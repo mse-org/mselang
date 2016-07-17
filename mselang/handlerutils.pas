@@ -1176,7 +1176,7 @@ begin
  if aoffset <> 0 then begin
   with info do begin
    ssabefore:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
-   with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
+   with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
     setimmint32(aoffset,par.imm);
     par.ssas1:= ssabefore;
    end;
@@ -2343,7 +2343,7 @@ begin
                 i3,bitoptypes[das_pointer]);
      if not isstartoffset and (d.dat.ref.offset <> 0) then begin
       ssabefore:= getcontextssa(stackoffset);
-      with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
+      with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
        par.ssas1:= ssabefore;
        setimmint32(d.dat.ref.offset,par.imm);
       end;
@@ -3080,9 +3080,11 @@ begin
    end
    else begin
     if int1 > 0 then begin //indirectlevel
+     si1:= das_pointer;
      sd1:= sdk_pointer;
     end
     else begin
+     si1:= po1^.h.datasize;
      case po1^.h.kind of
       dk_enum: begin
        sd1:= stackdatakinds[dk_integer];
@@ -3115,62 +3117,76 @@ begin
        oc_xor1: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean xor pboolean(po2)^;
        end;
-       oc_mulcard32: begin       
-        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
-                                                       card32(pcard64(po2)^);
+       oc_mulcard: begin       
+        d.dat.constval.vcardinal:= card64(d.dat.constval.vinteger) *
+                                                       card64(pcard64(po2)^);
        end;
-       oc_mulint32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) *
-                                                         int32(pint64(po2)^);
+       oc_mulint: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) *
+                                                         int64(pint64(po2)^);
        end;
-       oc_mulflo64: begin
+       oc_mulflo: begin
         d.dat.constval.vfloat:= d.dat.constval.vfloat * (pflo64(po2)^);
        end;
-       oc_divcard32: begin
+       oc_divcard: begin
         if pcard64(po2)^ = 0 then begin
          div0error();
          goto endlab;
         end;
-        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) div
-                                                       card32(pcard64(po2)^);
+        d.dat.constval.vcardinal:= card64(d.dat.constval.vinteger) div
+                                                       card64(pcard64(po2)^);
        end;
-       oc_divint32: begin
+       oc_divint: begin
         if pint64(po2)^ = 0 then begin
          div0error();
          goto endlab;
         end;
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) div
-                                                         int32(pint64(po2)^);
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) div
+                                                         int64(pint64(po2)^);
        end;
-       oc_divflo64: begin
+       oc_divflo: begin
         if pflo64(po2)^ = 0 then begin
          div0error();
          goto endlab;
         end;
         d.dat.constval.vfloat:= d.dat.constval.vfloat / pflo64(po2)^;
        end;
-       oc_and32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) and
-                                                         int32(pint64(po2)^);
+       oc_and: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) and
+                                                         int64(pint64(po2)^);
        end;
-       oc_or32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
-                                                         int32(pint64(po2)^);
+       oc_or: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) or
+                                                         int64(pint64(po2)^);
        end;
-       oc_xor32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) xor
-                                                         int32(pint64(po2)^);
+       oc_xor: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) xor
+                                                         int64(pint64(po2)^);
        end;
-       oc_shl32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shl
-                                                         int32(pint64(po2)^);
+       oc_shl: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) shl
+                                                         int64(pint64(po2)^);
        end;
-       oc_shr32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shr
-                                                         int32(pint64(po2)^);
+       oc_shr: begin
+        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) shr
+                                                         int64(pint64(po2)^);
        end; //todo: handle all ops
        else begin
         bo2:= false;
+       end;
+       case si1 of
+        das_8: begin
+         card64(d.dat.constval.vinteger):= 
+               card64(d.dat.constval.vinteger) and $ff;
+        end;
+        das_16: begin
+         card64(d.dat.constval.vinteger):= 
+               card64(d.dat.constval.vinteger) and $ffff;
+        end;
+        das_32: begin
+         card64(d.dat.constval.vinteger):= 
+               card64(d.dat.constval.vinteger) and $ffffffff;
+        end;
        end;
       end;
      end;
@@ -3178,12 +3194,6 @@ begin
       goto endlab;
      end;
 
-     if int1 > 0 then begin
-      si1:= das_pointer;
-     end
-     else begin
-      si1:= po1^.h.datasize;
-     end;
      if d.kind = ck_const then begin
       pushinsertconst(poa,-1,si1);
      end;

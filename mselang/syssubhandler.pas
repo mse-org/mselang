@@ -191,39 +191,39 @@ end;
 const
  incdecimmint32ops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_incdecsegimmint32,oc_incdeclocimmint32,oc_incdecparimmint32,
+  oc_incdecsegimmint,oc_incdeclocimmint,oc_incdecparimmint,
 //meo_paramindi          //meo_indi
-  oc_incdecparindiimmint32,oc_incdecindiimmint32);
+  oc_incdecparindiimmint,oc_incdecindiimmint);
  
  incdecimmpoops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_incdecsegimmpo32,oc_incdeclocimmpo32,oc_incdecparimmpo32,
+  oc_incdecsegimmpo,oc_incdeclocimmpo,oc_incdecparimmpo,
 //meo_paramindi         //meo_indi
-  oc_incdecparindiimmpo32,oc_incdecindiimmpo32);
+  oc_incdecparindiimmpo,oc_incdecindiimmpo);
 
  incint32ops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_incsegint32,oc_inclocint32,oc_incparint32,
+  oc_incsegint,oc_inclocint,oc_incparint,
 //meo_paramindi          //meo_indi
-  oc_incparindiint32,oc_incindiint32);
+  oc_incparindiint,oc_incindiint);
 
  decint32ops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_decsegint32,oc_declocint32,oc_decparint32,
+  oc_decsegint,oc_declocint,oc_decparint,
 //meo_paramindi          //meo_indi
-  oc_decparindiint32,oc_decindiint32);
+  oc_decparindiint,oc_decindiint);
  
  incpoops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_incsegpo32,oc_inclocpo32,oc_incparpo32,
+  oc_incsegpo,oc_inclocpo,oc_incparpo,
 //meo_paramindi         //meo_indi
-  oc_incparindipo32,oc_incindipo32);
+  oc_incparindipo,oc_incindipo);
 
  decpoops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
-  oc_decsegpo32,oc_declocpo32,oc_decparpo32,
+  oc_decsegpo,oc_declocpo,oc_decparpo,
 //meo_paramindi         //meo_indi
-  oc_decparindipo32,oc_decindipo32);
+  oc_decparindipo,oc_decindipo);
  
 procedure handleincdec(const paramco: integer; const adec: boolean);
 
@@ -279,7 +279,7 @@ var
      with contextstack[s.stacktop] do begin
       if i1 <> 1 then begin
        i2:= d.dat.fact.ssaindex;
-       with insertitem(oc_mulimmint32,s.stacktop-s.stackindex,-1)^ do begin
+       with insertitem(oc_mulimmint,s.stacktop-s.stackindex,-1)^ do begin
         par.ssas1:= i2;
         setimmint32(i1,par.imm);
        end;

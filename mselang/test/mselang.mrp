@@ -124,7 +124,7 @@ c=3
    c=2
     (
     kind=2
-    a=0,648,1,address
+    a=0,648,2,address
     teststate=2
     path=address.mla
     comment=
@@ -146,7 +146,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,address llvm
+    a=0,648,2,address llvm
     teststate=2
     path=address.mla
     comment=
@@ -192,7 +192,7 @@ c=3
     c=8
      (
      kind=2
-     a=0,648,1,and1
+     a=0,648,2,and1
      teststate=2
      path=and1.mla
      comment=
@@ -214,7 +214,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
+     a=0,648,2,and1 llvm
      teststate=2
      path=and1.mla
      comment=
@@ -236,7 +236,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1
+     a=0,648,2,or1
      teststate=2
      path=or1.mla
      comment=
@@ -258,7 +258,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
+     a=0,648,2,or1 llvm
      teststate=2
      path=or1.mla
      comment=
@@ -280,7 +280,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,not1
+     a=0,648,2,not1
      teststate=2
      path=not1.mla
      comment=
@@ -302,7 +302,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,not1 llvm
+     a=0,648,2,not1 llvm
      teststate=2
      path=not1.mla
      comment=
@@ -324,7 +324,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,booleval1
+     a=0,648,2,booleval1
      teststate=2
      path=booleval1.mla
      comment=
@@ -346,7 +346,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,booleaval1 llvm
+     a=0,648,2,booleaval1 llvm
      teststate=2
      path=booleval1.mla
      comment=
@@ -388,7 +388,7 @@ c=3
     c=6
      (
      kind=2
-     a=0,648,1,cmppointer
+     a=0,648,2,cmppointer
      teststate=2
      path=cmppointer.mla
      comment=
@@ -410,7 +410,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmppointer llvm
+     a=0,648,2,cmppointer llvm
      teststate=2
      path=cmppointer.mla
      comment=
@@ -432,7 +432,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpenum
+     a=0,648,2,cmpenum
      teststate=2
      path=cmpenum.mla
      comment=
@@ -454,7 +454,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpenum llvm
+     a=0,648,2,cmpenum llvm
      teststate=2
      path=cmpenum.mla
      comment=
@@ -476,7 +476,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpstring8
+     a=0,648,2,cmpstring8
      teststate=2
      path=cmpstring8.mla
      comment=
@@ -498,7 +498,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpstring8 llvm
+     a=0,648,2,cmpstring8 llvm
      teststate=2
      path=cmpstring8.mla
      comment=
@@ -540,7 +540,7 @@ c=3
     c=4
      (
      kind=2
-     a=0,648,1,floatassign
+     a=0,648,2,floatassign
      teststate=2
      path=floatassign.mla
      comment=
@@ -562,7 +562,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,floatassign llvm
+     a=0,648,2,floatassign llvm
      teststate=2
      path=floatassign.mla
      comment=
@@ -584,7 +584,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,sin
+     a=0,648,2,sin
      teststate=2
      path=sin.mla
      comment=
@@ -606,7 +606,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,sin llvm
+     a=0,648,2,sin llvm
      teststate=2
      path=sin.mla
      comment=
@@ -648,7 +648,7 @@ c=3
     c=6
      (
      kind=2
-     a=0,648,1,pointeradd
+     a=0,648,2,pointeradd
      teststate=2
      path=pointeradd.mla
      comment=
@@ -670,7 +670,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointeradd llvm
+     a=0,648,2,pointeradd llvm
      teststate=2
      path=pointeradd.mla
      comment=
@@ -692,7 +692,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerrecadd
+     a=0,648,2,pointerrecadd
      teststate=2
      path=pointerrecadd.mla
      comment=
@@ -714,7 +714,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerecadd llvm
+     a=0,648,2,pointerecadd llvm
      teststate=2
      path=pointerrecadd.mla
      comment=
@@ -736,7 +736,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff
+     a=0,648,2,pointerdiff
      teststate=2
      path=pointerdiff.mla
      comment=
@@ -758,7 +758,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff llvm
+     a=0,648,2,pointerdiff llvm
      teststate=2
      path=pointerdiff.mla
      comment=
@@ -796,7 +796,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,update
+    a=0,648,2,update
     teststate=2
     path=updatesize.mla
     comment=
@@ -818,7 +818,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,updatesize llvm
+    a=0,648,2,updatesize llvm
     teststate=2
     path=updatesize.mla
     comment=
@@ -840,7 +840,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divop
+    a=0,648,2,divop
     teststate=2
     path=divop.mla
     comment=
@@ -862,7 +862,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divop llvm
+    a=0,648,2,divop llvm
     teststate=2
     path=divop.mla
     comment=
@@ -884,7 +884,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divisionop
+    a=0,648,2,divisionop
     teststate=2
     path=divisionop.mla
     comment=
@@ -906,7 +906,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divisionop llvm
+    a=0,648,2,divisionop llvm
     teststate=2
     path=divisionop.mla
     comment=
@@ -928,7 +928,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint
+    a=0,648,2,addsubint
     teststate=2
     path=addsubint.mla
     comment=
@@ -950,7 +950,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint llvm
+    a=0,648,2,addsubint llvm
     teststate=2
     path=addsubint.mla
     comment=
@@ -972,7 +972,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1
+    a=0,648,2,bitexp1
     teststate=2
     path=bitexp1.mla
     comment=
@@ -994,7 +994,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
+    a=0,648,2,bitexp1 llvm
     teststate=2
     path=bitexp1.mla
     comment=
@@ -1016,7 +1016,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdec
+    a=0,648,2,incdec
     teststate=2
     path=incdec.mla
     comment=
@@ -1038,7 +1038,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdec llvm
+    a=0,648,2,incdec llvm
     teststate=2
     path=incdec.mla
     comment=
@@ -1060,7 +1060,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incval1
+    a=0,648,2,incval1
     teststate=2
     path=incval1.mla
     comment=
@@ -1082,7 +1082,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incval1 llvm
+    a=0,648,2,incval1 llvm
     teststate=2
     path=incval1.mla
     comment=
@@ -1104,7 +1104,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incvalpo1
+    a=0,648,2,incvalpo1
     teststate=2
     path=incvalpo1.mla
     comment=
@@ -1126,7 +1126,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incvalpo1 llvm
+    a=0,648,2,incvalpo1 llvm
     teststate=2
     path=incvalpo1.mla
     comment=
@@ -1148,7 +1148,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind
+    a=0,648,2,incdecind
     teststate=2
     path=incdecind.mla
     comment=
@@ -1170,7 +1170,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
+    a=0,648,2,incdecind llvm
     teststate=2
     path=incdecind.mla
     comment=
@@ -1192,7 +1192,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shl1
+    a=0,648,2,shl1
     teststate=2
     path=shl1.mla
     comment=
@@ -1214,7 +1214,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shl1 llvm
+    a=0,648,2,shl1 llvm
     teststate=2
     path=shl1.mla
     comment=
@@ -1236,7 +1236,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1
+    a=0,648,2,shr1
     teststate=2
     path=shr1.mla
     comment=
@@ -1258,7 +1258,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
+    a=0,648,2,shr1 llvm
     teststate=2
     path=shr1.mla
     comment=
@@ -1280,7 +1280,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecindpo
+    a=0,648,2,incdecindpo
     teststate=2
     path=incdecindpo.mla
     comment=
@@ -1302,7 +1302,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecindpo llvm
+    a=0,648,2,incdecindpo llvm
     teststate=2
     path=incdecindpo.mla
     comment=
@@ -1324,7 +1324,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,not1
+    a=0,648,2,not1
     teststate=2
     path=not1.mla
     comment=
@@ -1346,7 +1346,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,not1 llvm
+    a=0,648,2,not1 llvm
     teststate=2
     path=not1.mla
     comment=
@@ -1368,7 +1368,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,neg1
+    a=0,648,2,neg1
     teststate=2
     path=neg1.mla
     comment=
@@ -1390,7 +1390,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,neg1 llvm
+    a=0,648,2,neg1 llvm
     teststate=2
     path=neg1.mla
     comment=
@@ -1412,7 +1412,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1
+    a=0,648,2,andorxor1
     teststate=2
     path=andorxor1.mla
     comment=
@@ -1434,7 +1434,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
+    a=0,648,2,andorxor1 llvm
     teststate=2
     path=andorxor1.mla
     comment=
@@ -1472,11 +1472,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,control
+   a=0,665,5,control
    c=32
     (
     kind=2
-    a=0,648,1,breakrepeat
+    a=0,648,2,breakrepeat
     teststate=2
     path=breakrepeat.mla
     comment=
@@ -1498,7 +1498,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakrepat llvm
+    a=0,648,2,breakrepat llvm
     teststate=2
     path=breakrepeat.mla
     comment=
@@ -1520,7 +1520,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakwhile
+    a=0,648,2,breakwhile
     teststate=2
     path=breakwhile.mla
     comment=
@@ -1542,7 +1542,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakwhile llvm
+    a=0,648,2,breakwhile llvm
     teststate=2
     path=breakwhile.mla
     comment=
@@ -1564,7 +1564,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuerepeat
+    a=0,648,2,continuerepeat
     teststate=2
     path=continuerepeat.mla
     comment=
@@ -1586,7 +1586,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuerepat llvm
+    a=0,648,2,continuerepat llvm
     teststate=2
     path=continuerepeat.mla
     comment=
@@ -1608,7 +1608,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuewhile
+    a=0,648,2,continuewhile
     teststate=2
     path=continuewhile.mla
     comment=
@@ -1630,7 +1630,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuewhile llvm
+    a=0,648,2,continuewhile llvm
     teststate=2
     path=continuewhile.mla
     comment=
@@ -1652,7 +1652,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,iftest
+    a=0,648,2,iftest
     teststate=2
     path=iftest.mla
     comment=
@@ -1674,7 +1674,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,iftest llvm
+    a=0,648,2,iftest llvm
     teststate=2
     path=iftest.mla
     comment=
@@ -1696,7 +1696,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi
+    a=0,648,2,recifindi
     teststate=2
     path=recifindi.mla
     comment=
@@ -1718,7 +1718,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi llvm
+    a=0,648,2,recifindi llvm
     teststate=2
     path=recifindi.mla
     comment=
@@ -1740,7 +1740,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,case1
+    a=0,648,2,case1
     teststate=2
     path=case1.mla
     comment=
@@ -1762,7 +1762,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,case1 llvm
+    a=0,648,2,case1 llvm
     teststate=2
     path=case1.mla
     comment=
@@ -1784,8 +1784,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,while1
-    teststate=2
+    a=0,648,0,while1
+    teststate=0
     path=while1.mla
     comment=
     cc=${mlc}
@@ -1806,7 +1806,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,while1 llvm
+    a=0,648,2,while1 llvm
     teststate=2
     path=while1.mla
     comment=
@@ -1828,7 +1828,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto
+    a=0,648,2,forto
     teststate=2
     path=forto.mla
     comment=
@@ -1850,7 +1850,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto llvm
+    a=0,648,2,forto llvm
     teststate=2
     path=forto.mla
     comment=
@@ -1872,7 +1872,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,fordownto
+    a=0,648,2,fordownto
     teststate=2
     path=fordownto.mla
     comment=
@@ -1894,7 +1894,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,fordownto llvm
+    a=0,648,2,fordownto llvm
     teststate=2
     path=fordownto.mla
     comment=
@@ -1916,7 +1916,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto2
+    a=0,648,2,forto2
     teststate=2
     path=forto2.mla
     comment=
@@ -1938,7 +1938,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto2 llvm
+    a=0,648,2,forto2 llvm
     teststate=2
     path=forto2.mla
     comment=
@@ -1960,7 +1960,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,nestedwhile
+    a=0,648,2,nestedwhile
     teststate=2
     path=nestedwhile.mla
     comment=
@@ -1982,7 +1982,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,nestedwhile llvm
+    a=0,648,2,nestedwhile llvm
     teststate=2
     path=nestedwhile.mla
     comment=
@@ -2004,7 +2004,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt1
+    a=0,648,2,halt1
     teststate=2
     path=halt1.mla
     comment=
@@ -2026,7 +2026,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt1 llvm
+    a=0,648,2,halt1 llvm
     teststate=2
     path=halt1.mla
     comment=
@@ -2048,7 +2048,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt2
+    a=0,648,2,halt2
     teststate=2
     path=halt2.mla
     comment=
@@ -2070,7 +2070,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt2 llvm
+    a=0,648,2,halt2 llvm
     teststate=2
     path=halt2.mla
     comment=
@@ -2092,7 +2092,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,goto1
+    a=0,648,2,goto1
     teststate=2
     path=goto1.mla
     comment=
@@ -2114,7 +2114,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,goto1 llvm
+    a=0,648,2,goto1 llvm
     teststate=2
     path=goto1.mla
     comment=
@@ -2136,7 +2136,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,exit
+    a=0,648,2,exit
     teststate=2
     path=exit.mla
     comment=
@@ -2158,7 +2158,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,exit llvm
+    a=0,648,2,exit llvm
     teststate=2
     path=exit.mla
     comment=
@@ -2197,7 +2197,7 @@ c=3
    (
    kind=1
    a=0,665,5,conversions
-   c=10
+   c=12
     (
     kind=2
     a=0,648,2,potoint32
@@ -2401,6 +2401,50 @@ c=3
     a=0,648,1,leftsidecast llvm
     teststate=1
     path=leftsidecast.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,leftsizecast1
+    teststate=1
+    path=leftsidecast1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,leftsidecast1 llvm
+    teststate=1
+    path=leftsidecast1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -7869,7 +7913,41 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=41
+rowstate=75
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

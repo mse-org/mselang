@@ -855,7 +855,7 @@ begin
        if getclassinterfaceoffset(po1,dest,i3) then begin
         if getvalue(acontext,das_pointer) then begin
          i2:= d.dat.fact.ssaindex;
-         with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
+         with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
           setimmint32(i3,par.imm);
           par.ssas1:= i2;
          end;
@@ -2191,7 +2191,7 @@ begin
           ck_fact: begin
            if offset <> 0 then begin
             ssabefore:= d.dat.fact.ssaindex;
-            with insertitem(oc_offsetpoimm32,-1,-1)^ do begin
+            with insertitem(oc_offsetpoimm,-1,-1)^ do begin
              par.ssas1:= ssabefore;
              setimmint32(offset,par.imm);
             end;

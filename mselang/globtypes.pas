@@ -44,7 +44,9 @@ type
  pint16 = ^int16;
  ppint16 = ^pint16;
  pint32 = ^int32;
- ppint32 = ^int32;
+ ppint32 = ^pint32;
+ pint64 = ^int64;
+ ppint64 = ^pint64;
 
 // elementoffsetty = ptrint;
  elementoffsetty = int32; //same size for 64 and 32 bit compilers because of
@@ -393,12 +395,15 @@ const
  nullpointeroffset = high(card8)+1; //constlist index
 
 type 
- nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64,
-                nc_pointer);
- maxconstty = (mc_i1 = ord(high(nullconstty))+1, mc_i8=255,
-                              mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
- oneconstty = (oc_i1 = ord(mc_i1), oc_i8=1,
-                              oc_i16=ord(high(maxconstty))+1,oc_i32, oc_i64);
+ nullconstty = (nco_none = 0,
+          nco_i1 = 256+maxpointeroffset+1, nco_i8, nco_i16, nco_i32, nco_i64,
+          nco_pointer);
+ maxconstty = (mco_none = 0,
+               mco_i1 = ord(high(nullconstty))+1, mco_i8=255,
+                              mco_i16=ord(mco_i1)+1,mco_i32, mco_i64);
+ oneconstty = (oco_none = 0,
+               oco_i1 = ord(mco_i1), oco_i8=1,
+                              oco_i16=ord(high(maxconstty))+1,oco_i32, oco_i64);
   llvmvaluety = record
    typeid: int32;        //order fix because of metadata bcwriter
    listid: int32;        //
@@ -417,7 +422,7 @@ const
  floattype = ord(das_f64);
  bittypemax = ord(lastdatakind);
 
- nullpointer = ord(nc_pointer);
+ nullpointer = ord(nco_pointer);
  nullconst: llvmvaluety = (
              typeid: pointertype;
              listid: nullpointer;

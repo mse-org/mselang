@@ -174,16 +174,16 @@ type
   oc_inttopo,
 
   oc_and1,
-  oc_and32,
+  oc_and,
   oc_or1,
-  oc_or32,
+  oc_or,
   oc_xor1,
-  oc_xor32,
+  oc_xor,
   
-  oc_shl32,
-  oc_shr32,
-//  oc_shrint32,
-  
+  oc_shl,
+  oc_shr,
+  //oc_shrint
+    
   oc_card8tocard16,oc_card8tocard32,oc_card8tocard64,
   oc_card16tocard8,oc_card16tocard32,oc_card16tocard64,
   oc_card32tocard8,oc_card32tocard16,oc_card32tocard64,
@@ -210,84 +210,84 @@ type
   oc_listtoopenar,
   
   oc_not1,
-  oc_not32,
+  oc_not,
   
-  oc_negcard32,
-  oc_negint32,
-  oc_negflo64,
+  oc_negcard,
+  oc_negint,
+  oc_negflo,
 
-  oc_mulcard32,
-  oc_mulint32,
-  oc_divcard32,
-  oc_divint32,
-  oc_mulflo64,
-  oc_divflo64,
-  oc_addint32,
-  oc_subint32,
-  oc_addpoint32,
-  oc_subpoint32,
+  oc_mulcard,
+  oc_mulint,
+  oc_divcard,
+  oc_divint,
+  oc_mulflo,
+  oc_divflo,
+  oc_addint,
+  oc_subint,
+  oc_addpoint,
+  oc_subpoint,
   oc_subpo,
-  oc_addflo64,
-  oc_subflo64,
+  oc_addflo,
+  oc_subflo,
   oc_diffset,
   oc_xorset,
 
   oc_setbit,
   
-  oc_addimmint32,
-  oc_mulimmint32,
-  oc_offsetpoimm32,
+  oc_addimmint,
+  oc_mulimmint,
+  oc_offsetpoimm,
 
-  oc_incdecsegimmint32,
-  oc_incdecsegimmpo32,
+  oc_incdecsegimmint,
+  oc_incdecsegimmpo,
 
-  oc_incdeclocimmint32,
-  oc_incdeclocimmpo32,
+  oc_incdeclocimmint,
+  oc_incdeclocimmpo,
 
-  oc_incdecparimmint32,
-  oc_incdecparimmpo32,
+  oc_incdecparimmint,
+  oc_incdecparimmpo,
 
-  oc_incdecparindiimmint32,
-  oc_incdecparindiimmpo32,
+  oc_incdecparindiimmint,
+  oc_incdecparindiimmpo,
 
-  oc_incdecindiimmint32,
-  oc_incdecindiimmpo32,
+  oc_incdecindiimmint,
+  oc_incdecindiimmpo,
 
-  oc_incsegint32,
-  oc_incsegpo32,
+  oc_incsegint,
+  oc_incsegpo,
 
-  oc_inclocint32,
-  oc_inclocpo32,
+  oc_inclocint,
+  oc_inclocpo,
 
-  oc_incparint32,
-  oc_incparpo32,
+  oc_incparint,
+  oc_incparpo,
 
-  oc_incparindiint32,
-  oc_incparindipo32,
+  oc_incparindiint,
+  oc_incparindipo,
 
-  oc_incindiint32,
-  oc_incindipo32,
+  oc_incindiint,
+  oc_incindipo,
 
-  oc_decsegint32,
-  oc_decsegpo32,
+  oc_decsegint,
+  oc_decsegpo,
 
-  oc_declocint32,
-  oc_declocpo32,
+  oc_declocint,
+  oc_declocpo,
 
-  oc_decparint32,
-  oc_decparpo32,
+  oc_decparint,
+  oc_decparpo,
 
-  oc_decparindiint32,
-  oc_decparindipo32,
+  oc_decparindiint,
+  oc_decparindipo,
 
-  oc_decindiint32,
-  oc_decindipo32,
+  oc_decindiint,
+  oc_decindipo,
 
   oc_cmppo,
   oc_cmpbool,
-  oc_cmpcard32,
-  oc_cmpint32,
-  oc_cmpflo64,
+  oc_cmpcard,
+  oc_cmpint,
+  oc_cmpflo,
   oc_cmpstring8,
 {
   oc_cmpeqpo,
@@ -781,7 +781,7 @@ type
  stackopty = record
   t: typeallocinfoty;
   case opcodety of
-   oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,oc_cmpflo64:(
+   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo:(
     compkind: compopkindty;
    );
  end;
@@ -809,7 +809,7 @@ type
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
    oc_pushlocaddr,oc_pushstackaddr,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
-   oc_incdeclocimmint32,oc_incdeclocimmpo32:(
+   oc_incdeclocimmint,oc_incdeclocimmpo:(
     case integer of
      0:(locdataaddress: locdataaddressty;);
      1:(tempdataaddress: tempdataaddressty);
@@ -821,7 +821,7 @@ type
    oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
    oc_finirefsizesegdynar,oc_increfsizesegar,oc_increfsizesegdynar,
    oc_decrefsizesegar,oc_decrefsizesegdynar,
-   oc_incdecsegimmint32,oc_incdecsegimmpo32:(
+   oc_incdecsegimmint,oc_incdecsegimmpo:(
     segdataaddress: segdataaddressty;
    );
 {   
@@ -845,11 +845,11 @@ type
    oc_none:(
     llvm: llvmvaluety;
    );
-   oc_incdecsegimmint32,oc_incdecsegimmpo32,
-   oc_incdeclocimmint32,oc_incdeclocimmpo32,
-   oc_incdecparimmint32,oc_incdecparimmpo32,
-   oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32{,
+   oc_incdecsegimmint,oc_incdecsegimmpo,
+   oc_incdeclocimmint,oc_incdeclocimmpo,
+   oc_incdecparimmint,oc_incdecparimmpo,
+   oc_incdecparindiimmint,oc_incdecparindiimmpo,
+   oc_incdecindiimmint,oc_incdecindiimmpo{,
    oc_pushsegopenar}:(
     vint32: int32;
    );
@@ -1058,16 +1058,16 @@ type
    oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,
    oc_pushimmdatakind,
    oc_pushaddr,
-   oc_increg0,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
+   oc_increg0,oc_mulimmint,oc_addimmint,oc_offsetpoimm,
    oc_pop,
    oc_arraytoopenar: (
     imm: immty;
    );
-   oc_incdecsegimmint32,oc_incdecsegimmpo32,
-   oc_incdeclocimmint32,oc_incdeclocimmpo32,
-   oc_incdecparimmint32,oc_incdecparimmpo32,
-   oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32{,
+   oc_incdecsegimmint,oc_incdecsegimmpo,
+   oc_incdeclocimmint,oc_incdeclocimmpo,
+   oc_incdecparimmint,oc_incdecparimmpo,
+   oc_incdecparindiimmint,oc_incdecparindiimmpo,
+   oc_incdecindiimmint,oc_incdecindiimmpo{,
    oc_pushsegopenar}:(
     memimm: memimmopty;
    );
@@ -1122,13 +1122,13 @@ type
    
    oc_chartostring8,
    
-   oc_negcard32,oc_negint32,oc_negflo64,
-   oc_mulcard32,oc_mulint32,oc_mulflo64,
-   oc_divcard32,oc_divint32,oc_divflo64,
-   oc_addint32,oc_addflo64,
-   oc_subint32,oc_subflo64,oc_diffset,oc_xorset,
-   oc_addpoint32,oc_subpoint32,
-   oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,oc_cmpflo64,
+   oc_negcard,oc_negint,oc_negflo,
+   oc_mulcard,oc_mulint,oc_mulflo,
+   oc_divcard,oc_divint,oc_divflo,
+   oc_addint,oc_addflo,
+   oc_subint,oc_subflo,oc_diffset,oc_xorset,
+   oc_addpoint,oc_subpoint,
+   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,
    {
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
    oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,
@@ -1168,16 +1168,16 @@ type
    oc_decrefsizesegdynar,oc_decrefsizelocdynar,
    oc_decrefsizereg0dynar,oc_decrefsizestackdynar,oc_decrefsizestackrefdynar,
    oc_getmem,
-   oc_incsegint32,oc_incsegpo32,
-   oc_inclocint32,oc_inclocpo32,
-   oc_incparint32,oc_incparpo32,
-   oc_incparindiint32,oc_incparindipo32,
-   oc_incindiint32,oc_incindipo32,
-   oc_decsegint32,oc_decsegpo32,
-   oc_declocint32,oc_declocpo32, 
-   oc_decparint32,oc_decparpo32,
-   oc_decparindiint32,oc_decparindipo32,
-   oc_decindiint32,oc_decindipo32:(
+   oc_incsegint,oc_incsegpo,
+   oc_inclocint,oc_inclocpo,
+   oc_incparint,oc_incparpo,
+   oc_incparindiint,oc_incparindipo,
+   oc_incindiint,oc_incindipo,
+   oc_decsegint,oc_decsegpo,
+   oc_declocint,oc_declocpo, 
+   oc_decparint,oc_decparpo,
+   oc_decparindiint,oc_decparindipo,
+   oc_decindiint,oc_decindipo:(
     memop: memopty;
    );
    oc_setlengthstr8,oc_setlengthdynarray:(

@@ -870,40 +870,40 @@ end;
 const                     
  mulops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_mulcard32,oc_mulint32,oc_mulflo64,
+  (ops: (oc_none, oc_none,    oc_none,  oc_mulcard,oc_mulint,oc_mulflo,
        //sdk_set32,sdk_string8
-         oc_and32,oc_none);
+         oc_and,oc_none);
    wantedtype: st_none; opname: '*');
 
  divops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_divcard32,oc_divint32,oc_none,
+  (ops: (oc_none, oc_none,    oc_none,  oc_divcard,oc_divint,oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
    wantedtype: st_none; opname: 'div');
 
  divisionops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,    oc_divflo64,
+  (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,    oc_divflo,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
    wantedtype: st_flo64; opname: '/');
 
  andops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,  oc_and32, oc_none,
+  (ops: (oc_none, oc_none,    oc_and1,  oc_and,  oc_and, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
    wantedtype: st_none; opname: 'and');
  shlops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_shl32,  oc_shl32, oc_none,
+  (ops: (oc_none, oc_none,    oc_none,  oc_shl,  oc_shl, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
    wantedtype: st_none; opname: 'shl');
  shrops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_shr32,  oc_shr32, oc_none,
+  (ops: (oc_none, oc_none,    oc_none,  oc_shr,  oc_shr, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
    wantedtype: st_none; opname: 'shr');
@@ -1042,26 +1042,26 @@ end;
 const
  addops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addint32,oc_addflo64,
+ (ops: (oc_none, oc_none,    oc_none,  oc_addint,oc_addint,oc_addflo,
       //sdk_set32,sdk_string8
-        oc_or32,  oc_none);
+        oc_or,  oc_none);
   wantedtype: st_none; opname: '+');
  subops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subint32,oc_subflo64,
+ (ops: (oc_none, oc_subpo,   oc_none,  oc_subint,oc_subint,oc_subflo,
        //sdk_set32, sdk_string8
          oc_diffset,oc_none);
   wantedtype: st_none; opname: '-');
  orops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
- (ops: (oc_none, oc_none,   oc_or1,    oc_or32,   oc_or32,  oc_none,
+ (ops: (oc_none, oc_none,   oc_or1,    oc_or,   oc_or,  oc_none,
       //sdk_set32,sdk_string8
         oc_none,  oc_none);
   wantedtype: st_none; opname: 'or');
 
  xorops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
- (ops: (oc_none, oc_none,    oc_xor1,  oc_xor32,  oc_xor32, oc_none,
+ (ops: (oc_none, oc_none,    oc_xor1,  oc_xor,  oc_xor, oc_none,
       //sdk_set32,sdk_string8
         oc_none,  oc_none);
   wantedtype: st_none; opname: 'xor');
@@ -1200,7 +1200,7 @@ begin
 //         i2:= s.stacktop-s.stackindex-2;
          getvalue(poa,das_none);
          i1:= d.dat.fact.ssaindex;
-         with additem(oc_offsetpoimm32)^ do begin
+         with additem(oc_offsetpoimm)^ do begin
           if co_llvm in o.compileoptions then begin
            par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.
                                         addi32(pob^.d.dat.constval.vinteger);
@@ -1219,7 +1219,7 @@ begin
          if tryconvert(pob,st_int32) then begin //todo: data size
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
-           with additem(oc_mulimmint32)^ do begin
+           with additem(oc_mulimmint)^ do begin
             if co_llvm in o.compileoptions then begin
              par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(i2);
             end
@@ -1231,14 +1231,15 @@ begin
            i1:= s.ssa.nextindex-1;
           end;
           if issub then begin
-           op1:= oc_subpoint32;
+           op1:= oc_subpoint;
           end
           else begin
-           op1:= oc_addpoint32;
+           op1:= oc_addpoint;
           end;
           with additem(op1)^ do begin
            par.ssas1:= d.dat.fact.ssaindex;
            par.ssas2:= i1;
+           par.stackop.t:= bitoptypes[das_32];
           end;
           d.dat.fact.ssaindex:= s.ssa.nextindex-1;
          end
@@ -1399,7 +1400,7 @@ end;
 const
  negops: array[datakindty] of opcodety = (
  //dk_none, dk_pointer,dk_boolean,dk_cardinal, dk_integer, dk_float,
-   oc_none, oc_none,   oc_none,   oc_negcard32,oc_negint32,oc_negflo64,
+   oc_none, oc_none,   oc_none,   oc_negcard,oc_negint,oc_negflo,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
@@ -1410,7 +1411,7 @@ const
 
  notops: array[datakindty] of opcodety = (
  //dk_none, dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
-   oc_none, oc_none,   oc_not1,   oc_not32,   oc_not32,  oc_none,
+   oc_none, oc_none,   oc_not1,   oc_not,   oc_not,  oc_none,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
@@ -2265,34 +2266,34 @@ end;
 const
  cmpops: array[compopkindty] of opsinfoty = (
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
-  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint32,oc_cmpint32,                        
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint,oc_cmpint,                        
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpflo64,oc_cmpint32,oc_cmpstring8);
+         oc_cmpflo,oc_cmpint,oc_cmpstring8);
    wantedtype: st_none; opname: '='),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
-  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint32,oc_cmpint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint,oc_cmpint,
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpflo64,oc_cmpint32,oc_cmpstring8);
+         oc_cmpflo,oc_cmpint,oc_cmpstring8);
    wantedtype: st_none; opname: '<>'),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
-  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard32,oc_cmpint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpflo64,oc_none,  oc_cmpstring8);
+         oc_cmpflo,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '>'),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
-  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard32,oc_cmpint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpflo64,oc_none,  oc_cmpstring8);
+         oc_cmpflo,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '<'),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
-  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,
+  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpflo64,oc_none,  oc_cmpstring8);
+         oc_cmpflo,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '>='),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
-  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,
+  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpflo64,oc_setcontains,oc_cmpstring8);
+         oc_cmpflo,oc_setcontains,oc_cmpstring8);
    wantedtype: st_none; opname: '<='){,
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,

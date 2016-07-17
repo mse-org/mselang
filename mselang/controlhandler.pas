@@ -479,7 +479,7 @@ begin
       cok1:= cok_le;
       step:= 1;
      end;
-     with additem(oc_cmpint32)^.par do begin
+     with additem(oc_cmpint)^.par do begin
       ssas1:= start.tempaddress.ssaindex;
       ssas2:= stop.tempaddress.ssaindex;
       i1:= ssad;
@@ -497,7 +497,7 @@ begin
       par.ssas2:= i1; //dest
      end;
      i1:= pushtemppo(varad);
-     with additem(oc_incdecindiimmint32)^ do begin
+     with additem(oc_incdecindiimmint)^ do begin
       par.memimm.mem.t:= alloc;
 //       par.memimm.mem.t.flags:= varad.flags;
 //       par.memimm.mem.tempaddress:= varad.tempaddress;
@@ -508,7 +508,7 @@ begin
      linkmark(d.control.linksbreak,
                       getsegaddress(seg_op,@po2^.par.opaddress.opaddress));
      i1:= pushtemppo(varad);
-     with additem(oc_incdecindiimmint32)^ do begin
+     with additem(oc_incdecindiimmint)^ do begin
       par.memimm.mem.t:= alloc;
 //       par.memimm.mem.t.flags:= varad.flags;
 //       par.memimm.mem.tempaddress:= varad.tempaddress;
@@ -550,7 +550,7 @@ begin
      linkresolveopad(linkscontinue,opcount-1);
      i1:= pushtempindi(forinfo.varad,forinfo.alloc);
      i2:= pushtemp(forinfo.stop,forinfo.alloc);
-     with additem(oc_cmpint32)^.par do begin
+     with additem(oc_cmpint)^.par do begin
       ssas1:= i1;
       ssas2:= i2;
       i1:= ssad;

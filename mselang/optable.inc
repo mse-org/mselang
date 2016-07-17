@@ -191,22 +191,22 @@
 
 //oc_and1
   (ssa: and1ssa; proc: @and1op; flags: []), 
-//oc_and32
-  (ssa: and32ssa; proc: @and32op; flags: []), 
+//oc_and
+  (ssa: andssa; proc: @andop; flags: []), 
 //oc_or1
   (ssa: or1ssa; proc: @or1op; flags: []), 
-//oc_or32
-  (ssa: or32ssa; proc: @or32op; flags: []), 
+//oc_or
+  (ssa: orssa; proc: @orop; flags: []), 
 //oc_xor1
   (ssa: xor1ssa; proc: @xor1op; flags: []), 
-//oc_xor32
-  (ssa: xor32ssa; proc: @xor32op; flags: []), 
+//oc_xor
+  (ssa: xorssa; proc: @xorop; flags: []), 
 
-//oc_shl32
-  (ssa: shl32ssa; proc: @shl32op; flags: []), 
-//oc_shr32
-  (ssa: shr32ssa; proc: @shr32op; flags: []), 
-//  shrint32
+//oc_shl
+  (ssa: shlssa; proc: @shlop; flags: []), 
+//oc_shr
+  (ssa: shrssa; proc: @shrop; flags: []), 
+//oc_shrint
   
 //oc_card8tocard16
   (ssa: card8tocard16ssa; proc: @card8tocard16op; flags: []), 
@@ -335,42 +335,42 @@
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 
-//oc_not32
-  (ssa: not32ssa; proc: @not32op; flags: []), 
+//oc_not
+  (ssa: notssa; proc: @notop; flags: []), 
 
-//oc_negcard32
-  (ssa: negcard32ssa; proc: @negcard32op; flags: []), 
-//oc_negint32
-  (ssa: negint32ssa; proc: @negint32op; flags: []), 
-//oc_negflo64
-  (ssa: negflo64ssa; proc: @negflo64op; flags: []), 
+//oc_negcard
+  (ssa: negcardssa; proc: @negcardop; flags: []), 
+//oc_negint
+  (ssa: negintssa; proc: @negintop; flags: []), 
+//oc_negflo
+  (ssa: negflossa; proc: @negfloop; flags: []), 
 
-//oc_mulcard32
-  (ssa: mulcard32ssa; proc: @mulcard32op; flags: []), 
-//oc_mulint32
-  (ssa: mulint32ssa; proc: @mulint32op; flags: []), 
-//oc_divcard32
-  (ssa: divcard32ssa; proc: @divcard32op; flags: []), 
-//oc_divint32
-  (ssa: divint32ssa; proc: @divint32op; flags: []), 
-//oc_mulflo64
-  (ssa: mulflo64ssa; proc: @mulflo64op; flags: []), 
-//oc_divflo64
-  (ssa: divflo64ssa; proc: @divflo64op; flags: []), 
-//oc_addint32
-  (ssa: addint32ssa; proc: @addint32op; flags: []), 
-//oc_subint32
-  (ssa: subint32ssa; proc: @subint32op; flags: []), 
-//oc_addpoint32
-  (ssa: addpoint32ssa; proc: @addpoint32op; flags: []), 
-//oc_subpoint32
-  (ssa: subpoint32ssa; proc: @subpoint32op; flags: []), 
+//oc_mulcard
+  (ssa: mulcardssa; proc: @mulcardop; flags: []), 
+//oc_mulint
+  (ssa: mulintssa; proc: @mulintop; flags: []), 
+//oc_divcard
+  (ssa: divcardssa; proc: @divcardop; flags: []), 
+//oc_divint
+  (ssa: divintssa; proc: @divintop; flags: []), 
+//oc_mulflo
+  (ssa: mulflossa; proc: @mulfloop; flags: []), 
+//oc_divflo
+  (ssa: divflossa; proc: @divfloop; flags: []), 
+//oc_addint
+  (ssa: addintssa; proc: @addintop; flags: []), 
+//oc_subint
+  (ssa: subintssa; proc: @subintop; flags: []), 
+//oc_addpoint
+  (ssa: addpointssa; proc: @addpointop; flags: []), 
+//oc_subpoint
+  (ssa: subpointssa; proc: @subpointop; flags: []), 
 //oc_subpo
   (ssa: subpossa; proc: @subpoop; flags: []), 
-//oc_addflo64
-  (ssa: addflo64ssa; proc: @addflo64op; flags: []), 
-//oc_subflo64
-  (ssa: subflo64ssa; proc: @subflo64op; flags: []), 
+//oc_addflo
+  (ssa: addflossa; proc: @addfloop; flags: []), 
+//oc_subflo
+  (ssa: subflossa; proc: @subfloop; flags: []), 
 //oc_diffset
   (ssa: diffsetssa; proc: @diffsetop; flags: []), 
 //oc_xorset
@@ -379,98 +379,98 @@
 //oc_setbit
   (ssa: setbitssa; proc: @setbitop; flags: []), 
 
-//oc_addimmint32
-  (ssa: addimmint32ssa; proc: @addimmint32op; flags: []), 
-//oc_mulimmint32
-  (ssa: mulimmint32ssa; proc: @mulimmint32op; flags: []), 
-//oc_offsetpoimm32
-  (ssa: offsetpoimm32ssa; proc: @offsetpoimm32op; flags: []), 
+//oc_addimmint
+  (ssa: addimmintssa; proc: @addimmintop; flags: []), 
+//oc_mulimmint
+  (ssa: mulimmintssa; proc: @mulimmintop; flags: []), 
+//oc_offsetpoimm
+  (ssa: offsetpoimmssa; proc: @offsetpoimmop; flags: []), 
 
-//oc_incdecsegimmint32
-  (ssa: incdecsegimmint32ssa; proc: @incdecsegimmint32op; flags: [of_relocseg]), 
-//oc_incdecsegimmpo32
-  (ssa: incdecsegimmpo32ssa; proc: @incdecsegimmpo32op; flags: [of_relocseg]), 
+//oc_incdecsegimmint
+  (ssa: incdecsegimmintssa; proc: @incdecsegimmintop; flags: [of_relocseg]), 
+//oc_incdecsegimmpo
+  (ssa: incdecsegimmpossa; proc: @incdecsegimmpoop; flags: [of_relocseg]), 
 
-//oc_incdeclocimmint32
-  (ssa: incdeclocimmint32ssa; proc: @incdeclocimmint32op; flags: []), 
-//oc_incdeclocimmpo32
-  (ssa: incdeclocimmpo32ssa; proc: @incdeclocimmpo32op; flags: []), 
+//oc_incdeclocimmint
+  (ssa: incdeclocimmintssa; proc: @incdeclocimmintop; flags: []), 
+//oc_incdeclocimmpo
+  (ssa: incdeclocimmpossa; proc: @incdeclocimmpoop; flags: []), 
 
-//oc_incdecparimmint32
-  (ssa: incdecparimmint32ssa; proc: @incdecparimmint32op; flags: []), 
-//oc_incdecparimmpo32
-  (ssa: incdecparimmpo32ssa; proc: @incdecparimmpo32op; flags: []), 
+//oc_incdecparimmint
+  (ssa: incdecparimmintssa; proc: @incdecparimmintop; flags: []), 
+//oc_incdecparimmpo
+  (ssa: incdecparimmpossa; proc: @incdecparimmpoop; flags: []), 
 
-//oc_incdecparindiimmint32
-  (ssa: incdecparindiimmint32ssa; proc: @incdecparindiimmint32op; flags: []), 
-//oc_incdecparindiimmpo32
-  (ssa: incdecparindiimmpo32ssa; proc: @incdecparindiimmpo32op; flags: []), 
+//oc_incdecparindiimmint
+  (ssa: incdecparindiimmintssa; proc: @incdecparindiimmintop; flags: []), 
+//oc_incdecparindiimmpo
+  (ssa: incdecparindiimmpossa; proc: @incdecparindiimmpoop; flags: []), 
 
-//oc_incdecindiimmint32
-  (ssa: incdecindiimmint32ssa; proc: @incdecindiimmint32op; flags: []), 
-//oc_incdecindiimmpo32
-  (ssa: incdecindiimmpo32ssa; proc: @incdecindiimmpo32op; flags: []), 
+//oc_incdecindiimmint
+  (ssa: incdecindiimmintssa; proc: @incdecindiimmintop; flags: []), 
+//oc_incdecindiimmpo
+  (ssa: incdecindiimmpossa; proc: @incdecindiimmpoop; flags: []), 
 
-//oc_incsegint32
-  (ssa: incsegint32ssa; proc: @incsegint32op; flags: []), 
-//oc_incsegpo32
-  (ssa: incsegpo32ssa; proc: @incsegpo32op; flags: []), 
+//oc_incsegint
+  (ssa: incsegintssa; proc: @incsegintop; flags: []), 
+//oc_incsegpo
+  (ssa: incsegpossa; proc: @incsegpoop; flags: []), 
 
-//oc_inclocint32
-  (ssa: inclocint32ssa; proc: @inclocint32op; flags: []), 
-//oc_inclocpo32
-  (ssa: inclocpo32ssa; proc: @inclocpo32op; flags: []), 
+//oc_inclocint
+  (ssa: inclocintssa; proc: @inclocintop; flags: []), 
+//oc_inclocpo
+  (ssa: inclocpossa; proc: @inclocpoop; flags: []), 
 
-//oc_incparint32
-  (ssa: incparint32ssa; proc: @incparint32op; flags: []), 
-//oc_incparpo32
-  (ssa: incparpo32ssa; proc: @incparpo32op; flags: []), 
+//oc_incparint
+  (ssa: incparintssa; proc: @incparintop; flags: []), 
+//oc_incparpo
+  (ssa: incparpossa; proc: @incparpoop; flags: []), 
 
-//oc_incparindiint32
-  (ssa: incparindiint32ssa; proc: @incparindiint32op; flags: []), 
-//oc_incparindipo32
-  (ssa: incparindipo32ssa; proc: @incparindipo32op; flags: []), 
+//oc_incparindiint
+  (ssa: incparindiintssa; proc: @incparindiintop; flags: []), 
+//oc_incparindipo
+  (ssa: incparindipossa; proc: @incparindipoop; flags: []), 
 
-//oc_incindiint32
-  (ssa: incindiint32ssa; proc: @incindiint32op; flags: []), 
-//oc_incindipo32
-  (ssa: incindipo32ssa; proc: @incindipo32op; flags: []), 
+//oc_incindiint
+  (ssa: incindiintssa; proc: @incindiintop; flags: []), 
+//oc_incindipo
+  (ssa: incindipossa; proc: @incindipoop; flags: []), 
 
-//oc_decsegint32
-  (ssa: decsegint32ssa; proc: @decsegint32op; flags: []), 
-//oc_decsegpo32
-  (ssa: decsegpo32ssa; proc: @decsegpo32op; flags: []), 
+//oc_decsegint
+  (ssa: decsegintssa; proc: @decsegintop; flags: []), 
+//oc_decsegpo
+  (ssa: decsegpossa; proc: @decsegpoop; flags: []), 
 
-//oc_declocint32
-  (ssa: declocint32ssa; proc: @declocint32op; flags: []), 
-//oc_declocpo32
-  (ssa: declocpo32ssa; proc: @declocpo32op; flags: []), 
+//oc_declocint
+  (ssa: declocintssa; proc: @declocintop; flags: []), 
+//oc_declocpo
+  (ssa: declocpossa; proc: @declocpoop; flags: []), 
 
-//oc_decparint32
-  (ssa: decparint32ssa; proc: @decparint32op; flags: []), 
-//oc_decparpo32
-  (ssa: decparpo32ssa; proc: @decparpo32op; flags: []), 
+//oc_decparint
+  (ssa: decparintssa; proc: @decparintop; flags: []), 
+//oc_decparpo
+  (ssa: decparpossa; proc: @decparpoop; flags: []), 
 
-//oc_decparindiint32
-  (ssa: decparindiint32ssa; proc: @decparindiint32op; flags: []), 
-//oc_decparindipo32
-  (ssa: decparindipo32ssa; proc: @decparindipo32op; flags: []), 
+//oc_decparindiint
+  (ssa: decparindiintssa; proc: @decparindiintop; flags: []), 
+//oc_decparindipo
+  (ssa: decparindipossa; proc: @decparindipoop; flags: []), 
 
-//oc_decindiint32
-  (ssa: decindiint32ssa; proc: @decindiint32op; flags: []), 
-//oc_decindipo32
-  (ssa: decindipo32ssa; proc: @decindipo32op; flags: []), 
+//oc_decindiint
+  (ssa: decindiintssa; proc: @decindiintop; flags: []), 
+//oc_decindipo
+  (ssa: decindipossa; proc: @decindipoop; flags: []), 
 
 //oc_cmppo
   (ssa: cmppossa; proc: @cmppoop; flags: []), 
 //oc_cmpbool
   (ssa: cmpboolssa; proc: @cmpboolop; flags: []), 
-//oc_cmpcard32
-  (ssa: cmpcard32ssa; proc: @cmpcard32op; flags: []), 
+//oc_cmpcard
+  (ssa: cmpcardssa; proc: @cmpcardop; flags: []), 
 //oc_cmpint32
-  (ssa: cmpint32ssa; proc: @cmpint32op; flags: []), 
+  (ssa: cmpintssa; proc: @cmpintop; flags: []), 
 //oc_cmpflo64
-  (ssa: cmpflo64ssa; proc: @cmpflo64op; flags: []), 
+  (ssa: cmpflossa; proc: @cmpfloop; flags: []), 
 //oc_cmpstring8
   (ssa: cmpstring8ssa; proc: @cmpstring8op; flags: []), 
 

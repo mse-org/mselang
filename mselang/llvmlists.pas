@@ -802,6 +802,31 @@ type
    property metadatalist: tmetadatalist read fmetadatalist;
  end; 
 
+const
+ nullconsts: array[databitsizety] of nullconstty = (
+//das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
+  nco_none,nco_i1,nco_none,nco_i8,nco_none, nco_i16,nco_none, nco_i32,               
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
+  nco_none, nco_i64,nco_none,   nco_none,nco_none,nco_none,
+//das_sub, das_meta
+  nco_none,nco_none);
+
+ oneconsts: array[databitsizety] of oneconstty = (
+//das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
+  oco_none,oco_i1,oco_none,oco_i8,oco_none, oco_i16,oco_none, oco_i32,               
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
+  oco_none, oco_i64,oco_none,   oco_none,oco_none,oco_none,
+//das_sub, das_meta
+  oco_none,oco_none);
+
+ maxconsts: array[databitsizety] of maxconstty = (
+//das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
+  mco_none,mco_i1,mco_none,mco_i8,mco_none, mco_i16,mco_none, mco_i32,               
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
+  mco_none, mco_i64,mco_none,   mco_none,mco_none,mco_none,
+//das_sub, das_meta
+  mco_none,mco_none);
+
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 
 implementation

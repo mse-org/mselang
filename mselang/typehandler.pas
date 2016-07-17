@@ -461,7 +461,7 @@ begin
      i1:= field1^.offset - i1;
      if i1 > 0 then begin
       i2:= s.ssa.nextindex-1;
-      with additem(oc_offsetpoimm32)^ do begin
+      with additem(oc_offsetpoimm)^ do begin
        setimmint32(i1,par.imm);
        par.ssas1:= i2;
       end;
@@ -477,62 +477,6 @@ begin
    endsimplesub(true);
   end;
  end;
-(*
- with info do begin
-  with locad1 do begin
-   t:= bitoptypes[das_pointer];
-   with locdataaddress do begin
-    if co_llvm in compileoptions then begin
-     a.address:= 0; //first param
-    end
-    else begin
-     a.address:= -pointersize-stacklinksize; //single pointer param
-    end;
-    a.framelevel:= -1;    
-    offset:= 0;
-   end;
-  end;
-  ad1.base:= ab_stackref;
-  ad1.address:= -pointersize; //pointer to var
-  ad1.offset:= 0;
-  ad1.flags:= [];
-//  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
-  typ1:= ele.eledataabs(atyp);
-  for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
-   sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
-   sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
-   if sub1^.calllinks <> 0 then begin
-    linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
-                                //fetch globid from subbegin op
-   end;
-   ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
-   with additem(oc_pushlocpo)^.par do begin
-    memop:= locad1; 
-   end;
-//   pushtemppo(locad1);
-   i1:= 0; //field offset
-   while ele1 <> 0 do begin
-    field1:= ele.eledataabs(ele1);
-    typ2:= ele.eledataabs(field1^.vf.typ);
-    if typ2^.h.manageproc <> nil then begin
-     i1:= field1^.offset - i1;
-     if i1 > 0 then begin
-      i2:= s.ssa.nextindex-1;
-      with additem(oc_offsetpoimm32)^ do begin
-       setimmint32(i1,par);
-       par.ssas1:= i2;
-      end;
-     end;
-     typ2^.h.manageproc(op1,typ2,ad1,s.ssa.nextindex-1);
-     i1:= field1^.offset; 
-    end;
-    ele1:= field1^.vf.next;
-   end;
-   poptemp(pointersize);
-   endsimplesub(true);
-  end;
- end;
-*)
 end;
 
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
@@ -1009,7 +953,7 @@ begin
    case kind1 of
     dk_openarray: begin
      i1:= s.ssa.nextindex-1;
-     with insertitem(oc_offsetpoimm32,-1,-1)^ do begin //at end of context
+     with insertitem(oc_offsetpoimm,-1,-1)^ do begin //at end of context
       setimmint32(sizeof(openarrayty.high),par.imm); //pointer to openarrayty.data
       par.ssas1:= i1;
      end;
@@ -1123,21 +1067,23 @@ begin
     end;
     if range.min <> 0 then begin
      lastssa:= d.dat.fact.ssaindex;
-     with insertitem(oc_addimmint32,topoffset,-1)^ do begin
+     with insertitem(oc_addimmint,topoffset,-1)^ do begin
       par.ssas1:= lastssa;
       setimmint32(-range.min,par.imm);
      end;
     end;
     lastssa:= d.dat.fact.ssaindex;
-    with insertitem(oc_mulimmint32,topoffset,-1)^ do begin
+    with insertitem(oc_mulimmint,topoffset,-1)^ do begin
      par.ssas1:= lastssa;
      setimmint32(itemtype^.h.bytesize,par.imm);
     end;
    end;
                                                         //next dimension
-   with additem(oc_addpoint32)^ do begin
+   with additem(oc_addpoint)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
     par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+    par.stackop.t:= bitoptypes[
+              ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize];
     d.dat.fact.ssaindex:= par.ssad; //new pointer
    end;
    d.dat.datatyp.typedata:= ele.eledatarel(itemtype);

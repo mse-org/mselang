@@ -806,13 +806,46 @@ begin
  vbooleanty(po2^):= vbooleanty(po2^) and vbooleanty(po1^);
 end;
 
-procedure and32op();
-var
- po1,po2: pointer;
+function popbinop(): pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) and vintegerty(po1^);
+ with cpu.pc^.par do begin
+  result:= stackpop(bytesizes[stackop.t.kind]);
+ end;
+end;
+
+function pushbinop(): pointer;
+begin
+ with cpu.pc^.par do begin
+  result:= stackpush(bytesizes[stackop.t.kind]);
+ end;
+end;
+
+procedure andop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) and card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) and card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) and card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) and card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
 procedure or1op();
@@ -824,13 +857,32 @@ begin
  vbooleanty(po2^):= vbooleanty(po2^) or vbooleanty(po1^);
 end;
 
-procedure or32op();
+procedure orop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) or vintegerty(po1^);
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) or card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) or card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) or card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) or card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
 procedure xor1op();
@@ -842,22 +894,60 @@ begin
  vbooleanty(po2^):= vbooleanty(po2^) xor vbooleanty(po1^);
 end;
 
-procedure xor32op();
+procedure xorop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) xor vintegerty(po1^);
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) xor card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) xor card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) xor card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) xor card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure shl32op();
+procedure shlop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) shl vintegerty(po1^);
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) shl card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) shl card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) shl card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) shl card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 {
 procedure shrcard32op();
@@ -869,120 +959,320 @@ begin
  vintegerty(po2^):= vcardinalty(po2^) shr vcardinalty(po1^);
 end;
 }
-procedure shr32op();
+procedure shrop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) shr vintegerty(po1^);
-end;
-
-procedure mulcard32op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vcardinalty(po2^) * vcardinalty(po1^);
-end;
-
-procedure mulint32op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) * vintegerty(po1^);
-end;
-
-procedure divcard32op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- if vcardinalty(po1^) = 0 then begin
-  raise exception.create('Interpreter division by 0');
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) shr card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) shr card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) shr card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) shr card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end;
- vintegerty(po2^):= vcardinalty(po2^) div vcardinalty(po1^);
 end;
 
-procedure divint32op();
+procedure mulcardop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- if vintegerty(po1^) = 0 then begin
-  raise exception.create('Interpreter division by 0');
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) * card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) * card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) * card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) * card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end;
- vintegerty(po2^):= vintegerty(po2^) div vintegerty(po1^);
 end;
 
-procedure mulimmint32op();
+procedure mulintop();
 var
- po1: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= cpu.stack - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^) * cpu.pc^.par.imm.vint32;
-end;
-
-procedure mulflo64op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= po1-alignsize(sizeof(vfloatty));
- vfloatty(po2^):= vfloatty(po2^) * vfloatty(po1^);
-end;
-
-procedure divflo64op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= po1-alignsize(sizeof(vfloatty));
- if vfloatty(po1^) = 0 then begin
-  raise exception.create('Interpreter division by 0');
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) * int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) * int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) * int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) * int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end;
- vfloatty(po2^):= vfloatty(po2^) / vfloatty(po1^);
 end;
 
-procedure addint32op();
+procedure divcardop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) div card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) div card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) div card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) div card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure divintop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) div int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) div int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) div int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) div int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure mulimmintop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) * cpu.pc^.par.imm.vint32;
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) * cpu.pc^.par.imm.vint32;
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) * cpu.pc^.par.imm.vint32;
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) * cpu.pc^.par.imm.vint32;
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure mulfloop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= flo64(po1^) * flo64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure divfloop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= flo64(po1^) / flo64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure addintop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) + int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) + int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) + int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) + int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure subintop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) - int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) - int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) - int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) - int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure addpointop();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
-end;
-
-procedure subint32op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^)-vintegerty(po1^);
-end;
-
-procedure addpoint32op();
-var
- po1,po2: pointer;
-begin
- po1:= stackpop(sizeof(vintegerty));
+ po1:= popbinop();
  po2:= po1-alignsize(sizeof(vpointerty));
- inc(pvpointerty(po2)^,vintegerty(po1^));
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    inc(pvpointerty(po2)^,int8(po1^));
+   end;
+   das_16: begin
+    inc(pvpointerty(po2)^,int16(po1^));
+   end;
+   das_32: begin
+    inc(pvpointerty(po2)^,int32(po1^));
+   end;
+   das_64: begin
+    inc(pvpointerty(po2)^,int64(po1^));
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure subpoint32op();
+procedure subpointop();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
+ po1:= popbinop();
  po2:= po1-alignsize(sizeof(vpointerty));
- dec(pvpointerty(po2)^,vintegerty(po1^));
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    dec(pvpointerty(po2)^,int8(po1^));
+   end;
+   das_16: begin
+    dec(pvpointerty(po2)^,int16(po1^));
+   end;
+   das_32: begin
+    dec(pvpointerty(po2)^,int32(po1^));
+   end;
+   das_64: begin
+    dec(pvpointerty(po2)^,int64(po1^));
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
 procedure subpoop();
@@ -994,7 +1284,7 @@ begin
  vintegerty(po2^):= vpointerty(po2^)-vpointerty(po1^);
 end;
 
-procedure addimmint32op();
+procedure addimmintop();
 var
  po1: pointer;
 begin
@@ -1002,7 +1292,7 @@ begin
  vintegerty(po1^):= vintegerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
-procedure offsetpoimm32op();
+procedure offsetpoimmop();
 var
  po1: pointer;
 begin
@@ -1010,9 +1300,35 @@ begin
  vpointerty(po1^):= vpointerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
-procedure incdecsegimmint32op();
+procedure incdecsegimmintop();
 var
- po1: pinteger;
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getsegaddress(mem.segdataaddress);
+  case mem.t.kind of
+   das_8: begin
+    inc(pint8(po1)^,vint32);
+   end;
+   das_16: begin
+    inc(pint16(po1)^,vint32);
+   end;
+   das_32: begin
+    inc(pint32(po1)^,vint32);
+   end;
+   das_64: begin
+    inc(pint64(po1)^,vint32);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure incdecsegimmpoop();
+var
+ po1: ppointer;
 begin
  with cpu.pc^.par.memimm do begin
   po1:= getsegaddress(mem.segdataaddress);
@@ -1020,49 +1336,97 @@ begin
  end; 
 end;
 
-procedure incdecsegimmpo32op();
+procedure incdeclocimmintop();
+var
+ po1: pointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getlocaddress(mem);
+  case mem.t.kind of
+   das_8: begin
+    inc(pint8(po1)^,vint32);
+   end;
+   das_16: begin
+    inc(pint16(po1)^,vint32);
+   end;
+   das_32: begin
+    inc(pint32(po1)^,vint32);
+   end;
+   das_64: begin
+    inc(pint64(po1)^,vint32);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incdeclocimmpoop();
 var
  po1: ppointer;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getsegaddress(mem.segdataaddress);
-  inc(po1^,vint32);
+  po1:= getlocaddress(mem);
+  case mem.t.kind of
+   das_8: begin
+    inc(pint8(po1)^,vint32);
+   end;
+   das_16: begin
+    inc(pint16(po1)^,vint32);
+   end;
+   das_32: begin
+    inc(pint32(po1)^,vint32);
+   end;
+   das_64: begin
+    inc(pint64(po1)^,vint32);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure incdeclocimmint32op();
+procedure incdecparimmintop();
+begin
+ incdeclocimmintop();
+end;
+
+procedure incdecparimmpoop();
+begin
+ incdeclocimmpoop();
+end;
+
+procedure incdecparindiimmintop();
 var
- po1: pinteger;
+ po1: pointer;
 begin
  with cpu.pc^.par.memimm do begin
   po1:= getlocaddress(mem);
-  inc(po1^,vint32);
+  case mem.t.kind of
+   das_8: begin
+    inc(ppint8(po1)^^,vint32);
+   end;
+   das_16: begin
+    inc(ppint16(po1)^^,vint32);
+   end;
+   das_32: begin
+    inc(ppint32(po1)^^,vint32);
+   end;
+   das_64: begin
+    inc(ppint64(po1)^^,vint32);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure incdeclocimmpo32op();
+procedure incdecparindiimmpoop();
 var
- po1: ppointer;
-begin
- with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem);
-  inc(po1^,vint32);
- end; 
-end;
-
-procedure incdecparimmint32op();
-begin
- incdeclocimmint32op();
-end;
-
-procedure incdecparimmpo32op();
-begin
- incdeclocimmpo32op();
-end;
-
-procedure incdecparindiimmint32op();
-var
- po1: ^pinteger;
+ po1: pppointer;
 begin
  with cpu.pc^.par.memimm do begin
   po1:= getlocaddress(mem);
@@ -1070,241 +1434,503 @@ begin
  end; 
 end;
 
-procedure incdecparindiimmpo32op();
+procedure incdecindiimmintop();
+var
+ po1: pointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= stackpop(sizeof(vpointerty));
+  case mem.t.kind of
+   das_8: begin
+    inc(ppint8(po1)^^,vint32);
+   end;
+   das_16: begin
+    inc(ppint16(po1)^^,vint32);
+   end;
+   das_32: begin
+    inc(ppint32(po1)^^,vint32);
+   end;
+   das_64: begin
+    inc(ppint64(po1)^^,vint32);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incdecindiimmpoop();
 var
  po1: pppointer;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem);
-  inc(po1^^,vint32);
- end; 
-end;
-
-procedure incdecindiimmint32op();
-var
- po1: ^pinteger;
-begin
- with cpu.pc^.par.memimm do begin
   po1:= stackpop(sizeof(vpointerty));
   inc(po1^^,vint32);
  end; 
 end;
 
-procedure incdecindiimmpo32op();
-var
- po1: pppointer;
+function popmemop(): pointer;
 begin
- with cpu.pc^.par.memimm do begin
-  po1:= stackpop(sizeof(vpointerty));
-  inc(po1^^,vint32);
- end; 
+ with cpu.pc^.par do begin
+  result:= stackpop(bytesizes[memop.t.kind]);
+ end;
 end;
 
-procedure incsegint32op();
+procedure incsegintop();
 var
- po1: pinteger;
+ po1,po2: pointer;
 begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
-  inc(po1^,pint32(stackpop(sizeof(int32)))^);
+  po2:= popmemop();
+  case t.kind of
+   das_8: begin
+    inc(pint8(po1)^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(pint16(po1)^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(pint32(po1)^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(pint64(po1)^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure incsegpo32op();
+procedure incsegpoop();
 var
- po1: ppointer;
- i1: int32;
-begin
- with cpu.pc^.par.memop do begin
-  po1:= getsegaddress(segdataaddress);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^,i1);
- end; 
-end;
-
-procedure inclocint32op();
-var
- po1: pinteger;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^,i1);
- end; 
-end;
-
-procedure inclocpo32op();
-var
- po1: ppointer;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^,i1);
- end; 
-end;
-
-procedure incparint32op();
-begin
- inclocint32op();
-end;
-
-procedure incparpo32op();
-begin
- inclocpo32op();
-end;
-
-procedure incparindiint32op();
-var
- po1: ^pinteger;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^^,i1);
- end; 
-end;
-
-procedure incparindipo32op();
-var
- po1: pppointer;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^^,i1);
- end; 
-end;
-
-procedure incindiint32op();
-var
- po1: ^pinteger;
- i1: int32;
-begin
- with cpu.pc^.par.memop do begin
-  po1:= stackpop(sizeof(vpointerty));
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  inc(po1^^,i1);
- end; 
-end;
-
-procedure incindipo32op();
-var
- po1: pppointer;
-begin
- with cpu.pc^.par.memop do begin
-  po1:= stackpop(sizeof(vpointerty));
-  inc(po1^^,pint32(stackpop(sizeof(int32)))^);
- end; 
-end;
-
-procedure decsegint32op();
-var
- po1: pinteger;
+ po1,po2: ppointer;
  i1: int32;
 begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^,i1);
+  po2:= popmemop();
+  case t.kind of
+   das_8: begin
+    inc(po1^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(po1^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(po1^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(po1^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure decsegpo32op();
+procedure inclocintop();
 var
- po1: ppointer;
- i1: int32;
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(pint8(po1)^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(pint16(po1)^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(pint32(po1)^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(pint64(po1)^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure inclocpoop();
+var
+ po1,po2: ppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(po1^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(po1^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(po1^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(po1^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incparintop();
+begin
+ inclocintop();
+end;
+
+procedure incparpoop();
+begin
+ inclocpoop();
+end;
+
+procedure incparindiintop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(ppint8(po1)^^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(ppint16(po1)^^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(ppint32(po1)^^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(ppint64(po1)^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incparindipoop();
+var
+ po1,po2: pppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(po1^^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(po1^^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(po1^^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(po1^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incindiintop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stackpop(sizeof(vpointerty));
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(ppint8(po1)^^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(ppint16(po1)^^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(ppint32(po1)^^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(ppint64(po1)^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure incindipoop();
+var
+ po1,po2: pppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stackpop(sizeof(vpointerty));
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(po1^^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(po1^^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(po1^^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(po1^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure decsegintop();
+var
+ po1,po2: pointer;
 begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^,i1);
+  po2:= popmemop();
+  case t.kind of
+   das_8: begin
+    dec(pint8(po1)^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(pint16(po1)^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(pint32(po1)^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(pint64(po1)^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure declocint32op();
-var
- po1: pinteger;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^,i1);
- end; 
-end;
-
-procedure declocpo32op();
+procedure decsegpoop();
 var
  po1: ppointer;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^,i1);
- end; 
-end;
-
-procedure decparint32op();
-begin
- declocint32op();
-end;
-
-procedure decparpo32op();
-begin
- declocpo32op();
-end;
-
-procedure decparindiint32op();
-var
- po1: ^pinteger;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^^,i1);
- end; 
-end;
-
-procedure decparindipo32op();
-var
- po1: pppointer;
- i1: int32;
-begin
- with cpu.pc^.par do begin
-  po1:= getlocaddress(memop);
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^^,i1);
- end; 
-end;
-
-procedure decindiint32op();
-var
- po1: ^pinteger;
- i1: int32;
+ po2: pointer;
 begin
  with cpu.pc^.par.memop do begin
-  po1:= stackpop(sizeof(vpointerty));
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^^,i1);
+  po1:= getsegaddress(segdataaddress);
+  po2:= popmemop();
+  case t.kind of
+   das_8: begin
+    dec(po1^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(po1^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(po1^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(po1^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
-procedure decindipo32op();
+procedure declocintop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    dec(pint8(po1)^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(pint16(po1)^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(pint32(po1)^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(pint64(po1)^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure declocpoop();
+var
+ po1: ppointer;
+ po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    dec(po1^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(po1^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(po1^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(po1^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure decparintop();
+begin
+ declocintop();
+end;
+
+procedure decparpoop();
+begin
+ declocpoop();
+end;
+
+procedure decparindiintop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    dec(ppint8(po1)^^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(ppint16(po1)^^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(ppint32(po1)^^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(ppint64(po1)^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure decparindipoop();
 var
  po1: pppointer;
- i1: int32;
+ po2: pointer;
 begin
- with cpu.pc^.par.memop do begin
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    inc(po1^^,pint8(po2)^);
+   end;
+   das_16: begin
+    inc(po1^^,pint16(po2)^);
+   end;
+   das_32: begin
+    inc(po1^^,pint32(po2)^);
+   end;
+   das_64: begin
+    inc(po1^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure decindiintop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par do begin
   po1:= stackpop(sizeof(vpointerty));
-  i1:= pint32(stackpop(sizeof(int32)))^;
-  dec(po1^^,i1);
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    dec(ppint8(po1)^^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(ppint16(po1)^^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(ppint32(po1)^^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(ppint64(po1)^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end; 
+end;
+
+procedure decindipoop();
+var
+ po1: pppointer;
+ po2: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stackpop(sizeof(vpointerty));
+  po2:= popmemop();
+  case memop.t.kind of
+   das_8: begin
+    dec(po1^^,pint8(po2)^);
+   end;
+   das_16: begin
+    dec(po1^^,pint16(po2)^);
+   end;
+   das_32: begin
+    dec(po1^^,pint32(po2)^);
+   end;
+   das_64: begin
+    dec(po1^^,pint64(po2)^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
  end; 
 end;
 
@@ -1368,91 +1994,325 @@ begin
  end;
 end;
 
-procedure cmpcard32op();
+procedure cmpintop();
 var
- po1,po2: pvcardinalty;
+ po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vcardinalty));
- po2:= stackpop(sizeof(vcardinalty));
+ po1:= popbinop();
+ po2:= popbinop();
  with cpu.pc^.par do begin
   case stackop.compkind of
    cok_eq: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ = pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ = pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ = pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ = pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ne: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ <> pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ <> pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ <> pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ <> pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_gt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ > pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ > pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ > pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ > pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_lt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ < pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ < pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ < pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ < pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ge: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ >= pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ >= pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ >= pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ >= pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_le: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint8(po2)^ <= pint8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint16(po2)^ <= pint16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint32(po2)^ <= pint32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pint64(po2)^ <= pint64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
   end;
  end;
 end;
 
-procedure cmpint32op();
+procedure cmpcardop();
 var
- po1,po2: pvintegerty;
+ po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
+ po1:= popbinop();
+ po2:= popbinop();
  with cpu.pc^.par do begin
   case stackop.compkind of
    cok_eq: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ = pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ = pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ = pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ = pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ne: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ <> pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ <> pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ <> pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ <> pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_gt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ > pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ > pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ > pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ > pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_lt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ < pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ < pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ < pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ < pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ge: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ >= pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ >= pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ >= pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ >= pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_le: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+    case stackop.t.kind of
+     das_8: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard8(po2)^ <= pcard8(po1)^;
+     end;
+     das_16: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard16(po2)^ <= pcard16(po1)^;
+     end;
+     das_32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard32(po2)^ <= pcard32(po1)^;
+     end;
+     das_64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pcard64(po2)^ <= pcard64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
   end;
  end;
 end;
 
-procedure cmpflo64op();
+procedure cmpfloop();
 var
- po1,po2: pvfloatty;
+ po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
+ po1:= popbinop();
+ po2:= popbinop();
  with cpu.pc^.par do begin
   case stackop.compkind of
    cok_eq: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ = pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ne: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ <> pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_gt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ > pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_lt: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ < pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_ge: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ >= pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
    cok_le: begin
-    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+    case stackop.t.kind of
+     das_f64: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ <= pflo64(po1)^;
+     end;
+     else begin
+      internalerror('20160716A');
+     end;
+    end;
    end;
   end;
  end;
@@ -1558,22 +2418,42 @@ begin
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ in tintegerset(po1^);
 end;
 
-procedure addflo64op();
+procedure addfloop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= po1-alignsize(sizeof(vfloatty));
- vfloatty(po2^):= vfloatty(po2^)+vfloatty(po1^);
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= flo64(po1^) + flo64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure subflo64op();
+procedure subfloop();
 var
- po1,po2: pointer;
+ po1,po2,po3: pointer;
 begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= po1-alignsize(sizeof(vfloatty));
- vfloatty(po2^):= vfloatty(po2^)-vfloatty(po1^);
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= flo64(po1^) - flo64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
 procedure diffsetop(); //todo: arbitrary size
@@ -2129,36 +3009,103 @@ begin
  vbooleanty(po1^):= not vbooleanty(po1^);
 end;
 
-procedure not32op();
+procedure notop();
 var
- po1: pointer;
+ po1,po3: pointer;
 begin
- po1:= stacktop(sizeof(vcardinalty));
- vcardinalty(po1^):= not vcardinalty(po1^);
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= not card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= not card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= not card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= not card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure negcard32op();
+procedure negcardop();
 var
- po1: pointer;
+ po1,po3: pointer;
 begin
- po1:= stacktop(sizeof(vcardinalty));
- vcardinalty(po1^):= -vcardinalty(po1^);
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= -card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= -card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= -card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= -card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure negint32op();
+procedure negintop();
 var
- po1: pointer;
+ po1,po3: pointer;
 begin
- po1:= stacktop(sizeof(vintegerty));
- vintegerty(po1^):= -vintegerty(po1^);
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= -int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= -int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= -int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= -int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
-procedure negflo64op();
+procedure negfloop();
 var
- po1: pointer;
+ po1,po3: pointer;
 begin
- po1:= stacktop(sizeof(vfloatty));
- vfloatty(po1^):= -vfloatty(po1^);
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= -flo64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
 end;
 
 procedure pushnilop();
@@ -4256,14 +5203,14 @@ const
   inttopossa = 0;
   
   and1ssa = 0;
-  and32ssa = 0;
+  andssa = 0;
   or1ssa = 0;
-  or32ssa = 0;
+  orssa = 0;
   xor1ssa = 0;
-  xor32ssa = 0;
+  xorssa = 0;
   
-  shl32ssa = 0;
-  shr32ssa = 0;
+  shlssa = 0;
+  shrssa = 0;
 //  shrint32ssa = 0;
   
   card8tocard16ssa = 0;
@@ -4332,84 +5279,84 @@ const
   listtoopenarssa = 0;
 
   not1ssa = 0;
-  not32ssa = 0;
+  notssa = 0;
   
-  negcard32ssa = 0;
-  negint32ssa = 0;
-  negflo64ssa = 0;
+  negcardssa = 0;
+  negintssa = 0;
+  negflossa = 0;
 
-  mulcard32ssa = 0;
-  mulint32ssa = 0;
-  divcard32ssa = 0;
-  divint32ssa = 0;
-  mulflo64ssa = 0;
-  divflo64ssa = 0;
-  addint32ssa = 0;
-  subint32ssa = 0;
-  addpoint32ssa = 0;
-  subpoint32ssa = 0;
+  mulcardssa = 0;
+  mulintssa = 0;
+  divcardssa = 0;
+  divintssa = 0;
+  mulflossa = 0;
+  divflossa = 0;
+  addintssa = 0;
+  subintssa = 0;
+  addpointssa = 0;
+  subpointssa = 0;
   subpossa = 0;
-  addflo64ssa = 0;
-  subflo64ssa = 0;
+  addflossa = 0;
+  subflossa = 0;
   diffsetssa = 0;
   xorsetssa = 0;
   
   setbitssa = 0;
 
-  addimmint32ssa = 0;
-  mulimmint32ssa = 0;
-  offsetpoimm32ssa = 0;
+  addimmintssa = 0;
+  mulimmintssa = 0;
+  offsetpoimmssa = 0;
 
-  incdecsegimmint32ssa = 0;
-  incdecsegimmpo32ssa = 0;
+  incdecsegimmintssa = 0;
+  incdecsegimmpossa = 0;
 
-  incdeclocimmint32ssa = 0;
-  incdeclocimmpo32ssa = 0;
+  incdeclocimmintssa = 0;
+  incdeclocimmpossa = 0;
 
-  incdecparimmint32ssa = 0;
-  incdecparimmpo32ssa = 0;
+  incdecparimmintssa = 0;
+  incdecparimmpossa = 0;
 
-  incdecparindiimmint32ssa = 0;
-  incdecparindiimmpo32ssa = 0;
+  incdecparindiimmintssa = 0;
+  incdecparindiimmpossa = 0;
 
-  incdecindiimmint32ssa = 0;
-  incdecindiimmpo32ssa = 0;
+  incdecindiimmintssa = 0;
+  incdecindiimmpossa = 0;
 
-  incsegint32ssa = 0;
-  incsegpo32ssa = 0;
+  incsegintssa = 0;
+  incsegpossa = 0;
 
-  inclocint32ssa = 0;
-  inclocpo32ssa = 0;
+  inclocintssa = 0;
+  inclocpossa = 0;
 
-  incparint32ssa = 0;
-  incparpo32ssa = 0;
+  incparintssa = 0;
+  incparpossa = 0;
 
-  incparindiint32ssa = 0;
-  incparindipo32ssa = 0;
+  incparindiintssa = 0;
+  incparindipossa = 0;
 
-  incindiint32ssa = 0;
-  incindipo32ssa = 0;
+  incindiintssa = 0;
+  incindipossa = 0;
 
-  decsegint32ssa = 0;
-  decsegpo32ssa = 0;
+  decsegintssa = 0;
+  decsegpossa = 0;
 
-  declocint32ssa = 0;
-  declocpo32ssa = 0;
+  declocintssa = 0;
+  declocpossa = 0;
 
-  decparint32ssa = 0;
-  decparpo32ssa = 0;
+  decparintssa = 0;
+  decparpossa = 0;
 
-  decparindiint32ssa = 0;
-  decparindipo32ssa = 0;
+  decparindiintssa = 0;
+  decparindipossa = 0;
 
-  decindiint32ssa = 0;
-  decindipo32ssa = 0;
+  decindiintssa = 0;
+  decindipossa = 0;
 
   cmppossa = 0;
   cmpboolssa = 0;
-  cmpcard32ssa = 0;
-  cmpint32ssa = 0;
-  cmpflo64ssa = 0;
+  cmpcardssa = 0;
+  cmpintssa = 0;
+  cmpflossa = 0;
   cmpstring8ssa = 0;
 
   setcontainsssa = 0;
