@@ -2725,6 +2725,11 @@ begin
    d.dat.ref.castchain:= 0;
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;
+   if [af_paramindirect,af_paramvar] * 
+                                  d.dat.ref.c.address.flags <> [] then begin
+    inc(i1);                                //apply param deref
+    inc(d.dat.indirection);
+   end;
    dec(d.dat.datatyp.indirectlevel,i1);
    if getvalue(acontext,das_none) then begin
     result:= linkdocasts(link1,acontext,@castdatatype);

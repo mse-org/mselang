@@ -1147,14 +1147,18 @@ begin
      errormessage(err_illegalexpression,[]);
      goto errlab;
     end;
+//    india:= d.dat.datatyp.indirectlevel;
+//    i1:= india;
+//    if (d.kind = ck_ref) and 
+//              (af_paramindirect in d.dat.ref.c.address.flags) then begin
+//     dec(india);
+//    end;
     if not getvalue(poa,das_none) then begin //call possible pending conversions
      goto errlab;
     end;
+//    india:= india + d.dat.datatyp.indirectlevel - i1; 
+                                        //track changes by conversions
     india:= d.dat.datatyp.indirectlevel;
-    if (d.kind = ck_ref) and 
-              (af_paramindirect in d.dat.ref.c.address.flags) then begin
-     dec(india);
-    end;
     indib:= pob^.d.dat.datatyp.indirectlevel;
     if (pob^.d.kind = ck_ref) and 
               (af_paramindirect in pob^.d.dat.ref.c.address.flags) then begin
