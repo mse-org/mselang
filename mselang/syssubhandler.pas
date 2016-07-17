@@ -131,7 +131,8 @@ type
  memoparty = array[memopty] of opcodety;
   
 function addmemop(var context: contextdataty; const ops: memoparty;
-                        const readwrite: boolean): popinfoty;
+                     const readwrite: boolean; 
+                          const operanddatasize: databitsizety): popinfoty;
 var
  ssaextension1: integer;
  framelevel1: integer;
@@ -186,6 +187,7 @@ begin
   end;
  end;
  result^.par.memop.t:= opdatatype1;
+ result^.par.memop.operanddatasize:= operanddatasize;
 end;
 
 const
@@ -241,7 +243,7 @@ var
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    if (paramco = 1) or par2isconst then begin
     if (d.dat.datatyp.indirectlevel > 0) then begin
-     po3:= addmemop(d,incdecimmpoops,true);
+     po3:= addmemop(d,incdecimmpoops,true,das_32);
      if d.dat.datatyp.indirectlevel = 1 then begin
       if po1^.h.kind = dk_pointer then begin
        po3^.par.memimm.vint32:= 1;
@@ -255,7 +257,7 @@ var
      end;
     end
     else begin
-     po3:= addmemop(d,incdecimmint32ops,true);
+     po3:= addmemop(d,incdecimmint32ops,true,das_32);
      po3^.par.memimm.vint32:= 1;
     end;
     if par2isconst and (paramco > 1) then begin
@@ -287,20 +289,20 @@ var
       i2:= d.dat.fact.ssaindex;
      end;
      if adec then begin
-      po3:= addmemop(d,decpoops,true);
+      po3:= addmemop(d,decpoops,true,das_32);
      end
      else begin
-      po3:= addmemop(d,incpoops,true);
+      po3:= addmemop(d,incpoops,true,das_32);
      end;
      po3^.par.ssas2:= i2;
     end
     else begin
      i1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
      if adec then begin
-      po3:= addmemop(d,decint32ops,true);
+      po3:= addmemop(d,decint32ops,true,das_32);
      end
      else begin
-      po3:= addmemop(d,incint32ops,true);
+      po3:= addmemop(d,incint32ops,true,das_32);
      end;
      po3^.par.ssas2:= i1;
     end;

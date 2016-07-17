@@ -322,6 +322,34 @@ begin
  end; 
 end;
 
+function popimmop(): pointer;
+begin
+ with cpu.pc^.par do begin
+  result:= stackpop(bytesizes[imm.datasize]);
+ end;
+end;
+
+function pushimmop(): pointer;
+begin
+ with cpu.pc^.par do begin
+  result:= stackpush(bytesizes[imm.datasize]);
+ end;
+end;
+
+function popbinop(): pointer;
+begin
+ with cpu.pc^.par do begin
+  result:= stackpop(bytesizes[stackop.t.kind]);
+ end;
+end;
+
+function pushbinop(): pointer;
+begin
+ with cpu.pc^.par do begin
+  result:= stackpush(bytesizes[stackop.t.kind]);
+ end;
+end;
+
 procedure movesegreg0op();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= reg0;
@@ -806,20 +834,6 @@ begin
  vbooleanty(po2^):= vbooleanty(po2^) and vbooleanty(po1^);
 end;
 
-function popbinop(): pointer;
-begin
- with cpu.pc^.par do begin
-  result:= stackpop(bytesizes[stackop.t.kind]);
- end;
-end;
-
-function pushbinop(): pointer;
-begin
- with cpu.pc^.par do begin
-  result:= stackpush(bytesizes[stackop.t.kind]);
- end;
-end;
-
 procedure andop();
 var
  po1,po2,po3: pointer;
@@ -1101,11 +1115,10 @@ end;
 
 procedure mulimmintop();
 var
- po1,po2,po3: pointer;
+ po2,po3: pointer;
 begin
- po1:= popbinop();
- po2:= popbinop();
- po3:= pushbinop();
+ po2:= popimmop();
+ po3:= pushimmop();
  with cpu.pc^.par do begin
   case stackop.t.kind of
    das_8: begin
@@ -1137,7 +1150,7 @@ begin
  with cpu.pc^.par do begin
   case stackop.t.kind of
    das_f64: begin
-    flo64(po3^):= flo64(po1^) * flo64(po1^);
+    flo64(po3^):= flo64(po2^) * flo64(po1^);
    end;
    else begin
     internalerror('20160716A');
@@ -1156,7 +1169,7 @@ begin
  with cpu.pc^.par do begin
   case stackop.t.kind of
    das_f64: begin
-    flo64(po3^):= flo64(po1^) / flo64(po1^);
+    flo64(po3^):= flo64(po2^) / flo64(po1^);
    end;
    else begin
     internalerror('20160716A');
@@ -1473,7 +1486,8 @@ end;
 function popmemop(): pointer;
 begin
  with cpu.pc^.par do begin
-  result:= stackpop(bytesizes[memop.t.kind]);
+//  result:= stackpop(bytesizes[memop.t.kind]);
+  result:= stackpop(bytesizes[memop.operanddatasize]);
  end;
 end;
 
@@ -1484,7 +1498,7 @@ begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
   po2:= popmemop();
-  case t.kind of
+  case operanddatasize of
    das_8: begin
     inc(pint8(po1)^,pint8(po2)^);
    end;
@@ -1512,7 +1526,7 @@ begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
   po2:= popmemop();
-  case t.kind of
+  case operanddatasize of
    das_8: begin
     inc(po1^,pint8(po2)^);
    end;
@@ -1539,7 +1553,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(pint8(po1)^,pint8(po2)^);
    end;
@@ -1566,7 +1580,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(po1^,pint8(po2)^);
    end;
@@ -1603,7 +1617,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(ppint8(po1)^^,pint8(po2)^);
    end;
@@ -1630,7 +1644,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(po1^^,pint8(po2)^);
    end;
@@ -1657,7 +1671,7 @@ begin
  with cpu.pc^.par do begin
   po1:= stackpop(sizeof(vpointerty));
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(ppint8(po1)^^,pint8(po2)^);
    end;
@@ -1684,7 +1698,7 @@ begin
  with cpu.pc^.par do begin
   po1:= stackpop(sizeof(vpointerty));
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(po1^^,pint8(po2)^);
    end;
@@ -1711,7 +1725,7 @@ begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
   po2:= popmemop();
-  case t.kind of
+  case operanddatasize of
    das_8: begin
     dec(pint8(po1)^,pint8(po2)^);
    end;
@@ -1739,7 +1753,7 @@ begin
  with cpu.pc^.par.memop do begin
   po1:= getsegaddress(segdataaddress);
   po2:= popmemop();
-  case t.kind of
+  case operanddatasize of
    das_8: begin
     dec(po1^,pint8(po2)^);
    end;
@@ -1766,7 +1780,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     dec(pint8(po1)^,pint8(po2)^);
    end;
@@ -1794,7 +1808,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     dec(po1^,pint8(po2)^);
    end;
@@ -1831,7 +1845,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     dec(ppint8(po1)^^,pint8(po2)^);
    end;
@@ -1859,7 +1873,7 @@ begin
  with cpu.pc^.par do begin
   po1:= getlocaddress(memop);
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     inc(po1^^,pint8(po2)^);
    end;
@@ -1886,7 +1900,7 @@ begin
  with cpu.pc^.par do begin
   po1:= stackpop(sizeof(vpointerty));
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     dec(ppint8(po1)^^,pint8(po2)^);
    end;
@@ -1914,7 +1928,7 @@ begin
  with cpu.pc^.par do begin
   po1:= stackpop(sizeof(vpointerty));
   po2:= popmemop();
-  case memop.t.kind of
+  case memop.operanddatasize of
    das_8: begin
     dec(po1^^,pint8(po2)^);
    end;

@@ -161,6 +161,7 @@ type
 const
  pointersize = sizeof(pointer); //todo: use target size
  pointerbitsize = pointersize*8;
+ dataoffssize = das_32;
 {$if pointersize = 8}
  ptrcardsystype = st_card64;
  ptrintsystype = st_int64;

@@ -1226,12 +1226,15 @@ begin
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
            with additem(oc_mulimmint)^ do begin
+            setimmint32(i2,par.imm);
+{
             if co_llvm in o.compileoptions then begin
              par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(i2);
             end
             else begin
              par.imm.vint32:= i2;
             end;
+}
             par.ssas1:= i1;
            end;
            i1:= s.ssa.nextindex-1;

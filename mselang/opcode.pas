@@ -625,6 +625,7 @@ end;
 
 procedure setimmboolean(const value: boolean; var aimm: immty);
 begin
+ aimm.datasize:= das_1;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(value);
  end
@@ -635,6 +636,7 @@ end;
 
 procedure setimmcard8(const value: card8; var aimm: immty);
 begin
+ aimm.datasize:= das_8;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
@@ -645,6 +647,7 @@ end;
 
 procedure setimmcard16(const value: card16; var aimm: immty);
 begin
+ aimm.datasize:= das_16;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
@@ -655,6 +658,7 @@ end;
 
 procedure setimmcard32(const value: card32; var aimm: immty);
 begin
+ aimm.datasize:= das_32;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
@@ -665,6 +669,7 @@ end;
 
 procedure setimmcard64(const value: card64; var aimm: immty);
 begin
+ aimm.datasize:= das_64;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
@@ -675,6 +680,7 @@ end;
 
 procedure setimmint1(const value: int8; var aimm: immty);
 begin
+ aimm.datasize:= das_1;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(odd(value));
  end
@@ -685,6 +691,7 @@ end;
 
 procedure setimmint8(const value: int8; var aimm: immty);
 begin
+ aimm.datasize:= das_8;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
@@ -695,6 +702,7 @@ end;
 
 procedure setimmint16(const value: int16; var aimm: immty);
 begin
+ aimm.datasize:= das_16;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
@@ -705,6 +713,7 @@ end;
 
 procedure setimmint32(const value: int32; var aimm: immty);
 begin
+ aimm.datasize:= das_32;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
@@ -735,6 +744,7 @@ end;
 
 procedure setimmint64(const value: int64; var aimm: immty);
 begin
+ aimm.datasize:= das_64;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
@@ -745,6 +755,7 @@ end;
 
 procedure setimmfloat64(const value: float64; var aimm: immty);
 begin
+ aimm.datasize:= das_f64;
  if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
  end
@@ -755,6 +766,7 @@ end;
 
 procedure setimmsize(const value: datasizety; var aimm: immty);
 begin
+ aimm.datasize:= pointerintsize;
  if co_llvm in info.o.compileoptions then begin
   aimm.vsize:= info.s.unitinfo^.llvmlists.constlist.
                                         adddataoffs(value).listid;
@@ -766,6 +778,7 @@ end;
 
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 begin
+ aimm.datasize:= das_pointer;
  if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109C');
  end
@@ -776,6 +789,7 @@ end;
 
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
 begin
+ aimm.datasize:= dataoffssize;
  if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109D');
  end
@@ -786,6 +800,7 @@ end;
 
 procedure setimmdatakind(const value: datakindty; var aimm: immty);
 begin
+ aimm.datasize:= das_32;
  if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109E');
  end

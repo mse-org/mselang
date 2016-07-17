@@ -686,8 +686,7 @@ type
  end;
 }
  immty = record
-//   ssaindex: integer;
-//  datasize: integer;            //todo: remove, not necessary for bitcode
+  datasize: databitsizety;
   case integer of               //todo: use target size
    0: (llvm: llvmvaluety);
    1: (vboolean: boolean);
@@ -801,6 +800,7 @@ type
  
  memopty = record
   t: typeallocinfoty;
+  operanddatasize: databitsizety;
 //  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
