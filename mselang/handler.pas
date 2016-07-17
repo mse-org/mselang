@@ -1147,6 +1147,9 @@ begin
      errormessage(err_illegalexpression,[]);
      goto errlab;
     end;
+    if not getvalue(poa,das_none) then begin //call possible pending conversions
+     goto errlab;
+    end;
     india:= d.dat.datatyp.indirectlevel;
     if (d.kind = ck_ref) and 
               (af_paramindirect in d.dat.ref.c.address.flags) then begin
@@ -1197,8 +1200,7 @@ begin
           pob^.d.dat.constval.vinteger:= -pob^.d.dat.constval.vinteger;
          end;
          pob^.d.dat.constval.vinteger:= pob^.d.dat.constval.vinteger*i2;
-//         i2:= s.stacktop-s.stackindex-2;
-         getvalue(poa,das_none);
+//         getvalue(poa,das_none);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm)^ do begin
           if co_llvm in o.compileoptions then begin
@@ -1215,7 +1217,7 @@ begin
        end
        else begin
 //        i1:= s.stacktop-s.stackindex;
-        if getvalue(poa,das_pointer) and getvalue(pob,das_32) then begin
+        if {getvalue(poa,das_pointer) and} getvalue(pob,das_32) then begin
          if tryconvert(pob,st_int32) then begin //todo: data size
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin

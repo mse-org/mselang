@@ -4,14 +4,19 @@ type
  pcard32 = ^card32;
  ppointer = ^pointer;
  pcard8 = ^card8;
+ recty = record
+  a,b: flo64;
+ end;
+ precty = ^recty;
 var
  i1: int32;
- po1: pointer;
+ ca1: card16;
+ po1: precty;
  po2: pint32;
  po3: ppointer;
 begin
  po1:= @i1;
- pint32(pcard32(po1))^:= 20;
+ pint32(pcard32(po1))^:= 15;
  exitcode:= i1;
  card32(i1):= 90;
  exitcode:= exitcode + i1;
@@ -21,4 +26,7 @@ begin
  po1:= @i1;
  i1:= 10;
  exitcode:= exitcode + pcard8(po1)^;
+ po1:= @ca1;
+ (pcard8(po1)+1)^:= 5;
+ exitcode:= exitcode+ ca1 div 256;
 end.

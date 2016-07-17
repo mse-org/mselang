@@ -123,8 +123,9 @@ procedure linkresolvephi(const alinks: linkindexty;
                                  out philist: dataoffsty); //in seg_localloc
 procedure linkaddcast(var alinks: linkindexty; 
                                           const atype: elementoffsetty);
-procedure linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
-                                    const callback: castcallbackty);
+function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
+                                    const callback: castcallbackty): boolean;
+                                                          //true if ok
 function linkgetcasttype(const alinks: linkindexty): elementoffsetty;
 
 
@@ -1231,12 +1232,13 @@ begin
  po1^.cast.typedata:= atype;
 end;
 
-procedure linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
-                                    const callback: castcallbackty);
+function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
+                                    const callback: castcallbackty): boolean;
 var
  li1,li2: linkindexty;
  cancel1: boolean;
 begin
+ result:= true;
  if alinks <> 0 then begin
   li1:= alinks;
   alinks:= 0;
@@ -1256,6 +1258,7 @@ begin
   end;
   links[li1].next:= deletedlinks;
   deletedlinks:= li2;
+  result:= not cancel1;
  end;
 end;
 

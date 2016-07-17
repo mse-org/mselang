@@ -128,8 +128,8 @@ function compaddress(const a,b: addressvaluety): integer;
 function getcontextopcount(const stackoffset: int32): int32;
             //returns opcount in context
 
-procedure checkreftypeconversion(const acontext: pcontextitemty);
-procedure checkdatatypeconversion(const acontext: pcontextitemty);
+function checkreftypeconversion(const acontext: pcontextitemty): boolean;
+function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 //function getvalue(const stackoffset: integer; const adatasize: databitsizety;
@@ -2489,9 +2489,11 @@ label
 
 begin                    //todo: optimize
  result:= false;
- checkdatatypeconversion(acontext);
- stackoffset:= getstackoffset(acontext);
  with info,acontext^ do begin
+  if not checkdatatypeconversion(acontext) then begin
+   goto errlab;
+  end;
+  stackoffset:= getstackoffset(acontext);
   if d.kind = ck_list then begin
    if not listtoset(acontext) then begin
     goto errlab;
@@ -2682,16 +2684,18 @@ begin
   end
   else begin
    errormessage(err_typecastdifferentsize,[i2,i1]);
+         //todo: correct source pos
    cancel:= true;
   end;
  end;
 end;
 
-procedure checkreftypeconversion(const acontext: pcontextitemty);
+function checkreftypeconversion(const acontext: pcontextitemty): boolean;
 begin
+ result:= true;
  with acontext^ do begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
-   linkdocasts(d.dat.ref.castchain,acontext,@castreftype);
+   result:= linkdocasts(d.dat.ref.castchain,acontext,@castreftype);
   end;
  end;
 end;
@@ -2703,13 +2707,18 @@ var
 begin
  po1:= ele.eledataabs(item.typedata);
  cancel:= not tryconvert(acontext,po1,po1^.h.indirectlevel,[coo_type]);
+ if cancel then begin
+  illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
+         //todo: correct source pos
+ end;
 end;
 
-procedure checkdatatypeconversion(const acontext: pcontextitemty);
+function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
 var
  link1: linkindexty;
  i1: int32;
 begin
+ result:= true;
  with acontext^ do begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    link1:= d.dat.ref.castchain;
@@ -2718,7 +2727,7 @@ begin
    d.dat.indirection:= 0;
    dec(d.dat.datatyp.indirectlevel,i1);
    if getvalue(acontext,das_none) then begin
-    linkdocasts(link1,acontext,@castdatatype);
+    result:= linkdocasts(link1,acontext,@castdatatype);
    end;
    inc(d.dat.datatyp.indirectlevel,i1);
    inc(d.dat.indirection,i1);
@@ -2745,7 +2754,9 @@ begin
   end;
  {$endif}
   if d.kind = ck_ref then begin
-   checkreftypeconversion(acontext);
+   if not checkreftypeconversion(acontext) then begin
+    exit;
+   end;
   end;
   inc(d.dat.indirection);
   inc(d.dat.datatyp.indirectlevel);

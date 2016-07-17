@@ -564,19 +564,18 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
 begin
+ result:= false;
  with info do begin
-  checkreftypeconversion(acontext);
+  if not checkreftypeconversion(acontext) then begin
+   exit;
+  end;
   stackoffset:= getstackoffset(acontext);
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
      listtoset(acontext);
     end;
-//    dk_openarray: begin
-//     listtoopenarray(acontext,dest);
-//    end;
     else begin
-     result:= false;
      exit;
     end;
    end;
@@ -822,9 +821,10 @@ begin
      end
      else begin
       if (destindirectlevel > 0) and 
-           ((dest^.h.kind = dk_pointer) or 
-                           (source1^.h.kind = dk_pointer)) then begin
-       result:= true; //untyped pointer
+          ((((dest^.h.kind = dk_pointer) or 
+                           (source1^.h.kind = dk_pointer))) or //untyped pointer
+           (coo_type in aoptions) and (source1^.h.indirectlevel > 0)) then begin
+       result:= true; 
        pointerconv:= true;
       end;
      end;
