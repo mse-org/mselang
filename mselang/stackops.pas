@@ -2442,7 +2442,7 @@ begin
  with cpu.pc^.par do begin
   case stackop.t.kind of
    das_f64: begin
-    flo64(po3^):= flo64(po1^) + flo64(po1^);
+    flo64(po3^):= flo64(po2^) + flo64(po1^);
    end;
    else begin
     internalerror('20160716A');
@@ -2461,7 +2461,7 @@ begin
  with cpu.pc^.par do begin
   case stackop.t.kind of
    das_f64: begin
-    flo64(po3^):= flo64(po1^) - flo64(po1^);
+    flo64(po3^):= flo64(po2^) - flo64(po1^);
    end;
    else begin
     internalerror('20160716A');

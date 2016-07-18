@@ -2632,46 +2632,55 @@ procedure castreftype(const acontext: pcontextitemty;
 var
  sourcetyp,desttyp: ptypedataty;
  i1,i2,i3: int32;
+label
+ errorlab;
 begin
 {$ifdef mse_checkinternalerror}
  if not (acontext^.d.kind in datacontexts) then begin
   internalerror(ie_handler,'20160711A');
  end;
 {$endif}
- sourcetyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
+ sourcetyp:= ele.eledataabs(item.olddatatyp.typedata);
  desttyp:= ele.eledataabs(item.typedata);
  with desttyp^,acontext^ do begin
+{
   i3:= 0;
   if d.kind = ck_ref then begin
    i3:= d.dat.indirection;
    d.dat.indirection:= 0;
    dec(d.dat.datatyp.indirectlevel,i3);
   end;
+}
   i1:= h.bytesize;
   i2:= sourcetyp^.h.bytesize;
   if h.indirectlevel > 0 then begin
    i1:= pointersize;
   end;
-  if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
+  if item.olddatatyp.indirectlevel > 0 then begin
    i2:= pointersize;
   end;
   if i1 = i2 then begin
    if d.kind = ck_ref then begin
-    if d.dat.datatyp.indirectlevel > 0 then begin
-     if getvalue(acontext,das_none) then begin
-      d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
-                        h.indirectlevel - sourcetyp^.h.indirectlevel;
+    d.dat.datatyp:= item.olddatatyp;
+    d.dat.indirection:= item.indirection;
+    if item.olddatatyp.indirectlevel > 0 then begin
+     if not getvalue(acontext,das_none) then begin
+      goto errorlab;
      end;
+     dec(d.dat.indirection);
+     dec(d.dat.datatyp.indirectlevel);
     end
     else begin
-     if getaddress(acontext,true) then begin
-      d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
-                         h.indirectlevel - sourcetyp^.h.indirectlevel - 1;
-      dec(d.dat.indirection);
+     if not getaddress(acontext,true) then begin
+      goto errorlab;
      end;
+     dec(d.dat.datatyp.indirectlevel);
+     dec(d.dat.indirection);
     end;
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
+    d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                        h.indirectlevel - sourcetyp^.h.indirectlevel;
    end
    else begin //getaddress already called
     d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
@@ -2679,12 +2688,13 @@ begin
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
    end;
-   inc(d.dat.indirection,i3);
-   inc(d.dat.datatyp.indirectlevel,i3);
+//   inc(d.dat.indirection,i3);
+//   inc(d.dat.datatyp.indirectlevel,i3);
   end
   else begin
    errormessage(err_typecastdifferentsize,[i2,i1]);
          //todo: correct source pos
+errorlab:
    cancel:= true;
   end;
  end;
@@ -2706,6 +2716,14 @@ var
  po1: ptypedataty;
 begin
  po1:= ele.eledataabs(item.typedata);
+ acontext^.d.dat.indirection:= item.indirection;
+ if acontext^.d.kind = ck_ref then begin //first call
+  acontext^.d.dat.datatyp:= item.olddatatyp;
+  cancel:= not getvalue(acontext,das_none);
+  if cancel then begin
+   exit;
+  end;
+ end;
  cancel:= not tryconvert(acontext,po1,po1^.h.indirectlevel,[coo_type]);
  if cancel then begin
   illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
@@ -2723,6 +2741,8 @@ begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
+   result:= linkdocasts(link1,acontext,@castdatatype);
+{
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;
    if [af_paramindirect,af_paramvar] * 
@@ -2736,6 +2756,7 @@ begin
    end;
    inc(d.dat.datatyp.indirectlevel,i1);
    inc(d.dat.indirection,i1);
+}
   end;
  end;
 end;

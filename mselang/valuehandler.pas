@@ -566,9 +566,9 @@ var
 begin
  result:= false;
  with info do begin
-  if not checkreftypeconversion(acontext) then begin
-   exit;
-  end;
+//  if not checkreftypeconversion(acontext) then begin
+//   exit;
+//  end;
   stackoffset:= getstackoffset(acontext);
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
@@ -1057,14 +1057,14 @@ begin
    end;
   end;
   
-  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
-   source:= ele.basetype(linkgetcasttype(d.dat.ref.castchain));
-   sourceindilev:= source^.h.indirectlevel;
-  end
-  else begin
-   source:= ele.basetype(d.dat.datatyp.typedata);
-   sourceindilev:= d.dat.datatyp.indirectlevel;
-  end;
+//  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+//   source:= ele.basetype(linkgetcasttype(d.dat.ref.castchain));
+//   sourceindilev:= source^.h.indirectlevel;
+//  end
+//  else begin
+  source:= ele.basetype(d.dat.datatyp.typedata);
+  sourceindilev:= d.dat.datatyp.indirectlevel;
+//  end;
   result:= destindilev = sourceindilev;
   if result then begin
    result:= (source = dest);
@@ -1217,14 +1217,14 @@ var
             vardata1^.address,[cco_novarconversion],conversioncost1) then begin
     err1:= err_incompatibletypeforarg;
     with context1^ do begin
-     if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
-      sourcetype:= ele.eledataabs(linkgetcasttype(d.dat.ref.castchain));
-      i1:= 0;
-     end
-     else begin
-      sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
-      i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
-     end;
+//     if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+//      sourcetype:= ele.eledataabs(linkgetcasttype(d.dat.ref.castchain));
+//      i1:= 0;
+//     end
+//     else begin
+     sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
+     i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
+//     end;
     end;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
@@ -2024,6 +2024,21 @@ begin
   pob:= poind-1;
   potop:= @contextstack[s.stacktop];
   with pob^ do begin
+//   if d.kind = ck_ref then begin
+//    if not checkdatatypeconversion(pob) then begin
+//     goto endlab;
+//    end;
+//    if not checkreftypeconversion(pob) then begin
+//     goto endlab;
+//    end;
+//   end
+//   else begin
+//    if d.kind in [ck_fact,ck_subres] then begin
+//     if not checkdatatypeconversion(pob) then begin
+//      goto endlab;
+//     end;
+//    end
+//   end;
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
@@ -2314,7 +2329,13 @@ begin
         with ptypedataty(po2)^ do begin 
          bo1:= true;
          if (potop^.d.kind = ck_ref) then begin
-          linkaddcast(potop^.d.dat.ref.castchain,ele.eledatarel(po2));
+          linkaddcast(ele.eledatarel(po2),potop);
+          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+          potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
+          potop^.d.dat.datatyp.flags:= h.flags;
+          potop^.d.dat.datatyp.indirectlevel:= 
+                  potop^.d.dat.datatyp.indirectlevel + 
+                                      (h.indirectlevel - po3^.h.indirectlevel);
           bo1:= false;
 {
           po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);

@@ -484,6 +484,7 @@ begin
       ssas2:= stop.tempaddress.ssaindex;
       i1:= ssad;
       stackop.compkind:= cok1;
+      stackop.t:= alloc;
      end;
      checkopcapacity(10);
      po2:= addcontrolitem(oc_if); //jump to loop end
@@ -555,6 +556,7 @@ begin
       ssas2:= i2;
       i1:= ssad;
       stackop.compkind:= cok1;
+      stackop.t:= forinfo.alloc;
      end;    
      with addcontrolitem(oc_if)^ do begin //jump to loop start
       par.opaddress.opaddress:= d.control.opmark1.address;
