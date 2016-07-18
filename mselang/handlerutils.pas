@@ -2742,9 +2742,10 @@ begin
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
    i1:= d.dat.indirection;
+   d.dat.indirection:= 0;
    result:= linkdocasts(link1,acontext,@castdatatype);
-   inc(d.dat.datatyp.indirectlevel,(i1-d.dat.indirection));
-   d.dat.indirection:= i1; //could be changed
+//   inc(d.dat.datatyp.indirectlevel,(i1-d.dat.indirection));
+   inc(d.dat.indirection,i1); //could be changed
 {
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;

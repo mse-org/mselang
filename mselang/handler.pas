@@ -1355,6 +1355,11 @@ begin
      else begin
       exit;
      end;
+    end
+    else begin
+     if not getvalue(potop,das_none) then begin
+      exit;
+     end;
     end;
    end;
   end;
