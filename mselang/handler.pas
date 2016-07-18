@@ -1687,6 +1687,8 @@ begin
        errormessage(err_negnotpossible,[],s.stacktop-s.stackindex);
       end;
       par.ssas1:= i1;
+      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                              d.dat.datatyp.indirectlevel);
      end;
     end;
    end;
@@ -1743,6 +1745,8 @@ begin
        errormessage(err_notnotpossible,[],s.stacktop-s.stackindex);
       end;
       par.ssas1:= i1;
+      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                              d.dat.datatyp.indirectlevel);
      end;
     end;
    end;

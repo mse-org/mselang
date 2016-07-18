@@ -42,6 +42,8 @@ type
 
  castitemty = record
   typedata: elementoffsetty;
+  olddatatyp: typeinfoty;
+  indirection: int32;
  end;
  pcastitemty = ^castitemty;
  castcallbackty = procedure (const acontext: pcontextitemty;
@@ -121,8 +123,8 @@ procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
 procedure linkresolvephi(const alinks: linkindexty; 
                       const aaddress: opaddressty; const lastssa: int32;
                                  out philist: dataoffsty); //in seg_localloc
-procedure linkaddcast(var alinks: linkindexty; 
-                                          const atype: elementoffsetty);
+procedure linkaddcast(const atype: elementoffsetty; 
+                                          const acontext: pcontextitemty);
 function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty): boolean;
                                                           //true if ok
@@ -1223,13 +1225,24 @@ begin
  end;
 end;
 
-procedure linkaddcast(var alinks: linkindexty; 
-                                          const atype: elementoffsetty);
+procedure linkaddcast(const atype: elementoffsetty; 
+                                          const acontext: pcontextitemty);
 var
  po1: plinkinfoty;
 begin
- po1:= link(alinks);
- po1^.cast.typedata:= atype;
+ with acontext^ do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_ref then begin
+   internalerror(ie_handler,'20160716A');
+  end;
+ {$endif}
+  po1:= link(d.dat.ref.castchain);
+  with po1^ do begin
+   cast.typedata:= atype;
+   cast.olddatatyp:= d.dat.datatyp;
+   cast.indirection:= d.dat.indirection;
+  end;
+ end;
 end;
 
 function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
