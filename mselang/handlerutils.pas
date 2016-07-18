@@ -2741,7 +2741,10 @@ begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
+   i1:= d.dat.indirection;
    result:= linkdocasts(link1,acontext,@castdatatype);
+   inc(d.dat.datatyp.indirectlevel,(i1-d.dat.indirection));
+   d.dat.indirection:= i1; //could be changed
 {
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;
