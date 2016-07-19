@@ -2663,7 +2663,7 @@ begin
    if d.kind = ck_ref then begin
     d.dat.datatyp:= item.olddatatyp;
     d.dat.indirection:= item.indirection;
-    if item.olddatatyp.indirectlevel > 0 then begin
+    if false{item.olddatatyp.indirectlevel > 0} then begin
      if not getvalue(acontext,das_none) then begin
       goto errorlab;
      end;

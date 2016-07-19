@@ -1242,6 +1242,7 @@ begin
    cast.olddatatyp:= d.dat.datatyp;
    cast.indirection:= d.dat.indirection;
   end;
+  d.dat.indirection:= 0;
  end;
 end;
 
