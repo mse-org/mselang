@@ -1381,7 +1381,7 @@ var
 begin
  with cpu.pc^.par.memimm do begin
   po1:= getlocaddress(mem);
-  case mem.t.kind of
+  case mem.operanddatasize of
    das_8: begin
     inc(pint8(po1)^,vint32);
    end;
