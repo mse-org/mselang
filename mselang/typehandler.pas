@@ -1083,7 +1083,7 @@ begin
     par.ssas1:= d.dat.fact.ssaindex;
     par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
     par.stackop.t:= bitoptypes[
-              ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize];
+       ptypedataty(ele.eledataabs(ptop^.d.dat.datatyp.typedata))^.h.datasize];
     d.dat.fact.ssaindex:= par.ssad; //new pointer
    end;
    d.dat.datatyp.typedata:= ele.eledatarel(itemtype);

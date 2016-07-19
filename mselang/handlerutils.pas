@@ -2559,6 +2559,19 @@ begin                    //todo: optimize
         pocont1^.d.kind:= ck_space;
        end;
        dosub(psubdataty(ele.eledataabs(readele)),s.stackindex+1,i1,[]);
+       while i1 > 0 do begin //clear index params
+       {$ifdef mse_checkinternalerror}
+        if pocont1 > @contextstack[s.stacktop] then begin
+         internalerror(ie_handler,'20160719A');
+        end;
+       {$endif}
+        if pocont1^.d.kind <> ck_space then begin
+         pocont1^.d.kind:= ck_space;
+         exclude(pocont1^.d.handlerflags,hf_propindex);
+         dec(i1);
+        end;
+        inc(pocont1);
+       end;
        s.stackindex:= i2;
        ele.popelementparent();
        result:= true;
@@ -2663,20 +2676,20 @@ begin
    if d.kind = ck_ref then begin
     d.dat.datatyp:= item.olddatatyp;
     d.dat.indirection:= item.indirection;
-    if false{item.olddatatyp.indirectlevel > 0} then begin
-     if not getvalue(acontext,das_none) then begin
-      goto errorlab;
-     end;
-     dec(d.dat.indirection);
-     dec(d.dat.datatyp.indirectlevel);
-    end
-    else begin
-     if not getaddress(acontext,true) then begin
-      goto errorlab;
-     end;
-     dec(d.dat.datatyp.indirectlevel);
-     dec(d.dat.indirection);
+//    if item.olddatatyp.indirectlevel > 0 then begin
+//     if not getvalue(acontext,das_none) then begin
+//      goto errorlab;
+//     end;
+//     dec(d.dat.indirection);
+//     dec(d.dat.datatyp.indirectlevel);
+//    end
+//    else begin
+    if not getaddress(acontext,true) then begin
+     goto errorlab;
     end;
+    dec(d.dat.datatyp.indirectlevel);
+    dec(d.dat.indirection);
+//    end;
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
     d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
