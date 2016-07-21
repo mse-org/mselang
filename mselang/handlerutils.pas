@@ -45,6 +45,9 @@ var
  emptyset: typeinfoty;
 
 const
+ valuefalse: dataty = (kind: dk_boolean; vboolean: false);
+ valuetrue: dataty = (kind: dk_boolean; vboolean: true);
+  
  basedatatypes: array[databitsizety] of systypety = (
  //das_none,das_1,   das_2_7,das_8,  das_9_15,das_16,  das_17_31,das_32,
   st_none,  st_bool1,st_none,st_int8,st_int16,st_int16,st_int32, st_int32,

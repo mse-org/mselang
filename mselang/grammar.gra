@@ -60,7 +60,7 @@
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.fini','.incref','.decref','.decrefindi'
 @.tokens
- 'result','exitcode','sizeof','break','continue','self'
+ 'result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
 start,nounit,,
  ${whitespace}
@@ -212,9 +212,10 @@ stoponerror,directiveend,handlestoponerror,
 define,define1,,
  '',getident^*
 define1,directiveend,,handledefine
+ ${whitespace}
  '=',define2-
 define2,directiveend,,handledefinevalue
- '',callexppop^*
+ '',exp^*
  
 undef,directiveend,,handleundef
  '',getident^*
@@ -224,7 +225,7 @@ ifdef,directiveend,,handleifdef
 ifndef,directiveend,,handleifndef
  '',getident^*
 ifcond,directiveend,ifcondentry,handleifcond*
- '',callexp*
+ '',exp^*
 skipif,directiveend,,
  '}',skipif0-
  '',-

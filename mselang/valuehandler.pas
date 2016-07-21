@@ -2101,24 +2101,52 @@ begin
     goto endlab;
    end;
   end;
-  if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
-   paramstart:= s.stackindex+2+idents.high;
-   paramco:= 0;
-   pocontext1:= @contextstack[paramstart];
-   if (pocontext1 < potop) and (pocontext1^.d.kind = ck_params) then begin
-    inc(paramstart);
-    while getnextnospace(pocontext1+1,pocontext1) do begin
-     inc(paramco);
+  bo1:= findkindelements(1,[],allvisi,po1,firstnotfound,idents);
+  paramstart:= s.stackindex+2+idents.high;
+  paramco:= 0;
+  pocontext1:= @contextstack[paramstart];
+  if (pocontext1 < potop) and (pocontext1^.d.kind = ck_params) then begin
+   inc(paramstart);
+   while getnextnospace(pocontext1+1,pocontext1) do begin
+    inc(paramco);
+   end;
+  end;
+  if paramco < 0 then begin
+   paramco:= 0; //no paramsend context
+  end;
+  
+  if (stf_condition in s.currentstatementflags) then begin
+   if (idents.high = 0) and (idents.d[0] = tk_defined) then begin
+    if paramco = 1 then begin
+     case potop^.d.kind of
+      ck_const: begin
+       setconstcontext(poind,valuetrue);
+      end;
+      ck_none: begin
+       setconstcontext(poind,valuefalse);
+      end;
+      else begin
+       errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
+      end;
+     end;
+    end
+    else begin
+     errormessage(err_wrongnumberofparameters,['defined']);
     end;
+    goto endlab;
    end;
-   if paramco < 0 then begin
-    paramco:= 0; //no paramsend context
+   if not bo1 then begin
+    poind^.d.kind:= ck_none;
+    goto endlab;
    end;
+  end;
+
+  if bo1 then begin
    if isinherited then begin
     ele.elementparent:= origparent;
    end;
   end
-  else begin
+  else begin //no condition
    if not isgetfact or not(stf_loop in s.currentstatementflags) or 
                                            not checkloopcommand() then begin
     identerror(1,err_identifiernotfound);
@@ -2391,10 +2419,12 @@ begin
     end;
     ek_condition: begin
      with pconditiondataty(po2)^ do begin
+{
       if value.kind = dk_none then begin
        errormessage(err_definehasnovalue,[]);
        goto endlab;
       end;
+}
       setconstcontext(poind,value)
      end;
     end;

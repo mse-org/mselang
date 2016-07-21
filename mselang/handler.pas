@@ -420,6 +420,14 @@ begin
    dk_character: begin
     d.dat.datatyp:= sysdatatypes[st_char8];
    end;
+   dk_none: begin
+    if stf_condition in info.s.currentstatementflags then begin
+     d.dat.datatyp:= sysdatatypes[st_none];
+    end
+    else begin
+     internalerror1(ie_handler,'20160720A');
+    end;
+   end;
    else begin
     internalerror1(ie_handler,'20160704A');
    end;

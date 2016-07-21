@@ -1,0 +1,27 @@
+program condition1;
+const
+ val = 11;
+begin
+{$if defined(test)}
+ exitcode:= 10;
+{$else}
+ exitcode:= 100;
+{$endif}
+{$define test}
+{$if defined(test)}
+ exitcode:= exitcode+20;
+{$else}
+ exitcode:= 10;
+{$endif}
+{$define valu = val}
+{$if valu = val}
+ exitcode:= exitcode+2;
+{$else}
+ exitcode:= 10;
+{$endif}
+{$if valu = 0}
+ exitcode:= 10;
+{$else}
+ exitcode:= exitcode + 1;
+{$endif}
+end.
