@@ -236,6 +236,7 @@ skipif0,,,
 skipif1,,,
  'else'.,skipifelse-
  'endif'.,directiveend-
+ 'ifend'.,directiveend-
  '}',skipif0-
  '',-
 skipifelse,directiveend,handleskipifelseentry,
@@ -250,6 +251,7 @@ skipelse0,,,
  '',-
 skipelse1,,,
  'endif'.,directiveend-
+ 'ifend'.,directiveend-
  
 endif,directiveend,handleendif,
 

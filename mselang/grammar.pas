@@ -3206,13 +3206,16 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bskipif1: array[0..4] of branchty = (
+ bskipif1: array[0..5] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @skipifelseco); stack: nil; 
      keyword: $9CC3111C{'else'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @directiveendco); stack: nil; 
      keyword: $39862239{'endif'}),
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @directiveendco); stack: nil; 
+     keyword: $730C4472{'ifend'}),
    (flags: [bf_nt,bf_eat];
      dest: (context: @skipif0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['}']),
@@ -3263,10 +3266,13 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bskipelse1: array[0..1] of branchty = (
+ bskipelse1: array[0..2] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @directiveendco); stack: nil; 
      keyword: $39862239{'endif'}),
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @directiveendco); stack: nil; 
+     keyword: $730C4472{'ifend'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcompilerswitch: array[0..1] of branchty = (

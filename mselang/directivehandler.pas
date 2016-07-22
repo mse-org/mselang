@@ -216,6 +216,7 @@ begin
 {$endif}
  with info do begin
   include(s.currentstatementflags,stf_condition);
+  exclude(s.currentstatementflags,stf_invalidcondition);
  end;
 end;
 
@@ -226,23 +227,27 @@ begin
 {$endif}
  with info do begin
   exclude(s.currentstatementflags,stf_condition);
-  with info.contextstack[s.stacktop] do begin
-   if d.kind <> ck_const then begin
-    errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
-   end
-   else begin
-    if (d.dat.datatyp.indirectlevel <> 0) or 
-                      (d.dat.constval.kind <> dk_boolean) then begin
-     errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
+  if stf_invalidcondition in s.currentstatementflags then begin
+   switchcontext(@skipifco);
+  end
+  else begin
+   with info.contextstack[s.stacktop] do begin
+    if d.kind <> ck_const then begin
+     errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
     end
     else begin
-     if not d.dat.constval.vboolean then begin
-      switchcontext(@skipifco);
+     if (d.dat.datatyp.indirectlevel <> 0) or 
+                       (d.dat.constval.kind <> dk_boolean) then begin
+      errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
+     end
+     else begin
+      if not d.dat.constval.vboolean then begin
+       switchcontext(@skipifco);
+      end;
      end;
     end;
    end;
   end;
-//  dec(s.stackindex);
  end;
 end;
 

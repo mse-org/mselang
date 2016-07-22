@@ -3082,7 +3082,12 @@ begin
   with poa^ do begin
    if not (d.kind in alldatacontexts) or 
              not (pob^.d.kind in alldatacontexts)then begin
-    errormessage(err_illegalexpression,[]);
+    if stf_condition in s.currentstatementflags then begin
+     include(s.currentstatementflags,stf_invalidcondition);
+    end
+    else begin
+     errormessage(err_illegalexpression,[]);
+    end;
     goto endlab;
    end;
    if not (d.kind in datacontexts) or 
