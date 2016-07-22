@@ -1194,6 +1194,7 @@ commaidents,commaidentsnoidenterror,, //comma separated idents on stack
 commaidents1,commaidents2,,
  '',ident^*
 commaidents2,,,^
+ ${whitespace}
  ',',commaidents-
 commaidentsnoidenterror,,,handlenoidenterror
 
