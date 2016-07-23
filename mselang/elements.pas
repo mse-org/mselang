@@ -249,7 +249,8 @@ type
                   const avislevel: visikindsty;                  
                   out aelementdata: pointer): boolean;
                                                        //false if duplicate
-   function pushelement(const aname: identty; const akind: elementkindty;  
+   function pushelementorduplicate(const aname: identty;
+                const akind: elementkindty;  
                 const avislevel: visikindsty;                
                 const sizeextend: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
@@ -1550,18 +1551,23 @@ begin
       mstr1:= mstr1+' A:'+inttostrmse(h.ancestor);
       case h.kind of
        dk_class: begin
-        mstr1:= mstr1+' alloc:'+inttostrmse(infoclass.allocsize)+
+        if icf_defvalid in infoclass.flags then begin
+         mstr1:= mstr1+' alloc:'+inttostrmse(infoclass.allocsize)+
                       ' virt:'+inttostrmse(infoclass.virtualcount)+
                       ' intf:'+inttostrmse(infoclass.interfacecount)+
                       ' isub:'+inttostrmse(infoclass.interfacesubcount)+
                       ' defs:'+inttostrmse(infoclass.defs.address);
-        po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
-        for int6:= 0 to infoclass.virtualcount-1 do begin
-         if int6 mod 5 = 0 then begin
-          mstr1:= mstr1+lineend+'  ';
+         po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
+         for int6:= 0 to infoclass.virtualcount-1 do begin
+          if int6 mod 5 = 0 then begin
+           mstr1:= mstr1+lineend+'  ';
+          end;
+          mstr1:= mstr1+inttostrlenmse(po5^,4)+' ';
+          inc(po5);
          end;
-         mstr1:= mstr1+inttostrlenmse(po5^,4)+' ';
-         inc(po5);
+        end
+        else begin
+         mstr1:= mstr1 + ' forward';
         end;
        end;
       end;
@@ -1774,7 +1780,7 @@ end;
 
 function telementhashdatalist.pushelement(const aname: identty;
              const akind: elementkindty; 
-             const avislevel: visikindsty): pelementinfoty;
+             const avislevel: visikindsty): pelementinfoty; //nil if duplicate
 var
  ele1: elementoffsetty;
 begin
@@ -1809,7 +1815,7 @@ begin
  end;
 end;
 
-function telementhashdatalist.pushelement(const aname: identty;
+function telementhashdatalist.pushelementorduplicate(const aname: identty;
        const akind: elementkindty;                  
        const avislevel: visikindsty;
        const sizeextend: integer; out aelementdata: pointer): boolean;
@@ -1822,6 +1828,10 @@ begin
  if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
   po1:= pushelementduplicate(aname,akind,avislevel,sizeextend);
   aelementdata:= @(po1^.data);
+ end
+ else begin
+  aelementdata:= ele.eledataabs(ele1);
+  pushelementparent(ele1);
  end;
 end;
 

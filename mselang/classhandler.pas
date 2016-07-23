@@ -44,6 +44,7 @@ function getclassinterfaceoffset(const aclass: ptypedataty;
                             //true if ok
 
 procedure handleclassdefstart();
+procedure handleclassdefforward();
 procedure handleclassdeferror();
 procedure handleclassdefreturn();
 procedure handleclassdefparam2();
@@ -137,6 +138,7 @@ var
  po1: ptypedataty;
  id1: identty;
  ele1,ele2,ele3: elementoffsetty;
+ bo1: boolean;
  
 begin
 {$ifdef mse_debugparser}
@@ -171,32 +173,53 @@ begin
   end;
   contextstack[s.stackindex].b.eleparent:= ele.elementparent;
   with contextstack[s.stackindex-1] do begin
-   if not ele.pushelement(id1,ek_type,globalvisi,d.typ.typedata) then begin
-    identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
-   end;
-   ele1:= ele.addelementduplicate1(tks_classintfname,
-                                          ek_classintfnamenode,globalvisi);
-   ele2:= ele.addelementduplicate1(tks_classintftype,
-                                   ek_classintftypenode,globalvisi);
-   ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
-
+   bo1:= ele.addelementdata(id1,ek_type,globalvisi,po1);
+   d.typ.typedata:= ele.eledatarel(po1);
    currentcontainer:= d.typ.typedata;
-   po1:= ele.eledataabs(currentcontainer);
-   inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
-   with po1^ do begin
-    fieldchain:= 0;
-    infoclass.intfnamenode:= ele1;
-    infoclass.intftypenode:= ele2;
-    infoclass.implnode:= ele3;
-    infoclass.defs.address:= 0;
-    infoclass.flags:= [];
-    infoclass.pendingdescends:= 0;
-    infoclass.interfaceparent:= 0;
-    infoclass.interfacecount:= 0;
-    infoclass.interfacechain:= 0;
-    infoclass.interfacesubcount:= 0;
+   ele.elementparent:= d.typ.typedata;
+//   inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+   if not bo1 then begin
+    if icf_defvalid in po1^.infoclass.flags then begin
+     identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
+    end;
+   end
+   else begin
+    ele1:= ele.addelementduplicate1(tks_classintfname,
+                                           ek_classintfnamenode,globalvisi);
+    ele2:= ele.addelementduplicate1(tks_classintftype,
+                                    ek_classintftypenode,globalvisi);
+    ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
+    po1:= ele.eledataabs(currentcontainer); //could be moved by list size change
+    inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+    with po1^ do begin
+     fieldchain:= 0;
+     infoclass.intfnamenode:= ele1;
+     infoclass.intftypenode:= ele2;
+     infoclass.implnode:= ele3;
+     infoclass.defs.address:= 0;
+     infoclass.flags:= [];
+     infoclass.pendingdescends:= 0;
+     infoclass.interfaceparent:= 0;
+     infoclass.interfacecount:= 0;
+     infoclass.interfacechain:= 0;
+     infoclass.interfacesubcount:= 0;
+    end;
    end;
   end;
+ end;
+end;
+
+procedure handleclassdefforward();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFFORWARD');
+{$endif}
+ with info do begin
+  ele.elementparent:= contextstack[s.stackindex].b.eleparent;
+  currentcontainer:= 0;
+  dec(s.stackindex);
+  s.stackindex:= contextstack[s.stackindex].parent;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -409,6 +432,7 @@ begin
   exclude(s.currentstatementflags,stf_classdef);
   with contextstack[s.stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
+   include(infoclass.flags,icf_defvalid);
    regclass(d.typ.typedata);
    h.flags:= d.typ.flags;
    h.indirectlevel:= d.typ.indirectlevel;

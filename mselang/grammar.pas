@@ -1354,6 +1354,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdef');
+ classdefforwardco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefforward');
  classdef0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -6748,7 +6753,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef: array[0..6] of branchty = (
+ bclassdef: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6787,6 +6792,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @classdefparamco); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @classdefforwardco); stack: nil; keys: (
+    (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -11310,6 +11322,8 @@ begin
  classdefco.branch:= @bclassdef;
  classdefco.next:= @classdef0co;
  classdefco.handleentry:= @handleclassdefstart;
+ classdefforwardco.branch:= nil;
+ classdefforwardco.handleexit:= @handleclassdefforward;
  classdef0co.branch:= @bclassdef0;
  classdef0co.next:= @classdeferrorco;
  classdeferrorco.branch:= nil;
