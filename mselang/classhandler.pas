@@ -283,6 +283,9 @@ begin
      errormessage(err_classtypeexpected,[]);
     end
     else begin
+     if not (icf_defvalid in po2^.infoclass.flags) then begin
+      errormessage(err_classnotresolved,[]);
+     end;
      po1^.h.ancestor:= ele.eledatarel(po2);
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;

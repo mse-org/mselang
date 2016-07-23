@@ -69,7 +69,7 @@ type
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
             err_subnovalue,
             err_ignoreddirective,err_definehasnovalue,
-            err_typecastdifferentsize);
+            err_typecastdifferentsize,err_classnotresolved);
             
  errorinfoty = record
   level: errorlevelty;
@@ -254,7 +254,9 @@ const
   (level: erl_note; message: 'Ignored directive "%s"'),
   (level: erl_error; message: 'Define has no value'),
   (level: erl_error; message: 
-                    'Typecast has different size (%d -> %d) in assignment')
+                    'Typecast has different size (%d -> %d) in assignment'),
+  (level: erl_error; message: 
+                    'Parent class forward declaration not yet resolved')                    
  );
 
 procedure message1(const atext: string; const values: array of const); 
