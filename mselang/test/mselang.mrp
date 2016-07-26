@@ -116,7 +116,7 @@ c=3
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=23
    (
    kind=1
@@ -2975,7 +2975,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73B5130
+    ao=An unhandled exception occured at $B72F8130
     ae=
     aec=123
     ie=0
@@ -6157,11 +6157,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
-  c=29
+  a=0,664,4,class
+  c=31
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=30
     (
     kind=2
@@ -6841,6 +6841,50 @@ c=3
    )
    (
    kind=2
+   a=0,648,1,forwardclass
+   teststate=1
+   path=forwardclass.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,forwardclass llvm
+   teststate=1
+   path=forwardclass.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
    a=0,648,1,classminimal
    teststate=1
    path=classminimal.mla
@@ -7473,7 +7517,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syssubs
+  a=0,664,4,syssubs
   c=1
    (
    kind=1
@@ -7970,108 +8014,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=594
+propcolwidthref=609
 width0=50
 sortdescend0=0
-width1=180
+width1=185
 sortdescend1=0
-width2=146
+width2=150
 sortdescend2=0
-width3=154
+width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=102
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=11
  0 0
  0 0
  0 0
