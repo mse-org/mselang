@@ -57,6 +57,7 @@ procedure handleoverride();
 procedure handleoverload();
 procedure handleexternal();
 procedure handleforward();
+procedure handlesubof();
 procedure handlesubheader();
 procedure subbody4entry();
 procedure handlesubbody5a();
@@ -663,6 +664,13 @@ begin
    d.subdef.flags:= d.subdef.flags + [sf_forward,sf_header];
   end;
  end;
+end;
+
+procedure handlesubof();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBOF');
+{$endif}
 end;
 
 procedure addsubbegin(const aop: opcodety; const asub: psubdataty);
