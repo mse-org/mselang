@@ -387,6 +387,7 @@ subheader3,,,
 // 'overload'.,!handleoverload-
  'external'.,!handleexternal-
  'forward'.,!handleforward-
+ 'of'.,subof-*
  ';',subheader4-
  '',semicolonexpected
 subheader4,,,
@@ -400,6 +401,9 @@ subheader4,,,
 //virtual,subheader3,handlevirtual,
 //override,subheader3,handleoverride,
 //overload,subheader3,handleoverload, 
+subof,,,handlesubof*
+ '',identpath^*
+
 external,subheader3,handleexternal, 
 forward,subheader3,handleforward, 
 

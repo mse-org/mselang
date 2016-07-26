@@ -877,7 +877,10 @@ lineend+
         include(branflags1,bf_changeparentcontext);
        end;
        if not checkident(dest) then begin
+        str2:= str1;
+        str1:= '';
         error(branchformat,bline);
+        str1:= str1;
        end;
        str1:= str1+
 '   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
