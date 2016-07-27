@@ -423,6 +423,7 @@ var
  branflags1: branchflagsty;
  chars1: charsetty;
  kw1: keywordty;
+ outstr: string;
 const
  contlast = 3; 
 begin
@@ -710,7 +711,8 @@ begin
    end;
   end;
   passtream:= ttextstream.create(outfile,fm_create);
- str1:= 
+  str1:= ''; //for error message
+ outstr:= 
 '{ MSElang Copyright (c) 2013 by Martin Schreiber'+lineend+
 '   '+lineend+
 '    This program is free software; you can redistribute it and/or modify'+lineend+
@@ -735,10 +737,10 @@ begin
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;
-//  str1:= str1+
+//  outstr:= outstr+
 //'const'+lineend;
-  keywordsstart:= length(str1);
- str1:= str1+
+  keywordsstart:= length(outstr);
+ outstr:= outstr+
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
    str2:= '';
@@ -810,14 +812,14 @@ begin
     else begin
      str2:= str2+'nexteat: false; ';
     end;
-    str1:= str1+
+    outstr:= outstr+
 ' '+cont[0]+'co: contextty = (branch: nil; '+lineend+
 '               handleentry: nil; handleexit: nil; '+lineend+
 '               '+str2+'next: nil;'+lineend+
 '               caption: '''+cont[0]+''');'+lineend;
    end;
   end;
-  str1:= str1+
+  outstr:= outstr+
 lineend+
 'implementation'+lineend+
 ''+lineend+
@@ -829,7 +831,7 @@ lineend+
    with contexts[int1] do begin
     if bran <> nil then begin
      sortarray(bran,sizeof(bran[0]),@comparebranch);
-     str1:= str1+
+     outstr:= outstr+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
       with bran[int2] do begin
@@ -877,67 +879,64 @@ lineend+
         include(branflags1,bf_changeparentcontext);
        end;
        if not checkident(dest) then begin
-        str2:= str1;
-        str1:= '';
         error(branchformat,bline);
-        str1:= str1;
        end;
-       str1:= str1+
+       outstr:= outstr+
 '   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
                                  integer(branflags1),true)+';'+lineend+
 '     dest: (';
        if bf_handler in branflags1 then begin
-        str1:= str1 + 'handler: ';
+        outstr:= outstr + 'handler: ';
        end
        else begin
-        str1:= str1 + 'context: ';
+        outstr:= outstr + 'context: ';
        end;
        if dest = '' then begin
-        str1:= str1+'nil';
+        outstr:= outstr+'nil';
        end
        else begin
-        str1:= str1+'@'+dest;
+        outstr:= outstr+'@'+dest;
         if not (bf_handler in branflags1) then begin
-         str1:= str1+'co';
+         outstr:= outstr+'co';
         end;
        end;
-       str1:= str1+'); stack: ';
+       outstr:= outstr+'); stack: ';
        if stack = '' then begin
-        str1:= str1+'nil';
+        outstr:= outstr+'nil';
        end
        else begin
-        str1:= str1+'@'+stack+'co';
+        outstr:= outstr+'@'+stack+'co';
        end;
-       str1:= str1+'; ';
+       outstr:= outstr+'; ';
        if keyword <> 0 then begin
         include(branflags1,bf_keyword);
-        str1:= str1+lineend+
+        outstr:= outstr+lineend+
 '     keyword: $'+hextostr(keyword,8)+'{'+tokens[0]+'}),'+lineend;
        end
        else begin
         if (tokens <> nil) and (length(tokens[0]) > 1) then begin
-         str1:= str1+'keys: ('+lineend;
+         outstr:= outstr+'keys: ('+lineend;
          for int3:= 1 to length(tokens[0])-1 do begin
-          str1:= str1+
+          outstr:= outstr+
 '    (kind: bkk_charcontinued; chars: '+
             charsettostring([tokens[0][int3]])+')';
           if int3 <> branchkeymaxcount then begin
-           str1:= str1 + ',';
+           outstr:= outstr + ',';
           end;
-          str1:= str1+lineend;
+          outstr:= outstr+lineend;
          end;
-         str1:= str1+
+         outstr:= outstr+
 '    (kind: bkk_char; chars: '+
             charsettostring([tokens[0][length(tokens[0])]])+'),'+lineend;
          for int3:= length(tokens[0])+1 to branchkeymaxcount do begin
-          str1:= str1 +
+          outstr:= outstr +
 '    (kind: bkk_none; chars: [])';
           if int3 <> branchkeymaxcount then begin
-           str1:= str1+ ',';
+           outstr:= outstr+ ',';
           end;
-          str1:= str1+lineend;
+          outstr:= outstr+lineend;
          end;
-         str1:= str1+
+         outstr:= outstr+
 '    )),'+lineend;
         end
         else begin
@@ -952,7 +951,7 @@ lineend+
            break;
           end;
          end;
-         str1:= str1+'keys: ('+lineend+
+         outstr:= outstr+'keys: ('+lineend+
 '    (kind: bkk_char; chars: '+charsettostring(chars1)+'),'+lineend+
 '    (kind: bkk_none; chars: []),'+lineend+
 '    (kind: bkk_none; chars: []),'+lineend+
@@ -962,7 +961,7 @@ lineend+
        end;
       end;
      end;
-     str1:= str1+
+     outstr:= outstr+
 '   (flags: []; dest: (context: nil); stack: nil; keyword: 0)'+lineend+
 '   );'+lineend;
     end;
@@ -1033,41 +1032,41 @@ lineend+
   setlength(str2,length(str2)-1);
   str5:= str5 + str2+');'+lineend+lineend;
 
-  str1:= copy(str1,1,keywordsstart)+str5+copy(str1,keywordsstart+1,bigint);
+  outstr:= copy(outstr,1,keywordsstart)+str5+copy(outstr,keywordsstart+1,bigint);
 
-  str1:= str1+
+  outstr:= outstr+
 'procedure init;'+lineend+
 'begin'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
-    str1:= str1+
+    outstr:= outstr+
 ' '+cont[0]+'co.branch:= ';
     if bran = nil then begin
-     str1:= str1+'nil;'+lineend;
+     outstr:= outstr+'nil;'+lineend;
     end
     else begin
-     str1:= str1+'@b'+cont[0]+';'+lineend;
+     outstr:= outstr+'@b'+cont[0]+';'+lineend;
     end;
     if cont[1] <> '' then begin
-     str1:= str1+
+     outstr:= outstr+
 ' '+cont[0]+'co.next:= @'+cont[1]+'co;'+lineend;
     end;
     if cont[contlast-1] <> '' then begin
-     str1:= str1+
+     outstr:= outstr+
 ' '+cont[0]+'co.handleentry:= @'+cont[contlast-1]+';'+lineend;
     end;
     if cont[contlast] <> '' then begin
 //     if cont[1] <> '' then begin
 //      error('EXITHANDLER not allowed with NEXT',li);
 //     end;
-     str1:= str1+
+     outstr:= outstr+
 ' '+cont[0]+'co.handleexit:= @'+cont[contlast]+';'+lineend;
     end;
    end;
   end;
-  str1:= str1 +
+  outstr:= outstr +
 'end;'+lineend;
-  str1:= str1+lineend+
+  outstr:= outstr+lineend+
 'function startcontext: pcontextty;'+lineend+
 'begin'+lineend+
 ' result:= @'+contexts[0].cont[0]+'co;'+lineend+
@@ -1078,7 +1077,7 @@ lineend+
 'end.'+lineend+
 lineend;
 
-  passtream.write(str1);
+  passtream.write(outstr);
  finally
   grammarstream.free;
   passtream.free;

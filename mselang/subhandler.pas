@@ -57,7 +57,8 @@ procedure handleoverride();
 procedure handleoverload();
 procedure handleexternal();
 procedure handleforward();
-procedure handlesubof();
+procedure handleofobjectexpected();
+procedure handlesubofobject();
 procedure handlesubheader();
 procedure subbody4entry();
 procedure handlesubbody5a();
@@ -666,11 +667,25 @@ begin
  end;
 end;
 
-procedure handlesubof();
+procedure handleofobjectexpected();
 begin
 {$ifdef mse_debugparser}
- outhandle('SUBOF');
+ outhandle('OFOBJECTEXPECTED');
 {$endif}
+ with info do begin
+  errormessage(err_syntax,['object']);
+ end;
+end;
+
+procedure handlesubofobject();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBOFOBJECT');
+{$endif}
+ with info do begin
+  s.stacktop:= s.stackindex - 1;
+  s.stackindex:= contextstack[s.stackindex].parent;
+ end;
 end;
 
 procedure addsubbegin(const aop: opcodety; const asub: psubdataty);

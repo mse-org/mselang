@@ -720,9 +720,11 @@ begin
          if s.stopparser then begin
           goto parseend;
          end;
-         if bf_push in pb^.flags then begin
-          s.pc:= contextstack[s.stackindex].context;
+         s.pc:= contextstack[s.stackindex].context;
                                    //stackindex could be changed
+         if bf_push in pb^.flags then begin
+//          s.pc:= contextstack[s.stackindex].context;
+//                                   //stackindex could be changed
           break;                                //terminate current context
          end
         end
@@ -748,7 +750,10 @@ begin
 handlelab:
 {$ifdef mse_debugparser}
    if (cos_internaldebug in s.compilerswitches) then begin
-    writeln('*** terminate context');
+   {$ifdef mse_debugparser1}
+    writetransitioninfo('*** terminate context');
+   {$endif}
+//    writeln('*** terminate context');
           //context terminated, pop stack
    end;
 {$endif}
