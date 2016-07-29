@@ -222,6 +222,7 @@ type
                   //searches in scopestack, returns parent
    property lastdescendent: elementoffsetty read flastdescendent;
    function elebase: pointer; inline;
+   function eledatabase: pointer; inline;
    function eleoffset: ptruint; inline;
    function eledataoffset: ptruint; inline;
    function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
@@ -433,6 +434,11 @@ end;
 function telementhashdatalist.elebase: pointer; inline;
 begin
  result:= pointer(felementdata);
+end;
+
+function telementhashdatalist.eledatabase: pointer;
+begin
+ result:= pointer(felementdata) + eledatashift;
 end;
 
 function telementhashdatalist.eleoffset: ptruint; inline;

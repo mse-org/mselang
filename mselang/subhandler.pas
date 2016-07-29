@@ -1073,7 +1073,7 @@ begin
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
   sub1^.typ:= ele.eledatarel(typ1);
-  inittypedatasize(typ1^,dk_address,0,das_pointer);
+  inittypedatasize(typ1^,dk_sub,0,das_pointer);
   with typ1^ do begin
    infoaddress.sub:= currentsubchain;
   end;

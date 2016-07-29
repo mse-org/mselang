@@ -2521,7 +2521,12 @@ begin                    //todo: optimize
     if d.dat.indirection > 0 then begin //@ operator
      if d.dat.indirection = 1 then begin
       pushinsertaddress(stackoffset,-1);
-      d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+      if not (tf_subad in d.dat.datatyp.flags) then begin
+       d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+      end
+      else begin
+       dec(d.dat.datatyp.indirectlevel); //compensate @ operator
+      end;
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);

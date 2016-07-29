@@ -371,7 +371,7 @@ type
   next: elementoffsetty; //for subchain
   nextoverload: elementoffsetty; //-1 = none
   impl: elementoffsetty; //pfuncdataty
-  typ: elementoffsetty;  //typedataty dk_address for stf_getaddress
+  typ: elementoffsetty;  //typedataty dk_sub for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 
                            //by linkresolvecall()
   adlinks: linkindexty;    //calls which need to be resolved

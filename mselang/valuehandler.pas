@@ -510,6 +510,49 @@ const
   )
  );
 
+function checkcompatiblesub(const a,b: ptypedataty): boolean;
+var
+ sa,sb: psubdataty;
+ poa,poe,pob: pelementoffsetty;
+ va,vb: pvardataty;
+ po1: pointer;
+begin
+{$ifdef mse_checkinternalerror}
+ if (a^.h.kind <> dk_sub) or (b^.h.kind <> dk_sub) then begin
+  internalerror(ie_handler,'20160729B');
+ end;
+{$endif}
+ result:= a = b;
+ if not result then begin
+  po1:= ele.eledatabase;
+  sa:= po1 + a^.infosub.sub;
+  sb:= po1 + b^.infosub.sub;
+  result:= sa = sb;
+  if not result then begin
+   result:= (sa^.paramcount = sb^.paramcount) and 
+                        ((sa^.flags >< sb^.flags) * compatiblesubflags = []);
+   if result then begin
+    poa:= @sa^.paramsrel;
+    poe:= poa + sa^.paramcount;
+    pob:= @sb^.paramsrel;
+    while poa < poe do begin
+     va:= po1 + poa^;
+     vb:= po1 + pob^;
+     if ((va^.address.flags >< vb^.address.flags) * 
+                                       compatibleparamflags <> []) or 
+               (va^.address.indirectlevel <> vb^.address.indirectlevel) or
+                                        (va^.vf.typ <> vb^.vf.typ) then begin
+      result:= false;
+      break;
+     end;
+     inc(poa);
+     inc(pob);
+    end;
+   end;
+  end;
+ end;
+end;
+
 function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
@@ -594,6 +637,9 @@ begin
       end;
       dk_set: begin
        result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+      end;
+      dk_sub: begin
+       result:= checkcompatiblesub(source1,dest);
       end;
      end;
      if not result then begin

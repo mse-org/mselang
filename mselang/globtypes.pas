@@ -110,6 +110,7 @@ type
  addressflagsty = set of addressflagty;
 
 const
+ compatibleparamflags = [af_paramconst,af_paramvar,af_paramout];
  addresskindflags = [af_stack,af_local,af_segment,af_aggregate];
  addresscompflags = addresskindflags + [af_nil];
 
@@ -231,6 +232,7 @@ type
  pdatakindty = ^datakindty;
 
 const
+ compatiblesubflags = [sf_function,sf_method,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string8];
