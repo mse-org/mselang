@@ -348,13 +348,18 @@ virtual,clasubheader3,handlevirtual,
 override,clasubheader3,handleoverride,
 overload,clasubheader3,handleoverload, 
 
-subtypedef,,,*
+subtypedef,,,*               //no semicoloncheck
  '',subtypedef0*
 subtypedef0,subheader1,handlesubtypedef0entry, //push dummy ident
 
-subheader,,,*
+subheader,subheadera,,*
 // '',subheader0*
  '',callsubheader*
+subheadera,,,*
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
+
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
 constructor,sub,handleconstructorentry,
@@ -362,14 +367,22 @@ destructor,sub,handledestructorentry,
 
 //sub,suba,,
 // '',subheader0*
-sub,,,*
+sub,sub1,,
  '',callsubheader*
+sub1,,,*
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
  
 callsubheader,suba,callsubheaderentry, 
 //suba can be canceled by dec(stackindex)
  '',subheader0*
 
-suba,,,
+suba,suba1,,
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
+suba1,,,
  '',subbody4*
 
 subheader0,subheader1,,
@@ -388,16 +401,15 @@ subheader3,,,
  'external'.,!handleexternal-
  'forward'.,!handleforward-
  'of'.,subof-^*>
- ';',subheader4-
- '',semicolonexpected
-subheader4,,,
+ ';',subheader4-+
+// '',semicolonexpected
+subheader4,,,handlesubheader*+
  ${whitespace}
 // 'virtual'.,virtual-
 // 'override'.,override-
 // 'overload'.,overload-
  'external'.,external-
  'forward'.,forward-
- '',!handlesubheader*
 //virtual,subheader3,handlevirtual,
 //override,subheader3,handleoverride,
 //overload,subheader3,handleoverload, 
@@ -686,7 +698,9 @@ gettype,,,*^
  'array'.,arraydef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
- 'procedure'.,proceduretypedef-*,typedefreturn^
+// 'procedure'.,proceduretypedef-*,typedefreturn^
+// 'procedure'.,proceduretypedef-*,var3a^
+ 'procedure'.,proceduretypedef-^*
  '',simpletype^*
 typedefreturn,,,*>
 //

@@ -205,23 +205,32 @@ procedure setsubtype(atypetypecontext: int32;
                                           const asub: elementoffsetty);
 var
  po1: ptypedataty;
+ id1: identty;
+ bo1: boolean;
 begin
  with info do begin
   atypetypecontext:= atypetypecontext+s.stackindex;
- {$ifdef mse_checkinternalerror}
-  if (contextstack[atypetypecontext].d.kind <> ck_typetype) or
-   (contextstack[atypetypecontext-1].d.kind <> ck_ident) then begin
-   internalerror(ie_handler,'20150425A');
+  bo1:= contextstack[atypetypecontext].d.kind = ck_fieldtype;
+  if bo1 then begin
+   id1:= getident(); //anomymous type
+  end
+  else begin
+  {$ifdef mse_checkinternalerror}
+   if (contextstack[atypetypecontext].d.kind <> ck_typetype) or
+    (contextstack[atypetypecontext-1].d.kind <> ck_ident) then begin
+    internalerror(ie_handler,'20150425A');
+   end;
+  {$endif}
+   id1:= contextstack[atypetypecontext-1].d.ident.ident;
   end;
- {$endif}
-  if not ele.addelementdata(contextstack[atypetypecontext-1].d.ident.ident,
-                                                 ek_type,allvisi,po1) then begin
+  if not ele.addelementdata(id1,ek_type,allvisi,po1) then begin
    identerror(atypetypecontext-1,err_duplicateidentifier);
   end
   else begin
    with contextstack[atypetypecontext] do begin
     inittypedatasize(po1^,dk_sub,d.typ.indirectlevel+1,das_pointer);
     po1^.infosub.sub:= asub;
+    d.typ.typedata:= ele.eledatarel(po1);
    end;
   end;
 //  s.stackindex:= contextstack[atypetypecontext].parent-1;//todo: record field?

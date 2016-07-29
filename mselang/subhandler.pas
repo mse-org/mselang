@@ -479,15 +479,16 @@ end;
 
 procedure callsubheaderentry();
 var
- po1: psubinfoty;
+ po1: pcontextdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CALLSUBHEADERENTRY');
 {$endif}
  with info,contextstack[s.stackindex].d do begin
-  po1:= @contextstack[s.stackindex-1].d.subdef;
+  po1:= @contextstack[s.stackindex-1].d;
   kind:= ck_subdef;
-  subdef.flags:= po1^.flags;
+  subdef.flags:= po1^.subdef.flags;
+  po1^.kind:= ck_none;
  end;
 end;
 
@@ -1350,6 +1351,7 @@ begin
     end;
     ele.elementparent:= parent1; //restore in sub
    end;
+   dec(s.stackindex);
    s.stacktop:= s.stackindex;
   end
   else begin
@@ -1410,7 +1412,7 @@ begin
  outhandle('SUB5A');
 {$endif}
  checkforwardtypeerrors();
- with info,contextstack[s.stackindex-2] do begin
+ with info,contextstack[s.stackindex-1] do begin
  {$ifdef mse_checkinternalerror}
   if d.kind <> ck_subdef then begin
    internalerror(ie_handler,'20151126A');
@@ -1590,7 +1592,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
 {$endif}
- with info,contextstack[s.stackindex-2] do begin
+ with info,contextstack[s.stackindex-1] do begin
    //todo: check local forward
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
   if co_llvm in o.compileoptions then begin
