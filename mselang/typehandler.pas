@@ -228,7 +228,8 @@ begin
   end
   else begin
    with contextstack[atypetypecontext] do begin
-    inittypedatasize(po1^,dk_sub,d.typ.indirectlevel+1,das_pointer);
+    inc(d.typ.indirectlevel);
+    inittypedatasize(po1^,dk_sub,d.typ.indirectlevel,das_pointer);
     po1^.infosub.sub:= asub;
     d.typ.typedata:= ele.eledatarel(po1);
    end;
