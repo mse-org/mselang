@@ -46,6 +46,7 @@ procedure handleparamsend();
 procedure handlefunctionentry();
 procedure handleprocedureentry();
 procedure handleproceduretypedefentry();
+procedure handlefunctiontypedefentry();
 procedure handlesubtypedef0entry();
 
 procedure callsubheaderentry();
@@ -453,6 +454,14 @@ begin
  outhandle('PROCEDURETYPEENTRY');
 {$endif}
  initsubdef([sf_typedef,sf_header]);
+end;
+
+procedure handlefunctiontypedefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FUNCTIONTYPEENTRY');
+{$endif}
+ initsubdef([sf_typedef,sf_header,sf_function]);
 end;
 
 procedure handlesubtypedef0entry();

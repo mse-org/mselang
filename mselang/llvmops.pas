@@ -783,6 +783,11 @@ begin
  //dummy
 end;
 
+procedure movestackop();
+begin
+ //dummy
+end;
+
 procedure pushimm1op();
 begin
  with pc^.par do begin
@@ -3631,6 +3636,7 @@ const
   pushssa = 0; //dummy
   popssa = 0;  //dummy
   swapstackssa = 0;  //dummy
+  movestackssa = 0;  //dummy
 
   pushimm1ssa = 1;
   pushimm8ssa = 1;

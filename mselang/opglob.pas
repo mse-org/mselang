@@ -151,6 +151,7 @@ type
   oc_push,
   oc_pop,
   oc_swapstack,
+  oc_movestack,
 
   oc_pushimm1,
   oc_pushimm8,
@@ -1051,7 +1052,7 @@ type
    oc_progend,oc_halt: (
     progend: progendty;
    );
-   oc_swapstack: (
+   oc_swapstack,oc_movestack: (
     swapstack: swapstackty;
    );
    oc_push,

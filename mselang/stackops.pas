@@ -710,6 +710,17 @@ begin
  end;
 end;
 
+procedure movestackop;
+var
+ ps,pd: pointer;
+begin
+ with cpu.pc^.par.swapstack do begin
+  ps:= cpu.stack-size;
+  pd:= ps+offset;
+  move(ps^,pd^,size);
+ end;
+end;
+
 procedure pushimm1op();
 begin
  pint8(stackpush(1))^:= cpu.pc^.par.imm.vint8; 
@@ -5194,6 +5205,7 @@ const
   pushssa = 0;
   popssa = 0;
   swapstackssa = 0;
+  movestackssa = 0;
 
   pushimm1ssa = 0;
   pushimm8ssa = 0;

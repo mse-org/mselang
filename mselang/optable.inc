@@ -150,6 +150,8 @@
   (ssa: popssa; proc: @popop; flags: []),
 //oc_swapstack
   (ssa: swapstackssa; proc: @swapstackop; flags: []),
+//oc_movestack
+  (ssa: movestackssa; proc: @movestackop; flags: []),
 
 //oc_pushimm1
   (ssa: pushimm1ssa; proc: @pushimm1op; flags: []), 

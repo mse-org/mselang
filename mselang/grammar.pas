@@ -600,6 +600,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'proceduretypedef');
+ functiontypedefco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'functiontypedef');
  clasubheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -6073,7 +6078,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..14] of branchty = (
+ bgettype: array[0..15] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @setdefco); stack: nil; 
      keyword: $BE839C1E{'set'}),
@@ -6092,6 +6097,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @proceduretypedefco); stack: nil; 
      keyword: $76EB7398{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @functiontypedefco); stack: nil; 
+     keyword: $EDD6E730{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -11208,6 +11216,9 @@ begin
  proceduretypedefco.branch:= nil;
  proceduretypedefco.next:= @subtypedefco;
  proceduretypedefco.handleentry:= @handleproceduretypedefentry;
+ functiontypedefco.branch:= nil;
+ functiontypedefco.next:= @subtypedefco;
+ functiontypedefco.handleentry:= @handlefunctiontypedefentry;
  clasubheaderco.branch:= @bclasubheader;
  callclasubheaderco.branch:= @bcallclasubheader;
  callclasubheaderco.next:= @subaco;

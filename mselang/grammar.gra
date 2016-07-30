@@ -316,6 +316,7 @@ methprocedureheader,clasubheader,handlemethprocedureentry,
 methconstructorheader,clasubheader,handlemethconstructorentry,
 methdestructorheader,clasubheader,handlemethdestructorentry,
 proceduretypedef,subtypedef,handleproceduretypedefentry,
+functiontypedef,subtypedef,handlefunctiontypedefentry,
 
 clasubheader,,,*
  '',callclasubheader*
@@ -698,9 +699,8 @@ gettype,,,*^
  'array'.,arraydef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
-// 'procedure'.,proceduretypedef-*,typedefreturn^
-// 'procedure'.,proceduretypedef-*,var3a^
  'procedure'.,proceduretypedef-^*
+ 'function'.,functiontypedef-^*
  '',simpletype^*
 typedefreturn,,,*>
 //

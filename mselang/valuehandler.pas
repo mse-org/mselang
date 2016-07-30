@@ -1612,41 +1612,6 @@ begin
      inc(subparams1); //first param
     end;
     opoffset1:= getcontextopcount(0);
-(*
-    if co_mlaruntime in compileoptions then begin
-     stacksize:= 0;
-     i1:= 0;  //current stackindex
-     i2:= -1; //insert result space at end of statement
-     if hasresult then begin
-      if sf_method in asub^.flags then begin
-       i2:= 0; //insert result space before instance
-       stacksize:= vpointersize;
-      end;
-      stacksize:= stacksize + 
-                pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,
-                                                              resulttype1); 
-                                           //alloc space for return value
-      with insertitem(oc_pushstackaddr,0,-1)^.
-                                     par.memop.tempdataaddress do begin
-                                              //result var param
-       a.address:= -stacksize;
-       offset:= 0;
-      end;
-      stacksize:= stacksize + vpointersize;
-     end;
-     if (sf_method in asub^.flags) then begin
-          //param order is [returnvaluepointer],instancepo,{params}
-      with insertitem(oc_pushduppo,0,-1)^ do begin
-       if hasresult then begin
-        par.voffset:= -2*vpointersize;
-       end
-       else begin
-        par.voffset:= -vpointersize;
-       end;
-      end;
-     end;
-    end;
-*)
     if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;
@@ -1818,7 +1783,8 @@ begin
                      info.s.unitinfo^.llvmlists.typelist.addsubvalue(asub);
        end
        else begin
-        po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
+        po1^.par.callinfo.indi.calladdr:= -asub^.paramsize -
+                                                   resultsize - pointersize;
        end;
       end
       else begin
@@ -1886,6 +1852,12 @@ begin
      end;
     end;
     if dsf_indirect in aflags then begin
+     if hasresult then begin
+      with additem(oc_movestack)^ do begin //move result to calladdress
+       par.swapstack.offset:= -pointersize;
+       par.swapstack.size:= resultsize;
+      end;
+     end;
      with additem(oc_pop)^ do begin          //insertitem???
       setimmsize(pointersize,par.imm); //remove call address
      end;
