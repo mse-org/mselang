@@ -93,10 +93,10 @@ const
  tk_virtual = $0C4472FA;
  tk_override = $1888E5F4;
  tk_overload = $3111CBE8;
- tk_external = $622397D0;
- tk_forward = $C4472FA0;
- tk_of = $888E5F41;
- tk_object = $111CBE83;
+ tk_of = $622397D0;
+ tk_object = $C4472FA0;
+ tk_external = $888E5F41;
+ tk_forward = $111CBE83;
  tk_finally = $22397D07;
  tk_except = $4472FA0E;
  tk_do = $88E5F41C;
@@ -145,11 +145,11 @@ const
   'initialization','finalization','constructor','destructor','begin',
   'dumpelements','dumpopcode','abort','stoponerror','nop','include','define',
   'undef','ifdef','ifndef','if','else','endif','ifend','h','mode','inline','on',
-  'off','default','out','virtual','override','overload','external','forward',
-  'of','object','finally','except','do','with','case','while','repeat','for',
-  'try','raise','goto','then','until','to','downto','set','record','array',
-  'class','private','protected','public','published','property','read','write',
-  'div','and','shl','shr','or','xor','in','not','is','as','inherited');
+  'off','default','out','virtual','override','overload','of','object',
+  'external','forward','finally','except','do','with','case','while','repeat',
+  'for','try','raise','goto','then','until','to','downto','set','record',
+  'array','class','private','protected','public','published','property','read',
+  'write','div','and','shl','shr','or','xor','in','not','is','as','inherited');
 
  tokenids: array[0..110] of identty = (
   $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
@@ -735,6 +735,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'subheader2');
+ subheader2aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subheader2a');
+ subofco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subof');
  subheader3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -745,11 +755,6 @@ var
                continue: false; restoresource: true; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'subheader4');
- subofco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'subof');
  externalco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -4257,16 +4262,60 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubheader3: array[0..9] of branchty = (
+ bsubheader2a: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @subofco); stack: nil; 
+     keyword: $622397D0{'of'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bsubof: array[0..6] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @subheader3co); stack: nil; 
+     keyword: $C4472FA0{'object'}),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bsubheader3: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleexternal); stack: nil; 
-     keyword: $622397D0{'external'}),
+     keyword: $888E5F41{'external'}),
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleforward); stack: nil; 
-     keyword: $C4472FA0{'forward'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @subofco); stack: nil; 
-     keyword: $888E5F41{'of'}),
+     keyword: $111CBE83{'forward'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4314,51 +4363,10 @@ const
  bsubheader4: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @externalco); stack: nil; 
-     keyword: $622397D0{'external'}),
+     keyword: $888E5F41{'external'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @forwardco); stack: nil; 
-     keyword: $C4472FA0{'forward'}),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @bracecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['(']),
-    (kind: bkk_char; chars: ['*']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @curlycomment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bsubof: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
-     dest: (handler: @handlesubofobject); stack: nil; 
-     keyword: $111CBE83{'object'}),
+     keyword: $111CBE83{'forward'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5405,7 +5413,7 @@ const
  bcaseof: array[0..2] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @casebranchco); stack: nil; 
-     keyword: $888E5F41{'of'}),
+     keyword: $622397D0{'of'}),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handleofexpected); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -5717,7 +5725,7 @@ const
  bsetdef: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @setdef1co); stack: nil; 
-     keyword: $888E5F41{'of'}),
+     keyword: $622397D0{'of'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5826,7 +5834,7 @@ const
  barraydef: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @arraydef2co); stack: nil; 
-     keyword: $888E5F41{'of'}),
+     keyword: $622397D0{'of'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5874,7 +5882,7 @@ const
  barraydef1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @arraydef2co); stack: nil; 
-     keyword: $888E5F41{'of'}),
+     keyword: $622397D0{'of'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -11275,12 +11283,15 @@ begin
  subheader1co.next:= @subheader2co;
  subheader1co.handleentry:= @handlesub1entry;
  subheader2co.branch:= @bsubheader2;
- subheader2co.next:= @subheader3co;
+ subheader2co.next:= @subheader2aco;
+ subheader2aco.branch:= @bsubheader2a;
+ subheader2aco.next:= @subheader3co;
+ subofco.branch:= @bsubof;
+ subofco.handleentry:= @subofentry;
+ subofco.handleexit:= @handleofobjectexpected;
  subheader3co.branch:= @bsubheader3;
  subheader4co.branch:= @bsubheader4;
  subheader4co.handleexit:= @handlesubheader;
- subofco.branch:= @bsubof;
- subofco.handleexit:= @handleofobjectexpected;
  externalco.branch:= nil;
  externalco.next:= @subheader3co;
  externalco.handleentry:= @handleexternal;

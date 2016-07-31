@@ -59,7 +59,7 @@ procedure handleoverload();
 procedure handleexternal();
 procedure handleforward();
 procedure handleofobjectexpected();
-procedure handlesubofobject();
+procedure subofentry();
 procedure handlesubheader();
 procedure subbody4entry();
 procedure handlesubbody5a();
@@ -469,9 +469,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUBTYPEDEF0ENTRY');
 {$endif}
- inc(info.s.stacktop);
- with info,contextstack[s.stacktop].d do begin //add dummy ident
-  kind:= ck_ident;
+ pushdummycontext(ck_ident); //add dummy ident
+ with info,contextstack[s.stacktop].d do begin 
   ident.ident:= getident;
   ident.len:= 0;
   ident.flags:= [];
@@ -687,14 +686,15 @@ begin
  end;
 end;
 
-procedure handlesubofobject();
+procedure subofentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('SUBOFOBJECT');
+ outhandle('SUBOFENTRY');
 {$endif}
  with info do begin
-  s.stacktop:= s.stackindex - 1;
-  s.stackindex:= contextstack[s.stackindex].parent;
+  with contextstack[s.stackindex-1] do begin
+   d.subdef.flags:= d.subdef.flags + [sf_ofobject];
+  end;
  end;
 end;
 

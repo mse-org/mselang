@@ -44,6 +44,7 @@ function parseunit(const input: string; const aunit: punitinfoty;
                    const ainterfaceonly: boolean): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
+procedure pushdummycontext(const akind: contextkindty);
 procedure switchcontext(const acontext: pcontextty);
 procedure saveparsercontext(var acontext: pparsercontextty; 
                                                const astackcount: int32);
@@ -172,6 +173,32 @@ begin
   end;
   with contextstack[s.stacktop] do begin
    d.handlerflags:= [];
+  end;
+ end;
+end;
+
+procedure pushdummycontext(const akind: contextkindty);
+var
+ poind: pcontextitemty;
+begin
+ with info do begin
+  inc(s.stacktop);
+  if s.stacktop >= stackdepth then begin
+   stackdepth:= 2*stackdepth;
+   setlength(contextstack,stackdepth+contextstackreserve);
+  end;
+  poind:= @contextstack[s.stackindex];
+  with contextstack[s.stacktop] do begin
+   d.kind:= akind;
+   parent:= poind^.parent;
+   start:= poind^.start;
+  {$ifdef mse_debugparser}
+   debugstart:= start.po;
+  {$endif}
+   context:= nil;
+   returncontext:= nil;
+   transitionflags:= [];
+   opmark.address:= opcount;
   end;
  end;
 end;

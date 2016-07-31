@@ -120,7 +120,7 @@ c=3
   c=23
    (
    kind=1
-   a=0,665,4,conditon
+   a=0,664,4,conditon
    c=2
     (
     kind=2
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,address
+   a=0,664,4,address
    c=2
     (
     kind=2
@@ -2975,7 +2975,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7320130
+    ao=An unhandled exception occured at $B739F130
     ae=
     aec=123
     ie=0
@@ -4524,11 +4524,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
-   c=28
+   a=0,665,4,sub
+   c=30
     (
     kind=1
-    a=0,665,4,openarray
+    a=0,664,4,openarray
     c=12
      (
      kind=2
@@ -4991,6 +4991,50 @@ c=3
     a=0,648,1,subvar1 llvm
     teststate=1
     path=subvar1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,subvar2
+    teststate=1
+    path=subvar2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,subvar2 llvm
+    teststate=1
+    path=subvar2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -8024,7 +8068,33 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=38
+rowstate=64
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
