@@ -735,7 +735,7 @@ type
    function adddirefstringtype(const aname: lstringty;
                                 const akind: dicharkindty): metavaluety;
    function addtype(atype: elementoffsetty; //0 -> untyped pointer
-                         const aindirection: int32;
+                         aindirection: int32;
                               const subrange: boolean = false): metavaluety;
    function addtype(const avariable: vardataty): metavaluety;
    function adddicompileunit(const afile: metavaluety; 
@@ -2734,7 +2734,7 @@ begin
 end;
 
 function tmetadatalist.addtype(atype: elementoffsetty;
-                      const aindirection: int32;
+                      aindirection: int32;
                                 const subrange: boolean = false): metavaluety;
           //todo: use correct alignment
 const
@@ -2808,13 +2808,16 @@ begin
  if atype = 0 then begin //untyped pointer
   atype:= getbasetypeele(das_8);
  end;
+ po2:= ele.eledataabs(atype);
+ if po2^.h.kind = dk_sub then begin
+  inc(aindirection);
+ end;
  i1:= aindirection;
  if subrange then begin
   i1:= i1 or $80000000;
  end;
  if ftypemetalist.addunique(atype,i1,po1) then begin
   offs1:= ftypemetalist.getdataoffset(po1); //relative backup
-  po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
 //    file1:= dummymeta; //internal type
@@ -2830,7 +2833,8 @@ begin
     context1:= file1;
    end;
   end;
-  if aindirection > 0 then begin         //todo: set identname
+  if (aindirection > 0) then begin 
+                                              //todo: set identname
    typekind1:= didk_pointertype;
 //   if aisreference then begin
 //    typekind1:= ditk_referencetype;
