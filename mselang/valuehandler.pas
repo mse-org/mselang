@@ -942,7 +942,8 @@ begin
     end;
    end;
    if not result then begin
-    result:= (dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
+    result:= ((dest^.h.kind = dk_sub) and (destindirectlevel = 0) or
+               (dest^.h.kind = dk_pointer) and (destindirectlevel = 1)) and 
                                            (source1^.h.kind = dk_pointer) or 
        (source1^.h.kind = dk_pointer) and 
            (d.dat.datatyp.indirectlevel = 1) and (destindirectlevel > 0) or
