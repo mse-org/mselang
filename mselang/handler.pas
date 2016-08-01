@@ -1425,8 +1425,8 @@ const
    oc_none, oc_none,   oc_none,   oc_negcard,oc_negint,oc_negflo,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
- //dk_array,dk_class,dk_interface,dk_sub
-   oc_none, oc_none, oc_none,     oc_none,
+ //dk_array,dk_class,dk_interface,dk_sub, dk_method
+   oc_none, oc_none, oc_none,     oc_none,oc_none,
  //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
    oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
@@ -1436,8 +1436,8 @@ const
    oc_none, oc_none,   oc_not1,   oc_not,   oc_not,  oc_none,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
- //dk_array,dk_class,dk_interface,dk_sub
-   oc_none, oc_none, oc_none,     oc_none,
+ //dk_array,dk_class,dk_interface,dk_sub, dk_method
+   oc_none, oc_none, oc_none,     oc_none,oc_none,
  //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
    oc_none,oc_none,    oc_none,oc_none,     oc_none
  );

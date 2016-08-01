@@ -62,8 +62,8 @@ const
     sdk_pointer,  sdk_none, sdk_string8, sdk_none,sdk_none,    sdk_none,
   //dk_class,dk_interface
     sdk_none,sdk_none,
-  //dk_sub
-    sdk_pointer,
+  //dk_sub,     dk_method
+    sdk_pointer,sdk_none,
   //dk_enum,dk_enumitem, dk_set,   dk_character,dk_data
     sdk_none,   sdk_none, sdk_none,sdk_card32,  sdk_none);
                 

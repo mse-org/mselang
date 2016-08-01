@@ -1536,7 +1536,7 @@ begin
    if stf_getaddress in s.currentstatementflags then begin
     initdatacontext(indpo^.d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
-    d.dat.datatyp.indirectlevel:= 1;
+    d.dat.datatyp.indirectlevel:= 0;
     d.dat.datatyp.flags:= [tf_subad];
     d.dat.ref.c.address:= nilopad;
     d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
@@ -2315,7 +2315,7 @@ begin
                            (d.kind in datacontexts) then begin
        if getvalue(poind,das_none) then begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
-        if (d.dat.datatyp.indirectlevel = 1) and 
+        if (d.dat.datatyp.indirectlevel = 0) and 
                               (po3^.h.kind = dk_sub) then begin
          dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,
                                                 subflags+[dsf_indirect]);

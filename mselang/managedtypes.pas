@@ -64,8 +64,8 @@ const
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,      dk_dynarray,         dk_openarray,
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,oc_none,
-  //dk_array,dk_class,dk_interface,dk_sub,
-    oc_none, oc_none, oc_none,     oc_none,
+  //dk_array,dk_class,dk_interface,dk_sub, dk_method
+    oc_none, oc_none, oc_none,     oc_none,oc_none,
   //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
     oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
@@ -75,8 +75,8 @@ const
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,      dk_dynarray,   dk_openarray,
     oc_none,   oc_none,  oc_uniquestr8,oc_uniquedynarray,oc_none,
-  //dk_array,dk_class,dk_interface,dk_sub,
-    oc_none, oc_none, oc_none,     oc_none,
+  //dk_array,dk_class,dk_interface,dk_sub, dk_method
+    oc_none, oc_none, oc_none,     oc_none,oc_none,
   //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
     oc_none,oc_none,    oc_none,oc_none,     oc_none
  );

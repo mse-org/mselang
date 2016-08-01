@@ -228,8 +228,13 @@ begin
   end
   else begin
    with contextstack[atypetypecontext] do begin
-    inc(d.typ.indirectlevel);
-    inittypedatasize(po1^,dk_sub,d.typ.indirectlevel,das_pointer);
+//    inc(d.typ.indirectlevel);
+    if sf_ofobject in psubdataty(ele.eledataabs(asub))^.flags then begin
+     inittypedatasize(po1^,dk_method,d.typ.indirectlevel,das_none);
+    end
+    else begin
+     inittypedatasize(po1^,dk_sub,d.typ.indirectlevel,das_pointer);
+    end;
     po1^.infosub.sub:= asub;
     d.typ.typedata:= ele.eledatarel(po1);
    end;
