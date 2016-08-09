@@ -2712,7 +2712,7 @@ errorlab:
   end;
  end;
 end;
-
+{
 function checkreftypeconversion(const acontext: pcontextitemty): boolean;
 begin
  result:= true;
@@ -2722,7 +2722,7 @@ begin
   end;
  end;
 end;
-
+}
 procedure castdatatype(const acontext: pcontextitemty;
                                   const item: castitemty; var cancel: boolean);
 var
@@ -2745,7 +2745,8 @@ begin
  end;
 end;
 
-function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
+function checktypeconversion(const acontext: pcontextitemty;
+                                        const acast: castcallbackty): boolean;
 var
  link1: linkindexty;
  i1: int32;
@@ -2762,12 +2763,22 @@ begin
    d.dat.ref.castchain:= 0;
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;
-   result:= linkdocasts(link1,acontext,@castdatatype);
+   result:= linkdocasts(link1,acontext,acast);
    inc(d.dat.indirection,i1); //could be changed
    acontext^.d.dat.datatyp:= datatypbefore;
    acontext^.d.dat.ref.offset:= offsetbefore;
   end;
  end;
+end;
+
+function checkreftypeconversion(const acontext: pcontextitemty): boolean;
+begin
+ result:= checktypeconversion(acontext,@castreftype);
+end;
+
+function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
+begin
+ result:= checktypeconversion(acontext,@castdatatype);
 end;
 
 function getaddress(const acontext: pcontextitemty;
