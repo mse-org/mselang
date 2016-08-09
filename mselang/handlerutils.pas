@@ -42,6 +42,7 @@ type
 var
  unitsele: elementoffsetty;
  sysdatatypes: array[systypety] of typeinfoty;
+ methoddatatype: typeinfoty;
  emptyset: typeinfoty;
 
 const
@@ -323,6 +324,13 @@ const
        bitsize: pointerbitsize; bytesize: pointersize;
                                       datasize: das_pointer; next: 0);
        dummy1: 0)),
+{
+   (name: 'tmethod'; data: (h: (ancestor: 0; kind: dk_method;
+       base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
+       bitsize: 2*pointerbitsize; bytesize: 2*pointersize;
+                                      datasize: das_none; next: 0);
+       dummy1: 0)),
+}
    (name: 'bool1'; data: (h: (ancestor: 0; kind: dk_boolean;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 1; bytesize: 1; datasize: das_1; next: 0);
@@ -1067,6 +1075,17 @@ begin
      end;
     end;
    end;
+   dk_method: begin
+    si1:= das_none;
+    with constval do begin
+     if af_nil in vaddress.flags then begin
+      insertitem(oc_pushnilmethod,stackoffset,aopoffset);
+     end
+     else begin
+      notimplementederror('20160802A');
+     end;
+    end;
+   end;
    dk_openarray: begin
     segad1:= allocdataconst(constval.vopenarray);
     si1:= das_none;
@@ -1109,7 +1128,8 @@ begin
   {$endif}
   end;
   with contextstack[stackoffset+s.stackindex] do begin
-   if not (constval.kind in [dk_enum,dk_set,dk_string8,dk_openarray]) then begin
+   if not (constval.kind in 
+                 [dk_enum,dk_set,dk_string8,dk_openarray,dk_method]) then begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);
@@ -2935,6 +2955,13 @@ var
  int1: integer;
 begin
  ele.addelement(tks_units,ek_none,globalvisi,unitsele);
+ po2:= ele.addelementdata(tks_method,ek_type,globalvisi);
+{$ifdef mse_checkinternalerror}
+ if po2 = nil then begin
+  internalerror(ie_handler,'20160809A');
+ end;
+{$endif}
+ inittypedatasize(po2^,dk_method,0,das_none);
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= ele.addelement(getident(name),ek_type,globalvisi);
@@ -3688,7 +3715,7 @@ begin
         dk_float: begin
          write(d.dat.constval.vfloat,' ');
         end;
-        dk_address: begin
+        dk_address,dk_pointer: begin
          writeaddress(d.dat.constval.vaddress);
         end;
         dk_enum: begin

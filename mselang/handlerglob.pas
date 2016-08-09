@@ -613,8 +613,14 @@ procedure inittypedatasize(var atype: typedataty; akind: datakindty;
 begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
  atype.h.datasize:= adatasize;
- atype.h.bytesize:= bytesizes[adatasize];
- atype.h.bitsize:= bitsizes[adatasize];
+ if akind = dk_method then begin
+  atype.h.bytesize:= 2*pointersize;
+  atype.h.bitsize:= 8*2*pointersize;
+ end
+ else begin
+  atype.h.bytesize:= bytesizes[adatasize];
+  atype.h.bitsize:= bitsizes[adatasize];
+ end;
 end;
 
 end.

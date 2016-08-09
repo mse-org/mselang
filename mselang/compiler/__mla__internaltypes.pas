@@ -76,6 +76,16 @@ type
  end;
  popenarrayty = ^openarrayty;
 
+ methodty = record
+ {$ifdef mse_compiler}
+  code: targetpointerty;
+  data: targetpointerty;
+ {$else}
+  code: pointer;
+  data: pointer;
+ {$endif}
+ end;
+ 
 const
  string8headersize = sizeof(string8headerty);
  string8allocsize = string8headersize+1; //terminating #0

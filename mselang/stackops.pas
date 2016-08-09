@@ -3137,6 +3137,13 @@ procedure pushnilop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
 end;
+
+procedure pushnilmethodop();
+begin
+ ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
+ ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
+end;
+
 {
 procedure pushstack8op();
 var
@@ -5518,6 +5525,7 @@ const
   popparindissa = 0;
 
   pushnilssa = 0;
+  pushnilmethodssa = 0;
 {
   pushstack8ssa = 0;
   pushstack16ssa = 0;

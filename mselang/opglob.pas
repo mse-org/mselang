@@ -458,6 +458,7 @@ type
   oc_popparindi,
 
   oc_pushnil,
+  oc_pushnilmethod,
 //  oc_pushsegaddress,
 {
   oc_pushstack8,

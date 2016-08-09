@@ -787,6 +787,8 @@
 
 //oc_pushnil
   (ssa: pushnilssa; proc: @pushnilop; flags: []), 
+//oc_pushnilmethod
+  (ssa: pushnilmethodssa; proc: @pushnilmethodop; flags: []), 
 //  pushsegaddress
 {
 //oc_pushstack8

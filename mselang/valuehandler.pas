@@ -876,7 +876,20 @@ begin
      end;
     end;
    end
-   else begin
+   else begin //different indirectlevel
+    if (destindirectlevel = 0) and (acontext^.d.kind = ck_const) and 
+           (acontext^.d.dat.constval.kind = dk_pointer) and 
+           (acontext^.d.dat.datatyp.indirectlevel = 1) and
+           (af_nil in acontext^.d.dat.constval.vaddress.flags) then begin //nil
+     case dest^.h.kind of
+      dk_method: begin
+       acontext^.d.dat.constval.kind:= dk_method;
+       d.dat.datatyp:= methoddatatype{sysdatatypes[st_method]};
+       result:= true;
+       exit;
+      end;
+     end;
+    end;
     if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
              (d.dat.datatyp.indirectlevel > 0) and 
                                           (coo_type in aoptions) then begin

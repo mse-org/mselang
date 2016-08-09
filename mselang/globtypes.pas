@@ -153,7 +153,7 @@ type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
                   das_sub,das_meta);
- systypety = (st_none,st_pointer,st_bool1,
+ systypety = (st_none,st_pointer,{st_method,}st_bool1,
               st_int8,st_int16,st_int32,st_int64,
               st_card8,st_card16,st_card32,st_card64,
               st_flo64,
@@ -303,8 +303,14 @@ type
    dk_float:(
     vfloat: flo64;
    );
-   dk_address:(
+   dk_address,dk_pointer,dk_method:(
     vaddress: addressvaluety;
+   {
+    case datakindty of
+     dk_method: begin
+      vinstance:
+     end;
+   }
    );
    dk_string8:(
     vstring: stringvaluety;

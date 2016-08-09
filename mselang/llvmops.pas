@@ -2552,6 +2552,12 @@ begin
                                bcstream.typeval(pointertype));
  end;
 end;
+
+procedure pushnilmethodop();
+begin
+ notimplemented();
+end;
+
 {
 procedure pushstack8op();
 begin
@@ -3949,6 +3955,7 @@ const
   popparindissa = 2;
 
   pushnilssa = 1;
+  pushnilmethodssa = 1;
 {
   pushstack8ssa = 1;
   pushstack16ssa = 1;
