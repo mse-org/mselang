@@ -44,6 +44,7 @@ type
   typedata: elementoffsetty;
   olddatatyp: typeinfoty;
   indirection: int32;
+  offset: int32;
  end;
  pcastitemty = ^castitemty;
  castcallbackty = procedure (const acontext: pcontextitemty;
@@ -1241,6 +1242,7 @@ begin
    cast.typedata:= atype;
    cast.olddatatyp:= d.dat.datatyp;
    cast.indirection:= d.dat.indirection;
+   cast.offset:= d.dat.ref.offset;
   end;
   d.dat.indirection:= 0;
  end;

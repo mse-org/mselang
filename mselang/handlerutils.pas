@@ -2658,16 +2658,7 @@ errlab:
   end;
  end;
 end;
-{
-function getvalue(const stackoffset: integer; const adatasize: databitsizety;
-                                  const retainconst: boolean = false): boolean;
-begin
- with info do begin
-  result:= getvalue(@contextstack[s.stackindex+stackoffset],
-                                                adatasize,retainconst);
- end;
-end;
-}
+
 procedure castreftype(const acontext: pcontextitemty;
                                   const item: castitemty; var cancel: boolean);
 var
@@ -2684,14 +2675,6 @@ begin
  sourcetyp:= ele.eledataabs(item.olddatatyp.typedata);
  desttyp:= ele.eledataabs(item.typedata);
  with desttyp^,acontext^ do begin
-{
-  i3:= 0;
-  if d.kind = ck_ref then begin
-   i3:= d.dat.indirection;
-   d.dat.indirection:= 0;
-   dec(d.dat.datatyp.indirectlevel,i3);
-  end;
-}
   i1:= h.bytesize;
   i2:= sourcetyp^.h.bytesize;
   if h.indirectlevel > 0 then begin
@@ -2704,20 +2687,11 @@ begin
    if d.kind = ck_ref then begin
     d.dat.datatyp:= item.olddatatyp;
     d.dat.indirection:= item.indirection;
-//    if item.olddatatyp.indirectlevel > 0 then begin
-//     if not getvalue(acontext,das_none) then begin
-//      goto errorlab;
-//     end;
-//     dec(d.dat.indirection);
-//     dec(d.dat.datatyp.indirectlevel);
-//    end
-//    else begin
     if not getaddress(acontext,true) then begin
      goto errorlab;
     end;
     dec(d.dat.datatyp.indirectlevel);
     dec(d.dat.indirection);
-//    end;
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
     d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
@@ -2729,8 +2703,6 @@ begin
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
    end;
-//   inc(d.dat.indirection,i3);
-//   inc(d.dat.datatyp.indirectlevel,i3);
   end
   else begin
    errormessage(err_typecastdifferentsize,[i2,i1]);
@@ -2758,6 +2730,7 @@ var
 begin
  po1:= ele.eledataabs(item.typedata);
  acontext^.d.dat.indirection:= item.indirection;
+ acontext^.d.dat.ref.offset:= item.offset;
  if acontext^.d.kind = ck_ref then begin //first call
   acontext^.d.dat.datatyp:= item.olddatatyp;
   cancel:= not getvalue(acontext,das_none);
@@ -2776,32 +2749,23 @@ function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
 var
  link1: linkindexty;
  i1: int32;
+ offsetbefore: int32;
+ datatypbefore: typeinfoty;
 begin
  result:= true;
  with acontext^ do begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+                  //todo: optimize
+   datatypbefore:= acontext^.d.dat.datatyp;
+   offsetbefore:= acontext^.d.dat.ref.offset;
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
    i1:= d.dat.indirection;
    d.dat.indirection:= 0;
    result:= linkdocasts(link1,acontext,@castdatatype);
-//   inc(d.dat.datatyp.indirectlevel,(i1-d.dat.indirection));
    inc(d.dat.indirection,i1); //could be changed
-{
-   i1:= d.dat.indirection;
-   d.dat.indirection:= 0;
-   if [af_paramindirect,af_paramvar] * 
-                                  d.dat.ref.c.address.flags <> [] then begin
-    inc(i1);                                //apply param deref
-    inc(d.dat.indirection);
-   end;
-   dec(d.dat.datatyp.indirectlevel,i1);
-   if getvalue(acontext,das_none) then begin
-    result:= linkdocasts(link1,acontext,@castdatatype);
-   end;
-   inc(d.dat.datatyp.indirectlevel,i1);
-   inc(d.dat.indirection,i1);
-}
+   acontext^.d.dat.datatyp:= datatypbefore;
+   acontext^.d.dat.ref.offset:= offsetbefore;
   end;
  end;
 end;
