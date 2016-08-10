@@ -47,8 +47,10 @@ type
   offset: int32;
  end;
  pcastitemty = ^castitemty;
+ docastflagty = (dcf_first,dcf_cancel);
+ docastflagsty = set of docastflagty;
  castcallbackty = procedure (const acontext: pcontextitemty;
-                                  const item: castitemty; var cancel: boolean);
+                            const item: castitemty; var aflags: docastflagsty);
 
  
  unitlinkinfoty = record  //used for ini, fini
@@ -1252,7 +1254,7 @@ function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty): boolean;
 var
  li1,li2: linkindexty;
- cancel1: boolean;
+ flags1: docastflagsty;
 begin
  result:= true;
  if alinks <> 0 then begin
@@ -1260,21 +1262,22 @@ begin
   alinks:= 0;
   linksreverse(li1);
   li2:= li1; //backup
-  cancel1:= false;
+  flags1:= [dcf_first];
   while true do begin
    with links[li1] do begin
-    if not cancel1 then begin
-     callback(acontext,cast,cancel1);
+    if not (dcf_cancel in flags1) then begin
+     callback(acontext,cast,flags1);
     end;
     if next = 0 then begin
      break;
     end;
+    exclude(flags1,dcf_cancel);
     li1:= next;
    end;
   end;
   links[li1].next:= deletedlinks;
   deletedlinks:= li2;
-  result:= not cancel1;
+  result:= not (dcf_cancel in flags1);
  end;
 end;
 

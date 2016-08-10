@@ -2512,11 +2512,12 @@ label
 
 begin                    //todo: optimize
  result:= false;
+ stackoffset:= getstackoffset(acontext);
+ opdata1:= bitoptypes[das_none];
  with info,acontext^ do begin
   if not checkdatatypeconversion(acontext) then begin
    goto errlab;
   end;
-  stackoffset:= getstackoffset(acontext);
   if d.kind = ck_list then begin
    if not listtoset(acontext) then begin
     goto errlab;
@@ -2660,7 +2661,7 @@ errlab:
 end;
 
 procedure castreftype(const acontext: pcontextitemty;
-                                  const item: castitemty; var cancel: boolean);
+                      const item: castitemty; var aflags: docastflagsty);
 var
  sourcetyp,desttyp: ptypedataty;
  i1,i2,i3: int32;
@@ -2708,7 +2709,7 @@ begin
    errormessage(err_typecastdifferentsize,[i2,i1]);
          //todo: correct source pos
 errorlab:
-   cancel:= true;
+   include(aflags,dcf_cancel);
   end;
  end;
 end;
@@ -2724,13 +2725,18 @@ begin
 end;
 }
 procedure castdatatype(const acontext: pcontextitemty;
-                                  const item: castitemty; var cancel: boolean);
+                                  const item: castitemty;
+                                             var aflags: docastflagsty);
 var
  po1: ptypedataty;
 begin
  po1:= ele.eledataabs(item.typedata);
  acontext^.d.dat.indirection:= item.indirection;
  acontext^.d.dat.ref.offset:= item.offset;
+ if dcf_first in aflags then begin
+  acontext^.d.dat.datatyp:= item.olddatatyp;
+ end;
+{
  if acontext^.d.kind = ck_ref then begin //first call
   acontext^.d.dat.datatyp:= item.olddatatyp;
   cancel:= not getvalue(acontext,das_none);
@@ -2738,8 +2744,9 @@ begin
    exit;
   end;
  end;
- cancel:= not tryconvert(acontext,po1,po1^.h.indirectlevel,[coo_type]);
- if cancel then begin
+}
+ if not tryconvert(acontext,po1,po1^.h.indirectlevel,[coo_type]) then begin
+  include(aflags,dcf_cancel);
   illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
          //todo: correct source pos
  end;
