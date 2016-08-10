@@ -2390,11 +2390,17 @@ begin
          bo1:= true;
          if (potop^.d.kind = ck_ref) then begin
           linkaddcast(ele.eledatarel(po2),potop);
-//          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
           potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
           potop^.d.dat.datatyp.flags:= h.flags;
+          i1:= 0;
+          if (h.kind = dk_interface) and (h.indirectlevel = 0) and
+                (po3^.h.kind = dk_class) and 
+                        (potop^.d.dat.datatyp.indirectlevel = 1) then begin
+           i1:= 1;           //classinstance to interface
+          end;
           potop^.d.dat.datatyp.indirectlevel:= 
-                        potop^.d.dat.indirection + h.indirectlevel;
+                        potop^.d.dat.indirection + h.indirectlevel + i1;
 //          potop^.d.dat.datatyp.indirectlevel:= 
 //                  potop^.d.dat.datatyp.indirectlevel + 
 //                                      (h.indirectlevel - po3^.h.indirectlevel);
