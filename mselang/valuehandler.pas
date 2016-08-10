@@ -2390,12 +2390,14 @@ begin
          bo1:= true;
          if (potop^.d.kind = ck_ref) then begin
           linkaddcast(ele.eledatarel(po2),potop);
-          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+//          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
           potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
           potop^.d.dat.datatyp.flags:= h.flags;
           potop^.d.dat.datatyp.indirectlevel:= 
-                  potop^.d.dat.datatyp.indirectlevel + 
-                                      (h.indirectlevel - po3^.h.indirectlevel);
+                        potop^.d.dat.indirection + h.indirectlevel;
+//          potop^.d.dat.datatyp.indirectlevel:= 
+//                  potop^.d.dat.datatyp.indirectlevel + 
+//                                      (h.indirectlevel - po3^.h.indirectlevel);
           bo1:= false;
 {
           po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
