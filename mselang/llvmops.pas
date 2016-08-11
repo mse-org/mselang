@@ -2555,7 +2555,10 @@ end;
 
 procedure pushnilmethodop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.constval(nullmethod),
+                               bcstream.typeval(methodtype));
+ end;
 end;
 
 {

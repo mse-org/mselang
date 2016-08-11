@@ -2063,7 +2063,7 @@ begin
       FUNC_CODE_INST_CAST: begin
        checkdatalen(rec1,4);
        str1:= castopcodesnames[castopcodes(rec1[4])]+
-       '('+opname(rec1[2])+':'+ftypelist.typename(typeid(rec1[2]))+')';
+       '('+opname(rec1[2])+':'+ftypelist.typename(pointertypeid(rec1[2]))+')';
        i1:= rec1[3];
        outssarecord(i1,str1);
       end;

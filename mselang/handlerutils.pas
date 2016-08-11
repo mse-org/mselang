@@ -393,8 +393,9 @@ const
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
    (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
-   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
-             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
+   (name: 'nil'; ctyp: st_none; cval:(kind: dk_none))
+//   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
+//             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
   );
     
 { 
@@ -2943,7 +2944,12 @@ begin
   internalerror(ie_handler,'20160809A');
  end;
 {$endif}
- inittypedatasize(po2^,dk_method,0,das_none);
+ inittypedatabyte(po2^,dk_method,0,2*pointersize);
+ with methoddatatype do begin
+  flags:= [];
+  indirectlevel:= 0;
+  typedata:= ele.eledatarel(po2);
+ end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= ele.addelement(getident(name),ek_type,globalvisi);
@@ -2956,6 +2962,7 @@ begin
    end;
   end;
  end;
+ 
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
    po1:= ele.addelement(getident(name),ek_const,globalvisi);

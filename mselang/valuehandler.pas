@@ -651,114 +651,130 @@ begin
       case d.kind of
        ck_const: begin
         with d.dat.constval do begin
-         case dest^.h.kind of //todo: use table
-          dk_float: begin
-           case source1^.h.kind of
-            dk_float: begin
-             result:= true;
-            end;
-            dk_integer: begin
-             case intbits[source1^.h.datasize] of
-              ibs_8: begin
-               vfloat:= int8(vinteger);
-              end;
-              ibs_16: begin
-               vfloat:= int16(vinteger);
-              end;
-              ibs_32: begin
-               vfloat:= int32(vinteger);
-              end;
-              ibs_64: begin
-               vfloat:= int64(vinteger);
-              end;
-              else begin
-               internalerror1(ie_handler,'20160519B');
-              end;
-             end;
-             result:= true;
-            end;
-            dk_cardinal: begin
-             case intbits[source1^.h.datasize] of
-              ibs_8: begin
-               vfloat:= card8(vcardinal);
-              end;
-              ibs_16: begin
-               vfloat:= card16(vcardinal);
-              end;
-              ibs_32: begin
-               vfloat:= card32(vcardinal);
-              end;
-              ibs_64: begin
-               vfloat:= card64(vcardinal);
-              end;
-              else begin
-               internalerror1(ie_handler,'20160519C');
-              end;
-             end;
-             result:= true;
-            end;
+         if kind = dk_none then begin //nil
+          case dest^.h.kind of
+           dk_pointer: begin
+            kind:= dk_pointer;
+            vaddress:= niladdress;
+            result:= true;
+           end;
+           dk_method: begin
+            kind:= dk_method;
+            vaddress:= niladdress;
+            result:= true;
            end;
           end;
-          dk_cardinal: begin
-           case source1^.h.kind of
-            dk_cardinal: begin
-             result:= true;
-            end;
-            dk_integer: begin
-             result:= true;
-            end;
-            dk_enum: begin
-             if coo_enum in aoptions then begin
+         end
+         else begin
+          case dest^.h.kind of //todo: use table
+           dk_float: begin
+            case source1^.h.kind of
+             dk_float: begin
               result:= true;
              end;
-             vcardinal:= venum.value;
-            end;
-            dk_set: begin //todo: arbitrary size
-             if coo_set in aoptions then begin
+             dk_integer: begin
+              case intbits[source1^.h.datasize] of
+               ibs_8: begin
+                vfloat:= int8(vinteger);
+               end;
+               ibs_16: begin
+                vfloat:= int16(vinteger);
+               end;
+               ibs_32: begin
+                vfloat:= int32(vinteger);
+               end;
+               ibs_64: begin
+                vfloat:= int64(vinteger);
+               end;
+               else begin
+                internalerror1(ie_handler,'20160519B');
+               end;
+              end;
               result:= true;
              end;
-             vcardinal:= vset.value;
-            end;
-           end;
-          end;
-          dk_integer: begin
-           case source1^.h.kind of
-            dk_integer: begin
-             result:= true;
-            end;
-            dk_cardinal: begin
-             result:= true;
-            end;
-            dk_enum: begin
-             if coo_enum in aoptions then begin
+             dk_cardinal: begin
+              case intbits[source1^.h.datasize] of
+               ibs_8: begin
+                vfloat:= card8(vcardinal);
+               end;
+               ibs_16: begin
+                vfloat:= card16(vcardinal);
+               end;
+               ibs_32: begin
+                vfloat:= card32(vcardinal);
+               end;
+               ibs_64: begin
+                vfloat:= card64(vcardinal);
+               end;
+               else begin
+                internalerror1(ie_handler,'20160519C');
+               end;
+              end;
               result:= true;
-             end;
-             vinteger:= venum.value;
-            end;
-            dk_set: begin //todo: arbitrary size
-             if coo_set in aoptions then begin
-              result:= true;
-             end;
-             vinteger:= vset.value;
-            end;
-           end;
-          end;
-          dk_set: begin
-           case source1^.h.kind of
-            dk_set: begin
-             if vset.value = 0 then begin //empty set
-              result:= true; 
              end;
             end;
            end;
-          end;
-          dk_character: begin
-           case source1^.h.kind of
-            dk_string8: begin 
-             lstr1:= getstringconst(vstring);
-             if lstr1.len = 1 then begin
-              vcharacter:= ord(lstr1.po^); //todo: encoding
+           dk_cardinal: begin
+            case source1^.h.kind of
+             dk_cardinal: begin
               result:= true;
+             end;
+             dk_integer: begin
+              result:= true;
+             end;
+             dk_enum: begin
+              if coo_enum in aoptions then begin
+               result:= true;
+              end;
+              vcardinal:= venum.value;
+             end;
+             dk_set: begin //todo: arbitrary size
+              if coo_set in aoptions then begin
+               result:= true;
+              end;
+              vcardinal:= vset.value;
+             end;
+            end;
+           end;
+           dk_integer: begin
+            case source1^.h.kind of
+             dk_integer: begin
+              result:= true;
+             end;
+             dk_cardinal: begin
+              result:= true;
+             end;
+             dk_enum: begin
+              if coo_enum in aoptions then begin
+               result:= true;
+              end;
+              vinteger:= venum.value;
+             end;
+             dk_set: begin //todo: arbitrary size
+              if coo_set in aoptions then begin
+               result:= true;
+              end;
+              vinteger:= vset.value;
+             end;
+            end;
+           end;
+           dk_set: begin
+            case source1^.h.kind of
+             dk_set: begin
+              if vset.value = 0 then begin //empty set
+               result:= true; 
+              end;
+             end;
+            end;
+           end;
+           dk_character: begin
+            case source1^.h.kind of
+             dk_string8: begin 
+              lstr1:= getstringconst(vstring);
+              if lstr1.len = 1 then begin
+               vcharacter:= ord(lstr1.po^); //todo: encoding
+               result:= true;
+              end;
              end;
             end;
            end;
@@ -1134,6 +1150,13 @@ begin
      exit;
     end;
     inc(conversioncost);            //1
+    if (d.kind = ck_const) and (d.dat.constval.kind = dk_none) then begin 
+                        //nil const
+     if (dest^.h.kind in [dk_method,dk_pointer]) then begin
+      result:= true;
+      exit;
+     end;
+    end;
     if (destindilev = 0) and (dest^.h.kind = dk_openarray) and
                ((source^.h.kind = dk_dynarray) and 
                          issametype(source^.infodynarray.i.itemtypedata,

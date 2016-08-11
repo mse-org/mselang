@@ -1058,6 +1058,8 @@ begin
   for k1:= low(databitsizety) to lastdatakind do begin
    addbitvalue(k1);
   end;
+//  addstructvalue([pointertype,pointertype]); //method, bittypemax+1
+  addbytevalue(2*pointersize); //method, bittypemax+1
   fmetadata:= addbitvalue(das_meta);
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fintfitem:= addstructvalue([inttype,pointertype]);
@@ -1326,12 +1328,13 @@ begin
   for i1:= 0 to maxpointeroffset do begin
    addi32(i1*pointersize);
   end;
-  addnullvalue(ord(das_1));       //nc_i1
-  addnullvalue(ord(das_8));       //nc_i8
-  addnullvalue(ord(das_16));      //nc_i16
-  addnullvalue(ord(das_32));      //nc_i32
-  addnullvalue(ord(das_64));      //nc_i64
-  addnullvalue(ord(das_pointer)); //nc_pointer
+  addnullvalue(ord(das_1));         //nco_i1
+  addnullvalue(ord(das_8));         //nco_i8
+  addnullvalue(ord(das_16));        //nco_i16
+  addnullvalue(ord(das_32));        //nco_i32
+  addnullvalue(ord(das_64));        //nco_i64
+  addnullvalue(ord(das_pointer));   //nco_pointer
+  addnullvalue(methodtype);         //nco_method
   addi1(true); //mc_i1                   
   addi8(-1);   //mc_i8
   addi16(-1);  //mc_i16

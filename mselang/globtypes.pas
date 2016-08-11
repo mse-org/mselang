@@ -149,7 +149,10 @@ type
    3: (tempaddress: tempaddressty);
  end;
  paddressvaluety = ^addressvaluety;
- 
+const
+ niladdress: addressvaluety = (flags: [af_nil]; indirectlevel: 1);
+
+type 
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
                   das_sub,das_meta);
@@ -406,7 +409,7 @@ const
 type 
  nullconstty = (nco_none = 0,
           nco_i1 = 256+maxpointeroffset+1, nco_i8, nco_i16, nco_i32, nco_i64,
-          nco_pointer);
+          nco_pointer,nco_method);
  maxconstty = (mco_none = 0,
                mco_i1 = ord(high(nullconstty))+1, mco_i8=255,
                               mco_i16=ord(mco_i1)+1,mco_i32, mco_i64);
@@ -419,8 +422,10 @@ type
   end;
 
 const
+ bittypemax = ord(lastdatakind);
  voidtype = ord(das_none);
  pointertype = ord(das_pointer);
+ methodtype = bittypemax+1;
  bytetype = ord(das_8);
  inttype = ord(das_32);
 {$if pointersize = 64}
@@ -429,13 +434,18 @@ const
  sizetype = ord(das_32);
 {$endif}
  floattype = ord(das_f64);
- bittypemax = ord(lastdatakind);
 
  nullpointer = ord(nco_pointer);
  nullconst: llvmvaluety = (
              typeid: pointertype;
              listid: nullpointer;
             ); 
+ nullmethod = ord(nco_method);
+ nullmethodconst: llvmvaluety = (
+             typeid: methodtype;
+             listid: nullmethod;
+            ); 
+
 type
  metavalueflagty = (mvf_globval,mvf_pointer,mvf_meta,mvf_dummy);
  metavalueflagsty = set of metavalueflagty;
