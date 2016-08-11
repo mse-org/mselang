@@ -3690,8 +3690,11 @@ begin
       ck_const: begin
        writedat(d.dat);
        writetype(d);
-       write('V:');
+       write(' V:');
        case d.dat.constval.kind of
+        dk_none: begin
+         write(' ');
+        end;
         dk_boolean: begin
          write(d.dat.constval.vboolean,' ');
         end;

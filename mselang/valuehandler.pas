@@ -624,6 +624,15 @@ begin
    end;
   end;
   with acontext^ do begin
+   if (acontext^.d.kind = ck_const) and 
+       ((destindirectlevel > 0) or (dest^.h.kind = dk_sub)) and 
+          (acontext^.d.dat.constval.kind = dk_none) then begin 
+                  //nil -> nilpointer
+    d.dat.constval.kind:= dk_pointer;
+    d.dat.constval.vaddress:= niladdress;
+    d.dat.datatyp:= sysdatatypes[st_pointer];
+    inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
+   end;
    pointerconv:= false;
    source1:= ele.eledataabs(d.dat.datatyp.typedata);
    result:= destindirectlevel = d.dat.datatyp.indirectlevel;
@@ -653,13 +662,8 @@ begin
         with d.dat.constval do begin
          if kind = dk_none then begin //nil
           case dest^.h.kind of
-           dk_pointer: begin
-            kind:= dk_pointer;
-            vaddress:= niladdress;
-            result:= true;
-           end;
            dk_method: begin
-            kind:= dk_method;
+            kind:= dest^.h.kind;
             vaddress:= niladdress;
             result:= true;
            end;
@@ -893,19 +897,6 @@ begin
     end;
    end
    else begin //different indirectlevel
-    if (destindirectlevel = 0) and (acontext^.d.kind = ck_const) and 
-           (acontext^.d.dat.constval.kind = dk_pointer) and 
-           (acontext^.d.dat.datatyp.indirectlevel = 1) and
-           (af_nil in acontext^.d.dat.constval.vaddress.flags) then begin //nil
-     case dest^.h.kind of
-      dk_method: begin
-       acontext^.d.dat.constval.kind:= dk_method;
-       d.dat.datatyp:= methoddatatype{sysdatatypes[st_method]};
-       result:= true;
-       exit;
-      end;
-     end;
-    end;
     if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
              (d.dat.datatyp.indirectlevel > 0) and 
                                           (coo_type in aoptions) then begin
@@ -1152,7 +1143,7 @@ begin
     inc(conversioncost);            //1
     if (d.kind = ck_const) and (d.dat.constval.kind = dk_none) then begin 
                         //nil const
-     if (dest^.h.kind in [dk_method,dk_pointer]) then begin
+     if (dest^.h.kind in [dk_method,dk_sub]) then begin
       result:= true;
       exit;
      end;
@@ -1193,8 +1184,10 @@ begin
   if not result then begin  //untyped pointer conversion
    result:= (dest^.h.kind = dk_pointer) and (destindilev = 1) and 
                                      (sourceindilev > 0) or 
-        (sourceindilev = 1 ) and (source^.h.kind = dk_pointer) and 
-                                                         (destindilev > 0);
+    ((sourceindilev = 1 ) and (source^.h.kind = dk_pointer) or
+        (sourcecontext^.d.kind = ck_const) and 
+                 (sourcecontext^.d.dat.constval.kind = dk_none)) //nil
+                                                   and (destindilev > 0);
    if result then begin
     conversioncost:= 1;
    end;

@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=23
    (
    kind=1
@@ -756,7 +756,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerrecadd
+     a=0,648,1,pointerrecadd
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -778,7 +778,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerecadd llvm
+     a=0,648,1,pointerecadd llvm
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -2588,7 +2588,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,664,5,dynarray
    c=12
     (
     kind=2
@@ -2637,7 +2637,7 @@ c=3
     (
     kind=2
     a=0,648,1,setlength1
-    teststate=1
+    teststate=2
     path=setlength1.mla
     comment=
     cc=${mlc}
@@ -2650,16 +2650,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
     a=0,648,1,setlength1 llvm
-    teststate=1
+    teststate=2
     path=setlength1.mla
     comment=
     cc=${mlc_llvm}
@@ -2672,9 +2672,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -2854,7 +2854,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=dynarray/
    comment=
    cc=
@@ -3019,7 +3019,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B736F130
+    ao=An unhandled exception occured at $B730F130
     ae=
     aec=123
     ie=0
@@ -4568,7 +4568,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,665,5,sub
    c=30
     (
     kind=1
@@ -4966,8 +4966,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,subvar
-    teststate=1
+    a=0,648,2,subvar
+    teststate=2
     path=subvar.mla
     comment=
     cc=${mlc}
@@ -4980,16 +4980,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,subvar llvm
-    teststate=1
+    a=0,648,2,subvar llvm
+    teststate=2
     path=subvar.mla
     comment=
     cc=${mlc_llvm}
@@ -5002,9 +5002,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -5492,7 +5492,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -6227,7 +6227,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -7325,7 +7325,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterface
+   a=0,648,1,classinterface
    teststate=1
    path=classinterface.mla
    comment=
@@ -7347,7 +7347,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterface llvm
+   a=0,648,1,classinterface llvm
    teststate=1
    path=classinterface.mla
    comment=
@@ -7369,7 +7369,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinhinterface
+   a=0,648,1,classinhinterface
    teststate=1
    path=classinhinterface.mla
    comment=
@@ -7391,7 +7391,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinhinterface llvm
+   a=0,648,1,classinhinterface llvm
    teststate=1
    path=classinhinterface.mla
    comment=
@@ -7413,7 +7413,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinhinterface1
+   a=0,648,1,classinhinterface1
    teststate=1
    path=classinhinterface1.mla
    comment=
@@ -7435,7 +7435,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinhinterface1 llvm
+   a=0,648,1,classinhinterface1 llvm
    teststate=1
    path=classinhinterface1.mla
    comment=
@@ -7457,7 +7457,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterfacevirt
+   a=0,648,1,classinterfacevirt
    teststate=1
    path=classinterfacevirt.mla
    comment=
@@ -7479,7 +7479,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterfacevirt llvm
+   a=0,648,1,classinterfacevirt llvm
    teststate=1
    path=classinterfacevirt.mla
    comment=
@@ -7545,7 +7545,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classsubcalls
+   a=0,648,1,classsubcalls
    teststate=1
    path=classsubcalls.mla
    comment=
@@ -7567,7 +7567,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classsubcalls llvm
+   a=0,648,1,classsubcalls llvm
    teststate=1
    path=classsubcalls.mla
    comment=
@@ -7989,7 +7989,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
