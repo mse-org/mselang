@@ -625,7 +625,7 @@ begin
   end;
   with acontext^ do begin
    if (acontext^.d.kind = ck_const) and 
-       ((destindirectlevel > 0) or (dest^.h.kind = dk_sub)) and 
+       ((destindirectlevel > 0) or (dest^.h.kind in nilpointerdatakinds)) and 
           (acontext^.d.dat.constval.kind = dk_none) then begin 
                   //nil -> nilpointer
     d.dat.constval.kind:= dk_pointer;
@@ -962,7 +962,8 @@ begin
     end;
    end;
    if not result then begin
-    result:= ((dest^.h.kind = dk_sub) and (destindirectlevel = 0) or
+    result:= ((dest^.h.kind in nilpointerdatakinds) and 
+                                      (destindirectlevel = 0) or
                (dest^.h.kind = dk_pointer) and (destindirectlevel = 1)) and 
                                            (source1^.h.kind = dk_pointer) or 
        (source1^.h.kind = dk_pointer) and 
@@ -1143,7 +1144,7 @@ begin
     inc(conversioncost);            //1
     if (d.kind = ck_const) and (d.dat.constval.kind = dk_none) then begin 
                         //nil const
-     if (dest^.h.kind in [dk_method,dk_sub]) then begin
+     if dest^.h.kind in [dk_method]+nilpointerdatakinds then begin
       result:= true;
       exit;
      end;
