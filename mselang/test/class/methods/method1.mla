@@ -1,0 +1,21 @@
+program method1;
+uses
+ __mla__internaltypes;
+type
+
+ meth1ty = procedure (a,b: int32) of object;
+
+var
+ meth1: meth1ty;
+ meth2: meth1ty;
+
+begin
+ with methodty(meth1) do begin
+  code:= pointer(100);
+  data:= pointer(23);
+ end;
+ meth2:= meth1;
+ meth1:= nil;
+ exitcode:= ptrint(methodty(meth2).code)+ptrint(methodty(meth2).data)+
+            ptrint(methodty(meth1).code)+ptrint(methodty(meth1).data);
+end.

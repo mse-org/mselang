@@ -155,6 +155,7 @@ var
  globconst: string;
  internalfuncs: array[internalfuncty] of int32;
  internalstrings: array[internalstringty] of int32;
+ nullmethodconst: int32;
  
 procedure outbinop(const aop: BinaryOpcodes);
 begin
@@ -373,7 +374,24 @@ var
 
 procedure startllvmcode();
 const
- constlinkage = li_internal;
+ constlinkage = li_internal;    //0 1 2 3 4 5 6 7 8 9 a b c d e f
+ zeroes: array[0..255] of byte = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //0
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //1
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //2
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //3
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //4
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //5
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //6
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //7
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //8
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //9
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //a
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //b
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //c
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //d
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //e
+                                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);//f
+                                  
 var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
@@ -414,6 +432,9 @@ begin
                       addexternalsubvalue(flags,params^,getidentname(name));
   end;
  end;
+ nullmethodconst:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,
+                     info.s.unitinfo^.llvmlists.constlist.
+                            addvalue(zeroes,2*pointersize).listid,constlinkage);
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
                                        //string consts
   with internalstringconsts[strings1] do begin
@@ -2556,8 +2577,9 @@ end;
 procedure pushnilmethodop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.constval(nullmethod),
-                               bcstream.typeval(methodtype));
+//  bcstream.emitbitcast(bcstream.constval(nullmethod),
+//                               bcstream.typeval(methodtype));
+  bcstream.emitloadop(bcstream.globval(nullmethodconst));
  end;
 end;
 
