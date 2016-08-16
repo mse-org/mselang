@@ -1549,6 +1549,11 @@ begin
  end;
 end;
 
+procedure combinemethodop();
+begin
+ notimplemented();
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -3765,6 +3770,8 @@ const
   arraytoopenarssa = 1;
   dynarraytoopenarssa = 1;
   listtoopenarssa = 3;
+  
+  combinemethodssa = -1; //todo
 
   not1ssa = 1;
   notssa = 1;

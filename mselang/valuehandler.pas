@@ -56,7 +56,8 @@ procedure handlevaluepath2();
 procedure handlevalueinherited();
 
 type
- dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter);
+ dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
+                dsf_classinstanceonstack);
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
@@ -1565,6 +1566,14 @@ begin
    end;
 
    if stf_getaddress in s.currentstatementflags then begin
+    if dsf_classinstanceonstack in aflags then begin
+    {$ifdef mse_checkinternalerror}
+     if indpo^.d.kind <> ck_fact then begin
+      internalerror(ie_handler,'20160916A');
+     end;
+    {$endif}
+     i1:= indpo^.d.dat.fact.ssaindex;
+    end;
     initdatacontext(indpo^.d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
     d.dat.datatyp.indirectlevel:= 0;
@@ -1573,6 +1582,19 @@ begin
     d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
     d.dat.ref.offset:= 0;
     d.dat.ref.c.varele:= 0;
+    if dsf_classinstanceonstack in aflags then begin //get method
+     getaddress(indpo,true);
+    {$ifdef mse_checkinternalerror}
+     if indpo^.d.kind <> ck_fact then begin
+      internalerror(ie_handler,'20160916A');
+     end;
+    {$endif}
+     with insertitem(oc_combinemethod,indpo,-1)^ do begin
+      par.ssas1:= i1;
+      par.ssas2:= indpo^.d.dat.fact.ssaindex;
+     end;
+     initfactcontext(indpo);
+    end;
    end
    else begin
     isfactcontext:= d.kind in factcontexts;  
@@ -2011,7 +2033,8 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         getvalue(adatacontext,das_none);
+         getvalue(adatacontext,das_none); //get class instance
+         include(subflags,dsf_classinstanceonstack);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin

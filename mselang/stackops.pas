@@ -3026,6 +3026,17 @@ begin
  end;
 end;
 
+procedure combinemethodop();
+var                            //classinstance,subaddress
+ po1: ppointer;
+ po2: pointer;
+begin
+ po1:= stacktop(sizeof(pointer));
+ po2:= po1^;
+ (po1-1)^:= po1^;      //swap values
+ po1:= po2;
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -5310,6 +5321,8 @@ const
   arraytoopenarssa = 0;
   dynarraytoopenarssa = 0;
   listtoopenarssa = 0;
+  
+  combinemethodssa = 0;
 
   not1ssa = 0;
   notssa = 0;

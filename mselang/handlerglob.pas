@@ -282,7 +282,7 @@ type
    dk_interface:(
     infointerface: infointerfacety;
    );
-   dk_sub:(
+   dk_sub,dk_method:(
     infosub: infosubty;
    );
    dk_enum:(
@@ -371,7 +371,7 @@ type
   next: elementoffsetty; //for subchain
   nextoverload: elementoffsetty; //-1 = none
   impl: elementoffsetty; //pfuncdataty
-  typ: elementoffsetty;  //typedataty dk_sub for stf_getaddress
+  typ: elementoffsetty;  //typedataty dk_sub or dk_method for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 
                            //by linkresolvecall()
   adlinks: linkindexty;    //calls which need to be resolved

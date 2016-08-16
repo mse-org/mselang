@@ -210,6 +210,8 @@ type
   oc_dynarraytoopenar,
   oc_listtoopenar,
   
+  oc_combinemethod,  //instance,subaddress -> methodty
+  
   oc_not1,
   oc_not,
   

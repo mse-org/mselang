@@ -1384,7 +1384,7 @@ function telementhashdatalist.dumpelements: msestringarty;
       dk_interface: begin
        result:= result+' subco:'+inttostrmse(infointerface.subcount);
       end;
-      dk_sub: begin
+      dk_sub,dk_method: begin
        result:= result+' sub:'+inttostrmse(infosub.sub);
       end;
       dk_array: begin

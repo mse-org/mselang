@@ -335,6 +335,9 @@
 //oc_listtoopenar
   (ssa: listtoopenarssa; proc: @listtoopenarop; flags: []), 
 
+//oc_combinemethod
+  (ssa: combinemethodssa; proc: @combinemethodop; flags: []), 
+
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 
 //oc_not
