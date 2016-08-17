@@ -1456,7 +1456,7 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
           const avalue: addressvaluety; const offset: dataoffsty{;
                                            const indirect: boolean});
                  //push address on stack
-//todo: optimize
+//todo: optimize, unify with pushinsertaddress()
 
  function getop(const aop: opcodety; const ssaextension: int32 = 0): popinfoty;
  begin
@@ -1471,6 +1471,7 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
 var
  po1: popinfoty;
  i1,i2: int32;
+ typo1: psubdataty;
 begin
  if af_nil in avalue.flags then begin
   with getop(oc_pushaddr)^ do begin
@@ -1485,6 +1486,21 @@ begin
     par.memop.segdataaddress.a:= avalue.segaddress;
     par.memop.segdataaddress.offset:= offset;
     par.memop.t:= getopdatatype(atype);
+    if tf_subad in atype.flags then begin
+     typo1:= ele.eledataabs(avalue.segaddress.element);
+     if co_llvm in info.o.compileoptions then begin
+      par.memop.segdataaddress.a.address:= typo1^.globid;
+     end
+     else begin
+      if typo1^.address = 0 then begin
+       linkmark(typo1^.adlinks,getsegaddress(seg_op,
+                                         @par.memop.segdataaddress.a.address));
+      end
+      else begin
+       par.memop.segdataaddress.a.address:= typo1^.address;
+      end;
+     end;
+    end;
    end;
   end
   else begin

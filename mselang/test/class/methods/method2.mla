@@ -1,0 +1,41 @@
+program method2;
+uses
+ __mla__internaltypes;
+type
+
+ meth1ty = procedure (a,b: int32) of object;
+
+ tcla = class
+  public
+   constructor create();
+   destructor destroy();
+   procedure test(a,b: int32);
+ end;
+
+constructor tcla.create();
+begin
+end;
+
+destructor tcla.destroy();
+begin
+end;
+
+procedure tcla.test(a,b: int32);
+begin
+ exitcode:= a+b;
+end;
+
+var
+ meth1: meth1ty;
+ c1: tcla;
+begin
+ c1:= tcla.create();
+ meth1:= @c1.test;
+
+ with methodty(meth1) do begin
+  if (code = @tcla.test) and (data = c1) then begin
+   exitcode:= 123;
+  end;
+ end;
+ c1.destroy();
+end.
