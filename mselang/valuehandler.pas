@@ -1478,6 +1478,8 @@ var
  stacksize,resultsize,tempsize: int32;
  isfactcontext: boolean;
  opoffset1: int32;
+ methodtype1: ptypedataty;
+ 
 label
  paramloopend;
 begin
@@ -1567,6 +1569,7 @@ begin
 
    if stf_getaddress in s.currentstatementflags then begin
     if dsf_classinstanceonstack in aflags then begin
+                                     //get method
     {$ifdef mse_checkinternalerror}
      if indpo^.d.kind <> ck_fact then begin
       internalerror(ie_handler,'20160916A');
@@ -1583,17 +1586,25 @@ begin
     d.dat.ref.offset:= 0;
     d.dat.ref.c.varele:= 0;
     if dsf_classinstanceonstack in aflags then begin //get method
+     d.dat.ref.c.address.segaddress.address:= asub^.globid;
      getaddress(indpo,true);
     {$ifdef mse_checkinternalerror}
      if indpo^.d.kind <> ck_fact then begin
       internalerror(ie_handler,'20160916A');
      end;
     {$endif}
+     i2:= indpo^.d.dat.fact.ssaindex;
      with insertitem(oc_combinemethod,indpo,-1)^ do begin
       par.ssas1:= i1;
-      par.ssas2:= indpo^.d.dat.fact.ssaindex;
+      par.ssas2:= i2;
      end;
-     initfactcontext(indpo);
+     methodtype1:= ele.addelementdata(getident(),ek_type,nonevisi); //anonymous
+     inittypedatabyte(methodtype1^,dk_method,0,2*pointersize);
+     methodtype1^.infosub.sub:= ele.eledatarel(asub);
+     d.dat.datatyp:= methoddatatype; //sub type undefined
+     d.dat.datatyp.typedata:= ele.eledatarel(methodtype1);
+     dec(d.dat.indirection); //restore getaddress
+     dec(d.dat.datatyp.indirectlevel); //restore getaddress
     end;
    end
    else begin

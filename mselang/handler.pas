@@ -3056,8 +3056,10 @@ begin
       end;
      end;
      po1^.par.memop.t:= getopdatatype(destvar);
-     po1^.par.ssas1:= ssa1;                //source
-     po1^.par.ssas2:= dest^.d.dat.fact.ssaindex; //dest
+     po1^.par.ssas1:= ssa1;                       //source
+     if indi then begin
+      po1^.par.ssas2:= dest^.d.dat.fact.ssaindex; //dest
+     end;
     end;
    end;
  (*

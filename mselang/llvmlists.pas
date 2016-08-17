@@ -196,6 +196,7 @@ type
  ttypehashdatalist = class(tbufferhashdatalist)
   protected
    fclassdef: int32;
+//   fmethod: int32;
    fintfitem: int32;
    flandingpad: int32;
    fmetadata: int32;
@@ -223,6 +224,7 @@ type
    function first: ptypelistdataty;
    function next: ptypelistdataty;
    property classdef: int32 read fclassdef;
+//   property method: int32 read fmethod;
    property intfitem: int32 read fintfitem;
    property landingpad: int32 read flandingpad;
    property metadata: int32 read fmetadata;
@@ -1326,7 +1328,7 @@ begin
    addi8(int8(c1));                   //0..127,-128..-1
   end;
   for i1:= 0 to maxpointeroffset do begin
-   addi32(i1*pointersize);
+   addi32(i1*globtypes.pointersize);
   end;
   addnullvalue(ord(das_1));         //nco_i1
   addnullvalue(ord(das_8));         //nco_i8

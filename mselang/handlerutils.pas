@@ -2945,6 +2945,7 @@ begin
  end;
 {$endif}
  inittypedatabyte(po2^,dk_method,0,2*pointersize);
+ po2^.infosub.sub:= 0; //undefined
  with methoddatatype do begin
   flags:= [];
   indirectlevel:= 0;

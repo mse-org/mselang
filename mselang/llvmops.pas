@@ -1551,7 +1551,18 @@ end;
 
 procedure combinemethodop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(methodtype)); //1 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+                                                      //1 ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas2),bcstream.relval(0));
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(ord(poc_1)));  
+                                                      //2 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+                                                      //1 ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+  bcstream.emitloadop(bcstream.relval(4));            //1 ssa
+ end;
 end;
 
 procedure not1op();
@@ -3771,7 +3782,7 @@ const
   dynarraytoopenarssa = 1;
   listtoopenarssa = 3;
   
-  combinemethodssa = -1; //todo
+  combinemethodssa = 6;
 
   not1ssa = 1;
   notssa = 1;

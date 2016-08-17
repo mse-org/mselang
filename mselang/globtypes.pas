@@ -417,10 +417,16 @@ type
  oneconstty = (oco_none = 0,
                oco_i1 = ord(mco_i1), oco_i8=1,
                               oco_i16=ord(high(maxconstty))+1,oco_i32, oco_i64);
-  llvmvaluety = record
-   typeid: int32;        //order fix because of metadata bcwriter
-   listid: int32;        //
-  end;
+ pointeroffsetconstty = 
+       (poc_0=256,poc_1,poc_2,poc_3,poc_4,poc_5,poc_6,poc_7,poc_8,poc_9,
+        poc_10,poc_11,poc_12,poc_13,poc_14,poc_15,poc_16,poc_17,poc_18,poc_19,
+        poc_20,poc_21,poc_22,poc_23,poc_24,poc_25,poc_26,poc_27,poc_28,poc_29,
+        poc_30,poc_31,poc_32);
+
+ llvmvaluety = record
+  typeid: int32;        //order fix because of metadata bcwriter
+  listid: int32;        //
+ end;
 
 const
  bittypemax = ord(lastdatakind);

@@ -3028,13 +3028,14 @@ end;
 
 procedure combinemethodop();
 var                            //classinstance,subaddress
- po1: ppointer;
- po2: pointer;
+ poa,pob: ppointer;
+ po1: pointer;
 begin
- po1:= stacktop(sizeof(pointer));
- po2:= po1^;
- (po1-1)^:= po1^;      //swap values
- po1:= po2;
+ poa:= stacktop(sizeof(pointer));
+ pob:= poa-1;
+ po1:= poa^;
+ poa^:= pob^;      //swap values
+ pob^:= po1;
 end;
 
 procedure not1op();
