@@ -693,7 +693,7 @@ begin
 {$endif}
  with info do begin
   with contextstack[s.stackindex-1] do begin
-   d.subdef.flags:= d.subdef.flags + [sf_ofobject];
+   d.subdef.flags:= d.subdef.flags + [sf_ofobject,sf_method];
   end;
  end;
 end;
@@ -1031,7 +1031,7 @@ begin
   defaultparamcount1:= 0;
   isclass:= s.currentstatementflags * [stf_classdef,stf_classimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
-  ismethod:= isclass or isinterface;
+  ismethod:= isclass or isinterface or (sf_ofobject in subflags);
   if sf_function in subflags then begin
    with contextstack[s.stacktop].d.typ do begin
     resulttype1.typeele:= typedata;

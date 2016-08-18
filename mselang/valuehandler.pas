@@ -1774,7 +1774,8 @@ begin
 
     if not hasresult then begin
      d.kind:= ck_subcall;
-     if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
+     if (asub^.flags * [sf_method,sf_ofobject] = [sf_method]) and 
+                                     (dsf_ownedmethod in aflags) then begin
                 //owned method
      {$ifdef mse_checkinternalerror}
       if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
@@ -1854,6 +1855,10 @@ begin
        else begin
         po1^.par.callinfo.indi.calladdr:= -asub^.paramsize -
                                                    resultsize - pointersize;
+        if sf_ofobject in asub^.flags then begin
+         dec(po1^.par.callinfo.indi.calladdr,pointersize); 
+                     //method pointer is [code,data]
+        end;
        end;
       end
       else begin
@@ -2386,9 +2391,12 @@ begin
        if getvalue(poind,das_none) then begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
         if (d.dat.datatyp.indirectlevel = 0) and 
-                              (po3^.h.kind = dk_sub) then begin
-         dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,
-                                                subflags+[dsf_indirect]);
+                              (po3^.h.kind in [dk_sub,dk_method]) then begin
+         include(subflags,dsf_indirect);
+         if po3^.h.kind = dk_method then begin
+          include(subflags,dsf_classinstanceonstack);
+         end;
+         dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,subflags);
         end;
        end;     
       end;
