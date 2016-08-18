@@ -1613,10 +1613,26 @@ begin
     end;
    end
    else begin
-    isfactcontext:= d.kind in factcontexts;  
+    isfactcontext:= d.kind in factcontexts;
+    instancessa:= d.dat.fact.ssaindex; //for sf_method
     if dsf_indirect in aflags then begin
-     callssa:= d.dat.fact.ssaindex;
+     if co_llvm in o.compileoptions then begin
+      if sf_ofobject in asub^.flags then begin //method pointer call
+       with insertitem(oc_getmethodcode,indpo,-1)^ do begin
+        par.ssas1:= instancessa; //[code,data]
+       end;
+       callssa:= d.dat.fact.ssaindex;
+       with insertitem(oc_getmethoddata,indpo,-1)^ do begin
+        par.ssas1:= instancessa; //[code,data]
+       end;
+       instancessa:= d.dat.fact.ssaindex;
+      end
+      else begin
+       callssa:= d.dat.fact.ssaindex;
+      end;
+     end;
     end;
+
     subparams1:= @asub^.paramsrel;
     totparamco:= paramco;
     if [sf_function] * asub^.flags <> [] then begin
@@ -1631,7 +1647,6 @@ begin
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
     end;
-    instancessa:= d.dat.fact.ssaindex; //for sf_method
     hasresult:= (sf_function in asub^.flags) or 
           not isfactcontext and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);

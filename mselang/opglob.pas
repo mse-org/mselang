@@ -211,6 +211,8 @@ type
   oc_listtoopenar,
   
   oc_combinemethod,  //instance,subaddress -> methodty
+  oc_getmethodcode,
+  oc_getmethoddata,
   
   oc_not1,
   oc_not,

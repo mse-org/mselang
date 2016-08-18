@@ -1565,6 +1565,30 @@ begin
  end;
 end;
 
+procedure getmethodcodeop();
+begin
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(methodtype)); //1 ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+                                                      //1 ssa
+  bcstream.emitloadop(bcstream.relval(0));            //1 ssa
+ end;
+end;
+
+procedure getmethoddataop();
+begin
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(methodtype)); //1 ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(pointersize));
+                                                      //2 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+                                                      //1 ssa
+  bcstream.emitloadop(bcstream.relval(0));            //1 ssa
+ end;
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -3783,6 +3807,8 @@ const
   listtoopenarssa = 3;
   
   combinemethodssa = 6;
+  getmethodcodessa = 3;
+  getmethoddatassa = 5;
 
   not1ssa = 1;
   notssa = 1;

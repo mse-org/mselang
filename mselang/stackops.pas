@@ -3038,6 +3038,16 @@ begin
  pob^:= po1;
 end;
 
+procedure getmethodcodeop();
+begin
+ notimplemented();
+end;
+
+procedure getmethoddataop();
+begin
+ notimplemented();
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -5324,6 +5334,8 @@ const
   listtoopenarssa = 0;
   
   combinemethodssa = 0;
+  getmethodcodessa = 0;
+  getmethoddatassa = 0;
 
   not1ssa = 0;
   notssa = 0;

@@ -2738,6 +2738,10 @@ begin
  end;
 end;
 
+const
+ name_code: lstringty = (po: 'code'; len: length('code'));
+ name_data: lstringty = (po: 'data'; len: length('data'));
+
 function tmetadatalist.addtype(atype: elementoffsetty;
                       aindirection: int32;
                                 const subrange: boolean = false): metavaluety;
@@ -2931,6 +2935,18 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
 //      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
+     end;
+     dk_method: begin
+      initmetabuffer();
+      addbufferitem(adddiderivedtype(didk_member,file1,context1,name_data,0,
+           pointerbitsize,0,pointerbitsize,0,pointertyp));
+      addbufferitem(adddiderivedtype(didk_member,file1,context1,name_code,0,
+           pointerbitsize,0,0,0,pointertyp));
+
+      m2:= addbufferreverse();
+      m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
+                                          dummymeta,2*pointerbitsize,0,0,0,m2);
+                                        //todo: use correct alignment
      end;
      dk_record,dk_class: begin
       initmetabuffer();

@@ -1,0 +1,37 @@
+program method3;
+type
+
+ meth1ty = procedure (a,b: int32) of object;
+
+ tcla = class
+  private
+   f: int32;
+  public
+   constructor create();
+   destructor destroy();
+   procedure test(a,b: int32);
+ end;
+
+constructor tcla.create();
+begin
+ f:= 3;
+end;
+
+destructor tcla.destroy();
+begin
+end;
+
+procedure tcla.test(a,b: int32);
+begin
+ exitcode:= a+b+f;
+end;
+
+var
+ meth1: meth1ty;
+ c1: tcla;
+begin
+ c1:= tcla.create();
+ meth1:= @c1.test;
+ meth1(100,20);
+ c1.destroy();
+end.
