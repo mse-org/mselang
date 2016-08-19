@@ -1549,6 +1549,7 @@ begin
  end;
 end;
 
+//todo: use struct type
 procedure combinemethodop();
 begin
  with pc^.par do begin

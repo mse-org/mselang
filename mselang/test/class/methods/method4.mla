@@ -1,0 +1,47 @@
+program method4;
+type
+
+ meth1ty = function (a,b: int32): int32 of object;
+
+ tcla = class
+  private
+   f: int32;
+  public
+   constructor create();
+   destructor destroy();
+   function test(a,b: int32): int32 virtual;
+ end;
+
+ tcla2 = class(tcla)
+  public
+   function test(a,b: int32): int32 override;
+ end;
+
+constructor tcla.create();
+begin
+ f:= 3;
+end;
+
+destructor tcla.destroy();
+begin
+end;
+
+function tcla.test(a,b: int32): int32;
+begin
+ result:= a+b+f;
+end;
+
+function tcla2.test(a,b: int32): int32;
+begin
+ result:= 2 * (a+b+f);//inherited test(a,b);
+end;
+
+var
+ meth1: meth1ty;
+ c1: tcla;
+begin
+ c1:= tcla2.create();
+ meth1:= @c1.test;
+ exitcode:= meth1(100,20);
+ c1.destroy();
+end.
