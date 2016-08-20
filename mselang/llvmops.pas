@@ -3501,6 +3501,22 @@ begin
  end;
 end;
 
+procedure getvirtsubadop();
+begin
+ with pc^.par do begin 
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));     //1 ssa **i8
+  bcstream.emitloadop(bcstream.relval(0));                        //1 ssa *i8
+               //class def
+  bcstream.emitgetelementptr(bcstream.relval(0),               
+                     bcstream.constval(getvirtsubad.virtoffset)); //2 ssa *i8
+               //virtual table item address
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+                                                                  //1 ssa **i8
+  bcstream.emitloadop(bcstream.relval(0));                        //1 ssa *i8
+               //sub address
+ end;
+end;
+
 procedure decloop32op();
 begin
  notimplemented();
@@ -4137,6 +4153,8 @@ const
 
   initclassssa = 3;
   destroyclassssa = 0;
+  
+  getvirtsubadssa = 6;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;

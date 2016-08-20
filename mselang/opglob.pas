@@ -213,6 +213,7 @@ type
   oc_combinemethod,  //instance,subaddress -> methodty
   oc_getmethodcode,
   oc_getmethoddata,
+  oc_getvirtsubad,   //read from vitualtable
   
   oc_not1,
   oc_not,
@@ -661,6 +662,10 @@ type
   selfinstance: dataoffsty; //stackoffset
  end;
 
+ getvirtsubadinfoty = record
+  virtoffset: dataoffsty;
+ end;
+ 
  segdataaddressty = record
   a: segaddressty;
   offset: dataoffsty;
@@ -1218,6 +1223,9 @@ type
    );
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
+   );
+   oc_getvirtsubad:(
+    getvirtsubad: getvirtsubadinfoty;
    );
    oc_lineinfo:(
     lineinfo: lineinfoty;

@@ -341,6 +341,8 @@
   (ssa: getmethodcodessa; proc: @getmethodcodeop; flags: []), 
 //oc_getmethoddata
   (ssa: getmethoddatassa; proc: @getmethoddataop; flags: []), 
+//oc_getvirtsubad
+  (ssa: getvirtsubadssa; proc: @getvirtsubadop; flags: []), 
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 

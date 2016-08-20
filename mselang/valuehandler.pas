@@ -1592,7 +1592,22 @@ begin
     d.dat.ref.c.varele:= 0;
     if dsf_classinstanceonstack in aflags then begin //get method
      d.dat.ref.c.address.segaddress.address:= asub^.globid;
-     getaddress(indpo,true);
+     if asub^.flags * [sf_virtual,sf_override] <> [] then begin
+      with insertitem(oc_getvirtsubad,indpo,-1)^ do begin
+       par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+                                                         virtualtableoffset;
+       if co_llvm in info.o.compileoptions then begin
+        par.ssas1:= i1; //class
+        par.getvirtsubad.virtoffset:= 
+              info.s.unitinfo^.llvmlists.constlist.
+                         adddataoffs(par.getvirtsubad.virtoffset).listid;
+       end;
+      end;
+      initfactcontext(indpo);
+     end
+     else begin
+      getaddress(indpo,true);
+     end;
     {$ifdef mse_checkinternalerror}
      if indpo^.d.kind <> ck_fact then begin
       internalerror(ie_handler,'20160916A');

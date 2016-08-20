@@ -4333,6 +4333,17 @@ begin
  end;
 end;
 
+procedure getvirtsubadop();
+var
+ po1: pppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stacktop(sizeof(pointer));
+  ppointer(stackpush(sizeof(pointer)))^:= 
+                   startpo + pptruint((po1^^ + getvirtsubad.virtoffset))^;
+ end;
+end;
+
 procedure decloop32op();
 var
  po1: pinteger;
@@ -5663,6 +5674,8 @@ const
 
   initclassssa = 0;
   destroyclassssa = 0;
+  
+  getvirtsubadssa = 0;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;
