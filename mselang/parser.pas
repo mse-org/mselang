@@ -833,7 +833,16 @@ handlelab:
     if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
      goto parseend;
     end;
-    s.pc:= contextstack[s.stackindex].context;
+    while true do begin                        //skip deleted
+     s.pc:= contextstack[s.stackindex].context;
+     if s.pc <> nil then begin
+      break;
+     end;
+     dec(s.stackindex);
+     if s.stackindex < 1 then begin
+      internalerror1(ie_parser,'20160821B');
+     end;
+    end;
     if popped then begin
      if (s.pc^.handleexit <> nil) and (s.pc^.next <> nil) and 
        not (pc1^.continue or (bf_continue in 
