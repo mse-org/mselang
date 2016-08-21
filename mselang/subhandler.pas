@@ -1166,7 +1166,12 @@ begin
     vf.typ:= currentcontainer;
    end;
   end;
-  curstackindex:= s.stackindex + 3; //->paramsdef
+//  curstackindex:= s.stackindex + 3; //->paramsdef
+  curstackindex:= s.stackindex;
+  while (curstackindex < s.stacktop) and 
+         (contextstack[curstackindex].d.kind <> ck_paramdef) do begin
+   inc(curstackindex);
+  end;
   doparams(false);
  {
   for curparamindex:= 0 to lastparamindex do begin
