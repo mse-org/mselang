@@ -57,7 +57,7 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_classinstanceonstack);
+                dsf_instanceonstack);
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
@@ -1484,6 +1484,7 @@ var
  isfactcontext: boolean;
  opoffset1: int32;
  methodtype1: ptypedataty;
+ instancetype1: ptypedataty;
  
 label
  paramloopend;
@@ -1573,7 +1574,7 @@ begin
    end;
 
    if stf_getaddress in s.currentstatementflags then begin
-    if dsf_classinstanceonstack in aflags then begin
+    if dsf_instanceonstack in aflags then begin
                                      //get method
     {$ifdef mse_checkinternalerror}
      if indpo^.d.kind <> ck_fact then begin
@@ -1581,6 +1582,7 @@ begin
      end;
     {$endif}
      i1:= indpo^.d.dat.fact.ssaindex;
+     instancetype1:= ele.eledataabs(indpo^.d.dat.datatyp.typedata);
     end;
     initdatacontext(indpo^.d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
@@ -1590,33 +1592,53 @@ begin
     d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
     d.dat.ref.offset:= 0;
     d.dat.ref.c.varele:= 0;
-    if dsf_classinstanceonstack in aflags then begin //get method
-     d.dat.ref.c.address.segaddress.address:= asub^.globid;
-     if asub^.flags * [sf_virtual,sf_override] <> [] then begin
-      with insertitem(oc_getvirtsubad,indpo,-1)^ do begin
-       par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
-                                                         virtualtableoffset;
-       if co_llvm in info.o.compileoptions then begin
-        par.ssas1:= i1; //class
-        par.getvirtsubad.virtoffset:= 
-              info.s.unitinfo^.llvmlists.constlist.
-                         adddataoffs(par.getvirtsubad.virtoffset).listid;
+    if dsf_instanceonstack in aflags then begin //get method
+     case instancetype1^.h.kind of
+      dk_interface: begin
+       with insertitem(oc_getintfmethod,indpo,-1)^ do begin
+        par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
+                                                        sizeof(intfdefheaderty);
+        if co_llvm in info.o.compileoptions then begin
+         par.ssas1:= i1; //class
+         par.getvirtsubad.virtoffset:= 
+               info.s.unitinfo^.llvmlists.constlist.
+                          adddataoffs(par.getvirtsubad.virtoffset).listid;
+        end;
+       end;
+       initfactcontext(indpo);
+      end;
+      dk_class: begin
+       d.dat.ref.c.address.segaddress.address:= asub^.globid;
+       if asub^.flags * [sf_virtual,sf_override] <> [] then begin
+        with insertitem(oc_getvirtsubad,indpo,-1)^ do begin
+         par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+                                                           virtualtableoffset;
+         if co_llvm in info.o.compileoptions then begin
+          par.ssas1:= i1; //class
+          par.getvirtsubad.virtoffset:= 
+                info.s.unitinfo^.llvmlists.constlist.
+                           adddataoffs(par.getvirtsubad.virtoffset).listid;
+         end;
+        end;
+        initfactcontext(indpo);
+       end
+       else begin
+        getaddress(indpo,true);
+       end;
+      {$ifdef mse_checkinternalerror}
+       if indpo^.d.kind <> ck_fact then begin
+        internalerror(ie_handler,'20160916A');
+       end;
+      {$endif}
+       i2:= indpo^.d.dat.fact.ssaindex;
+       with insertitem(oc_combinemethod,indpo,-1)^ do begin
+        par.ssas1:= i1;
+        par.ssas2:= i2;
        end;
       end;
-      initfactcontext(indpo);
-     end
-     else begin
-      getaddress(indpo,true);
-     end;
-    {$ifdef mse_checkinternalerror}
-     if indpo^.d.kind <> ck_fact then begin
-      internalerror(ie_handler,'20160916A');
-     end;
-    {$endif}
-     i2:= indpo^.d.dat.fact.ssaindex;
-     with insertitem(oc_combinemethod,indpo,-1)^ do begin
-      par.ssas1:= i1;
-      par.ssas2:= i2;
+      else begin
+       internalerror1(ie_handler,'20160821C');
+      end;
      end;
      methodtype1:= ele.addelementdata(getident(),ek_type,nonevisi); //anonymous
      inittypedatabyte(methodtype1^,dk_method,0,2*pointersize);
@@ -2085,7 +2107,7 @@ var
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
          getvalue(adatacontext,das_none); //get class instance
-         include(subflags,dsf_classinstanceonstack);
+         include(subflags,dsf_instanceonstack);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
@@ -2424,7 +2446,7 @@ begin
                               (po3^.h.kind in [dk_sub,dk_method]) then begin
          include(subflags,dsf_indirect);
          if po3^.h.kind = dk_method then begin
-          include(subflags,dsf_classinstanceonstack);
+          include(subflags,dsf_instanceonstack);
          end;
          dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,subflags);
         end;

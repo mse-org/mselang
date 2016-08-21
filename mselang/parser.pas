@@ -833,7 +833,7 @@ handlelab:
     if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
      goto parseend;
     end;
-    while true do begin                        //skip deleted
+    while true do begin                        //skip deleted contexts
      s.pc:= contextstack[s.stackindex].context;
      if s.pc <> nil then begin
       break;

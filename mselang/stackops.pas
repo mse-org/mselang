@@ -4343,6 +4343,23 @@ begin
                    startpo + pptruint((po1^^ + getvirtsubad.virtoffset))^;
  end;
 end;
+var testvar: int32;
+procedure getintfmethodop();
+var
+ po1: pppointer;
+ po2: pintfdefinfoty;
+ po3: pointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stacktop(pointersize);         //interface
+  po3:= po1^;                          //interface pointer in instance
+  po2:= ppointer(po3)^;                //interface definition
+  inc(po3,po2^.header.instanceoffset); //instance
+  ppointer(stackpush(pointersize))^:= po3;                         //data
+  ppointer(po1)^:= startpo + pintfitemty(pointer(po2) + 
+                                  getvirtsubad.virtoffset)^.subad; //code
+ end;
+end;
 
 procedure decloop32op();
 var
@@ -5676,6 +5693,7 @@ const
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;
+  getintfmethodssa = 0;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;

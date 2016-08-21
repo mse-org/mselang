@@ -214,6 +214,7 @@ type
   oc_getmethodcode,
   oc_getmethoddata,
   oc_getvirtsubad,   //read from vitualtable
+  oc_getintfmethod,
   
   oc_not1,
   oc_not,
@@ -1224,7 +1225,7 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
-   oc_getvirtsubad:(
+   oc_getvirtsubad,oc_getintfmethod:(
     getvirtsubad: getvirtsubadinfoty;
    );
    oc_lineinfo:(

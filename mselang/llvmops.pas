@@ -3517,6 +3517,11 @@ begin
  end;
 end;
 
+procedure getintfmethodop();
+begin
+ notimplemented();
+end;
+
 procedure decloop32op();
 begin
  notimplemented();
@@ -4155,6 +4160,7 @@ const
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;
+  getintfmethodssa = -1;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;
