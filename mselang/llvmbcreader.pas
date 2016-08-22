@@ -2117,7 +2117,7 @@ begin
       FUNC_CODE_INST_STORE: begin  //  2  3     4      5
        checkdatalen(rec1,5);       //[ptr,val, align, vol]
        i1:= pointerbasetypeid(rec1[2]); //dest
-       i2:= typeid(rec1[3]); //source
+       i2:= pointertypeid(rec1[3]); //source
        str1:= functioncodesnames[functioncodes(rec1[1])]+
                ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
                                                  ftypelist.typename(i2);
