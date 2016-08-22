@@ -3519,7 +3519,41 @@ end;
 
 procedure getintfmethodop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                   bcstream.ptypeval(pointertype));                        //0
+                                 //1 ssa **i8 interface in instance
+  bcstream.emitloadop(bcstream.relval(0));                                 //1
+                                 //1 ssa *i8  interface definition
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(ord(das_32))); //2
+                                 //1 ssa *i32 pointer to instanceoffset
+  bcstream.emitloadop(bcstream.relval(0));                                 //3
+                                 //1 ssa i32 instanceoffset
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.relval(0));   //4
+                                 //2 ssa *i8 instance
+  bcstream.emitgetelementptr(bcstream.relval(4),                           //6
+                        bcstream.constval(getvirtsubad.virtoffset));
+                                 //2 ssa *i8 pointer to sub address
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype)); //8
+                                 //1 ssa **i8 pointer to sub address
+  bcstream.emitloadop(bcstream.relval(0));                                 //9
+                                 //1 ssa *i8 sub address
+  bcstream.emitalloca(bcstream.ptypeval(methodtype));                      //10
+                                 //1 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype)); //11
+                                 //1 ssa **i8
+  bcstream.emitstoreop(bcstream.relval(2),bcstream.relval(0));             //12
+                                 //           sub address
+  bcstream.emitgetelementptr(bcstream.relval(1),
+                                       bcstream.constval(ord(poc_1)));     //12
+                                 //2 ssa *i8 pointer to data
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype)); //14
+                                 //1 ssa **i8 pointer to data
+  bcstream.emitstoreop(bcstream.relval(9),bcstream.relval(0)); //instance  //15
+  bcstream.emitloadop(bcstream.relval(4));
+                                 //1 ssa methodpointer
+                                                                           //16
+ end;
 end;
 
 procedure decloop32op();
@@ -4160,7 +4194,7 @@ const
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;
-  getintfmethodssa = -1;
+  getintfmethodssa = 16;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;

@@ -4343,7 +4343,7 @@ begin
                    startpo + pptruint((po1^^ + getvirtsubad.virtoffset))^;
  end;
 end;
-var testvar: int32;
+
 procedure getintfmethodop();
 var
  po1: pppointer;
