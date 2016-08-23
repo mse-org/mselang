@@ -1,0 +1,43 @@
+program inheritedfunc;
+
+type
+ tcla = class
+  private
+   f: int32;
+  public
+   constructor create();
+   destructor destroy();
+   function test1(a,b: int32): int32; virtual;
+ end;
+
+ tcla2 = class(tcla)
+  public
+   function test1(a,b: int32): int32; override;
+ end;
+
+constructor tcla.create();
+begin
+ f:= 3;
+end;
+
+destructor tcla.destroy();
+begin
+end;
+
+function tcla.test1(a,b: int32): int32;
+begin
+ result:= f+a+b;
+end;
+
+function tcla2.test1(a,b: int32): int32;
+begin
+ result:= inherited test1(a,b)-3;
+end;
+
+var
+ c1: tcla;
+begin
+ c1:= tcla2.create();
+ exitcode:= c1.test1(100,23);
+ c1.destroy();
+end.
