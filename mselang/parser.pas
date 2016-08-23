@@ -546,6 +546,7 @@ begin
   currentsubchain:= 0;
   currentsubcount:= 0;
   s.currentstatementflags:= [];
+  s.currentopcodemarkchain:= 0;
   s.globlinkage:= li_internal;
 //  inc(unitlevel);
   
@@ -925,6 +926,7 @@ parseend:
    writeinfoline('after2');
   end;
 {$endif}
+  linkresolve(s.currentopcodemarkchain); //delete chain
 {
   with s.unitinfo^,externallinklist do begin
    ad1:= externalchain;

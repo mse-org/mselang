@@ -131,7 +131,8 @@ procedure dumpops();
 {$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils,
+ unithandler;
  
 type
  opadsty = array[addressbasety] of opcodety;
@@ -922,6 +923,7 @@ begin
    else begin
     ad1:= contextstack[int1+1].opmark.address
    end;
+   linkinsertop(s.currentopcodemarkchain,ad1); //shift pending relocations
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    result^.op.op:= aopcode;

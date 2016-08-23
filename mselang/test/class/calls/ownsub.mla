@@ -1,0 +1,53 @@
+program ownsub;
+
+type
+ tcla = class
+  private
+   f: int32;
+  public
+   constructor create();
+   destructor destroy();
+   function test1(a,b: int32): int32;
+   procedure test2(a,b: int32);
+   function test0(a,b: int32): int32;
+   procedure test00(a,b: int32);
+ end;
+
+constructor tcla.create();
+begin
+ f:= 3;
+end;
+
+destructor tcla.destroy();
+begin
+end;
+
+function tcla.test1(a,b: int32): int32;
+begin
+ result:= test0(a,b);
+end;
+
+procedure tcla.test2(a,b: int32);
+begin
+ test00(a,b);
+end;
+
+function tcla.test0(a,b: int32): int32;
+begin
+ result:= a+b+f;
+end;
+
+procedure tcla.test00(a,b: int32);
+begin
+ exitcode:= a+b+f;
+end;
+
+var
+ c1: tcla;
+begin
+ c1:= tcla.create();
+ if c1.test1(100,20) = 123 then begin
+  c1.test2(100,20);
+ end;
+ c1.destroy();
+end.

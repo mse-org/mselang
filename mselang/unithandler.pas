@@ -40,6 +40,12 @@ type
  end;
  pphilistty = ^philistty;
 
+ oprelocitemty = record
+  opad: opaddressty;
+  link: linkindexty;
+ end;
+ poprelocitemty = ^oprelocitemty;
+ 
  castitemty = record
   typedata: elementoffsetty;
   olddatatyp: typeinfoty;
@@ -115,6 +121,8 @@ procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
 procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
                                                 const ssaindex: int32);
+procedure linkresolve(var alinks: linkindexty); //delete chain
+
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
 procedure linkresolvegoto(const alinks: linkindexty; 
@@ -132,6 +140,7 @@ function linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty): boolean;
                                                           //true if ok
 function linkgetcasttype(const alinks: linkindexty): elementoffsetty;
+procedure linkinsertop(const alinks: linkindexty; const aaddress: opaddressty);
 
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
@@ -1018,6 +1027,7 @@ type
    1:(dest: segaddressty);
    2:(phi: phiitemty);
    3:(cast: castitemty);
+   4:(opreloc: oprelocitemty);
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
@@ -1074,7 +1084,58 @@ var
 begin
  po1:= link(alinks);
  po1^.dest:= aaddress;
- inc(po1^.dest.address,offset); 
+ inc(po1^.dest.address,offset);
+ if aaddress.segment = seg_op then begin
+  with link(info.s.currentopcodemarkchain)^ do begin
+   opreloc.opad:= po1^.dest.address;
+   opreloc.link:= alinks;
+  end;
+ end;
+end;
+
+procedure linkinsertop(const alinks: linkindexty; const aaddress: opaddressty);
+var
+ li1: linkindexty;
+ o1: opaddressty;
+ ad1: opaddressty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  ad1:= aaddress * sizeof(opinfoty);
+  while true do begin
+   with links[li1] do begin
+    if opreloc.opad >= ad1 then begin
+     inc(opreloc.opad,sizeof(opinfoty));
+     inc(links[opreloc.link].dest.address,sizeof(opinfoty));
+    end;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+ end;
+end;
+
+
+procedure linkresolve(var alinks: linkindexty); //delete chain
+var
+ li1: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+  alinks:= 0;
+ end;
 end;
 
 procedure linkresolveopad(const alinks: linkindexty;
@@ -1290,6 +1351,7 @@ begin
 {$endif}
  result:= links[alinks].cast.typedata;
 end;
+
 {
 function addtypedef(const aname: identty; const avislevel: visikindsty;
                                         out aelementdata: pointer): boolean;

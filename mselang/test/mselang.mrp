@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=461
- y=480
+ x=463
+ y=476
  cx=879
  cy=396
 macros.sta=9
@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
@@ -3019,7 +3019,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B733C130
+    ao=An unhandled exception occured at $B734B130
     ae=
     aec=123
     ie=0
@@ -6245,8 +6245,8 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
-  c=25
+  a=0,665,4,class
+  c=26
    (
    kind=1
    a=0,664,4,properties
@@ -6929,7 +6929,71 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,methods
+   a=0,665,4,calls
+   c=2
+    (
+    kind=2
+    a=0,648,1,ownsub
+    teststate=1
+    path=ownsub.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,ownsub llvm
+    teststate=1
+    path=ownsub.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=calls/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,664,4,methods
    c=14
     (
     kind=2
@@ -7197,8 +7261,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,interfacemethod
-    teststate=2
+    a=0,648,1,interfacemethod
+    teststate=1
     path=interfacemethod.mla
     comment=
     cc=${mlc}
@@ -7211,7 +7275,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
     aec=123
@@ -7219,8 +7283,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,interfacemethod llvm
-    teststate=2
+    a=0,648,1,interfacemethod llvm
+    teststate=1
     path=interfacemethod.mla
     comment=
     cc=${mlc_llvm}
@@ -7233,13 +7297,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=methods/
    comment=
    cc=
@@ -7979,7 +8043,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -8381,7 +8445,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -8494,28 +8558,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=594
+propcolwidthref=609
 width0=50
 sortdescend0=0
-width1=326
+width1=334
 sortdescend1=0
-width2=146
+width2=150
 sortdescend2=0
-width3=154
+width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=50
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=39
  0 0
  0 0
  0 0

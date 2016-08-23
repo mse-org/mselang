@@ -675,6 +675,7 @@ type
   stoponerror: boolean;
   interfaceonly: boolean;
   currentstatementflags: statementflagsty;
+  currentopcodemarkchain: linkindexty;
   trystack: listadty;
   trystacklevel: int32;
   debugoptions: debugoptionsty;

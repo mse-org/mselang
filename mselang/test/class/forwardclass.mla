@@ -1,0 +1,30 @@
+program forwardclass;
+type
+ poty = ^tt;
+ tc = class;
+ tc = class
+  f1: int32;
+  constructor create();
+  destructor destroy();
+ end;
+ tc1 = class(tc)
+ end;
+ tt = int32; 
+
+constructor tc.create();
+begin
+ f1:= 123;
+end;
+
+destructor tc.destroy();
+begin
+end;
+
+var
+ po1: poty;
+ c1: tc;
+begin
+ c1:= tc.create();
+ exitcode:= c1.f1;
+ c1.destroy();
+end.

@@ -3211,6 +3211,7 @@ begin
 //  opshift:= 0;
   s.currentstatementflags-= [stf_rightside,{stf_params,}
                            stf_leftreference,stf_proccall];
+  linkresolve(s.currentopcodemarkchain); //delete chain
   with contextstack[s.stacktop].d,statement do begin
    kind:= ck_statement;
 //   flags:= [];

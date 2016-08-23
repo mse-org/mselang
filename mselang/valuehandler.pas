@@ -1652,6 +1652,27 @@ begin
    else begin
     isfactcontext:= d.kind in factcontexts;
     instancessa:= d.dat.fact.ssaindex; //for sf_method
+
+    if (asub^.flags * [sf_method,sf_ofobject] = [sf_method]) and 
+                                    (dsf_ownedmethod in aflags) then begin
+               //owned method
+    {$ifdef mse_checkinternalerror}
+     if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
+      internalerror(ie_value,'20140505A');
+     end;
+    {$else}
+     ele.findcurrent(tk_self,[],allvisi,vardata1);
+    {$endif}
+//     with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
+     with insertitem(oc_pushlocpo,0,-1)^ do begin
+      par.memop.t:= bitoptypes[das_pointer];
+      par.memop.locdataaddress.a.framelevel:= -1;
+      par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
+      par.memop.locdataaddress.offset:= 0;
+      instancessa:= par.ssad;
+     end;
+    end;
+
     if dsf_indirect in aflags then begin
      if co_llvm in o.compileoptions then begin
       if sf_ofobject in asub^.flags then begin //method pointer call
@@ -1826,6 +1847,7 @@ begin
 
     if not hasresult then begin
      d.kind:= ck_subcall;
+(*
      if (asub^.flags * [sf_method,sf_ofobject] = [sf_method]) and 
                                      (dsf_ownedmethod in aflags) then begin
                 //owned method
@@ -1844,6 +1866,7 @@ begin
        selfpo^.ssaindex:= par.ssad;
       end;
      end;
+*)
      if (dsf_indexedsetter in aflags) and 
                              (co_mlaruntime in o.compileoptions) then begin
       with additem(oc_swapstack)^.par.swapstack do begin
