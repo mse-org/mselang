@@ -19,7 +19,7 @@ unit parserglob;
 interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
- segmentutils,llvmbitcodes,opglob;
+ segmentutils,llvmbitcodes,opglob,msehash;
 
 type
  compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
@@ -156,7 +156,7 @@ type
 // pparseinfoty = ^parseinfoty;
 
  markinfoty = record
-  hashref: ptruint;
+  hashref: hashoffsetty;
   bufferref: ptruint;
  end;
 

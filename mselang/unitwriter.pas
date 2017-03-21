@@ -45,24 +45,36 @@ type
 
 type
  identbufferdataty = record
-  header: identheaderty;
+//  header: identheaderty;
   nameindex: int32;
  end;
  pidentbufferdataty = ^identbufferdataty;
+ identbufferhashdataty = record
+  header: identhashdataty;
+  data: identbufferdataty;
+ end;
  
  tidentlist = class(tidenthashdatalist)
   private
+  protected
+   function getrecordsize(): int32 override;
   public
-   constructor create();
+//   constructor create();
  end;
 
 { tidentlist }
-
+{
 constructor tidentlist.create;
 begin
  inherited create(sizeof(identbufferdataty));
 end;
- 
+}
+
+function tidentlist.getrecordsize(): int32;
+begin
+ result:= sizeof(identbufferhashdataty);
+end;
+
 function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var

@@ -47,7 +47,7 @@ type
  end;
 
  buffermarkinfoty = record
-  hashref: ptruint;
+  hashref: hashoffsetty;
   bufferref: ptruint;
  end;
  
@@ -59,15 +59,16 @@ type
   protected
    procedure checkbuffercapacity(const asize: integer);
    function hashkey(const akey): hashvaluety override;
-   function checkkey(const akey; const aitemdata): boolean override;
+   function checkkey(const akey; const aitem: phashdataty): boolean override;
    function addunique(const adata: bufferallocdataty;
                        out res: pbufferhashdataty): boolean; //true if new
    function addunique(const adata: card32;
                        out res: pbufferhashdataty): boolean; //true if new
    function addunique(const adata; const size: integer;
                        out res: pbufferhashdataty): boolean; //true if new
+   function getrecordsize(): int32 override;
   public
-   constructor create(const datasize: integer);
+//   constructor create(const datasize: integer);
    procedure clear(); override;
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
@@ -97,8 +98,9 @@ type
    function addunique(const key; const abufferdata; const size: int32;
                       out res: pointer): boolean;
                     //true if new
+   function getrecordsize(): int32 override;
   public
-   constructor create(const datasize: integer);
+//   constructor create(const datasize: integer);
    procedure clear(); override;
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
@@ -110,19 +112,21 @@ type
   data: record
   end;
  end;
- int32keybufferdataty = record
+ int32keybufferhashdataty = record
   header: keybufferhashdataty;
   data: int32bufferdataty;
  end;
+ pint32keybufferhashdataty = ^int32keybufferhashdataty;
  
  tint32bufferhashdatalist = class(tkeybufferhashdatalist)
   protected
    function hashkey(const akey): hashvaluety override;
-   function checkkey(const akey; const aitemdata): boolean override;
+   function checkkey(const akey; const aitem: phashdataty): boolean override;
    function addunique(const akey: int32; const adata; const size: integer;
                        out res: pkeybufferdataty): boolean; //true if new
+   function getrecordsize(): int32 override;
   public
-   constructor create(const datasize: integer);
+//   constructor create(const datasize: integer);
  end;
 
  typelistdataty = record
@@ -194,6 +198,7 @@ const
  
 type
  ttypehashdatalist = class(tbufferhashdatalist)
+  private
   protected
    fclassdef: int32;
 //   fmethod: int32;
@@ -203,8 +208,9 @@ type
    fvoid: int32;
 //   fsimplesub: int32;
    function hashkey(const akey): hashvaluety override;
-   function checkkey(const akey; const aitemdata): boolean override;
+   function checkkey(const akey; const aitem: phashdataty): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
+   function getrecordsize(): int32 override;
   public
    constructor create();
    procedure clear(); override; //automatic entries for bitsize optypes...
@@ -282,8 +288,9 @@ type
    fpointersize: int32;
   protected
    function hashkey(const akey): hashvaluety override;
-   function checkkey(const akey; const aitemdata): boolean override;
+   function checkkey(const akey; const aitem: phashdataty): boolean override;
 //   function addintfitem(const aitem: intfitemconstty): int32;
+   function getrecordsize(): int32 override;
   public
    constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override; //init first entries with 0..255
@@ -346,10 +353,17 @@ type
   globid: int32;
  end;
  plinkdataty = ^linkdataty;
+ linkhashdataty = record
+  header: hashheaderty;
+  data: linkdataty;
+ end;
+ plinkhashdataty = ^linkhashdataty;
  
  tlinklist = class(tintegerhashdatalist)
+  protected
+   function getrecordsize(): int32 override;
   public
-   constructor create();
+//   constructor create();
    procedure addlink(const adata: pointer; const aglobid: int32);
  end;
  
@@ -603,14 +617,30 @@ type
  end;
  pmetaiddataty = ^metaiddataty;
 } 
+ typemetahashdataty = record
+  header: doubleintegerhashdataty;
+  data: metavaluety;
+ end;
+ ptypemetahashdataty = ^typemetahashdataty;
+
  ttypemetahashdatalist = class(tdoubleintegerhashdatalist)
+  protected
+   function getrecordsize(): int32;
   public
-   constructor create();
+//   constructor create();
  end;
 
+ constmetahashdataty = record
+  header: integerhashdataty;
+  data: metavaluety;
+ end;
+ pconstmetahashdataty = ^constmetahashdataty;
+ 
  tconstmetahashdatalist = class(tintegerhashdatalist)
+  protected
+   function getrecordsize(): int32;
   public
-   constructor create();
+//   constructor create();
  end;
  
  
@@ -848,10 +878,15 @@ begin
 end;
 
 { tbufferhashdatalist }
-
+{
 constructor tbufferhashdatalist.create(const datasize: integer);
 begin
  inherited create(sizeof(bufferhashdataty)-sizeof(hashheaderty)+datasize);
+end;
+}
+function tbufferhashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(bufferhashdataty);
 end;
 
 procedure tbufferhashdatalist.checkbuffercapacity(const asize: integer);
@@ -898,12 +933,13 @@ begin
  end;
 end;
 
-function tbufferhashdatalist.checkkey(const akey; const aitemdata): boolean;
+function tbufferhashdatalist.checkkey(const akey; 
+                                     const aitem: phashdataty): boolean;
 var
  po1,po2,pe: pcard8;
 begin
  result:= true;
- with bufferdataty(aitemdata) do begin
+ with pbufferhashdataty(aitem)^.data do begin
   if buffersize <> bufferallocdataty(akey).size then begin
    result:= false;
   end
@@ -980,10 +1016,15 @@ begin
 end;
 
 { tkeybufferhashdatalist }
-
+{
 constructor tkeybufferhashdatalist.create(const datasize: integer);
 begin
  inherited create(datasize + sizeof(keybufferdataty));
+end;
+}
+function tkeybufferhashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(keybufferhashdataty);
 end;
 
 procedure tkeybufferhashdatalist.checkbuffercapacity(const asize: integer);
@@ -1045,8 +1086,14 @@ end;
 constructor ttypehashdatalist.create();
 begin
 // inherited create(sizeof(typeallocinfoty));
- inherited create(sizeof(typelisthashdataty)-sizeof(bufferhashdataty));
+// inherited create(sizeof(typelisthashdataty)-sizeof(bufferhashdataty));
+ inherited;
  clear();
+end;
+
+function ttypehashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(typelisthashdataty);
 end;
 
 procedure ttypehashdatalist.clear;
@@ -1288,20 +1335,22 @@ begin
                scramble(ord(typeallocdataty(akey).kind));
 end;
 
-function ttypehashdatalist.checkkey(const akey; const aitemdata): boolean;
+function ttypehashdatalist.checkkey(const akey;
+                                 const aitem: phashdataty): boolean;
 begin
- result:= (typeallocdataty(akey).kind = typelistdataty(aitemdata).kind) and
-              inherited checkkey(akey,aitemdata);
+ result:= (typeallocdataty(akey).kind = 
+                ptypelisthashdataty(aitem)^.data.kind) and
+                                        inherited checkkey(akey,aitem);
 end;
 
 function ttypehashdatalist.first: ptypelistdataty;
 begin
- result:= pointer(internalfirst());
+ result:= @ptypelisthashdataty(internalfirstx())^.data;;
 end;
 
 function ttypehashdatalist.next: ptypelistdataty;
 begin
- result:= pointer(internalnext());
+ result:= @ptypelisthashdataty(internalnextx())^.data;
 end;
 
 { tconsthashdatalist }
@@ -1310,9 +1359,15 @@ constructor tconsthashdatalist.create(const atypelist: ttypehashdatalist);
 
 begin
  ftypelist:= atypelist;
- inherited create(sizeof(constlisthashdataty)-sizeof(bufferhashdataty));
+ inherited create();
+// inherited create(sizeof(constlisthashdataty)-sizeof(bufferhashdataty));
 // inherited create(sizeof(constallocdataty));
  clear(); //create default entries
+end;
+
+function tconsthashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(constlisthashdataty);
 end;
 
 procedure tconsthashdatalist.clear;
@@ -1385,11 +1440,12 @@ begin
  result:= inherited hashkey(akey) xor scramble(constallocdataty(akey).typeid);
 end;
 
-function tconsthashdatalist.checkkey(const akey; const aitemdata): boolean;
+function tconsthashdatalist.checkkey(const akey;
+                                         const aitem: phashdataty): boolean;
 begin
- result:= (constlistdataty(aitemdata).typeid = 
+ result:= (pconstlisthashdataty(aitem)^.data.typeid = 
                            constallocdataty(akey).typeid) and 
-                                    inherited checkkey(akey,aitemdata);
+                                    inherited checkkey(akey,aitem);
 end;
 
 function tconsthashdatalist.addi1(const avalue: boolean): llvmvaluety;
@@ -1775,12 +1831,12 @@ end;
 
 function tconsthashdatalist.first: pconstlistdataty;
 begin
- result:= pointer(internalfirst());
+ result:= @pconstlisthashdataty(internalfirstx())^.data;
 end;
 
 function tconsthashdatalist.next: pconstlistdataty;
 begin
- result:= pointer(internalnext());
+ result:= @pconstlisthashdataty(internalnextx())^.data;
 end;
 
 function tconsthashdatalist.gettype(const aindex: int32): int32;
@@ -2075,17 +2131,28 @@ begin
 end;
 
 { ttypemetahashdatalist }
-
+{
 constructor ttypemetahashdatalist.create();
 begin
  inherited create(sizeof(metavaluety));
 end;
+}
 
+function ttypemetahashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(typemetahashdataty);
+end;
 { tconstmetahashdatalist }
-
+{
 constructor tconstmetahashdatalist.create();
 begin
  inherited create(sizeof(metavaluety));
+end;
+}
+
+function tconstmetahashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(tconstmetahashdatalist);
 end;
 
 { tmetadatalist }
@@ -2258,19 +2325,19 @@ end;
 
 function tmetadatalist.addconst(const constid: int32): metavaluety;
 var
- po1: pmetavaluety;
+ po1: pconstmetahashdataty;
  m1: metavaluety;
 begin
- if fconstmetalist.addunique(constid,po1) then begin
+ if fconstmetalist.addunique(constid,pintegerhashdataty(po1)) then begin
   with pvaluemetaty(adddata(mdk_constvalue,
                             sizeof(valuemetaty),m1))^ do begin
    value.listid:= constid;
    value.typeid:= fconstlist.gettype(constid);;
   end;
-  po1^.id:= m1.id;
+  po1^.data.id:= m1.id;
  end;
 // result.value.typeid:= ftypelist.metadata;
- result.id:= po1^.id;
+ result.id:= po1^.data.id;
 // result.flags:= [mvf_meta];
 end;
 
@@ -2750,7 +2817,6 @@ const
  metabuffersize = 1;
  
 var
- po1: pmetavaluety;
  po2: ptypedataty;
  po3: pfielddataty;
  po4: ptypedataty;
@@ -2812,7 +2878,9 @@ var
    result:= addnodereverse(@metabuffer,pb-pmetavaluety(@metabuffer));
   end;
  end; //addbufferreverse
- 
+var
+ p0: pointer;
+ po1: pmetavaluety;  
 begin
  if atype = 0 then begin //untyped pointer
   atype:= getbasetypeele(das_8);
@@ -2825,8 +2893,9 @@ begin
  if subrange then begin
   i1:= i1 or $80000000;
  end;
- if ftypemetalist.addunique(atype,i1,po1) then begin
-  offs1:= ftypemetalist.getdataoffset(po1); //relative backup
+ if ftypemetalist.addunique(atype,i1,p0) then begin
+  po1:= @ptypemetahashdataty(p0)^.data;
+  offs1:= ftypemetalist.getdataoffs(p0); //relative backup
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
 //    file1:= dummymeta; //internal type
@@ -3093,10 +3162,15 @@ begin
 end;
 
 { tlinklist }
-
+{
 constructor tlinklist.create;
 begin
  inherited create(sizeof(linkdataty));
+end;
+}
+function tlinklist.getrecordsize(): int32;
+begin
+ result:= sizeof(linkhashdataty);
 end;
 
 procedure tlinklist.addlink(const adata: pointer; const aglobid: int32);
@@ -3107,10 +3181,15 @@ begin
 end;
 
 { tint32bufferhashdatalist }
-
+{
 constructor tint32bufferhashdatalist.create(const datasize: integer);
 begin
  inherited create(datasize+sizeof(int32bufferdataty));
+end;
+}
+function tint32bufferhashdatalist.getrecordsize(): int32;
+begin
+ result:= sizeof(int32keybufferhashdataty);
 end;
 
 function tint32bufferhashdatalist.hashkey(const akey): hashvaluety;
@@ -3119,9 +3198,9 @@ begin
 end;
 
 function tint32bufferhashdatalist.checkkey(const akey;
-               const aitemdata): boolean;
+                                    const aitem: phashdataty): boolean;
 begin
- result:= integer(akey) = int32keybufferdataty(aitemdata).data.key;
+ result:= integer(akey) = pint32keybufferhashdataty(aitem)^.data.key;
 end;
 
 function tint32bufferhashdatalist.addunique(const akey: int32; const adata;
@@ -3130,12 +3209,13 @@ begin
  result:= addunique(akey,adata,size,res);
 end;
 
-end.
-
 { tconstcache }
-
+{
 constructor tconstcache.create();
 begin
  inherited create(sizeof(constcachedataty);
 end;
+}
+
+end.
 

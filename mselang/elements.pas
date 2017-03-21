@@ -80,6 +80,11 @@ type
   data: elementoffsetty; //offset in elementdata
  end;
  pelementdataty = ^elementdataty;
+ elementhashdataty = record
+  header: hashheaderty;
+  data: elementdataty;
+ end;
+ pelementhashdataty = ^elementhashdataty;
  
 const
  elesize = sizeof(elementinfoty);
@@ -151,11 +156,12 @@ type
    felementparent: elementoffsetty;
    fparentlevel: integer;
    function hashkey(const akey): hashvaluety; override;
-   function checkkey(const akey; const aitemdata): boolean; override;
+   function checkkey(const akey; const aitem: phashdataty): boolean; override;
    procedure addelement(const aident: identty; const avislevel: visikindsty;
                                               const aelement: elementoffsetty);
    procedure setelementparent(const element: elementoffsetty);
    procedure checkbuffersize; inline;
+   function getrecordsize: int32 override;
   public
 //todo: use faster calling, less parameters
    constructor create();
@@ -380,7 +386,8 @@ type
   protected
    procedure initbuffer;
    function hashkey(const akey): hashvaluety; override;
-   function checkkey(const akey; const aitemdata): boolean; override;
+   function checkkey(const akey; const aitem: phashdataty): boolean; override;
+   function getrecordsize(): int32 override;
   public
    constructor create;
    destructor destroy; override;
@@ -391,13 +398,13 @@ type
    function getlength(const astring: stringvaluety): int32;
    function getstring(const astring: stringvaluety): lstringty;
  end;
-
+{
  elementhashdataty = record
   header: hashheaderty;
   data: elementdataty;
  end;
  pelementhashdataty = ^elementhashdataty;
-
+}
 var
  stringbuf: tstringbuffer;
 
@@ -578,8 +585,14 @@ end;
 constructor telementhashdatalist.create();
 begin
 // ffindvislevel:= nonevisi;
- inherited create(sizeof(elementdataty));
+// inherited create(sizeof(elementdataty));
+ inherited;
  clear();
+end;
+
+function telementhashdatalist.getrecordsize: int32;
+begin
+ result:= sizeof(elementhashdataty);
 end;
 
 procedure telementhashdatalist.clear();
@@ -613,9 +626,10 @@ begin
  result:= elementdataty(akey).key;
 end;
 
-function telementhashdatalist.checkkey(const akey; const aitemdata): boolean;
+function telementhashdatalist.checkkey(const akey;
+                                    const aitem: phashdataty): boolean;
 begin
- result:= identty(akey) = elementdataty(aitemdata).key;
+ result:= identty(akey) = pelementhashdataty(aitem)^.data.key;
 end;
 
 procedure telementhashdatalist.addelement(const aident: identty;
@@ -1700,6 +1714,7 @@ end;
 {$endif}
 
 procedure telementhashdatalist.checkbuffersize; inline;
+
 begin
  if fnextelement >= felementlen then begin
   felementlen:= fnextelement*2+mindatasize;
@@ -2281,8 +2296,14 @@ end;
 
 constructor tstringbuffer.create;
 begin
- inherited create(sizeof(stringbufdataty));
+// inherited create(sizeof(stringbufdataty));
+ inherited;
  initbuffer;
+end;
+
+function tstringbuffer.getrecordsize(): int32;
+begin
+ result:= sizeof(stringbufhashdataty);
 end;
 
 destructor tstringbuffer.destroy;
@@ -2296,12 +2317,13 @@ begin
  result:= stringhash(lstringty(akey));
 end;
 
-function tstringbuffer.checkkey(const akey; const aitemdata): boolean;
+function tstringbuffer.checkkey(const akey; const aitem: phashdataty): boolean;
 begin
- result:= (lstringty(akey).len = stringbufdataty(aitemdata).len) and
+ with pstringbufhashdataty(aitem)^ do begin
+  result:= (lstringty(akey).len = data.len) and
        comparemem(lstringty(akey).po,
-                       fbuffer+stringbufdataty(aitemdata).offset,
-                                      stringbufdataty(aitemdata).len);
+                       fbuffer+data.offset,data.len);
+ end;
 end;
 
 function tstringbuffer.add(const avalue: lstringty): stringvaluety;

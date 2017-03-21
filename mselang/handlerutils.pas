@@ -1806,8 +1806,8 @@ begin
    destunitid:= po1^.header.defunit^.key;
    result:= destunitid <> s.unitinfo^.key;
    if result then begin
-    po2:= info.s.unitinfo^.llvmlists.globlist.linklist.find(
-                                              ele.eledatarel(adata));
+    po2:= @plinkhashdataty(info.s.unitinfo^.llvmlists.globlist.linklist.find(
+                                              ele.eledatarel(adata)))^.data;
     if po2 <> nil then begin
      globid:= po2^.globid;
     end

@@ -192,11 +192,12 @@ type
  tunitlist = class(thashdatalist)
   private
    ffilenameiteratepo: pfilenamety;
-   procedure filenameiterator(var aitemdata);
+   procedure filenameiterator(const aitem: phashdataty);
   protected
    function hashkey(const akey): hashvaluety; override;
-   function checkkey(const akey; const aitemdata): boolean; override;
-   procedure finalizeitem(var aitemdata); override;
+   function checkkey(const akey; const aitem: phashdataty): boolean; override;
+   procedure finalizeitem(const aitem: phashdataty); override;
+   function getrecordsize(): int32 override;
   public
    constructor create;
    function findunit(const aname: identty): punitinfoty;
@@ -857,7 +858,8 @@ end;
 
 constructor tunitlist.create;
 begin
- inherited create(sizeof(punitinfoty));
+// inherited create(sizeof(punitinfoty));
+ inherited;
  fstate:= fstate + [hls_needsfinalize];
 end;
 
@@ -866,9 +868,9 @@ begin
  result:= unitinfoty(akey).key;
 end;
 
-function tunitlist.checkkey(const akey; const aitemdata): boolean;
+function tunitlist.checkkey(const akey; const aitem: phashdataty): boolean;
 begin
- result:= identty(akey) = punitinfoty(aitemdata)^.key;
+ result:= identty(akey) = punithashdataty(aitem)^.data^.key;
 end;
 
 function tunitlist.findunit(const aname: identty): punitinfoty;
@@ -882,19 +884,24 @@ begin
  end;
 end;
 
-procedure tunitlist.finalizeitem(var aitemdata);
+procedure tunitlist.finalizeitem(const aitem: phashdataty);
 begin
 {
  with punitinfoty(aitemdata)^ do begin
   clearlist(externallinklist,sizeof(externallinkinfoty),0);
  end;
 }
- system.finalize(punitinfoty(aitemdata)^);
- with punitinfoty(aitemdata)^ do begin
+ with punithashdataty(aitem)^ do begin
+  system.finalize(data^);
 //  metadatalist.free();
-  freeparsercontext(implstart);
+  freeparsercontext(data^.implstart);
+  freemem(data);
  end;
- freemem(punitinfoty(aitemdata));
+end;
+
+function tunitlist.getrecordsize(): int32;
+begin
+ result:= sizeof(unithashdataty);
 end;
 
 function tunitlist.newunit(const aname: identty): punitinfoty;
@@ -915,9 +922,9 @@ begin
  end;
 end;
 
-procedure tunitlist.filenameiterator(var aitemdata);
+procedure tunitlist.filenameiterator(const aitem: phashdataty);
 begin
- with punitinfoty(aitemdata)^ do begin
+ with punithashdataty(aitem)^.data^ do begin
   ffilenameiteratepo^:= bcfilepath;
  end;
  inc(ffilenameiteratepo);
