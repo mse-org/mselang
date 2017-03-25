@@ -1442,8 +1442,8 @@ function telementhashdatalist.dumpelements: msestringarty;
      result:= result + hextostrmse(card32(vset.value)); 
                //todo: arbitrary size, set format
     end;
-    dk_string8: begin
-     result:= result + lstringtostring(getstringconst(vstring));
+    dk_string{8,dk_string16,dk_string32}: begin
+     result:= result + msestring(lstringtostring(getstringconst(vstring)));
     end;
    end;
   end;

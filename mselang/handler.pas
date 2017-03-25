@@ -414,11 +414,11 @@ begin
    dk_address: begin
     d.dat.datatyp:= sysdatatypes[st_pointer];
    end;
-   dk_string8: begin
+   dk_string{8,dk_string16,dk_string32}: begin
     d.dat.datatyp:= sysdatatypes[st_string8];
    end;
    dk_character: begin
-    d.dat.datatyp:= sysdatatypes[st_char8];
+    d.dat.datatyp:= sysdatatypes[st_char32];
    end;
    dk_none: begin
     if stf_condition in info.s.currentstatementflags then begin
@@ -1462,7 +1462,7 @@ begin
      ck_str: begin
       initdatacontext(toppo^.d,ck_const);
       d.dat.datatyp:= sysdatatypes[st_string8];
-      d.dat.constval.kind:= dk_string8;
+      d.dat.constval.kind:= dk_string;
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin

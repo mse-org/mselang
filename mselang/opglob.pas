@@ -144,6 +144,8 @@ type
   oc_writefloat64,
   oc_writechar8,
   oc_writestring8,
+  oc_writestring16,
+  oc_writestring32,
   oc_writepointer,
   oc_writeclass,
   oc_writeenum,
@@ -564,6 +566,8 @@ type
   oc_setlengthdynarray,
 
   oc_uniquestr8,
+  oc_uniquestr16,
+  oc_uniquestr32,
   oc_uniquedynarray,
 
   oc_pushcpucontext,
@@ -1008,7 +1012,7 @@ const
   oc_writeinteger32,
   oc_writeinteger64,
   oc_writefloat64,
-  oc_writestring8,
+  oc_writestring8,oc_writestring16,oc_writestring32,
   oc_writechar8,
   oc_writepointer,
   oc_writeclass,
@@ -1101,7 +1105,7 @@ type
    );}
    oc_increg0,oc_writeboolean,oc_writeinteger8,oc_writeinteger16,
    oc_writeinteger32,oc_writeinteger64,oc_writefloat64,
-   oc_writechar8,oc_writestring8,
+   oc_writechar8,oc_writestring8,oc_writestring16,oc_writestring32,
    oc_writepointer,oc_writeclass,oc_writeenum,
    {oc_pushstackaddrindi,}oc_pushduppo,
    oc_indirectpooffs,oc_indirectoffspo: (

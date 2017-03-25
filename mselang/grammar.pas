@@ -498,7 +498,7 @@ var
                caption: 'compilerswitch2');
  directiveendco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: true; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'directiveend');
  linecomment0co: contextty = (branch: nil; 
@@ -11107,6 +11107,7 @@ begin
  bracecomment0co.handleexit:= @handlecommentend;
  directiveco.branch:= @bdirective;
  directiveco.next:= @directive1co;
+ directiveco.handleentry:= @handledirectiveentry;
  directive1co.branch:= @bdirective1;
  ignoreddirectiveco.branch:= @bignoreddirective;
  ignoreddirectiveco.next:= @directiveendco;
@@ -11179,6 +11180,7 @@ begin
  compilerswitch2co.handleentry:= @handlelongcompilerswitchentry;
  compilerswitch2co.handleexit:= @handlecompilerswitch;
  directiveendco.branch:= @bdirectiveend;
+ directiveendco.handleentry:= @handledirective;
  linecomment0co.branch:= @blinecomment0;
  linecomment1co.branch:= nil;
  linecomment1co.handleexit:= @handlecommentend;

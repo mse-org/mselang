@@ -726,8 +726,8 @@ begin
         manageproc1:= @managearraydynar;
        end;
       end;
-      dk_string8: begin
-       manageproc1:= @managearraystring8;
+      dk_string: begin
+       manageproc1:= @managearraystring;
       end;
       else begin
        notimplementederror('20160312D');
@@ -854,8 +854,8 @@ begin
           h.manageproc:= @managedynarraydynar;
          end;
         end;
-        dk_string8: begin
-         h.manageproc:= @managedynarraystring8;
+        dk_string: begin
+         h.manageproc:= @managedynarraystring;
         end;
         else begin
          notimplementederror('20160312B');
@@ -979,8 +979,8 @@ begin
      end;
      dec(d.dat.datatyp.indirectlevel);
     end;
-    dk_dynarray,dk_string8: begin
-     if kind1 = dk_string8 then begin
+    dk_dynarray,dk_string: begin
+     if kind1 = dk_string then begin
       include(d.handlerflags,hf_needsunique);
       d.dat.fact.opoffset:= getcontextopcount(-1); //for needsunique call
      end;
@@ -1030,7 +1030,7 @@ begin
      itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
      range.min:= 0;
     end;
-    dk_string8: begin
+    dk_string: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
       errormessage(err_illegalqualifier,[],topoffset);
       goto errorlab;

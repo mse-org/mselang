@@ -137,6 +137,10 @@
   (ssa: writechar8ssa; proc: @writechar8op; flags: []), 
 //oc_writestring8
   (ssa: writestring8ssa; proc: @writestring8op; flags: []), 
+//oc_writestring16
+  (ssa: writestring16ssa; proc: @writestring16op; flags: []), 
+//oc_writestring32
+  (ssa: writestring32ssa; proc: @writestring32op; flags: []), 
 //oc_writepointer
   (ssa: writepointerssa; proc: @writepointerop; flags: []), 
 //oc_writeclass
@@ -979,6 +983,10 @@
 
 //oc_uniquestr8
   (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: []), 
+//oc_uniquestr16
+  (ssa: uniquestr16ssa; proc: @uniquestr16op; flags: []), 
+//oc_uniquestr32
+  (ssa: uniquestr32ssa; proc: @uniquestr32op; flags: []), 
 //oc_uniquedynarray
   (ssa: uniquedynarrayssa; proc: @uniquedynarrayop; flags: []), 
 

@@ -625,7 +625,7 @@ type
 
  ttypemetahashdatalist = class(tdoubleintegerhashdatalist)
   protected
-   function getrecordsize(): int32;
+   function getrecordsize(): int32 override;
   public
 //   constructor create();
  end;
@@ -638,7 +638,7 @@ type
  
  tconstmetahashdatalist = class(tintegerhashdatalist)
   protected
-   function getrecordsize(): int32;
+   function getrecordsize(): int32 override;
   public
 //   constructor create();
  end;
@@ -2998,7 +2998,7 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
      end;
-     dk_string8: begin
+     dk_string: begin         //todo: itemsize !!!!!!!!!!!!!!!
                                         //todo: use refstringtype
       m2:= addtype(sysdatatypes[st_char8].typedata,0);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,

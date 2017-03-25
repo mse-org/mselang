@@ -590,6 +590,16 @@ begin
  end;
 end;
 
+procedure writestring16op();
+begin
+ notimplemented();
+end;
+
+procedure writestring32op();
+begin
+ notimplemented();
+end;
+
 procedure writepointerop();
 begin
  write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.voffset)^)));
@@ -5005,6 +5015,16 @@ begin
  stackpop(pointersize);
 end;
 
+procedure uniquestr16op();
+begin
+ notimplemented();
+end;
+
+procedure uniquestr32op();
+begin
+ notimplemented();
+end;
+
 procedure uniquedynarrayop();
 var
  si1: dynarraysizety;
@@ -5255,6 +5275,8 @@ const
   writefloat64ssa = 0;
   writechar8ssa = 0;
   writestring8ssa = 0;
+  writestring16ssa = 0;
+  writestring32ssa = 0;
   writepointerssa = 0;
   writeclassssa = 0;
   writeenumssa = 0;
@@ -5699,6 +5721,8 @@ const
   setlengthdynarrayssa = 0;
 
   uniquestr8ssa = 0;
+  uniquestr16ssa = 0;
+  uniquestr32ssa = 0;
   uniquedynarrayssa = 0;
 
   raisessa = 0;

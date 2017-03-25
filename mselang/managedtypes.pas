@@ -38,17 +38,17 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 procedure handlesetlength(const paramco: integer);
 procedure handleunique(const paramco: integer);
 
-procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
+procedure managestring(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 procedure managedynarray(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 procedure managedynarraydynar(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
-procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
+procedure managedynarraystring(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 procedure managearraydynar(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
-procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
+procedure managearraystring(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
@@ -69,7 +69,7 @@ const
   //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
     oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
-
+{
  uniqueops: array[datakindty] of opcodety = (
   //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
@@ -80,8 +80,8 @@ const
   //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
     oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
-
-procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
+}
+procedure managestring(const op: managedopty;{ const atype: ptypedataty;}
                        const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
@@ -157,7 +157,7 @@ begin
  end;
 end;
 
-procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
+procedure managedynarraystring(const op: managedopty;{ const atype: ptypedataty;}
                        const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
@@ -209,7 +209,7 @@ begin
  end;
 end;
 
-procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
+procedure managearraystring(const op: managedopty;{ const atype: ptypedataty;}
                        const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
@@ -309,6 +309,7 @@ end;
 procedure handleunique(const paramco: integer);
 var
  ptop: pcontextitemty;
+ op1: opcodety;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
@@ -316,11 +317,35 @@ begin
                        getaddress(ptop,true) then begin
    with ptop^ do begin
     with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
-     with additem(uniqueops[h.kind])^ do begin
-      if op.op = oc_none then begin
-       errormessage(err_typemismatch,[]);
-      end
-      else begin
+     op1:= oc_none;
+     case h.kind of
+      dk_string: begin
+       case itemsize of
+        1: begin
+         op1:= oc_uniquestr8;
+        end;
+        2: begin
+         op1:= oc_uniquestr16;
+        end;
+        4: begin
+         op1:= oc_uniquestr32;
+        end;
+       {$ifdef mse_checkinternalerror}                             
+        else begin
+         internalerror(ie_managed,'20170325C');
+        end;
+       {$endif}
+       end;
+      end;
+      dk_dynarray: begin
+       op1:= oc_uniquedynarray;
+      end;
+     end;
+     if op1 = oc_none then begin
+      errormessage(err_typemismatch,[]);
+     end
+     else begin
+      with additem(op1)^ do begin
        if co_llvm in o.compileoptions then begin
         par.ssas1:= d.dat.fact.ssaindex; //result
         par.setlength.itemsize:= 

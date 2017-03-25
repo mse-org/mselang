@@ -668,6 +668,7 @@ type
   sourcestart: pchar; //todo: use file cache for include files
   stackindex: integer; 
   stacktop: integer; 
+  stackref1: int32; //for directiveentryhandler()/directivehandler()
   unitinfo: punitinfoty;
   ssa: ssainfoty;
   pc: pcontextty;

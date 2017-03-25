@@ -169,7 +169,7 @@ curlycomment0,,,handlecommentend^>
 bracecomment0,,,handlecommentend^>
  '*)',-*
  '',-
-directive,directive1,,*
+directive,directive1,handledirectiveentry,*
  'dumpelements'.,dumpelements-*
  'dumpopcode'.,dumpopcode-*
  'abort'.,abort-*
@@ -270,7 +270,7 @@ compilerswitch2,directiveend,handlelongcompilerswitchentry,handlecompilerswitch
  'off'.,!unsetlongcompilerswitch-*
  'default'.,!setdefaultcompilerswitch-*
 
-directiveend,,,^*>
+directiveend,,handledirective,^>
  '}',-*
  '',-
 linecomment0,,,*

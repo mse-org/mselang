@@ -1079,7 +1079,7 @@ begin
        end
        else begin
         pcond^.value.vstring:= newstringconst(lstr1);
-        pcond^.value.kind:= dk_string8;
+        pcond^.value.kind:= dk_string;
        end;
       end
       else begin

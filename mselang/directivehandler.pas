@@ -30,6 +30,8 @@ procedure handledefine();
 procedure handledefinevalue();
 procedure handleundef();
 
+procedure handledirectiveentry();
+procedure handledirective();
 procedure handleifdef();
 procedure handleifndef();
 procedure ifcondentry();
@@ -191,6 +193,22 @@ begin
    switchcontext(@skipifco);
   end;
  end;
+end;
+
+procedure handledirectiveentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DIRECTIVEENTRY');
+{$endif}
+ info.s.stackref1:= info.s.stacktop-1;
+end;
+
+procedure handledirective();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DIRECTIVE');
+{$endif}
+ info.s.stacktop:= info.s.stackref1;
 end;
 
 procedure handleifdef();

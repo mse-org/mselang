@@ -492,8 +492,23 @@ begin
        po1:=  additem(oc_writefloat64);
        po1^.par.voffset:= alignsize(sizeof(float64));
       end;
-      dk_string8: begin
-       po1:= additem(oc_writestring8);
+      dk_string: begin
+       case po2^.itemsize of
+        1: begin
+         po1:= additem(oc_writestring8);
+        end;
+        2: begin
+         po1:= additem(oc_writestring16);
+        end;
+        4: begin
+         po1:= additem(oc_writestring32);
+        end;
+        else begin
+        {$ifdef mse_checkinternalerror}   
+         internalerror(ie_parser,'20170325A');
+        {$endif}
+        end;
+       end;
        po1^.par.voffset:= alignsize(pointersize);
       end;
       dk_character: begin
@@ -794,7 +809,7 @@ var
   op1: opcodety;
  begin
   case po1^.h.kind of
-   dk_string8: begin
+   dk_string: begin
     op1:= oc_highstring;
    end;
    dk_dynarray: begin
@@ -837,7 +852,7 @@ begin
         dk_array: begin
          checktype(po1^.infoarray.indextypedata);
         end;
-        dk_string8,dk_dynarray,dk_openarray: begin
+        dk_string,dk_dynarray,dk_openarray: begin
          if ahigh then begin
           if po1^.h.kind = dk_openarray then begin
            if getaddress(ptop,true) then begin
@@ -874,7 +889,7 @@ begin
      end;
      ck_const: begin
       case d.dat.constval.kind of
-       dk_string8: begin
+       dk_string: begin
 //        dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
         dest1^.d.dat.constval.kind:= dk_integer;
         if ahigh then begin
@@ -945,7 +960,7 @@ begin
         dk_array: begin
          dest1^.d.dat.constval.vinteger:= arraylength();
         end;
-        dk_string8: begin
+        dk_string: begin
          dest1^.d.dat.constval.vinteger:= 
                                       stringconstlen(d.dat.constval.vstring);
         end;
@@ -969,7 +984,7 @@ begin
        else begin
         if getvalue(ptop,das_none) then begin
          case typ1^.h.kind of
-          dk_string8: begin
+          dk_string: begin
            with additem(oc_lengthstring)^ do begin
             par.ssas1:= info.s.ssa.index-1;
            end;

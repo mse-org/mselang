@@ -759,6 +759,16 @@ begin
  end;
 end;
 
+procedure writestring16op();
+begin
+ notimplemented();
+end;
+
+procedure writestring32op();
+begin
+ notimplemented();
+end;
+
 procedure writechar8op();
 begin
  with pc^.par do begin
@@ -3593,6 +3603,16 @@ begin
  end;
 end;
 
+procedure uniquestr16op();
+begin
+ notimplemented();
+end;
+
+procedure uniquestr32op();
+begin
+ notimplemented();
+end;
+
 procedure uniquedynarrayop();
 begin                                         
  with pc^.par do begin
@@ -3756,6 +3776,8 @@ const
   writefloat64ssa = 1;
   writechar8ssa = 1;
   writestring8ssa = 1;
+  writestring16ssa = 1;
+  writestring32ssa = 1;
   writepointerssa = 1;
   writeclassssa = 1;
   writeenumssa = 1;
@@ -4200,6 +4222,8 @@ const
   setlengthdynarrayssa = 0;
 
   uniquestr8ssa = 0;
+  uniquestr16ssa = 0;
+  uniquestr32ssa = 0;
   uniquedynarrayssa = 0;
 
   raisessa = 0;

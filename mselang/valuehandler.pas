@@ -774,10 +774,10 @@ begin
            end;
            dk_character: begin
             case source1^.h.kind of
-             dk_string8: begin 
+             dk_string: begin 
               lstr1:= getstringconst(vstring);
               if lstr1.len = 1 then begin
-               vcharacter:= ord(lstr1.po^); //todo: encoding
+               vcharacter:= ord(lstr1.po^); //todo: encoding !!!!!!!!!!!!!!!
                result:= true;
               end;
              end;
@@ -869,10 +869,10 @@ begin
            result:= true;
           end;
          end;
-         dk_string8: begin
+         dk_string: begin
           case source1^.h.kind of
            dk_character: begin
-            convert(oc_chartostring8);
+            convert(oc_chartostring8); //todo: !!!!!!!!!!!!!!!!!!!
             result:= true;
            end;
           end;
@@ -1167,7 +1167,8 @@ begin
     end;
     result:= (source^.h.kind = dest^.h.kind) and 
              (source^.h.kind in [dk_cardinal,dk_integer,dk_float,
-                                 dk_string8,dk_character]);
+                                 dk_string,dk_character]);
+                        //todo: stringsizes !!!!!!!!!!!!
     if result and (source^.h.datasize <> dest^.h.datasize) then begin
      inc(conversioncost);          //2
      if source^.h.datasize > dest^.h.datasize then begin

@@ -3019,7 +3019,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B733D130
+    ao=An unhandled exception occured at $B7396130
     ae=
     aec=123
     ie=0
@@ -6245,7 +6245,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=26
    (
    kind=1
@@ -8233,7 +8233,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,units
+  a=0,665,4,units
   c=4
    (
    kind=2
@@ -8612,33 +8612,7 @@ sortdescend2=0
 width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=41
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=15
  0 0
  0 0
  0 0

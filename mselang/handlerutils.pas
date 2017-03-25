@@ -59,8 +59,8 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = (
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_dynarray,dk_openarray,dk_array,
-    sdk_pointer,  sdk_none, sdk_string8, sdk_none,sdk_none,    sdk_none,
+  //dk_address, dk_record,dk_string,  dk_dynarray,dk_openarray,dk_array,
+    sdk_pointer,sdk_none, sdk_string8,sdk_none,   sdk_none,    sdk_none,
   //dk_class,dk_interface
     sdk_none,sdk_none,
   //dk_sub,     dk_method
@@ -72,7 +72,7 @@ const
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
            (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
           //sdk_set32,sdk_string8
-            dk_set,  dk_string8);
+            dk_set,  dk_string);
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
            (st_none, st_pointer, st_bool1, st_card32, st_int32, st_flo64,
@@ -383,12 +383,24 @@ const
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32; next: 0);
        infochar32:(min: int32($00000000); max: $ffffffff))),
-   (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string8;
-       base: 0;  rtti: 0; manageproc: @managestring8;
+   (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
+       base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize;
                                           datasize: das_pointer; next: 0);
-       itemsize: 1; dummy2: 0))
+       itemsize: 1; infostring: (dummy2: 0))),
+   (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
+       base: 0;  rtti: 0; manageproc: @managestring;
+       flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
+       bitsize: pointerbitsize; bytesize: pointersize;
+                                          datasize: das_pointer; next: 0);
+       itemsize: 2; infostring: (dummy2: 0))),
+   (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
+       base: 0;  rtti: 0; manageproc: @managestring;
+       flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
+       bitsize: pointerbitsize; bytesize: pointersize;
+                                          datasize: das_pointer; next: 0);
+       itemsize: 4; infostring: (dummy2: 0)))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
@@ -1029,7 +1041,7 @@ begin
      setimmfloat64(constval.vfloat,par.imm);
     end;
    end;
-   dk_string8: begin
+   dk_string: begin
     si1:= das_pointer;
     isimm:= false;
     segad1:= allocstringconst(constval.vstring);
@@ -1046,7 +1058,7 @@ begin
     end;
    end;
    dk_character: begin
-    si1:= das_8; //todo: size
+    si1:= das_8; //todo: size !!!!!!!!!!!!!!
     with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
      setimmint8(constval.vcharacter,par.imm);
     end;
@@ -1130,7 +1142,7 @@ begin
   end;
   with contextstack[stackoffset+s.stackindex] do begin
    if not (constval.kind in 
-                 [dk_enum,dk_set,dk_string8,dk_openarray,dk_method]) then begin
+                 [dk_enum,dk_set,dk_string,dk_openarray,dk_method]) then begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);
@@ -1180,7 +1192,7 @@ begin
       par.voffset:= -pointersize;
       par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
      end;
-     inc(i1);
+     inc(i1);            //todo: item size !!!!!!!!!!!!!
      with insertitem(oc_uniquestr8,stackoffset,i1)^ do begin
       par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
      end;

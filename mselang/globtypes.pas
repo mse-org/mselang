@@ -161,7 +161,7 @@ type
               st_card8,st_card16,st_card32,st_card64,
               st_flo64,
               st_char8,st_char16,st_char32,
-              st_string8);
+              st_string8,st_string16,st_string32);
 const
  pointersize = sizeof(pointer); //todo: use target size
  pointerbitsize = pointersize*8;
@@ -228,7 +228,8 @@ type
  
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
                dk_kind,
-               dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
+               dk_address,dk_record,dk_string,
+               dk_dynarray,dk_openarray,
                dk_array,dk_class,dk_interface,dk_sub,dk_method,
                dk_enum,dk_enumitem,dk_set,dk_character,
                dk_data);
@@ -238,12 +239,12 @@ const
  compatiblesubflags = [sf_function,sf_method,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
-                     dk_interface,dk_class,dk_string8];
+                     dk_interface,dk_class,dk_string];
  nilpointerdatakinds = pointerdatakinds+[dk_sub];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
- stringdatakinds = [dk_string8];
-// dynardatakinds = [dk_string8,dk_dynarray];
+ stringdatakinds = [dk_string];
+// dynardatakinds = [dk_string8,dk_string16.dk_string32,dk_dynarray];
 type
  enumflagty = (enf_contiguous);
  enumflagsty = set of enumflagty;
@@ -316,7 +317,7 @@ type
      end;
    }
    );
-   dk_string8:(
+   dk_string:(
     vstring: stringvaluety;
    );
    dk_character:(
