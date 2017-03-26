@@ -69,7 +69,8 @@ type
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
             err_subnovalue,
             err_ignoreddirective,err_definehasnovalue,
-            err_typecastdifferentsize,err_classnotresolved);
+            err_typecastdifferentsize,err_classnotresolved,
+            err_invalidutf8);
             
  errorinfoty = record
   level: errorlevelty;
@@ -256,7 +257,9 @@ const
   (level: erl_error; message: 
                     'Typecast has different size (%d -> %d) in assignment'),
   (level: erl_error; message: 
-                    'Parent class forward declaration not yet resolved')                    
+                    'Parent class forward declaration not yet resolved'),
+  (level: erl_error; message: 
+                    'Invalid utf-8 sequence')                    
  );
 
 procedure message1(const atext: string; const values: array of const); 

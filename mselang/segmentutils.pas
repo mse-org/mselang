@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,6 +77,9 @@ function allocsegmentpounaligned(const asegment: segmentty;
                                                 const asize: integer): pointer;
 function allocsegmentpo(const asegment: segmentty;
                                  asize: integer; var buffer: pointer): pointer;
+procedure reallocsegment(const address: segaddressty; 
+                                oldsize,newsize: int32); 
+                                   //for reducing last alloc only
 procedure checksegmentcapacity(const asegment: segmentty;
                                asize: integer; var buffer: pointer);
 function checksegmentcapacity(const asegment: segmentty;
@@ -417,6 +420,22 @@ begin
   if toppo > endpo then begin
    grow(asegment);
   end;
+ end;
+end;
+
+procedure reallocsegment(const address: segaddressty; 
+                                oldsize,newsize: int32); 
+                                   //for reducing last alloc only
+begin
+ sizealign(oldsize);
+ sizealign(newsize);
+{$ifdef mse_debugparser}
+ if oldsize < newsize then begin
+  internalerror(ie_segment,'20170326B');
+ end;
+{$endif}
+ with segments[address.segment] do begin
+  dec(toppo,oldsize-newsize);
  end;
 end;
 

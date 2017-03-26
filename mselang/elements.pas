@@ -369,7 +369,8 @@ type
  stringbufdataty = record
   len: integer;
   offset: ptruint; //offset in fbuffer
-  constoffset: dataoffsty; //offset in constdata, 0 -> not assigned
+  constoffset8,constoffset16,constoffset32: dataoffsty; 
+                      //offset in constdata, 0 -> not assigned
  end;
  pstringbufdataty = ^stringbufdataty;
  stringbufhashdataty = record
@@ -2339,7 +2340,9 @@ begin
 //  len1:= length(avalue);
   po1:= pointer(internaladdhash(hash));
   po1^.data.offset:= fbufsize;
-  po1^.data.constoffset:= 0;
+  po1^.data.constoffset8:= 0;
+  po1^.data.constoffset16:= 0;
+  po1^.data.constoffset32:= 0;
   po1^.data.len:= avalue.len;
   fbufsize:= fbufsize + avalue.len;
   if fbufsize > fbufcapacity then begin
@@ -2378,30 +2381,164 @@ begin
 end;
                                                  //!!codenavig
 function tstringbuffer.allocconst(const astring: stringvaluety): segaddressty;
-var
- po1: pstring8headerty;
- fla1: addressflagsty;
-begin
- with pstringbufdataty(fdata+astring.offset)^ do begin
-  if constoffset = 0 then begin
-   result:= getglobconstaddress(sizeof(string8headerty)+len+1,fla1);
-   constoffset:= result.address;
-   with info do begin    
-    po1:= getsegmentpo(result);
-    po1^.ref.count:= -1;
-    po1^.len:= len;
-    inc(po1); //data
-    move((fbuffer+offset)^,po1^,len);
-    pbyte(pointer(po1))[len]:= 0;
+
+ function getcodepoint(var ps: pcard8; const pe: pcard8): card32;
+
+  procedure error();
+  begin
+   result:= ord('?');
+   errormessage(err_invalidutf8,[]);
+  end;
+    
+  function checkok(var acodepoint: card32): boolean; //inline;
+  var
+   c1: card8;
+  begin
+   result:= false;
+   inc(ps);
+   if ps >= pe then begin
+    error();
+   end
+   else begin
+    c1:= ps^ - %10000000;
+    if c1 > %00111111 then begin
+     error();
+    end
+    else begin
+     acodepoint:= (acodepoint shl 6) or c1;
+     result:= true;
+    end;
    end;
   end;
+
+ begin
+  if ps^ < %10000000 then begin   //1 byte
+   result:= ps^;
+  end
+  else begin
+   if ps^ <= %11100000 then begin //2 bytes
+    result:= ps^ and %00011111;
+    if checkok(result) then begin
+     if result < %1000000 then begin
+      error(); //overlong
+     end;
+    end;
+   end
+   else begin
+    if ps^ < %11110000 then begin //3 bytes
+     result:= ps^ and %00001111;
+     if checkok(result) and checkok(result) then begin
+      if result < %100000000000 then begin
+       error(); //overlong
+      end;
+     end;
+    end
+    else begin
+     if ps^ < %11111000 then begin //4 bytes
+      result:= ps^ and %00000111;
+      if checkok(result) and checkok(result) and checkok(result) then begin
+       if result < %10000000000000000 then begin
+        error(); //overlong
+       end;
+      end;
+     end
+     else begin
+      error();
+     end;
+    end;
+   end;
+  end;
+  inc(ps);
+  if (result >= $d800) and (result <= $dfff) then begin
+   error;
+  end;
+ end;
+ 
+var
+ po1: pstringheaderty;
+ fla1: addressflagsty;
+ i1: int32;
+ p1: pdataoffsty;
+ ps,pe: pcard8;
+ pd: pointer;
+ p8: pcard8;
+ p16: pcard16;
+ p32: pcard32;
+ c1: card32;
+ len1: int32;
+begin
+ with pstringbufdataty(fdata+astring.offset)^ do begin
   if len = 0 then begin
    result.address:= 0;
    result.segment:= seg_nil;
   end
   else begin
+   ps:= fbuffer+offset;
+   pe:= ps+len;
+   if strf_16 in astring.flags then begin
+    p1:= @constoffset16;
+    if p1^ = 0 then begin
+     i1:= sizeof(stringheaderty)+(len+1)*2; //max
+     result:= getglobconstaddress(i1,pd); 
+     pd:= pd+sizeof(stringheaderty);
+     p16:= pd;
+     while ps < pe do begin
+      c1:= getcodepoint(ps,pe);
+      if c1 > $ffff then begin
+       c1:= c1 - $10000;
+       p16^:= (c1 shr 10) or $d800;
+       inc(p16);
+       p16^:= c1 and %1111111111 or $dc00;
+      end
+      else begin
+       p16^:= c1;
+      end;
+      inc(p16);
+     end;
+     p16^:= 0;       //terminating zero
+     len1:= p16-pcard16(pd);
+     reallocsegment(result,i1,sizeof(stringheaderty)+(len1+1)*2);
+    end;
+   end
+   else begin
+    if strf_32 in astring.flags then begin
+     p1:= @constoffset32;
+     if p1^ = 0 then begin
+      i1:= sizeof(stringheaderty)+(len+1)*4; //max
+      result:= getglobconstaddress(i1,pd); 
+      pd:= pd+sizeof(stringheaderty);
+      p32:= pd;
+      while ps < pe do begin
+       p32^:= getcodepoint(ps,pe);
+       inc(p32);
+      end;
+      p32^:= 0;       //terminating zero
+      len1:= p32-pcard32(pd);
+      reallocsegment(result,i1,sizeof(stringheaderty)+(len1+1)*4);
+     end;
+    end
+    else begin
+     len1:= len;
+     p1:= @constoffset8;
+     if p1^ = 0 then begin
+      result:= getglobconstaddress(sizeof(stringheaderty)+(len1+1),pd);
+      p8:= pd+sizeof(stringheaderty);
+      move((fbuffer+offset)^,p8^,len1);
+      p8[len1]:= 0;
+     end;
+    end;
+   end;
+   if p1^ = 0 then begin
+    p1^:= result.address;
+    with info do begin    
+     po1:= getsegmentpo(result);
+     po1^.ref.count:= -1;
+     po1^.len:= len1;
+     inc(po1); //data
+    end;
+   end;
    result.segment:= seg_globconst;
-   result.address:= constoffset+sizeof(string8headerty);
+   result.address:= p1^+sizeof(stringheaderty);
    if co_llvm in info.o.compileoptions then begin
     result.address:= info.s.unitinfo^.llvmlists.constlist.
                                   adddataoffs(result.address).listid;

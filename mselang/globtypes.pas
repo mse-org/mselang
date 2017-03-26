@@ -265,7 +265,7 @@ type
  end;
  ptypeinfoty = ^typeinfoty;
 
- stringflagty = (strf_empty);
+ stringflagty = (strf_empty,strf_16,strf_32);
  stringflagsty = set of stringflagty;
  
  stringvaluety = record

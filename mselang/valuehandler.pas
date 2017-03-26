@@ -641,19 +641,24 @@ begin
     result:= (dest^.h.kind = source1^.h.kind) and 
                            (dest^.h.datasize = source1^.h.datasize);
     if result then begin
-     case dest^.h.kind of
-      dk_enum: begin
-       result:= issametype(dest,source1);
+     if dest^.h.kind = dk_string then begin
+      result:= dest^.itemsize = source1^.itemsize;
+     end
+     else begin
+      case dest^.h.kind of
+       dk_enum: begin
+        result:= issametype(dest,source1);
+       end;
+       dk_set: begin
+        result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+       end;
+       dk_sub: begin
+        result:= checkcompatiblesub(source1,dest);
+       end;
       end;
-      dk_set: begin
-       result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+      if not result then begin
+       exit; //no conversion possible
       end;
-      dk_sub: begin
-       result:= checkcompatiblesub(source1,dest);
-      end;
-     end;
-     if not result then begin
-      exit; //no conversion possible
      end;
     end;
     if not result then begin
@@ -780,6 +785,26 @@ begin
                vcharacter:= ord(lstr1.po^); //todo: encoding !!!!!!!!!!!!!!!
                result:= true;
               end;
+             end;
+            end;
+           end;
+           dk_string: begin
+            case dest^.itemsize of
+             1: begin
+              result:= true;
+             end;
+             2: begin
+              include(vstring.flags,strf_16);
+              result:= true;
+             end;
+             4: begin
+              include(vstring.flags,strf_32);
+              result:= true;
+             end;
+             else begin
+             {$ifdef mse_checkinternalerrror}
+              internalerror(ie_handler,'20170326A');
+             {$endif}
              end;
             end;
            end;

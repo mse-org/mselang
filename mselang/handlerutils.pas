@@ -3530,6 +3530,9 @@ procedure outinfo(const text: string; const indent: boolean = true);
    po1:= ele.eledataabs(typedata);
    write('T:',typedata,' ',
           getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
+   if po1^.h.kind = dk_string then begin
+    write(po1^.itemsize*8);
+   end;
    if po1^.h.kind <> dk_none then begin
     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.h.flags),true),
@@ -3552,6 +3555,9 @@ procedure outinfo(const text: string; const indent: boolean = true);
     po1:= ele.eledataabs(typedata);
     write('T:',typedata,' ',
            getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
+    if po1^.h.kind = dk_string then begin
+     write(po1^.itemsize*8);
+    end;
     if po1^.h.kind <> dk_none then begin
      write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.h.flags),true),

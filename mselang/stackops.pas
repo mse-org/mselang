@@ -578,12 +578,12 @@ end;
 procedure writestring8op();
 var
  po1: pointer;
- po2: pstring8headerty;
+ po2: pstringheaderty;
  str1: string;
 begin
  po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
  if po1 <> nil then begin
-  po2:= po1-sizeof(string8headerty);
+  po2:= po1-sizeof(stringheaderty);
   setlength(str1,po2^.len);
   move(po1^,pointer(str1)^,po2^.len);
   write(str1);
@@ -591,8 +591,18 @@ begin
 end;
 
 procedure writestring16op();
+var
+ po1: pointer;
+ po2: pstringheaderty;
+ str1: unicodestring;
 begin
- notimplemented();
+ po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
+ if po1 <> nil then begin
+  po2:= po1-sizeof(stringheaderty);
+  setlength(str1,po2^.len);
+  move(po1^,pointer(str1)^,po2^.len*2);
+  write(str1);
+ end;
 end;
 
 procedure writestring32op();
@@ -2374,8 +2384,8 @@ begin
    else begin
     poa:= a;
     pob:= b;
-    s1:= (pstring8headerty(a)-1)^.len;
-    s2:= (pstring8headerty(b)-1)^.len;
+    s1:= (pstringheaderty(a)-1)^.len;
+    s2:= (pstringheaderty(b)-1)^.len;
     if s1 < s2 then begin
      poe:= poa + s1;
     end
@@ -2945,7 +2955,7 @@ end;
 procedure chartostring8op();
 var
  char1: card8;
- po1: pstring8headerty;
+ po1: pstringheaderty;
 begin
  char1:= pcard8(stackpop(sizeof(card8)))^;
  getmem(po1,1*1 + string8allocsize);
@@ -4890,7 +4900,7 @@ end;
 procedure setlengthstr8op(); //address, length
 var
  si1,si2: stringsizety;
- ds,ss: pstring8headerty;
+ ds,ss: pstringheaderty;
  ad: ppointer;
 begin
  si1:= pstringsizety(cpu.stack-sizeof(stringsizety))^;
@@ -4993,7 +5003,7 @@ end;
 procedure uniquestr8op(); //address
 var
  si1: stringsizety;
- ds,ss: pstring8headerty;
+ ds,ss: pstringheaderty;
  ad: ppointer;
 begin
  ad:= ppointer(cpu.stack-sizeof(pointer))^;
