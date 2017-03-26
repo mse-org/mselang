@@ -370,7 +370,7 @@ type
   len: integer;
   offset: ptruint; //offset in fbuffer
   constoffset8,constoffset16,constoffset32: dataoffsty; 
-                      //offset in constdata, 0 -> not assigned
+                      //offset in constdata, -1 -> not assigned
  end;
  pstringbufdataty = ^stringbufdataty;
  stringbufhashdataty = record
@@ -2340,9 +2340,9 @@ begin
 //  len1:= length(avalue);
   po1:= pointer(internaladdhash(hash));
   po1^.data.offset:= fbufsize;
-  po1^.data.constoffset8:= 0;
-  po1^.data.constoffset16:= 0;
-  po1^.data.constoffset32:= 0;
+  po1^.data.constoffset8:= -1;
+  po1^.data.constoffset16:= -1;
+  po1^.data.constoffset32:= -1;
   po1^.data.len:= avalue.len;
   fbufsize:= fbufsize + avalue.len;
   if fbufsize > fbufcapacity then begin
@@ -2477,7 +2477,7 @@ begin
    pe:= ps+len;
    if strf_16 in astring.flags then begin
     p1:= @constoffset16;
-    if p1^ = 0 then begin
+    if p1^ = -1 then begin
      i1:= sizeof(stringheaderty)+(len+1)*2; //max
      result:= getglobconstaddress(i1,pd); 
      pd:= pd+sizeof(stringheaderty);
@@ -2503,7 +2503,7 @@ begin
    else begin
     if strf_32 in astring.flags then begin
      p1:= @constoffset32;
-     if p1^ = 0 then begin
+     if p1^ = -1 then begin
       i1:= sizeof(stringheaderty)+(len+1)*4; //max
       result:= getglobconstaddress(i1,pd); 
       pd:= pd+sizeof(stringheaderty);
@@ -2520,7 +2520,7 @@ begin
     else begin
      len1:= len;
      p1:= @constoffset8;
-     if p1^ = 0 then begin
+     if p1^ = -1 then begin
       result:= getglobconstaddress(sizeof(stringheaderty)+(len1+1),pd);
       p8:= pd+sizeof(stringheaderty);
       move((fbuffer+offset)^,p8^,len1);
@@ -2528,7 +2528,7 @@ begin
      end;
     end;
    end;
-   if p1^ = 0 then begin
+   if p1^ = -1 then begin
     p1^:= result.address;
     with info do begin    
      po1:= getsegmentpo(result);

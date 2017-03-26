@@ -606,8 +606,37 @@ begin
 end;
 
 procedure writestring32op();
+var
+ po1: pointer;
+ po2: pstringheaderty;
+ str1: unicodestring;
+ ps,pe: pcard32;
+ pd: pcard16;
+ c1: card32;
 begin
- notimplemented();
+ po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
+ if po1 <> nil then begin
+  po2:= po1-sizeof(stringheaderty);
+  setlength(str1,po2^.len*2); //max
+  ps:= po1;
+  pe:= ps+po2^.len;
+  pd:= pointer(str1);
+  while ps < pe do begin
+   c1:= ps^;
+   if c1 < $10000 then begin
+    pd^:= c1;
+   end
+   else begin
+    pd^:= (c1 shr 10) and $3ff or $d800;
+    inc(pd);
+    pd^:= c1 and $3ff or $dc00;
+   end;
+   inc(pd);   
+   inc(ps);
+  end;
+  setlength(str1,pd-pcard16(pointer(str1)));
+  write(str1);
+ end;
 end;
 
 procedure writepointerop();
