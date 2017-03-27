@@ -3596,6 +3596,16 @@ begin
  end;
 end;
 
+procedure setlengthstr16op();
+begin
+ notimplemented();
+end;
+
+procedure setlengthstr32op();
+begin
+ notimplemented();
+end;
+
 procedure setlengthdynarrayop();
 begin                           
  with pc^.par do begin                            
@@ -4232,6 +4242,8 @@ const
   getintfmethodssa = 16;
 
   setlengthstr8ssa = 0;
+  setlengthstr16ssa = 0;
+  setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
 
   uniquestr8ssa = 0;

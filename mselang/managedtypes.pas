@@ -57,18 +57,19 @@ implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
  stackops,unithandler,segmentutils;
- 
+{ 
 const
  setlengthops: array[datakindty] of opcodety = (
   //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
-  //dk_address,dk_record,dk_string8,      dk_dynarray,         dk_openarray,
+  //dk_address,dk_record,dk_string,      dk_dynarray,         dk_openarray,
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,oc_none,
   //dk_array,dk_class,dk_interface,dk_sub, dk_method
     oc_none, oc_none, oc_none,     oc_none,oc_none,
   //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
     oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
+}
 {
  uniqueops: array[datakindty] of opcodety = (
   //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
@@ -257,6 +258,7 @@ var
  len: integer;
  typ1: ptypedataty;
  po1,po2: pcontextitemty;
+ op1: opcodety;
 begin
  with info do begin
   if checkparamco(2,paramco) then begin
@@ -280,7 +282,26 @@ begin
       {$endif}
        with po1^ do begin
         with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
-         with additem(setlengthops[h.kind])^ do begin
+         op1:= oc_none;
+         case h.kind of
+          dk_dynarray: begin
+           op1:= oc_setlengthdynarray;
+          end;
+          dk_string: begin
+           case itemsize of
+            2: begin
+             op1:= oc_setlengthstr16;
+            end;
+            4: begin
+             op1:= oc_setlengthstr32;
+            end;
+            else begin
+             op1:= oc_setlengthstr8;
+            end;
+           end;
+          end;
+         end;
+         with additem(op1)^ do begin
           if op.op = oc_none then begin
            errormessage(err_typemismatch,[]);
           end

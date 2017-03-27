@@ -87,8 +87,11 @@ type
  end;
  
 const
- string8headersize = sizeof(stringheaderty);
- string8allocsize = string8headersize+1; //terminating #0
+// string8headersize = sizeof(stringheaderty);
+ stringheadersize = sizeof(stringheaderty);
+ string8allocsize = stringheadersize+1; //terminating #0
+ string16allocsize = stringheadersize+2; //terminating #0
+ string32allocsize = stringheadersize+4; //terminating #0
  dynarrayheadersize = sizeof(dynarrayheaderty);
  dynarrayallocsize = dynarrayheadersize;
 

@@ -982,6 +982,10 @@
 
 //oc_setlengthstr8
   (ssa: setlengthstr8ssa; proc: @setlengthstr8op; flags: []), 
+//oc_setlengthstr16
+  (ssa: setlengthstr16ssa; proc: @setlengthstr16op; flags: []), 
+//oc_setlengthstr32
+  (ssa: setlengthstr32ssa; proc: @setlengthstr32op; flags: []), 
 //oc_setlengthdynarray
   (ssa: setlengthdynarrayssa; proc: @setlengthdynarrayop; flags: []), 
 

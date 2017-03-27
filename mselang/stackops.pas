@@ -4985,6 +4985,102 @@ begin
  stackpop(pointersize+sizeof(stringsizety));
 end;
 
+procedure setlengthstr16op(); //address, length
+var
+ si1,si2: stringsizety;
+ ds,ss: pstringheaderty;
+ ad: ppointer;
+begin
+ si1:= pstringsizety(cpu.stack-sizeof(stringsizety))^ * 2;
+ ad:= ppointer(cpu.stack-(sizeof(stringsizety)+sizeof(pointer)))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+ end;
+ if si1 <= 0 then begin
+  if ds <> nil then begin
+   dec(ds^.ref.count);
+   if ds^.ref.count = 0 then begin
+    freemem(ds);
+   end;
+   ad^:= nil;
+  end;
+ end
+ else begin
+  if ds = nil then begin
+   getmem(ds,si1+string16allocsize);
+  end
+  else begin
+   if ds^.ref.count = 1 then begin
+    reallocmem(ds,si1+string16allocsize);
+   end
+   else begin //needs copy
+    ss:= ds;
+    getmem(ds,si1+string16allocsize);
+    si2:= ss^.len*2;
+    if si1 < si2 then begin
+     si2:= si1;
+    end;
+    move((ss+1)^,(ds+1)^,si2); //get data copy
+   end;
+  end;
+  ds^.len:= si1 div 2;
+  ds^.ref.count:= 1;
+  inc(ds);    //data
+  pchar16(pointer(ds)+si1)^:= #0; //endmarker
+  ad^:= ds;
+ end;
+ stackpop(pointersize+sizeof(stringsizety));
+end;
+
+procedure setlengthstr32op(); //address, length
+var
+ si1,si2: stringsizety;
+ ds,ss: pstringheaderty;
+ ad: ppointer;
+begin
+ si1:= pstringsizety(cpu.stack-sizeof(stringsizety))^ * 4;
+ ad:= ppointer(cpu.stack-(sizeof(stringsizety)+sizeof(pointer)))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+ end;
+ if si1 <= 0 then begin
+  if ds <> nil then begin
+   dec(ds^.ref.count);
+   if ds^.ref.count = 0 then begin
+    freemem(ds);
+   end;
+   ad^:= nil;
+  end;
+ end
+ else begin
+  if ds = nil then begin
+   getmem(ds,si1+string32allocsize);
+  end
+  else begin
+   if ds^.ref.count = 1 then begin
+    reallocmem(ds,si1+string32allocsize);
+   end
+   else begin //needs copy
+    ss:= ds;
+    getmem(ds,si1+string32allocsize);
+    si2:= ss^.len*4;
+    if si1 < si2 then begin
+     si2:= si1;
+    end;
+    move((ss+1)^,(ds+1)^,si2); //get data copy
+   end;
+  end;
+  ds^.len:= si1 div 4;
+  ds^.ref.count:= 1;
+  inc(ds);    //data
+  pchar32(pointer(ds)+si1)^:= 0; //endmarker
+  ad^:= ds;
+ end;
+ stackpop(pointersize+sizeof(stringsizety));
+end;
+
 procedure setlengthdynarrayop(); //address, length
 var
  si1: dynarraysizety;
@@ -5770,6 +5866,8 @@ const
   getintfmethodssa = 0;
 
   setlengthstr8ssa = 0;
+  setlengthstr16ssa = 0;
+  setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
 
   uniquestr8ssa = 0;

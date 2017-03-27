@@ -565,6 +565,8 @@ type
   oc_returnfunc,
 
   oc_setlengthstr8,
+  oc_setlengthstr16,
+  oc_setlengthstr32,
   oc_setlengthdynarray,
 
   oc_uniquestr8,
