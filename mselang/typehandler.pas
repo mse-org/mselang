@@ -1036,7 +1036,17 @@ begin
       goto errorlab;
      end;
      range.min:= 1;
-     itemtype:= ele.eledataabs(sysdatatypes[st_char8].typedata);
+     case itemtype^.itemsize of
+      2: begin
+       itemtype:= ele.eledataabs(sysdatatypes[st_char16].typedata);
+      end;
+      4: begin
+       itemtype:= ele.eledataabs(sysdatatypes[st_char32].typedata);
+      end;
+      else begin
+       itemtype:= ele.eledataabs(sysdatatypes[st_char8].typedata);
+      end;
+     end;
     end;
     dk_array: begin
      if d.dat.datatyp.indirectlevel <> 1 then begin

@@ -292,6 +292,9 @@ procedure setenumconst(const aenumitem: infoenumitemty;
 procedure pushcurrentscope(const ascope: metavaluety);
 procedure popcurrentscope();
 
+function getcodepoint(var ps: pcard8; const pe: pcard8;
+                               out ares: card32): boolean; //true if ok
+
 procedure initsubdef(const aflags: subflagsty);
 
 procedure init();
@@ -410,6 +413,81 @@ const
 //             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
   );
     
+function getcodepoint(var ps: pcard8; const pe: pcard8; 
+                                  out ares: card32): boolean;
+
+ procedure error(); //todo: correct errormessage
+ begin
+  ares:= ord('?');
+  errormessage(err_invalidutf8,[]);
+  result:= false;
+ end;
+   
+ function checkok(var acodepoint: card32): boolean; //inline;
+ var
+  c1: card8;
+ begin
+  result:= false;
+  inc(ps);
+  if ps >= pe then begin
+   error();
+  end
+  else begin
+   c1:= ps^ - %10000000;
+   if c1 > %00111111 then begin
+    error();
+   end
+   else begin
+    acodepoint:= (acodepoint shl 6) or c1;
+    result:= true;
+   end;
+  end;
+ end;
+
+begin
+ result:= true;
+ if ps^ < %10000000 then begin   //1 byte
+  ares:= ps^;
+ end
+ else begin
+  if ps^ <= %11100000 then begin //2 bytes
+   ares:= ps^ and %00011111;
+   if checkok(ares) then begin
+    if ares < %1000000 then begin
+     error(); //overlong
+    end;
+   end;
+  end
+  else begin
+   if ps^ < %11110000 then begin //3 bytes
+    ares:= ps^ and %00001111;
+    if checkok(ares) and checkok(ares) then begin
+     if ares < %100000000000 then begin
+      error(); //overlong
+     end;
+    end;
+   end
+   else begin
+    if ps^ < %11111000 then begin //4 bytes
+     ares:= ps^ and %00000111;
+     if checkok(ares) and checkok(ares) and checkok(ares) then begin
+      if ares < %10000000000000000 then begin
+       error(); //overlong
+      end;
+     end;
+    end
+    else begin
+     error();
+    end;
+   end;
+  end;
+ end;
+ inc(ps);
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  error;
+ end;
+end;
+                                                 //!!codenavig
 { 
 procedure error(const error: comperrorty;
                    const pos: pchar=nil);
@@ -1058,9 +1136,23 @@ begin
     end;
    end;
    dk_character: begin
-    si1:= das_8; //todo: size !!!!!!!!!!!!!!
-    with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-     setimmint8(constval.vcharacter,par.imm);
+    si1:= adatasize;
+    case adatasize of
+     das_16: begin
+      with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
+       setimmint16(constval.vcharacter,par.imm);
+      end;
+     end;
+     das_32: begin
+      with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
+       setimmint32(constval.vcharacter,par.imm);
+      end;
+     end;
+     else begin
+      with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
+       setimmint8(constval.vcharacter,par.imm);
+      end;
+     end;
     end;
    end;
    dk_pointer: begin

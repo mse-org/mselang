@@ -76,7 +76,8 @@ function getoptable: poptablety;
 
 implementation
 uses
- sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
+ msestrings,sysutils,handlerglob,mseformatstr,msetypes,internaltypes,
+ mserttiutils,
  segmentutils,classhandler,interfacehandler,__mla__internaltypes;
   
 type
@@ -573,6 +574,16 @@ end;
 procedure writechar8op();
 begin
  write(char8((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writechar16op();
+begin
+ write(char16((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writechar32op();
+begin
+ write(ucs4tostring(card32((cpu.stack+cpu.pc^.par.voffset)^)));
 end;
 
 procedure writestring8op();
@@ -5313,6 +5324,8 @@ const
   writeinteger64ssa = 0;
   writefloat64ssa = 0;
   writechar8ssa = 0;
+  writechar16ssa = 0;
+  writechar32ssa = 0;
   writestring8ssa = 0;
   writestring16ssa = 0;
   writestring32ssa = 0;

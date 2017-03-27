@@ -517,8 +517,18 @@ begin
          po1:= additem(oc_writechar8);
          po1^.par.voffset:= alignsize(1);
         end;
+        das_16: begin
+         po1:= additem(oc_writechar16);
+         po1^.par.voffset:= alignsize(2);
+        end;
+        das_32: begin
+         po1:= additem(oc_writechar32);
+         po1^.par.voffset:= alignsize(4);
+        end;
         else begin
-         notimplementederror('20160404B');
+        {$ifdef mse_checkinternalerror}   
+         internalerror(ie_parser,'20170327A');
+        {$endif}
         end;
        end;
       end;

@@ -779,6 +779,17 @@ begin
  end;
 end;
 
+procedure writechar16op();
+begin
+ notimplemented();
+end;
+
+procedure writechar32op();
+begin
+ notimplemented();
+end;
+
+
 procedure writepointerop();
 begin
  with pc^.par do begin
@@ -3775,6 +3786,8 @@ const
   writeinteger64ssa = 1;
   writefloat64ssa = 1;
   writechar8ssa = 1;
+  writechar16ssa = 1;
+  writechar32ssa = 1;
   writestring8ssa = 1;
   writestring16ssa = 1;
   writestring32ssa = 1;

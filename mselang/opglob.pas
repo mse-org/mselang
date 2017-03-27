@@ -143,6 +143,8 @@ type
   oc_writeinteger64,
   oc_writefloat64,
   oc_writechar8,
+  oc_writechar16,
+  oc_writechar32,
   oc_writestring8,
   oc_writestring16,
   oc_writestring32,

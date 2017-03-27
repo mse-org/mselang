@@ -349,7 +349,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,grammar,mseformatstr,
- mselinklist,msesysutils,opcode,
+ mselinklist,msesysutils,opcode,handlerutils,
  internaltypes,__mla__internaltypes,errorhandler,identutils;
 
 function eletodata(const aele: pelementinfoty): pointer; inline;
@@ -2379,81 +2379,10 @@ begin
  fbufcapacity:= minbuffersize;
  reallocmem(fbuffer,fbufcapacity);
 end;
-                                                 //!!codenavig
+ 
+                                                //!!codenavig
 function tstringbuffer.allocconst(const astring: stringvaluety): segaddressty;
 
- function getcodepoint(var ps: pcard8; const pe: pcard8): card32;
-
-  procedure error();
-  begin
-   result:= ord('?');
-   errormessage(err_invalidutf8,[]);
-  end;
-    
-  function checkok(var acodepoint: card32): boolean; //inline;
-  var
-   c1: card8;
-  begin
-   result:= false;
-   inc(ps);
-   if ps >= pe then begin
-    error();
-   end
-   else begin
-    c1:= ps^ - %10000000;
-    if c1 > %00111111 then begin
-     error();
-    end
-    else begin
-     acodepoint:= (acodepoint shl 6) or c1;
-     result:= true;
-    end;
-   end;
-  end;
-
- begin
-  if ps^ < %10000000 then begin   //1 byte
-   result:= ps^;
-  end
-  else begin
-   if ps^ <= %11100000 then begin //2 bytes
-    result:= ps^ and %00011111;
-    if checkok(result) then begin
-     if result < %1000000 then begin
-      error(); //overlong
-     end;
-    end;
-   end
-   else begin
-    if ps^ < %11110000 then begin //3 bytes
-     result:= ps^ and %00001111;
-     if checkok(result) and checkok(result) then begin
-      if result < %100000000000 then begin
-       error(); //overlong
-      end;
-     end;
-    end
-    else begin
-     if ps^ < %11111000 then begin //4 bytes
-      result:= ps^ and %00000111;
-      if checkok(result) and checkok(result) and checkok(result) then begin
-       if result < %10000000000000000 then begin
-        error(); //overlong
-       end;
-      end;
-     end
-     else begin
-      error();
-     end;
-    end;
-   end;
-  end;
-  inc(ps);
-  if (result >= $d800) and (result <= $dfff) then begin
-   error;
-  end;
- end;
- 
 var
  po1: pstringheaderty;
  fla1: addressflagsty;
@@ -2483,7 +2412,7 @@ begin
      pd:= pd+sizeof(stringheaderty);
      p16:= pd;
      while ps < pe do begin
-      c1:= getcodepoint(ps,pe);
+      getcodepoint(ps,pe,c1);
       if c1 > $ffff then begin
        c1:= c1 - $10000;
        p16^:= (c1 shr 10) or $d800;
@@ -2509,7 +2438,7 @@ begin
       pd:= pd+sizeof(stringheaderty);
       p32:= pd;
       while ps < pe do begin
-       p32^:= getcodepoint(ps,pe);
+       getcodepoint(ps,pe,p32^);
        inc(p32);
       end;
       p32^:= 0;       //terminating zero

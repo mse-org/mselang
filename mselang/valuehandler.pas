@@ -607,6 +607,7 @@ var
  pointerconv: boolean;
  i1,i2,i3: integer;
  lstr1: lstringty;
+ p1,p2: pcard8;
 begin
  result:= false;
  with info do begin
@@ -781,9 +782,12 @@ begin
             case source1^.h.kind of
              dk_string: begin 
               lstr1:= getstringconst(vstring);
-              if lstr1.len = 1 then begin
-               vcharacter:= ord(lstr1.po^); //todo: encoding !!!!!!!!!!!!!!!
-               result:= true;
+              if lstr1.len > 0 then begin
+               p1:= pointer(lstr1.po);
+               p2:= p1 + lstr1.len;
+               if getcodepoint(p1,p2,vcharacter) and (p1 = p2) then begin
+                result:= true;
+               end;
               end;
              end;
             end;
