@@ -3598,12 +3598,22 @@ end;
 
 procedure setlengthstr16op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_setlengthstring16,false,[bcstream.ssaval(ssas1),
+                                                         //dest
+                                                     bcstream.ssaval(ssas2)]);
+                                                            //count
+ end;
 end;
 
 procedure setlengthstr32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_setlengthstring32,false,[bcstream.ssaval(ssas1),
+                                                         //dest
+                                                     bcstream.ssaval(ssas2)]);
+                                                            //count
+ end;
 end;
 
 procedure setlengthdynarrayop();

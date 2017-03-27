@@ -26,9 +26,15 @@ procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
 procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
                                                     const count: int32);
+procedure __mla__setlengthstring16(const ref: pprefsizeinfoty;
+                                                    const count: int32);
+procedure __mla__setlengthstring32(const ref: pprefsizeinfoty;
+                                                    const count: int32);
 procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
                                                     const itemsize: int32);
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
 function __mla__compstring8eq(a,b: pointer): bool1;
 function __mla__compstring8ne(a,b: pointer): bool1;
 function __mla__compstring8gt(a,b: pointer): bool1;
@@ -37,6 +43,8 @@ function __mla__compstring8ge(a,b: pointer): bool1;
 function __mla__compstring8le(a,b: pointer): bool1;
 
 function __mla__chartostring8(achar: card8): pointer;
+function __mla__chartostring16(achar: card16): pointer;
+function __mla__chartostring32(achar: card32): pointer;
 function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
 function __mla__dynarraytoopenar(ref: prefsizeinfoty): openarrayty;
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
@@ -71,6 +79,8 @@ function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 implementation
 type
  pcard8 = ^card8;
+ pcard16 = ^card16;
+ pcard32 = ^card32;
 
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 var
@@ -226,7 +236,7 @@ end;
 procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
                                                     const count: int32);
 var
- s,d: pstring8headerty;
+ s,d: pstringheaderty;
  i1,i2: int32;
 begin
  i1:= count * 1; //bytesize
@@ -279,6 +289,119 @@ begin
  end;
 end;
 
+procedure __mla__setlengthstring16(const ref: pprefsizeinfoty;
+                                                    const count: int32);
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ i1:= count * 2; //bytesize
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count = 1 then begin
+   if i1 = 0 then begin
+    freemem(s);
+    ref^:= nil;
+   end
+   else begin
+    reallocmem(s,i1+string16allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard16(pointer(s+1))+count)^:= 0; //terminator
+   end;
+  end
+  else begin
+   if i1 = 0 then begin
+    freemem(s);
+    ref^:= nil;
+   end
+   else begin
+    getmem(d,i1+string16allocsize);
+    i2:= s^.len * 2; //old bytesize
+    if i2 <= i1 then begin
+     memcpy(@d^.data,@s^.data,i2);
+    end
+    else begin
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+    (pcard16(pointer(s+1))+count)^:= 0; //terminator
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+  end;
+ end
+ else begin
+  if count > 0 then begin
+   getmem(s,i1+string16allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard16(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__setlengthstring32(const ref: pprefsizeinfoty;
+                                                    const count: int32);
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ i1:= count * 4; //bytesize
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count = 1 then begin
+   if i1 = 0 then begin
+    freemem(s);
+    ref^:= nil;
+   end
+   else begin
+    reallocmem(s,i1+string32allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard32(pointer(s+1))+count)^:= 0; //terminator
+   end;
+  end
+  else begin
+   if i1 = 0 then begin
+    freemem(s);
+    ref^:= nil;
+   end
+   else begin
+    getmem(d,i1+string32allocsize);
+    i2:= s^.len * 4; //old bytesize
+    if i2 <= i1 then begin
+     memcpy(@d^.data,@s^.data,i2);
+    end
+    else begin
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+    (pcard32(pointer(s+1))+count)^:= 0; //terminator
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+  end;
+ end
+ else begin
+  if count > 0 then begin
+   getmem(s,i1+string32allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard32(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+
 procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
                                                     const itemsize: int32);
 var
@@ -290,7 +413,7 @@ begin
   dec(s);
   if s^.ref.count <> 1 then begin
    i1:= (s^.high+1)*itemsize + dynarrayallocsize;
-   getmem(d,i1+dynarrayallocsize);
+   getmem(d,i1);
    memcpy(d,s,i1);
    dec(s^.ref.count);
    d^.ref.count:= 1;
@@ -301,15 +424,57 @@ end;
 
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 var
- s,d: pstring8headerty;
+ s,d: pstringheaderty;
  i1: int32;
 begin
  s:= ref^;
  if s <> nil then begin
   dec(s);
   if s^.ref.count <> 1 then begin
-   i1:= (s^.len)*1 + dynarrayallocsize;
-   getmem(d,i1+string8allocsize);
+   i1:= (s^.len)*1 + string8allocsize;
+   getmem(d,i1);
+   memcpy(d,s,i1);
+   if s^.ref.count > 0 then begin
+    dec(s^.ref.count);
+   end;
+   d^.ref.count:= 1;
+   ref^:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
+var
+ s,d: pstringheaderty;
+ i1: int32;
+begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count <> 1 then begin
+   i1:= (s^.len)*2 + string16allocsize;
+   getmem(d,i1);
+   memcpy(d,s,i1);
+   if s^.ref.count > 0 then begin
+    dec(s^.ref.count);
+   end;
+   d^.ref.count:= 1;
+   ref^:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
+var
+ s,d: pstringheaderty;
+ i1: int32;
+begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count <> 1 then begin
+   i1:= (s^.len)*4 + string32allocsize;
+   getmem(d,i1);
    memcpy(d,s,i1);
    if s^.ref.count > 0 then begin
     dec(s^.ref.count);
@@ -326,8 +491,8 @@ var
  la,lb: stringsizety;
  i1: int16;
 begin
- la:= (pstring8headerty(a)-1)^.len;
- lb:= (pstring8headerty(b)-1)^.len;
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
  poa:= a;
  pob:= b;
  if la < lb then begin
@@ -399,7 +564,7 @@ end;
 
 function __mla__chartostring8(achar: card8): pointer;
 var
- po1: pstring8headerty;
+ po1: pstringheaderty;
 begin
  getmem(po1,1*1+string8allocsize);
  po1^.len:= 1;
@@ -407,6 +572,30 @@ begin
  result:= po1+1; //data
  pcard8(result)^:= achar;
  (pcard8(result)+1)^:= 0; //terminator
+end;
+
+function __mla__chartostring16(achar: card16): pointer;
+var
+ po1: pstringheaderty;
+begin
+ getmem(po1,1*2+string16allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard16(result)^:= achar;
+ (pcard16(result)+1)^:= 0; //terminator
+end;
+
+function __mla__chartostring32(achar: card32): pointer;
+var
+ po1: pstringheaderty;
+begin
+ getmem(po1,1*4+string32allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard32(result)^:= achar;
+ (pcard32(result)+1)^:= 0; //terminator
 end;
 
 function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
@@ -444,7 +633,7 @@ end;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 begin
  if ref <> nil then begin
-  result:= pstring8headerty(ref-1)^.len;
+  result:= pstringheaderty(ref-1)^.len;
  end
  else begin
   result:= 0;
@@ -470,7 +659,7 @@ end;
 function __mla__highstring(ref: prefsizeinfoty): int32;
 begin
  if ref <> nil then begin
-  result:= pstring8headerty(ref-1)^.len;
+  result:= pstringheaderty(ref-1)^.len;
  end
  else begin
   result:= 0;
