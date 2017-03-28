@@ -1255,23 +1255,30 @@ begin
    else begin
     avalue^.allocs.nestedallocstypeindex:= -1;
    end;
-   if sf_hasnestedaccess in header.flags then begin
-                   //array of pointer for pointer to nested vars
-    with parbuf.params[0] do begin
-     flags:= [];
-     typelistindex:= ord(das_pointer);
-    end;
-    inc(header.paramcount);
-    i1:= 1;
-   end
-   else begin
-    i1:= 0;
-   end;
-   if header.paramcount > maxparamcount then begin
+   if header.paramcount > maxparamcount-1 then begin 
+                                    //1 reserve for nestedacces
     header.paramcount:= 0;
     errormessage(err_toomanyparams,[]);
    end;
    po2:= @avalue^.paramsrel;
+   i1:= 0; 
+   if sf_function in header.flags then begin
+    with params[0] do begin
+     flags:= [];
+     typelistindex:= addvarvalue(ele.eledataabs(po2^));
+    end;
+    inc(i1);
+    inc(po2);
+   end;
+   if sf_hasnestedaccess in header.flags then begin
+                   //array of pointer for pointer to nested vars
+    with parbuf.params[i1] do begin
+     flags:= [];
+     typelistindex:= ord(das_pointer);
+    end;
+    inc(i1);
+    inc(header.paramcount);
+   end;
    for i1:= i1 to header.paramcount - 1 do begin
     with params[i1] do begin
      flags:= [];
