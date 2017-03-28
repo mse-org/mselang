@@ -1,0 +1,20 @@
+program nestedsub2;
+
+procedure test();
+
+var
+ i1: int32;
+ function test1(): int32;
+ begin
+  i1:= i1+13;
+  result:= 10;
+ end;
+
+begin
+ i1:= 100;
+ exitcode:= test1()+i1;
+end;
+
+begin
+ test();
+end.

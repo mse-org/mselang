@@ -116,7 +116,7 @@ c=3
  c=6
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=34
     (
     kind=1
@@ -2260,7 +2260,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=14
     (
     kind=2
@@ -3019,7 +3019,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C1420
+    ao=An unhandled exception occured at $B7386420
     ae=
     aec=123
     ie=0
@@ -4569,7 +4569,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=30
+   c=32
     (
     kind=1
     a=0,664,4,openarray
@@ -5211,6 +5211,50 @@ c=3
     a=0,648,1,nestedsub1 llvm
     teststate=1
     path=nestedsub1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedsub2
+    teststate=1
+    path=nestedsub2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedsub2 llvm
+    teststate=1
+    path=nestedsub2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -8602,17 +8646,72 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=609
+propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=334
+width1=326
 sortdescend1=0
-width2=150
+width2=146
 sortdescend2=0
-width3=158
+width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=15
+rowstate=70
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
