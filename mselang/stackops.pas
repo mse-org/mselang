@@ -2995,10 +2995,9 @@ end;
 function getcodepoint(var ps: pcard8; const pe: pcard8; 
                                   out ares: card32): boolean;
 
- procedure error(); //todo: correct errormessage
+ procedure error();
  begin
   ares:= ord('?');
-//  errormessage(err_invalidutf8,[]);
   result:= false;
  end;
    
@@ -3067,6 +3066,37 @@ begin
  end;
 end;
 
+function getcodepoint(var ps: pcard16; const pe: pcard16; 
+                                  out ares: card32): boolean;
+
+ procedure error();
+ begin
+  ares:= ord('?');
+  result:= false;
+ end;
+
+begin
+ result:= true;
+ ares:= ps^;
+ inc(ps);
+ if ares and $fc00 = $d800 then begin
+  ares:= (ares - $d800) shl 10;
+  if ps < pe then begin 
+   ares:= ares + ps^ - $dc00 + $10000;
+   inc(ps);
+   if ares < $10000 then begin
+    error; //overlong;
+   end;
+  end
+  else begin
+   error(); //missing surrogate
+  end;
+ end;
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  error; //surrogate pair
+ end;
+end;
+
 procedure string8to16op();
 var
  pss,pds: pstringheaderty;
@@ -3113,28 +3143,229 @@ begin
 end;
 
 procedure string8to32op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard8;
+ p2,p3: pcard32;
+ c1: card32;
 begin
- notimplemented();
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string32allocsize+pss^.len*4); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,p2^);
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
+end;
+
+procedure setutf8(const codepoint: card32; var dest: pcard8);
+begin
+ if codepoint < $80 then begin
+  dest^:= codepoint;
+ end
+ else begin
+  if codepoint < $800 then begin //2 byte
+   dest^:= (codepoint shr 6) or %11000000;
+   inc(dest);
+   dest^:= codepoint and %00111111 or %10000000;
+  end
+  else begin
+   if codepoint < $10000 then begin //3 byte
+    dest^:= (codepoint shr 12) or %11100000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   end
+   else begin                       //4 byte
+    dest^:= (codepoint shr 18) or %11110000;
+    inc(dest);
+    dest^:= (codepoint shr 12) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   end;
+  end;
+ end;
+ inc(dest);
 end;
 
 procedure string16to8op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard8;
+ c1: card32;
 begin
- notimplemented();
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string8allocsize+pss^.len*3); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,c1);
+   setutf8(c1,p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
 procedure string16to32op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard32;
+ c1: card32;
 begin
- notimplemented();
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string8allocsize+pss^.len);
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,p2^); 
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
 procedure string32to8op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard32;
+ p2,p3: pcard8;
+ c1: card32;
 begin
- notimplemented();
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string8allocsize+pss^.len*4); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   setutf8(p1^,p2);
+   inc(p1);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
 procedure string32to16op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard32;
+ p2,p3: pcard16;
+ c1: card32;
 begin
- notimplemented();
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string16allocsize+pss^.len*2); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   c1:= p1^;
+   inc(p1);
+   if c1 < $10000 then begin
+    p2^:= c1;
+   end
+   else begin
+    p2^:= (c1 shr 10) and $3ff or $d800;
+    inc(p2);
+    p2^:= c1 and $3ff or $dc00;
+   end;
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
 procedure chartostring8op();

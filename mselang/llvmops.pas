@@ -1525,32 +1525,44 @@ end;
 
 procedure string8to16op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string8to16,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure string8to32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string8to32,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure string16to8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string16to8,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure string16to32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string16to32,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure string32to8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string32to8,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure string32to16op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string32to16,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure chartostring8op();

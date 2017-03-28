@@ -35,6 +35,13 @@ procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
 procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
+procedure __mla__string8to16(const ref: pprefsizeinfoty);
+procedure __mla__string8to32(const ref: pprefsizeinfoty);
+procedure __mla__string16to8(const ref: pprefsizeinfoty);
+procedure __mla__string16to32(const ref: pprefsizeinfoty);
+procedure __mla__string32to8(const ref: pprefsizeinfoty);
+procedure __mla__string32to16(const ref: pprefsizeinfoty);
+
 function __mla__compstring8eq(a,b: pointer): bool1;
 function __mla__compstring8ne(a,b: pointer): bool1;
 function __mla__compstring8gt(a,b: pointer): bool1;
@@ -483,6 +490,191 @@ begin
    ref^:= @d^.data;
   end;
  end;
+end;
+
+const
+ errorcodepoint = $3f; //?
+(*
+procedure getcodepoint(var ps: pcard8; const pe: pcard8; 
+                                  out ares: card32);
+ function checkok(var acodepoint: card32): boolean; //inline;
+ var
+  c1: card8;
+ begin
+  result:= false;
+  inc(ps);
+  if ps >= pe then begin
+   acodepoint:= errorcodepoint;
+  end
+  else begin
+   c1:= ps^ - %10000000;
+   if c1 > %00111111 then begin
+    acodepoint:= errorcodepoint;
+   end
+   else begin
+    acodepoint:= (acodepoint shl 6) or c1;
+    result:= true;
+   end;
+  end;
+ end;
+
+begin
+ if ps^ < %10000000 then begin   //1 byte
+  ares:= ps^;
+ end
+ else begin
+  if ps^ <= %11100000 then begin //2 bytes
+   ares:= ps^ and %00011111;
+   if checkok(ares) then begin
+    if ares < %1000000 then begin
+     ares:= errorcodepoint; //overlong
+    end;
+   end;
+  end
+  else begin
+   if ps^ < %11110000 then begin //3 bytes
+    ares:= ps^ and %00001111;
+    if checkok(ares) and checkok(ares) then begin
+     if ares < %100000000000 then begin
+      ares:= errorcodepoint; //overlong
+     end;
+    end;
+   end
+   else begin
+    if ps^ < %11111000 then begin //4 bytes
+     ares:= ps^ and %00000111;
+     if checkok(ares) and checkok(ares) and checkok(ares) then begin
+      if ares < %10000000000000000 then begin
+       ares:= errorcodepoint; //overlong
+      end;
+     end;
+    end
+    else begin
+     ares:= errorcodepoint;
+    end;
+   end;
+  end;
+ end;
+ inc(ps);
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  ares:= errorcodepoint; //surrogate
+ end;
+end;
+
+function getcodepoint(var ps: pcard16; const pe: pcard16; 
+                                  out ares: card32): boolean;
+begin
+ result:= true;
+ ares:= ps^;
+ inc(ps);
+ if ares and $fc00 = $d800 then begin
+  ares:= (ares - $d800) shl 10;
+  if ps < pe then begin 
+   ares:= ares + ps^ - $dc00 + $10000;
+   inc(ps);
+   if ares < $10000 then begin
+    ares:= errorcodepoint; //overlong
+   end;
+  end
+  else begin
+   ares:= errorcodepoint; //missing surrogate
+  end;
+ end;
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  ares:= errorcodepoint; //surrogate pair
+ end;
+end;
+
+procedure setutf8(const codepoint: card32; var dest: pcard8);
+begin
+ if codepoint < $80 then begin
+  dest^:= codepoint;
+ end
+ else begin
+  if codepoint < $800 then begin //2 byte
+   dest^:= (codepoint shr 6) or %11000000;
+   inc(dest);
+   dest^:= codepoint and %00111111 or %10000000;
+  end
+  else begin
+   if codepoint < $10000 then begin //3 byte
+    dest^:= (codepoint shr 12) or %11100000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   end
+   else begin                       //4 byte
+    dest^:= (codepoint shr 18) or %11110000;
+    inc(dest);
+    dest^:= (codepoint shr 12) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   end;
+  end;
+ end;
+ inc(dest);
+end;
+*)
+procedure __mla__string8to16(const ref: pprefsizeinfoty);
+begin
+end;
+
+procedure __mla__string8to32(const ref: pprefsizeinfoty);
+begin
+end;
+
+procedure __mla__string16to8(const ref: pprefsizeinfoty);
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard8;
+ c1: card32;
+begin
+(*
+ pss:= ppointer(ref)^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string8allocsize+pss^.len*3); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,c1);
+   setutf8(c1,p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(ref)^:= pds;
+*)
+end;
+
+procedure __mla__string16to32(const ref: pprefsizeinfoty);
+begin
+end;
+
+procedure __mla__string32to8(const ref: pprefsizeinfoty);
+begin
+end;
+
+procedure __mla__string32to16(const ref: pprefsizeinfoty);
+begin
 end;
 
 function compstring8(a,b:pointer): stringsizety; //a and b <> nil
