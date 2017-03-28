@@ -2992,6 +2992,151 @@ begin
  //dummy
 end;
 
+function getcodepoint(var ps: pcard8; const pe: pcard8; 
+                                  out ares: card32): boolean;
+
+ procedure error(); //todo: correct errormessage
+ begin
+  ares:= ord('?');
+//  errormessage(err_invalidutf8,[]);
+  result:= false;
+ end;
+   
+ function checkok(var acodepoint: card32): boolean; //inline;
+ var
+  c1: card8;
+ begin
+  result:= false;
+  inc(ps);
+  if ps >= pe then begin
+   error();
+  end
+  else begin
+   c1:= ps^ - %10000000;
+   if c1 > %00111111 then begin
+    error();
+   end
+   else begin
+    acodepoint:= (acodepoint shl 6) or c1;
+    result:= true;
+   end;
+  end;
+ end;
+
+begin
+ result:= true;
+ if ps^ < %10000000 then begin   //1 byte
+  ares:= ps^;
+ end
+ else begin
+  if ps^ <= %11100000 then begin //2 bytes
+   ares:= ps^ and %00011111;
+   if checkok(ares) then begin
+    if ares < %1000000 then begin
+     error(); //overlong
+    end;
+   end;
+  end
+  else begin
+   if ps^ < %11110000 then begin //3 bytes
+    ares:= ps^ and %00001111;
+    if checkok(ares) and checkok(ares) then begin
+     if ares < %100000000000 then begin
+      error(); //overlong
+     end;
+    end;
+   end
+   else begin
+    if ps^ < %11111000 then begin //4 bytes
+     ares:= ps^ and %00000111;
+     if checkok(ares) and checkok(ares) and checkok(ares) then begin
+      if ares < %10000000000000000 then begin
+       error(); //overlong
+      end;
+     end;
+    end
+    else begin
+     error();
+    end;
+   end;
+  end;
+ end;
+ inc(ps);
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  error;
+ end;
+end;
+
+procedure string8to16op();
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard8;
+ p2,p3: pcard16;
+ c1: card32;
+begin
+ pss:= ppointer(stackpop(sizeof(pointer)))^;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string16allocsize+pss^.len*2); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,c1);
+   if c1 < $10000 then begin
+    p2^:= c1;
+   end
+   else begin
+    p2^:= (c1 shr 10) and $3ff or $d800;
+    inc(p2);
+    p2^:= c1 and $3ff or $dc00;
+   end;
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+  if pss^.ref.count > 0 then begin
+   dec(pss^.ref.count);
+   if pss^.ref.count = 0 then begin
+    freemem(pss);
+   end;
+  end;
+ end
+ else begin
+  pds:= nil;
+ end;
+ ppointer(stackpush(sizeof(pointer)))^:= pds;
+end;
+
+procedure string8to32op();
+begin
+ notimplemented();
+end;
+
+procedure string16to8op();
+begin
+ notimplemented();
+end;
+
+procedure string16to32op();
+begin
+ notimplemented();
+end;
+
+procedure string32to8op();
+begin
+ notimplemented();
+end;
+
+procedure string32to16op();
+begin
+ notimplemented();
+end;
+
 procedure chartostring8op();
 var
  char1: card8;
@@ -5525,6 +5670,13 @@ const
   int64tocard16ssa = 0;
   int64tocard32ssa = 0;
   int64tocard64ssa = 0;
+
+  string8to16ssa = 0;
+  string8to32ssa = 0;
+  string16to8ssa = 0;
+  string16to32ssa = 0;
+  string32to8ssa = 0;
+  string32to16ssa = 0;
   
   chartostring8ssa = 0;
   arraytoopenarssa = 0;

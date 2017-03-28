@@ -333,6 +333,19 @@
   (ssa: int64tocard32ssa; proc: @int64tocard32op; flags: []), 
 //oc_int64tocard64
   (ssa: int64tocard64ssa; proc: @int64tocard64op; flags: []), 
+
+//oc_string8to16
+  (ssa: string8to16ssa; proc: @string8to16op; flags: []), 
+//oc_string8to32
+  (ssa: string8to32ssa; proc: @string8to32op; flags: []), 
+//oc_string16to8
+  (ssa: string16to8ssa; proc: @string16to8op; flags: []), 
+//oc_string16to32
+  (ssa: string16to32ssa; proc: @string16to32op; flags: []), 
+//oc_string32to8
+  (ssa: string32to8ssa; proc: @string32to8op; flags: []), 
+//oc_string32to16
+  (ssa: string32to16ssa; proc: @string32to16op; flags: []), 
   
 //oc_chartostring8
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 

@@ -1523,6 +1523,36 @@ begin
  //dummy
 end;
 
+procedure string8to16op();
+begin
+ notimplemented();
+end;
+
+procedure string8to32op();
+begin
+ notimplemented();
+end;
+
+procedure string16to8op();
+begin
+ notimplemented();
+end;
+
+procedure string16to32op();
+begin
+ notimplemented();
+end;
+
+procedure string32to8op();
+begin
+ notimplemented();
+end;
+
+procedure string32to16op();
+begin
+ notimplemented();
+end;
+
 procedure chartostring8op();
 begin
  with pc^.par do begin
@@ -3911,6 +3941,13 @@ const
   int64tocard16ssa = 1;
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
+  
+  string8to16ssa = 0;
+  string8to32ssa = 0;
+  string16to8ssa = 0;
+  string16to32ssa = 0;
+  string32to8ssa = 0;
+  string32to16ssa = 0;
   
   chartostring8ssa = 1;
   arraytoopenarssa = 1;

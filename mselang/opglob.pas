@@ -208,6 +208,10 @@ type
   oc_int16tocard8,oc_int16tocard16,oc_int16tocard32,oc_int16tocard64,
   oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
+  
+  oc_string8to16,oc_string8to32,
+  oc_string16to8,oc_string16to32,
+  oc_string32to8,oc_string32to16,
 
   oc_chartostring8,
   oc_arraytoopenar,

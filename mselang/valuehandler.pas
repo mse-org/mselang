@@ -554,6 +554,20 @@ begin
  end;
 end;
 
+const                                  // 0  1  2  3  4
+ stringsizeindex: array[0..4] of card8 = (0, 0, 1, 0, 2);
+ stringconvops: array[card8(0)..card8(2),card8(0)..card8(2)] of opcodety = (
+ //8              16              32      dest          source
+  (oc_none,       oc_string8to16, oc_string8to32),      //8
+  (oc_string16to8,oc_none,        oc_string16to32),     //16
+  (oc_string32to8,oc_string32to16,oc_none)              //32
+ );
+
+function getconvstringop(const sourcesize,destsize: int32): opcodety;
+begin
+ result:= stringconvops[stringsizeindex[sourcesize],stringsizeindex[destsize]];
+end;
+
 function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
@@ -902,6 +916,10 @@ begin
           case source1^.h.kind of
            dk_character: begin
             convert(oc_chartostring8); //todo: !!!!!!!!!!!!!!!!!!!
+            result:= true;
+           end;
+           dk_string: begin
+            convert(getconvstringop(source1^.itemsize,dest^.itemsize));
             result:= true;
            end;
           end;
