@@ -2887,7 +2887,8 @@ var
  end; //addbufferreverse
 var
  p0: pointer;
- po1: pmetavaluety;  
+ po1: pmetavaluety;
+ st1: systypety;
 begin
  if atype = 0 then begin //untyped pointer
   atype:= getbasetypeele(das_8);
@@ -3005,9 +3006,19 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
      end;
-     dk_string: begin         //todo: itemsize !!!!!!!!!!!!!!!
-                                        //todo: use refstringtype
-      m2:= addtype(sysdatatypes[st_char8].typedata,0);
+     dk_string: begin         //todo: use refstringtype
+      case po2^.itemsize of
+       2: begin
+        st1:= st_char16;
+       end;
+       4: begin
+        st1:= st_char32;
+       end;
+       else begin
+        st1:= st_char8;
+       end;
+      end;
+      m2:= addtype(sysdatatypes[st1].typedata,0);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
 //      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
@@ -3055,6 +3066,9 @@ begin
   end;
   po1:= ftypemetalist.getdatapo(offs1); //possibly moved
   po1^.id:= m1.id;
+ end
+ else begin
+  po1:= @ptypemetahashdataty(p0)^.data;
  end;
  result.id:= po1^.id;
 end;

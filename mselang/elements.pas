@@ -1330,6 +1330,9 @@ function telementhashdatalist.dumpelements: msestringarty;
    with ptypedataty(@po2^.data)^ do begin
     result:= result+' B:'+inttostrmse(h.base);
     result:= result+' K:'+msestring(getenumname(typeinfo(h.kind),ord(h.kind)));
+    if h.kind = dk_string then begin
+     result:= result+inttostrmse(itemsize*8);
+    end;
     if h.kind <> dk_none then begin
      result:= result+
      ' F:'+msestring(

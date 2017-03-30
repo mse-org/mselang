@@ -96,6 +96,8 @@ uses
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
+const
+ llcopt = '-debugger-tune=gdb ';
 var
  errstream,outstream: ttextstream;
  mlistream: tmsefilestream;
@@ -123,6 +125,9 @@ begin
   end;
   if proginfoed.value then begin
    include(compoptions,co_proginfo);
+  end;
+  if nameed.value then begin
+   include(compoptions,co_names);
   end;
  end
  else begin
@@ -169,7 +174,7 @@ begin
          int1:= 0;
         end;
         if int1 = 0 then begin
-         int1:= getprocessoutput(llvmbindir+'llc -o '+
+         int1:= getprocessoutput(llvmbindir+'llc '+llcopt+'-o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -195,7 +200,7 @@ begin
                 quotefilename(ar1),'',str1);
        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        if int1 = 0 then begin
-        int1:= getprocessoutput(llvmbindir+'llc '+filename2,'',str1);
+        int1:= getprocessoutput(llvmbindir+'llc '+llcopt+filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if int1 = 0 then begin
          int1:= getprocessoutput('gcc -lm -o'+filenamebase(filename1)+'.bin '+
@@ -288,10 +293,10 @@ procedure tmainfo.nameset(const sender: TObject; var avalue: Boolean;
                var accept: Boolean);
 begin
  if avalue then begin
-  include(info.o.debugoptions,do_name);
+  include(info.o.debugoptions,do_names);
  end
  else begin
-  exclude(info.o.debugoptions,do_name);
+  exclude(info.o.debugoptions,do_names);
  end;
 end;
 

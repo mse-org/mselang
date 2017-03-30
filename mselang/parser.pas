@@ -512,6 +512,7 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
+  aunit^.dwarflangid:= DW_LANG_Pascal83;
   if o.compileoptions * [co_readunits,co_build] = [co_readunits] then begin
    if not (us_invalidunitfile in aunit^.state) and 
                                       readunitfile(aunit) then begin
@@ -1057,6 +1058,9 @@ begin
      end;
      if co_proginfo in aoptions then begin
       include(info.o.debugoptions,do_proginfo);
+     end;    
+     if co_names in aoptions then begin
+      include(info.o.debugoptions,do_names);
      end;    
     end;
     s.debugoptions:= o.debugoptions;

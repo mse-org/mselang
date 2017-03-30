@@ -411,6 +411,7 @@ var
  countpo,counte: pint32;
  intfpo: pintfdefinfoty;
  unitheader1: bcunitinfoty;
+ ac1: metadataattachmentcodes;
 begin
  codestarted:= true;
  for int1:= low(i32consts) to high(i32consts) do begin
@@ -487,6 +488,16 @@ begin
    bcstream.start(constlist,globlist,metadatalist,unitheader1,
                      'e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128',
                      'i386-unknown-linux-gnu'); //todo: real values
+  end;
+  if do_proginfo in info.o.debugoptions then begin
+   bcstream.beginblock(METADATA_KIND_BLOCK_ID,3);
+   for ac1:= low(metadataattachmentcodes) to 
+                          high(metadataattachmentcodes) do begin
+    bcstream.emitmetadatakind(ord(ac1),
+           length(metadataattachmentcodenames[ac1]),
+               pchar(metadataattachmentcodenames[ac1]));
+   end;
+   bcstream.endblock();
   end;
  end;
 end;
@@ -3387,15 +3398,20 @@ begin
   pe:= ps + sub.allocs.alloccount;
   po1:= ps;
   if do_proginfo in info.o.debugoptions then begin
-   bcstream.beginblock(METADATA_BLOCK_ID,3);
-   i1:= bcstream.allocval(0);
-   while po1 < pe do begin
-    bcstream.emitmetavalue(bcstream.ptypeval(po1^.size.listindex),i1);
-    inc(po1);
-    inc(i1);
+//   bcstream.beginblock(METADATA_ATTACHMENT_ID,3);
+//   bcstream.emitsubdbg(submeta.id);
+//   bcstream.endblock();
+   if po1 < pe then begin
+    bcstream.beginblock(METADATA_BLOCK_ID,3);
+    i1:= bcstream.allocval(0);
+    while po1 < pe do begin
+     bcstream.emitmetavalue(bcstream.ptypeval(po1^.size.listindex),i1);
+     inc(po1);
+     inc(i1);
+    end;
+    bcstream.endblock();
+    po1:= ps;
    end;
-   bcstream.endblock();
-   po1:= ps;
   end;
   while po1 < pe do begin
    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
@@ -3497,26 +3513,32 @@ var
  po2: pdilocvariablety;
 begin
  with pc^.par.subend do begin
-  if info.o.debugoptions * [do_name,do_proginfo] = 
-                                     [do_name,do_proginfo] then begin
-   po1:= getsegmentpo(seg_localloc,allocs.allocs);
-   pe:= po1 + allocs.alloccount;
-   bcstream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-   i1:= bcstream.paramval(0);
-   metalist:= info.s.unitinfo^.llvmlists.metadatalist;
-   while po1 < pe do begin
-    po2:= metalist.getdata(po1^.debuginfo);
-   {$ifdef mse_checkinternalerror}
-    if pmetadataty(pointer(po2)-sizeof(metadataheaderty))^.header.kind <> 
-                                                    mdk_dilocvariable then begin
-     internalerror(ie_llvmmeta,'20151108B');
-    end;
-   {$endif}
-    bcstream.emitvstentry(i1,metalist.getstringvalue(po2^.name));    
-    inc(po1);
-    inc(i1);
-   end;
+  if do_proginfo in info.o.debugoptions then begin
+   bcstream.beginblock(METADATA_ATTACHMENT_ID,3);
+   bcstream.emitsubdbg(submeta.id);
    bcstream.endblock();
+   if do_proginfo in info.o.debugoptions then begin
+    if allocs.alloccount > 0 then begin
+     po1:= getsegmentpo(seg_localloc,allocs.allocs);
+     pe:= po1 + allocs.alloccount;
+     bcstream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
+     i1:= bcstream.paramval(0);
+     metalist:= info.s.unitinfo^.llvmlists.metadatalist;
+     while po1 < pe do begin
+      po2:= metalist.getdata(po1^.debuginfo);
+     {$ifdef mse_checkinternalerror}
+      if pmetadataty(pointer(po2)-sizeof(metadataheaderty))^.header.kind <> 
+                                                      mdk_dilocvariable then begin
+       internalerror(ie_llvmmeta,'20151108B');
+      end;
+     {$endif}
+      bcstream.emitvstentry(i1,metalist.getstringvalue(po2^.name));    
+      inc(po1);
+      inc(i1);
+     end;
+     bcstream.endblock();
+    end;
+   end;
   end;
   bcstream.endsub();
  end;

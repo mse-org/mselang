@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -168,6 +168,7 @@ type
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
+   procedure emitsubdbg(const avalue: int32);
    procedure emitvar(const atype: int32; const alinkage: linkagety);
    procedure emitvar(const atype: int32; const ainitconst: int32;
                                                    const alinkage: linkagety);
@@ -232,6 +233,9 @@ type
    procedure marktrampoline(const apc: popinfoty);
    procedure releasetrampoline(out apc: popinfoty); //nil if none
 
+   procedure emitmetadatakind(const aid: int32; const len: int32;
+                                                       const name: pchar);
+   
    procedure emitmetavalue(const atyp,avalue: int32);  
    procedure emitmetafile(const afile,adirectory: int32);
    procedure emitmetacompileunit(const avalue: dicompileunitty);
@@ -1420,6 +1424,11 @@ begin
 // inc(fsubopstart);
 end;
 
+procedure tllvmbcwriter.emitsubdbg(const avalue: int32);
+begin
+ emitrec(ord(metadata_attachment),[ord(md_dbg),avalue]);
+end;
+
 //{$define explicitvartype}
 
 const
@@ -1943,6 +1952,23 @@ procedure tllvmbcwriter.releasetrampoline(out apc: popinfoty);
 begin
  apc:= ftrampolineop;
  ftrampolineop:= nil;
+end;
+
+procedure tllvmbcwriter.emitmetadatakind(const aid: int32; 
+                                      const len: int32; const name: pchar);
+var
+ p1,pe: pcard8;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(ord(METADATA_KIND));
+ emitvbr6(len+1);
+ emitvbr6(aid);
+ p1:= pointer(name);
+ pe:= p1+len;
+ while p1 < pe do begin
+  emitvbr6(p1^);
+  inc(p1);
+ end;
 end;
 
 procedure tllvmbcwriter.emitmetavalue(const atyp: int32;

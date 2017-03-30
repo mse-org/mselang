@@ -217,6 +217,8 @@ type
    procedure readtypeblock();
    procedure readconstantsblock(const alist: tgloblist);
    procedure readmetadatablock();
+   procedure readmetadatakindblock();
+   procedure readmetadataattachmentblock();
    procedure readvaluesymtabblock();
    procedure readfunctionblock();
    procedure readparamattr(const akind: blockids);
@@ -249,8 +251,12 @@ const
   'METADATA_BLOCK',
   'METADATA_ATTACHMENT',
   'TYPE_BLOCK_NEW',
-  'USELIST_BLOCK'
- );
+  'USELIST_BLOCK',
+  'MODULE_STRTAB_BLOCK',
+  'FUNCTION_SUMMARY_BLOCK',
+  'OPERAND_BUNDLE_TAGS_BLOCK',
+  'METADATA_KIND_BLOCK'
+);
 
  modulecodenames: array[modulecodes] of string = (
   '',             //0
@@ -374,7 +380,7 @@ const
     'METADATA_IMPORTED_ENTITY',
     'METADATA_MODULE'
    );
-  
+
  functioncodesnames: array[functioncodes] of string = (
   '',                            //0
   'DECLAREBLOCKS',               //1
@@ -1591,9 +1597,8 @@ begin
      end;
      METADATA_SUBPROGRAM: begin
       fmetalist.add();
-      checkdatalen(rec1,20);
-      outmetarecord(distinct()+
-        metaornull('scope',3)+','+
+      checkmindatalen(rec1,19);
+      str1:= distinct()+metaornull('scope',3)+','+
         metaornull('name',4)+','+
         metaornull('linkagename',5)+','+
         metaornull('file',6)+','+
@@ -1609,13 +1614,16 @@ begin
         card('isoptimized',16)+','+
         metaornull('function',17)+','+
         metaornull('templateparams',18)+','+
-        metaornull('declaration',19)+','+
-        metaornull('variables',20)+',',20);
+        metaornull('declaration',19);
+      if high(rec1) >= 20 then begin
+       str1:= str1 + ',' + metaornull('variables',20);
+      end;
+      outmetarecord(str1,high(rec1));
      end;
      METADATA_COMPILE_UNIT: begin
       fmetalist.add();
       checkmindatalen(rec1,14);
-      checkmaxdatalen(rec1,16);
+//      checkmaxdatalen(rec1,16);
       str1:= distinct()+
         tag('sourcelanguage',3)+','+
         metaornull('file',4)+','+
@@ -1630,9 +1638,9 @@ begin
         metaornull('subprograms',13)+','+
         metaornull('globalvariables',14)+','+
         metaornull('importedidentities',15);
-      if high(rec1) = 16 then begin
+      if high(rec1) >= 16 then begin
        str1:= str1+','+card('dwoid',16);
-       outmetarecord(str1,16);
+       outmetarecord(str1,high(rec1));
       end
       else begin
        outmetarecord(str1,15);
@@ -1681,6 +1689,62 @@ begin
       outmetarecord(intvalueartostring(rec1,2),bigint);
      end;
     end;
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readmetadatakindblock();
+var
+ blocklevelbefore: int32;
+ name1: string;
+ str1: string;
+ fncount: int32;
+ i1: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[METADATA_KIND_BLOCK_ID]);
+ blocklevelbefore:= fblocklevel;
+ fncount:= 0;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   checkmindatalen(rec1,2);
+   if (rec1[1] <> ord(metadata_kind)) then begin
+    unknownrec(rec1);
+   end
+   else begin
+    outrecord('KIND.'+inttostr(rec1[2]),
+                         [quotestring(valueartostring(rec1,3),'"')]);
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readmetadataattachmentblock();
+var
+ blocklevelbefore: int32;
+ name1: string;
+ str1: string;
+ fncount: int32;
+ i1: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[METADATA_ATTACHMENT_ID]);
+ blocklevelbefore:= fblocklevel;
+ fncount:= 0;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   checkmindatalen(rec1,2);
+   if (rec1[1] <> ord(metadata_attachment)) or 
+                (rec1[2] > ord(high(metadataattachmentcodenames))) then begin
+    unknownrec(rec1);
+   end
+   else begin
+    outrecord('ATTACHMENT.'+
+         metadataattachmentcodenames[metadataattachmentcodes(rec1[2])],
+          [intvalueartostring(rec1,3)]);
    end;
   end;
  end;
@@ -2430,6 +2494,12 @@ begin
    end;
    METADATA_BLOCK_ID: begin
     readmetadatablock();
+   end;
+   METADATA_KIND_BLOCK_ID: begin
+    readmetadatakindblock();
+   end;
+   METADATA_ATTACHMENT_ID: begin
+    readmetadataattachmentblock();
    end;
    PARAMATTR_BLOCK_ID: begin
     readparamattrblock();

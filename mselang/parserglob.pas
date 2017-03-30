@@ -137,7 +137,7 @@ type
                     co_writeunits,     //write unitfiles
                     co_readunits,      //read unitfiles
                     co_build,          //compile all unit files
-                    co_lineinfo,co_proginfo //debug
+                    co_lineinfo,co_proginfo,co_names //debug
                     );
  compileoptionsty = set of compileoptionty;
 const
@@ -147,7 +147,7 @@ const
  
 type
  debugoptionty = (do_lineinfo,do_proginfo,
-                  do_name);  //use source names
+                  do_names);  //use source names
  debugoptionsty = set of debugoptionty;
 const
  defaultdebugoptions = [];

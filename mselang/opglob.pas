@@ -964,6 +964,7 @@ type
 
  subendty = record
   flags: subflagsty;
+  submeta: metavaluety;
   allocs: suballocinfoty;
  end;
 {

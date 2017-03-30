@@ -50,8 +50,11 @@ var
  mstr1: msestring;
 begin
  if not findfile(aname) and //current dir
-           not findfile(aname,info.o.unitdirs,aname) then begin
+            not findfile(aname,info.o.unitdirs,aname) then begin
   aname:= '';
+ end
+ else begin
+  aname:= filepath(aname);
  end;
 end;
 

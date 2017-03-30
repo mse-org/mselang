@@ -120,10 +120,10 @@ begin
        if not (us_implementation in s.unitinfo^.state) then begin
         nameid:= s.unitinfo^.nameid; //for llvm
        end;
-       if (info.o.debugoptions*[do_proginfo,do_name] <> []) and 
+       if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
                           (co_llvm in info.o.compileoptions) then begin
         getidentname(ident1,n1);
-        if do_name in info.o.debugoptions then begin
+        if do_names in info.o.debugoptions then begin
 
          s.unitinfo^.llvmlists.globlist.namelist.addname(
                                               n1,address.segaddress.address);

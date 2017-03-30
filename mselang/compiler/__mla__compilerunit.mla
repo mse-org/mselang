@@ -494,7 +494,7 @@ end;
 
 const
  errorcodepoint = $3f; //?
-(*
+
 procedure getcodepoint(var ps: pcard8; const pe: pcard8; 
                                   out ares: card32);
  function checkok(var acodepoint: card32): boolean; //inline;
@@ -617,7 +617,7 @@ begin
  end;
  inc(dest);
 end;
-*)
+
 procedure __mla__string8to16(const ref: pprefsizeinfoty);
 begin
 end;
@@ -633,7 +633,6 @@ var
  p2,p3: pcard8;
  c1: card32;
 begin
-(*
  pss:= ppointer(ref)^;
  if pss <> nil then begin
   p1:= pointer(pss);
@@ -662,7 +661,6 @@ begin
   pds:= nil;
  end;
  ppointer(ref)^:= pds;
-*)
 end;
 
 procedure __mla__string16to32(const ref: pprefsizeinfoty);

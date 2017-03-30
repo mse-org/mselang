@@ -710,6 +710,7 @@ begin
   with additem(aop,0)^ do begin
    par.subbegin.subname:= asub^.address;
    par.subbegin.globid:= asub^.globid;
+//   par.subbegin.submeta:= asub^.submeta;
    par.subbegin.sub.flags:= asub^.flags;
    par.subbegin.sub.allocs:= asub^.allocs; 
                   //will be updated for llvm nested vars
@@ -727,6 +728,7 @@ procedure addsubend(const asub: psubdataty);
 begin
  with additem(oc_subend)^ do begin
   par.subend.flags:= asub^.flags;
+  par.subend.submeta:= asub^.submeta;
   par.subend.allocs:= asub^.allocs;
  end;
  with info do begin
@@ -826,6 +828,7 @@ begin
   end;
  end;
  with additem(oc_subend)^ do begin
+  par.subend.submeta:= info.currentscopemeta;
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
  end;
@@ -1344,7 +1347,7 @@ begin
      sub1^.globid:= globlist.addsubvalue(sub1);
     end;
     }
-    if s.debugoptions * [do_proginfo,do_name] <> [] then begin
+    if s.debugoptions * [do_proginfo,do_names] <> [] then begin
      with (poind-1)^ do begin
      {$ifdef mse_checkinternalerror}
       if (s.stackindex < 1) or (d.kind <> ck_subdef) then begin
@@ -1359,6 +1362,7 @@ begin
             s.currentfilemeta,
             info.contextstack[info.s.stackindex].start.line,-1,
             dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
+        sub1^.submeta:= currentscopemeta;
        end;
       end;
      end;
@@ -1536,7 +1540,7 @@ begin
   end;
 
   if co_llvm in o.compileoptions then begin
-   if do_name in s.debugoptions then begin
+   if do_names in s.debugoptions then begin
     s.unitinfo^.llvmlists.globlist.namelist.addname(
                                         getidentname2(po1),po1^.globid);
    end;

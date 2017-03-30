@@ -125,7 +125,14 @@ type
 
     TYPE_BLOCK_ID_NEW,           //17
 
-    USELIST_BLOCK_ID             //18
+    USELIST_BLOCK_ID,            //18
+    MODULE_STRTAB_BLOCK_ID,      //19
+    FUNCTION_SUMMARY_BLOCK_ID,   //20
+
+    OPERAND_BUNDLE_TAGS_BLOCK_ID,//21
+
+    METADATA_KIND_BLOCK_ID       //22
+
   );
 
 
@@ -772,7 +779,50 @@ type
     METADATA_MODULE//         =32,   // [distinct, scope, name, ...]
  );
 
+//from include/llvm/IR/LLVMContext.h
+ metadataattachmentcodes = (
+    MD_dbg,                     // = 0,  // "dbg"
+    MD_tbaa,                    // = 1, // "tbaa"
+    MD_prof,                    // = 2,  // "prof"
+    MD_fpmath,                  // = 3,  // "fpmath"
+    MD_range,                   // = 4, // "range"
+    MD_tbaa_struct,             // = 5, // "tbaa.struct"
+    MD_invariant_load,          // = 6, // "invariant.load"
+    MD_alias_scope,             // = 7, // "alias.scope"
+    MD_noalias,                 // = 8, // "noalias",
+    MD_nontemporal,             // = 9, // "nontemporal"
+    MD_mem_parallel_loop_access,// = 10, // "llvm.mem.parallel_loop_access"
+    MD_nonnull,                 // = 11, // "nonnull"
+    MD_dereferenceable,         // = 12, // "dereferenceable"
+    MD_dereferenceable_or_null, // = 13, // "dereferenceable_or_null"
+    MD_make_implicit,           // = 14, // "make.implicit"
+    MD_unpredictable,           // = 15, // "unpredictable"
+    MD_invariant_group,         // = 16, // "invariant.group"
+    MD_align                    // = 17 // "align"
+  );
+
 const
+ metadataattachmentcodenames: array[metadataattachmentcodes] of string = (
+  'dbg',
+  'tbaa',
+  'prof',
+  'fpmath',
+  'range',
+  'tbaa.struct',
+  'invariant.load',
+  'alias.scope',
+  'noalias',
+  'nontemporal',
+  'llvm.mem.parallel_loop_access',
+  'nonnull',
+  'dereferenceable',
+  'dereferenceable_or_null',
+  'make.implicit',
+  'unpredictable',
+  'invariant.group',
+  'align'
+ );
+ 
 //from include/llvm/Support/Dwarf.def
  DW_OP_addr = $03;  //HANDLE_DW_OP(0x03, addr)
  DW_OP_deref = $06; //HANDLE_DW_OP(0x06, deref)
