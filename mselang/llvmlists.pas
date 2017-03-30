@@ -2903,7 +2903,7 @@ begin
  end;
  if ftypemetalist.addunique(atype,i1,p0) then begin
   po1:= @ptypemetahashdataty(p0)^.data;
-  offs1:= ftypemetalist.getdataoffs(p0); //relative backup
+  offs1:= ftypemetalist.getdataoffs(po1); //relative backup
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
 //    file1:= dummymeta; //internal type
