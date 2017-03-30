@@ -35,12 +35,13 @@ procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
 procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
-procedure __mla__string8to16(const ref: pprefsizeinfoty);
-procedure __mla__string8to32(const ref: pprefsizeinfoty);
-procedure __mla__string16to8(const ref: pprefsizeinfoty);
-procedure __mla__string16to32(const ref: pprefsizeinfoty);
-procedure __mla__string32to8(const ref: pprefsizeinfoty);
-procedure __mla__string32to16(const ref: pprefsizeinfoty);
+
+function __mla__string8to16(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string16to8(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string16to32(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string32to8(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string32to16(source: prefsizeinfoty): prefsizeinfoty;
 
 function __mla__compstring8eq(a,b: pointer): bool1;
 function __mla__compstring8ne(a,b: pointer): bool1;
@@ -618,22 +619,22 @@ begin
  inc(dest);
 end;
 
-procedure __mla__string8to16(const ref: pprefsizeinfoty);
+function __mla__string8to16(source: prefsizeinfoty): prefsizeinfoty;
 begin
 end;
 
-procedure __mla__string8to32(const ref: pprefsizeinfoty);
+function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
 begin
 end;
 
-procedure __mla__string16to8(const ref: pprefsizeinfoty);
+function __mla__string16to8(source: prefsizeinfoty): prefsizeinfoty;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard16;
  p2,p3: pcard8;
  c1: card32;
 begin
- pss:= ppointer(ref)^;
+ pss:= source;
  if pss <> nil then begin
   p1:= pointer(pss);
   dec(pss); //header
@@ -660,18 +661,18 @@ begin
  else begin
   pds:= nil;
  end;
- ppointer(ref)^:= pds;
+ result:= pds;
 end;
 
-procedure __mla__string16to32(const ref: pprefsizeinfoty);
+function __mla__string16to32(source: prefsizeinfoty): prefsizeinfoty;
 begin
 end;
 
-procedure __mla__string32to8(const ref: pprefsizeinfoty);
+function __mla__string32to8(source: prefsizeinfoty): prefsizeinfoty;
 begin
 end;
 
-procedure __mla__string32to16(const ref: pprefsizeinfoty);
+function __mla__string32to16(source: prefsizeinfoty): prefsizeinfoty;
 begin
 end;
 

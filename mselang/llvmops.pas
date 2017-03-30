@@ -1537,42 +1537,42 @@ end;
 procedure string8to16op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string8to16,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string8to16,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure string8to32op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string8to32,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string8to32,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure string16to8op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string16to8,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string16to8,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure string16to32op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string16to32,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string16to32,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure string32to8op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string32to8,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string32to8,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure string32to16op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_string32to16,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_string32to16,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -3976,12 +3976,12 @@ const
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
   
-  string8to16ssa = 0;
-  string8to32ssa = 0;
-  string16to8ssa = 0;
-  string16to32ssa = 0;
-  string32to8ssa = 0;
-  string32to16ssa = 0;
+  string8to16ssa = 1;
+  string8to32ssa = 1;
+  string16to8ssa = 1;
+  string16to32ssa = 1;
+  string32to8ssa = 1;
+  string32to16ssa = 1;
   
   chartostring8ssa = 1;
   arraytoopenarssa = 1;
