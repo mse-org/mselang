@@ -1103,6 +1103,7 @@ var
  i1,i2: int32;
  india,indib: int32;
  op1: opcodety;
+ ptype: ptypedataty;
 label
  errlab,endlab;
 begin
@@ -1179,10 +1180,25 @@ begin
        opnotsupported();
       end
       else begin
-       updateop(subops); //todo: div by pointed size
+       i1:= s.stackindex;
+       i2:= s.stacktop;
+       updateop(subops);
        with poa^ do begin
         d.dat.datatyp:= sysdatatypes[ptrintsystype];
         d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp);
+       end;
+       with pob^ do begin //still valid
+        ptype:= ele.eledataabs(d.dat.datatyp.typedata);
+        if ptype^.h.bytesize <> 1 then begin
+         d.kind:= ck_const;
+         d.dat.indirection:= 0;
+         d.dat.datatyp:= sysdatatypes[ptrintsystype]; //??? necessary
+         d.dat.constval.kind:= dk_integer;
+         d.dat.constval.vinteger:= ptype^.h.bytesize;
+         s.stackindex:= i1;
+         s.stacktop:= i2;
+         updateop(divops);
+        end;
        end;
        goto endlab;
       end;

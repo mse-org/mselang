@@ -640,6 +640,7 @@ begin
     p2^:= c1;
    end
    else begin
+    c1:= c1 - $10000;
     p2^:= (c1 shr 10) and $3ff or $d800;
     inc(p2);
     p2^:= c1 and $3ff or $dc00;
@@ -799,6 +800,7 @@ begin
     p2^:= c1;
    end
    else begin
+    c1:= c1 - $10000;
     p2^:= (c1 shr 10) and $3ff or $d800;
     inc(p2);
     p2^:= c1 and $3ff or $dc00;

@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=34
     (
     kind=1
@@ -708,8 +708,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
-    c=6
+    a=0,665,4,pointer
+    c=8
      (
      kind=2
      a=0,648,1,pointeradd
@@ -825,6 +825,50 @@ c=3
      a=0,648,1,pointerdiff llvm
      teststate=1
      path=pointerdiff.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerdiff1
+     teststate=1
+     path=pointerdiff1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerdiff1 llvm
+     teststate=1
+     path=pointerdiff1.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -2261,7 +2305,7 @@ c=3
    (
    kind=1
    a=0,664,4,conversions
-   c=14
+   c=16
     (
     kind=2
     a=0,648,1,potoint32
@@ -2553,6 +2597,50 @@ c=3
     a=0,648,1,recordconversion llvm
     teststate=1
     path=recordconversion.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringtopo
+    teststate=1
+    path=stringtopo.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringtopo llvm
+    teststate=1
+    path=stringtopo.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3019,7 +3107,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72433A0
+    ao=An unhandled exception occured at $B728BFCC
     ae=
     aec=123
     ie=0
@@ -4568,8 +4656,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
-   c=34
+   a=0,664,4,sub
+   c=36
     (
     kind=1
     a=0,664,4,openarray
@@ -4925,6 +5013,50 @@ c=3
     a=0,648,1,pppar llvm
     teststate=1
     path=pppar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varppar
+    teststate=1
+    path=varppar.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varppar llvm
+    teststate=1
+    path=varppar.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -8700,7 +8832,15 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=72
+rowstate=80
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
