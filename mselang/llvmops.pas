@@ -784,7 +784,14 @@ end;
 
 procedure writestring32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string32to8,true,[bcstream.ssaval(ssas1)]);
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.relval(1)]);
+  callcompilersub(cs_decrefsize,false,[bcstream.relval(1)]);
+ end;
 end;
 
 procedure writechar8op();
