@@ -496,7 +496,7 @@ end;
 const
  errorcodepoint = $3f; //?
 
-procedure getcodepoint(var ps: pcard8; const pe: pcard8; 
+procedure getcodepoint(var ps: pcard8; const pe: pcard8;
                                   out ares: card32);
  function checkok(var acodepoint: card32): boolean; //inline;
  var
@@ -562,7 +562,7 @@ begin
  end;
 end;
 
-function getcodepoint(var ps: pcard16; const pe: pcard16; 
+function getcodepoint(var ps: pcard16; const pe: pcard16;
                                   out ares: card32): boolean;
 begin
  result:= true;
@@ -570,7 +570,7 @@ begin
  inc(ps);
  if ares and $fc00 = $d800 then begin
   ares:= (ares - $d800) shl 10;
-  if ps < pe then begin 
+  if ps < pe then begin
    ares:= ares + ps^ - $dc00 + $10000;
    inc(ps);
    if ares < $10000 then begin
@@ -620,7 +620,41 @@ begin
 end;
 
 function __mla__string8to16(source: prefsizeinfoty): prefsizeinfoty;
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard8;
+ p2,p3: pcard16;
+ c1: card32;
 begin
+ pss:= source;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string16allocsize+pss^.len*2); //max
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,c1);
+   if c1 < $10000 then begin
+    p2^:= c1;
+   end
+   else begin
+    p2^:= (c1 shr 10) and $3ff or $d800;
+    inc(p2);
+    p2^:= c1 and $3ff or $dc00;
+   end;
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ end
+ else begin
+  pds:= nil;
+ end;
+ result:= pds;
 end;
 
 function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
@@ -634,7 +668,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string32allocsize+pss^.len);
+  getmem(pds,string32allocsize+pss^.len*4); //max
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -664,7 +698,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*3); //max 
+  getmem(pds,string8allocsize+pss^.len*3); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -694,7 +728,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string32allocsize+pss^.len);
+  getmem(pds,string32allocsize+pss^.len*4); //max
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -724,7 +758,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*4); //max 
+  getmem(pds,string8allocsize+pss^.len*4); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -755,7 +789,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2); //max 
+  getmem(pds,string16allocsize+pss^.len*2*2); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -769,7 +803,7 @@ begin
     inc(p2);
     p2^:= c1 and $3ff or $dc00;
    end;
-   inc(p2);   
+   inc(p2);
    inc(p1);
   end;
   p2^:= 0;
