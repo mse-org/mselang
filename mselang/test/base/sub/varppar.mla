@@ -1,0 +1,19 @@
+program varppar;
+
+procedure test(var ares: int32);
+
+ procedure tt(var a: int32);
+ begin
+  exitcode:= a;
+ end;
+
+begin
+ tt(ares);
+end;
+
+var
+ i1: int32;
+begin
+ i1:= 123;
+ test(i1);
+end.

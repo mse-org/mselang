@@ -1,0 +1,29 @@
+program subvar2;
+
+procedure test(a: int32);
+begin
+ exitcode:= exitcode + a;
+end;
+
+function tefu(a: int32): int32;
+begin
+ result:= 10*a;
+end;
+
+type
+ procty = procedure(a: int32);
+ functy = function(a: int32): int32;
+
+var
+ proc: procty;
+ proc1: procedure(a: int32);
+ fu: functy;
+ fu1: function(a: int32): int32;
+begin
+ proc:= @test;
+ proc1:= @test;
+ fu:= @tefu;
+ fu1:= @tefu;
+ proc(fu(10));
+ proc1(fu1(2)+3);
+end.

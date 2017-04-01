@@ -624,7 +624,32 @@ begin
 end;
 
 function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard8;
+ p2,p3: pcard32;
 begin
+ pss:= source;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string32allocsize+pss^.len);
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,p2^);
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ end
+ else begin
+  pds:= nil;
+ end;
+ result:= pds;
 end;
 
 function __mla__string16to8(source: prefsizeinfoty): prefsizeinfoty;
@@ -659,7 +684,32 @@ begin
 end;
 
 function __mla__string16to32(source: prefsizeinfoty): prefsizeinfoty;
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard32;
 begin
+ pss:= source;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string32allocsize+pss^.len);
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   getcodepoint(p1,pe,p2^);
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ end
+ else begin
+  pds:= nil;
+ end;
+ result:= pds;
 end;
 
 function __mla__string32to8(source: prefsizeinfoty): prefsizeinfoty;

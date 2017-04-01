@@ -897,13 +897,25 @@ begin
    if i1 >= 0 then begin
     i2:= getssa(ocssa_nestedvarad);
    end;
-   with insertitem(oc_pushlocaddr,stackoffset,aopoffset,i2)^ do begin
-    tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
-                 getopdatatype(datatyp.typedata, datatyp.indirectlevel));
-    par.memop.locdataaddress.a:= ref.c.address.locaddress;
-    par.memop.locdataaddress.a.framelevel:= i1;
-    par.memop.locdataaddress.offset:= ref.offset;
-    par.memop.t:= getopdatatype(datatyp);
+   tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
+                getopdatatype(datatyp.typedata, datatyp.indirectlevel));
+   if af_paramvar in ref.c.address.flags then begin
+    with insertitem(oc_pushlocpo,stackoffset,aopoffset,i2)^ do begin
+     par.memop.locdataaddress.a:= ref.c.address.locaddress;
+     par.memop.locdataaddress.a.framelevel:= i1;
+     par.memop.locdataaddress.offset:= ref.offset;
+     par.memop.t:= getopdatatype(datatyp);
+    end;
+   end
+   else begin
+    with insertitem(oc_pushlocaddr,stackoffset,aopoffset,i2)^ do begin
+//     tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
+//                  getopdatatype(datatyp.typedata, datatyp.indirectlevel));
+     par.memop.locdataaddress.a:= ref.c.address.locaddress;
+     par.memop.locdataaddress.a.framelevel:= i1;
+     par.memop.locdataaddress.offset:= ref.offset;
+     par.memop.t:= getopdatatype(datatyp);
+    end;
    end;
   end;
  end;

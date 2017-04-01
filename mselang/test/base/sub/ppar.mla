@@ -1,0 +1,18 @@
+program ppar;
+type
+ pcard32 = ^card32;
+
+procedure test(const a: card32);
+begin
+ exitcode:= a;
+end;
+
+var
+ p1: pcard32;
+ c1: card32;
+begin
+ c1:= 123;
+ p1:= @c1;
+{$internaldebug on}
+ test(p1^);
+end.
