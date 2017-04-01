@@ -651,14 +651,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
- {
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
- }
  end
  else begin
   pds:= nil;
@@ -694,14 +686,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
-{
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
-}
  end
  else begin
   pds:= nil;
@@ -710,7 +694,43 @@ begin
 end;
 
 function __mla__string32to16(source: prefsizeinfoty): prefsizeinfoty;
+var
+ pss,pds: pstringheaderty;
+ p1,pe: pcard32;
+ p2,p3: pcard16;
+ c1: card32;
 begin
+ pss:= source;
+ if pss <> nil then begin
+  p1:= pointer(pss);
+  dec(pss); //header
+  pe:= p1+pss^.len;
+  getmem(pds,string16allocsize+pss^.len*2); //max 
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do begin
+   c1:= p1^;
+   if c1 < $10000 then begin
+    p2^:= c1;
+   end
+   else begin
+    p2^:= (c1 shr 10) and $3ff or $d800;
+    inc(p2);
+    p2^:= c1 and $3ff or $dc00;
+   end;
+   inc(p2);   
+   inc(p1);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= 1;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ end
+ else begin
+  pds:= nil;
+ end;
+ result:= pds;
 end;
 
 function compstring8(a,b:pointer): stringsizety; //a and b <> nil
