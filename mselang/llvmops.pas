@@ -772,7 +772,14 @@ end;
 
 procedure writestring16op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_string16to8,true,[bcstream.ssaval(ssas1)]);
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.relval(1)]);
+  callcompilersub(cs_decrefsize,false,[bcstream.relval(1)]);
+ end;
 end;
 
 procedure writestring32op();
@@ -3873,8 +3880,8 @@ const
   writechar16ssa = 1;
   writechar32ssa = 1;
   writestring8ssa = 1;
-  writestring16ssa = 1;
-  writestring32ssa = 1;
+  writestring16ssa = 2;
+  writestring32ssa = 2;
   writepointerssa = 1;
   writeclassssa = 1;
   writeenumssa = 1;

@@ -1,19 +1,12 @@
-program __mla__compilerunit;
-
-procedure getcodepoint();
+program test;
+{
 var
- i1: int16;
-
- function checkok(p: int16): int32;
- begin
-  i1:= 11;
-  result:= 123;
- end;
-
+ s1: string8;
+ s2: string16;
+ s3: string32;
+}
 begin
- exitcode:= checkok(22)+i1;
-end;
-
-begin
- getcodepoint();
+// s3:= 'abcöä';
+// s1:= s3;
+// writeln(s1);
 end.
