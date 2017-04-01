@@ -1,12 +1,24 @@
 program test;
-{
+
 var
- s1: string8;
- s2: string16;
- s3: string32;
-}
+ s8a,s8b: string8;
+ s16: string16;
+ s32: string32;
+
 begin
-// s3:= 'abcöä';
-// s1:= s3;
-// writeln(s1);
+ s8a:= 'abcöä';
+ s16:= s8a;
+writeln(length(s16);
+ s32:= s16;
+ s16:= s32;
+ s8b:= s16;
+ writeln(s8a);
+ writeln(s8b);
+ if s8b = s8a then begin
+  s16:= s32;
+  s8b:= s16;
+  if s8b = s8a then begin
+   exitcode:= 123;
+  end;
+ end;
 end.

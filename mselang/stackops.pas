@@ -3236,12 +3236,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;
@@ -3261,7 +3255,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len);
+  getmem(pds,string8allocsize+pss^.len*4);
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -3272,12 +3266,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;
@@ -3309,12 +3297,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;
@@ -3334,7 +3316,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2); //max 
+  getmem(pds,string16allocsize+pss^.len*2*2); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3355,12 +3337,6 @@ begin
   pds^.ref.count:= 1;
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;

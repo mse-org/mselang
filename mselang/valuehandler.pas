@@ -996,14 +996,19 @@ begin
               ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                (source1^.h.bitsize = pointerbitsize) or 
                       (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
-       if getvalue(acontext,pointerintsize) then begin //any to pointer
-        i1:= d.dat.fact.ssaindex; //todo: no int source
-        with insertitem(oc_inttopo,stackoffset,-1)^ do begin
-         par.ssas1:= i1;
+       if source1^.h.kind = dk_string then begin
+        result:= true; //todo: pchar handling
+       end
+       else begin
+        if getvalue(acontext,pointerintsize) then begin //any to pointer
+         i1:= d.dat.fact.ssaindex; //todo: no int source
+         with insertitem(oc_inttopo,stackoffset,-1)^ do begin
+          par.ssas1:= i1;
+         end;
+         d.dat.datatyp.typedata:= ele.eledatarel(dest);
+         d.dat.datatyp.indirectlevel:= destindirectlevel;
+         result:= true;
         end;
-        d.dat.datatyp.typedata:= ele.eledatarel(dest);
-        d.dat.datatyp.indirectlevel:= destindirectlevel;
-        result:= true;
        end;
       end;
      end;
