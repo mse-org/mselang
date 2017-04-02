@@ -3127,15 +3127,9 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;
@@ -3164,15 +3158,9 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
-  if pss^.ref.count > 0 then begin
-   dec(pss^.ref.count);
-   if pss^.ref.count = 0 then begin
-    freemem(pss);
-   end;
-  end;
  end
  else begin
   pds:= nil;
@@ -3234,7 +3222,7 @@ begin
    setutf8(c1,p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3264,7 +3252,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3295,7 +3283,7 @@ begin
    inc(p1);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3336,7 +3324,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= 0; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -4807,9 +4795,9 @@ begin
   dec(d);
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
+  end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
   end;
   ref^:= nil;
  end;
@@ -4834,11 +4822,11 @@ begin
    dec(d);
    if d^.ref.count > 0 then begin
     dec(d^.ref.count);
-    if d^.ref.count = 0 then begin
-     freemem(d);
-    end;
-    ref^:= nil;
    end;
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+   ref^:= nil;
   end;
   inc(ref);
  end;
@@ -4858,11 +4846,11 @@ begin
     dec(d);
     if d^.ref.count > 0 then begin
      dec(d^.ref.count);
-     if d^.ref.count = 0 then begin
-      freemem(d);
-     end;
-     ref^:= nil;
     end;
+    if d^.ref.count = 0 then begin
+     freemem(d);
+    end;
+    ref^:= nil;
    end;
    inc(ref);
   end;
@@ -4876,7 +4864,7 @@ begin
  d:= ref^;
  if d <> nil then begin
   dec(d);
-  if d^.ref.count > 0 then begin
+  if d^.ref.count >= 0 then begin
    inc(d^.ref.count);
   end;
  end;
@@ -4892,7 +4880,7 @@ begin
   d:= ref^;
   if d <> nil then begin
    dec(d);
-   if d^.ref.count > 0 then begin
+   if d^.ref.count >= 0 then begin
     inc(d^.ref.count);
    end;
   end;
@@ -4911,7 +4899,7 @@ begin
    d:= ref^;
    if d <> nil then begin
     dec(d);
-    if d^.ref.count > 0 then begin
+    if d^.ref.count >= 0 then begin
      inc(d^.ref.count);
     end;
    end;
@@ -4929,11 +4917,11 @@ begin
   dec(d);
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
-//   ref^:= nil;
   end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+//   ref^:= nil;
  end;
 end;
 
@@ -4946,11 +4934,11 @@ begin
   dec(d);
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
-//   ref^:= nil;
   end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+//   ref^:= nil;
  end;
 end;
 
@@ -4966,11 +4954,11 @@ begin
    dec(d);
    if d^.ref.count > 0 then begin
     dec(d^.ref.count);
-    if d^.ref.count = 0 then begin
-     freemem(d);
-    end;
-    ref^:= nil;
    end;
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+   ref^:= nil; //??
   end;
   inc(ref);
  end;
@@ -4989,11 +4977,11 @@ begin
     dec(d);
     if d^.ref.count > 0 then begin
      dec(d^.ref.count);
-     if d^.ref.count = 0 then begin
-      freemem(d);
-     end;
-     ref^:= nil;
     end;
+    if d^.ref.count = 0 then begin
+     freemem(d);
+    end;
+    ref^:= nil; //??
    end;
    inc(ref);
   end;

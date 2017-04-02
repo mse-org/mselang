@@ -107,7 +107,7 @@ procedure __mla__increfsize(ref: prefsizeinfoty);
 begin
  if ref <> nil then begin
   dec(ref);
-  if ref^.ref.count > 0 then begin
+  if ref^.ref.count >= 0 then begin
    inc(ref^.ref.count);
   end;
  end;
@@ -119,9 +119,9 @@ begin
   dec(ref);
   if ref^.ref.count > 0 then begin
    dec(ref^.ref.count);
-   if ref^.ref.count = 0 then begin
-    freemem(ref);
-   end;
+  end;
+  if ref^.ref.count = 0 then begin
+   freemem(ref);
   end;
  end;
 end;
@@ -133,7 +133,9 @@ begin
  d:= ref^;
  if d <> nil then begin
   dec(d);
-  inc(d^.ref.count);
+  if d^.ref.count >= 0 then begin
+   inc(d^.ref.count);
+  end;
  end;
 end;
 
@@ -146,9 +148,9 @@ begin
   dec(d);
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
+  end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
   end;
 //  ref^:= nil;
  end;
@@ -163,9 +165,9 @@ begin
   dec(d);
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
+  end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
   end;
   ref^:= nil;
  end;

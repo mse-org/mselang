@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -996,7 +996,7 @@ begin
               ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                (source1^.h.bitsize = pointerbitsize) or 
                       (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
-       if source1^.h.kind = dk_string then begin
+       if source1^.h.kind in [dk_string,dk_dynarray] then begin
         result:= true; //todo: pchar handling
        end
        else begin

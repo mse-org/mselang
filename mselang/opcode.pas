@@ -339,7 +339,12 @@ begin
      end;
      ck_fact: begin
       af1:= [];
-      ab1:= ab_stack;
+      if dat.indirection = -1 then begin
+       ab1:= ab_stackref;
+      end
+      else begin
+       ab1:= ab_stack;
+      end;
       ad1:= aref.offset;
       offs1:= 0;
 //       typ1:= aaddress.typ;
