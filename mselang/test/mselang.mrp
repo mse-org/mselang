@@ -35,8 +35,8 @@ memodialog.sta=8
 testedit.sta=9
  [testeditfo]
  stackedunder=
- x=606
- y=331
+ x=1130
+ y=206
  cx=628
  cy=595
  wsize=0
@@ -2720,7 +2720,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,4,dynarray
    c=12
     (
     kind=2
@@ -3151,7 +3151,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72381AC
+    ao=An unhandled exception occured at $B7291314
     ae=
     aec=123
     ie=0
@@ -4592,7 +4592,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
+   a=0,665,4,string
    c=4
     (
     kind=2
@@ -8858,8 +8858,8 @@ groupcomment=6
  
 [mainfo]
 stackedunder=
-x=633
-y=122
+x=1134
+y=94
 cx=700
 cy=852
 wsize=0
@@ -8876,7 +8876,23 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=56
+rowstate=72
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

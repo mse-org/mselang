@@ -50,6 +50,21 @@ function __mla__compstring8lt(a,b: pointer): bool1;
 function __mla__compstring8ge(a,b: pointer): bool1;
 function __mla__compstring8le(a,b: pointer): bool1;
 
+function __mla__compstring16eq(a,b: pointer): bool1;
+function __mla__compstring16ne(a,b: pointer): bool1;
+function __mla__compstring16gt(a,b: pointer): bool1;
+function __mla__compstring16lt(a,b: pointer): bool1;
+function __mla__compstring16ge(a,b: pointer): bool1;
+function __mla__compstring16le(a,b: pointer): bool1;
+
+
+function __mla__compstring32eq(a,b: pointer): bool1;
+function __mla__compstring32ne(a,b: pointer): bool1;
+function __mla__compstring32gt(a,b: pointer): bool1;
+function __mla__compstring32lt(a,b: pointer): bool1;
+function __mla__compstring32ge(a,b: pointer): bool1;
+function __mla__compstring32le(a,b: pointer): bool1;
+
 function __mla__chartostring8(achar: card8): pointer;
 function __mla__chartostring16(achar: card16): pointer;
 function __mla__chartostring32(achar: card32): pointer;
@@ -825,7 +840,69 @@ function compstring8(a,b:pointer): stringsizety; //a and b <> nil
 var
  poa,poe,pob: pcard8;
  la,lb: stringsizety;
+ i1: int8;
+begin
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then begin
+  poe:= poa + la;
+ end
+ else begin
+  poe:= poa + lb;
+ end;
+ while true do begin
+  i1:= poa^ - pob^;
+  if i1 <> 0 then begin
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then begin
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+function compstring16(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard16;
+ la,lb: stringsizety;
  i1: int16;
+begin
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then begin
+  poe:= poa + la;
+ end
+ else begin
+  poe:= poa + lb;
+ end;
+ while true do begin
+  i1:= poa^ - pob^;
+  if i1 <> 0 then begin
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then begin
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+function compstring32(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard32;
+ la,lb: stringsizety;
+ i1: int32;
 begin
  la:= (pstringheaderty(a)-1)^.len;
  lb:= (pstringheaderty(b)-1)^.len;
@@ -896,6 +973,98 @@ end;
 function __mla__compstring8le(a,b: pointer): bool1;
 begin
  result:= compstring8(a,b) <= 0;
+end;
+
+function __mla__compstring16eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) = 0;
+  end
+  else begin
+   result:= false;
+  end;
+ end;
+end;
+
+function __mla__compstring16ne(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) <> 0;
+  end
+  else begin
+   result:= true;
+  end;
+ end;
+end;
+
+function __mla__compstring16gt(a,b: pointer): bool1;
+begin
+ result:= compstring16(a,b) > 0;
+end;
+
+function __mla__compstring16lt(a,b: pointer): bool1;
+begin
+ result:= compstring16(a,b) < 0;
+end;
+
+function __mla__compstring16ge(a,b: pointer): bool1;
+begin
+ result:= compstring16(a,b) >= 0;
+end;
+
+function __mla__compstring16le(a,b: pointer): bool1;
+begin
+ result:= compstring16(a,b) <= 0;
+end;
+
+function __mla__compstring32eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) = 0;
+  end
+  else begin
+   result:= false;
+  end;
+ end;
+end;
+
+function __mla__compstring32ne(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) <> 0;
+  end
+  else begin
+   result:= true;
+  end;
+ end;
+end;
+
+function __mla__compstring32gt(a,b: pointer): bool1;
+begin
+ result:= compstring32(a,b) > 0;
+end;
+
+function __mla__compstring32lt(a,b: pointer): bool1;
+begin
+ result:= compstring32(a,b) < 0;
+end;
+
+function __mla__compstring32ge(a,b: pointer): bool1;
+begin
+ result:= compstring32(a,b) >= 0;
+end;
+
+function __mla__compstring32le(a,b: pointer): bool1;
+begin
+ result:= compstring32(a,b) <= 0;
 end;
 
 function __mla__chartostring8(achar: card8): pointer;

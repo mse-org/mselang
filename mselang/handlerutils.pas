@@ -943,7 +943,12 @@ begin
    result.size:= atypedata^.h.bytesize;
   end
   else begin
-   result.size:= atypedata^.h.bitsize;
+   if atypedata^.h.kind = dk_string then begin
+    result.size:= atypedata^.itemsize;
+   end
+   else begin
+    result.size:= atypedata^.h.bitsize;
+   end;
   end;
   result.flags:= [];
  end;

@@ -303,7 +303,7 @@ type
   oc_cmpcard,
   oc_cmpint,
   oc_cmpflo,
-  oc_cmpstring8,
+  oc_cmpstring,
 {
   oc_cmpeqpo,
   oc_cmpeqbool,
@@ -804,7 +804,7 @@ type
  stackopty = record
   t: typeallocinfoty;
   case opcodety of
-   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo:(
+   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,oc_cmpstring:(
     compkind: compopkindty;
    );
  end;
@@ -1153,7 +1153,7 @@ type
    oc_addint,oc_addflo,
    oc_subint,oc_subflo,oc_diffset,oc_xorset,
    oc_addpoint,oc_subpoint,
-   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,
+   oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,oc_cmpstring,
    {
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
    oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,

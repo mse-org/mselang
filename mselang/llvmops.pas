@@ -2024,35 +2024,43 @@ begin
  end;
 end;
 
-procedure cmpstring8op();
+const
+ cmpstr8ops: array[compopkindty] of compilersubty = (
+ //cok_eq,          cok_ne           cok_gt,          cok_lt,
+   cs_compstring8eq,cs_compstring8ne,cs_compstring8gt,cs_compstring8lt,
+ //cok_ge,          cok_le
+   cs_compstring8ge,cs_compstring8le);
+ cmpstr16ops: array[compopkindty] of compilersubty = (
+ //cok_eq,           cok_ne            cok_gt,           cok_lt,
+   cs_compstring16eq,cs_compstring16ne,cs_compstring16gt,cs_compstring16lt,
+ //cok_ge,           cok_le
+   cs_compstring16ge,cs_compstring16le);
+ cmpstr32ops: array[compopkindty] of compilersubty = (
+ //cok_eq,           cok_ne            cok_gt,           cok_lt,
+   cs_compstring32eq,cs_compstring32ne,cs_compstring32gt,cs_compstring32lt,
+ //cok_ge,           cok_le
+   cs_compstring32ge,cs_compstring32le);
+ 
+procedure cmpstringop();
+var
+ oc1: compilersubty;
 begin
  with pc^.par do begin
-  case stackop.compkind of
-   cok_eq: begin
-    callcompilersub(cs_compstring8eq,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
+  case stackop.t.size of
+   1: begin
+    oc1:= cmpstr8ops[stackop.compkind];
    end;
-   cok_ne: begin
-    callcompilersub(cs_compstring8ne,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
+   2: begin
+    oc1:= cmpstr16ops[stackop.compkind];
    end;
-   cok_gt: begin
-    callcompilersub(cs_compstring8gt,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
+   4: begin
+    oc1:= cmpstr32ops[stackop.compkind];
    end;
-   cok_lt: begin
-    callcompilersub(cs_compstring8lt,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
-   end;
-   cok_ge: begin
-    callcompilersub(cs_compstring8ge,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
-   end;
-   cok_le: begin
-    callcompilersub(cs_compstring8le,true,[bcstream.ssaval(ssas1),
-                                             bcstream.ssaval(ssas2)]);
+   else begin
+    internalerror(ie_llvm,'20170403B');
    end;
   end;
+  callcompilersub(oc1,true,[bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
  end;
 end;
 
@@ -4085,7 +4093,7 @@ const
   cmpcardssa = 1;
   cmpintssa = 1;
   cmpflossa = 1;
-  cmpstring8ssa = 1;
+  cmpstringssa = 1;
 
   setcontainsssa = 3;
   setinssa = 3;

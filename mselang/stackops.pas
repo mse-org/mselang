@@ -2407,6 +2407,55 @@ function compstring8(a,b: pointer): stringsizety;
 var
  poa,poe,pob: pcard8;
  s1,s2: stringsizety;
+ i1: int8;
+ 
+begin
+ result:= 0;
+ if a <> b then begin
+  if a = nil then begin
+   if b <> nil then begin
+    result:= -1;
+   end;
+  end
+  else begin
+   if b = nil then begin
+    result:= 1;
+   end
+   else begin
+    poa:= a;
+    pob:= b;
+    s1:= (pstringheaderty(a)-1)^.len;
+    s2:= (pstringheaderty(b)-1)^.len;
+    if s1 < s2 then begin
+     poe:= poa + s1;
+    end
+    else begin
+     poe:= poa + s2;
+    end;
+    while true do begin
+     i1:= poa^-pob^;
+     if i1 <> 0 then begin
+      result:= i1;
+      exit;
+     end;
+     inc(poa);
+     if poa >= poe then begin
+      break;
+     end;
+     inc(pob);
+    end;
+    if i1 = 0 then begin
+     result:= s1 - s2;
+    end;
+   end;
+  end;
+ end;
+end;
+
+function compstring16(a,b: pointer): stringsizety;
+var
+ poa,poe,pob: pcard16;
+ s1,s2: stringsizety;
  i1: int16;
  
 begin
@@ -2452,15 +2501,79 @@ begin
  end;
 end;
 
-procedure cmpstring8op();
+function compstring32(a,b: pointer): stringsizety;
+var
+ poa,poe,pob: pcard32;
+ s1,s2: stringsizety;
+ i1: int32;
+ 
+begin
+ result:= 0;
+ if a <> b then begin
+  if a = nil then begin
+   if b <> nil then begin
+    result:= -1;
+   end;
+  end
+  else begin
+   if b = nil then begin
+    result:= 1;
+   end
+   else begin
+    poa:= a;
+    pob:= b;
+    s1:= (pstringheaderty(a)-1)^.len;
+    s2:= (pstringheaderty(b)-1)^.len;
+    if s1 < s2 then begin
+     poe:= poa + s1;
+    end
+    else begin
+     poe:= poa + s2;
+    end;
+    while true do begin
+     i1:= poa^-pob^;
+     if i1 <> 0 then begin
+      result:= i1;
+      exit;
+     end;
+     inc(poa);
+     if poa >= poe then begin
+      break;
+     end;
+     inc(pob);
+    end;
+    if i1 = 0 then begin
+     result:= s1 - s2;
+    end;
+   end;
+  end;
+ end;
+end;
+
+
+procedure cmpstringop();
 var
  po1,po2: ppointer;
  i1: stringsizety;
 begin
  po1:= stackpop(sizeof(pointer));
  po2:= stackpop(sizeof(pointer));
- i1:= compstring8(po2^,po1^);
  with cpu.pc^.par do begin
+  case stackop.t.size of
+   1: begin
+    i1:= compstring8(po2^,po1^);
+   end;
+   2: begin
+    i1:= compstring16(po2^,po1^);
+   end;
+   4: begin
+    i1:= compstring32(po2^,po1^);
+   end;
+   else begin
+    internalerror('20170403A');
+   end;
+  end;
+
   case stackop.compkind of
    cok_eq: begin
     vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 = 0;
@@ -5963,7 +6076,7 @@ const
   cmpcardssa = 0;
   cmpintssa = 0;
   cmpflossa = 0;
-  cmpstring8ssa = 0;
+  cmpstringssa = 0;
 
   setcontainsssa = 0;
   setinssa = 0;

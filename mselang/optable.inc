@@ -501,12 +501,12 @@
   (ssa: cmpboolssa; proc: @cmpboolop; flags: []), 
 //oc_cmpcard
   (ssa: cmpcardssa; proc: @cmpcardop; flags: []), 
-//oc_cmpint32
+//oc_cmpint
   (ssa: cmpintssa; proc: @cmpintop; flags: []), 
-//oc_cmpflo64
+//oc_cmpflo
   (ssa: cmpflossa; proc: @cmpfloop; flags: []), 
-//oc_cmpstring8
-  (ssa: cmpstring8ssa; proc: @cmpstring8op; flags: []), 
+//oc_cmpstring
+  (ssa: cmpstringssa; proc: @cmpstringop; flags: []), 
 
 {
 //oc_cmpeqpo
