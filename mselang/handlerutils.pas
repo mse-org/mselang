@@ -58,27 +58,28 @@ const
 
  stackdatakinds: array[datakindty] of stackdatakindty = (
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-    sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32, sdk_flo64,sdk_none,
+    sdk_none,sdk_pointer,sdk_boolean,sdk_cardinal, sdk_integer, sdk_float,sdk_none,
   //dk_address, dk_record,dk_string,  dk_dynarray,dk_openarray,dk_array,
-    sdk_pointer,sdk_none, sdk_string8,sdk_none,   sdk_none,    sdk_none,
+    sdk_pointer,sdk_none, sdk_string,sdk_none,   sdk_none,    sdk_none,
   //dk_class,dk_interface
     sdk_none,sdk_none,
   //dk_sub,     dk_method
     sdk_pointer,sdk_none,
   //dk_enum,dk_enumitem, dk_set,   dk_character,dk_data
-    sdk_none,   sdk_none, sdk_none,sdk_card32,  sdk_none);
+    sdk_none,   sdk_none, sdk_none,sdk_cardinal,  sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
-          //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
+          //sdk_none,sdk_pointer,sdk_bool,sdk_cardinal,sdk_integer,sdk_float,
            (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
-          //sdk_set32,sdk_string8
+          //sdk_set,sdk_string
             dk_set,  dk_string);
+{
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
            (st_none, st_pointer, st_bool1, st_card32, st_int32, st_flo64,
           //sdk_set32,sdk_string8
             st_card32,st_string8);
-
+}
  popindioptable: array[databitsizety] of opcodety = (
  //das_none,      das_1,          das_2_7,        das_8,
    oc_popindirect,oc_popindirect8,oc_popindirect8,oc_popindirect8,
@@ -1797,7 +1798,7 @@ begin
   if poa^.d.dat.constval.kind <> pob^.d.dat.constval.kind then begin
    case pob^.d.dat.constval.kind of
     dk_float: begin
-     result:= sdk_flo64;
+     result:= sdk_float;
      case poa^.d.dat.constval.kind of
       dk_integer: begin
        poa^.d.dat.constval.vfloat:= poa^.d.dat.constval.vinteger;
@@ -1830,7 +1831,7 @@ begin
    case poa^.d.dat.constval.kind of
     dk_enum: begin
      if poa^.d.dat.datatyp.typedata = pob^.d.dat.datatyp.typedata then begin
-      result:= sdk_int32; //todo: different sizes
+      result:= sdk_integer; //todo: different sizes
      end;
     end;
     dk_set: begin                          //todo: basetype?
@@ -1838,7 +1839,7 @@ begin
             poa^.d.dat.datatyp.typedata))^.infoset.itemtype = 
             ptypedataty(ele.eledataabs(
                       pob^.d.dat.datatyp.typedata))^.infoset.itemtype then begin
-      result:= sdk_set32; //todo: different sizes
+      result:= sdk_set; //todo: different sizes
      end;
     end;
    end;
@@ -3312,7 +3313,7 @@ begin
        sd1:= stackdatakinds[dk_integer];
       end;
       dk_set: begin
-       sd1:= sdk_set32; //todo: arbitrary size
+       sd1:= sdk_set; //todo: arbitrary size
       end;
       else begin
        sd1:= stackdatakinds[po1^.h.kind];

@@ -114,12 +114,12 @@ type
                   ck_paramdef,ck_params,ck_index,ck_casebranch);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
-                    sdk_bool1,
-                    sdk_card32,
-                    sdk_int32,
-                    sdk_flo64,
-                    sdk_set32,
-                    sdk_string8);
+                    sdk_boolean,
+                    sdk_cardinal,
+                    sdk_integer,
+                    sdk_float,
+                    sdk_set,
+                    sdk_string);
  stackdatakindsty = set of stackdatakindty;
 
 const

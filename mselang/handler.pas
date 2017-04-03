@@ -1117,7 +1117,7 @@ begin
                (d.kind = ck_const) then begin
     dk1:= convertconsts(poa,pob);
     case dk1 of
-     sdk_card32,sdk_int32: begin
+     sdk_cardinal,sdk_integer: begin
       if issub then begin
        d.dat.constval.vinteger:= d.dat.constval.vinteger -
                 pob^.d.dat.constval.vinteger;
@@ -1127,7 +1127,7 @@ begin
                 pob^.d.dat.constval.vinteger;
       end;
      end;
-     sdk_flo64: begin
+     sdk_float: begin
       if issub then begin
        d.dat.constval.vfloat:= d.dat.constval.vfloat -
                              pob^.d.dat.constval.vfloat;
@@ -2406,15 +2406,15 @@ begin
     case aop of
      cok_eq: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger = 
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat = 
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean =
                                                   pob^.d.dat.constval.vboolean;
        end;
@@ -2422,11 +2422,11 @@ begin
         d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
                                              pob^.d.dat.constval.vaddress) = 0;
        end;
-       sdk_set32: begin
+       sdk_set: begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
                                          tintegerset(pob^.d.dat.constval.vset);
        end;
-       sdk_string8: begin
+       sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
                                           pob^.d.dat.constval.vstring) = 0;
        end;
@@ -2437,23 +2437,23 @@ begin
      end;
      cok_ne: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <>
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat <>
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean <>
                                                   pob^.d.dat.constval.vboolean;
        end;
-       sdk_set32: begin
+       sdk_set: begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
                                          tintegerset(pob^.d.dat.constval.vset);
        end;
-       sdk_string8: begin
+       sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
                                           pob^.d.dat.constval.vstring) <> 0;
        end;
@@ -2464,19 +2464,19 @@ begin
      end;
      cok_gt: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger >
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat >
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean >
                                                   pob^.d.dat.constval.vboolean;
        end;
-       sdk_string8: begin
+       sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
                                           pob^.d.dat.constval.vstring) > 0;
        end;
@@ -2487,15 +2487,15 @@ begin
      end;
      cok_lt: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat <
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean <
                                                   pob^.d.dat.constval.vboolean;
        end;
@@ -2503,19 +2503,19 @@ begin
      end;
      cok_ge: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger >=
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat >=
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean >=
                                                   pob^.d.dat.constval.vboolean;
        end;
-       sdk_string8: begin
+       sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
                                           pob^.d.dat.constval.vstring) >= 0;
        end;
@@ -2526,23 +2526,23 @@ begin
      end;
      cok_le: begin
       case dk1 of
-       sdk_card32,sdk_int32: begin
+       sdk_cardinal,sdk_integer: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <=
                                                   pob^.d.dat.constval.vinteger;
        end;
-       sdk_flo64: begin
+       sdk_float: begin
         d.dat.constval.vboolean:= d.dat.constval.vfloat <=
                                                     pob^.d.dat.constval.vfloat;
        end;
-       sdk_bool1: begin
+       sdk_boolean: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean <=
                                                   pob^.d.dat.constval.vboolean;
        end;
-       sdk_set32: begin
+       sdk_set: begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
                                          tintegerset(pob^.d.dat.constval.vset);
        end;
-       sdk_string8: begin
+       sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
                                           pob^.d.dat.constval.vstring) <= 0;
        end;
@@ -2563,7 +2563,8 @@ errlab:
      stackop.compkind:= aop;
     end;
     with info,poa^ do begin
-     d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
+//     d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_boolean]];
+     d.dat.datatyp:= sysdatatypes[st_bool1];
      d.dat.fact.opdatatype:= bitoptypes[das_1];
     end;
    end;
