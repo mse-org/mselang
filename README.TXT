@@ -1,3 +1,3 @@
-Experiments for MSElang
+MSEpas/MSElang
 
-Copyright (c) 2013-2014 by Martin Schreiber 
+Copyright (c) 2013-2017 by Martin Schreiber 

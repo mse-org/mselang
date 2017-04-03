@@ -2,8 +2,8 @@ program stringconv;
 
 var
  s8a,s8b: string8;
- s16: string16;
- s32: string32;
+ s16,s16b: string16;
+ s32,s32b: string32;
 
 begin
  s8a:= 'abcöä'#$1234#$12345#102345;
@@ -19,7 +19,9 @@ begin
    if s8b = s8a then begin
     s32:= s8a;
     s8b:= s32;
-    if s8b = s8a then begin
+    s16b:= s8a;
+    s32b:= s8a;
+    if (s8b = s8a) and (s16b = s16) and (s32b = s32) then begin
      exitcode:= 123;
     end;
    end;
