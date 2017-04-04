@@ -396,6 +396,7 @@ type
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitem: phashdataty): boolean; override;
    function getrecordsize(): int32 override;
+   function checkgrow(): boolean;
   public
    constructor create;
    destructor destroy; override;
@@ -2369,6 +2370,16 @@ begin
  end;
 end;
 
+function tstringbuffer.checkgrow(): boolean;
+begin
+ result:= false;
+ if fbufsize > fbufcapacity then begin
+  fbufcapacity:= fbufsize*2;
+  reallocmem(fbuffer,fbufcapacity);
+  result:= true;
+ end;
+end;
+
 function tstringbuffer.add(const avalue: lstringty): stringvaluety;
 var
  hash: longword;
@@ -2388,10 +2399,7 @@ begin
   po1^.data.constoffset32:= -1;
   po1^.data.len:= avalue.len;
   fbufsize:= fbufsize + avalue.len;
-  if fbufsize > fbufcapacity then begin
-   fbufcapacity:= fbufsize*2;
-   reallocmem(fbuffer,fbufcapacity);
-  end;
+  checkgrow();
   move(avalue.po^,(fbuffer+po1^.data.offset)^,avalue.len);
  end;
  result.offset:= pointer(po1)-fdata;
@@ -2557,14 +2565,17 @@ begin
   include(data.flags,sbf_referenced);
  end; 
 end;
-var testvar: pstringbufhashdataty;
+
 procedure tstringbuffer.concatstringconsts(var dest: stringvaluety;
                const b: stringvaluety);
 var
  pa,pb: pstringbufhashdataty;
+ p1: pointer;
+ i1: int32;
+ lstr1: lstringty;
+ hash1: hashvaluety;
 begin
  pa:= pstringbufhashdataty(fdata+dest.offset);
-testvar:= pa;
  pb:= pstringbufhashdataty(fdata+b.offset);
  if (pb^.data.offset + pb^.data.len = fbufsize) and 
                        (pa^.data.offset + pa^.data.len = pb^.data.offset) and
@@ -2576,11 +2587,37 @@ testvar:= pa;
            (pb^.data.constoffset8 = -1) and (pb^.data.constoffset16 = -1) and
                (pb^.data.constoffset32 = -1) then begin
   removehash(pointer(pa));
-//  include(pa^.flags,sbf_temp);
   pa^.data.len:= pa^.data.len + pb^.data.len;
   internaldelete(b.offset);
  end
  else begin
+  i1:= pa^.data.len + pb^.data.len;
+  fbufsize:= fbufsize + i1;
+  if checkgrow() then begin
+   pa:= pstringbufhashdataty(fdata+dest.offset);
+   pb:= pstringbufhashdataty(fdata+b.offset);
+  end;
+  lstr1.po:= fbuffer+fbufsize-i1;
+  lstr1.len:= i1;
+  move((fbuffer+pa^.data.offset)^,lstr1.po^,pa^.data.len);
+  move((fbuffer+pb^.data.offset)^,(fbuffer+fbufsize-pb^.data.len)^,
+                                                         pb^.data.len);
+  hash1:= stringhash(lstr1);
+  pa:= pointer(internalfind(lstr1,hash1));
+  if pa = nil then begin
+   pa:= pointer(internaladdhash(hash1));
+   pa^.data.offset:= fbufsize-i1;
+   pa^.data.flags:= [];
+   pa^.data.constoffset8:= -1;
+   pa^.data.constoffset16:= -1;
+   pa^.data.constoffset32:= -1;
+   pa^.data.len:= i1;
+  end
+  else begin
+   fbufsize:= fbufsize-i1;
+  end;
+  dest.offset:= pointer(pa)-fdata;
+  dest.flags:= [];
  end;
 end;
 
