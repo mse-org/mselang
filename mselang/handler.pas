@@ -1137,6 +1137,9 @@ begin
                              pob^.d.dat.constval.vfloat;
       end;
      end;
+     sdk_string: begin
+      concatstringconsts(d.dat.constval.vstring,pob^.d.dat.constval.vstring);
+     end;
      else begin
       opnotsupported();
      end;
@@ -2181,6 +2184,9 @@ begin
    else begin
     with contextstack[s.stacktop].d do begin
      po1^.val.typ:= dat.datatyp;
+     if dat.constval.kind = dk_string then begin
+      trackstringref(dat.constval.vstring);
+     end;
      po1^.val.d:= dat.constval;
     end;
    end;

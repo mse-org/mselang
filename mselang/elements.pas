@@ -339,6 +339,9 @@ function newstringconst(): stringvaluety; //save info.stringbuffer
 function newstringconst(const avalue: lstringty): stringvaluety;
 function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
+procedure trackstringref(const astring: stringvaluety);
+                    //can not been concatenated in place
+procedure concatstringconsts(var dest: stringvaluety; const b: stringvaluety);
 function allocstringconst(const astring: stringvaluety): segaddressty;
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
 
@@ -366,9 +369,13 @@ const
  mindatasize = 1024; 
 
 type
+ stringbufflagty = (sbf_referenced);   //can not been concateniated in place
+ stringbufflagsty = set of stringbufflagty;
+ 
  stringbufdataty = record
   len: integer;
   offset: ptruint; //offset in fbuffer
+  flags: stringbufflagsty;
   constoffset8,constoffset16,constoffset32: dataoffsty; 
                       //offset in constdata, -1 -> not assigned
  end;
@@ -398,6 +405,10 @@ type
    function allocconst(const astring: stringvaluety): segaddressty;
    function getlength(const astring: stringvaluety): int32;
    function getstring(const astring: stringvaluety): lstringty;
+   procedure trackstringref(const astring: stringvaluety);
+                  //can not been concatenated in place
+   procedure concatstringconsts(var dest: stringvaluety;
+                                        const b: stringvaluety);
  end;
 {
  elementhashdataty = record
@@ -437,6 +448,17 @@ end;
 function stringconstlen(const astring: stringvaluety): int32;
 begin
  result:= stringbuf.getlength(astring);
+end;
+
+procedure trackstringref(const astring: stringvaluety);
+                    //can not been concatenated in place
+begin
+ stringbuf.trackstringref(astring);
+end;
+
+procedure concatstringconsts(var dest: stringvaluety; const b: stringvaluety);
+begin
+ stringbuf.concatstringconsts(dest,b);
 end;
 
 function telementhashdatalist.elebase: pointer; inline;
@@ -2320,7 +2342,24 @@ function tstringbuffer.hashkey(const akey): hashvaluety;
 begin
  result:= stringhash(lstringty(akey));
 end;
-
+{
+function tstringbuffer.hashkey(const akey): hashvaluety;
+var
+ h1: hashvaluety;
+ p1,pe: pcard8;
+begin
+ h1:= 0;
+ with lstringty(akey) do begin
+  p1:= pointer(po);
+  pe:= p1 + len;
+  while p1 < pe do begin
+   h1:= h1+p1^;
+   inc(p1);
+  end;
+ end;
+ result:= h1;
+end;
+}
 function tstringbuffer.checkkey(const akey; const aitem: phashdataty): boolean;
 begin
  with pstringbufhashdataty(aitem)^ do begin
@@ -2343,6 +2382,7 @@ begin
 //  len1:= length(avalue);
   po1:= pointer(internaladdhash(hash));
   po1^.data.offset:= fbufsize;
+  po1^.data.flags:= [];
   po1^.data.constoffset8:= -1;
   po1^.data.constoffset16:= -1;
   po1^.data.constoffset32:= -1;
@@ -2354,7 +2394,7 @@ begin
   end;
   move(avalue.po^,(fbuffer+po1^.data.offset)^,avalue.len);
  end;
- result.offset:= @po1^.data-fdata;
+ result.offset:= pointer(po1)-fdata;
  if avalue.len = 0 then begin
   result.flags:= [strf_empty];
  end
@@ -2398,13 +2438,30 @@ var
  p32: pcard32;
  c1: card32;
  len1: int32;
+ hash1: hashvaluety;
+ lstr1: lstringty;
+ stringbuf: pstringbufhashdataty;
+ hashbuf2: phashdataty;
 begin
- with pstringbufdataty(fdata+astring.offset)^ do begin
-  if len = 0 then begin
-   result.address:= 0;
-   result.segment:= seg_nil;
-  end
-  else begin
+ stringbuf:= pstringbufhashdataty(fdata+astring.offset);
+ if stringbuf^.data.len = 0 then begin
+  result.address:= 0;
+  result.segment:= seg_nil;
+ end
+ else begin
+  if stringbuf^.header.prevhash < 0 then begin //temp string
+   lstr1.len:= stringbuf^.data.len;
+   lstr1.po:= fbuffer + stringbuf^.data.offset;
+   hash1:= hashkey(lstr1);
+   hashbuf2:= internalfind(lstr1,hash1);
+   if hashbuf2 <> nil then begin
+    stringbuf:= pointer(hashbuf2);
+   end
+   else begin
+    inserthash(hash1,pointer(stringbuf));
+   end;
+  end;
+  with stringbuf^.data do begin
    ps:= fbuffer+offset;
    pe:= ps+len;
    if strf_16 in astring.flags then begin
@@ -2481,16 +2538,49 @@ end;
 
 function tstringbuffer.getlength(const astring: stringvaluety): int32;
 begin
- with pstringbufdataty(fdata+astring.offset)^ do begin
-  result:= len;
+ with pstringbufhashdataty(fdata+astring.offset)^ do begin
+  result:= data.len;
  end;
 end;
 
 function tstringbuffer.getstring(const astring: stringvaluety): lstringty;
 begin
- with pstringbufdataty(fdata+astring.offset)^ do begin
-  result.len:= len;
-  result.po:= fbuffer + offset;
+ with pstringbufhashdataty(fdata+astring.offset)^ do begin
+  result.len:= data.len;
+  result.po:= fbuffer + data.offset;
+ end;
+end;
+
+procedure tstringbuffer.trackstringref(const astring: stringvaluety);
+begin
+ with pstringbufhashdataty(fdata+astring.offset)^ do begin
+  include(data.flags,sbf_referenced);
+ end; 
+end;
+var testvar: pstringbufhashdataty;
+procedure tstringbuffer.concatstringconsts(var dest: stringvaluety;
+               const b: stringvaluety);
+var
+ pa,pb: pstringbufhashdataty;
+begin
+ pa:= pstringbufhashdataty(fdata+dest.offset);
+testvar:= pa;
+ pb:= pstringbufhashdataty(fdata+b.offset);
+ if (pb^.data.offset + pb^.data.len = fbufsize) and 
+                       (pa^.data.offset + pa^.data.len = pb^.data.offset) and
+                       //last two entries
+    not (sbf_referenced in pa^.data.flags) and 
+             not (sbf_referenced in pa^.data.flags) and
+           (pa^.data.constoffset8 = -1) and (pa^.data.constoffset16 = -1) and
+               (pa^.data.constoffset32 = -1) and
+           (pb^.data.constoffset8 = -1) and (pb^.data.constoffset16 = -1) and
+               (pb^.data.constoffset32 = -1) then begin
+  removehash(pointer(pa));
+//  include(pa^.flags,sbf_temp);
+  pa^.data.len:= pa^.data.len + pb^.data.len;
+  internaldelete(b.offset);
+ end
+ else begin
  end;
 end;
 

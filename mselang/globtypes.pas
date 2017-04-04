@@ -269,7 +269,7 @@ type
  stringflagsty = set of stringflagty;
  
  stringvaluety = record
-  offset: ptruint; //offset in string buffer
+  offset: ptruint; //stringbufhashdataty offset in string buffer
   flags: stringflagsty;
  // len: databytesizety;
  end;
