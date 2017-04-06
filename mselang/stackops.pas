@@ -4903,7 +4903,9 @@ end;
 
 procedure subbeginop();
 begin
- //dummy
+ with cpu.pc^.par.subbegin do begin
+  stackpush(sub.varsize);
+ end;
 end;
 
 procedure subendop();

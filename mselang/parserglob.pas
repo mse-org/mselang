@@ -718,6 +718,7 @@ type
   start: int32;
   globdatapo: targetadty;
   locdatapo: targetadty;
+  managedtempcount: int32;
   frameoffset: targetcardty;
   
   currentblockid: int32; //with and try blocks 

@@ -714,6 +714,7 @@ begin
    par.subbegin.sub.flags:= asub^.flags;
    par.subbegin.sub.allocs:= asub^.allocs; 
                   //will be updated for llvm nested vars
+   par.subbegin.sub.varsize:= 0; //will be updated at subend
   end;
  {$ifdef mse_checkinternalerror}
   if s.trystack <> 0 then begin
@@ -1004,9 +1005,9 @@ begin
               //todo: multi level type
 
 //runtime call stack:
-//                                   |cpu.frame |cpu.stack
-//[^result] [self] {param} frameinfo {locvar}
-//|-------- subdataty.paramsize -----|
+//                                   |cpu.frame                    |cpu.stack
+//[^result] [self] {param} frameinfo {locvar}{managedtemp pointers}
+//|-------- subdataty.paramsize -----|------subdataty.varsize------|
 //
 //llvm call stack:
 //[self] {params}
@@ -1439,6 +1440,7 @@ begin
   d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
+  managedtempcount:= 0;
   if d.subdef.match <> 0 then begin
    po2:= ele.eledataabs(d.subdef.match);    
    if co_llvm in o.compileoptions then begin
@@ -1586,11 +1588,13 @@ begin
   end;
   resetssa();
   addsubbegin(oc_subbegin,po1);
+ {
   if d.subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
+ }
   if stf_needsmanage in s.currentstatementflags then begin
    writemanagedvarop(mo_ini,po1^.varchain);
   end;           //todo: implicit try-finally
@@ -1670,6 +1674,8 @@ begin
    inc(po2);
   end;
   with po2^ do begin
+   par.subbegin.sub.varsize:= d.subdef.varsize+
+                              managedtempcount*sizeof(pointer);
    par.subbegin.sub.flags:= po1^.flags;
    par.subbegin.sub.blockcount:= s.ssa.bbindex + 1;
   end;

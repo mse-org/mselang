@@ -2540,6 +2540,7 @@ begin
   with info do begin
    pt^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    info.s.stacktop:= terms^.d.dat.termgroupstart;
+   addmanagedtemp(info.s.stacktop);
   end;
  end;
 end;

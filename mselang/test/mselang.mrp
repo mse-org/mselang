@@ -2720,7 +2720,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=12
     (
     kind=2
@@ -3151,7 +3151,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C5FE4
+    ao=An unhandled exception occured at $B72719B8
     ae=
     aec=123
     ie=0
@@ -3897,7 +3897,7 @@ c=3
    (
    kind=1
    a=0,664,4,mem
-   c=4
+   c=6
     (
     kind=2
     a=0,648,1,getmem
@@ -3984,6 +3984,50 @@ c=3
     ao=-1
     ae=
     aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,memcpy
+    teststate=1
+    path=memcpy.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,memcpy llvm
+    teststate=1
+    path=memcpy.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
     ie=0
     )
    teststate=1
@@ -4593,7 +4637,7 @@ c=3
    (
    kind=1
    a=0,665,4,string
-   c=4
+   c=6
     (
     kind=2
     a=0,648,1,stringtest
@@ -4680,6 +4724,50 @@ c=3
     ao=a
     ae=
     aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringconcat
+    teststate=1
+    path=stringconcat.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringconcat llvm
+    teststate=1
+    path=stringconcat.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
     ie=0
     )
    teststate=1
@@ -8369,7 +8457,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syssubs
+  a=0,665,4,syssubs
   c=1
    (
    kind=1
@@ -8876,12 +8964,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=54
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=49
  0 0
  0 0
  0 0

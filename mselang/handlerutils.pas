@@ -156,6 +156,7 @@ function pushtempindi(const address: addressvaluety;
 function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
 procedure poptemp(const asize: int32);
+procedure addmanagedtemp(const aindex: int32);
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -1382,6 +1383,18 @@ procedure poptemp(const asize: int32);
 begin
  with additem(oc_pop)^ do begin
   par.imm.vsize:= asize;
+ end;
+end;
+
+procedure addmanagedtemp(const aindex: int32);
+begin
+ with info,contextstack[aindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) then begin
+   internalerror(ie_handler,'2070406H');
+  end;
+ {$endif}
+  inc(managedtempcount);
  end;
 end;
 

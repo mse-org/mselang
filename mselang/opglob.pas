@@ -973,6 +973,7 @@ type
  subbegininfoty = record
   flags: subflagsty;
   allocs: suballocinfoty;
+  varsize: int32;
   blockcount: int32;
  end;
 
