@@ -55,6 +55,12 @@ type
  end;
  pparallocinfoty = ^parallocinfoty;
 
+ concatparallocinfoty = record
+  ssaindex: integer;
+//  size: typeallocinfoty;
+ end;
+ pconcatparallocinfoty = ^concatparallocinfoty;
+
  nestedaddressty = record
   arrayoffset: dataoffsty;
   origin: dataoffsty;
@@ -212,6 +218,8 @@ type
   oc_string8to16,oc_string8to32,
   oc_string16to8,oc_string16to32,
   oc_string32to8,oc_string32to16,
+  
+  oc_concatstring8,oc_concatstring16,oc_concatstring32,
 
   oc_chartostring8,
   oc_arraytoopenar,
@@ -609,7 +617,8 @@ type
   ocssa_pushsegaddrglobvar,
   ocssa_pushsegaddrglobconst,
   ocssa_pushsegaddrclassdef,
-  ocssa_listtoopenaritem //per item
+  ocssa_listtoopenaritem, //per item
+  ocssa_concattermsitem  //per item
  );
  
  v8ty = array[0..0] of byte;
@@ -624,6 +633,8 @@ type
  v64ty = array[0..7] of byte;
  pv64ty = ^v64ty;
  ppv64ty = ^pv64ty;
+ vpoty = array[0..sizeof(pointer)-1] of byte;
+ pvpoty = ^vpoty;
 
    //todo: simplify nested procedure link handling
 
@@ -807,6 +818,12 @@ type
    oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,oc_cmpstring:(
     compkind: compopkindty;
    );
+ end;
+ concatopty = record
+  count: int32; 
+  countid: int32;//llvm const id
+  allocs: dataoffsty;
+  arraytype: int32; //llvm type id
  end;
 {
  stackimmopty = record
@@ -1144,6 +1161,10 @@ type
    oc_int16tocard8,oc_int16tocard16,oc_int16tocard32,oc_int16tocard64,
    oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
+
+   oc_string8to16,oc_string8to32,
+   oc_string16to8,oc_string16to32,
+   oc_string32to8,oc_string32to16,
    
    oc_chartostring8,
    
@@ -1165,6 +1186,10 @@ type
    oc_setcontains,oc_setin: (
     stackop: stackopty;
    );
+    oc_concatstring8,oc_concatstring16,oc_concatstring32: (
+     concatop: concatopty;
+    );
+
    {oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo,}
    oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
@@ -1192,7 +1217,7 @@ type
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar,
    oc_decrefsizesegdynar,oc_decrefsizelocdynar,
    oc_decrefsizereg0dynar,oc_decrefsizestackdynar,oc_decrefsizestackrefdynar,
-   oc_getmem,
+   oc_getmem,oc_getzeromem,oc_memcpy,
    oc_incsegint,oc_incsegpo,
    oc_inclocint,oc_inclocpo,
    oc_incparint,oc_incparpo,

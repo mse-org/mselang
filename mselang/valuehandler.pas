@@ -269,7 +269,17 @@ begin
       end;
       inc(poitem1);
      end;
-    end
+    end;
+    das_pointer: begin
+     while poitem1 < poe do begin
+      if poitem1^.d.kind <> ck_space then begin
+       pvpoty(podata1)^:= pvpoty(@poitem1^.d.dat.constval.vdummy)^;
+       inc(pvpoty(podata1));
+       poitem1^.d.kind:= ck_space;
+      end;
+      inc(poitem1);
+     end;
+    end;
     else begin
      notimplementederror('20160613A'); //todo
     end;

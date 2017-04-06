@@ -346,6 +346,13 @@
   (ssa: string32to8ssa; proc: @string32to8op; flags: []), 
 //oc_string32to16
   (ssa: string32to16ssa; proc: @string32to16op; flags: []), 
+
+//oc_concatstring8
+  (ssa: concatstring8ssa; proc: @concatstring8op; flags: []), 
+//oc_concatstring16
+  (ssa: concatstring16ssa; proc: @concatstring16op; flags: []), 
+//oc_concatstring32
+  (ssa: concatstring32ssa; proc: @concatstring32op; flags: []), 
   
 //oc_chartostring8
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
@@ -1064,5 +1071,7 @@
 //oc_pushsegaddrclassdef
   (ssa: pushsegaddrclassdefssa; proc: nil; flags: []),
 //ocssa_listtoopenaritem
-  (ssa: listtoopenaritemssa; proc: nil; flags: []) 
+  (ssa: listtoopenaritemssa; proc: nil; flags: []),
+//ocssa_concattermsitem
+  (ssa: concattermsitemssa; proc: nil; flags: []) 
  );

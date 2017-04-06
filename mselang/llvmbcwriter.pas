@@ -67,6 +67,7 @@ type
    ftriple: string;
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
+   fpointersizeconst: int32;
    fconstseg: int32;
    flastdebugloc: debuglocty;
    fconststart: int32;      //start of global constants
@@ -258,6 +259,7 @@ type
                                  const len: int32; const values: pint32);
 //   procedure emitmetadatafnnonde(const avalue,atype: int32);
    function valindex(const aadress: segaddressty): integer;
+   property pointersizeconst: int32 read fpointersizeconst;
    property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
@@ -468,6 +470,7 @@ begin
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
+ fpointersizeconst:= consts.pointersize;
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature

@@ -1637,6 +1637,42 @@ begin
  end;
 end;
 
+procedure concatstring8op();
+var
+ i1: int32;
+ p1,pe: pconcatparallocinfoty;
+begin
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(concatop.arraytype)); //1 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                                                  //1 ssa
+  i1:= bcstream.relval(0);
+  p1:= getsegmentpo(seg_localloc,concatop.allocs);
+  pe:= p1 + concatop.count;
+  while p1 < pe do begin
+   bcstream.emitbitcast(bcstream.relval(0),
+                              bcstream.pptypeval(ord(das_8)));     //1 ssa
+   bcstream.emitstoreop(bcstream.ssaval(p1^.ssaindex),bcstream.relval(0));
+   bcstream.emitgetelementptr(bcstream.relval(0),
+                   bcstream.constval(bcstream.pointersizeconst));   //2 ssa
+   inc(p1);
+  end;
+  callcompilersub(cs_concatstring8,true,
+                [bcstream.constval(concatop.countid),i1]);  //1 ssa
+ end;
+end;
+
+procedure concatstring16op();
+begin
+ notimplemented();
+end;
+
+procedure concatstring32op();
+begin
+ notimplemented();
+end;
+
+
 //todo: use struct type
 procedure combinemethodop();
 begin
@@ -4005,6 +4041,10 @@ const
   string32to8ssa = 1;
   string32to16ssa = 1;
   
+  concatstring8ssa = 3;
+  concatstring16ssa = 3;
+  concatstring32ssa = 3;
+  
   chartostring8ssa = 1;
   arraytoopenarssa = 1;
   dynarraytoopenarssa = 1;
@@ -4386,6 +4426,7 @@ const
   pushsegaddrglobconstssa = 3;
   pushsegaddrclassdefssa = 3;
   listtoopenaritemssa = 3;
+  concattermsitemssa = 3;
   
 {$include optable.inc}
 

@@ -56,6 +56,7 @@ type
   end; //stringdata + terminating #0
  end; 
  pstringheaderty = ^stringheaderty;
+ ppstringheaderty = ^pstringheaderty;
 
  dynarrayheaderty = record
   ref: refinfoty;

@@ -409,7 +409,7 @@ const
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
    (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
-   (name: 'nil'; ctyp: st_none; cval:(kind: dk_none))
+   (name: 'nil'; ctyp: st_none; cval:(kind: dk_none; vdummy: ()))
 //   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
 //             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
   );
@@ -2425,7 +2425,7 @@ begin
 {$endif}
  acontext.kind:= akind;
  with acontext.dat do begin
-//  flags:= [];
+  termgroupstart:= 0;
   indirection:= 0;
   ref.castchain:= 0;
  end;
@@ -2794,7 +2794,9 @@ begin                    //todo: optimize
   result:= true;
 errlab:
   if not (d.kind in factcontexts) then begin
+   i1:= d.dat.termgroupstart;
    initfactcontext(stackoffset);
+   d.dat.termgroupstart:= i1; //restore
    d.dat.fact.opdatatype:= opdata1;
   end;
  end;
@@ -3701,8 +3703,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
 
  procedure writedat(const adat: datacontextty);
  begin
-//  write('F:',settostring(ptypeinfo(typeinfo(datacontextflagsty)),
-//                                                integer(adat.flags),true),' ');
+  write('Tg:',adat.termgroupstart,' ');
  end;
   
  procedure writeref(const ainfo: contextdataty);

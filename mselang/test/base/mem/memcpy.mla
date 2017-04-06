@@ -1,0 +1,7 @@
+program memcpy;
+var
+ i1: int32;
+begin
+ i1:= 123;
+ memcpy(@exitcode,@i1,4);
+end.

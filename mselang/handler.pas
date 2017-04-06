@@ -1103,7 +1103,7 @@ var
  i1,i2: int32;
  india,indib: int32;
  op1: opcodety;
- ptype: ptypedataty;
+ pta,ptb: ptypedataty;
 label
  errlab,endlab;
 begin
@@ -1191,13 +1191,13 @@ begin
         d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp);
        end;
        with pob^ do begin //still valid
-        ptype:= ele.eledataabs(d.dat.datatyp.typedata);
-        if ptype^.h.bytesize <> 1 then begin
+        ptb:= ele.eledataabs(d.dat.datatyp.typedata);
+        if ptb^.h.bytesize <> 1 then begin
          d.kind:= ck_const;
          d.dat.indirection:= 0;
          d.dat.datatyp:= sysdatatypes[ptrintsystype]; //??? necessary
          d.dat.constval.kind:= dk_integer;
-         d.dat.constval.vinteger:= ptype^.h.bytesize;
+         d.dat.constval.vinteger:= ptb^.h.bytesize;
          s.stackindex:= i1;
          s.stacktop:= i2;
          updateop(divops);
@@ -1300,7 +1300,21 @@ errlab:
       updateop(subops);
      end
      else begin
-      updateop(addops);
+      pta:= ele.eledataabs(poa^.d.dat.datatyp.typedata);
+      ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+      if (pta^.h.kind = dk_string) and (ptb^.h.kind = dk_string) then begin
+       if poa^.d.dat.termgroupstart = 0 then begin
+        poa^.d.dat.termgroupstart:= poa-pcontextitemty(pointer(contextstack));
+                                         //init
+       end;
+       pob^.d.dat.termgroupstart:= poa^.d.dat.termgroupstart;
+       contextstack[s.stackindex].d.kind:= ck_space;
+       s.stackindex:= getpreviousnospace(poa^.d.dat.termgroupstart)-2;
+       goto endlab; //for concatmulty
+      end
+      else begin
+       updateop(addops);
+      end;
      end;
     end;
    end;
@@ -2383,6 +2397,99 @@ begin
  end;
 end;
 
+procedure concatterms(const wanted,terms: pcontextitemty);
+var
+ wantedtype: systypety;
+ pa: ptypedataty;
+ pt,p1,pe: pcontextitemty;
+ i1: int32;
+ palloc: pconcatparallocinfoty;
+ op1: opcodety;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (terms^.d.kind in datacontexts) then begin
+  internalerror(ie_handler,'20170405A');
+ end;
+{$endif}
+ pt:= @info.contextstack[terms^.d.dat.termgroupstart];
+ pe:= @info.contextstack[info.s.stacktop];
+
+ if terms^.d.dat.termgroupstart <> 0 then begin
+  if wanted <> nil then begin
+ {$ifdef mse_checkinternalerror}
+   if not (wanted^.d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20170405B');
+   end;
+ {$endif}
+   pa:= ele.eledataabs(wanted^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if pa^.h.kind <> dk_string then begin
+    internalerror(ie_handler,'20170405C');
+   end;
+  {$endif}
+  end
+  else begin
+   pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
+  end;
+  case pa^.itemsize of 
+   1: begin
+    wantedtype:= st_string8;
+    op1:= oc_concatstring8;
+   end;
+   2: begin
+    wantedtype:= st_string16;
+    op1:= oc_concatstring16;
+   end;
+   4: begin
+    wantedtype:= st_string32;
+    op1:= oc_concatstring32;
+   end
+   else begin
+    internalerror(ie_handler,'20170405G');
+   end;
+  end;
+  p1:= pt;
+  i1:= 0;
+  while p1 <= pe do begin
+   if p1^.d.kind <> ck_space then begin
+   {$ifdef mse_checkinternalerror}
+    if not (p1^.d.kind in datacontexts) then begin
+     internalerror(ie_handler,'20170405D');
+    end;
+   {$endif}
+    if not tryconvert(p1,wantedtype,[]) then begin
+     internalerror(ie_handler,'20170405E');
+    end;
+    getvalue(p1,das_none);
+    inc(i1);
+   end;
+   inc(p1);
+  end;
+  with additem(op1,getssa(ocssa_concattermsitem)*i1)^ do begin
+   par.concatop.count:= i1;
+   if co_llvm in info.o.compileoptions then begin
+    setimmint32(i1,par.concatop.countid);
+    par.concatop.arraytype:= info.s.unitinfo^.
+            llvmlists.typelist.addbytevalue(i1*pointersize);
+   palloc:= allocsegmentpo(seg_localloc,sizeof(concatparallocinfoty)*i1);
+   par.concatop.allocs:= getsegmentoffset(seg_localloc,palloc);
+   p1:= pt;
+   while p1 <= pe do begin
+    if p1^.d.kind <> ck_space then begin
+     palloc^.ssaindex:= p1^.d.dat.fact.ssaindex;
+     inc(palloc);
+    end;
+    inc(p1);
+   end;
+   end;
+  end;
+  with info do begin
+   pt^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+   info.s.stacktop:= terms^.d.dat.termgroupstart;
+  end;
+ end;
+end;
+
 procedure handlecomparison(const aop: compopkindty);
 
 var
@@ -2406,6 +2513,7 @@ begin
                               not getfactstart(s.stacktop,pob) then begin
    goto errlab;
   end;
+  concatterms(poa,pob);
   with poa^ do begin
    if (pob^.d.kind = ck_const) and (d.kind = ck_const) then begin
     dk1:= convertconsts(poa,pob);

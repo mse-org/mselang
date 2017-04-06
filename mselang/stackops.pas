@@ -3447,6 +3447,59 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
+procedure concatstring8op();
+var
+ p1,ps,pe: ppstringheaderty;
+ i1: int32;
+ p0,p3: pstringheaderty;
+ p4: pcard8;
+begin
+ with cpu.pc^.par do begin
+  pe:= cpu.stack;
+  ps:= pe - concatop.count;
+  p1:= ps;
+  i1:= 0;
+  while p1 < pe do begin
+   p0:= p1^;
+   if p0 <> nil then begin
+    i1:= i1+(p0-1)^.len;
+   end;
+   inc(p1);
+  end;
+  if i1 > 0 then begin
+   getmem(p3,string8allocsize+i1*1);
+   p3^.ref.count:= 0;
+   p3^.len:= i1;
+   inc(p3);
+   p4:= pointer(p3);
+   (p4+i1)^:= 0; //terminating 0
+   p1:= ps;
+   while p1 < pe do begin
+    p0:= p1^;
+    if p0 <> nil then begin
+     i1:= (p0-1)^.len;
+     move(p0^,p4^,i1);
+     inc(p4,i1);
+    end;
+    inc(p1);
+   end;
+   ps^:= pointer(p3);
+  end
+  else begin
+   ps^:= nil;
+  end;
+  stackpop(sizeof(pointer)*(concatop.count-1));
+ end;
+end;
+
+procedure concatstring16op();
+begin
+end;
+
+procedure concatstring32op();
+begin
+end;
+
 procedure chartostring8op();
 var
  char1: card8;
@@ -5987,7 +6040,11 @@ const
   string16to32ssa = 0;
   string32to8ssa = 0;
   string32to16ssa = 0;
-  
+
+  concatstring8ssa = 0;
+  concatstring16ssa = 0;
+  concatstring32ssa = 0;
+    
   chartostring8ssa = 0;
   arraytoopenarssa = 0;
   dynarraytoopenarssa = 0;
@@ -6369,6 +6426,7 @@ const
   pushsegaddrglobconstssa = 0;
   pushsegaddrclassdefssa = 0;
   listtoopenaritemssa = 0;
+  concattermsitemssa = 0;
     
 {$include optable.inc}
 

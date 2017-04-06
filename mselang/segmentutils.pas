@@ -77,6 +77,7 @@ function allocsegmentpounaligned(const asegment: segmentty;
                                                 const asize: integer): pointer;
 function allocsegmentpo(const asegment: segmentty;
                                  asize: integer; var buffer: pointer): pointer;
+                                                 //relocates buffer
 procedure reallocsegment(const address: segaddressty; 
                                 oldsize,newsize: int32); 
                                    //for reducing last alloc only

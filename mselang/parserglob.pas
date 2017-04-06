@@ -390,8 +390,8 @@ type
 // datacontextflagsty = set of datacontextflagty;
  
  datacontextty = record
-//  flags: datacontextflagsty;
-  indirection: integer; //pending
+  termgroupstart: int32;
+  indirection: int32; //pending
   datatyp: typeinfoty;
   case contextkindty of
    ck_const:(

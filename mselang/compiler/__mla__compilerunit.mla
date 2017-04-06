@@ -16,32 +16,38 @@ uses
  __mla__internaltypes;
 
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
-procedure __mla__decrefsize(ref: prefsizeinfoty);
-procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
-procedure __mla__increfsize(ref: prefsizeinfoty);
-procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+procedure __mla__decrefsize(ref: pointer);
+procedure __mla__decrefsizeref(const ref: ppointer);
+procedure __mla__increfsize(ref: pointer);
+procedure __mla__finirefsize(const ref: ppointer);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 
-procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
+procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
-procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
+procedure __mla__setlengthstring8(const ref: ppointer;
                                                     const count: int32);
-procedure __mla__setlengthstring16(const ref: pprefsizeinfoty;
+procedure __mla__setlengthstring16(const ref: ppointer;
                                                     const count: int32);
-procedure __mla__setlengthstring32(const ref: pprefsizeinfoty;
+procedure __mla__setlengthstring32(const ref: ppointer;
                                                     const count: int32);
-procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
+procedure __mla__uniquedynarray(const ref: ppointer;
                                                     const itemsize: int32);
-procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
-procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
-procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring8(const ref: ppointer);
+procedure __mla__uniquestring16(const ref: ppointer);
+procedure __mla__uniquestring32(const ref: ppointer);
 
-function __mla__string8to16(source: prefsizeinfoty): prefsizeinfoty;
-function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
-function __mla__string16to8(source: prefsizeinfoty): prefsizeinfoty;
-function __mla__string16to32(source: prefsizeinfoty): prefsizeinfoty;
-function __mla__string32to8(source: prefsizeinfoty): prefsizeinfoty;
-function __mla__string32to16(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string8to16(source: pointer): pointer;
+function __mla__string8to32(source: pointer): pointer;
+function __mla__string16to8(source: pointer): pointer;
+function __mla__string16to32(source: pointer): pointer;
+function __mla__string32to8(source: pointer): pointer;
+function __mla__string32to16(source: pointer): pointer;
+function __mla__concatstring8(count: int32;
+                                   strings: ppointer): pointer;
+function __mla__concatstring16(count: int32;
+                                   strings: ppointer): pointer;
+function __mla__concatstring32(count: int32;
+                                   strings: ppointer): pointer;
 
 function __mla__compstring8eq(a,b: pointer): bool1;
 function __mla__compstring8ne(a,b: pointer): bool1;
@@ -69,13 +75,13 @@ function __mla__chartostring8(achar: card8): pointer;
 function __mla__chartostring16(achar: card16): pointer;
 function __mla__chartostring32(achar: card32): pointer;
 function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
-function __mla__dynarraytoopenar(ref: prefsizeinfoty): openarrayty;
-function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
+function __mla__dynarraytoopenar(ref: pointer): openarrayty;
+function __mla__lengthdynarray(ref: pointer): int32;
 function __mla__lengthopenarray(ref: popenarrayty): int32;
-function __mla__lengthstring(ref: prefsizeinfoty): int32;
-function __mla__highdynarray(ref: prefsizeinfoty): int32;
+function __mla__lengthstring(ref: pointer): int32;
+function __mla__highdynarray(ref: pointer): int32;
 function __mla__highopenarray(ref: popenarrayty): int32;
-function __mla__highstring(ref: prefsizeinfoty): int32;
+function __mla__highstring(ref: pointer): int32;
 
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
@@ -118,30 +124,36 @@ end;
 
 //todo: thread safe managed types
 
-procedure __mla__increfsize(ref: prefsizeinfoty);
+procedure __mla__increfsize(ref: pointer);
+var
+ d: prefsizeinfoty;
 begin
- if ref <> nil then begin
-  dec(ref);
-  if ref^.ref.count >= 0 then begin
-   inc(ref^.ref.count);
+ d:= ref;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count >= 0 then begin
+   inc(d^.ref.count);
   end;
  end;
 end;
 
-procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__decrefsize(ref: pointer);
+var
+ d: prefsizeinfoty;
 begin
- if ref <> nil then begin
-  dec(ref);
-  if ref^.ref.count > 0 then begin
-   dec(ref^.ref.count);
+ d:= ref;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
   end;
-  if ref^.ref.count = 0 then begin
-   freemem(ref);
+  if d^.ref.count = 0 then begin
+   freemem(d);
   end;
  end;
 end;
 
-procedure __mla__increfsizeref(ref: pprefsizeinfoty);
+procedure __mla__increfsizeref(ref: ppointer);
 var
  d: prefsizeinfoty;
 begin
@@ -154,7 +166,7 @@ begin
  end;
 end;
 
-procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
+procedure __mla__decrefsizeref(const ref: ppointer);
 var
  d: prefsizeinfoty;
 begin
@@ -171,7 +183,7 @@ begin
  end;
 end;
 
-procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+procedure __mla__finirefsize(const ref: ppointer);
 var
  d: prefsizeinfoty;
 begin
@@ -199,7 +211,7 @@ begin
  end;
 end;
 
-procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
+procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
 var
  s,d: pdynarrayheaderty;
@@ -258,8 +270,7 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
-                                                    const count: int32);
+procedure __mla__setlengthstring8(const ref: ppointer; const count: int32);
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -314,8 +325,7 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring16(const ref: pprefsizeinfoty;
-                                                    const count: int32);
+procedure __mla__setlengthstring16(const ref: ppointer; const count: int32);
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -370,8 +380,7 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring32(const ref: pprefsizeinfoty;
-                                                    const count: int32);
+procedure __mla__setlengthstring32(const ref: ppointer; const count: int32);
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -427,8 +436,7 @@ begin
 end;
 
 
-procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
-                                                    const itemsize: int32);
+procedure __mla__uniquedynarray(const ref: ppointer; const itemsize: int32);
 var
  s,d: pdynarrayheaderty;
  i1: int32;
@@ -447,7 +455,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring8(const ref: ppointer);
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -468,7 +476,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring16(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring16(const ref: ppointer);
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -489,7 +497,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring32(const ref: pprefsizeinfoty);
+procedure __mla__uniquestring32(const ref: ppointer);
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -636,7 +644,7 @@ begin
  inc(dest);
 end;
 
-function __mla__string8to16(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string8to16(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard8;
@@ -675,7 +683,7 @@ begin
  result:= pds;
 end;
 
-function __mla__string8to32(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string8to32(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard8;
@@ -704,7 +712,7 @@ begin
  result:= pds;
 end;
 
-function __mla__string16to8(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string16to8(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard16;
@@ -735,7 +743,7 @@ begin
  result:= pds;
 end;
 
-function __mla__string16to32(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string16to32(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard16;
@@ -764,7 +772,7 @@ begin
  result:= pds;
 end;
 
-function __mla__string32to8(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string32to8(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard32;
@@ -795,7 +803,7 @@ begin
  result:= pds;
 end;
 
-function __mla__string32to16(source: prefsizeinfoty): prefsizeinfoty;
+function __mla__string32to16(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
  p1,pe: pcard32;
@@ -834,6 +842,52 @@ begin
   pds:= nil;
  end;
  result:= pds;
+end;
+
+function __mla__concatstring8(count: int32;
+                              strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
+begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do begin
+  ps:= p1^;
+  if ps <> nil then begin
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then begin
+  getmem(pd,string8allocsize+i1*1);
+  inc(pd);
+  result:= pd;
+  (pcard8(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do begin
+   ps:= p1^;
+   i1:= (ps-1)^.len;
+   memcpy(pd,ps,i1*1);
+   inc(pcard8(pointer(pd)),i1);
+   inc(p1);
+  end;
+ end
+ else begin
+  result:= nil;
+ end;
+end;
+
+function __mla__concatstring16(count: int32;
+                                   strings: ppointer): pointer;
+begin
+end;
+
+function __mla__concatstring32(count: int32;
+                                   strings: ppointer): pointer;
+begin
 end;
 
 function compstring8(a,b:pointer): stringsizety; //a and b <> nil
@@ -1109,21 +1163,21 @@ begin
  result.data:= adata;
 end;
 
-function __mla__dynarraytoopenar(ref: prefsizeinfoty): openarrayty;
+function __mla__dynarraytoopenar(ref: pointer): openarrayty;
 begin
  if ref = nil then begin
   result.high:= -1;
  end
  else begin
-  result.high:= pdynarrayheaderty(ref-1)^.high;
+  result.high:= (pdynarrayheaderty(ref)-1)^.high;
  end;
  result.data:= ref;
 end;
 
-function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
+function __mla__lengthdynarray(ref: pointer): int32;
 begin
  if ref <> nil then begin
-  result:= pdynarrayheaderty(ref-1)^.high + 1;
+  result:= (pdynarrayheaderty(ref)-1)^.high + 1;
  end
  else begin
   result:= 0;
@@ -1135,20 +1189,20 @@ begin
  result:= ref^.high+1;
 end;
 
-function __mla__lengthstring(ref: prefsizeinfoty): int32;
+function __mla__lengthstring(ref: pointer): int32;
 begin
  if ref <> nil then begin
-  result:= pstringheaderty(ref-1)^.len;
+  result:= (pstringheaderty(ref)-1)^.len;
  end
  else begin
   result:= 0;
  end;
 end;
 
-function __mla__highdynarray(ref: prefsizeinfoty): int32;
+function __mla__highdynarray(ref: pointer): int32;
 begin
  if ref <> nil then begin
-  result:= pdynarrayheaderty(ref-1)^.high;
+  result:= (pdynarrayheaderty(ref)-1)^.high;
  end
  else begin
   result:= -1;
@@ -1161,10 +1215,10 @@ begin
 end;
 
 
-function __mla__highstring(ref: prefsizeinfoty): int32;
+function __mla__highstring(ref: pointer): int32;
 begin
  if ref <> nil then begin
-  result:= pstringheaderty(ref-1)^.len;
+  result:= (pstringheaderty(ref)-1)^.len;
  end
  else begin
   result:= 0;
