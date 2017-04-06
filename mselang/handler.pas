@@ -2403,7 +2403,7 @@ var
  pa: ptypedataty;
  pt,p1,pe: pcontextitemty;
  i1: int32;
- palloc: pconcatparallocinfoty;
+ palloc: plistitemallocinfoty;
  op1: opcodety;
 begin
 {$ifdef mse_checkinternalerror}
@@ -2411,41 +2411,95 @@ begin
   internalerror(ie_handler,'20170405A');
  end;
 {$endif}
- pt:= @info.contextstack[terms^.d.dat.termgroupstart];
- pe:= @info.contextstack[info.s.stacktop];
-
  if terms^.d.dat.termgroupstart <> 0 then begin
+  pt:= @info.contextstack[terms^.d.dat.termgroupstart];
+  pe:= @info.contextstack[info.s.stacktop];
+
   if wanted <> nil then begin
  {$ifdef mse_checkinternalerror}
    if not (wanted^.d.kind in datacontexts) then begin
     internalerror(ie_handler,'20170405B');
    end;
  {$endif}
-   pa:= ele.eledataabs(wanted^.d.dat.datatyp.typedata);
-  {$ifdef mse_checkinternalerror}
-   if pa^.h.kind <> dk_string then begin
-    internalerror(ie_handler,'20170405C');
+   if wanted^.d.kind = ck_const then begin
+    pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
+   {$ifdef mse_checkinternalerror}
+    if pa^.h.kind <> dk_string then begin
+     internalerror(ie_handler,'20170406C');
+    end;
+   {$endif}
+    case pa^.itemsize of
+     1: begin
+      wantedtype:= st_string8;
+     end;
+     2: begin
+      wantedtype:= st_string16;
+     end;
+     4: begin
+      wantedtype:= st_string32;
+     end
+     else begin
+      internalerror(ie_handler,'20170405G');
+     end;
+    end;
+    if not tryconvert(wanted,wantedtype,[]) then begin
+     internalerror(ie_handler,'20170406A');
+    end;
+   end
+   else begin
+    pa:= ele.eledataabs(pe^.d.dat.datatyp.typedata);
+   {$ifdef mse_checkinternalerror}
+    if pa^.h.kind <> dk_string then begin
+     internalerror(ie_handler,'20170406B');
+    end;
+   {$endif}
+    case pa^.itemsize of
+     1: begin
+      wantedtype:= st_string8;
+     end;
+     2: begin
+      wantedtype:= st_string16;
+     end;
+     4: begin
+      wantedtype:= st_string32;
+     end
+     else begin
+      internalerror(ie_handler,'20170405G');
+     end;
+    end;
    end;
-  {$endif}
   end
   else begin
    pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if pa^.h.kind <> dk_string then begin
+    internalerror(ie_handler,'20170406B');
+   end;
+  {$endif}
+   case pa^.itemsize of
+    1: begin
+     wantedtype:= st_string8;
+    end;
+    2: begin
+     wantedtype:= st_string16;
+    end;
+    4: begin
+     wantedtype:= st_string32;
+    end
+    else begin
+     internalerror(ie_handler,'20170405G');
+    end;
+   end;
   end;
-  case pa^.itemsize of 
-   1: begin
-    wantedtype:= st_string8;
+  case wantedtype of 
+   st_string8: begin
     op1:= oc_concatstring8;
    end;
-   2: begin
-    wantedtype:= st_string16;
+   st_string16: begin
     op1:= oc_concatstring16;
    end;
-   4: begin
-    wantedtype:= st_string32;
+   st_string32: begin
     op1:= oc_concatstring32;
-   end
-   else begin
-    internalerror(ie_handler,'20170405G');
    end;
   end;
   p1:= pt;
@@ -2466,13 +2520,13 @@ begin
    inc(p1);
   end;
   with additem(op1,getssa(ocssa_concattermsitem)*i1)^ do begin
-   par.concatop.count:= i1;
+   par.listinfo.alloccount:= i1;
    if co_llvm in info.o.compileoptions then begin
-    setimmint32(i1,par.concatop.countid);
-    par.concatop.arraytype:= info.s.unitinfo^.
+    setimmint32(i1,par.concatstring.alloccount);
+    par.concatstring.arraytype:= info.s.unitinfo^.
             llvmlists.typelist.addbytevalue(i1*pointersize);
-   palloc:= allocsegmentpo(seg_localloc,sizeof(concatparallocinfoty)*i1);
-   par.concatop.allocs:= getsegmentoffset(seg_localloc,palloc);
+   palloc:= allocsegmentpo(seg_localloc,sizeof(listitemallocinfoty)*i1);
+   par.listinfo.allocs:= getsegmentoffset(seg_localloc,palloc);
    p1:= pt;
    while p1 <= pe do begin
     if p1^.d.kind <> ck_space then begin

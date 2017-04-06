@@ -79,7 +79,10 @@ uses
  msestrings,sysutils,handlerglob,mseformatstr,msetypes,internaltypes,
  mserttiutils,
  segmentutils,classhandler,interfacehandler,__mla__internaltypes;
-  
+
+const
+ temprefcount = 0;
+   
 type
  cputy = record
   pc: popinfoty;
@@ -3240,7 +3243,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3271,7 +3274,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3335,7 +3338,7 @@ begin
    setutf8(c1,p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3365,7 +3368,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3396,7 +3399,7 @@ begin
    inc(p1);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3437,7 +3440,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 0; //will be incremented by assign
+  pds^.ref.count:= temprefcount;; //will be incremented by assign
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -3456,7 +3459,7 @@ var
 begin
  with cpu.pc^.par do begin
   pe:= cpu.stack;
-  ps:= pe - concatop.count;
+  ps:= pe - listinfo.alloccount;
   p1:= ps;
   i1:= 0;
   while p1 < pe do begin
@@ -3468,7 +3471,7 @@ begin
   end;
   if i1 > 0 then begin
    getmem(p3,string8allocsize+i1*1);
-   p3^.ref.count:= 0;
+   p3^.ref.count:= temprefcount;;
    p3^.len:= i1;
    inc(p3);
    p4:= pointer(p3);
@@ -3488,16 +3491,98 @@ begin
   else begin
    ps^:= nil;
   end;
-  stackpop(sizeof(pointer)*(concatop.count-1));
+  stackpop(sizeof(pointer)*(listinfo.alloccount-1));
  end;
 end;
 
 procedure concatstring16op();
+var
+ p1,ps,pe: ppstringheaderty;
+ i1: int32;
+ p0,p3: pstringheaderty;
+ p4: pcard16;
 begin
+ with cpu.pc^.par do begin
+  pe:= cpu.stack;
+  ps:= pe - listinfo.alloccount;
+  p1:= ps;
+  i1:= 0;
+  while p1 < pe do begin
+   p0:= p1^;
+   if p0 <> nil then begin
+    i1:= i1+(p0-1)^.len;
+   end;
+   inc(p1);
+  end;
+  if i1 > 0 then begin
+   getmem(p3,string16allocsize+i1*2);
+   p3^.ref.count:= temprefcount;;
+   p3^.len:= i1;
+   inc(p3);
+   p4:= pointer(p3);
+   (p4+i1)^:= 0; //terminating 0
+   p1:= ps;
+   while p1 < pe do begin
+    p0:= p1^;
+    if p0 <> nil then begin
+     i1:= (p0-1)^.len;
+     move(p0^,p4^,i1*2);
+     inc(p4,i1);
+    end;
+    inc(p1);
+   end;
+   ps^:= pointer(p3);
+  end
+  else begin
+   ps^:= nil;
+  end;
+  stackpop(sizeof(pointer)*(listinfo.alloccount-1));
+ end;
 end;
 
 procedure concatstring32op();
+var
+ p1,ps,pe: ppstringheaderty;
+ i1: int32;
+ p0,p3: pstringheaderty;
+ p4: pcard32;
 begin
+ with cpu.pc^.par do begin
+  pe:= cpu.stack;
+  ps:= pe - listinfo.alloccount;
+  p1:= ps;
+  i1:= 0;
+  while p1 < pe do begin
+   p0:= p1^;
+   if p0 <> nil then begin
+    i1:= i1+(p0-1)^.len;
+   end;
+   inc(p1);
+  end;
+  if i1 > 0 then begin
+   getmem(p3,string32allocsize+i1*4);
+   p3^.ref.count:= temprefcount;;
+   p3^.len:= i1;
+   inc(p3);
+   p4:= pointer(p3);
+   (p4+i1)^:= 0; //terminating 0
+   p1:= ps;
+   while p1 < pe do begin
+    p0:= p1^;
+    if p0 <> nil then begin
+     i1:= (p0-1)^.len;
+     move(p0^,p4^,i1*4);
+     inc(p4,i1);
+    end;
+    inc(p1);
+   end;
+   ps^:= pointer(p3);
+  end
+  else begin
+   ps^:= nil;
+  end;
+  stackpop(sizeof(pointer)*(listinfo.alloccount-1));
+ end;
 end;
 
 procedure chartostring8op();

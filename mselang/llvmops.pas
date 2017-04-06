@@ -1637,18 +1637,18 @@ begin
  end;
 end;
 
-procedure concatstring8op();
+procedure concatstring(const asub: compilersubty);
 var
  i1: int32;
- p1,pe: pconcatparallocinfoty;
+ p1,pe: plistitemallocinfoty;
 begin
  with pc^.par do begin
-  bcstream.emitalloca(bcstream.ptypeval(concatop.arraytype)); //1 ssa
+  bcstream.emitalloca(bcstream.ptypeval(concatstring.arraytype)); //1 ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                   //1 ssa
   i1:= bcstream.relval(0);
-  p1:= getsegmentpo(seg_localloc,concatop.allocs);
-  pe:= p1 + concatop.count;
+  p1:= getsegmentpo(seg_localloc,listinfo.allocs);
+  pe:= p1 + listinfo.alloccount;
   while p1 < pe do begin
    bcstream.emitbitcast(bcstream.relval(0),
                               bcstream.pptypeval(ord(das_8)));     //1 ssa
@@ -1657,19 +1657,24 @@ begin
                    bcstream.constval(bcstream.pointersizeconst));   //2 ssa
    inc(p1);
   end;
-  callcompilersub(cs_concatstring8,true,
-                [bcstream.constval(concatop.countid),i1]);  //1 ssa
+  callcompilersub(asub,true,
+                [bcstream.constval(concatstring.alloccount),i1]);  //1 ssa
  end;
+end;
+
+procedure concatstring8op();
+begin
+ concatstring(cs_concatstring8);
 end;
 
 procedure concatstring16op();
 begin
- notimplemented();
+ concatstring(cs_concatstring16);
 end;
 
 procedure concatstring32op();
 begin
- notimplemented();
+ concatstring(cs_concatstring32);
 end;
 
 

@@ -1,0 +1,21 @@
+program stringconcat;
+var
+ s1,s2: string8;
+ s1a,s2a: string16;
+ s1b,s2b: string32;
+ bo1: boolean;
+begin
+ s1:= 'abc';
+ s1a:= 'abc';
+ s1b:= 'abc';
+ bo1:= 'abcabc' = s1+s2+s1;
+ if bo1 then begin
+  bo1:= 'abcabc' = s1a+s2a+s1a;
+  if bo1 then begin
+   bo1:= 'abcabc' = s1b+s2b+s1b;
+   if bo1 then begin
+    exitcode:= 123;
+   end;
+  end;
+ end;
+end.

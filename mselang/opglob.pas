@@ -54,13 +54,13 @@ type
   size: typeallocinfoty;
  end;
  pparallocinfoty = ^parallocinfoty;
-
+{
  concatparallocinfoty = record
   ssaindex: integer;
 //  size: typeallocinfoty;
  end;
  pconcatparallocinfoty = ^concatparallocinfoty;
-
+}
  nestedaddressty = record
   arrayoffset: dataoffsty;
   origin: dataoffsty;
@@ -819,12 +819,14 @@ type
     compkind: compopkindty;
    );
  end;
+ {
  concatopty = record
   count: int32; 
   countid: int32;//llvm const id
   allocs: dataoffsty;
   arraytype: int32; //llvm type id
  end;
+ }
 {
  stackimmopty = record
   t: typeallocinfoty;
@@ -933,6 +935,10 @@ type
   arraytype: int32; //llvm type id
   itemtype: typeallocinfoty;
   allochigh: int32; //llvm constid
+ end;
+ concatstringty = record
+  arraytype: int32; //llvm type id
+  alloccount: int32; //llvm constid
  end;
  
 const
@@ -1057,7 +1063,9 @@ const
   oc_initclass,
   oc_destroyclass
  ];
- listops = [oc_listtoopenar];                     //have listinfo record
+ listops = [oc_listtoopenar,
+                  oc_concatstring8,oc_concatstring16,oc_concatstring32];  
+                    //have listinfo record
  
 type
      //todo: unify, variable size, maybe use objects instead of records
@@ -1186,10 +1194,11 @@ type
    oc_setcontains,oc_setin: (
     stackop: stackopty;
    );
+{
     oc_concatstring8,oc_concatstring16,oc_concatstring32: (
      concatop: concatopty;
     );
-
+}
    {oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo,}
    oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
@@ -1250,11 +1259,14 @@ type
 //      returnfuncinfo: returnfuncinfoty;
 //     );
    );
-   oc_listtoopenar:(                                           //listops
+   oc_listtoopenar,oc_concatstring8,oc_concatstring16,oc_concatstring32:(                                           //listops
     listinfo: listinfoty;
     case opcodety of
      oc_listtoopenar:(
       listtoopenar: listtoopenarty;
+     );
+     oc_concatstring8,oc_concatstring16,oc_concatstring32:(
+      concatstring: concatstringty;
      );
    );
    oc_initclass:(

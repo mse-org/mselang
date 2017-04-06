@@ -106,6 +106,8 @@ procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint;
 function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 
 implementation
+const
+ temprefcount = 0;
 type
  pcard8 = ^card8;
  pcard16 = ^card16;
@@ -673,7 +675,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -702,7 +704,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -733,7 +735,7 @@ begin
    setutf8(c1,p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -762,7 +764,7 @@ begin
    inc(p2);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -793,7 +795,7 @@ begin
    inc(p1);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -834,7 +836,7 @@ begin
    inc(p1);
   end;
   p2^:= 0;
-  pds^.ref.count:= 1;
+  pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
   inc(pds); //data
  end
@@ -863,15 +865,19 @@ begin
  end;
  if i1 > 0 then begin
   getmem(pd,string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
   inc(pd);
   result:= pd;
   (pcard8(pointer(pd))+i1)^:= 0; //terminator
   p1:= strings;
   while p1 < pe do begin
    ps:= p1^;
-   i1:= (ps-1)^.len;
-   memcpy(pd,ps,i1*1);
-   inc(pcard8(pointer(pd)),i1);
+   if ps <> nil then begin
+    i1:= (ps-1)^.len*1;
+    memcpy(pd,ps,i1*1);
+    inc(pointer(pd),i1);
+   end;
    inc(p1);
   end;
  end
@@ -882,12 +888,82 @@ end;
 
 function __mla__concatstring16(count: int32;
                                    strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
 begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do begin
+  ps:= p1^;
+  if ps <> nil then begin
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then begin
+  getmem(pd,string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
+  inc(pd);
+  result:= pd;
+  (pcard16(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do begin
+   ps:= p1^;
+   if ps <> nil then begin
+    i1:= (ps-1)^.len*2;
+    memcpy(pd,ps,i1);
+    inc(pointer(pd),i1);
+   end;
+   inc(p1);
+  end;
+ end
+ else begin
+  result:= nil;
+ end;
 end;
 
 function __mla__concatstring32(count: int32;
                                    strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
 begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do begin
+  ps:= p1^;
+  if ps <> nil then begin
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then begin
+  getmem(pd,string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
+  inc(pd);
+  result:= pd;
+  (pcard16(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do begin
+   ps:= p1^;
+   if ps <> nil then begin
+    i1:= (ps-1)^.len*4;
+    memcpy(pd,ps,i1);
+    inc(pointer(pd),i1);
+   end;
+   inc(p1);
+  end;
+ end
+ else begin
+  result:= nil;
+ end;
 end;
 
 function compstring8(a,b:pointer): stringsizety; //a and b <> nil
