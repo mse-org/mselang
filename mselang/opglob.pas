@@ -1028,10 +1028,23 @@ type
 //  nr: integer;
  end;
 
- mainty = record
-  managedtempsize: int32;
+ mainllvmty = record
+  managedtemptypeid: int32;
+  managedtempcount: int32; //constid
   blockcount: int32;
+ end;
+ mainstackopty = record
+  managedtempsize: int32;
+ end;
+ mainty = record
   exitcodeaddress: segaddressty;
+  case integer of
+   0: (
+    stackop: mainstackopty;
+   );
+   1: (
+    llvm: mainllvmty;
+   );
  end;
 
 const

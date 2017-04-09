@@ -447,11 +447,11 @@ begin
  cpu.stacklink:= cpu.frame;
  cpu.frame:= cpu.stack;
  with cpu.pc^.par do begin
-  stackpush(main.managedtempsize);
+  stackpush(main.stackop.managedtempsize);
   pe:= cpu.stack;
   cpu.tempbefore:= cpu.temp;
   cpu.temp:= pe;
-  p1:= pointer(pe)-main.managedtempsize;
+  p1:= pointer(pe)-main.stackop.managedtempsize;
   while p1 < pe do begin
    p1^:= nil;
    inc(p1);
@@ -4597,7 +4597,7 @@ end;
 
 procedure storemanagedtempop();
 begin
- ppointer((cpu.frame+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
+ ppointer((cpu.temp+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
 end;
 
 procedure indirect8op();

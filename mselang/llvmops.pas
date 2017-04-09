@@ -537,8 +537,19 @@ end;
 
 procedure mainop();
 begin
- with pc^.par do begin
-  bcstream.beginsub([]{false},nullallocs,main.blockcount);
+ with pc^.par do begin //todo: managedtemps
+  bcstream.beginsub([]{false},nullallocs,main.llvm.blockcount);
+  if main.llvm.managedtemptypeid <> 0 then begin
+   bcstream.emitalloca(bcstream.ptypeval(main.llvm.managedtemptypeid)); //1ssa
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                                                       //1ssa
+   callcompilersub(cs_zeropointerar,false,[bcstream.relval(0),
+                      bcstream.constval(main.llvm.managedtempcount)]);
+  end
+  else begin
+   bcstream.emitnopssa();
+   bcstream.emitnopssa();
+  end;
  end;
 end;
 
@@ -3427,6 +3438,7 @@ var
  idar: idarty;
  ids: idsarty;
  isfunction: boolean;
+ hasmanagedtemp: boolean;
  dummyexp,derefexp,openarrayexp: int32;
 begin
 ///////////// bcstream.nodebugloc:= true; 
@@ -3471,6 +3483,8 @@ begin
   end;
  end;
  with pc^.par.subbegin do begin
+  i1:= 0;
+  hasmanagedtemp:= sub.llvm.managedtemptypeid > 0;
   bcstream.beginsub(sub.flags,sub.allocs,sub.llvm.blockcount);
   if sf_nolineinfo in sub.flags then begin
    bcstream.nodebugloc:= true;
@@ -3551,7 +3565,7 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
-  if sub.llvm.managedtemptypeid > 0 then begin
+  if hasmanagedtemp then begin
    bcstream.emitalloca(bcstream.ptypeval(sub.llvm.managedtemptypeid)); //1ssa
    bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                        //1ssa
@@ -3930,7 +3944,7 @@ const
   endparsessa = 0;
   beginunitcodessa = 0;
   endunitssa = 0;
-  mainssa = 0;//1;
+  mainssa = 2;//1;
   progendssa = 0;  
   haltssa = 1;
 
@@ -4191,7 +4205,7 @@ const
   storestackrefnildynarssa = 2;
 
   finirefsizesegssa = 1;
-  finirefsizelocssa = 1;
+  finirefsizelocssa = 2;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
   finirefsizestackrefssa = 0;

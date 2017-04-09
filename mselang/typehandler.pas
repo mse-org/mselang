@@ -483,6 +483,7 @@ begin
      end;
      ad1.typ:= typ2;
      ad1.ssaindex:= s.ssa.nextindex-1;
+     ad1.contextindex:= s.stacktop;
      typ2^.h.manageproc(op1,{typ2,}ad1);
      i1:= field1^.offset; 
     end;

@@ -179,7 +179,7 @@ type
    procedure resetssa(); //sets ssastart to current ssa
    
    procedure beginsub(const aflags: subflagsty; const allocs: suballocinfoty;
-                                                         const bbcount: int32);
+                                                          const bbcount: int32);
    procedure endsub();
                                         //todo: add explicit typeid to call ops
    procedure emitcallop(const afunc: boolean;
@@ -1812,7 +1812,7 @@ begin
 end;
 }
 procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
-                          const allocs: suballocinfoty; const bbcount: int32);
+                   const allocs: suballocinfoty; const bbcount: int32);
 begin
  fcurrentbb:= 0;
  flandingpad:= 0;

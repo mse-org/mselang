@@ -777,6 +777,13 @@ begin
       end;
      end;
     end;
+    subbegin.sub.llvm.managedtemptypeid:= 0;
+    subbegin.sub.llvm.managedtempcount:= 0; //constid
+    subbegin.sub.llvm.blockcount:= 1;
+   end
+   else begin
+    subbegin.sub.stackop.varsize:= 0;
+    subbegin.sub.stackop.managedtempsize:= 0;
    end;
    subbegin.sub.flags:= [];
  //  sub.flags:= [sf_nolineinfo];
@@ -804,9 +811,6 @@ begin
    end
    else begin
     subbegin.sub.allocs:= nullallocs;
-   end;
-   if co_llvm in o.compileoptions then begin
-    subbegin.sub.llvm.blockcount:= 1;
    end;
   end;
  end;
@@ -1639,7 +1643,8 @@ begin
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_fini,po1^.paramfinichain,s.stacktop);
   end;          
-  managedtempsize1:= managedtempcount*sizeof(pointer);
+  managedtempsize1:= managedtempcount*sizeof(pointer); 
+              //todo: target pointer size
   varsize1:= managedtempsize1+d.subdef.varsize;
   if varsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin

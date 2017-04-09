@@ -286,6 +286,7 @@ var
  hasfini: boolean;
  finicall: opaddressty;
  i1: int32;
+ managedtempsize1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -320,10 +321,25 @@ begin
  if do_proginfo in info.s.debugoptions then begin
   popcurrentscope();
  end;
+ managedtempsize1:= info.managedtempcount*sizeof(pointer);
+  //todo: target pointersize
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
-   par.main.blockcount:= info.s.ssa.bbindex+1;
-   par.main.managedtempsize:= info.managedtempcount*sizeof(pointer);
+   if co_llvm in info.o.compileoptions then begin
+    par.main.llvm.blockcount:= info.s.ssa.bbindex+1;
+    if managedtempsize1 > 0 then begin
+     par.main.llvm.managedtemptypeid:=
+        info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
+                                                  managedtempsize1,ord(das_8));
+     setimmint32(info.managedtempcount,par.main.llvm.managedtempcount);
+    end
+    else begin
+     par.main.llvm.managedtemptypeid:= 0;
+    end;
+   end
+   else begin
+    par.main.stackop.managedtempsize:= managedtempsize1;
+   end;
   end;  
  end;
  

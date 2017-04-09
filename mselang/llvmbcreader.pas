@@ -78,6 +78,7 @@ type
    function typename(const aindex: int32): string;
    function iskind(const aindex: int32; const akind: typecodes): boolean;
    function ispointer(const aindex: int32): boolean;
+   function sametype(const a,b: int32): boolean;
    function parentiskind(const aindex: int32; const akind: typecodes): boolean;
    function parenttype(const aindex: int32): ptypeinfoty;
    function parenttype(const atype: ptypeinfoty): ptypeinfoty;
@@ -675,6 +676,23 @@ begin
    end;
   end;
   result:= inttostr(aindex)+'.'+result;
+ end;
+end;
+
+function ttypelist.sametype(const a,b: int32): boolean;
+var
+ sa,sb: string;
+begin
+ result:= a = b;
+ if not result then begin
+  sa:= typename(a);
+  sb:= typename(b);
+  result:= (countchars(sa,'^') = countchars(sb,'^'));
+  if result then begin
+   sa:= copy(sa,findlastchar(sa,'.')+1,bigint);
+   sb:= copy(sb,findlastchar(sb,'.')+1,bigint);
+   result:= sa = sb;
+  end;
  end;
 end;
 
@@ -2186,8 +2204,8 @@ begin
                ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
                                                  ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
-       if (i1 <> i2) then begin
-////////////////        error('Invalid type');
+       if not ftypelist.sametype(i1,i2) then begin
+        error('Invalid type');
        end;
       end;
       FUNC_CODE_INST_LOAD: begin

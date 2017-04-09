@@ -1397,7 +1397,7 @@ begin
    internalerror(ie_handler,'2070406H');
   end;
  {$endif}
-  i1:= d.dat.fact.ssaindex;
+//  i1:= d.dat.fact.ssaindex;
   ref1.offset:= 0;
   ref1.kind:= ark_local;
   if co_llvm in o.compileoptions then begin
@@ -1420,7 +1420,7 @@ begin
     voffset:= ref1.address;
    end;
   end;
-  d.dat.fact.ssaindex:= i1;
+//  d.dat.fact.ssaindex:= i1;
   inc(managedtempcount);
  end;
 end;
