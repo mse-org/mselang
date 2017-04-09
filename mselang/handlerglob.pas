@@ -162,10 +162,11 @@ type
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
  
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
-                     ark_stack,ark_stackref);
+                     ark_local,ark_stack,ark_stackref);
  addressrefty = record //todo: resolve circular dependency, use real types
   offset: dataoffsty;
   ssaindex: int32;
+  contextindex: int32; //for managedtypes
   case kind: addressrefkindty of
    ark_vardata,ark_vardatanoaggregate: (
     vardata: pointer;     //pvardataty
@@ -173,7 +174,7 @@ type
    ark_contextdata: (
     contextdata: pointer; //pcontextdataty
    ); 
-   ark_stack,ark_stackref: (
+   ark_stack,ark_stackref,ark_local: (
     address: dataoffsty;
     typ: ptypedataty;
    );

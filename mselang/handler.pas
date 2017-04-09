@@ -216,13 +216,18 @@ begin
  outhandle('PROGBEGIN');
 {$endif}
  with info do begin
+  frameoffset:= 0;
+  tempoffset:= 0;
+  managedtempcount:= 0;
+  managedtempref:= 0;
+  managedtemparrayid:= 0;
   if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
     endsimplesub(false);
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,s.stacktop);
     endsimplesub(false);
    end;
   end;
@@ -318,6 +323,7 @@ begin
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
    par.main.blockcount:= info.s.ssa.bbindex+1;
+   par.main.managedtempsize:= info.managedtempcount*sizeof(pointer);
   end;  
  end;
  
@@ -3013,6 +3019,7 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
  with info do begin       //todo: use direct move if possible
+  ad1.contextindex:= s.stacktop;
   potop:= @contextstack[s.stacktop];
   if not errorfla then begin
    if not getnextnospace(s.stackindex+1,dest) or 

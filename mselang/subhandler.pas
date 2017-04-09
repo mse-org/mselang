@@ -714,7 +714,9 @@ begin
    par.subbegin.sub.flags:= asub^.flags;
    par.subbegin.sub.allocs:= asub^.allocs; 
                   //will be updated for llvm nested vars
-   par.subbegin.sub.varsize:= 0; //will be updated at subend
+   if not (co_llvm in o.compileoptions) then begin
+    par.subbegin.sub.stackop.varsize:= 0; //will be updated at subend
+   end;
   end;
  {$ifdef mse_checkinternalerror}
   if s.trystack <> 0 then begin
@@ -803,7 +805,9 @@ begin
    else begin
     subbegin.sub.allocs:= nullallocs;
    end;
-   subbegin.sub.blockcount:= 1;
+   if co_llvm in o.compileoptions then begin
+    subbegin.sub.llvm.blockcount:= 1;
+   end;
   end;
  end;
  (*
@@ -1438,6 +1442,8 @@ begin
   end;
  {$endif}
   d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
+  managedtempref:= d.subdef.varsize;
+  managedtemparrayid:= locallocid;  
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
   managedtempcount:= 0;
@@ -1588,6 +1594,7 @@ begin
   end;
   resetssa();
   addsubbegin(oc_subbegin,po1);
+  tempoffset:= locdatapo;
  {
   if d.subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
@@ -1596,10 +1603,10 @@ begin
   end;
  }
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_ini,po1^.varchain);
+   writemanagedvarop(mo_ini,po1^.varchain,s.stacktop);
   end;           //todo: implicit try-finally
   if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_incref,po1^.paramfinichain);
+   writemanagedvarop(mo_incref,po1^.paramfinichain,s.stacktop);
   end;          
  end;
 end;
@@ -1610,6 +1617,7 @@ var
  po2: popinfoty;
  m1,m2: metavaluety;
  i1: int32;
+ managedtempsize1,varsize1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -1626,14 +1634,16 @@ begin
   addlabel();
   linkresolveopad(po1^.exitlinks,opcount-1);
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_fini,po1^.varchain);
+   writemanagedvarop(mo_fini,po1^.varchain,s.stacktop);
   end;
   if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_fini,po1^.paramfinichain);
+   writemanagedvarop(mo_fini,po1^.paramfinichain,s.stacktop);
   end;          
-  if d.subdef.varsize <> 0 then begin
+  managedtempsize1:= managedtempcount*sizeof(pointer);
+  varsize1:= managedtempsize1+d.subdef.varsize;
+  if varsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin
-    par.stacksize:= d.subdef.varsize;
+    par.stacksize:= varsize1;
    end;
   end;
   i1:= d.subdef.paramsize;
@@ -1674,10 +1684,23 @@ begin
    inc(po2);
   end;
   with po2^ do begin
-   par.subbegin.sub.varsize:= d.subdef.varsize+
-                              managedtempcount*sizeof(pointer);
+   if co_llvm in o.compileoptions then begin
+    if managedtempsize1 > 0 then begin
+     par.subbegin.sub.llvm.managedtemptypeid:= 
+         info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
+                                            managedtempsize1,ord(das_8));
+     setimmint32(managedtempcount,par.subbegin.sub.llvm.managedtempcount);
+    end
+    else begin
+     par.subbegin.sub.llvm.managedtemptypeid:= 0;
+    end;
+    par.subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+   end
+   else begin
+    par.subbegin.sub.stackop.managedtempsize:= managedtempsize1;
+    par.subbegin.sub.stackop.varsize:= varsize1;
+   end;
    par.subbegin.sub.flags:= po1^.flags;
-   par.subbegin.sub.blockcount:= s.ssa.bbindex + 1;
   end;
   s.ssa:= d.subdef.ssabefore;
   if do_proginfo in s.debugoptions then begin

@@ -22,17 +22,19 @@ uses
  
 const
  managedopids: array[managedopty] of identty = (
-               //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi
+               //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi,
                 tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
                );
               //todo: check ssaindex
-procedure writemanagedvarop(const op: managedopty; const avar: pvardataty);
-procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty{;
-                              const global: boolean; const ssaindex: integer});
+procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
+                                                  const acontextindex: int32);
+procedure writemanagedvarop(const op: managedopty;
+                            const chain: elementoffsetty;
+                                                    const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                      const aaddress: addressvaluety{; const ssaindex: integer});
+                    const aaddress: addressvaluety; const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                       const aref: addressrefty{; const ssaindex: integer});
+                                                     const aref: addressrefty);
 
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
@@ -384,8 +386,7 @@ begin
 end;  
 
 procedure writemanagedtypeop(const op: managedopty;
-                const atype: ptypedataty; const aref: addressrefty{;
-                                                   const ssaindex: integer});
+                const atype: ptypedataty; const aref: addressrefty);
 var
  po2,po4: ptypedataty;
  po3: pfielddataty;
@@ -505,10 +506,12 @@ begin
 *)
 end;
 
-procedure writemanagedvarop(const op: managedopty; const avar: pvardataty);
+procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
+                                                 const acontextindex: int32);
 var
  ad1: addressrefty;
 begin
+ ad1.contextindex:= acontextindex;
  ad1.kind:= ark_vardatanoaggregate;
  ad1.offset:= 0;
  ad1.vardata:= avar;
@@ -516,14 +519,14 @@ begin
 end;
 
 procedure writemanagedvarop(const op: managedopty;
-             const chain: elementoffsetty{; const global: boolean;
-                                               const ssaindex: integer});
+                 const chain: elementoffsetty; const acontextindex: int32);
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
 begin
  if chain <> 0 then begin
+  ad1.contextindex:= acontextindex;
   ad1.kind:= ark_vardatanoaggregate;
   ad1.offset:= 0;
   ele1:= chain;
@@ -531,7 +534,7 @@ begin
    po1:= ele.eledataabs(ele1);
    if tf_needsmanage in po1^.vf.flags then begin
     ad1.vardata:= po1;
-    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1{,ssaindex});
+    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
@@ -539,7 +542,7 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                      const aaddress: addressvaluety{; const ssaindex: integer});
+                   const aaddress: addressvaluety; const acontextindex: int32);
 var
  ad1: addressrefty;
 begin

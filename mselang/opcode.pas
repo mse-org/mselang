@@ -298,6 +298,14 @@ begin
     end;
    end;
   end;
+  ark_local: begin
+   af1:= [];
+   lev1:= -1;
+   ab1:= ab_local;
+   ad1:= aref.address;
+   offs1:= aref.offset;
+   typ1:= aref.typ;
+  end;
   ark_stack: begin
    af1:= [];
    ab1:= ab_stack;
@@ -366,7 +374,7 @@ begin
  if (ab1 = ab_local) and (lev1 >= 0) then begin
   ssaext1:= ssaext1 + getssa(ocssa_nestedvar);
  end;
- with additem(opsar[arop][ab1],ssaext1)^ do begin
+ with insertitem(opsar[arop][ab1],aref.contextindex,-1,ssaext1)^ do begin
   par.ssas1:= aref.ssaindex;
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= af1;
@@ -518,7 +526,7 @@ begin
   result.indirectlevel:= 1;
 //  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.frameoffset;
+   result.tempaddress.address:= locdatapo - info.tempoffset;
    locdatapo:= locdatapo + pointersize;
   end
   else begin
@@ -547,7 +555,7 @@ begin
   result.indirectlevel:= 0;
 //  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.frameoffset;
+   result.tempaddress.address:= locdatapo - info.tempoffset;
    locdatapo:= locdatapo + alignsize(bytesizes[asize]);
   end
   else begin
@@ -566,7 +574,7 @@ begin
   result.flags:= [af_temp];
   result.indirectlevel:= 0;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.frameoffset;
+   result.tempaddress.address:= locdatapo - info.tempoffset;
    i1:= alignsize(abytesize);
    locdatapo:= locdatapo + i1;
    atotsize:= atotsize + i1;

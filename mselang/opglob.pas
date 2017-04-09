@@ -544,6 +544,7 @@ type
 //  oc_pushstackaddrindi,
 
   oc_pushduppo,
+  oc_storemanagedtemp,
   
   oc_indirect8,
   oc_indirect16,
@@ -898,6 +899,9 @@ type
    );
  end;
  
+ managedtempopty = record
+ end;
+ 
  setlengthty = record
   itemsize: integer;
  end;
@@ -969,12 +973,27 @@ type
   virtoffset: dataoffsty;   //offset in classdefinfoty
 //  typeid: int32;
  end;
+
+ subbeginllvmty = record
+  managedtemptypeid: int32;
+  managedtempcount: int32; //constid
+  blockcount: int32;
+ end;
+ subbeginstackopty = record
+  varsize: int32; //includes managed temp
+  managedtempsize: int32;
+ end;
  
  subbegininfoty = record
   flags: subflagsty;
   allocs: suballocinfoty;
-  varsize: int32;
-  blockcount: int32;
+  case integer of
+   0: (
+    stackop:subbeginstackopty;
+   );
+   1: ( //llvm
+    llvm: subbeginllvmty;
+   );
  end;
 
  subbeginty = record
@@ -1010,6 +1029,7 @@ type
  end;
 
  mainty = record
+  managedtempsize: int32;
   blockcount: int32;
   exitcodeaddress: segaddressty;
  end;
@@ -1142,12 +1162,15 @@ type
    oc_writeinteger32,oc_writeinteger64,oc_writefloat64,
    oc_writechar8,oc_writestring8,oc_writestring16,oc_writestring32,
    oc_writepointer,oc_writeclass,oc_writeenum,
-   {oc_pushstackaddrindi,}oc_pushduppo,
+   {oc_pushstackaddrindi,}oc_pushduppo,oc_storemanagedtemp,
    oc_indirectpooffs,oc_indirectoffspo: (
     voffset: dataoffsty;
     case opcodety of
      oc_writeenum{,oc_pushstackaddrindi}: (
       voffsaddress: dataaddressty;
+     );
+     oc_storemanagedtemp: (
+      managedtemparrayid: int32;
      );
    );
 

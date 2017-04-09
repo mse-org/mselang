@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1387,6 +1387,9 @@ begin
 end;
 
 procedure addmanagedtemp(const aindex: int32);
+var
+ ref1: addressrefty;
+ i1: int32;
 begin
  with info,contextstack[aindex] do begin
  {$ifdef mse_checkinternalerror}
@@ -1394,6 +1397,30 @@ begin
    internalerror(ie_handler,'2070406H');
   end;
  {$endif}
+  i1:= d.dat.fact.ssaindex;
+  ref1.offset:= 0;
+  ref1.kind:= ark_local;
+  if co_llvm in o.compileoptions then begin
+   ref1.address:= managedtemparrayid;
+   setimmint32(managedtempcount*sizeof(pointer),ref1.offset);
+  end
+  else begin
+   ref1.address:= managedtempref+managedtempcount*sizeof(pointer);
+  end;
+  ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
+  ref1.contextindex:= aindex;
+  writemanagedtypeop(mo_fini,ref1.typ,ref1);
+  with insertitem(oc_storemanagedtemp,aindex,-1)^.par do begin
+   ssas1:= i1;
+   if co_llvm in o.compileoptions then begin
+    setimmint32(ref1.address-managedtempref,voffset);
+    managedtemparrayid:= info.managedtemparrayid;
+   end
+   else begin
+    voffset:= ref1.address;
+   end;
+  end;
+  d.dat.fact.ssaindex:= i1;
   inc(managedtempcount);
  end;
 end;

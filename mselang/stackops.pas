@@ -88,6 +88,8 @@ type
   pc: popinfoty;
   stack: pointer;
   frame: pointer;
+  temp: pointer;
+  tempbefore: pointer;
   stacklink: pointer;
   stop: boolean;
  end;
@@ -180,7 +182,7 @@ var
  po1: pointer;
 begin
  if af_temp in aaddress.t.flags then begin
-  result:= cpu.frame + aaddress.tempdataaddress.a.address; //offset?
+  result:= cpu.temp + aaddress.tempdataaddress.a.address; //offset?
  end
  else begin
   with aaddress.locdataaddress do begin
@@ -204,7 +206,7 @@ var
  i1: integer;
  po1: pointer;
 begin
- result:= cpu.frame + aaddress.address; //offset?
+ result:= cpu.temp + aaddress.address; //offset?
 end;
 
 function getlocaddressindi(const aaddress: memopty): pointer; 
@@ -214,7 +216,7 @@ var
  po1: pointer;
 begin
  if af_temp in aaddress.t.flags then begin
-  result:= ppointer(cpu.frame + aaddress.tempdataaddress.a.address)^; //offset?
+  result:= ppointer(cpu.temp + aaddress.tempdataaddress.a.address)^; //offset?
  end
  else begin
   with aaddress.locdataaddress do begin
@@ -439,9 +441,21 @@ begin
 end;
 
 procedure mainop();
+var
+ p1,pe: ppointer;
 begin
+ cpu.stacklink:= cpu.frame;
  cpu.frame:= cpu.stack;
  with cpu.pc^.par do begin
+  stackpush(main.managedtempsize);
+  pe:= cpu.stack;
+  cpu.tempbefore:= cpu.temp;
+  cpu.temp:= pe;
+  p1:= pointer(pe)-main.managedtempsize;
+  while p1 < pe do begin
+   p1^:= nil;
+   inc(p1);
+  end;
   exitcodeaddress:= pint32(segments[main.exitcodeaddress.segment].basepo+
                                                  main.exitcodeaddress.address);
  end; 
@@ -449,6 +463,10 @@ end;
 
 procedure progendop();
 begin
+ cpu.frame:= cpu.stacklink;
+ cpu.stack:= cpu.frame;
+ cpu.temp:= cpu.tempbefore;
+
 {
  with cpu.pc^.par.progend do begin
   exitcode:= pint32(segments[exitcodeaddress.segment].basepo+
@@ -4577,6 +4595,11 @@ begin
  ppointer(po1)^:= ppointer((po1+cpu.pc^.par.voffset))^
 end;
 
+procedure storemanagedtempop();
+begin
+ ppointer((cpu.frame+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
+end;
+
 procedure indirect8op();
 var
  po1: pointer;
@@ -4902,9 +4925,19 @@ begin
 end;
 
 procedure subbeginop();
+var
+ p1,pe: ppointer;
 begin
  with cpu.pc^.par.subbegin do begin
-  stackpush(sub.varsize);
+  stackpush(sub.stackop.varsize);
+  pe:= cpu.stack;
+  cpu.tempbefore:= cpu.temp;
+  cpu.temp:= pe;
+  p1:= pointer(pe)-sub.stackop.managedtempsize;
+  while p1 < pe do begin
+   p1^:= nil;
+   inc(p1);
+  end;
  end;
 end;
 
@@ -4933,6 +4966,7 @@ begin
   cpu.pc:= pc;
   cpu.frame:= frame;
   cpu.stacklink:= link;
+  cpu.temp:= cpu.tempbefore;
  end;
 // cpu.stack:= po1 - i1;
  cpu.stack:= cpu.stack-i1;
@@ -6420,6 +6454,7 @@ const
 //  pushstackaddrindissa = 0;
 
   pushduppossa = 0;
+  storemanagedtempssa = 0;
   
   indirect8ssa = 0;
   indirect16ssa = 0;

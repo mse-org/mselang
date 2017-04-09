@@ -67,6 +67,7 @@ type
    ftriple: string;
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
+   fpointertype: int32;
    fpointersizeconst: int32;
    fconstseg: int32;
    flastdebugloc: debuglocty;
@@ -158,7 +159,7 @@ type
    procedure emitrec(const id: int32; const len: int32; const data: pcard8);
    procedure emitrec(const id: int32; const len: int32; const data: pint32);
 
-   procedure emitnopssaop(); //1 ssa
+   procedure emitnopssa(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const aflags: subflagsty;
@@ -259,6 +260,7 @@ type
                                  const len: int32; const values: pint32);
 //   procedure emitmetadatafnnonde(const avalue,atype: int32);
    function valindex(const aadress: segaddressty): integer;
+   property pointertype: int32 read fpointertype;
    property pointersizeconst: int32 read fpointersizeconst;
    property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
@@ -471,6 +473,7 @@ begin
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
  fpointersizeconst:= consts.pointersize;
+ fpointertype:= ptypeval(das_8);
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
@@ -1202,7 +1205,7 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emitnopssaop();
+procedure tllvmbcwriter.emitnopssa();
 begin
  emitbinop(binop_add,constval(0),constval(0));
 end;

@@ -222,7 +222,7 @@ begin
     bcstream.emitloadop(bcstream.relval(0));
             //pointer to variable
     if af_aggregate in t.flags then begin
-     bcstream.emitnopssaop();          //agregatessa = 3
+     bcstream.emitnopssa();          //agregatessa = 3
      bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
     end;
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
@@ -255,7 +255,7 @@ begin
   {$endif}
    bcstream.emitloadop(bcstream.allocval(a.address)); //^variable
    if af_aggregate in t.flags then begin
-    bcstream.emitnopssaop(); //aggregatessa = 3
+    bcstream.emitnopssa(); //aggregatessa = 3
     bcstream.emitgetelementptr(bcstream.relval(1),
                           bcstream.constval(offset));
    end;
@@ -309,7 +309,7 @@ begin
      bcstream.emitloadop(bcstream.relval(0));
              //pointer to variable
      if af_aggregate in t.flags then begin
-      bcstream.emitnopssaop();          //agregatessa = 3
+      bcstream.emitnopssa();          //agregatessa = 3
       bcstream.emitgetelementptr(bcstream.relval(1),
                         bcstream.constval(locdataaddress.offset));
      end;
@@ -355,7 +355,7 @@ end;
 procedure nopop();
 begin
  with pc^.par do begin
-  bcstream.emitnopssaop();
+  bcstream.emitnopssa();
  end;
 end;
 
@@ -3019,7 +3019,7 @@ begin
    bcstream.emitloadop(bcstream.relval(0));
            //pointer to variable
    if af_aggregate in memop.t.flags then begin
-    bcstream.emitnopssaop();          //agregatessa = 3
+    bcstream.emitnopssa();          //agregatessa = 3
     bcstream.emitgetelementptr(bcstream.relval(1),
                       bcstream.constval(memop.locdataaddress.offset));
    end;
@@ -3081,6 +3081,24 @@ procedure pushduppoop();
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(das_pointer));
+ end;
+end;
+
+procedure storemanagedtempop();
+begin
+ with pc^.par do begin
+
+ bcstream.emitnopssa();
+ bcstream.emitnopssa();
+ bcstream.emitnopssa();
+
+{
+  bcstream.emitgetelementptr(bcstream.ssaval(managedtemparrayid),
+                                         bcstream.constval(voffset)); //2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer)); 
+                                                                      //1ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+}
  end;
 end;
 
@@ -3453,7 +3471,7 @@ begin
   end;
  end;
  with pc^.par.subbegin do begin
-  bcstream.beginsub(sub.flags,sub.allocs,sub.blockcount);
+  bcstream.beginsub(sub.flags,sub.allocs,sub.llvm.blockcount);
   if sf_nolineinfo in sub.flags then begin
    bcstream.nodebugloc:= true;
   end;
@@ -3532,6 +3550,17 @@ begin
                                                bcstream.typeval(das_pointer));
                                  //pointer to nestedallocs
    bcstream.resetssa();
+  end;
+  if sub.llvm.managedtemptypeid > 0 then begin
+   bcstream.emitalloca(bcstream.ptypeval(sub.llvm.managedtemptypeid)); //1ssa
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                                                       //1ssa
+   callcompilersub(cs_zeropointerar,false,[bcstream.relval(0),
+                      bcstream.constval(sub.llvm.managedtempcount)]);
+  end
+  else begin
+   bcstream.emitnopssa();
+   bcstream.emitnopssa();
   end;
   if do_proginfo in info.o.debugoptions then begin
    idar.count:= 3;
@@ -4338,6 +4367,7 @@ const
 //  pushstackaddrindissa = 1;
   
   pushduppossa = 1;
+  storemanagedtempssa = 3;
 
   indirect8ssa = 2;
   indirect16ssa = 2;
@@ -4377,7 +4407,7 @@ const
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
 
-  subbeginssa = 0; //1;
+  subbeginssa = 2; //1;
   subendssa = 0;
   externalsubssa = 0;
   returnssa = 0;

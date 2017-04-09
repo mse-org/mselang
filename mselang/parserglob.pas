@@ -719,7 +719,10 @@ type
   globdatapo: targetadty;
   locdatapo: targetadty;
   managedtempcount: int32;
+  managedtempref: targetcardty;
+  managedtemparrayid: int32;
   frameoffset: targetcardty;
+  tempoffset: targetcardty;
   
   currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;
