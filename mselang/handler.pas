@@ -292,6 +292,7 @@ begin
  outhandle('PROGBLOCK');
 {$endif}
 // writeop(nil); //endmark
+ writemanagedtempop(mo_decref,info.managedtempchain,info.s.stacktop);
  handleunitend();
  invertlist(unitlinklist,unitchain);
  hasfini:= false;
