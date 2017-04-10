@@ -298,8 +298,13 @@ begin
     end;
    end;
   end;
-  ark_local: begin
-   af1:= [];
+  ark_local,ark_localaggregate: begin
+   if aref.kind = ark_localaggregate then begin
+    af1:= [af_aggregate];
+   end
+   else begin
+    af1:= [];
+   end;
    lev1:= -1;
    ab1:= ab_local;
    ad1:= aref.address;

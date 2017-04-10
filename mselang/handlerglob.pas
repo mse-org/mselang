@@ -162,7 +162,7 @@ type
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
  
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
-                     ark_local,ark_stack,ark_stackref);
+                     ark_local,ark_localaggregate,ark_stack,ark_stackref);
  addressrefty = record //todo: resolve circular dependency, use real types
   offset: dataoffsty;
   ssaindex: int32;
