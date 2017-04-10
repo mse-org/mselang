@@ -53,6 +53,8 @@ type
   pc: vpointerty;
   frame: vpointerty; //lsb -> constructor flag
   link: vpointerty;     //todo: remove link field
+  managedtemp: vpointerty;
+  stacktemp: vpointerty;
  end;
  pframeinfoty = ^frameinfoty;
  infoopty = procedure(const opinfo: popinfoty);
@@ -88,8 +90,8 @@ type
   pc: popinfoty;
   stack: pointer;
   frame: pointer;
-  temp: pointer;
-  tempbefore: pointer;
+  managedtemp: pointer;
+  stacktemp: pointer;
   stacklink: pointer;
   stop: boolean;
  end;
@@ -123,6 +125,7 @@ var                       //todo: use threadvars where necessary
  exceptioninfo: exceptioninfoty;
  exitcodeaddress: pint32;
  cpu: cputy;
+ alloccount: int32;
  {
  mainstackpo: pointer;
  framepo: pointer;
@@ -136,6 +139,18 @@ var                       //todo: use threadvars where necessary
 // constdata: pointer;
 
  segments: array[segmentty] of segmentrangety;
+
+function getmem1(const size: ptruint): pointer;
+begin
+ getmem(result,size);
+ inc(alloccount);
+end;
+
+procedure freemem1(const mem: pointer);
+begin
+ freemem(mem);
+ dec(alloccount);
+end;
 
 procedure notimplemented();
 begin
@@ -181,20 +196,25 @@ var
  i1: integer;
  po1: pointer;
 begin
- if af_temp in aaddress.t.flags then begin
-  result:= cpu.temp + aaddress.tempdataaddress.a.address; //offset?
+ if af_stacktemp in aaddress.t.flags then begin
+  result:= cpu.stacktemp + aaddress.tempdataaddress.a.address; //offset?
  end
  else begin
-  with aaddress.locdataaddress do begin
-   if a.framelevel < 0 then begin
-    result:= cpu.frame + a.address + offset;
-   end
-   else begin
-    po1:= cpu.stacklink;
-    for i1:= a.framelevel downto 0 do begin
-     po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  if af_managedtemp in aaddress.t.flags then begin
+   result:= cpu.managedtemp + aaddress.tempdataaddress.a.address; //offset?
+  end
+  else begin
+   with aaddress.locdataaddress do begin
+    if a.framelevel < 0 then begin
+     result:= cpu.frame + a.address + offset;
+    end
+    else begin
+     po1:= cpu.stacklink;
+     for i1:= a.framelevel downto 0 do begin
+      po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+     end;
+     result:= po1 + a.address + offset;
     end;
-    result:= po1 + a.address + offset;
    end;
   end;
  end;
@@ -206,7 +226,7 @@ var
  i1: integer;
  po1: pointer;
 begin
- result:= cpu.temp + aaddress.address; //offset?
+ result:= cpu.stacktemp + aaddress.address; //offset?
 end;
 
 function getlocaddressindi(const aaddress: memopty): pointer; 
@@ -215,20 +235,25 @@ var
  i1: integer;
  po1: pointer;
 begin
- if af_temp in aaddress.t.flags then begin
-  result:= ppointer(cpu.temp + aaddress.tempdataaddress.a.address)^; //offset?
+ if af_stacktemp in aaddress.t.flags then begin
+  result:= ppointer(cpu.stacktemp + aaddress.tempdataaddress.a.address)^; //offset?
  end
  else begin
-  with aaddress.locdataaddress do begin
-   if a.framelevel < 0 then begin
-    result:= ppointer(cpu.frame + a.address)^ + offset;
-   end
-   else begin
-    po1:= cpu.stacklink;
-    for i1:= a.framelevel downto 0 do begin
-     po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  if af_managedtemp in aaddress.t.flags then begin
+   result:= ppointer(cpu.managedtemp + aaddress.tempdataaddress.a.address)^; //offset?
+  end
+  else begin
+   with aaddress.locdataaddress do begin
+    if a.framelevel < 0 then begin
+     result:= ppointer(cpu.frame + a.address)^ + offset;
+    end
+    else begin
+     po1:= cpu.stacklink;
+     for i1:= a.framelevel downto 0 do begin
+      po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+     end;
+     result:= ppointer(po1 + a.address)^ + offset;
     end;
-    result:= ppointer(po1 + a.address)^ + offset;
    end;
   end;
  end;
@@ -247,19 +272,19 @@ end;
 
 function intgetmem(const size: integer): pointer;
 begin
- result:= getmem(size);
+ result:= getmem1(size);
 end;
 
 function intgetzeromem(const size: integer): pointer;
 begin
- result:= getmem(size);
+ result:= getmem1(size);
  fillchar(result^,size,0);
 end;
 
 function intgetzeroedmem(const allocsize: integer;
                            const nullsize: integer): pointer;
 begin
- result:= getmem(allocsize);
+ result:= getmem1(allocsize);
  fillchar(result^,nullsize,0);
 end;
 
@@ -274,7 +299,7 @@ end;
 
 procedure intfreemem(const mem: pointer);
 begin
- freemem(mem);
+ freemem1(mem);
 end;
 
 function stackoffs(const offs: ptruint; const size: ptruint): pointer;
@@ -422,6 +447,7 @@ begin
   finihandler:= par.beginparse.finisub;
   halting:= false;
   cpu.pc:= startpo + par.beginparse.mainad - 1;
+  alloccount:= 0;
  end;
 end;
 
@@ -449,9 +475,9 @@ begin
  with cpu.pc^.par do begin
   stackpush(main.stackop.managedtempsize);
   pe:= cpu.stack;
-  cpu.tempbefore:= cpu.temp;
-  cpu.temp:= pe;
+  cpu.stacktemp:= pe;
   p1:= pointer(pe)-main.stackop.managedtempsize;
+  cpu.managedtemp:= p1;
   while p1 < pe do begin
    p1^:= nil;
    inc(p1);
@@ -465,7 +491,7 @@ procedure progendop();
 begin
  cpu.frame:= cpu.stacklink;
  cpu.stack:= cpu.frame;
- cpu.temp:= cpu.tempbefore;
+// cpu.temp:= cpu.tempbefore;
 
 {
  with cpu.pc^.par.progend do begin
@@ -474,6 +500,9 @@ begin
  end;
 }
  cpu.stop:= true;
+ if alloccount <> 0 then begin
+  writeln('********** Memory alloc error ',alloccount,' blocks');
+ end;
 end;
 
 procedure cmpjmpneimm4op();
@@ -781,13 +810,13 @@ var
  ps,pd: pointer;
 begin
  with cpu.pc^.par.swapstack do begin
-  getmem(po1,size);
+  po1:= getmem1(size);
   ps:= cpu.stack-size;
   pd:= cpu.stack+offset;
   move(ps^,po1^,size);
   move(pd^,(pd+size)^,-offset-size);
   move(po1^,pd^,size);
-  freemem(po1);
+  freemem1(po1);
  end;
 end;
 
@@ -3243,7 +3272,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2); //max 
+  pds:= getmem1(string16allocsize+pss^.len*2); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3283,7 +3312,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string32allocsize+pss^.len*4); //max 
+  pds:= getmem1(string32allocsize+pss^.len*4); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3347,7 +3376,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*3); //max 
+  pds:= getmem1(string8allocsize+pss^.len*3); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3378,7 +3407,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*4);
+  pds:= getmem1(string8allocsize+pss^.len*4);
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -3408,7 +3437,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*4); //max 
+  pds:= getmem1(string8allocsize+pss^.len*4); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3439,7 +3468,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2*2); //max 
+  pds:= getmem1(string16allocsize+pss^.len*2*2); //max 
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -3488,7 +3517,7 @@ begin
    inc(p1);
   end;
   if i1 > 0 then begin
-   getmem(p3,string8allocsize+i1*1);
+   p3:= getmem1(string8allocsize+i1*1);
    p3^.ref.count:= temprefcount;;
    p3^.len:= i1;
    inc(p3);
@@ -3533,7 +3562,7 @@ begin
    inc(p1);
   end;
   if i1 > 0 then begin
-   getmem(p3,string16allocsize+i1*2);
+   p3:= getmem1(string16allocsize+i1*2);
    p3^.ref.count:= temprefcount;;
    p3^.len:= i1;
    inc(p3);
@@ -3578,7 +3607,7 @@ begin
    inc(p1);
   end;
   if i1 > 0 then begin
-   getmem(p3,string32allocsize+i1*4);
+   p3:= getmem1(string32allocsize+i1*4);
    p3^.ref.count:= temprefcount;;
    p3^.len:= i1;
    inc(p3);
@@ -3609,7 +3638,7 @@ var
  po1: pstringheaderty;
 begin
  char1:= pcard8(stackpop(sizeof(card8)))^;
- getmem(po1,1*1 + string8allocsize);
+ po1:= getmem1(1*1 + string8allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  pcard8(@po1^.data)^:= char1;
@@ -4597,7 +4626,7 @@ end;
 
 procedure storemanagedtempop();
 begin
- ppointer((cpu.temp+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
+ ppointer((cpu.managedtemp+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
 end;
 
 procedure indirect8op();
@@ -4773,11 +4802,7 @@ begin
  move(po1^,po2^,int1);
 end;
 
-//first op:
-//                  |cpu.frame    |cpu.stack
-// params frameinfo locvars      
-//
-procedure docall(const isconstructor: boolean);
+procedure savecpu(const isconstructor: boolean);
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -4786,7 +4811,18 @@ begin
    frame:= pointer(ptruint(frame) or 1);
   end;
   link:= cpu.stacklink;
+  managedtemp:= cpu.managedtemp;
+  stacktemp:= cpu.stacktemp;
  end;
+end;
+
+//first op:
+//                  |cpu.frame    |cpu.stack
+// params frameinfo locvars      
+//
+procedure docall(const isconstructor: boolean);
+begin
+ savecpu(isconstructor);
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
 end;
@@ -4837,12 +4873,16 @@ procedure calloutop();
 var
  i1: integer;
 begin
+ savecpu(false);
+{
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
   frame:= cpu.frame;
   link:= cpu.stacklink;
+  managedtemp:= cpu.managedtemp;
+  stacktemp:= cpu.stacktemp;
  end;
- 
+} 
  for i1:= cpu.pc^.par.callinfo.linkcount downto 0 do begin
   cpu.stacklink:= frameinfoty((cpu.stacklink-sizeof(frameinfoty))^).link;
  end;
@@ -4857,11 +4897,14 @@ end;
 
 procedure callvirtop();
 begin
+ savecpu(false);
+{
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
   frame:= cpu.frame;
   link:= cpu.stacklink;
  end;
+}
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
  with cpu.pc^.par.callinfo.virt do begin
@@ -4881,11 +4924,14 @@ var
 // po2: pintfitemty;
  po3: pintfdefinfoty;
 begin
+ savecpu(false);
+{
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
   frame:= cpu.frame;
   link:= cpu.stacklink;
  end;
+}
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
  with cpu.pc^.par.callinfo.virt do begin
@@ -4931,9 +4977,9 @@ begin
  with cpu.pc^.par.subbegin do begin
   stackpush(sub.stackop.varsize);
   pe:= cpu.stack;
-  cpu.tempbefore:= cpu.temp;
-  cpu.temp:= pe;
+  cpu.stacktemp:= pe;
   p1:= pointer(pe)-sub.stackop.managedtempsize;
+  cpu.managedtemp:= p1;
   while p1 < pe do begin
    p1^:= nil;
    inc(p1);
@@ -4966,7 +5012,8 @@ begin
   cpu.pc:= pc;
   cpu.frame:= frame;
   cpu.stacklink:= link;
-  cpu.temp:= cpu.tempbefore;
+  cpu.managedtemp:= managedtemp;
+  cpu.stacktemp:= stacktemp;
  end;
 // cpu.stack:= po1 - i1;
  cpu.stack:= cpu.stack-i1;
@@ -5084,7 +5131,7 @@ begin
    dec(d^.ref.count);
   end;
   if d^.ref.count = 0 then begin
-   freemem(d);
+   freemem1(d);
   end;
   ref^:= nil;
  end;
@@ -5111,7 +5158,7 @@ begin
     dec(d^.ref.count);
    end;
    if d^.ref.count = 0 then begin
-    freemem(d);
+    freemem1(d);
    end;
    ref^:= nil;
   end;
@@ -5135,7 +5182,7 @@ begin
      dec(d^.ref.count);
     end;
     if d^.ref.count = 0 then begin
-     freemem(d);
+     freemem1(d);
     end;
     ref^:= nil;
    end;
@@ -5206,7 +5253,7 @@ begin
    dec(d^.ref.count);
   end;
   if d^.ref.count = 0 then begin
-   freemem(d);
+   freemem1(d);
   end;
 //   ref^:= nil;
  end;
@@ -5223,7 +5270,7 @@ begin
    dec(d^.ref.count);
   end;
   if d^.ref.count = 0 then begin
-   freemem(d);
+   freemem1(d);
   end;
 //   ref^:= nil;
  end;
@@ -5243,7 +5290,7 @@ begin
     dec(d^.ref.count);
    end;
    if d^.ref.count = 0 then begin
-    freemem(d);
+    freemem1(d);
    end;
    ref^:= nil; //??
   end;
@@ -5266,7 +5313,7 @@ begin
      dec(d^.ref.count);
     end;
     if d^.ref.count = 0 then begin
-     freemem(d);
+     freemem1(d);
     end;
     ref^:= nil; //??
    end;
@@ -5582,14 +5629,14 @@ begin
   if ds <> nil then begin
    dec(ds^.ref.count);
    if ds^.ref.count = 0 then begin
-    freemem(ds);
+    freemem1(ds);
    end;
    ad^:= nil;
   end;
  end
  else begin
   if ds = nil then begin
-   getmem(ds,si1+string8allocsize);
+   ds:= getmem1(si1+string8allocsize);
   end
   else begin
    if ds^.ref.count = 1 then begin
@@ -5597,7 +5644,7 @@ begin
    end
    else begin //needs copy
     ss:= ds;
-    getmem(ds,si1+string8allocsize);
+    ds:= getmem1(si1+string8allocsize);
     si2:= ss^.len;
     if si1 < si2 then begin
      si2:= si1;
@@ -5630,14 +5677,14 @@ begin
   if ds <> nil then begin
    dec(ds^.ref.count);
    if ds^.ref.count = 0 then begin
-    freemem(ds);
+    freemem1(ds);
    end;
    ad^:= nil;
   end;
  end
  else begin
   if ds = nil then begin
-   getmem(ds,si1+string16allocsize);
+   ds:= getmem1(si1+string16allocsize);
   end
   else begin
    if ds^.ref.count = 1 then begin
@@ -5645,7 +5692,7 @@ begin
    end
    else begin //needs copy
     ss:= ds;
-    getmem(ds,si1+string16allocsize);
+    ds:= getmem1(si1+string16allocsize);
     si2:= ss^.len*2;
     if si1 < si2 then begin
      si2:= si1;
@@ -5678,14 +5725,14 @@ begin
   if ds <> nil then begin
    dec(ds^.ref.count);
    if ds^.ref.count = 0 then begin
-    freemem(ds);
+    freemem1(ds);
    end;
    ad^:= nil;
   end;
  end
  else begin
   if ds = nil then begin
-   getmem(ds,si1+string32allocsize);
+   ds:= getmem1(si1+string32allocsize);
   end
   else begin
    if ds^.ref.count = 1 then begin
@@ -5693,7 +5740,7 @@ begin
    end
    else begin //needs copy
     ss:= ds;
-    getmem(ds,si1+string32allocsize);
+    ds:= getmem1(si1+string32allocsize);
     si2:= ss^.len*4;
     if si1 < si2 then begin
      si2:= si1;
@@ -5728,7 +5775,7 @@ begin
   if ds <> nil then begin
    dec(ds^.ref.count);
    if ds^.ref.count = 0 then begin
-    freemem(ds);
+    freemem1(ds);
    end;
    ad^:= nil;
   end;
@@ -5746,7 +5793,7 @@ begin
    end
    else begin //needs copy
     ss:= ds;
-    getmem(ds,sil1+dynarrayallocsize);
+    ds:= getmem1(sil1+dynarrayallocsize);
     sil2:= (ss^.high+1)*itemsize1;
     if sil1 < sil2 then begin
      sil2:= sil1;
@@ -5778,7 +5825,7 @@ begin
   if ds^.ref.count <> 1 then begin
    ss:= ds;
    si1:= ds^.len*1 + string8allocsize;
-   getmem(ds,si1+string8allocsize);
+   ds:= getmem1(si1+string8allocsize);
    move(ss^,ds^,si1); //get copy including terminator
    if ss^.ref.count > 0 then begin //no const
     dec(ss^.ref.count);
@@ -5813,7 +5860,7 @@ begin
   if ds^.ref.count <> 1 then begin
    si1:= (ds^.high+1)*cpu.pc^.par.setlength.itemsize + dynarrayallocsize;
    ss:= ds;
-   getmem(ds,si1);
+   ds:= getmem1(si1);
    move(ss^,ds^,si1);
    dec(ss^.ref.count);
    ds^.ref.count:= 1;
@@ -5918,7 +5965,7 @@ var
 begin
  int1:= pinteger(stackpop(sizeof(int32)))^;
  po1:= ppointer(stackpop(pointersize))^;
- getmem(po1^,int1); //todo: out of memory
+ po1^:= getmem1(int1); //todo: out of memory
 end;
 
 procedure getzeromemop();
@@ -5929,7 +5976,7 @@ begin
  int1:= pinteger(stackpop(sizeof(int32)))^;
  po1:= ppointer(stackpop(pointersize))^;
  po1^:= intgetzeromem(int1);
-// getmem(po1^,int1); //todo: out of memory
+// getmem1(po1^,int1); //todo: out of memory
 end;
 
 procedure freememop();
@@ -5937,7 +5984,7 @@ var
  po1: pointer;
 begin
  po1:= ppointer(stackpop(pointersize))^;
- freemem(po1);
+ freemem1(po1);
 end;
 
 procedure reallocmemop();

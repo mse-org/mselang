@@ -217,7 +217,7 @@ begin
 {$endif}
  with info do begin
   frameoffset:= 0;
-  tempoffset:= 0;
+  stacktempoffset:= 0;
   managedtempcount:= 0;
   managedtempref:= 0;
   managedtemparrayid:= 0;

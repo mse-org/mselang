@@ -112,15 +112,15 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=23
    (
    kind=1
-   a=0,664,5,conditon
+   a=0,664,4,conditon
    c=2
     (
     kind=2
@@ -146,8 +146,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,condition1 llvm
-    teststate=2
+    a=0,648,2,condition1 llvm
+    teststate=1
     path=condition1.mla
     comment=
     cc=${mlc_llvm}
@@ -162,11 +162,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=condition/
    comment=
    cc=
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,address
+   a=0,664,4,address
    c=2
     (
     kind=2
@@ -210,8 +210,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,address llvm
-    teststate=2
+    a=0,648,2,address llvm
+    teststate=1
     path=address.mla
     comment=
     cc=${mlc_llvm}
@@ -226,11 +226,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=address/
    comment=
    cc=
@@ -248,11 +248,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,arith
+   a=0,664,4,arith
    c=34
     (
     kind=1
-    a=0,664,5,bool
+    a=0,664,4,bool
     c=8
      (
      kind=2
@@ -278,8 +278,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
-     teststate=2
+     a=0,648,2,and1 llvm
+     teststate=1
      path=and1.mla
      comment=
      cc=${mlc_llvm}
@@ -294,8 +294,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -322,8 +322,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
-     teststate=2
+     a=0,648,2,or1 llvm
+     teststate=1
      path=or1.mla
      comment=
      cc=${mlc_llvm}
@@ -338,8 +338,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -366,8 +366,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,not1 llvm
-     teststate=2
+     a=0,648,2,not1 llvm
+     teststate=1
      path=not1.mla
      comment=
      cc=${mlc_llvm}
@@ -382,8 +382,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -410,8 +410,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,booleaval1 llvm
-     teststate=2
+     a=0,648,2,booleaval1 llvm
+     teststate=1
      path=booleval1.mla
      comment=
      cc=${mlc_llvm}
@@ -426,11 +426,11 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=bool/
     comment=
     cc=
@@ -448,7 +448,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,cmp
+    a=0,664,4,cmp
     c=6
      (
      kind=2
@@ -474,8 +474,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmppointer llvm
-     teststate=2
+     a=0,648,2,cmppointer llvm
+     teststate=1
      path=cmppointer.mla
      comment=
      cc=${mlc_llvm}
@@ -490,8 +490,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -518,8 +518,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpenum llvm
-     teststate=2
+     a=0,648,2,cmpenum llvm
+     teststate=1
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -534,8 +534,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -562,8 +562,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpstring8 llvm
-     teststate=2
+     a=0,648,2,cmpstring8 llvm
+     teststate=1
      path=cmpstring8.mla
      comment=
      cc=${mlc_llvm}
@@ -578,11 +578,11 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=cmp/
     comment=
     cc=
@@ -600,7 +600,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,float
+    a=0,664,4,float
     c=4
      (
      kind=2
@@ -626,8 +626,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,floatassign llvm
-     teststate=2
+     a=0,648,2,floatassign llvm
+     teststate=1
      path=floatassign.mla
      comment=
      cc=${mlc_llvm}
@@ -642,8 +642,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -670,8 +670,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,sin llvm
-     teststate=2
+     a=0,648,2,sin llvm
+     teststate=1
      path=sin.mla
      comment=
      cc=${mlc_llvm}
@@ -686,11 +686,11 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=float/
     comment=
     cc=
@@ -708,7 +708,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,pointer
+    a=0,664,4,pointer
     c=8
      (
      kind=2
@@ -734,8 +734,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointeradd llvm
-     teststate=2
+     a=0,648,2,pointeradd llvm
+     teststate=1
      path=pointeradd.mla
      comment=
      cc=${mlc_llvm}
@@ -750,8 +750,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -778,8 +778,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerecadd llvm
-     teststate=2
+     a=0,648,2,pointerecadd llvm
+     teststate=1
      path=pointerrecadd.mla
      comment=
      cc=${mlc_llvm}
@@ -794,8 +794,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -822,8 +822,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff llvm
-     teststate=2
+     a=0,648,2,pointerdiff llvm
+     teststate=1
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -838,8 +838,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -866,8 +866,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff1 llvm
-     teststate=2
+     a=0,648,2,pointerdiff1 llvm
+     teststate=1
      path=pointerdiff1.mla
      comment=
      cc=${mlc_llvm}
@@ -882,11 +882,11 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=pointer/
     comment=
     cc=
@@ -926,8 +926,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,updatesize llvm
-    teststate=2
+    a=0,648,2,updatesize llvm
+    teststate=1
     path=updatesize.mla
     comment=
     cc=${mlc_llvm}
@@ -942,8 +942,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -970,8 +970,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divop llvm
-    teststate=2
+    a=0,648,2,divop llvm
+    teststate=1
     path=divop.mla
     comment=
     cc=${mlc_llvm}
@@ -986,8 +986,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1014,8 +1014,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divisionop llvm
-    teststate=2
+    a=0,648,2,divisionop llvm
+    teststate=1
     path=divisionop.mla
     comment=
     cc=${mlc_llvm}
@@ -1029,9 +1029,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
+    ao=1.230000e+02
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -1058,8 +1058,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint llvm
-    teststate=2
+    a=0,648,2,addsubint llvm
+    teststate=1
     path=addsubint.mla
     comment=
     cc=${mlc_llvm}
@@ -1074,8 +1074,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1102,8 +1102,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
-    teststate=2
+    a=0,648,2,bitexp1 llvm
+    teststate=1
     path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
@@ -1118,8 +1118,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1146,8 +1146,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdec llvm
-    teststate=2
+    a=0,648,2,incdec llvm
+    teststate=1
     path=incdec.mla
     comment=
     cc=${mlc_llvm}
@@ -1162,8 +1162,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1190,8 +1190,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incval1 llvm
-    teststate=2
+    a=0,648,2,incval1 llvm
+    teststate=1
     path=incval1.mla
     comment=
     cc=${mlc_llvm}
@@ -1206,8 +1206,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1234,8 +1234,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incvalpo1 llvm
-    teststate=2
+    a=0,648,2,incvalpo1 llvm
+    teststate=1
     path=incvalpo1.mla
     comment=
     cc=${mlc_llvm}
@@ -1250,8 +1250,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1278,8 +1278,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
-    teststate=2
+    a=0,648,2,incdecind llvm
+    teststate=1
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -1294,8 +1294,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1322,8 +1322,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shl1 llvm
-    teststate=2
+    a=0,648,2,shl1 llvm
+    teststate=1
     path=shl1.mla
     comment=
     cc=${mlc_llvm}
@@ -1338,8 +1338,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1366,8 +1366,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
-    teststate=2
+    a=0,648,2,shr1 llvm
+    teststate=1
     path=shr1.mla
     comment=
     cc=${mlc_llvm}
@@ -1382,8 +1382,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1410,8 +1410,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecindpo llvm
-    teststate=2
+    a=0,648,2,incdecindpo llvm
+    teststate=1
     path=incdecindpo.mla
     comment=
     cc=${mlc_llvm}
@@ -1426,7 +1426,7 @@ c=3
     eec=1
     cr=0
     ao=
-    ae=error: Invalid record
+    ae=
     aec=1
     ie=0
     )
@@ -1454,8 +1454,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,not1 llvm
-    teststate=2
+    a=0,648,2,not1 llvm
+    teststate=1
     path=not1.mla
     comment=
     cc=${mlc_llvm}
@@ -1470,8 +1470,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1498,8 +1498,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,neg1 llvm
-    teststate=2
+    a=0,648,2,neg1 llvm
+    teststate=1
     path=neg1.mla
     comment=
     cc=${mlc_llvm}
@@ -1514,8 +1514,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1542,8 +1542,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
-    teststate=2
+    a=0,648,2,andorxor1 llvm
+    teststate=1
     path=andorxor1.mla
     comment=
     cc=${mlc_llvm}
@@ -1558,11 +1558,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=arith/
    comment=
    cc=
@@ -1580,7 +1580,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,control
+   a=0,665,4,control
    c=32
     (
     kind=2
@@ -1606,8 +1606,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,breakrepat llvm
-    teststate=2
+    a=0,648,1,breakrepat llvm
+    teststate=1
     path=breakrepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1622,8 +1622,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1650,8 +1650,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,breakwhile llvm
-    teststate=2
+    a=0,648,1,breakwhile llvm
+    teststate=1
     path=breakwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1666,8 +1666,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1694,8 +1694,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,continuerepat llvm
-    teststate=2
+    a=0,648,1,continuerepat llvm
+    teststate=1
     path=continuerepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1710,8 +1710,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1738,8 +1738,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,continuewhile llvm
-    teststate=2
+    a=0,648,1,continuewhile llvm
+    teststate=1
     path=continuewhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1754,8 +1754,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1782,8 +1782,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,iftest llvm
-    teststate=2
+    a=0,648,1,iftest llvm
+    teststate=1
     path=iftest.mla
     comment=
     cc=${mlc_llvm}
@@ -1798,8 +1798,8 @@ c=3
     eec=99
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=99
     ie=0
     )
     (
@@ -1826,8 +1826,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recifindi llvm
-    teststate=2
+    a=0,648,1,recifindi llvm
+    teststate=1
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1842,8 +1842,8 @@ c=3
     eec=99
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=99
     ie=0
     )
     (
@@ -1870,8 +1870,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case1 llvm
-    teststate=2
+    a=0,648,1,case1 llvm
+    teststate=1
     path=case1.mla
     comment=
     cc=${mlc_llvm}
@@ -1886,8 +1886,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1914,8 +1914,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,while1 llvm
-    teststate=2
+    a=0,648,1,while1 llvm
+    teststate=1
     path=while1.mla
     comment=
     cc=${mlc_llvm}
@@ -1930,8 +1930,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -1958,8 +1958,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,forto llvm
-    teststate=2
+    a=0,648,1,forto llvm
+    teststate=1
     path=forto.mla
     comment=
     cc=${mlc_llvm}
@@ -1974,8 +1974,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2002,8 +2002,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,fordownto llvm
-    teststate=2
+    a=0,648,1,fordownto llvm
+    teststate=1
     path=fordownto.mla
     comment=
     cc=${mlc_llvm}
@@ -2018,8 +2018,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2046,8 +2046,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,forto2 llvm
-    teststate=2
+    a=0,648,1,forto2 llvm
+    teststate=1
     path=forto2.mla
     comment=
     cc=${mlc_llvm}
@@ -2062,8 +2062,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2090,8 +2090,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,nestedwhile llvm
-    teststate=2
+    a=0,648,1,nestedwhile llvm
+    teststate=1
     path=nestedwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -2106,8 +2106,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2134,8 +2134,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,halt1 llvm
-    teststate=2
+    a=0,648,1,halt1 llvm
+    teststate=1
     path=halt1.mla
     comment=
     cc=${mlc_llvm}
@@ -2150,8 +2150,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2178,8 +2178,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,halt2 llvm
-    teststate=2
+    a=0,648,1,halt2 llvm
+    teststate=1
     path=halt2.mla
     comment=
     cc=${mlc_llvm}
@@ -2194,8 +2194,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2222,8 +2222,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,goto1 llvm
-    teststate=2
+    a=0,648,1,goto1 llvm
+    teststate=1
     path=goto1.mla
     comment=
     cc=${mlc_llvm}
@@ -2238,8 +2238,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2266,8 +2266,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,exit llvm
-    teststate=2
+    a=0,648,1,exit llvm
+    teststate=1
     path=exit.mla
     comment=
     cc=${mlc_llvm}
@@ -2282,11 +2282,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=control/
    comment=
    cc=
@@ -2304,7 +2304,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,conversions
+   a=0,664,4,conversions
    c=18
     (
     kind=2
@@ -2330,8 +2330,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,potoint32 llvm
-    teststate=2
+    a=0,648,2,potoint32 llvm
+    teststate=1
     path=potoint32.mla
     comment=
     cc=${mlc_llvm}
@@ -2346,7 +2346,7 @@ c=3
     eec=1
     cr=0
     ao=
-    ae=error: Invalid record
+    ae=
     aec=1
     ie=0
     )
@@ -2374,8 +2374,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,anytopo llvm
-    teststate=2
+    a=0,648,2,anytopo llvm
+    teststate=1
     path=anytopo.mla
     comment=
     cc=${mlc_llvm}
@@ -2390,8 +2390,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2418,8 +2418,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,sizeconvert1 llvm
-    teststate=2
+    a=0,648,2,sizeconvert1 llvm
+    teststate=1
     path=sizeconvert1.mla
     comment=
     cc=${mlc_llvm}
@@ -2434,8 +2434,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2462,8 +2462,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,pointercast llvm
-    teststate=2
+    a=0,648,2,pointercast llvm
+    teststate=1
     path=pointercast.mla
     comment=
     cc=${mlc_llvm}
@@ -2478,8 +2478,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2506,8 +2506,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,leftsidecast llvm
-    teststate=2
+    a=0,648,2,leftsidecast llvm
+    teststate=1
     path=leftsidecast.mla
     comment=
     cc=${mlc_llvm}
@@ -2522,8 +2522,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2550,8 +2550,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,leftsidecast1 llvm
-    teststate=2
+    a=0,648,2,leftsidecast1 llvm
+    teststate=1
     path=leftsidecast1.mla
     comment=
     cc=${mlc_llvm}
@@ -2566,8 +2566,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2594,8 +2594,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordconversion llvm
-    teststate=2
+    a=0,648,2,recordconversion llvm
+    teststate=1
     path=recordconversion.mla
     comment=
     cc=${mlc_llvm}
@@ -2610,8 +2610,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2638,8 +2638,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,stringtopo llvm
-    teststate=2
+    a=0,648,2,stringtopo llvm
+    teststate=1
     path=stringtopo.mla
     comment=
     cc=${mlc_llvm}
@@ -2654,8 +2654,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2682,8 +2682,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,stringconv llvm
-    teststate=2
+    a=0,648,2,stringconv llvm
+    teststate=1
     path=stringconv.mla
     comment=
     cc=${mlc_llvm}
@@ -2698,11 +2698,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=conversions/
    comment=
    cc=
@@ -2720,7 +2720,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,dynarray
+   a=0,665,4,dynarray
    c=12
     (
     kind=2
@@ -2747,7 +2747,7 @@ c=3
     (
     kind=2
     a=0,648,1,setlength llvm
-    teststate=2
+    teststate=1
     path=setlength.mla
     comment=
     cc=${mlc_llvm}
@@ -2762,8 +2762,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2791,7 +2791,7 @@ c=3
     (
     kind=2
     a=0,648,1,setlength1 llvm
-    teststate=2
+    teststate=1
     path=setlength1.mla
     comment=
     cc=${mlc_llvm}
@@ -2806,8 +2806,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2835,7 +2835,7 @@ c=3
     (
     kind=2
     a=0,648,1,unique llvm
-    teststate=2
+    teststate=1
     path=unique.mla
     comment=
     cc=${mlc_llvm}
@@ -2850,8 +2850,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2879,7 +2879,7 @@ c=3
     (
     kind=2
     a=0,648,1,copy llvm
-    teststate=2
+    teststate=1
     path=copy.mla
     comment=
     cc=${mlc_llvm}
@@ -2894,8 +2894,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2923,7 +2923,7 @@ c=3
     (
     kind=2
     a=0,648,1,nestedloc llvm
-    teststate=2
+    teststate=1
     path=nestedloc.mla
     comment=
     cc=${mlc_llvm}
@@ -2938,8 +2938,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2967,7 +2967,7 @@ c=3
     (
     kind=2
     a=0,648,1,lenght llvm
-    teststate=2
+    teststate=1
     path=length.mla
     comment=
     cc=${mlc_llvm}
@@ -2982,11 +2982,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=dynarray/
    comment=
    cc=
@@ -3004,7 +3004,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,enum
+   a=0,664,4,enum
    c=2
     (
     kind=2
@@ -3030,8 +3030,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,enum1 llvm
-    teststate=2
+    a=0,648,2,enum1 llvm
+    teststate=1
     path=enum1.mla
     comment=
     cc=${mlc_llvm}
@@ -3046,11 +3046,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=enum/
    comment=
    cc=
@@ -3132,7 +3132,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,exception
+   a=0,664,4,exception
    c=6
     (
     kind=2
@@ -3151,15 +3151,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72056B0
+    ao=An unhandled exception occured at $B726AC18
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise1 llvm
-    teststate=2
+    a=0,648,2,raise1 llvm
+    teststate=1
     path=raise1.mla
     comment=
     cc=${mlc_llvm}
@@ -3174,8 +3174,8 @@ c=3
     eec=217
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=217
     ie=0
     )
     (
@@ -3202,8 +3202,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise2 llvm
-    teststate=2
+    a=0,648,2,raise2 llvm
+    teststate=1
     path=raise2.mla
     comment=
     cc=${mlc_llvm}
@@ -3218,8 +3218,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3246,8 +3246,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise3 llvm
-    teststate=2
+    a=0,648,2,raise3 llvm
+    teststate=1
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -3262,11 +3262,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -3284,7 +3284,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,indirect
+   a=0,664,4,indirect
    c=22
     (
     kind=2
@@ -3310,8 +3310,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,indirectloc llvm
-    teststate=2
+    a=0,648,2,indirectloc llvm
+    teststate=1
     path=indirectloc.mla
     comment=
     cc=${mlc_llvm}
@@ -3326,8 +3326,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3354,8 +3354,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,indirectpar llvm
-    teststate=2
+    a=0,648,2,indirectpar llvm
+    teststate=1
     path=indirectpar.mla
     comment=
     cc=${mlc_llvm}
@@ -3370,8 +3370,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3398,8 +3398,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,varpar llvm
-    teststate=2
+    a=0,648,2,varpar llvm
+    teststate=1
     path=varpar.mla
     comment=
     cc=${mlc_llvm}
@@ -3414,8 +3414,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3442,8 +3442,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,varparrec llvm
-    teststate=2
+    a=0,648,2,varparrec llvm
+    teststate=1
     path=varparrec.mla
     comment=
     cc=${mlc_llvm}
@@ -3458,8 +3458,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3486,8 +3486,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,varparload llvm
-    teststate=2
+    a=0,648,2,varparload llvm
+    teststate=1
     path=varparload.mla
     comment=
     cc=${mlc_llvm}
@@ -3502,8 +3502,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3530,8 +3530,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,varparrecload llvm
-    teststate=2
+    a=0,648,2,varparrecload llvm
+    teststate=1
     path=varparrecload.mla
     comment=
     cc=${mlc_llvm}
@@ -3546,8 +3546,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3574,8 +3574,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recindi llvm
-    teststate=2
+    a=0,648,2,recindi llvm
+    teststate=1
     path=recindi.mla
     comment=
     cc=${mlc_llvm}
@@ -3590,8 +3590,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3618,8 +3618,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,parrecindi llvm
-    teststate=2
+    a=0,648,2,parrecindi llvm
+    teststate=1
     path=parrecindi.mla
     comment=
     cc=${mlc_llvm}
@@ -3634,8 +3634,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3662,8 +3662,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recderef llvm
-    teststate=2
+    a=0,648,2,recderef llvm
+    teststate=1
     path=recderef.mla
     comment=
     cc=${mlc_llvm}
@@ -3678,8 +3678,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3706,8 +3706,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,pointerrec llvm
-    teststate=2
+    a=0,648,2,pointerrec llvm
+    teststate=1
     path=pointerrec.mla
     comment=
     cc=${mlc_llvm}
@@ -3722,8 +3722,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3750,8 +3750,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,pointerrec1 llvm
-    teststate=2
+    a=0,648,2,pointerrec1 llvm
+    teststate=1
     path=pointerrec1.mla
     comment=
     cc=${mlc_llvm}
@@ -3766,11 +3766,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=indirect/
    comment=
    cc=
@@ -3788,7 +3788,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,IO
+   a=0,664,4,IO
    c=4
     (
     kind=2
@@ -3814,8 +3814,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,writeln int llvm
-    teststate=2
+    a=0,648,2,writeln int llvm
+    teststate=1
     path=writelnint.mla
     comment=
     cc=${mlc_llvm}
@@ -3829,9 +3829,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
+    ao=123
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -3858,8 +3858,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,writeln string lc
-    teststate=2
+    a=0,648,2,writeln string lc
+    teststate=1
     path=writelnstr.mla
     comment=
     cc=${mlc_llvm}
@@ -3873,12 +3873,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
+    ao=abc
+    ae=
+    aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=io/
    comment=
    cc=${COMP}
@@ -3896,7 +3896,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,mem
+   a=0,664,4,mem
    c=6
     (
     kind=2
@@ -3922,8 +3922,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,getmem llvm
-    teststate=2
+    a=0,648,2,getmem llvm
+    teststate=1
     path=getmem.mla
     comment=
     cc=${mlc_llvm}
@@ -3938,8 +3938,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3966,8 +3966,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setmem llvm
-    teststate=2
+    a=0,648,2,setmem llvm
+    teststate=1
     path=setmem.mla
     comment=
     cc=${mlc_llvm}
@@ -3981,9 +3981,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
+    ao=-1
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -4010,8 +4010,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,memcpy llvm
-    teststate=2
+    a=0,648,2,memcpy llvm
+    teststate=1
     path=memcpy.mla
     comment=
     cc=${mlc_llvm}
@@ -4026,11 +4026,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=mem/
    comment=
    cc=
@@ -4048,7 +4048,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,minimal
+   a=0,664,4,minimal
    c=2
     (
     kind=2
@@ -4074,8 +4074,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,program llvm
-    teststate=2
+    a=0,648,2,program llvm
+    teststate=1
     path=minprog.mla
     comment=
     cc=${mlc_llvm}
@@ -4090,11 +4090,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=
    comment=
    cc=
@@ -4112,7 +4112,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,record
+   a=0,664,4,record
    c=10
     (
     kind=2
@@ -4138,8 +4138,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfield llvm
-    teststate=2
+    a=0,648,2,recordfield llvm
+    teststate=1
     path=recordfield.mla
     comment=
     cc=${mlc_llvm}
@@ -4154,8 +4154,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4182,8 +4182,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind llvm
-    teststate=2
+    a=0,648,2,recordfieldind llvm
+    teststate=1
     path=recordfieldind.mla
     comment=
     cc=${mlc_llvm}
@@ -4198,8 +4198,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4226,8 +4226,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2 llvm
-    teststate=2
+    a=0,648,2,recordfieldind2 llvm
+    teststate=1
     path=recordfieldind2.mla
     comment=
     cc=${mlc_llvm}
@@ -4242,8 +4242,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4270,8 +4270,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,pointerinrec llvm
-    teststate=2
+    a=0,648,2,pointerinrec llvm
+    teststate=1
     path=pointerinrec.mla
     comment=
     cc=${mlc_llvm}
@@ -4286,8 +4286,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4314,8 +4314,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordcopy llvm
-    teststate=2
+    a=0,648,2,recordcopy llvm
+    teststate=1
     path=recordcopy.mla
     comment=
     cc=${mlc_llvm}
@@ -4330,11 +4330,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=record/
    comment=
    cc=
@@ -4352,7 +4352,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,set
+   a=0,664,4,set
    c=12
     (
     kind=2
@@ -4378,8 +4378,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setconstructro1 llvm
-    teststate=2
+    a=0,648,2,setconstructro1 llvm
+    teststate=1
     path=setconstructor1.mla
     comment=
     cc=${mlc_llvm}
@@ -4394,8 +4394,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4422,8 +4422,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setop1 llvm
-    teststate=2
+    a=0,648,2,setop1 llvm
+    teststate=1
     path=setops1.mla
     comment=
     cc=${mlc_llvm}
@@ -4438,8 +4438,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4466,8 +4466,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,xorset1 llvm
-    teststate=2
+    a=0,648,2,xorset1 llvm
+    teststate=1
     path=xorset1.mla
     comment=
     cc=${mlc_llvm}
@@ -4482,8 +4482,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4510,8 +4510,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setcomp1 llvm
-    teststate=2
+    a=0,648,2,setcomp1 llvm
+    teststate=1
     path=setcomp1.mla
     comment=
     cc=${mlc_llvm}
@@ -4526,8 +4526,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4554,8 +4554,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,inset1 llvm
-    teststate=2
+    a=0,648,2,inset1 llvm
+    teststate=1
     path=inset1.mla
     comment=
     cc=${mlc_llvm}
@@ -4570,8 +4570,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4598,8 +4598,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,set2 llvm
-    teststate=2
+    a=0,648,2,set2 llvm
+    teststate=1
     path=set2.mla
     comment=
     cc=${mlc_llvm}
@@ -4614,11 +4614,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=set/
    comment=
    cc=
@@ -4636,7 +4636,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=6
     (
     kind=2
@@ -4662,8 +4662,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringtest llvm
-    teststate=2
+    a=0,648,1,stringtest llvm
+    teststate=1
     path=stringtest.mla
     comment=
     cc=${mlc_llvm}
@@ -4678,8 +4678,8 @@ c=3
     eec=0
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -4706,8 +4706,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,chartostring llvm
-    teststate=2
+    a=0,648,1,chartostring llvm
+    teststate=1
     path=chartostring.mla
     comment=
     cc=${mlc_llvm}
@@ -4721,9 +4721,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
+    ao=a
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -4750,8 +4750,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,0,stringconcat llvm
-    teststate=0
+    a=0,648,1,stringconcat llvm
+    teststate=1
     path=stringconcat.mla
     comment=
     cc=${mlc_llvm}
@@ -4764,13 +4764,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -4811,8 +4811,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4833,8 +4833,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4855,8 +4855,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4877,8 +4877,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4899,8 +4899,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4921,8 +4921,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4943,8 +4943,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4965,8 +4965,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -4987,8 +4987,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -5009,8 +5009,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -5031,8 +5031,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -5053,8 +5053,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -5091,8 +5091,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5113,8 +5113,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5135,8 +5135,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5157,8 +5157,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5179,8 +5179,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5201,8 +5201,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5223,8 +5223,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5245,8 +5245,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5267,8 +5267,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5289,8 +5289,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5311,8 +5311,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5333,8 +5333,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5355,8 +5355,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5377,8 +5377,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5399,8 +5399,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5421,8 +5421,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5443,8 +5443,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5465,8 +5465,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5487,8 +5487,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5509,8 +5509,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5531,8 +5531,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5553,8 +5553,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5575,8 +5575,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5597,8 +5597,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5619,8 +5619,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5641,8 +5641,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    ae=
     aec=123
     ie=0
     )
@@ -5663,8 +5663,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    ae=
     aec=123
     ie=0
     )
@@ -5685,8 +5685,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5707,8 +5707,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5729,8 +5729,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5751,8 +5751,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5773,8 +5773,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5795,8 +5795,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5817,8 +5817,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5839,8 +5839,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5881,8 +5881,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5903,8 +5903,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5925,8 +5925,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5947,8 +5947,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5969,8 +5969,9 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=1
-    ae=1
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2016 by Martin Schreiber
+    ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     aec=1
     ie=0
     )
@@ -5991,8 +5992,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6013,8 +6014,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6055,8 +6056,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6077,8 +6078,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6119,8 +6120,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6141,8 +6142,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6163,8 +6164,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6185,8 +6186,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6207,8 +6208,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6229,8 +6230,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6251,8 +6252,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6273,8 +6274,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6295,8 +6296,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6317,8 +6318,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6339,8 +6340,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6361,8 +6362,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6384,7 +6385,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,managed
+   a=0,665,4,managed
    c=6
     (
     kind=2
@@ -6403,8 +6404,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6425,8 +6426,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6447,8 +6448,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6469,8 +6470,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6491,8 +6492,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=ZbcabcaYc
+    ae=
     aec=0
     ie=0
     )
@@ -6513,8 +6514,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=ZbcabcaYc
+    ae=
     aec=0
     ie=0
     )
@@ -6551,8 +6552,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -6573,12 +6574,12 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -6619,8 +6620,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6641,8 +6642,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6663,8 +6664,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6685,8 +6686,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6707,8 +6708,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6729,8 +6730,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6751,8 +6752,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6773,8 +6774,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6795,8 +6796,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6817,8 +6818,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6839,8 +6840,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6861,8 +6862,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6883,8 +6884,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6905,8 +6906,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6927,8 +6928,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6949,8 +6950,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6971,8 +6972,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6993,8 +6994,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7015,8 +7016,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7037,8 +7038,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7059,8 +7060,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7081,8 +7082,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7103,8 +7104,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7125,8 +7126,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7147,8 +7148,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7169,8 +7170,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7191,8 +7192,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7213,8 +7214,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7235,8 +7236,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7257,8 +7258,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7299,8 +7300,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7321,8 +7322,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7343,8 +7344,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7365,8 +7366,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7407,8 +7408,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7429,8 +7430,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7451,8 +7452,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7473,8 +7474,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7495,8 +7496,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7517,8 +7518,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7539,8 +7540,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7561,8 +7562,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7583,8 +7584,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7605,8 +7606,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7627,8 +7628,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7649,8 +7650,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7671,8 +7672,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7693,8 +7694,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7735,8 +7736,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7757,8 +7758,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7779,8 +7780,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7801,8 +7802,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7823,8 +7824,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7845,8 +7846,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7867,8 +7868,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7889,8 +7890,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7911,8 +7912,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7933,8 +7934,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -7971,8 +7972,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -7993,8 +7994,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8015,8 +8016,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8037,8 +8038,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8059,8 +8060,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8081,8 +8082,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8103,8 +8104,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8125,8 +8126,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8147,8 +8148,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8169,8 +8170,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8191,8 +8192,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8213,8 +8214,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8235,8 +8236,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8257,8 +8258,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8279,8 +8280,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8301,8 +8302,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8323,8 +8324,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8345,8 +8346,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8367,8 +8368,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=abc
+   ae=
    aec=0
    ie=0
    )
@@ -8389,8 +8390,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=abc
+   ae=
    aec=0
    ie=0
    )
@@ -8411,8 +8412,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8433,8 +8434,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8479,8 +8480,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=123 123
+    ae=
     aec=123
     ie=0
     )
@@ -8501,8 +8502,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=123 123
+    ae=
     aec=123
     ie=0
     )
@@ -8523,8 +8524,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=b
+    ae=
     aec=0
     ie=0
     )
@@ -8545,8 +8546,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=b
+    ae=
     aec=0
     ie=0
     )
@@ -8603,8 +8604,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8625,8 +8626,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8647,8 +8648,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8669,8 +8670,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8715,8 +8716,9 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=1
-    ae=1
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2016 by Martin Schreiber
+    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     aec=1
     ie=0
     )
@@ -8737,8 +8739,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=1
-    ae=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2016 by Martin Schreiber
+    ae=
     aec=0
     ie=0
     )
@@ -8795,8 +8798,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8817,8 +8820,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -8838,7 +8841,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -8961,7 +8964,25 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=137
+rowstate=155
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

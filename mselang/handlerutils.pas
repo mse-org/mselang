@@ -18,7 +18,8 @@ unit handlerutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes;
+ globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes,
+ listutils;
 
 type
  datasizetyxx = type integer;
@@ -1351,7 +1352,7 @@ begin
   if op.op = oc_none then begin
    internalerror(ie_handler,'20150914A');
   end;
-  if not (af_temp in address.flags) then begin
+  if not (af_stacktemp in address.flags) then begin
    internalerror(ie_handler,'20160314B');
   end;
  {$endif}
@@ -1366,7 +1367,7 @@ end;
 function pushtemppo(const address: addressvaluety): int32;
 begin
  {$ifdef mse_checkinternalerror}
-  if not (af_temp in address.flags) then begin
+  if not (af_stacktemp in address.flags) then begin
    internalerror(ie_handler,'20160314C');
   end;
  {$endif}
@@ -1405,22 +1406,27 @@ begin
    setimmint32(managedtempcount*sizeof(pointer),ref1.offset);
   end
   else begin
-   ref1.address:= managedtempref+managedtempcount*sizeof(pointer);
+   ref1.address:= managedtempref+managedtempcount*pointersize;
   end;
   ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
   ref1.contextindex:= aindex;
   writemanagedtypeop(mo_fini,ref1.typ,ref1);
   with insertitem(oc_storemanagedtemp,aindex,-1)^.par do begin
-   ssas1:= i1;
+   ssas1:= d.dat.fact.ssaindex;
    if co_llvm in o.compileoptions then begin
     setimmint32(ref1.address-managedtempref,voffset);
     managedtemparrayid:= info.managedtemparrayid;
    end
    else begin
-    voffset:= ref1.address;
+    voffset:= ref1.address-managedtempref;
    end;
   end;
 //  d.dat.fact.ssaindex:= i1;
+  with pmanagedtempitemty(
+               addlistitem(managedtemplist,managedtempchain))^ do begin
+   typ:= d.dat.datatyp.typedata;
+   index:= managedtempcount;
+  end;
   inc(managedtempcount);
  end;
 end;
@@ -1444,7 +1450,7 @@ begin
   if op.op = oc_none then begin
    internalerror(ie_handler,'2050914B');
   end;
-  if not (af_temp in address.flags) then begin
+  if not (af_stacktemp in address.flags) then begin
    internalerror(ie_handler,'20160314D');
   end;
  {$endif}
@@ -2115,7 +2121,7 @@ begin
    end;
   end
   else begin
-   if af_temp in opflags1 then begin
+   if af_stacktemp in opflags1 then begin
     po1:= getop(pushloc[opsize1]);
     with po1^ do begin
      par.memop.tempdataaddress.a:= tempaddress;

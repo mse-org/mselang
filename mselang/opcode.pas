@@ -522,11 +522,11 @@ end;
 function getpointertempaddress(): addressvaluety;
 begin
  with info do begin
-  result.flags:= [af_temp];
+  result.flags:= [af_stacktemp];
   result.indirectlevel:= 1;
 //  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.tempoffset;
+   result.tempaddress.address:= locdatapo - stacktempoffset;
    locdatapo:= locdatapo + pointersize;
   end
   else begin
@@ -551,11 +551,11 @@ end;
 function gettempaddress(const asize: databitsizety): addressvaluety;
 begin
  with info do begin
-  result.flags:= [af_temp];
+  result.flags:= [af_stacktemp];
   result.indirectlevel:= 0;
 //  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.tempoffset;
+   result.tempaddress.address:= locdatapo - info.stacktempoffset;
    locdatapo:= locdatapo + alignsize(bytesizes[asize]);
   end
   else begin
@@ -571,10 +571,10 @@ var
  i1: int32;
 begin
  with info do begin
-  result.flags:= [af_temp];
+  result.flags:= [af_stacktemp];
   result.indirectlevel:= 0;
   if not (co_llvm in o.compileoptions) then begin
-   result.tempaddress.address:= locdatapo - info.tempoffset;
+   result.tempaddress.address:= locdatapo - info.stacktempoffset;
    i1:= alignsize(abytesize);
    locdatapo:= locdatapo + i1;
    atotsize:= atotsize + i1;

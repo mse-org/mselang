@@ -96,11 +96,11 @@ const
  storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
                    seg_classintfcount,seg_intfitemcount];
 type
- addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,
-                  af_paramindirect,af_const,
+ addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_managedtemp,
+                  af_param,af_paramindirect,af_const,
                   af_paramconst,af_paramvar,af_paramout, 
                                               //for paramkindty match test
-                  af_managedtemp,
+//                  af_managedtemp,
                   af_openarray,
                   af_withindirect,
                   af_classfield,af_stack,af_segmentpo,af_aggregate,

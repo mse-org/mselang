@@ -718,11 +718,12 @@ type
   start: int32;
   globdatapo: targetadty;
   locdatapo: targetadty;
+  managedtempchain: listadty;
   managedtempcount: int32;
   managedtempref: targetcardty;
   managedtemparrayid: int32;
   frameoffset: targetcardty;
-  tempoffset: targetcardty;
+  stacktempoffset: targetcardty;
   
   currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;

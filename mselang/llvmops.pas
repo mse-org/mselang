@@ -296,7 +296,7 @@ begin
    else begin
     i1:= bcstream.typeval(t.listindex);
    end;
-   if af_temp in t.flags then begin
+   if af_stacktemp in t.flags then begin
     bcstream.emitbitcast(bcstream.ssaval(tempdataaddress.a.ssaindex),i1);
    end
    else begin
@@ -3098,18 +3098,18 @@ end;
 procedure storemanagedtempop();
 begin
  with pc^.par do begin
-
- bcstream.emitnopssa();
- bcstream.emitnopssa();
- bcstream.emitnopssa();
-
 {
+ bcstream.emitnopssa();
+ bcstream.emitnopssa();
+ bcstream.emitnopssa();
+}
+
   bcstream.emitgetelementptr(bcstream.ssaval(managedtemparrayid),
                                          bcstream.constval(voffset)); //2ssa
-  bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer)); 
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer)); 
                                                                       //1ssa
   bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
-}
+
  end;
 end;
 

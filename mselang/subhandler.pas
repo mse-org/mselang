@@ -1448,9 +1448,10 @@ begin
   d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
   managedtempref:= d.subdef.varsize;
   managedtemparrayid:= locallocid;  
+  managedtempchain:= 0;
+  managedtempcount:= 0;
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
-  managedtempcount:= 0;
   if d.subdef.match <> 0 then begin
    po2:= ele.eledataabs(d.subdef.match);    
    if co_llvm in o.compileoptions then begin
@@ -1598,7 +1599,7 @@ begin
   end;
   resetssa();
   addsubbegin(oc_subbegin,po1);
-  tempoffset:= locdatapo;
+  stacktempoffset:= locdatapo;
  {
   if d.subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
@@ -1642,7 +1643,9 @@ begin
   end;
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_fini,po1^.paramfinichain,s.stacktop);
-  end;          
+  end;
+  writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
+  deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*sizeof(pointer); 
               //todo: target pointer size
   varsize1:= managedtempsize1+d.subdef.varsize;

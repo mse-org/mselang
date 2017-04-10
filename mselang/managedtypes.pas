@@ -18,18 +18,34 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,handlerglob,opglob,opcode,grammar;
+ globtypes,parserglob,handlerglob,opglob,opcode,grammar,listutils;
+ 
+type
+ managedtempitemty = record
+  header: linkheaderty;
+  typ: elementoffsetty;
+  index: int32;
+//  entry: int32;  //index of op_pushcpucontext
+//  links: linkindexty;
+ end;
+ pmanagedtempitemty = ^managedtempitemty;
+var
+ managedtemplist: linklistty;
  
 const
  managedopids: array[managedopty] of identty = (
                //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi,
                 tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
                );
+
               //todo: check ssaindex
 procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
                                                   const acontextindex: int32);
 procedure writemanagedvarop(const op: managedopty;
-                            const chain: elementoffsetty;
+                            const chain: elementoffsetty; //vardataty
+                                                    const acontextindex: int32);
+procedure writemanagedtempop(const op: managedopty;
+                            const achain: listadty; //managettempitem
                                                     const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                     const aaddress: addressvaluety; const acontextindex: int32);
@@ -538,6 +554,40 @@ begin
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
+ end;
+end;
+
+procedure writemanagedtempop(const op: managedopty;
+                            const achain: listadty; //managettempitem
+                                                    const acontextindex: int32);
+var
+ ad1: listadty;
+ po2: pointer;
+ po1: pmanagedtempitemty;
+ ref1: addressrefty;
+begin
+ if achain <> 0 then begin
+  ref1.contextindex:= acontextindex;
+  ref1.offset:= 0;
+  ref1.kind:= ark_local;
+  if co_llvm in info.o.compileoptions then begin
+   ref1.address:= info.managedtemparrayid;
+  end;
+
+  ad1:= achain;
+  po2:= managedtemplist.list;
+  while ad1 <> 0 do begin
+   po1:= po2+ad1;
+   if co_llvm in info.o.compileoptions then begin
+    setimmint32(po1^.index*pointersize,ref1.offset);
+   end
+   else begin
+    ref1.address:= info.managedtempref+po1^.index*pointersize;
+   end;
+   ref1.typ:= ele.eledataabs(po1^.typ);
+   writemanagedtypeop(mo_decref,ref1.typ,ref1);
+   ad1:= po1^.header.next;
+  end;
  end;
 end;
 
