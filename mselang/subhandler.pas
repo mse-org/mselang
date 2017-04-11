@@ -758,6 +758,10 @@ begin
            currentscopemeta,getidentname2(aname),
               s.currentfilemeta,s.source.line,-1,m1,[],true));
   end;
+  managedtempref:= 0;
+  managedtemparrayid:= locallocid;  
+  managedtempchain:= 0;
+  managedtempcount:= 0;
   resetssa();
   result:= opcount;
   simplesubstart:= opcount;
@@ -780,12 +784,12 @@ begin
      end;
     end;
     subbegin.sub.llvm.managedtemptypeid:= 0;
-    subbegin.sub.llvm.managedtempcount:= 0; //constid
-    subbegin.sub.llvm.blockcount:= 1; //will be updated in endsimplesub()
+//    subbegin.sub.llvm.managedtempcount:= 0; //constid
+//    subbegin.sub.llvm.blockcount:= 1; //will be updated in endsimplesub()
    end
    else begin
-    subbegin.sub.stackop.varsize:= 0;
-    subbegin.sub.stackop.managedtempsize:= 0;
+//    subbegin.sub.stackop.varsize:= 0;
+//    subbegin.sub.stackop.managedtempsize:= 0;
    end;
    subbegin.sub.flags:= [];
  //  sub.flags:= [sf_nolineinfo];
@@ -829,11 +833,34 @@ begin
 end;
 
 procedure endsimplesub(const pointerparam: boolean);
+var
+ managedtempsize1: int32;
 begin
  with info do begin
-  with getitem(simplesubstart)^.par do begin
+  writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
+  deletelistchain(managedtemplist,managedtempchain);
+  managedtempsize1:= managedtempcount*pointersize; 
+  with getitem(simplesubstart)^ do begin
    if co_llvm in o.compileoptions then begin
-    subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+    if managedtempsize1 > 0 then begin
+     par.subbegin.sub.llvm.managedtemptypeid:= 
+         info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
+                                            managedtempsize1,ord(das_8));
+     setimmint32(managedtempcount,par.subbegin.sub.llvm.managedtempcount);
+    end
+    else begin
+     par.subbegin.sub.llvm.managedtemptypeid:= 0;
+    end;
+    par.subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+   end
+   else begin
+    par.subbegin.sub.stackop.managedtempsize:= managedtempsize1;
+    par.subbegin.sub.stackop.varsize:= managedtempsize1;
+   end;
+  end;
+  if managedtempsize1 <> 0 then begin
+   with additem(oc_locvarpop)^ do begin
+    par.stacksize:= managedtempsize1;
    end;
   end;
  end;
@@ -849,6 +876,10 @@ begin
   par.subend.submeta:= info.currentscopemeta;
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
+ end;
+ with info do begin
+  deletelistchain(trystacklist,s.trystack); //normally already empty
+  s.trystacklevel:= 0;
  end;
  if do_proginfo in info.s.debugoptions then begin
   popcurrentscope();
@@ -1655,8 +1686,7 @@ begin
   end;
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
-  managedtempsize1:= managedtempcount*sizeof(pointer); 
-              //todo: target pointer size
+  managedtempsize1:= managedtempcount*pointersize; 
   varsize1:= managedtempsize1+d.subdef.varsize;
   if varsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin

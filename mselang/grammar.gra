@@ -26,6 +26,8 @@
  'constructor'.,*
  'destructor'.,*
  'end'.,*
+ 'initialization'.,*
+ 'finalization'.,*
 "
 {blockends}
 " 'end'.,blockend

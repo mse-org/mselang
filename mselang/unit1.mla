@@ -1,20 +1,18 @@
 unit unit1;
 interface
-procedure test();
 implementation
-
-procedure test();
-begin
- exitcode:= 123;
-end;
-
-//{$internaldebug on}
-{
-initialization
-
- exitcode:= 33;
-
+{$internaldebug on}
+var
+ s1,s2: string8;
+ b1: boolean;
 finalization
- exitcode:= 33;
-} 
+
+ s1:= 'abc';
+
+ b1:= 'abcabc' = s1+s2+s1;
+
+ if b1 then begin
+  exitcode:= 123;
+ end;
+
 end.

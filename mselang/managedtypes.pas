@@ -569,7 +569,7 @@ begin
  if achain <> 0 then begin
   ref1.contextindex:= acontextindex;
   ref1.offset:= 0;
-  ref1.kind:= ark_localaggregate;
+  ref1.kind:= ark_managedtemp;
   if co_llvm in info.o.compileoptions then begin
    ref1.address:= info.managedtemparrayid;
   end;

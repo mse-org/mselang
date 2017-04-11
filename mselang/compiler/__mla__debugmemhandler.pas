@@ -42,7 +42,7 @@ begin
  free(ptr);
  dec(alloccount);
 end;
-{$internaldebug on}
+
 finalization
  if alloccount <> 0 then begin
   writeln('********** Memory alloc error ',alloccount,' blocks');
