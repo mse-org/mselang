@@ -724,6 +724,7 @@ type
   managedtemparrayid: int32;
   frameoffset: targetcardty;
   stacktempoffset: targetcardty;
+  simplesubstart: opaddressty;
   
   currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;

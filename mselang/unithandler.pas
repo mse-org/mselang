@@ -19,12 +19,7 @@ unit unithandler;
 interface
 uses
  globtypes,mselinklist,listutils,msestrings,parserglob,opglob,elements,
- handlerglob,msetypes;
-
-const
-// systemunitname = '__mla__system';
- systemunitname = 'system';
- compilerunitname = '__mla__compilerunit';
+ handlerglob,msetypes,compilerunit;
 
 type
  philistitemty = record
@@ -179,7 +174,7 @@ implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
- {stackops,}segmentutils,classhandler,compilerunit,managedtypes,llvmbitcodes,
+ {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,
  unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler;
  
 type
@@ -804,7 +799,7 @@ begin
   end;
   inc(info.unitlevel);
   result:= parseusesunit(aunit);
-  if result and (aname = compilerunitname) then begin
+  if result then begin
    initcompilersubs(aunit);
   end;
   dec(info.unitlevel);

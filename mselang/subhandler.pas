@@ -760,8 +760,10 @@ begin
   end;
   resetssa();
   result:= opcount;
+  simplesubstart:= opcount;
   with additem(oc_subbegin)^.par do begin
    subbegin.subname:= result;
+   
    if co_llvm in o.compileoptions then begin
     with s.unitinfo^ do begin
      if pointerparam then begin
@@ -779,7 +781,7 @@ begin
     end;
     subbegin.sub.llvm.managedtemptypeid:= 0;
     subbegin.sub.llvm.managedtempcount:= 0; //constid
-    subbegin.sub.llvm.blockcount:= 1;
+    subbegin.sub.llvm.blockcount:= 1; //will be updated in endsimplesub()
    end
    else begin
     subbegin.sub.stackop.varsize:= 0;
@@ -828,6 +830,13 @@ end;
 
 procedure endsimplesub(const pointerparam: boolean);
 begin
+ with info do begin
+  with getitem(simplesubstart)^.par do begin
+   if co_llvm in o.compileoptions then begin
+    subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+   end;
+  end;
+ end;
  with additem(oc_return)^ do begin
   if pointerparam then begin
    par.stacksize:= pointersize + sizeof(frameinfoty);

@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ type
   params: pparamsty;
  end;
  internalfuncty = (if_printf,
-                   if_malloc,if_free,if_calloc,if_realloc,if_memset,if_memcpy,
+                   {if_malloc,if_free,if_calloc,}if_realloc,if_memset,if_memcpy,
                    if__exit,
                    if_sin64);
 const
@@ -120,9 +120,9 @@ const
 //todo: use llvm intinsics where possible 
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
   (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
-  (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
-  (name: 'free'; flags: [sf_proto]; params: @freeparams),
-  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
+//  (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
+//  (name: 'free'; flags: [sf_proto]; params: @freeparams),
+//  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'realloc'; flags: [sf_proto,sf_function]; params: @reallocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
   (name: 'memcpy'; flags: [sf_proto,sf_function]; params: @memcpyparams),
@@ -3687,8 +3687,9 @@ end;
 procedure destroyclassop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
-                                                    [bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_free,false,[bcstream.ssaval(ssas1)]);
+//  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
+//                                                    [bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -3861,8 +3862,9 @@ end;
 procedure getmemop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_malloc]),
-                                                    [bcstream.ssaval(ssas2)]);
+  callcompilersub(cs_malloc,true,[bcstream.ssaval(ssas2)]);
+//  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_malloc]),
+//                                                    [bcstream.ssaval(ssas2)]);
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
@@ -3871,8 +3873,10 @@ end;
 procedure getzeromemop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
-               [bcstream.ssaval(ssas2),bcstream.constval(i32consts[1])]);
+  callcompilersub(cs_calloc,true,[bcstream.ssaval(ssas2),
+                                         bcstream.constval(i32consts[1])]);
+//  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
+//               [bcstream.ssaval(ssas2),bcstream.constval(i32consts[1])]);
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
@@ -3881,8 +3885,9 @@ end;
 procedure freememop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
-                                                    [bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_free,false,[bcstream.ssaval(ssas1)]);
+//  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
+//                                                    [bcstream.ssaval(ssas1)]);
  end;
 end;
 

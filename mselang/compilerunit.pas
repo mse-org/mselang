@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,9 +19,18 @@ unit compilerunit;
 interface
 uses
  globtypes,parserglob;
+
+const
+// systemunitname = '__mla__system';
+ systemunitname = 'system';
+ memhandlerunitname = '__mla__debugmemhandler';
+ compilerunitname = '__mla__compilerunit';
  
 type
  compilersubty = (
+  cs_malloc,
+  cs_calloc,
+  cs_free,
   cs_zeropointerar,
   cs_increfsize,
   cs_decrefsize,
@@ -74,6 +83,9 @@ type
  );
 const
  compilersubnames: array[compilersubty] of string = (
+  '__mla__malloc',
+  '__mla__calloc',
+  '__mla__free',
   '__mla__zeropointerar',
   '__mla__increfsize',
   '__mla__decrefsize',
@@ -137,16 +149,30 @@ uses
  
 procedure initcompilersubs(const aunit: punitinfoty);
 var
- sub1: compilersubty;
+ s1,se: compilersubty;
+ 
 begin
+ if aunit^.namestring = compilerunitname then begin
+  s1:= cs_zeropointerar;
+  se:= cs_personality;
+ end
+ else begin
+  if aunit^.namestring = memhandlerunitname then begin
+   s1:= cs_malloc;
+   se:= cs_free;
+  end
+  else begin
+   exit;
+  end;
+ end;
  ele.pushelementparent(aunit^.interfaceelement);
- for sub1:= low(compilersubty) to high(compilersubty) do begin
-  if not ele.findcurrent(getident(compilersubnames[sub1]),[ek_sub],allvisi,
-                                              compilersubs[sub1]) then begin
+ for s1:= s1 to se do begin
+  if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
+                                              compilersubs[s1]) then begin
    internalerror1(ie_parser,'20141031A');
   end;
-  compilersubids[sub1]:= psubdataty(ele.eledataabs(
-       psubdataty(ele.eledataabs(compilersubs[sub1]))^.impl))^.globid;  
+  compilersubids[s1]:= psubdataty(ele.eledataabs(
+       psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;  
  end;
  ele.popelementparent();
 end;

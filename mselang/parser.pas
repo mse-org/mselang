@@ -61,7 +61,7 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils;
+ identutils,compilerunit;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -1121,7 +1121,8 @@ begin
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= po1;
      if not (co_nocompilerunit in aoptions) then begin
-      result:= parsecompilerunit(compilerunitname,unit2);
+      result:= parsecompilerunit(memhandlerunitname,unit2) and
+               parsecompilerunit(compilerunitname,unit2);
      end;
      if result then begin
       result:= parseunit(input,unit1,false);
