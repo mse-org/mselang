@@ -1020,7 +1020,7 @@ var                       //todo: move after doparam
         err1:= true;
         internalerror1(ie_parser,'20150212A');
        end;
-       inc(paramsize1,si1);
+       inc(paramsize1,alignsize(si1));
        inc(curparam);
       end;
      end;
