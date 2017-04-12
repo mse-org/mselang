@@ -206,6 +206,7 @@ type
    flandingpad: int32;
    fmetadata: int32;
    fvoid: int32;
+   fpointerid: int32;
 //   fsimplesub: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitem: phashdataty): boolean override;
@@ -235,6 +236,7 @@ type
    property landingpad: int32 read flandingpad;
    property metadata: int32 read fmetadata;
    property void: int32 read fvoid;
+   property pointerid: int32 read fpointerid;
 //   property simplesub: int32 read fsimplesub; //no params, 
 //                                         //for initialization, finalizition
  end;
@@ -385,6 +387,7 @@ type
    fnamelist: tglobnamelist;
    flinklist: tlinklist;
    flastitem: pgloballocdataty;
+   fgetexceptionpointer: int32;
   protected
    procedure inccount();
    function addnoinit(const atyp: int32; const alinkage: linkagety;
@@ -433,6 +436,7 @@ type
    property namelist: tglobnamelist read fnamelist;
    property linklist: tlinklist read flinklist;
    property lastitem: pgloballocdataty read flastitem;
+   property getexceptionpointer: int32 read fgetexceptionpointer;
  end;
 
 const
@@ -1907,6 +1911,8 @@ procedure tgloballocdatalist.clear;
 begin
  inherited;
  fnamelist.clear();
+// fgetexceptionpointer:= addexternalsubvalue(
+//                 [ftypelist.pointerid],getidentname('llvm.eh.padparam.pNi8'));
 end;
 
 procedure tgloballocdatalist.inccount();

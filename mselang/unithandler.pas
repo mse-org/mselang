@@ -1793,19 +1793,27 @@ end;
 
 function endunit(const aunit: punitinfoty): boolean;
 var
- m1: metavaluety;
+ m1,m2: metavaluety;
  po1: pdicompileunitty;
 begin
  result:= true;
  with info do begin
   if (do_proginfo in s.debugoptions) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
-    po1:= getdata(aunit^.compileunitmeta);
+    m1.id:= -1;
+    m2.id:= -1;
     if aunit^.subprograms.count > 0 then begin
-     po1^.subprograms:= addnode(aunit^.subprograms);
+     m1:= addnode(aunit^.subprograms);
     end;
     if aunit^.globalvariables.count > 0 then begin
-     po1^.globalvariables:= addnode(aunit^.globalvariables);
+     m2:= addnode(aunit^.globalvariables);
+    end;
+    po1:= getdata(aunit^.compileunitmeta);
+    if m1.id >= 0 then begin
+     po1^.subprograms:= m1;
+    end;
+    if m2.id >= 0 then begin
+     po1^.globalvariables:= m2;
     end;
    end;
   end;

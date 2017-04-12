@@ -2806,6 +2806,7 @@ begin
   wrappererror();
  end;
  exitcode:= 0;
+ system.flush(system.output);
 end;
 
 procedure tllvmbcreader.align32();

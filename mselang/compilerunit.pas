@@ -174,9 +174,11 @@ begin
   if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
                                               compilersubs[s1]) then begin
    internalerror1(ie_parser,'20141031A');
+  end
+  else begin
+   compilersubids[s1]:= psubdataty(ele.eledataabs(
+       psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
   end;
-  compilersubids[s1]:= psubdataty(ele.eledataabs(
-       psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;  
  end;
  ele.popelementparent();
 end;
