@@ -231,25 +231,10 @@ begin
     endsimplesub(false);
    end;
   end;
-  s.unitinfo^.mainad:= opcount;
-  with getoppo(startupoffset)^ do begin
-   par.beginparse.mainad:= opcount;
-  end;
-  resetssa();
-  with contextstack[s.stackindex] do begin
-   d.kind:= ck_prog;
-   d.prog.blockcountad:= info.opcount;
-  end;
-  with additem(oc_main)^ do begin
-   //blockcount set in handleprogblock() 
-   par.main.exitcodeaddress:= getexitcodeaddress();
-  end;
+
   if co_llvm in o.compileoptions then begin
    n1:= getidentname2(getident('main'));
    i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
-//   m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
-//                                          gettype(m1.value.listid);
-//   m1.flags:= [mvf_globval,mvf_pointer];
    if do_proginfo in info.s.debugoptions then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
@@ -259,10 +244,41 @@ begin
            llvmlists.metadatalist.adddisubroutinetype(nil{,
                       filepathmeta,s.currentscopemeta}),[flagprototyped],false);
      pushcurrentscope(mainsubmeta);
-//     setcurrentscope(mainsubmeta);
     end;
    end;
   end;
+
+  s.unitinfo^.mainad:= opcount;
+  with getoppo(startupoffset)^ do begin
+   par.beginparse.mainad:= opcount;
+  end;
+  resetssa();
+  with contextstack[s.stackindex] do begin
+   d.kind:= ck_prog;
+   d.prog.blockcountad:= info.opcount;
+  end;
+
+  with additem(oc_main)^ do begin
+   //blockcount set in handleprogblock() 
+   par.main.exitcodeaddress:= getexitcodeaddress();
+  end;
+(*
+  if co_llvm in o.compileoptions then begin
+   n1:= getidentname2(getident('main'));
+   i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
+   if do_proginfo in info.s.debugoptions then begin
+    with info.s.unitinfo^ do begin
+     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
+           info.{s.}currentscopemeta,
+           n1,info.s.currentfilemeta,
+           info.contextstack[info.s.stackindex].start.line+1,i1,
+           llvmlists.metadatalist.adddisubroutinetype(nil{,
+                      filepathmeta,s.currentscopemeta}),[flagprototyped],false);
+     pushcurrentscope(mainsubmeta);
+    end;
+   end;
+  end;
+*) 
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls

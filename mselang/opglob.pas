@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -810,6 +810,7 @@ type
  
  progendty = record
   exitcodeaddress: segaddressty;
+  submeta: metavaluety;
  end;
  compopkindty = (cok_eq,cok_ne,cok_gt,cok_lt,cok_ge,cok_le);
 

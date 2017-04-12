@@ -537,7 +537,7 @@ end;
 
 procedure mainop();
 begin
- with pc^.par do begin //todo: managedtemps
+ with pc^.par do begin
   bcstream.beginsub([]{false},nullallocs,main.llvm.blockcount);
   if main.llvm.managedtemptypeid <> 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(main.llvm.managedtemptypeid)); //1ssa
@@ -559,8 +559,13 @@ var
 begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
+  bcstream.emitretop(bcstream.ssaindex-1);
+  if do_proginfo in info.o.debugoptions then begin
+   bcstream.beginblock(METADATA_ATTACHMENT_ID,3);
+   bcstream.emitsubdbg(progend.submeta.id);
+   bcstream.endblock();
+  end;
  end;
- bcstream.emitretop(bcstream.ssaindex-1);
  bcstream.endsub();
 end;
 
@@ -3844,14 +3849,22 @@ begin
  with pc^.par do begin
   bcstream.landingpad:= opaddress.bbindex;
   bcstream.emitlandingpad(bcstream.typeval(
-                         info.s.unitinfo^.llvmlists.typelist.landingpad),
-                       bcstream.globval(compilersubids[cs_personality]));
+                  info.s.unitinfo^.llvmlists.typelist.landingpad),
+                       bcstream.globval(compilersubids[cs_personality])); //1ssa
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.landingpadtype)); //1ssa
+  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
 
 procedure finiexceptionop();
 begin
-// notimplemented();
+ with pc^.par do begin
+  bcstream.emitgetelementptr(ssas1,bcstream.constval(0)); //2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+                                                          //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                //1ssa
+  callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure continueexceptionop();
@@ -4450,8 +4463,8 @@ const
 
   raisessa = 0;
   pushcpucontextssa = 0;
-  popcpucontextssa = 1;
-  finiexceptionssa = 0;
+  popcpucontextssa = 2;
+  finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;
   getzeromemssa = 2;

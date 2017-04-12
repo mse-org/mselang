@@ -1120,9 +1120,11 @@ begin
      po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= po1;
-     if not (co_nocompilerunit in aoptions) then begin
-      result:= parsecompilerunit(memhandlerunitname,unit2) and
-               parsecompilerunit(compilerunitname,unit2);
+     if result and not (co_nocompilerunit in aoptions) then begin
+      result:= parsecompilerunit(memhandlerunitname,unit2);
+      if result  then begin
+       result:= parsecompilerunit(compilerunitname,unit2);
+      end;
      end;
      if result then begin
       result:= parseunit(input,unit1,false);

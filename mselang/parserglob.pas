@@ -233,6 +233,7 @@ type
 // identkindty = (ik_param); 
  blockinfoty = record
   blockidbefore: int32;
+  landingpad: int32; //ssa
  end;
  
  identinfoty = record

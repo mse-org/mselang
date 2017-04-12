@@ -1,17 +1,30 @@
-program stringconcat;
-procedure test();
+program raise2;
 
-var
- s1,s2: string8;
- bo1: boolean;
+type
+ tc = class
+  public
+//   constructor create();
+//   destructor destroy();
+ end;
+{
+constructor tc.create();
 begin
- s1:= 'abc';
- bo1:= 'abcabc' = s1+s2+s1;
- if bo1 then begin
+end;
+destructor tc.destroy();
+begin
+end;
+procedure test();
+begin
+ raise tc.create();
+end;
+}
+begin
+{$internaldebug on}
+{
+ try
+  test();
+ except
   exitcode:= 123;
  end;
-end;
-
-begin
- test();
+}
 end.

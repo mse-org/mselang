@@ -67,6 +67,7 @@ type
    ftriple: string;
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
+   flandingpadtype: int32;
    fpointertype: int32;
    fpointersizeconst: int32;
    fconstseg: int32;
@@ -210,6 +211,7 @@ type
                                //for load/store, 3 ssa
 
    procedure emitptroffset(const avalue: int32; const aoffset: int32);
+//   procedure emitgetelement(const avalue: int32; const aindex: int32);
    procedure emitgetelementptr(const avalue: int32;
                                               const aoffset: int32);
                                          //aoffset = byteoffset, 2 ssa
@@ -261,6 +263,7 @@ type
 //   procedure emitmetadatafnnonde(const avalue,atype: int32);
    function valindex(const aadress: segaddressty): integer;
    property pointertype: int32 read fpointertype;
+   property landingpadtype: int32 read flandingpadtype;
    property pointersizeconst: int32 read fpointersizeconst;
    property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
@@ -472,6 +475,7 @@ begin
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
+ flandingpadtype:= consts.typelist.landingpad;
  fpointersizeconst:= consts.pointersize;
  fpointertype:= ptypeval(das_8);
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
@@ -1607,7 +1611,16 @@ begin
  checkdebugloc();
  inc(fsubopindex);
 end;
-
+{
+procedure tllvmbcwriter.emitgetelement(const avalue: int32;
+                              const atype: int32; const aindex: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_GEP),[0,atype,
+                                  fsubopindex-avalue,fsubopindex-aindex]);
+ checkdebugloc();
+ inc(fsubopindex);
+end;
+}
 procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
                                                    const aoffset: int32);
 begin
@@ -2190,6 +2203,8 @@ begin                        //todo: use FUNC_CODE_INST_LANDINGPAD,
                              //set personality in function definitions
  emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
                                    [aresulttype,fsubopindex-apersonality,1,0]);
+// emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
+//                                   [aresulttype,fsubopindex-apersonality,1,0]);
  inc(fsubopindex);
 end;
 

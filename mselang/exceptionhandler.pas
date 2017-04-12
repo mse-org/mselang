@@ -85,8 +85,9 @@ begin
    else begin
     par.opaddress.bbindex:= 0;
    end;
+   newblockcontext(0);
+   info.contextstack[info.s.stackindex].d.block.landingpad:= par.ssad;
   end;
-  newblockcontext(0);
  end;
 end;
 
@@ -148,6 +149,7 @@ begin
                                       //skip exception handling code
   addlabel();
   with additem(oc_finiexception)^ do begin
+   par.ssas1:= contextstack[s.stackindex].d.block.landingpad;
   end;
 //  dec(s.stackindex,1);
  end; 

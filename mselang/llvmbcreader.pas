@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2015-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2015-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2301,6 +2301,11 @@ begin
        end;
       end;
       FUNC_CODE_INST_LANDINGPAD: begin
+       checkmindatalen(rec1,5);
+       outssarecord(rec1[2],opname(rec1[3])+','+inttostr(rec1[4])+
+                                                      ','+inttostr(rec1[5]));
+      end;
+      FUNC_CODE_INST_LANDINGPAD_OLD: begin
        checkmindatalen(rec1,5);
        outssarecord(rec1[2],opname(rec1[3])+','+inttostr(rec1[4])+
                                                       ','+inttostr(rec1[5]));

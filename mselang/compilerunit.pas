@@ -78,8 +78,10 @@ type
   cs_highopenarray,
   cs_highstring,
   cs_initclass,
+  cs_finiclass,
   cs_raise,
-  cs_personality
+  cs_personality,
+  cs_finiexception
  );
 const
  compilersubnames: array[compilersubty] of string = (
@@ -133,8 +135,10 @@ const
   '__mla__highopenarray',
   '__mla__highstring',
   '__mla__initclass',
+  '__mla__finiclass',
   '__mla__raise',
-  '__mla__personality'
+  '__mla__personality',
+  '__mla__finiexception'
  );
  
 var
@@ -154,7 +158,7 @@ var
 begin
  if aunit^.namestring = compilerunitname then begin
   s1:= cs_zeropointerar;
-  se:= cs_personality;
+  se:= high(compilersubnames);
  end
  else begin
   if aunit^.namestring = memhandlerunitname then begin

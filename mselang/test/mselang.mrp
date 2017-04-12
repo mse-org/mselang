@@ -1580,7 +1580,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=32
     (
     kind=2
@@ -2720,7 +2720,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=12
     (
     kind=2
@@ -3132,7 +3132,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,665,5,exception
    c=6
     (
     kind=2
@@ -3151,7 +3151,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72A9C18
+    ao=An unhandled exception occured at $B72099A4
     ae=
     aec=123
     ie=0
@@ -3202,8 +3202,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise2 llvm
-    teststate=1
+    a=0,648,2,raise2 llvm
+    teststate=2
     path=raise2.mla
     comment=
     cc=${mlc_llvm}
@@ -3217,7 +3217,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=********** Memory alloc error 2 blocks
     ae=
     aec=123
     ie=0
@@ -3246,8 +3246,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise3 llvm
-    teststate=1
+    a=0,648,2,raise3 llvm
+    teststate=2
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -3261,12 +3261,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=********** Memory alloc error 2 blocks
     ae=
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=exception/
    comment=
    cc=
@@ -4707,8 +4707,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,chartostring llvm
-    teststate=1
+    a=0,648,2,chartostring llvm
+    teststate=2
     path=chartostring.mla
     comment=
     cc=${mlc_llvm}
@@ -4723,6 +4723,7 @@ c=3
     eec=0
     cr=0
     ao=a
+    +********** Memory alloc error 1 blocks
     ae=
     aec=0
     ie=0
@@ -4751,8 +4752,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,stringconcat llvm
-    teststate=1
+    a=0,648,2,stringconcat llvm
+    teststate=2
     path=stringconcat.mla
     comment=
     cc=${mlc_llvm}
@@ -4766,7 +4767,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=********** Memory alloc error 2 blocks
     ae=
     aec=123
     ie=0
@@ -6102,7 +6103,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=12
     (
     kind=2
@@ -6598,7 +6599,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=26
    (
    kind=1
@@ -8587,7 +8588,7 @@ c=3
   (
   kind=1
   a=0,665,4,units
-  c=4
+  c=6
    (
    kind=2
    a=0,648,1,unituses1
@@ -8659,6 +8660,50 @@ c=3
    a=0,648,1,unituses2 llvm
    teststate=1
    path=unituses2.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=${FILE_NONAME(${file})}
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,finalization1
+   teststate=1
+   path=finalization1.mla
+   comment=
+   cc=${mlc}
+   cd=${FILE_NONAME(${file})}
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,finalization1 llvm
+   teststate=1
+   path=finalization1.mla
    comment=
    cc=${mlc_llvm}
    cd=${FILE_NONAME(${file})}
@@ -8965,105 +9010,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=161
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=63
  0 0
  0 0
  0 0

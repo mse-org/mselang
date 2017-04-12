@@ -84,7 +84,9 @@ function __mla__highopenarray(ref: popenarrayty): int32;
 function __mla__highstring(ref: pointer): int32;
 
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
+procedure __mla__finiclass(const instance: pointer);
 procedure __mla__raise(const data: pointer);
+procedure __mla__finiexception(const data: pointer);
 function __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionclass: _Unwind_Exception_Class;
@@ -1339,6 +1341,11 @@ begin
  until po1 = nil;
 end;
 
+procedure __mla__finiclass(const instance: pointer);
+begin
+ freemem(instance); //todo: class.destroy
+end;
+
 procedure exceptioncleanup(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
 begin
@@ -1357,8 +1364,17 @@ begin  //todo: handle out of memory situation
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
  freemem(po1);
+ __mla__finiclass(data);
  exitcode:= exco_unhandledexception; //no handler found
  halt();
+end;
+
+procedure __mla__finiexception(const data: pointer);
+begin
+ with pexceptinfoty(data)^ do begin
+  __mla__finiclass(data);
+ end;
+ freemem(data);
 end;
 
 function readusleb128(var adata: pointer): ptrint;
