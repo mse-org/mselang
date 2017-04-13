@@ -3151,7 +3151,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72099A4
+    ao=An unhandled exception occured at $B72D7EF4
     ae=
     aec=123
     ie=0
@@ -3217,9 +3217,11 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=********** Memory alloc error 2 blocks
-    ae=
-    aec=123
+    ao=
+    ae=/tmp/ccd6qUIY.o: In function `main':
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise2.bc:(.text+0x290b): undefined reference to `llvm.eh.padparam.pNi8'
+    +collect2: error: ld returned 1 exit status
+    aec=1
     ie=0
     )
     (
@@ -3261,9 +3263,11 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=********** Memory alloc error 2 blocks
-    ae=
-    aec=123
+    ao=
+    ae=/tmp/ccD4utAc.o: In function `main':
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise3.bc:(.text+0x28ff): undefined reference to `llvm.eh.padparam.pNi8'
+    +collect2: error: ld returned 1 exit status
+    aec=1
     ie=0
     )
    teststate=2
@@ -4790,7 +4794,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
+   a=0,665,5,sub
    c=36
     (
     kind=1
@@ -5254,8 +5258,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,external llvm
-    teststate=1
+    a=0,648,2,external llvm
+    teststate=2
     path=external.mla
     comment=
     cc=${mlc_llvm}
@@ -5270,8 +5274,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 17716 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
@@ -5846,7 +5850,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -9010,7 +9014,43 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=63
+rowstate=99
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

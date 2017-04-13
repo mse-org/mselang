@@ -153,9 +153,11 @@ type
     MODULE_CODE_GLOBALVAR,//   = 7,
                    //mse: bit 2 of isconst is explicitType flag -> 
                    //      type is base type
-    // FUNCTION:  [type, callingconv, isproto, linkage, paramattrs, alignment,
-    //             section, visibility, gc, unnamed_addr]
-                                      //mse: there are more items
+    // FUNCTION:  [type, callingconv, isproto, linkage, paramattr,
+    //             alignment, section, visibility, gc, unnamed_addr,
+    //             prologuedata, dllstorageclass, comdat, prefixdata,
+    //             personality]
+
     MODULE_CODE_FUNCTION,//    = 8,
 
     // ALIAS: [alias type, aliasee val#, linkage, visibility]
