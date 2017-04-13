@@ -4,7 +4,7 @@ value=mabmod
 value=4
 [mainfo.grid]
 propcolwidthref=208
-values0=15
+values0=16
  sub
  
  
@@ -20,8 +20,9 @@ values0=15
  
  
  
+ 
 sortdescend0=0
-values1=15
+values1=16
  0
  2
  2
@@ -37,9 +38,10 @@ values1=15
  0
  0
  0
+ 2
 values1_ci=-1
 sortdescend1=0
-values2=15
+values2=16
  8
  6
  6
@@ -55,9 +57,10 @@ values2=15
  0
  0
  0
+ 6
 values2_ci=-1
 sortdescend2=0
-values3=15
+values3=16
  MODULE_CODE_FUNCTION
  type
  callingconv
@@ -73,6 +76,7 @@ values3=15
  dllstorageclass
  comdat
  prefixdata
+ personality
 sortdescend3=0
 [mainfo.idsize]
 value=3

@@ -75,6 +75,7 @@ procedure tryhandle();
 begin
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
+//  addlabel();
   with additem(oc_popcpucontext)^ do begin
    if info.s.trystacklevel > 1 then begin //restore parent landingpad
     with ptrystackitemty(

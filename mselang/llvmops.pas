@@ -487,7 +487,9 @@ begin
   with llvmlists do begin
    bcstream.start(constlist,globlist,metadatalist,unitheader1,
                      'e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128',
-                     'i386-unknown-linux-gnu'); //todo: real values
+                     'i386-unknown-linux-gnu',
+                      //todo: real values
+                                           compilersubids[cs_personality]);
   end;
   if do_proginfo in info.o.debugoptions then begin
    bcstream.beginblock(METADATA_KIND_BLOCK_ID,3);
@@ -3840,14 +3842,14 @@ end;
 procedure pushcpucontextop();
 begin
  with pc^.par do begin
-  bcstream.landingpad:= opaddress.bbindex;
+  bcstream.landingpadblock:= opaddress.bbindex;
  end;
 end;
 
 procedure popcpucontextop();
 begin
  with pc^.par do begin
-  bcstream.landingpad:= opaddress.bbindex;
+  bcstream.landingpadblock:= opaddress.bbindex;
   bcstream.emitlandingpad(bcstream.typeval(
                   info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality])); //1ssa
@@ -3860,9 +3862,13 @@ procedure finiexceptionop();
 begin
  with pc^.par do begin
   bcstream.emitgetelementptr(ssas1,bcstream.constval(0)); //2ssa
-  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+  bcstream.emitbitcast(bcstream.relval(0),
+              bcstream.ptypeval(bcstream.landingpadtype));
                                                           //1ssa
   bcstream.emitloadop(bcstream.relval(0));                //1ssa
+  bcstream.emitcallop(true,bcstream.globval(bcstream.getexceptionpointer),
+                                                      [bcstream.relval(0)]);
+                                                          //1ssa
   callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
  end;
 end;
@@ -4464,7 +4470,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 2;
-  finiexceptionssa = 4;
+  finiexceptionssa = 5;
   continueexceptionssa = 0;
   getmemssa = 2;
   getzeromemssa = 2;

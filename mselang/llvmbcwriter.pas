@@ -124,7 +124,7 @@ type
                     const metadata: tmetadatalist;
                     const unitheader: bcunitinfoty;
                     const adatalayout: string;
-                    const atriple: string);
+                    const atriple: string; const apersonality: int32);
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
@@ -165,13 +165,8 @@ type
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const aflags: subflagsty;
-               const alinkage: linkagety; const aparamattr: int32{;
-               const aalignment: int32; const asection: int32;
-               const avisibility: visibility; const agc: int32;
-               const unnamed_addr: int32;
-               const aprologdata: int32;
-               const adllstorageclass: dllstorageclassty; const acomdat: int32;
-               const aprefixdata: int32});
+               const alinkage: linkagety; const aparamattr: int32;
+               const apersonality: int32);
    procedure emitsubdbg(const avalue: int32);
    procedure emitvar(const atype: int32; const alinkage: linkagety);
    procedure emitvar(const atype: int32; const ainitconst: int32;
@@ -286,11 +281,11 @@ uses
  
 type
  mabmodty = (
-  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (fixed 1), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (fixed 1), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0), personality (vbr 6)
  );
 const
- mabmodsdat: array[0..17] of card8 = (122,17,200,144,145,64,134,76,128,0,1,2,4,8,16,32,64,0);
- mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
+ mabmodsdat: array[0..19] of card8 = (130,33,2,25,50,18,200,144,9,16,32,64,128,0,1,2,4,8,64,6);
+ mabmods: bcdataty = (bitsize: 157; data: @mabmodsdat);
 
 type
  mabconstty = (
@@ -432,7 +427,8 @@ procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                               const metadata: tmetadatalist;
                               const unitheader: bcunitinfoty;
                               const adatalayout: string;
-                              const atriple: string);
+                              const atriple: string;
+                              const apersonality: int32);
 var
  id1: int32;
  
@@ -632,7 +628,8 @@ begin
   while pga5 < pgae do begin
    case pga5^.kind of
     gak_sub: begin
-     emitsub(pga5^.typeindex,cv_ccc,pga5^.flags,pga5^.linkage,0);
+     emitsub(pga5^.typeindex,cv_ccc,pga5^.flags,pga5^.linkage,0,
+     apersonality+1);
     end;
     gak_const: begin
      emitconst(pga5^.typeindex,pga5^.initconstindex);
@@ -1416,7 +1413,7 @@ end;
 procedure tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty;
                const aflags: subflagsty; const alinkage: linkagety;
-               const aparamattr: int32);
+               const aparamattr: int32; const apersonality: int32);
 begin
 {
  emitrec(ord(MODULE_CODE_FUNCTION),[atype*typeindexstep+1,
@@ -1434,6 +1431,12 @@ begin
  end;
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr);
+ if sf_proto in aflags then begin
+  emitvbr6(0); //personality
+ end
+ else begin
+  emitvbr6(apersonality); //personality
+ end;
 // result:= fsubopstart;
 // inc(fsubopstart);
 end;
@@ -2205,10 +2208,10 @@ procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
                                                    const apersonality: int32);
 begin                        //todo: use FUNC_CODE_INST_LANDINGPAD,
                              //set personality in function definitions
- emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
-                                   [aresulttype,fsubopindex-apersonality,1,0]);
-// emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
+// emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
 //                                   [aresulttype,fsubopindex-apersonality,1,0]);
+ emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
+                                   [aresulttype,1,0]);
  inc(fsubopindex);
 end;
 
