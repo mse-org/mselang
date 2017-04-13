@@ -206,7 +206,7 @@ type
    flandingpad: int32;
    fmetadata: int32;
    fvoid: int32;
-   fpointerid: int32;
+//   fpointerid: int32;
 //   fsimplesub: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitem: phashdataty): boolean override;
@@ -236,7 +236,7 @@ type
    property landingpad: int32 read flandingpad;
    property metadata: int32 read fmetadata;
    property void: int32 read fvoid;
-   property pointerid: int32 read fpointerid;
+//   property pointerid: int32 read fpointerid;
 //   property simplesub: int32 read fsimplesub; //no params, 
 //                                         //for initialization, finalizition
  end;
@@ -389,6 +389,7 @@ type
    flastitem: pgloballocdataty;
    fgetexceptionpointer: int32;
   protected
+   fdestroying: boolean;
    procedure inccount();
    function addnoinit(const atyp: int32; const alinkage: linkagety;
                       const externunit: boolean): int32;
@@ -421,8 +422,8 @@ type
    function addexternalsubvalue(const aflags: subflagsty; 
                        const aparams: paramsty;
                            const aname: identnamety): int32;  //returns listid
-   function addexternalsubvalue(const aparamtypes: array of int32;
-                                              //param flags = []
+   function addexternalsubvalue(const afunction : boolean;
+                                 const aparamtypes: array of int32;
                            const aname: identnamety): int32;  
                //returns listid, for llvm functions like llvm.dbg.declare()
 
@@ -1902,6 +1903,7 @@ end;
 
 destructor tgloballocdatalist.destroy();
 begin
+ fdestroying:= true;
  inherited;
  fnamelist.free();
  flinklist.free();
@@ -1911,8 +1913,11 @@ procedure tgloballocdatalist.clear;
 begin
  inherited;
  fnamelist.clear();
-// fgetexceptionpointer:= addexternalsubvalue(
-//                 [ftypelist.pointerid],getidentname('llvm.eh.padparam.pNi8'));
+ if not fdestroying then begin
+  fgetexceptionpointer:= addexternalsubvalue(true,
+                 [ord(das_pointer),ftypelist.landingpad],
+                              getidentname('llvm.eh.padparam.pNi8'));
+ end;
 end;
 
 procedure tgloballocdatalist.inccount();
@@ -2105,12 +2110,13 @@ begin
  fnamelist.addname(aname,result);
 end;
 
-function tgloballocdatalist.addexternalsubvalue(
+function tgloballocdatalist.addexternalsubvalue(const afunction : boolean;
            const aparamtypes: array of int32; const aname: identnamety): int32;
 var
  params1: paramsty;
  parar1: array[0..15] of paramitemty;
  i1: int32;
+ f1: subflagsty;
 begin
 {$ifdef mse_checkinternalerror}
  if high(aparamtypes) > high(parar1) then begin
@@ -2123,7 +2129,13 @@ begin
   parar1[i1].flags:= [];
   parar1[i1].typelistindex:= aparamtypes[i1];
  end;
- result:= addexternalsubvalue([sf_proto],params1,aname);
+ if afunction then begin
+  f1:= [sf_proto,sf_function];
+ end
+ else begin
+  f1:= [sf_proto];
+ end;
+ result:= addexternalsubvalue(f1,params1,aname);
 end;
 
 function tgloballocdatalist.gettype(const alistid: int32): int32;
@@ -2212,7 +2224,7 @@ begin
    fsysfile:= adddifile('system');
    fsyscontext:= fsysfile;
    fsysname:= addstring('system');
-   fdbgdeclare:= fgloblist.addexternalsubvalue(
+   fdbgdeclare:= fgloblist.addexternalsubvalue(false,
             [ftypelist.metadata,ftypelist.metadata,ftypelist.metadata],
                                             getidentname('llvm.dbg.declare'));
    fdummyaddrexp:= adddiexpression([]);

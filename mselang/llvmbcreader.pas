@@ -560,6 +560,8 @@ end;
 
 procedure error(const message: string);
 begin
+ writeln('********** error '+message);
+ flush(output);
  raise exception.create(message+'.');
 end;
 
@@ -2301,7 +2303,7 @@ begin
        end;
       end;
       FUNC_CODE_INST_LANDINGPAD: begin
-       checkmindatalen(rec1,5);
+       checkmindatalen(rec1,5); //???
        outssarecord(rec1[2],opname(rec1[3])+','+inttostr(rec1[4])+
                                                       ','+inttostr(rec1[5]));
       end;

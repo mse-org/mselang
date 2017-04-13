@@ -79,7 +79,8 @@ type
    fsubopstart: int32;      //start of op ssa id's
    fsubopindex: int32;      //current op ssa is
    fcurrentbb: int32;
-   flandingpad: int32;
+   flandingpadblock: int32;
+   fgetexceptionpointer: int32;
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -265,7 +266,9 @@ type
    property pointertype: int32 read fpointertype;
    property landingpadtype: int32 read flandingpadtype;
    property pointersizeconst: int32 read fpointersizeconst;
-   property landingpad: int32 read flandingpad write flandingpad;
+   property landingpadblock: int32 read flandingpadblock write flandingpadblock;
+   property getexceptionpointer: int32 read fgetexceptionpointer 
+                                                   write fgetexceptionpointer;
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
@@ -476,6 +479,7 @@ begin
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
  flandingpadtype:= consts.typelist.landingpad;
+ fgetexceptionpointer:= globals.getexceptionpointer;
  fpointersizeconst:= consts.pointersize;
  fpointertype:= ptypeval(das_8);
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
@@ -1828,7 +1832,7 @@ procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                    const allocs: suballocinfoty; const bbcount: int32);
 begin
  fcurrentbb:= 0;
- flandingpad:= 0;
+ flandingpadblock:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
  with allocs do begin
@@ -1870,13 +1874,13 @@ begin
  for i1:= aparams.count-1 downto 0 do begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
- if flandingpad = 0 then begin
+ if flandingpadblock = 0 then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  end
  else begin
   inc(fcurrentbb);
   emitrec(ord(FUNC_CODE_INST_INVOKE),
-                  [0,0,fcurrentbb,flandingpad,fsubopindex-valueid],aparams);
+          [0,0,fcurrentbb,flandingpadblock,fsubopindex-valueid],aparams);
  end;
  checkdebugloc();
  if afunc then begin
@@ -1892,13 +1896,13 @@ begin
  for i1:= high(aparams) downto 0 do begin
   aparams[i1]:= fsubopindex-aparams[i1];
  end;
- if flandingpad = 0 then begin
+ if flandingpadblock = 0 then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  end
  else begin
   inc(fcurrentbb);
   emitrec(ord(FUNC_CODE_INST_INVOKE),
-                    [0,0,fcurrentbb,flandingpad,fsubopindex-valueid],aparams);
+            [0,0,fcurrentbb,flandingpadblock,fsubopindex-valueid],aparams);
  end;
  checkdebugloc();
  if afunc then begin

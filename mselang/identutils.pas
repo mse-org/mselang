@@ -540,6 +540,7 @@ begin
 end;
 
 initialization
+ init();
  identlist:= tindexidenthashdatalist.create;
 finalization
  clear();
