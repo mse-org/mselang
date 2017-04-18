@@ -3,7 +3,9 @@ program external;
 interface
 uses
  __mla__compilerunit;
- 
+
+function sin(x: flo64): flo64 external;
+
 implementation
 
 procedure test();
@@ -12,6 +14,7 @@ begin
 end;
 
 begin
- _Unwind_RaiseException(nil); //does nothing
- test();
+ if sin(0) = 0 then begin
+  exitcode:= 123;
+ end;
 end.
