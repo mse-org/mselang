@@ -109,7 +109,7 @@ function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 
 implementation
 const
- temprefcount = 0;
+ temprefcount = 1;
 type
  pcard8 = ^card8;
  pcard16 = ^card16;

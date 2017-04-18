@@ -629,6 +629,7 @@ var                     //todo: optimize, use tables, complete
   
 var
  pointerconv: boolean;
+ needsmanagedtemp: boolean;
  i1,i2,i3: integer;
  lstr1: lstringty;
  p1,p2: pcard8;
@@ -639,6 +640,7 @@ begin
 //   exit;
 //  end;
   stackoffset:= getstackoffset(acontext);
+  needsmanagedtemp:= false;
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
@@ -933,6 +935,7 @@ begin
             result:= true;
            end;
           end;
+          needsmanagedtemp:= true;
          end;
         end;
        end;
@@ -1050,6 +1053,9 @@ begin
     end;    
     d.dat.datatyp.indirectlevel:= destindirectlevel;
     d.dat.datatyp.typedata:= ele.eledatarel(dest);
+    if needsmanagedtemp then begin
+     addmanagedtemp(s.stackindex+stackoffset);
+    end;
    end;
   end;
  end;
