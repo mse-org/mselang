@@ -1438,7 +1438,8 @@ begin
   with insertitem(oc_storemanagedtemp,aindex,-1)^.par do begin
    ssas1:= d.dat.fact.ssaindex;
    if co_llvm in o.compileoptions then begin
-    setimmint32(ref1.address-managedtempref,voffset);
+//    setimmint32(ref1.address-managedtempref,voffset);
+    voffset:= ref1.offset;
     managedtemparrayid:= info.managedtemparrayid;
    end
    else begin
