@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,7 +72,12 @@ begin
 end;
 
 procedure tryhandle();
+var
+ i1: int32;
 begin
+ if co_llvm in info.o.compileoptions then begin
+  i1:= allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
+ end;
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
 //  addlabel();

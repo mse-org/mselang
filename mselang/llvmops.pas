@@ -3850,10 +3850,10 @@ procedure popcpucontextop();
 begin
  with pc^.par do begin
   bcstream.landingpadblock:= opaddress.bbindex;
-  bcstream.emitlandingpad(bcstream.typeval(
-                  info.s.unitinfo^.llvmlists.typelist.landingpad),
+  bcstream.emitlandingpad(bcstream.typeval(bcstream.landingpadtype),
+//                  info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality])); //1ssa
-  bcstream.emitalloca(bcstream.ptypeval(bcstream.landingpadtype)); //1ssa
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.landingpadtype));        //1ssa
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
@@ -3861,15 +3861,24 @@ end;
 procedure finiexceptionop();
 begin
  with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.constval(0));//2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
+  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+
+{
   bcstream.emitgetelementptr(ssas1,bcstream.constval(0)); //2ssa
   bcstream.emitbitcast(bcstream.relval(0),
               bcstream.ptypeval(bcstream.landingpadtype));
                                                           //1ssa
   bcstream.emitloadop(bcstream.relval(0));                //1ssa
+}
+{
+       //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
   bcstream.emitcallop(true,bcstream.globval(bcstream.getexceptionpointer),
                                                       [bcstream.relval(0)]);
                                                           //1ssa
-  callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
+}
+//  callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
  end;
 end;
 
@@ -4470,7 +4479,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 2;
-  finiexceptionssa = 5;
+  finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;
   getzeromemssa = 2;

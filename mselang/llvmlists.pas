@@ -387,7 +387,7 @@ type
    fnamelist: tglobnamelist;
    flinklist: tlinklist;
    flastitem: pgloballocdataty;
-   fgetexceptionpointer: int32;
+//   fgetexceptionpointer: int32;
   protected
    fdestroying: boolean;
    procedure inccount();
@@ -437,7 +437,8 @@ type
    property namelist: tglobnamelist read fnamelist;
    property linklist: tlinklist read flinklist;
    property lastitem: pgloballocdataty read flastitem;
-   property getexceptionpointer: int32 read fgetexceptionpointer;
+//   property getexceptionpointer: int32 read fgetexceptionpointer;
+       //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
  end;
 
 const
@@ -1913,11 +1914,14 @@ procedure tgloballocdatalist.clear;
 begin
  inherited;
  fnamelist.clear();
+{
+       //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
  if not fdestroying then begin
   fgetexceptionpointer:= addexternalsubvalue(true,
                  [ord(das_pointer),ftypelist.landingpad],
                               getidentname('llvm.eh.padparam.pNi8'));
  end;
+}
 end;
 
 procedure tgloballocdatalist.inccount();

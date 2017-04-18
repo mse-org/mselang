@@ -80,7 +80,7 @@ type
    fsubopindex: int32;      //current op ssa is
    fcurrentbb: int32;
    flandingpadblock: int32;
-   fgetexceptionpointer: int32;
+//   fgetexceptionpointer: int32;
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -207,7 +207,8 @@ type
                                //for load/store, 3 ssa
 
    procedure emitptroffset(const avalue: int32; const aoffset: int32);
-//   procedure emitgetelement(const avalue: int32; const aindex: int32);
+   procedure emitgetelementad(const avalue: int32; const atype: int32;
+                                                    const aindex: int32);//1 ssa
    procedure emitgetelementptr(const avalue: int32;
                                               const aoffset: int32);
                                          //aoffset = byteoffset, 2 ssa
@@ -262,8 +263,9 @@ type
    property landingpadtype: int32 read flandingpadtype;
    property pointersizeconst: int32 read fpointersizeconst;
    property landingpadblock: int32 read flandingpadblock write flandingpadblock;
-   property getexceptionpointer: int32 read fgetexceptionpointer 
-                                                   write fgetexceptionpointer;
+//   property getexceptionpointer: int32 read fgetexceptionpointer 
+//                                                   write fgetexceptionpointer;
+       //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
@@ -475,7 +477,7 @@ begin
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
  flandingpadtype:= consts.typelist.landingpad;
- fgetexceptionpointer:= globals.getexceptionpointer;
+// fgetexceptionpointer:= globals.getexceptionpointer;
  fpointersizeconst:= consts.pointersize;
  fpointertype:= ptypeval(das_8);
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
@@ -1618,8 +1620,8 @@ begin
  checkdebugloc();
  inc(fsubopindex);
 end;
-{
-procedure tllvmbcwriter.emitgetelement(const avalue: int32;
+
+procedure tllvmbcwriter.emitgetelementad(const avalue: int32;
                               const atype: int32; const aindex: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_GEP),[0,atype,
@@ -1627,7 +1629,7 @@ begin
  checkdebugloc();
  inc(fsubopindex);
 end;
-}
+
 procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
                                                    const aoffset: int32);
 begin

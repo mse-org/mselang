@@ -157,6 +157,7 @@ function pushtempindi(const address: addressvaluety;
 function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
 procedure poptemp(const asize: int32);
+function allocllvmtemp(const typeid: int32): int32;
 procedure addmanagedtemp(const aindex: int32);
 
 procedure push(const avalue: boolean); overload;
@@ -1385,6 +1386,10 @@ begin
  with additem(oc_pop)^ do begin
   par.imm.vsize:= asize;
  end;
+end;
+
+function allocllvmtemp(const typeid: int32): int32;
+begin
 end;
 
 procedure addmanagedtemp(const aindex: int32);

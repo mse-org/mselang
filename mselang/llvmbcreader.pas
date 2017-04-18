@@ -2165,15 +2165,16 @@ begin
         str1:= str1+opname(rec1[i1])+',';
         i2:= ftypelist.itemtypeindex(i2);
        end;
-       if i2 <> rec1[3] then begin
-        error('Invalid explicit type');
-       end;
+       i3:= i2;
        if high(rec1) >= 5 then begin
         setlength(str1,length(str1)-1);
         i2:= i2 or pointermask; //pointer
        end;
        str1:= str1+']';
        outssarecord(i2,str1);
+       if i3 <> rec1[3] then begin
+        error('Invalid explicit type');
+       end;
       end;
       FUNC_CODE_INST_STORE_OLD: begin
        checkmindatalen(rec1,3);
