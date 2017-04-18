@@ -75,6 +75,7 @@ function getinternalsub(const asub: internalsubty;
 function callinternalsub(const asub: opaddressty;
                               const pointerparam: boolean): popinfoty;
                                                         //ignores op address 0
+procedure initsubstartinfo();
 function startsimplesub(const aname: identty;
                         const pointerparam: boolean): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
@@ -715,7 +716,7 @@ begin
    par.subbegin.sub.allocs:= asub^.allocs; 
                   //will be updated for llvm nested vars
    if not (co_llvm in o.compileoptions) then begin
-    par.subbegin.sub.stackop.varsize:= 0; //will be updated at subend
+    par.subbegin.sub.allocs.stackop.varsize:= 0; //will be updated at subend
    end;
   end;
  {$ifdef mse_checkinternalerror}
@@ -740,6 +741,21 @@ begin
  end;
 end;
 
+procedure initsubstartinfo();
+begin
+ with info do begin
+//  frameoffset:= 0;
+//  stacktempoffset:= 0;
+  llvmtempcount:= 0;
+  firstllvmtemp:= -1;
+  lastllvmtemp:= -1;
+  managedtempcount:= 0;
+  managedtempchain:= 0;
+  managedtempref:= 0;
+  managedtemparrayid:= 0;
+ end;
+end;
+
 function startsimplesub(const aname: identty;
                              const pointerparam: boolean): opaddressty;
 var
@@ -758,10 +774,15 @@ begin
            currentscopemeta,getidentname2(aname),
               s.currentfilemeta,s.source.line,-1,m1,[],true));
   end;
+  initsubstartinfo();
+  managedtemparrayid:= locallocid;  
+ {
   managedtempref:= 0;
   managedtemparrayid:= locallocid;  
   managedtempchain:= 0;
   managedtempcount:= 0;
+ }
+  managedtemparrayid:= locallocid;  
   resetssa();
   result:= opcount;
   simplesubstart:= opcount;
@@ -783,7 +804,8 @@ begin
       end;
      end;
     end;
-    subbegin.sub.llvm.managedtemptypeid:= 0;
+//    subbegin.sub.allocs.llvm.tempcount:= 0;
+//    subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
 //    subbegin.sub.llvm.managedtempcount:= 0; //constid
 //    subbegin.sub.llvm.blockcount:= 1; //will be updated in endsimplesub()
    end
@@ -843,19 +865,19 @@ begin
   with getitem(simplesubstart)^ do begin
    if co_llvm in o.compileoptions then begin
     if managedtempsize1 > 0 then begin
-     par.subbegin.sub.llvm.managedtemptypeid:= 
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
          info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
                                             managedtempsize1,ord(das_8));
-     setimmint32(managedtempcount,par.subbegin.sub.llvm.managedtempcount);
+     setimmint32(managedtempcount,par.subbegin.sub.allocs.llvm.managedtempcount);
     end
     else begin
-     par.subbegin.sub.llvm.managedtemptypeid:= 0;
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
-    par.subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
    end
    else begin
-    par.subbegin.sub.stackop.managedtempsize:= managedtempsize1;
-    par.subbegin.sub.stackop.varsize:= managedtempsize1;
+    par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
+    par.subbegin.sub.allocs.stackop.varsize:= managedtempsize1;
    end;
   end;
   if managedtempsize1 <> 0 then begin
@@ -1486,10 +1508,15 @@ begin
   end;
  {$endif}
   d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
+  initsubstartinfo();
+  managedtempref:= d.subdef.varsize;
+  managedtemparrayid:= locallocid;  
+ {
   managedtempref:= d.subdef.varsize;
   managedtemparrayid:= locallocid;  
   managedtempchain:= 0;
   managedtempcount:= 0;
+ }
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
   if d.subdef.match <> 0 then begin
@@ -1732,20 +1759,23 @@ begin
   end;
   with po2^ do begin
    if co_llvm in o.compileoptions then begin
+    par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;
+    par.subbegin.sub.allocs.llvm.firsttemp:= firstllvmtemp;
     if managedtempsize1 > 0 then begin
-     par.subbegin.sub.llvm.managedtemptypeid:= 
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
          info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
                                             managedtempsize1,ord(das_8));
-     setimmint32(managedtempcount,par.subbegin.sub.llvm.managedtempcount);
+     setimmint32(managedtempcount,
+                         par.subbegin.sub.allocs.llvm.managedtempcount);
     end
     else begin
-     par.subbegin.sub.llvm.managedtemptypeid:= 0;
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
-    par.subbegin.sub.llvm.blockcount:= s.ssa.bbindex + 1;
+    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
    end
    else begin
-    par.subbegin.sub.stackop.managedtempsize:= managedtempsize1;
-    par.subbegin.sub.stackop.varsize:= varsize1;
+    par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
+    par.subbegin.sub.allocs.stackop.varsize:= varsize1;
    end;
    par.subbegin.sub.flags:= po1^.flags;
   end;

@@ -72,16 +72,15 @@ begin
 end;
 
 procedure tryhandle();
-var
- i1: int32;
 begin
- if co_llvm in info.o.compileoptions then begin
-  i1:= allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
- end;
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
 //  addlabel();
   with additem(oc_popcpucontext)^ do begin
+   if co_llvm in info.o.compileoptions then begin
+    par.popcpucontext.landingpadalloc:= 
+                 allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
+   end;
    if info.s.trystacklevel > 1 then begin //restore parent landingpad
     with ptrystackitemty(
             getnextlistitem(trystacklist,info.s.trystack))^ do begin
@@ -92,7 +91,8 @@ begin
     par.opaddress.bbindex:= 0;
    end;
    newblockcontext(0);
-   info.contextstack[info.s.stackindex].d.block.landingpad:= par.ssad;
+   info.contextstack[info.s.stackindex].d.block.landingpad:= 
+                                    par.popcpucontext.landingpadalloc;
   end;
  end;
 end;
@@ -155,7 +155,8 @@ begin
                                       //skip exception handling code
   addlabel();
   with additem(oc_finiexception)^ do begin
-   par.ssas1:= contextstack[s.stackindex].d.block.landingpad;
+   par.finiexception.landingpadalloc:= 
+                    contextstack[s.stackindex].d.block.landingpad;
   end;
 //  dec(s.stackindex,1);
  end; 

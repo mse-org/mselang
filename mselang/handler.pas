@@ -215,12 +215,15 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
 {$endif}
+ initsubstartinfo();
  with info do begin
   frameoffset:= 0;
   stacktempoffset:= 0;
+ {
   managedtempcount:= 0;
   managedtempref:= 0;
   managedtemparrayid:= 0;
+ }
   if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
@@ -343,6 +346,8 @@ begin
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
    if co_llvm in info.o.compileoptions then begin
+    par.main.llvm.tempcount:= info.llvmtempcount;
+    par.main.llvm.firsttemp:= info.firstllvmtemp;
     par.main.llvm.blockcount:= info.s.ssa.bbindex+1;
     if managedtempsize1 > 0 then begin
      par.main.llvm.managedtemptypeid:=

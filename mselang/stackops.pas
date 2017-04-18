@@ -4975,10 +4975,10 @@ var
  p1,pe: ppointer;
 begin
  with cpu.pc^.par.subbegin do begin
-  stackpush(sub.stackop.varsize);
+  stackpush(sub.allocs.stackop.varsize);
   pe:= cpu.stack;
   cpu.stacktemp:= pe;
-  p1:= pointer(pe)-sub.stackop.managedtempsize;
+  p1:= pointer(pe)-sub.allocs.stackop.managedtempsize;
   cpu.managedtemp:= p1;
   while p1 < pe do begin
    p1^:= nil;

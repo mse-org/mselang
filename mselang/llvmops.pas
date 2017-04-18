@@ -537,10 +537,30 @@ begin
  end;
 end;
 
+procedure alloctemps(const acount: int32; const afirst: dataoffsty);
+var
+ po1: ptempallocinfoty;
+begin
+ if acount > 0 then begin
+  po1:= getsegmentpo(seg_localloc,afirst);
+  while true do begin
+   bcstream.emitalloca(bcstream.ptypeval(po1^.typeid));
+   if po1^.next <= 0 then begin
+    break;
+   end;
+   po1:= getsegmentpo(seg_localloc,po1^.next);
+  end;
+ end;
+end;
+
 procedure mainop();
+var
+ allocs1: suballocinfoty;
 begin
  with pc^.par do begin
-  bcstream.beginsub([]{false},nullallocs,main.llvm.blockcount);
+  allocs1:= nullallocs;
+  allocs1.llvm.tempcount:= main.llvm.tempcount;
+  bcstream.beginsub([]{false},allocs1,main.llvm.blockcount);
   if main.llvm.managedtemptypeid <> 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(main.llvm.managedtemptypeid)); //1ssa
    bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
@@ -552,6 +572,7 @@ begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
+  alloctemps(main.llvm.tempcount,main.llvm.firsttemp);
  end;
 end;
 
@@ -3491,8 +3512,8 @@ begin
  end;
  with pc^.par.subbegin do begin
   i1:= 0;
-  hasmanagedtemp:= sub.llvm.managedtemptypeid > 0;
-  bcstream.beginsub(sub.flags,sub.allocs,sub.llvm.blockcount);
+  hasmanagedtemp:= sub.allocs.llvm.managedtemptypeid > 0;
+  bcstream.beginsub(sub.flags,sub.allocs,sub.allocs.llvm.blockcount);
   if sf_nolineinfo in sub.flags then begin
    bcstream.nodebugloc:= true;
   end;
@@ -3573,11 +3594,12 @@ begin
    bcstream.resetssa();
   end;
   if hasmanagedtemp then begin
-   bcstream.emitalloca(bcstream.ptypeval(sub.llvm.managedtemptypeid)); //1ssa
+   bcstream.emitalloca(bcstream.ptypeval(
+                                  sub.allocs.llvm.managedtemptypeid)); //1ssa
    bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                        //1ssa
    callcompilersub(cs_zeropointerar,false,[bcstream.relval(0),
-                      bcstream.constval(sub.llvm.managedtempcount)]);
+                      bcstream.constval(sub.allocs.llvm.managedtempcount)]);
   end
   else begin
    bcstream.emitnopssa();
@@ -3853,17 +3875,19 @@ begin
   bcstream.emitlandingpad(bcstream.typeval(bcstream.landingpadtype),
 //                  info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality])); //1ssa
-  bcstream.emitalloca(bcstream.ptypeval(bcstream.landingpadtype));        //1ssa
-  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+  bcstream.emitstoreop(bcstream.relval(0),
+                  bcstream.tempval(popcpucontext.landingpadalloc));
  end;
 end;
 
 procedure finiexceptionop();
 begin
  with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.constval(0));//2ssa
+  bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
+                                                    bcstream.constval(0));//2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
   bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+  callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
 
 {
   bcstream.emitgetelementptr(ssas1,bcstream.constval(0)); //2ssa
@@ -4478,7 +4502,7 @@ const
 
   raisessa = 0;
   pushcpucontextssa = 0;
-  popcpucontextssa = 2;
+  popcpucontextssa = 1;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;

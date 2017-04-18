@@ -49,6 +49,12 @@ type
  end;
  plocallocinfoty = ^locallocinfoty;
  
+ tempallocinfoty = record
+  next: dataoffsty;
+  typeid: int32; //llvm
+ end;
+ ptempallocinfoty = ^tempallocinfoty;
+ 
  parallocinfoty = record
   ssaindex: integer;
   size: typeallocinfoty;
@@ -903,10 +909,31 @@ type
  managedtempopty = record
  end;
  
+ popcpucontextty = record
+  landingpadalloc: int32; //tempval ssa
+ end;
+
+ finiexceptionty = record
+  landingpadalloc: int32; //tempval ssa
+ end;
+  
  setlengthty = record
   itemsize: integer;
  end;
  
+ suballocllvmty = record
+  tempcount: int32;
+  firsttemp: dataoffsty;
+  managedtemptypeid: int32;
+  managedtempcount: int32; //constid
+  blockcount: int32;
+ end;
+ suballocstackopty = record
+  varsize: int32; //includes managed temp
+  managedtempsize: int32;
+ end;
+ 
+
  suballocinfoty = record
   allocs: dataoffsty;
   alloccount: int32;
@@ -914,10 +941,13 @@ type
   nestedallocs: dataoffsty;
   nestedalloccount: int32;
   nestedallocstypeindex: int32;
-//  parallocs: dataoffsty;
-//  paralloccount: integer;
-//  varallocs: dataoffsty;
-//  varalloccount: integer;
+  case integer of
+   0: (
+    stackop:suballocstackopty;
+   );
+   1: ( //llvm
+    llvm: suballocllvmty;
+   );
  end;
 
  listitemallocinfoty = record
@@ -975,19 +1005,10 @@ type
 //  typeid: int32;
  end;
 
- subbeginllvmty = record
-  managedtemptypeid: int32;
-  managedtempcount: int32; //constid
-  blockcount: int32;
- end;
- subbeginstackopty = record
-  varsize: int32; //includes managed temp
-  managedtempsize: int32;
- end;
- 
  subbegininfoty = record
   flags: subflagsty;
   allocs: suballocinfoty;
+ {
   case integer of
    0: (
     stackop:subbeginstackopty;
@@ -995,6 +1016,7 @@ type
    1: ( //llvm
     llvm: subbeginllvmty;
    );
+ }
  end;
 
  subbeginty = record
@@ -1030,6 +1052,8 @@ type
  end;
 
  mainllvmty = record
+  tempcount: int32;
+  firsttemp: dataoffsty;
   managedtemptypeid: int32;
   managedtempcount: int32; //constid
   blockcount: int32;
@@ -1105,14 +1129,18 @@ const
 type
      //todo: unify, variable size, maybe use objects instead of records
  opparamty = record
-  ssad: int32;
-  ssas1: int32;
-  ssas2: int32;
+  ssad: int32; //updated by op insertions
+  ssas1: int32;//updated by op insertions
+  ssas2: int32;//updated by op insertions
   case opcodety of 
    oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
    oc_pushcpucontext,oc_popcpucontext: (
     opaddress: labty; //first!
+    case opcodety of
+     oc_popcpucontext: (
+      popcpucontext: popcpucontextty;
+     );
    );
    oc_phi: (
     phi: phity;
@@ -1312,6 +1340,9 @@ type
    );
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
+   );
+   oc_finiexception:(
+    finiexception: finiexceptionty;
    );
    oc_getvirtsubad,oc_getintfmethod:(
     getvirtsubad: getvirtsubadinfoty;

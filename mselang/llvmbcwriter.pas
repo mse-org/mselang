@@ -76,6 +76,7 @@ type
    fsubstart: int32;        //start of sub values (params)
    fsubparamstart: int32;   //reference for param access
    fsuballocstart: int32;   //reference for allocs
+   fsubtempstart: int32;    //reference for temp allocs
    fsubopstart: int32;      //start of op ssa id's
    fsubopindex: int32;      //current op ssa is
    fcurrentbb: int32;
@@ -141,6 +142,7 @@ type
    function globval(const globid: int32): int32; inline;
    function paramval(const paramid: int32): int32; inline;
    function allocval(const allocid: int32): int32; inline;
+   function tempval(const tempid: int32): int32; inline;
    function subval(const offset: int32): int32; inline; 
                           //0 -> first param
    function ssaval(const ssaid: int32): int32; inline;
@@ -1817,6 +1819,11 @@ begin
  result:= allocid + fsuballocstart;
 end;
 
+function tllvmbcwriter.tempval(const tempid: int32): int32;
+begin
+ result:= tempid + fsubtempstart;
+end;
+
 function tllvmbcwriter.subval(const offset: int32): int32;
 begin
  result:= offset + fsubstart;
@@ -1849,7 +1856,8 @@ begin
    inc(fsubparamstart); //skip nested var array pointer
   end;
   fsuballocstart:= fsubparamstart+paramcount;
-  fsubopstart:= fsuballocstart+alloccount;
+  fsubtempstart:= fsuballocstart+alloccount+2; //managedtemp
+  fsubopstart:= fsubtempstart+llvm.tempcount-2;//managedtemp
  {
   if nestedalloccount > 0 then begin
    inc(fsubopstart,2); //nested var array alloc + byte pointer
