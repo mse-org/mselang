@@ -74,7 +74,7 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils;
+ stackops,unithandler,segmentutils,valuehandler;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -274,7 +274,7 @@ end;
 procedure handlesetlength(const paramco: integer);
 var
  len: integer;
- typ1: ptypedataty;
+// typ1: ptypedataty;
  po1,po2: pcontextitemty;
  op1: opcodety;
 begin
@@ -283,60 +283,66 @@ begin
    po2:= @contextstack[s.stacktop];
    po1:= getpreviousnospace(po2-1);
    if getvalue(po2,das_32) then begin
+    if not tryconvert(po2,st_int32,[]) then begin
+     incompatibletypeserror(sysdatatypes[st_int32],s.stacktop-s.stackindex);
+     exit;
+    end;
     with po2^ do begin
+{
      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                                      (typ1^.h.kind <> dk_integer) then begin
       incompatibletypeserror(2,'dk_integer',d);
      end
      else begin
-      if getaddress(po1,true) then begin
-      {$ifdef mse_checkinternalerror}
-       if not (po2^.d.kind in factcontexts) or 
-                     not (po1^.d.kind in 
-                                               [ck_fact,ck_subres]) then begin
-        internalerror(ie_handler,'20160228A');
-       end;
-      {$endif}
-       with po1^ do begin
-        with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
-         op1:= oc_none;
-         case h.kind of
-          dk_dynarray: begin
-           op1:= oc_setlengthdynarray;
-          end;
-          dk_string: begin
-           case itemsize of
-            2: begin
-             op1:= oc_setlengthstr16;
-            end;
-            4: begin
-             op1:= oc_setlengthstr32;
-            end;
-            else begin
-             op1:= oc_setlengthstr8;
-            end;
-           end;
-          end;
+     }
+     if getaddress(po1,true) then begin
+     {$ifdef mse_checkinternalerror}
+      if not (po2^.d.kind in factcontexts) or 
+                    not (po1^.d.kind in 
+                                              [ck_fact,ck_subres]) then begin
+       internalerror(ie_handler,'20160228A');
+      end;
+     {$endif}
+      with po1^ do begin
+       with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+        op1:= oc_none;
+        case h.kind of
+         dk_dynarray: begin
+          op1:= oc_setlengthdynarray;
          end;
-         with additem(op1)^ do begin
-          if op.op = oc_none then begin
-           errormessage(err_typemismatch,[]);
-          end
-          else begin
-           if co_llvm in o.compileoptions then begin
-            par.ssas1:= d.dat.fact.ssaindex; //result
-            par.ssas2:= po2^.d.dat.fact.ssaindex;
-            par.setlength.itemsize:= 
-                   info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
-           end
+         dk_string: begin
+          case itemsize of
+           2: begin
+            op1:= oc_setlengthstr16;
+           end;
+           4: begin
+            op1:= oc_setlengthstr32;
+           end;
            else begin
-            par.setlength.itemsize:= itemsize;
+            op1:= oc_setlengthstr8;
            end;
           end;
          end;
         end;
+        with additem(op1)^ do begin
+         if op.op = oc_none then begin
+          errormessage(err_typemismatch,[]);
+         end
+         else begin
+          if co_llvm in o.compileoptions then begin
+           par.ssas1:= d.dat.fact.ssaindex; //result
+           par.ssas2:= po2^.d.dat.fact.ssaindex;
+           par.setlength.itemsize:= 
+                  info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+          end
+          else begin
+           par.setlength.itemsize:= itemsize;
+          end;
+         end;
+        end;
        end;
+//       end;
       end;
      end;
     end;  
