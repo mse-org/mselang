@@ -1,30 +1,45 @@
-program raise2;
+program test;
 
+{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+const
+ defaultmwcseedw = 521288629;
+ defaultmwcseedz = 362436069;
 type
- tc = class
-  public
-//   constructor create();
-//   destructor destroy();
+ mwcinfoty = record
+  fw,fz: card32; //call checkmwcseed() after init
  end;
-{
-constructor tc.create();
+{$ifdef FPC}
+ string8 = string;
+{$endif}
+
+function mwcnoise(var state: mwcinfoty): card32;
 begin
+ with state do begin
+  fz:= 36969 * (fz and $ffff) + (fz shr 16);
+  fw:= 18000 * (fw and $ffff) + (fw shr 16);
+  result:= fz shl 16 + fw;
+ end;
 end;
-destructor tc.destroy();
+
+const
+ stringcount = 10;
+
+procedure test1();
+var
+ mwc: mwcinfoty;
+ s1: string8;
+ ar1: array of string8;
+ i1,i2: int32;
 begin
-end;
-procedure test();
-begin
- raise tc.create();
-end;
-}
-begin
+ mwc.fw:= defaultmwcseedw;
+ mwc.fz:= defaultmwcseedz;
+ setlength(ar1,stringcount);
+ for i1:= 0 to high(ar1) do begin
+  mwcnoise(mwc);
 {$internaldebug on}
-{
- try
-  test();
- except
-  exitcode:= 123;
+  setlength(ar1[i1],card8(mwcnoise(mwc)));
  end;
-}
+end;
+begin
+ test1();
 end.

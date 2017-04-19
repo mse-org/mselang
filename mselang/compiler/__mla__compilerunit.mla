@@ -21,6 +21,8 @@ procedure __mla__decrefsizeref(const ref: ppointer);
 procedure __mla__increfsize(ref: pointer);
 procedure __mla__finirefsize(const ref: ppointer);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+procedure __mla__finirefsizedynar(const ref: ppointer);
+procedure __mla__storenildynar(const dest: pointer);
 
 procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
@@ -212,6 +214,43 @@ begin
  while ref < pe do begin
   __mla__finirefsize(pointer(ref));
   inc(ref);
+ end;
+end;
+
+procedure __mla__finirefsizedynar(const ref: ppointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ p1:= ref^;
+ if p1 <> nil then begin
+  d:= pdynarrayheaderty(p1)-1;
+  pe:= p1+d^.high;
+  while p1 <= pe do begin
+   __mla__finirefsize(p1);
+   inc(p1);
+  end;
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+  ref^:= nil;
+ end;
+end;
+
+procedure __mla__storenildynar(const dest: pointer);
+var
+ p1,pe: ppointer;
+begin
+ p1:= dest;
+ if p1 <> nil then begin
+  pe:= p1+(pdynarrayheaderty(dest)-1)^.high;
+  while p1 <= pe do begin
+   p1^:= nil;
+   inc(p1);
+  end;
  end;
 end;
 

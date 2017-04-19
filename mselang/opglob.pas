@@ -860,7 +860,9 @@ type
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
    oc_pushlocaddr,oc_pushstackaddr,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
-   oc_incdeclocimmint,oc_incdeclocimmpo:(
+   oc_incdeclocimmint,oc_incdeclocimmpo,
+   oc_storelocnilar,oc_storelocnildynar,
+   oc_finirefsizelocar,oc_increfsizelocar,oc_decrefsizelocar:(
     case integer of
      0:(locdataaddress: locdataaddressty;);
      1:(tempdataaddress: tempdataaddressty);
@@ -880,11 +882,11 @@ type
     stackaddress: stackaddressty;
    );
 }
-   oc_storelocnilar,oc_storereg0nilar,oc_storestacknilar,
-   oc_storestackrefnilar,oc_finirefsizelocar,oc_finirefsizereg0ar,
-   oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizelocar,
+   {oc_storelocnilar,}oc_storereg0nilar,oc_storestacknilar,
+   oc_storestackrefnilar,{oc_finirefsizelocar,}oc_finirefsizereg0ar,
+   oc_finirefsizestackar,oc_finirefsizestackrefar,{oc_increfsizelocar,}
    oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
-   oc_decrefsizelocar,oc_decrefsizereg0ar,oc_decrefsizestackar,
+   {oc_decrefsizelocar,}oc_decrefsizereg0ar,oc_decrefsizestackar,
    oc_decrefsizestackrefar:(
     podataaddress: podataaddressty;
    );

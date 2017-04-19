@@ -181,12 +181,12 @@ procedure managedynarraystring(const op: managedopty;{ const atype: ptypedataty;
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_dynamic,{atype,}aref{,ssaindex});
+//   inipointer(aro_dynamic,{atype,}aref{,ssaindex});
    inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
    finirefsize(aro_dynamic,{atype,}aref{,ssaindex});
-   finirefsize(aro_none,{atype,}aref{,ssaindex});
+//   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
    increfsize(aro_dynamic,{atype,}aref{,ssaindex});

@@ -5166,16 +5166,19 @@ begin
  end;
 end;
 
-procedure finirefsizedynar(ref: ppointer); 
+procedure finirefsizedynar(const ref: ppointer); 
                                     {$ifdef mse_inline}inline;{$endif}
 var
+ r: pdynarrayheaderty;
  d: prefsizeinfoty;
- si1: datasizety;
+ p1,pe: ppointer;
 begin
- ref:= ref^;
- if ref <> nil then begin
-  for si1:= (pdynarraysizety(ref)-1)^ downto 0 do begin
-   d:= ref^;
+ p1:= ref^;
+ if p1 <> nil then begin
+  r:= (pdynarrayheaderty(p1)-1);
+  pe:= p1+r^.high;
+  while p1 <= pe do begin
+   d:= p1^;
    if d <> nil then begin
     dec(d);
     if d^.ref.count > 0 then begin
@@ -5183,11 +5186,18 @@ begin
     end;
     if d^.ref.count = 0 then begin
      freemem1(d);
+     p1^:= nil;
     end;
-    ref^:= nil;
    end;
-   inc(ref);
+   inc(p1);
   end;
+  if r^.ref.count > 0 then begin
+   dec(r^.ref.count);
+  end;
+  if r^.ref.count = 0 then begin
+   freemem1(r);
+  end;
+  ref^:= nil;
  end;
 end;
 

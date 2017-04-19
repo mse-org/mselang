@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -3132,7 +3132,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,exception
+   a=0,664,4,exception
    c=6
     (
     kind=2
@@ -3151,7 +3151,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D7EF4
+    ao=An unhandled exception occured at $B72104A0
     ae=
     aec=123
     ie=0
@@ -3202,8 +3202,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise2 llvm
-    teststate=2
+    a=0,648,1,raise2 llvm
+    teststate=1
     path=raise2.mla
     comment=
     cc=${mlc_llvm}
@@ -3218,10 +3218,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/tmp/ccd6qUIY.o: In function `main':
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise2.bc:(.text+0x290b): undefined reference to `llvm.eh.padparam.pNi8'
-    +collect2: error: ld returned 1 exit status
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -3248,8 +3246,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise3 llvm
-    teststate=2
+    a=0,648,1,raise3 llvm
+    teststate=1
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -3264,13 +3262,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/tmp/ccD4utAc.o: In function `main':
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise3.bc:(.text+0x28ff): undefined reference to `llvm.eh.padparam.pNi8'
-    +collect2: error: ld returned 1 exit status
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -4640,7 +4636,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,664,4,string
    c=6
     (
     kind=2
@@ -4688,8 +4684,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,chartostring
-    teststate=2
+    a=0,648,1,chartostring
+    teststate=1
     path=chartostring.mla
     comment=
     cc=${mlc}
@@ -4704,15 +4700,14 @@ c=3
     eec=0
     cr=0
     ao=a
-    +********** Memory alloc error 1 blocks
     ae=
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,2,chartostring llvm
-    teststate=2
+    a=0,648,1,chartostring llvm
+    teststate=1
     path=chartostring.mla
     comment=
     cc=${mlc_llvm}
@@ -4727,7 +4722,6 @@ c=3
     eec=0
     cr=0
     ao=a
-    +********** Memory alloc error 1 blocks
     ae=
     aec=0
     ie=0
@@ -4756,8 +4750,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringconcat llvm
-    teststate=2
+    a=0,648,1,stringconcat llvm
+    teststate=1
     path=stringconcat.mla
     comment=
     cc=${mlc_llvm}
@@ -4771,12 +4765,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=********** Memory alloc error 2 blocks
+    ao=
     ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -4794,7 +4788,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,sub
+   a=0,664,4,sub
    c=36
     (
     kind=1
@@ -5258,8 +5252,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,external llvm
-    teststate=2
+    a=0,648,1,external llvm
+    teststate=1
     path=external.mla
     comment=
     cc=${mlc_llvm}
@@ -5274,8 +5268,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 17716 Segmentation fault      $2
-    aec=139
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -5850,7 +5844,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=sub/
    comment=
    cc=
@@ -6392,7 +6386,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=6
+   c=8
     (
     kind=2
     a=0,648,1,globrecassign
@@ -6525,6 +6519,50 @@ c=3
     aec=0
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,finistringar
+    teststate=1
+    path=finistringar.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,finistringar llvm
+    teststate=1
+    path=finistringar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
    teststate=1
    path=managed/
    comment=
@@ -6585,7 +6623,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -8891,7 +8929,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -9014,53 +9052,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=99
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=53
  0 0
  0 0
  0 0
