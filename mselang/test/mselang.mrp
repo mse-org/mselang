@@ -2721,7 +2721,7 @@ c=3
    (
    kind=1
    a=0,664,4,dynarray
-   c=12
+   c=14
     (
     kind=2
     a=0,648,1,setlength
@@ -2793,6 +2793,50 @@ c=3
     a=0,648,1,setlength1 llvm
     teststate=1
     path=setlength1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,setlength2
+    teststate=1
+    path=setlength2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,setlength2 llvm
+    teststate=1
+    path=setlength2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3151,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72104A0
+    ao=An unhandled exception occured at $B72464A0
     ae=
     aec=123
     ie=0
@@ -4788,8 +4832,204 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
-   c=36
+   a=0,665,4,sub
+   c=31
+    (
+    kind=1
+    a=0,665,4,subvar
+    c=8
+     (
+     kind=2
+     a=0,648,1,subvar
+     teststate=1
+     path=subvar.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar llvm
+     teststate=1
+     path=subvar.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar1
+     teststate=1
+     path=subvar1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar1 llvm
+     teststate=1
+     path=subvar1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar2
+     teststate=1
+     path=subvar2.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar2 llvm
+     teststate=1
+     path=subvar2.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar3
+     teststate=1
+     path=subvar3.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subvar3 llvm
+     teststate=1
+     path=subvar3.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=1
+    path=subvar/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
     (
     kind=1
     a=0,664,4,openarray
@@ -5255,138 +5495,6 @@ c=3
     a=0,648,1,external llvm
     teststate=1
     path=external.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar
-    teststate=1
-    path=subvar.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar llvm
-    teststate=1
-    path=subvar.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar1
-    teststate=1
-    path=subvar1.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar1 llvm
-    teststate=1
-    path=subvar1.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar2
-    teststate=1
-    path=subvar2.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,subvar2 llvm
-    teststate=1
-    path=subvar2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -6385,7 +6493,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
+   a=0,664,4,managed
    c=8
     (
     kind=2
@@ -9052,7 +9160,38 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=53
+rowstate=84
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

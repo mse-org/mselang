@@ -42,10 +42,9 @@ function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
 }
 function checkcompatibledatatype(const sourcecontext: pcontextitemty;
-                         const desttypedata: elementoffsetty;
-                         const destaddress: addressvaluety;
+    const desttypedata: elementoffsetty; const destaddress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
-                                            out conversioncost: int32): boolean;
+            out conversioncost: int32; out destindirectlevel: int32): boolean;
 function getbasevalue(const acontext: pcontextitemty;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
@@ -1118,16 +1117,15 @@ begin
 end;
 
 function checkcompatibledatatype(const sourcecontext: pcontextitemty;
-                         const desttypedata: elementoffsetty;
-                         const destaddress: addressvaluety;
-                                   const options: compatibilitycheckoptionsty;
-                                            out conversioncost: int32): boolean;
+         const desttypedata: elementoffsetty; const destaddress: addressvaluety;
+           const options: compatibilitycheckoptionsty;
+             out conversioncost: int32; out destindirectlevel: int32): boolean;
 var
  source,dest: ptypedataty;
  sourceitem{,destitem}: ptypedataty;
- sourceindilev,destindilev: int32;
+ sourceindilev{,destindilev}: int32;
  pocont1,poe: pcontextitemty;
- i1: int32;
+ i1,i2: int32;
  addr1: addressvaluety;
 begin
  with info,sourcecontext^ do begin
@@ -1138,14 +1136,16 @@ begin
  {$endif}
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
-  destindilev:= destaddress.indirectlevel;
+  destindirectlevel:= destaddress.indirectlevel;
   if af_paramindirect in destaddress.flags then begin
-   dec(destindilev);
+   dec(destindirectlevel);
   end;
-  
+  if dest^.h.kind in [dk_sub,dk_method] then begin
+   inc(destindirectlevel);
+  end;
   if d.kind = ck_list then begin
    result:= false;
-   if destindilev <> 0 then begin
+   if destindirectlevel <> 0 then begin
     exit;
    end;
    pocont1:= sourcecontext+1;
@@ -1162,7 +1162,7 @@ begin
      while pocont1 < poe do begin
       if pocont1^.d.kind <> ck_space then begin
        if not checkcompatibledatatype(
-                    pocont1,dest^.infoset.itemtype,addr1,[],i1) then begin
+                    pocont1,dest^.infoset.itemtype,addr1,[],i1,i2) then begin
         exit;
        end;
        if i1 > conversioncost then begin
@@ -1180,7 +1180,7 @@ begin
      while pocont1 < poe do begin
       if pocont1^.d.kind <> ck_space then begin
        if not checkcompatibledatatype(
-               pocont1,dest^.infodynarray.i.itemtypedata,addr1,[],i1) then begin
+         pocont1,dest^.infodynarray.i.itemtypedata,addr1,[],i1,i2) then begin
         exit;
        end;
        if i1 > conversioncost then begin
@@ -1207,10 +1207,18 @@ begin
   source:= ele.basetype(d.dat.datatyp.typedata);
   sourceindilev:= d.dat.datatyp.indirectlevel;
 //  end;
-  result:= destindilev = sourceindilev;
+  result:= destindirectlevel = sourceindilev;
   if result then begin
    result:= (source = dest);
    if not result then begin
+    if (source^.h.kind in [dk_sub,dk_method]) and 
+                        (dest^.h.kind in [dk_sub,dk_method]) then begin
+     result:= checkparamsbase(ele.eledataabs(source^.infosub.sub),
+                              ele.eledataabs(dest^.infosub.sub));
+     if result then begin
+      exit;
+     end;
+    end;
     if (cco_novarconversion in options) and 
              (destaddress.flags * [af_paramvar,af_paramout] <> []) then begin
      exit;
@@ -1223,7 +1231,7 @@ begin
       exit;
      end;
     end;
-    if (destindilev = 0) and (dest^.h.kind = dk_openarray) and
+    if (destindirectlevel = 0) and (dest^.h.kind = dk_openarray) and
                ((source^.h.kind = dk_dynarray) and 
                          issametype(source^.infodynarray.i.itemtypedata,
                           dest^.infodynarray.i.itemtypedata) or
@@ -1258,12 +1266,12 @@ begin
    end;
   end;
   if not result then begin  //untyped pointer conversion
-   result:= (dest^.h.kind = dk_pointer) and (destindilev = 1) and 
+   result:= (dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
                                      (sourceindilev > 0) or 
     ((sourceindilev = 1 ) and (source^.h.kind = dk_pointer) or
         (sourcecontext^.d.kind = ck_const) and 
                  (sourcecontext^.d.dat.constval.kind = dk_none)) //nil
-                                                   and (destindilev > 0);
+                                                   and (destindirectlevel > 0);
    if result then begin
     conversioncost:= 1;
    end;
@@ -1353,6 +1361,7 @@ var
   po1: pcontextitemty;
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
+  destindilev1: int32;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -1366,7 +1375,8 @@ var
    conversioncost1:= 1;
    if not paramschecked and 
           not checkcompatibledatatype(context1,vardata1^.vf.typ,
-            vardata1^.address,[cco_novarconversion],conversioncost1) then begin
+                               vardata1^.address,[cco_novarconversion],
+                                       conversioncost1,destindilev1) then begin
     err1:= err_incompatibletypeforarg;
     with context1^ do begin
 //     if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
@@ -1389,13 +1399,13 @@ var
     if context1^.d.kind = ck_list then begin
      errormessage(err1,[i2,'list',
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                   vardata1^.address.indirectlevel)],stackoffset);
+                                                   destindilev1)],stackoffset);
     end
     else begin
      errormessage(err1,[i2,
                typename(sourcetype^,i1),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                   vardata1^.address.indirectlevel)],stackoffset);
+                                                   destindilev1)],stackoffset);
     end;
     exit;
    end;
@@ -1562,7 +1572,7 @@ var
  opoffset1: int32;
  methodtype1: ptypedataty;
  instancetype1: ptypedataty;
- 
+ i4: int32; 
 label
  paramloopend;
 begin
@@ -1610,7 +1620,7 @@ begin
        bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
        if (vardata1^.vf.typ = 0) or 
              not checkcompatibledatatype(poitem1,
-                        vardata1^.vf.typ,vardata1^.address,[],i2) then begin
+                        vardata1^.vf.typ,vardata1^.address,[],i2,i4) then begin
                                                            //report byvalue,
                                                            //byaddress dup
         goto paramloopend;

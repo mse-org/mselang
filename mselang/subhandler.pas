@@ -38,6 +38,7 @@ procedure handleparams0entry();
 procedure setconstparam();
 procedure setvarparam();
 procedure setoutparam();
+procedure handleuntypedparam();
 procedure handleparamdef3();
 procedure handleparamdefault();
 procedure handleparamsend();
@@ -70,6 +71,9 @@ procedure handleendexpected();
 procedure handleimplementationexpected();
 
 function checkparams(const po1,ref: psubdataty): boolean; 
+                  //paramcount an subkind must be equal
+function checkparamsbase(const po1,ref: psubdataty): boolean;
+               //compare base types
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
 function callinternalsub(const asub: opaddressty;
@@ -140,6 +144,57 @@ begin
  end;
 end;
 
+function checkparamsbase(const po1,ref: psubdataty): boolean; 
+//                                  {$ifndef mse_debugparser} inline;{$endif}
+var
+ par1,parref: pelementoffsetaty;
+ pva,pvb: pvardataty;
+ offs1: ptruint;
+ var1,varref: pvardataty;
+ int1: integer;
+// start,stop: integer;
+begin
+ result:= (((po1^.flags >< ref^.flags) *  //todo: sf_ofobject?
+  [sf_function,sf_method,sf_constructor,sf_destructor]) = []) and 
+                                        (po1^.paramcount = ref^.paramcount);
+ if result then begin
+  offs1:= ele.eledataoffset;
+  pointer(par1):= @po1^.paramsrel;
+  pointer(parref):= @ref^.paramsrel;
+  int1:= 0;
+  if sf_constructor in ref^.flags then begin
+   int1:= 2; //skip result and self
+  end
+  else begin
+   if sf_method in ref^.flags then begin
+    if sf_function in ref^.flags then begin
+     if basetype(pvardataty(par1^[0]+offs1)^.vf.typ) <> 
+                   basetype(pvardataty(parref^[0]+offs1)^.vf.typ) then begin
+      result:= false;
+      exit;
+     end;
+     int1:= 2; //skip result and self
+    end
+    else begin
+     int1:= 1; //skip self;
+    end;
+   end;
+  end;
+  for int1:= int1 to ref^.paramcount-1 do begin
+   pva:= pvardataty(par1^[int1]+offs1);
+   pvb:= pvardataty(parref^[int1]+offs1);
+   if ((pva^.address.flags >< pvb^.address.flags) * 
+        [af_param,af_paramindirect,af_const,af_paramconst,
+                                   af_paramvar,af_paramout] <> []) or
+         (pva^.address.indirectlevel <> pvb^.address.indirectlevel) or
+                 (basetype(pva^.vf.typ) <> basetype(pvb^.vf.typ)) then begin
+    result:= false;
+    exit;
+   end;
+  end;
+ end;
+end;
+
 function checkparams(const po1,ref: psubdataty): boolean; 
 //                                  {$ifndef mse_debugparser} inline;{$endif}
 var
@@ -179,45 +234,6 @@ begin
    exit;
   end;
  end;
-{ 
- if (sf_function in ref^.flags) then begin
-  if check(0) then begin
-   result:= false;
-   exit;
-  end;
-  inc(int1);
- end;
- if (sf_method in ref^.flags) then begin
-  inc(int1); //do not 
- end;
- for int1:= 0 to ref^.paramcount-1 do begin
-  var1:= pointer(par1^[int1]+offs1);
-  varref:= pointer(parref^[int1]+offs1);
-  if (var1^.vf.typ <> varref^.vf.typ) and 
-           ((int1 <> 1) or not(sf_method in ref^.flags)) then begin
-   result:= false;
-   exit;
-  end;
- end;
- }
- {
- start:= 0;
- stop:= ref^.paramcount-1;
- if sf_method in ref^.flags then begin
-  start:= 1; //skip self param
-  if sf_constructor in ref^.flags then begin
-   dec(stop); //skip result param
-  end;
- end;
- for int1:= start to stop do begin
-  var1:= pointer(par1^[int1]+offs1);
-  varref:= pointer(parref^[int1]+offs1);
-  if var1^.vf.typ <> varref^.vf.typ then begin
-   result:= false;
-   exit;
-  end;
- end;
- }
 end;
 
 procedure checkequalheader(const aelement: pelementinfoty; var adata;
@@ -346,6 +362,17 @@ begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_out;
+ end;
+end;
+
+procedure handleuntypedparam();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMDEF3');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  d.kind:= ck_fieldtype;
+  d.typ:= sysdatatypes[st_none];
  end;
 end;
 

@@ -1,0 +1,27 @@
+program subvar3;
+
+type
+ ppointer = ^pointer;
+ arraysortcomparety = function (const l,r: ppointer): int32;
+ ppint32 = ^^int32;
+
+function comparestring(const l,r: ppointer): int32;
+begin
+ exitcode:= ppint32(l)^^+ppint32(r)^^
+end;
+
+procedure sortarray(const compare: arraysortcomparety);
+var
+ p1,p2: pointer;
+ i1,i2: int32;
+begin
+ i1:= 100;
+ i2:= 23;
+ p1:= @i1;
+ p2:= @i2;
+ compare(@p1,@p2)
+end;
+
+begin
+ sortarray(@comparestring);
+end.

@@ -323,7 +323,7 @@ const
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
    (name: 'none'; data: (h: (ancestor: 0; kind: dk_none;
-       base: 0; rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
+       base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
        dummy1: 0)),
    (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;

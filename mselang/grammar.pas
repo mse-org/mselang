@@ -548,9 +548,14 @@ var
                caption: 'paramdef0');
  paramdef1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'paramdef1');
+ untypedparamco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'untypedparam');
  paramdef2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3612,7 +3617,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bparamdef1: array[0..6] of branchty = (
+ bparamdef1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3651,6 +3656,13 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @paramdef2co); stack: nil; keys: (
     (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @untypedparamco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -11224,6 +11236,8 @@ begin
  paramdef0co.next:= @paramdef1co;
  paramdef0co.handleentry:= @handleparamdef0entry;
  paramdef1co.branch:= @bparamdef1;
+ untypedparamco.branch:= nil;
+ untypedparamco.handleexit:= @handleuntypedparam;
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.next:= @paramdef3co;
  paramdef3co.branch:= @bparamdef3;

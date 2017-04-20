@@ -255,7 +255,8 @@ type
                tf_lower,       //in range expression
                tf_upper,       //in range expression
                tf_subad,       //sub address
-               tf_subrange
+               tf_subrange,
+               tf_untyped
                ); 
  typeflagsty = set of typeflagty;   
  

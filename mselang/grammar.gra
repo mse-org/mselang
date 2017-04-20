@@ -300,9 +300,11 @@ paramdef0,paramdef1,handleparamdef0entry,
  'out'.,!setoutparam->
  @identstart,commaidents^*
 // @identstart,ident^*
-paramdef1,,,*
+paramdef1,,,
  ${whitespace}
  ':',paramdef2-
+ '',untypedparam*
+untypedparam,,,handleuntypedparam^
 paramdef2,paramdef3,,
  '',getfieldtype^*
 paramdef3,,,handleparamdef3^
