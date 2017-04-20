@@ -662,6 +662,10 @@ begin
    end;
    pointerconv:= false;
    source1:= ele.eledataabs(d.dat.datatyp.typedata);
+   if source1^.h.kind = dk_none then begin
+    result:= true; //untyped param
+    exit;
+   end;
    result:= destindirectlevel = d.dat.datatyp.indirectlevel;
    if result then begin
     result:= (dest^.h.kind = source1^.h.kind) and 
@@ -1136,6 +1140,15 @@ begin
  {$endif}
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
+  if dest^.h.kind = dk_none then begin
+  {$ifdef mse_checkinternalerror}
+   if not (af_param in destaddress.flags) then begin
+    internalerror(ie_parser,'20170420A');
+   end;
+  {$endif}
+   result:= true; //untyped pointer
+   exit;
+  end;
   destindirectlevel:= destaddress.indirectlevel;
   if af_paramindirect in destaddress.flags then begin
    dec(destindirectlevel);

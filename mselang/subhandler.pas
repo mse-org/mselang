@@ -969,12 +969,13 @@ var                       //todo: move after doparam
  ident1: identty;
  resulttype1: resulttypety;
 
- procedure doparams(const resultvar: boolean);
+ function doparams(const resultvar: boolean): boolean;
  var
   i1,i2: int32;
   paramkind1: paramkindty;
   defaultconst1: elementoffsetty;
  begin
+  result:= true;
   with info do begin
    while curparam < curparamend do begin
     i1:= curstackindex+2; //first ck_ident
@@ -1055,6 +1056,21 @@ var                       //todo: move after doparam
                      (tf_needsmanage in typ1^.h.flags) then begin
             include(vf.flags,tf_needsmanage);
            end;                     
+          end;
+         end;
+         if typ1^.h.kind = dk_none then begin //untyped
+          if address.flags * 
+                  [af_paramconst,af_paramvar,af_paramout] = [] then begin
+           tokenexpectederror(':'); //todo: sourcepos
+           result:= false;
+           exit;
+          end
+          else begin
+           if not (af_paramindirect in address.flags) then begin
+            inc(address.indirectlevel);
+            include(address.flags,af_paramindirect);
+            si1:= pointersize;
+           end;
           end;
          end;
          if impl1 then begin
@@ -1238,8 +1254,9 @@ begin
   if sf_function in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
    curparamend:= curparam + 1;
-   doparams(true); //increments curparam
-//   inc(po4);
+   if not doparams(true) then begin //increments curparam
+    exit;
+   end;
   end;
   curparamend:= pelementoffsetty(@sub1^.paramsrel) + paramco;
   
@@ -1273,15 +1290,9 @@ begin
          (contextstack[curstackindex].d.kind <> ck_paramdef) do begin
    inc(curstackindex);
   end;
-  doparams(false);
- {
-  for curparamindex:= 0 to lastparamindex do begin
-   doparam();
+  if not doparams(false) then begin
+   exit;
   end;
-}
-//  if ismethod then begin
-//   dec(po4);
-//  end;
   curparam:= @sub1^.paramsrel;
   inc(paramsize1,stacklinksize);
   sub1^.paramsize:= paramsize1;
