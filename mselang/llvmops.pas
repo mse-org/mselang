@@ -684,9 +684,15 @@ begin
 end;
 
 procedure gotoop();
+var
+ p1: popinfoty;
 begin
  with pc^.par do begin
-  bcstream.emitbrop(getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex);
+  p1:= getoppo(opaddress.opaddress+1);
+  while p1^.op.op = oc_lineinfo do begin
+   inc(p1);
+  end;
+  bcstream.emitbrop(p1^.par.opaddress.bbindex);
  end;
 end;
 
