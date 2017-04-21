@@ -326,6 +326,10 @@ const
        base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
        dummy1: 0)),
+   (name: 'forward'; data: (h: (ancestor: 0; kind: dk_none;
+       base: 0; rtti: 0; manageproc: nil; flags: [tf_forward]; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
+       dummy1: 0)),
    (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 1;
 //       bitsize: pointerbitsize; bytesize: pointersize;

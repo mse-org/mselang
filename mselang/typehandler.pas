@@ -133,7 +133,7 @@ begin
   bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
   forward1:= not bo2 and bo1;
   if forward1 then begin //forward pointer
-   po2:= ele.eleinfoabs(getsystypeele(st_none));
+   po2:= ele.eleinfoabs(getsystypeele(st_forward));
    bo2:= true;
   end;
   if bo2 then begin

@@ -1058,7 +1058,8 @@ var                       //todo: move after doparam
            end;                     
           end;
          end;
-         if typ1^.h.kind = dk_none then begin //untyped
+         if (typ1^.h.kind = dk_none) and 
+                      not (tf_forward in typ1^.h.flags) then begin //untyped
           if address.flags * 
                   [af_paramconst,af_paramvar,af_paramout] = [] then begin
            tokenexpectederror(':'); //todo: sourcepos

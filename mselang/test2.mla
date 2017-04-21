@@ -1,9 +1,28 @@
-program test;
+program untyped;
+{$internaldebug on}
+
+type
+ ppint32 = ^^int32;
+
+function comparestring(const l,r: flo64): int32;
+//{$dumpelements}
+begin
+// exitcode:= int32(l) + int32(r);
+// exitcode:= ppint32(l)^^+ppint32(r)^^
+end;
 
 var
- p1,p2: ^card16;
-
+ p1,p2: pointer;
+ i1,i2: int32;
 begin
- inc(p2);
- exitcode:= p2-p1;
+
+ i1:= 100;
+ i2:= 23;
+{
+ p1:= @i1;
+ p2:= @i2;
+ comparestring(@p1,@p2)
+}
+// comparestring(i1,i2);
+ comparestring(100.0,23.0);
 end.

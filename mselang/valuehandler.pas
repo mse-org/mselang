@@ -1429,7 +1429,9 @@ var
        errormessage(err_variableexpected,[],stackoffset);
       end
       else begin
-       notimplementederror('20140405B'); //todo
+       
+       errormessage(err_variableexpected,[],stackoffset);
+//       notimplementederror('20140405B'); //todo
       end;
      end;
      ck_ref: begin

@@ -2,7 +2,7 @@ program test;
 
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 const
- stringcount = 10;
+ stringcount = 20;
  defaultmwcseedw = 521288629;
  defaultmwcseedz = 362436069;
 type
@@ -37,8 +37,8 @@ begin
     result:= -1;
    end
    else begin
-    i1:= length(pstring8(pointer(pl))^);
-    i2:= length(pstring8(pointer(pr))^);
+    i1:= length(string8(pointer(pl));
+    i2:= length(string8(pointer(pr));
     if i1 < i2 then begin
      pe:= pl+i1;
      while pl < pe do begin
@@ -182,8 +182,15 @@ begin
    ch1:= char8(card8(((mwcnoise(mwc) and $ff) * 95) div 255 + 32)); //32..127
    ar1[i1][i2]:= ch1;
   end;
-  sortarray(pointerarty(pointer(ar1)),@comparestring);
  end;
+ sortarray(pointerarty(pointer(ar1)),@comparestring);
+ for i1:= 1 to high(ar1) do begin
+  if ar1[i1-1] > ar1[i1] then begin
+   exitcode:= 1;
+   exit;
+  end;
+//  writeln(i1,':',card8(ar1[i1][1]),': ', ar1[i1]);
+ end; 
 end;
 
 
