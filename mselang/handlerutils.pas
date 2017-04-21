@@ -326,6 +326,10 @@ const
        base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
        dummy1: 0)),
+   (name: '_nil'; data: (h: (ancestor: 0; kind: dk_none;
+       base: 0; rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
+       dummy1: 0)),
    (name: 'forward'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; manageproc: nil; flags: [tf_forward]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
@@ -416,7 +420,7 @@ const
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
    (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
-   (name: 'nil'; ctyp: st_none; cval:(kind: dk_none; vdummy: ()))
+   (name: 'nil'; ctyp: st_nil; cval:(kind: dk_none; vdummy: ()))
 //   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
 //             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
   );

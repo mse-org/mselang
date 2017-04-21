@@ -662,7 +662,7 @@ begin
    end;
    pointerconv:= false;
    source1:= ele.eledataabs(d.dat.datatyp.typedata);
-   if source1^.h.kind = dk_none then begin
+   if tf_untyped in source1^.h.flags then begin
     result:= true; //untyped param
     exit;
    end;

@@ -1128,22 +1128,54 @@ end;
 
 function __mla__compstring8gt(a,b: pointer): bool1;
 begin
- result:= compstring8(a,b) > 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) > 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring8lt(a,b: pointer): bool1;
 begin
- result:= compstring8(a,b) < 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) < 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring8ge(a,b: pointer): bool1;
 begin
- result:= compstring8(a,b) >= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) >= 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring8le(a,b: pointer): bool1;
 begin
- result:= compstring8(a,b) <= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) <= 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring16eq(a,b: pointer): bool1;
@@ -1174,22 +1206,54 @@ end;
 
 function __mla__compstring16gt(a,b: pointer): bool1;
 begin
- result:= compstring16(a,b) > 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) > 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring16lt(a,b: pointer): bool1;
 begin
- result:= compstring16(a,b) < 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) < 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring16ge(a,b: pointer): bool1;
 begin
- result:= compstring16(a,b) >= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) >= 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring16le(a,b: pointer): bool1;
 begin
- result:= compstring16(a,b) <= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring16(a,b) <= 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring32eq(a,b: pointer): bool1;
@@ -1220,22 +1284,54 @@ end;
 
 function __mla__compstring32gt(a,b: pointer): bool1;
 begin
- result:= compstring32(a,b) > 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) > 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring32lt(a,b: pointer): bool1;
 begin
- result:= compstring32(a,b) < 0;
+ result:= a <> b;
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) < 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring32ge(a,b: pointer): bool1;
 begin
- result:= compstring32(a,b) >= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) >= 0;
+  end
+  else begin
+   result:= b = nil;
+  end;
+ end;
 end;
 
 function __mla__compstring32le(a,b: pointer): bool1;
 begin
- result:= compstring32(a,b) <= 0;
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring32(a,b) <= 0;
+  end
+  else begin
+   result:= a = nil;
+  end;
+ end;
 end;
 
 function __mla__chartostring8(achar: card8): pointer;
