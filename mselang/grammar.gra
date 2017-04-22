@@ -296,6 +296,7 @@ paramsdef3,,,handleparamsdef^
 paramdef0,paramdef1,handleparamdef0entry,
  ${whitespace}
  'const'.,!setconstparam->
+ 'constref'.,!setconstrefparam->
  'var'.,!setvarparam->
  'out'.,!setoutparam->
  @identstart,commaidents^*

@@ -98,7 +98,7 @@ const
 type
  addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_managedtemp,
                   af_param,af_paramindirect,af_const,
-                  af_paramconst,af_paramvar,af_paramout, 
+                  af_paramconst,af_paramconstref,af_paramvar,af_paramout, 
                                               //for paramkindty match test
 //                  af_managedtemp,
                   af_openarray,
@@ -111,7 +111,8 @@ type
  addressflagsty = set of addressflagty;
 
 const
- compatibleparamflags = [af_paramconst,af_paramvar,af_paramout];
+ compatibleparamflags = [af_paramconst,af_paramconstref,af_paramvar,
+                                                              af_paramout];
  addresskindflags = [af_stack,af_local,af_segment,af_aggregate];
  addresscompflags = addresskindflags + [af_nil];
 

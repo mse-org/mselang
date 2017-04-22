@@ -36,6 +36,7 @@ procedure handleparamdef0entry();
 
 procedure handleparams0entry();
 procedure setconstparam();
+procedure setconstrefparam();
 procedure setvarparam();
 procedure setoutparam();
 procedure handleuntypedparam();
@@ -184,7 +185,7 @@ begin
    pva:= pvardataty(par1^[int1]+offs1);
    pvb:= pvardataty(parref^[int1]+offs1);
    if ((pva^.address.flags >< pvb^.address.flags) * 
-        [af_param,af_paramindirect,af_const,af_paramconst,
+        [af_param,af_paramindirect,af_const,af_paramconst,af_paramconstref,
                                    af_paramvar,af_paramout] <> []) or
          (pva^.address.indirectlevel <> pvb^.address.indirectlevel) or
                  (basetype(pva^.vf.typ) <> basetype(pvb^.vf.typ)) then begin
@@ -334,6 +335,20 @@ begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_const;
+ end;
+end;
+
+procedure setconstrefparam();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CONSTREFPARAM');
+{$endif}
+// with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramdef do begin
+  if kind <> pk_value then begin
+   errormessage(err_identexpected,[],minint,0,erl_fatal);
+  end;
+  kind:= pk_constref;
  end;
 end;
 
@@ -1046,10 +1061,13 @@ var                       //todo: move after doparam
           include(address.flags,af_const);
          end
          else begin
-          if paramkind1 in [pk_var,pk_out] then begin
+          if paramkind1 in [pk_constref,pk_var,pk_out] then begin
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
            si1:= pointersize;
+           if paramkind1 = pk_constref then begin
+            include(address.flags,af_const);
+           end;
           end
           else begin
            if impl1 and (d.typ.indirectlevel = 0) and 
@@ -1060,8 +1078,8 @@ var                       //todo: move after doparam
          end;
          if (typ1^.h.kind = dk_none) and 
                       not (tf_forward in typ1^.h.flags) then begin //untyped
-          if address.flags * 
-                  [af_paramconst,af_paramvar,af_paramout] = [] then begin
+          if address.flags * [af_paramconst,af_paramconstref,af_paramvar,
+                                                    af_paramout] = [] then begin
            tokenexpectederror(':'); //todo: sourcepos
            result:= false;
            exit;

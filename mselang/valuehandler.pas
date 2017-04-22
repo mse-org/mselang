@@ -1361,6 +1361,7 @@ var
   stackoffset,i1,i2: int32;
   conversioncost1: int32;
   err1: errorty;
+  opref1: int32;
   
   procedure doconvert();
   begin
@@ -1429,9 +1430,19 @@ var
        errormessage(err_variableexpected,[],stackoffset);
       end
       else begin
-       
-       errormessage(err_variableexpected,[],stackoffset);
-//       notimplementederror('20140405B'); //todo
+       if context1^.d.kind = ck_const then begin
+        if co_llvm in o.compileoptions then begin
+         notimplementederror('20170422A'); //todo
+        end
+        else begin
+         opref1:= opcount;
+         doconvert();
+        end;
+       end
+       else begin
+        errormessage(err_variableexpected,[],stackoffset);
+ //       notimplementederror('20140405B'); //todo
+       end;
       end;
      end;
      ck_ref: begin

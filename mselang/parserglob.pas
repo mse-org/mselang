@@ -269,14 +269,14 @@ type
  end;
  psubinfoty = ^subinfoty;
 
- paramkindty = (pk_value,pk_const,pk_var,pk_out);
+ paramkindty = (pk_value,pk_const,pk_constref,pk_var,pk_out);
 
 const
  paramkinds: array[paramkindty] of addressflagsty = (
-   //pk_value, pk_const,       pk_var,       pk_out
-   [],        [af_paramconst],[af_paramvar],[af_paramout]
+   //pk_value, pk_const,      pk_constref, pk_var,       pk_out
+   [],        [af_paramconst],[af_paramconstref],[af_paramvar],[af_paramout]
  );
- paramflagsmask = [af_paramconst,af_paramvar,af_paramout];
+ paramflagsmask = [af_paramconst,af_paramconstref,af_paramvar,af_paramout];
 
 type 
  paramdefinfoty = record

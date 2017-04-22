@@ -1,0 +1,19 @@
+program constref;
+var
+ i1,i2: int32;
+
+function test1(constref l,r: int32): int32;
+begin
+ if @l = @i1 then begin
+  result:= l+r;
+ end
+ else begin
+  result:= 1;
+ end;
+end;
+
+begin
+ i1:= 100;
+ i2:= 23;
+ exitcode:= test1(i1,i2);
+end.
