@@ -310,8 +310,8 @@ begin
                                               itemtype1^.h.indirectlevel);
     end
     else begin // co_mlaruntime
-     par.listinfo.tempad:= gettempaddress(itemcount1*itemtype1^.h.bytesize,
-                         poparams^.d.params.tempsize).tempaddress;
+     par.listinfo.tempad:= gettempaddress(itemcount1*itemtype1^.h.bytesize{,
+                         poparams^.d.params.tempsize}).tempaddress;
     end;
     d.dat.fact.ssaindex:= par.ssad;
    end;
@@ -1351,6 +1351,7 @@ procedure dosub(asub: psubdataty; const paramstart,paramco: int32;
 var
  paramsize1: int32;
  paramschecked: boolean;
+// tempsize: int32;
  
  procedure doparam(var context1: pcontextitemty;
          const subparams1: pelementoffsetty; const parallocpo: pparallocinfoty);
@@ -1376,6 +1377,7 @@ var
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
+  ad1: addressvaluety;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -1435,8 +1437,23 @@ var
          notimplementederror('20170422A'); //todo
         end
         else begin
+         notimplementederror('20170422A'); //todo
+        {
+         i2:= desttype^.h.bytesize;
+         if vardata1^.address.indirectlevel > 1 then begin
+          i2:= pointersize;
+         end;
+         ad1:= gettempaddress(i2,tempsize);
+         }
+//         pushinsertaddress(
+{
          opref1:= opcount;
+         if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+                   vardata1^.address.indirectlevel-1,[]) then begin
+          internalerror1(ie_handler,'20170423A');
+         end;
          doconvert();
+         }
         end;
        end
        else begin
@@ -1593,12 +1610,13 @@ var
 var
  realparamco: int32; //including defaults
  {poparams,}indpo,poitem1{,pe}: pcontextitemty;
- stacksize,resultsize,tempsize: int32;
+ stacksize,resultsize: int32;
  isfactcontext: boolean;
  opoffset1: int32;
  methodtype1: ptypedataty;
  instancetype1: ptypedataty;
- i4: int32; 
+ i4: int32;
+// tempsbefore: targetadty;
 label
  paramloopend;
 begin
@@ -1889,7 +1907,9 @@ begin
                                  realparamco);
                                  //including default params
     poitem1:= @contextstack[paramstart-1]; //before first param
+//    tempsize:= 0;
     i1:= paramco;
+//    tempsbefore:= locdatapo;
     if dsf_indexedsetter in aflags then begin
      inc(parallocpo); //second, first index
      inc(subparams1);
@@ -1918,13 +1938,14 @@ begin
      end;
      dodefaultparams();
     end;
+//    locdatapo:= tempsbefore;
     
     if co_mlaruntime in o.compileoptions then begin
      poitem1:= @contextstack[paramstart];
      if poitem1^.d.kind <> ck_params then begin //no params
       dec(poitem1);
      end;
-     tempsize:= 0;
+     {
      if poitem1^.d.kind = ck_params then begin
       tempsize:= poitem1^.d.params.tempsize;
      end;
@@ -1934,11 +1955,12 @@ begin
       end;
       inc(opoffset1);
      end;
+     }
      if hasresult then begin
       with insertitem(oc_pushstackaddr,0,opoffset1)^.
                                      par.memop.tempdataaddress do begin
                                               //result var param
-       a.address:= -stacksize-tempsize;
+       a.address:= -stacksize{-tempsize};
        offset:= 0;
       end;
       inc(opoffset1);
@@ -2125,7 +2147,7 @@ begin
      end;
     end;
     if co_mlaruntime in o.compileoptions then begin
-     releasetempaddress(tempsize);
+//     releasetempaddress(tempsize);
      locdatapo:= locdatapo - resultsize;
     end;
    end;

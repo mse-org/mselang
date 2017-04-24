@@ -3956,7 +3956,7 @@ begin
                              ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
       end;
       ck_params: begin
-       write('tempsize:',inttostrmse(d.params.tempsize));
+//       write('tempsize:',inttostrmse(d.params.tempsize));
       end;
       ck_paramdef: begin
        with d.paramdef do begin

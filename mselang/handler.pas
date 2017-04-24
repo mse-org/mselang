@@ -361,6 +361,7 @@ begin
    end
    else begin
     par.main.stackop.managedtempsize:= managedtempsize1;
+    par.main.stackop.tempsize:= info.locdatapo;
    end;
   end;  
  end;

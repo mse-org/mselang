@@ -482,6 +482,7 @@ begin
    p1^:= nil;
    inc(p1);
   end;
+  stackpush(main.stackop.tempsize);
   exitcodeaddress:= pint32(segments[main.exitcodeaddress.segment].basepo+
                                                  main.exitcodeaddress.address);
  end; 

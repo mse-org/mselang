@@ -285,7 +285,7 @@ type
  end;
  
  paramsinfoty = record
-  tempsize: int32;
+//  tempsize: int32;
 //  flagsbefore: statementflagsty;
  end;
 {

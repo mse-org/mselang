@@ -1062,6 +1062,7 @@ type
  end;
  mainstackopty = record
   managedtempsize: int32;
+  tempsize: int32;
  end;
  mainty = record
   exitcodeaddress: segaddressty;
