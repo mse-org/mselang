@@ -199,6 +199,8 @@ procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const offset: dataoffsty;
                   const opdatatype: typeallocinfoty);
 procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
+procedure pushinserttempaddress(const aaddress: tempaddressty;
+                           const stackoffset: integer; const aopoffset: int32);
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                               const adatasize: databitsizety);
 procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
@@ -933,6 +935,17 @@ begin
   end;
  end;
  initfactcontext(stackoffset);
+end;
+
+procedure pushinserttempaddress(const aaddress: tempaddressty;
+                           const stackoffset: integer; const aopoffset: int32);
+begin
+ with insertitem(oc_pushlocaddr,stackoffset,aopoffset)^ do begin
+  par.memop.t:= bitoptypes[das_pointer];
+  include(par.memop.t.flags,af_stacktemp);
+  par.memop.tempdataaddress.a:= aaddress;
+  par.memop.tempdataaddress.offset:= 0;
+ end;
 end;
 
 function getopdatatype(const atypedata: ptypedataty;

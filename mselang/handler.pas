@@ -161,6 +161,7 @@ procedure copytoken();
 procedure handlechar();
 
 procedure setconstcontext(const aitem: pcontextitemty; const avalue: dataty);
+function getpoptempop(const asize: databitsizety): opcodety;
 
 implementation
 uses
@@ -2972,6 +2973,11 @@ const                //todo: segment and local indirect
    oc_popparindipo,oc_none
    ) 
  );
+
+function getpoptempop(const asize: databitsizety): opcodety;
+begin
+ result:= popoptable[mvd_local,asize];
+end;
  
 {
 function getmovesize(const asize: integer): movesizety; inline;

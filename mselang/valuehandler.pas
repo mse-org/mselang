@@ -1437,15 +1437,31 @@ var
          notimplementederror('20170422A'); //todo
         end
         else begin
-         notimplementederror('20170422A'); //todo
-        {
-         i2:= desttype^.h.bytesize;
+         if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+                   vardata1^.address.indirectlevel-1,[]) then begin
+          internalerror1(ie_handler,'20170423A');
+         end;
+         if not getvalue(context1,das_none) then begin
+          internalerror1(ie_handler,'20170424A');
+         end;
          if vardata1^.address.indirectlevel > 1 then begin
           i2:= pointersize;
+          si1:= das_pointer;
+         end
+         else begin
+          i2:= desttype^.h.bytesize;
+          si1:= desttype^.h.datasize;
          end;
-         ad1:= gettempaddress(i2,tempsize);
-         }
-//         pushinsertaddress(
+         ad1:= gettempaddress(i2);
+         with insertitem(getpoptempop(si1),context1,-1)^ do begin
+          par.memop.t:= getopdatatype(desttype,
+                       vardata1^.address.indirectlevel-1);
+          include(par.memop.t.flags,af_stacktemp);
+          par.memop.tempdataaddress.a:= ad1.tempaddress;
+          par.memop.tempdataaddress.offset:= 0;
+         end;
+         pushinserttempaddress(ad1.tempaddress,
+                   context1-pcontextitemty(pointer(contextstack)),-1);
 {
          opref1:= opcount;
          if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
