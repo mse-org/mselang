@@ -941,8 +941,11 @@ begin
 end;
 
 procedure inttopoop();
-//var
-// po1: ppointer;
+begin
+ //dummy
+end;
+
+procedure potopoop();
 begin
  //dummy
 end;
@@ -4971,6 +4974,11 @@ begin
  stackpop(cpu.pc^.par.stacksize);
 end;
 
+procedure tempallocop();
+begin
+ //dummy
+end;
+
 procedure subbeginop();
 var
  p1,pe: ppointer;
@@ -6141,6 +6149,7 @@ const
 
   potoint32ssa = 0;
   inttopossa = 0;
+  potopossa = 0;
   
   and1ssa = 0;
   andssa = 0;
@@ -6551,6 +6560,7 @@ const
 
   locvarpushssa = 0;
   locvarpopssa = 0;
+  tempallocssa = 0;
 
   subbeginssa = 0;
   subendssa = 0;

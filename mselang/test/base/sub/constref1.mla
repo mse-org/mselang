@@ -1,0 +1,14 @@
+program constref1;
+
+function test1(constref p0,p1,p2: int32): int32;
+begin
+ result:= p0+p1+p2;
+end;
+
+var
+ i1: int32;
+
+begin
+ i1:= 3;
+ exitcode:= test1(100,20,i1);
+end.

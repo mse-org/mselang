@@ -212,29 +212,37 @@ end;
 procedure storeloc(const source: int32);
 begin
  with pc^.par do begin
-  with memop,locdataaddress do begin
-   if a.framelevel >= 0 then begin  //nested variable
-    bcstream.emitgetelementptr(bcstream.subval(0),
-            //pointer to array of pointer to local alloc
-                                           bcstream.constval(a.address));
-            //byte offset in array
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
-    bcstream.emitloadop(bcstream.relval(0));
-            //pointer to variable
-    if af_aggregate in t.flags then begin
-     bcstream.emitnopssa();          //aggregatessa = 3
-     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
-    end;
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-    bcstream.emitstoreop(source,bcstream.relval(0));
+  with memop do begin
+   if af_stacktemp in t.flags then begin
+    bcstream.emitstoreop(bcstream.ssaval(ssas1),
+                           bcstream.ssaval(tempdataaddress.a.ssaindex));
    end
    else begin
-    if af_aggregate in t.flags then begin
-     bcstream.emitlocdataaddresspo(memop);
-     bcstream.emitstoreop(source,bcstream.relval(0));
-    end
-    else begin
-     bcstream.emitstoreop(source,bcstream.allocval(a.address));
+    with locdataaddress do begin
+     if a.framelevel >= 0 then begin  //nested variable
+      bcstream.emitgetelementptr(bcstream.subval(0),
+              //pointer to array of pointer to local alloc
+                                             bcstream.constval(a.address));
+              //byte offset in array
+      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+      bcstream.emitloadop(bcstream.relval(0));
+              //pointer to variable
+      if af_aggregate in t.flags then begin
+       bcstream.emitnopssa();          //aggregatessa = 3
+       bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
+      end;
+      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+      bcstream.emitstoreop(source,bcstream.relval(0));
+     end
+     else begin
+      if af_aggregate in t.flags then begin
+       bcstream.emitlocdataaddresspo(memop);
+       bcstream.emitstoreop(source,bcstream.relval(0));
+      end
+      else begin
+       bcstream.emitstoreop(source,bcstream.allocval(a.address));
+      end;
+     end;
     end;
    end;
   end;
@@ -1056,6 +1064,14 @@ begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(pointertype),
                                                                CAST_INTTOPTR);
+ end;
+end;
+
+procedure potopoop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                                 bcstream.typeval(bcstream.pointertype));
  end;
 end;
 
@@ -3521,6 +3537,13 @@ begin
  //dummy
 end;
 
+procedure tempallocop();
+begin
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(tempalloc.typid));
+ end;
+end;
+
 procedure subbeginop();
 var
  po1,ps,pe: plocallocinfoty;
@@ -4131,7 +4154,8 @@ const
   int64toflo64ssa = 1;
 
   potoint32ssa = 1;
-  inttopossa =1;
+  inttopossa = 1;
+  potopossa = 1;
 
   and1ssa = 1;
   andssa = 1;
@@ -4542,6 +4566,7 @@ const
 
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
+  tempallocssa = 1;
 
   subbeginssa = 2; //1;
   subendssa = 0;

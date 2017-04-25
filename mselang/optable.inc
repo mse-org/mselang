@@ -198,6 +198,8 @@
   (ssa: potoint32ssa; proc: @potoint32op; flags: []), 
 //oc_inttopo
   (ssa: inttopossa; proc: @inttopoop; flags: []), 
+//oc_potopo
+  (ssa: potopossa; proc: @potopoop; flags: []), 
 
 //oc_and1
   (ssa: and1ssa; proc: @and1op; flags: []), 
@@ -990,6 +992,8 @@
   (ssa: locvarpushssa; proc: @locvarpushop; flags: []), 
 //oc_locvarpop
   (ssa: locvarpopssa; proc: @locvarpopop; flags: []), 
+//oc_tempalloc
+  (ssa: tempallocssa; proc: @tempallocop; flags: []), 
 
 //oc_subbegin
   (ssa: subbeginssa; proc: @subbeginop; flags: []), 

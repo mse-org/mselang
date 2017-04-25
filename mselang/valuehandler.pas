@@ -1357,12 +1357,6 @@ var
          const subparams1: pelementoffsetty; const parallocpo: pparallocinfoty);
  var
   vardata1: pvardataty;
-  desttype: ptypedataty;
-  si1: databitsizety;
-  stackoffset,i1,i2: int32;
-  conversioncost1: int32;
-  err1: errorty;
-  opref1: int32;
   
   procedure doconvert();
   begin
@@ -1373,11 +1367,18 @@ var
   end; //doconvert
   
  var
+  desttype: ptypedataty;
+  si1: databitsizety;
+  stackoffset,i1,i2,i3: int32;
+  conversioncost1: int32;
+  err1: errorty;
+  opref1: int32;
   po1: pcontextitemty;
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
   ad1: addressvaluety;
+  ty1: typeallocinfoty;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -1433,44 +1434,61 @@ var
       end
       else begin
        if context1^.d.kind = ck_const then begin
-        if co_llvm in o.compileoptions then begin
-         notimplementederror('20170422A'); //todo
+        if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+                  vardata1^.address.indirectlevel-1,[]) then begin
+         internalerror1(ie_handler,'20170423A');
+        end;
+        if not getvalue(context1,das_none) then begin
+         internalerror1(ie_handler,'20170424A');
+        end;
+        i3:= context1^.d.dat.fact.ssaindex; //data ssa
+        if vardata1^.address.indirectlevel > 1 then begin
+         i2:= pointersize;
+         si1:= das_pointer;
         end
         else begin
-         if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
-                   vardata1^.address.indirectlevel-1,[]) then begin
-          internalerror1(ie_handler,'20170423A');
+         i2:= desttype^.h.bytesize;
+         si1:= desttype^.h.datasize;
+        end;
+        ad1:= gettempaddress(i2);
+        ty1:= getopdatatype(desttype,vardata1^.address.indirectlevel-1);
+        if co_llvm in o.compileoptions then begin
+         with insertitem(oc_tempalloc,context1,-1)^ do begin
+          par.tempalloc.typid:= ty1.listindex;
+          i1:= par.ssad;
          end;
-         if not getvalue(context1,das_none) then begin
-          internalerror1(ie_handler,'20170424A');
-         end;
-         if vardata1^.address.indirectlevel > 1 then begin
-          i2:= pointersize;
-          si1:= das_pointer;
+        end;
+        with insertitem(getpoptempop(si1),context1,-1)^ do begin
+         par.memop.t:= getopdatatype(desttype,
+                      vardata1^.address.indirectlevel-1);
+         include(par.memop.t.flags,af_stacktemp);
+         if co_llvm in o.compileoptions then begin
+          par.ssas1:= i3;
+          par.memop.tempdataaddress.a.ssaindex:= i1; //alloc ssa
          end
          else begin
-          i2:= desttype^.h.bytesize;
-          si1:= desttype^.h.datasize;
-         end;
-         ad1:= gettempaddress(i2);
-         with insertitem(getpoptempop(si1),context1,-1)^ do begin
-          par.memop.t:= getopdatatype(desttype,
-                       vardata1^.address.indirectlevel-1);
-          include(par.memop.t.flags,af_stacktemp);
           par.memop.tempdataaddress.a:= ad1.tempaddress;
-          par.memop.tempdataaddress.offset:= 0;
          end;
-         pushinserttempaddress(ad1.tempaddress,
-                   context1-pcontextitemty(pointer(contextstack)),-1);
-{
-         opref1:= opcount;
-         if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
-                   vardata1^.address.indirectlevel-1,[]) then begin
-          internalerror1(ie_handler,'20170423A');
-         end;
-         doconvert();
-         }
+         par.memop.tempdataaddress.offset:= 0;
         end;
+        if not (co_llvm in o.compileoptions) then begin
+         pushinserttempaddress(ad1.tempaddress,
+                  context1-pcontextitemty(pointer(contextstack)),-1);
+        end
+        else begin
+         with insertitem(oc_potopo,context1,-1)^ do begin
+          par.ssas1:= i1;
+          context1^.d.dat.fact.ssaindex:= par.ssad;
+         end;
+        end;
+{
+        opref1:= opcount;
+        if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+                  vardata1^.address.indirectlevel-1,[]) then begin
+         internalerror1(ie_handler,'20170423A');
+        end;
+        doconvert();
+        }
        end
        else begin
         errormessage(err_variableexpected,[],stackoffset);

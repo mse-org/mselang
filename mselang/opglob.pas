@@ -189,6 +189,7 @@ type
 
   oc_potoint32,
   oc_inttopo,
+  oc_potopo, //llvm typed->untyped pointer
 
   oc_and1,
   oc_and,
@@ -576,6 +577,7 @@ type
 
   oc_locvarpush,
   oc_locvarpop,
+  oc_tempalloc,
 
   oc_subbegin,
   oc_subend,
@@ -935,7 +937,10 @@ type
   managedtempsize: int32;
  end;
  
-
+ tempallocty = record
+  typid: int32;
+ end;
+ 
  suballocinfoty = record
   allocs: dataoffsty;
   alloccount: int32;
@@ -1327,6 +1332,9 @@ type
 //     oc_returnfunc:(
 //      returnfuncinfo: returnfuncinfoty;
 //     );
+   );
+   oc_tempalloc:(
+    tempalloc: tempallocty;
    );
    oc_listtoopenar,oc_concatstring8,oc_concatstring16,oc_concatstring32:(                                           //listops
     listinfo: listinfoty;
