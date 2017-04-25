@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1597,9 +1597,13 @@ begin
      if h.kind in ancestordatakinds then begin
       mstr1:= mstr1+' A:'+inttostrmse(h.ancestor);
       case h.kind of
-       dk_class: begin
+       dk_class,dk_object: begin
         if icf_defvalid in infoclass.flags then begin
-         mstr1:= mstr1+' alloc:'+inttostrmse(infoclass.allocsize)+
+         mstr1:= mstr1+lineend+
+            ' flags:'+
+              msestring(settostring(ptypeinfo(typeinfo(infoclass.flags)),
+                                         integer(infoclass.flags),true))+
+                      ' alloc:'+inttostrmse(infoclass.allocsize)+
                       ' virt:'+inttostrmse(infoclass.virtualcount)+
                       ' intf:'+inttostrmse(infoclass.interfacecount)+
                       ' isub:'+inttostrmse(infoclass.interfacesubcount)+

@@ -1389,11 +1389,21 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'getrange3');
+ objectdefco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'objectdef');
  classdefco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdef');
+ classdefaco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefa');
  classdefforwardco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -6105,7 +6115,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..15] of branchty = (
+ bgettype: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @setdefco); stack: nil; 
      keyword: $FA0E707A{'set'}),
@@ -6115,6 +6125,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @arraydefco); stack: nil; 
      keyword: $E839C1EA{'array'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @objectdefco); stack: nil; 
+     keyword: $111CBE83{'object'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classdefco); stack: nil; 
      keyword: $D07383D4{'class'}),
@@ -7019,7 +7032,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef: array[0..7] of branchty = (
+ bclassdefa: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -11604,9 +11617,14 @@ begin
  getrange1co.handleexit:= @handlerange1;
  getrange3co.branch:= @bgetrange3;
  getrange3co.handleexit:= @handlerange3;
- classdefco.branch:= @bclassdef;
- classdefco.next:= @classdef0co;
+ objectdefco.branch:= nil;
+ objectdefco.next:= @classdefaco;
+ objectdefco.handleentry:= @handleobjectdefstart;
+ classdefco.branch:= nil;
+ classdefco.next:= @classdefaco;
  classdefco.handleentry:= @handleclassdefstart;
+ classdefaco.branch:= @bclassdefa;
+ classdefaco.next:= @classdef0co;
  classdefforwardco.branch:= nil;
  classdefforwardco.handleexit:= @handleclassdefforward;
  classdef0co.branch:= @bclassdef0;

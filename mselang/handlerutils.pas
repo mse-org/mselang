@@ -62,8 +62,8 @@ const
     sdk_none,sdk_pointer,sdk_boolean,sdk_cardinal, sdk_integer, sdk_float,sdk_none,
   //dk_address, dk_record,dk_string,  dk_dynarray,dk_openarray,dk_array,
     sdk_pointer,sdk_none, sdk_string,sdk_none,   sdk_none,    sdk_none,
-  //dk_class,dk_interface
-    sdk_none,sdk_none,
+  //dk_object,dk_class,dk_interface
+    sdk_none,sdk_none,sdk_none,
   //dk_sub,     dk_method
     sdk_pointer,sdk_none,
   //dk_enum,dk_enumitem, dk_set,   dk_character,dk_data

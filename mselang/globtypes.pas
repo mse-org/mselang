@@ -234,7 +234,7 @@ type
                dk_kind,
                dk_address,dk_record,dk_string,
                dk_dynarray,dk_openarray,
-               dk_array,dk_class,dk_interface,dk_sub,dk_method,
+               dk_array,dk_object,dk_class,dk_interface,dk_sub,dk_method,
                dk_enum,dk_enumitem,dk_set,dk_character,
                dk_data);
  pdatakindty = ^datakindty;

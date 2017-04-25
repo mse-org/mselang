@@ -695,6 +695,7 @@ gettype,,,*^
  'set'.,setdef-^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
+ 'object'.,objectdef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
  'procedure'.,proceduretypedef-^*
@@ -779,7 +780,9 @@ getrange3,,,handlerange3^
 //
 // class
 //
-classdef,classdef0,handleclassdefstart,
+objectdef,classdefa,handleobjectdefstart,
+classdef,classdefa,handleclassdefstart,
+classdefa,classdef0,,
  ${whitespace}
  '(',classdefparam-*
  ';',classdefforward

@@ -43,6 +43,7 @@ function getclassinterfaceoffset(const aclass: ptypedataty;
               const aintf: ptypedataty; out offset: integer): boolean;
                             //true if ok
 
+procedure handleobjectdefstart();
 procedure handleclassdefstart();
 procedure handleclassdefforward();
 procedure handleclassdeferror();
@@ -133,7 +134,7 @@ begin
  end;
 end;
 
-procedure handleclassdefstart();
+procedure doclassdef(const isclass: boolean); //else object
 var
  po1: ptypedataty;
  id1: identty;
@@ -141,9 +142,6 @@ var
  bo1: boolean;
  
 begin
-{$ifdef mse_debugparser}
- outhandle('CLASSDEFSTART');
-{$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
   if s.stackindex < 3 then begin
@@ -158,7 +156,13 @@ begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
    d.cla.intfindex:= 0;
-   d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
+   d.cla.isclass:= isclass;
+   if isclass then begin
+    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
+   end
+   else begin
+    d.cla.fieldoffset:= 0;
+   end;
    d.cla.virtualindex:= 0;
   end;
   with contextstack[s.stackindex-2] do begin
@@ -200,7 +204,12 @@ begin
      infoclass.intftypenode:= ele2;
      infoclass.implnode:= ele3;
      infoclass.defs.address:= 0;
-     infoclass.flags:= [];
+     if isclass then begin
+      infoclass.flags:= [icf_class];
+     end
+     else begin
+      infoclass.flags:= [];
+     end;
      infoclass.pendingdescends:= 0;
      infoclass.interfaceparent:= 0;
      infoclass.interfacecount:= 0;
@@ -210,6 +219,22 @@ begin
    end;
   end;
  end;
+end;
+
+procedure handleobjectdefstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('OBJECTDEFSTART');
+{$endif}
+ doclassdef(false);
+end;
+
+procedure handleclassdefstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFSTART');
+{$endif}
+ doclassdef(true);
 end;
 
 procedure handleclassdefforward();
@@ -436,6 +461,7 @@ var
  int1: integer;
  po1: pdataoffsty;
  interfacealloc: int32;
+ typ1: ptypedataty;
  
 begin
 {$ifdef mse_debugparser}
@@ -443,75 +469,81 @@ begin
 {$endif}
  with info do begin
   exclude(s.currentstatementflags,stf_classdef);
-  with contextstack[s.stackindex-1],ptypedataty(ele.eledataabs(
-                                                d.typ.typedata))^ do begin
-   include(infoclass.flags,icf_defvalid);
-   regclass(d.typ.typedata);
-   h.flags:= d.typ.flags;
-   h.indirectlevel:= d.typ.indirectlevel;
-   classinfo1:= @contextstack[s.stackindex].d.cla;
-
-                     
-   intfcount:= 0;
-   intfsubcount:= 0;
-   ele1:= infoclass.interfacechain;
-   while ele1 <> 0 do begin          //count interfaces
-    with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
-     intfsubcount:= intfsubcount + 
-            ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
-     ele1:= next;
+  with contextstack[s.stackindex-1] do begin
+   typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   with typ1^ do begin
+    include(infoclass.flags,icf_defvalid);
+    regclass(d.typ.typedata);
+    h.flags:= d.typ.flags;
+    h.indirectlevel:= d.typ.indirectlevel;
+    classinfo1:= @contextstack[s.stackindex].d.cla;
+ 
+                      
+    intfcount:= 0;
+    intfsubcount:= 0;
+    ele1:= infoclass.interfacechain;
+    while ele1 <> 0 do begin          //count interfaces
+     with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
+      intfsubcount:= intfsubcount + 
+             ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
+      ele1:= next;
+     end;
+     inc(intfcount);
     end;
-    inc(intfcount);
-   end;
-   infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
-   infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
-
-         //alloc classinfo
-   interfacealloc:= infoclass.interfacecount*pointersize;
-   infoclass.allocsize:= classinfo1^.fieldoffset + interfacealloc;
-   infoclass.virtualcount:= classinfo1^.virtualindex;
-   int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
-                    //interfacetable start
-   classdefs1:= getclassinfoaddress(
-                                 int1+interfacealloc,infoclass.interfacecount);
-   infoclass.defs:= classdefs1;
-   with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
-    header.allocs.size:= infoclass.allocsize;
-    header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;
-    header.allocs.classdefinterfacestart:= int1;
-    header.parentclass:= -1;
-    header.interfaceparent:= -1;
-    if h.ancestor <> 0 then begin 
-     parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
-     header.parentclass:= 
-                     parentinfoclass1^.defs.address; //todo: relocate
-     if parentinfoclass1^.virtualcount > 0 then begin
-      fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
-      if icf_virtualtablevalid in parentinfoclass1^.flags then begin
-       copyvirtualtable(infoclass.defs,classdefs1,
-                                       parentinfoclass1^.virtualcount);
-      end
-      else begin
-       regclassdescendent(d.typ.typedata,h.ancestor);
+    infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
+    infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
+ 
+          //alloc classinfo
+    interfacealloc:= infoclass.interfacecount*pointersize;
+    infoclass.allocsize:= classinfo1^.fieldoffset + interfacealloc;
+    infoclass.virtualcount:= classinfo1^.virtualindex;
+    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
+                     //interfacetable start
+    classdefs1:= getclassinfoaddress(
+                                  int1+interfacealloc,infoclass.interfacecount);
+    infoclass.defs:= classdefs1;
+    with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
+     header.allocs.size:= infoclass.allocsize;
+     header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;
+     header.allocs.classdefinterfacestart:= int1;
+     header.parentclass:= -1;
+     header.interfaceparent:= -1;
+     if h.ancestor <> 0 then begin 
+      parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
+      header.parentclass:= 
+                      parentinfoclass1^.defs.address; //todo: relocate
+      if parentinfoclass1^.virtualcount > 0 then begin
+       fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
+       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
+        copyvirtualtable(infoclass.defs,classdefs1,
+                                        parentinfoclass1^.virtualcount);
+       end
+       else begin
+        regclassdescendent(d.typ.typedata,h.ancestor);
+       end;
+      end;
+     end;
+     if infoclass.interfaceparent <> 0 then begin
+      header.interfaceparent:= ptypedataty(ele.eledataabs(
+             infoclass.interfaceparent))^.infoclass.defs.address;
+                                                          //todo: relocate
+     end;
+     if intfcount <> 0 then begin       //alloc interface table
+      po1:= pointer(@header) + header.allocs.classdefinterfacestart;
+      inc(po1,infoclass.interfacecount); //top - down
+      int1:= -infoclass.allocsize; 
+      ele1:= infoclass.interfacechain;
+      while ele1 <> 0 do begin
+       inc(int1,pointersize);
+       dec(po1);
+       po1^:= checkinterface(int1,ele.eledataabs(ele1));
+       ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
       end;
      end;
     end;
-    if infoclass.interfaceparent <> 0 then begin
-     header.interfaceparent:= ptypedataty(ele.eledataabs(
-            infoclass.interfaceparent))^.infoclass.defs.address;
-                                                         //todo: relocate
-    end;
-    if intfcount <> 0 then begin       //alloc interface table
-     po1:= pointer(@header) + header.allocs.classdefinterfacestart;
-     inc(po1,infoclass.interfacecount); //top - down
-     int1:= -infoclass.allocsize; 
-     ele1:= infoclass.interfacechain;
-     while ele1 <> 0 do begin
-      inc(int1,pointersize);
-      dec(po1);
-      po1^:= checkinterface(int1,ele.eledataabs(ele1));
-      ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
-     end;
+    if not (icf_class in infoclass.flags) then begin
+     inittypedatabyte(typ1^,dk_object,typ1^.h.indirectlevel,
+                                                  infoclass.allocsize);
     end;
    end;
   {

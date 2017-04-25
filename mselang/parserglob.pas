@@ -298,6 +298,7 @@ type
   fieldoffset: dataoffsty;
  end;
  classinfoty = record
+  isclass: boolean;
   visibility: visikindsty;
   intfindex: integer;
   fieldoffset: dataoffsty;

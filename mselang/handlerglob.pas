@@ -93,7 +93,7 @@ type
   i: arrayiteminfoty;
  end;
 
- infoclassflagty = (icf_virtualtablevalid,icf_defvalid,icf_forward);
+ infoclassflagty = (icf_class,icf_virtualtablevalid,icf_defvalid,icf_forward);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   intfnamenode: elementoffsetty;
