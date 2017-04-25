@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72E7698
+    ao=An unhandled exception occured at $B7290698
     ae=
     aec=123
     ie=0
@@ -4833,10 +4833,10 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=33
+   c=37
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=8
      (
      kind=2
@@ -5032,8 +5032,8 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,openarray
-    c=12
+    a=0,664,4,openarray
+    c=14
      (
      kind=2
      a=0,648,1,openarray1
@@ -5298,6 +5298,50 @@ c=3
      aec=123
      ie=0
      )
+     (
+     kind=2
+     a=0,648,1,openarray7
+     teststate=1
+     path=openarray7.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,openarray7 llvm
+     teststate=1
+     path=openarray7.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
     teststate=1
     path=openarray/
     comment=
@@ -5341,6 +5385,50 @@ c=3
     a=0,648,1,constref llvm
     teststate=1
     path=constref.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,constref1
+    teststate=1
+    path=constref1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,constref1 llvm
+    teststate=1
+    path=constref1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -5979,6 +6067,50 @@ c=3
     a=0,648,1,setparams llvm
     teststate=1
     path=setparam.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,untypedconst
+    teststate=1
+    path=untypedconst.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,untypedconst llvm
+    teststate=1
+    path=untypedconst.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -9268,23 +9400,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=143
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=127
  0 0
  0 0
  0 0

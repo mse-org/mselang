@@ -19,18 +19,17 @@ type
  pcard8 = ^card8;
  ppointer = ^pointer;
  pointerarty = array of pointer;
- arraysortcomparety = function (const l,r: ppointer): int32;
-// arraysortcomparety = function (const l,r): int32;
+ arraysortcomparety = function (const l,r): int32;
 
-function comparestring(const l,r: ppointer): int32;
+function comparestring(const l,r): int32;
 var
  pl,pr,pe: pcard8;
  c: int8;
  i1,i2: int32;
 begin
  result:= 0;
- pl:= l^;
- pr:= r^;
+ pl:= pointer(l);
+ pr:= pointer(r);
  if pl <> pr then begin
   if pl = nil then begin
    result:= -1;
@@ -100,7 +99,7 @@ begin
   end;
   while true do begin //runs
    while true do begin //steps
-    while compare(l,r) <= 0 do begin //merge from left
+    while compare(l^,r^) <= 0 do begin //merge from left
      d^:= l^;
      inc(l);
      inc(d);
@@ -113,7 +112,7 @@ begin
       goto endstep;
      end;
     end;
-    while compare(l,r) > 0 do begin //merge from right;
+    while compare(l^,r^) > 0 do begin //merge from right;
      d^:= r^;
      inc(r);
      inc(d);

@@ -662,7 +662,8 @@ begin
    end;
    pointerconv:= false;
    source1:= ele.eledataabs(d.dat.datatyp.typedata);
-   if tf_untyped in source1^.h.flags then begin
+   if (tf_untyped in source1^.h.flags) or 
+                                (tf_untyped in dest^.h.flags) then begin
     result:= true; //untyped param
     exit;
    end;
@@ -1388,7 +1389,6 @@ var
    desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
    si1:= desttype^.h.datasize;
    stackoffset:= getstackoffset(context1);
-//   context1:= @contextstack[stackind];
    conversioncost1:= 1;
    if not paramschecked and 
           not checkcompatibledatatype(context1,vardata1^.vf.typ,
@@ -1396,14 +1396,8 @@ var
                                        conversioncost1,destindilev1) then begin
     err1:= err_incompatibletypeforarg;
     with context1^ do begin
-//     if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
-//      sourcetype:= ele.eledataabs(linkgetcasttype(d.dat.ref.castchain));
-//      i1:= 0;
-//     end
-//     else begin
      sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
      i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
-//     end;
     end;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
@@ -1441,17 +1435,19 @@ var
         if not getvalue(context1,das_none) then begin
          internalerror1(ie_handler,'20170424A');
         end;
+        sourcetype:= ele.eledataabs(context1^.d.dat.datatyp.typedata);
+                   //dest can be untyped
         i3:= context1^.d.dat.fact.ssaindex; //data ssa
-        if vardata1^.address.indirectlevel > 1 then begin
+        if context1^.d.dat.datatyp.indirectlevel > 1 then begin
          i2:= pointersize;
          si1:= das_pointer;
         end
         else begin
-         i2:= desttype^.h.bytesize;
-         si1:= desttype^.h.datasize;
+         i2:= sourcetype^.h.bytesize;
+         si1:= sourcetype^.h.datasize;
         end;
         ad1:= gettempaddress(i2);
-        ty1:= getopdatatype(desttype,vardata1^.address.indirectlevel-1);
+        ty1:= getopdatatype(sourcetype,vardata1^.address.indirectlevel-1);
         if co_llvm in o.compileoptions then begin
          with insertitem(oc_tempalloc,context1,-1)^ do begin
           par.tempalloc.typid:= ty1.listindex;
@@ -1459,7 +1455,7 @@ var
          end;
         end;
         with insertitem(getpoptempop(si1),context1,-1)^ do begin
-         par.memop.t:= getopdatatype(desttype,
+         par.memop.t:= getopdatatype(sourcetype,
                       vardata1^.address.indirectlevel-1);
          include(par.memop.t.flags,af_stacktemp);
          if co_llvm in o.compileoptions then begin
@@ -1481,14 +1477,6 @@ var
           context1^.d.dat.fact.ssaindex:= par.ssad;
          end;
         end;
-{
-        opref1:= opcount;
-        if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
-                  vardata1^.address.indirectlevel-1,[]) then begin
-         internalerror1(ie_handler,'20170423A');
-        end;
-        doconvert();
-        }
        end
        else begin
         errormessage(err_variableexpected,[],stackoffset);
