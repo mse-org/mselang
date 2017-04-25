@@ -694,13 +694,17 @@ type
    fderefaddrexp: metavaluety;
    fopenarrayaddrexp: metavaluety;
    fnoparams: metavaluety;
+//   fvoidtyp: metavaluety;
    fpointertyp: metavaluety;
+   fbytetyp: metavaluety;
    fparams1po: metavaluety;
    fparams1posubtyp: metavaluety;
    fnoparamssubtyp: metavaluety;
    fdynarrayindex: metavaluety;
    function getparams1po: metavaluety;
+//   function getvoidtyp: metavaluety;
    function getpointertyp: metavaluety;
+   function getbytetyp: metavaluety;
    function getparams1posubtyp: metavaluety;
    function getdynarrayindex: metavaluety;
   protected
@@ -808,7 +812,9 @@ type
 //   property nullintconst: metavaluety read fnullintconst;
 
    property emptystringconst: metavaluety read femptystringconst;
+//   property voidtyp: metavaluety read getvoidtyp;
    property pointertyp: metavaluety read getpointertyp;
+   property bytetyp: metavaluety read getbytetyp;
    property noparams: metavaluety read fnoparams; //[dummymeta]
    property params1po: metavaluety read getparams1po; 
                                              //[dummymeta,pointertype]
@@ -2243,8 +2249,10 @@ begin
                                              fnoparamssubtyp))^ do begin
     params:= noparams;
    end;
-   fpointertyp.id:= 0;     //initialized in getter func
-   fparams1po.id:= 0;      //initialized in getter func
+//   fvoidtyp.id:= 0;         //initialized in getter func
+   fpointertyp.id:= 0;      //initialized in getter func
+   fbytetyp.id:= 0;         //initialized in getter func
+   fparams1po.id:= 0;       //initialized in getter func
    fparams1posubtyp.id:= 0; //initialized in getter func
   end;
  end;
@@ -2266,6 +2274,22 @@ begin
  result:= fpointertyp;
 end;
 
+function tmetadatalist.getbytetyp: metavaluety;
+begin
+ if fbytetyp.id = 0 then begin
+  fbytetyp:= addtype(sysdatatypes[st_card8].typedata,0);
+ end;
+ result:= fbytetyp;
+end;
+{
+function tmetadatalist.getvoidtyp: metavaluety;
+begin
+ if fvoidtyp.id = 0 then begin
+  fvoidtyp:= addtype(ftypelist.void,0); wrong!
+ end;
+ result:= fvoidtyp;
+end;
+}
 function tmetadatalist.getparams1posubtyp: metavaluety;
 begin
  if fparams1posubtyp.id = 0 then begin
@@ -3080,6 +3104,17 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
      end;
+     dk_none: begin
+     {$ifdef msechckinternalerror}
+      if not (tf_untyped in po2^.h.flags) then begin
+       internalerror(ie_llvmmeta,'20170425');
+      end;
+     {$endif}
+      m1:= bytetyp;
+//      m1:= pointertyp;
+//      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+//                     emptylstring,0,pointerbitsize,pointerbitsize,0,0,voidtyp);
+     end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');
      end;
@@ -3100,7 +3135,9 @@ var
  i1: int32;
 begin
  i1:= 0;
- if af_paramindirect in avariable.address.flags then begin
+ if (af_paramindirect in avariable.address.flags) and 
+          not (tf_untyped in 
+             ptypedataty(ele.eledataabs(avariable.vf.typ))^.h.flags) then begin
   i1:= -1;
  end;
  result:= addtype(avariable.vf.typ,avariable.address.indirectlevel-
