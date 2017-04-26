@@ -355,6 +355,9 @@ uses
  mselinklist,msesysutils,opcode,handlerutils,
  internaltypes,__mla__internaltypes,errorhandler,identutils;
 
+const
+ recursionmax = 1024;
+
 function eletodata(const aele: pelementinfoty): pointer; inline;
 begin
  result:= pointer(aele)+sizeof(elementheaderty);
@@ -776,6 +779,7 @@ var
  parentele: elementoffsetty;
  classdescend: elementoffsetty;
  elepath: identty;
+ recursioncount: int32;
 label
  endlab;
 begin
@@ -785,6 +789,7 @@ begin
   classdescend:= 0;
   parentele:= felementparent;
   elepath:= felementpath;
+  recursioncount:= recursionmax;
   while true do begin
    id1:= elepath+aident;
    uint1:= fhashtable[id1 and fmask];
@@ -827,6 +832,11 @@ begin
         elepath:= header.path+header.name;
        end;
        include(avislevel,vik_descendent);
+       dec(recursioncount);
+       if recursioncount <= 0 then begin
+        errormessage(err_recursiveancestor,[getidentname(aident)]);
+        break;
+       end;
        continue;
       end;
      end;
@@ -1188,10 +1198,12 @@ var
  uint1: ptruint;
  po1: pelementhashdataty;
  po2,po3: pelementinfoty;
+ recursioncount: int32;
 label
  next;
 begin
  result:= false;
+ recursioncount:= recursionmax;
  repeat
   with pelementinfoty(pointer(felementdata)+aparent)^ do begin
    id1:= header.path + header.name + achild;
@@ -1223,6 +1235,11 @@ next:
     end;
     po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
    end;
+  end;
+  dec(recursioncount);
+  if recursioncount <= 0 then begin
+   errormessage(err_recursiveancestor,[getidentname(achild)],minint,0,erl_fatal);
+   exit;
   end;
  until not checkancestor(aparent,avislevel);
 end;

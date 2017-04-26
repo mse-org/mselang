@@ -70,7 +70,8 @@ type
             err_subnovalue,
             err_ignoreddirective,err_definehasnovalue,
             err_typecastdifferentsize,err_classnotresolved,
-            err_invalidutf8,err_objecttypeexpected);
+            err_invalidutf8,err_objecttypeexpected,
+            err_recursiveancestor);
             
  errorinfoty = record
   level: errorlevelty;
@@ -260,7 +261,8 @@ const
                     'Parent class forward declaration not yet resolved'),
   (level: erl_error; message: 
                     'Invalid utf-8 sequence'),
-  (level: erl_error; message: 'Object type expected')
+  (level: erl_error; message: 'Object type expected'),
+  (level: erl_error; message: 'Recursive ancestor "%s"')
  );
 
 procedure message1(const atext: string; const values: array of const); 

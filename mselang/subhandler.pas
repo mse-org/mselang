@@ -1028,6 +1028,9 @@ var                       //todo: move after doparam
        identerror(curstackindex,err_duplicateidentifier);
        err1:= true;
       end;
+      if s.stopparser then begin
+       exit; //recursive ancestor
+      end;
       curparam^:= elementoffsetty(var1); //absoluteaddress
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
@@ -1273,7 +1276,8 @@ begin
   if sf_function in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
    curparamend:= curparam + 1;
-   if not doparams(true) then begin //increments curparam
+   if not doparams(true) or s.stopparser then begin //increments curparam
+                            //recursive class or object parent
     exit;
    end;
   end;
