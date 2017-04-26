@@ -269,14 +269,14 @@ type
    dk_address:(
     infoaddress: infoaddressty;
    );
-   dk_record,dk_class:(
+   dk_record,dk_object,dk_class:(
     fieldchain: elementoffsetty;
     case datakindty of
      dk_record:(
       recordmanagehandlers: array[managedopty] of elementoffsetty;
                     //offset to handler subinfoty,
      );
-     dk_class:(
+     dk_class,dk_object:(
 //      classancestor: elementoffsetty;
       case datakindty of
        dk_class:(
@@ -537,6 +537,7 @@ procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; adatasize: databitsizety;
             aflags: typeflagsty = [];
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 
 implementation
 uses
@@ -606,6 +607,18 @@ begin
  if abytesize >= pointersize then begin
   atype.h.datasize:= das_none;
 //  atype.h.bitsize:= 0;
+ end
+ else begin
+  atype.h.datasize:= datasizes[atype.h.bitsize];
+ end;  
+end;
+
+procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
+begin
+ atype.h.bytesize:= abytesize;
+ atype.h.bitsize:= abytesize*8;
+ if abytesize >= pointersize then begin
+  atype.h.datasize:= das_none;
  end
  else begin
   atype.h.datasize:= datasizes[atype.h.bitsize];

@@ -611,7 +611,7 @@ begin
       errormessage(err_syntax,[';'],2);
      end
      else begin     //class sub
-      include(s.currentstatementflags,stf_classimp);
+      include(s.currentstatementflags,stf_objimp);
       currentcontainer:= ele1;
       contextstack[s.stackindex+1].d.ident:= 
                                        contextstack[s.stackindex+2].d.ident;
@@ -623,7 +623,7 @@ begin
    end;
   end
   else begin
-   exclude(s.currentstatementflags,stf_classimp);
+   exclude(s.currentstatementflags,stf_objimp);
   end;
  end;
 end;
@@ -632,7 +632,7 @@ function checkclassdef(): boolean;
 begin
  result:= true;
  with info,contextstack[s.stackindex-1] do begin
-  if not (stf_classdef in s.currentstatementflags) then begin
+  if not (stf_objdef in s.currentstatementflags) then begin
    result:= false;
    if stf_implementation in s.currentstatementflags then begin
     handlebeginexpected();
@@ -695,7 +695,7 @@ begin
   if sublevel > 0 then begin
    errormessage(err_cannotdeclarelocalexternal,[]);
   end;
-  if (stf_classdef in s.currentstatementflags) then begin
+  if (stf_objimp in s.currentstatementflags) then begin
    errormessage(err_invaliddirective,['external']);
   end
   else begin
@@ -710,8 +710,8 @@ begin
  outhandle('FORWARD');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  if (stf_classdef in s.currentstatementflags) then begin
-   errormessage(err_invaliddirective,['external']);
+  if (stf_objdef in s.currentstatementflags) then begin
+   errormessage(err_invaliddirective,['forward']);
   end
   else begin
    d.subdef.flags:= d.subdef.flags + [sf_forward,sf_header];
@@ -1165,7 +1165,7 @@ begin
   resulttype1.typeele:= 0;
   resulttype1.indirectlevel:= 0;
   defaultparamcount1:= 0;
-  isclass:= s.currentstatementflags * [stf_classdef,stf_classimp] <> [];
+  isclass:= s.currentstatementflags * [stf_objdef,stf_objimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isclass or isinterface or (sf_ofobject in subflags);
   if sf_function in subflags then begin
@@ -1254,7 +1254,7 @@ begin
   sub1^.varchain:= 0;
   sub1^.paramfinichain:= 0;
   sub1^.allocs.nestedalloccount:= 0;
-  if (stf_classdef in s.currentstatementflags) and 
+  if (stf_objdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[s.stackindex-3] do begin
    {$ifdef mse_checkinternalerror}

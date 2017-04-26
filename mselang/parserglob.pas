@@ -165,7 +165,7 @@ type
                     stf_condition,stf_invalidcondition,
                     stf_leftreference,stf_proccall,
                     stf_loop,{stf_propindex,}
-                    stf_classdef,stf_classimp,stf_interfacedef,
+                    stf_objdef,stf_class,stf_objimp,stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
                     stf_needsmanage,stf_newlineposted);

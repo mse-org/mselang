@@ -140,7 +140,6 @@ var
  id1: identty;
  ele1,ele2,ele3: elementoffsetty;
  bo1: boolean;
- 
 begin
  with info do begin
  {$ifdef mse_checkinternalerror}
@@ -148,7 +147,12 @@ begin
    internalerror(ie_handler,'20140325D');
   end;
  {$endif}
-  include(s.currentstatementflags,stf_classdef);
+  if isclass then begin
+   s.currentstatementflags:= s.currentstatementflags + [stf_objdef,stf_class];
+  end
+  else begin
+   s.currentstatementflags:= s.currentstatementflags + [stf_objdef];
+  end;
   if sublevel > 0 then begin
    errormessage(err_localclassdef,[]);
   end;
@@ -198,7 +202,12 @@ begin
                                     ek_classintftypenode,globalvisi);
     ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
     po1:= ele.eledataabs(currentcontainer); //could be moved by list size change
-    inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+    if isclass then begin
+     inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+    end
+    else begin
+     inittypedatasize(po1^,dk_object,d.typ.indirectlevel,das_none);
+    end;
     with po1^ do begin
      fieldchain:= 0;
      infoclass.intfnamenode:= ele1;
@@ -265,6 +274,7 @@ var
  po3: pclassintfnamedataty;
  po4: pclassintftypedataty;
  ele1: elementoffsetty;
+ ki1: datakindty;
 begin
  with info do begin
   ele.checkcapacity(elesizes[ek_classintfname]+elesizes[ek_classintftype]);
@@ -305,8 +315,19 @@ begin
     end;
    end
    else begin
-    if po2^.h.kind <> dk_class then begin
-     errormessage(err_classtypeexpected,[]);
+    if stf_class in s.currentstatementflags then begin
+     ki1:= dk_class;
+    end
+    else begin
+     ki1:= dk_object;
+    end;
+    if po2^.h.kind <> ki1 then begin
+     if ki1 = dk_class then begin
+      errormessage(err_classtypeexpected,[]);
+     end
+     else begin
+      errormessage(err_objecttypeexpected,[]);
+     end;
     end
     else begin
      if not (icf_defvalid in po2^.infoclass.flags) then begin
@@ -469,7 +490,7 @@ begin
  outhandle('CLASSDEFRETURN');
 {$endif}
  with info do begin
-  exclude(s.currentstatementflags,stf_classdef);
+  s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
   with contextstack[s.stackindex-1] do begin
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    with typ1^ do begin
@@ -543,8 +564,7 @@ begin
      end;
     end;
     if not (icf_class in infoclass.flags) then begin
-     inittypedatabyte(typ1^,dk_object,typ1^.h.indirectlevel,
-                                                  infoclass.allocsize);
+     updatetypedatabyte(typ1^,infoclass.allocsize);
     end;
    end;
   {

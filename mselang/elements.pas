@@ -817,7 +817,7 @@ begin
    if vik_ancestor in avislevel then begin
     with eleinfoabs(parentele)^ do begin
      if (header.kind = ek_type) and 
-                             (ptypedataty(@data)^.h.kind = dk_class) then begin
+            (ptypedataty(@data)^.h.kind in [dk_object,dk_class]) then begin
       if classdescend = 0 then begin
        classdescend:= parentele;
       end;

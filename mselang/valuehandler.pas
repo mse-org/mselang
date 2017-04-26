@@ -2413,7 +2413,7 @@ begin
  {$endif}
   isinherited:= idf_inherited in contextstack[s.stackindex+1].d.ident.flags;
   if isinherited then begin
-   if stf_classimp in s.currentstatementflags then begin
+   if stf_objimp in s.currentstatementflags then begin
     origparent:= ele.elementparent;
     ele.decelementparent(); //ek_classimpnode
     ele.decelementparent(); //ek_class
