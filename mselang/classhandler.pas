@@ -156,11 +156,12 @@ begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
    d.cla.intfindex:= 0;
-   d.cla.isclass:= isclass;
    if isclass then begin
+    d.cla.flags:= [obf_class];
     d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    end
    else begin
+    d.cla.flags:= [];
     d.cla.fieldoffset:= 0;
    end;
    d.cla.virtualindex:= 0;
@@ -611,12 +612,19 @@ var
  po1: pvardataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
+ af1: addressflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSFIELD');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  checkrecordfield(d.cla.visibility,[af_classfield],d.cla.fieldoffset,
+  if obf_class in d.cla.flags then begin
+   af1:= [af_classfield];
+  end
+  else begin
+   af1:= [af_objectfield];
+  end;
+  checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,
                                    contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
@@ -676,7 +684,12 @@ begin
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_classprop;
-  d.classprop.flags:= [];
+  if obf_class in contextstack[s.stackindex-1].d.cla.flags then begin
+   d.classprop.flags:= [pof_class];
+  end
+  else begin
+   d.classprop.flags:= [];
+  end;
   d.classprop.errorref:= errors[erl_error];
  end;
 end;

@@ -3981,7 +3981,9 @@ begin
        write('foffs:',d.rec.fieldoffset);
       end;
       ck_classdef: begin
-       write('foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
+       write('flags:',settostring(ptypeinfo(typeinfo(objflagsty)),
+                                                   integer(d.cla.flags),true),
+                   ' foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
       end;
       ck_classprop: begin
        write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),

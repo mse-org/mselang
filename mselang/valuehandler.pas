@@ -2264,8 +2264,10 @@ var
         case d.kind of
          ck_ref: begin
           d.kind:= ck_prop;
-          dec(d.dat.indirection);
-          dec(d.dat.datatyp.indirectlevel);
+          if pof_class in flags then begin
+           dec(d.dat.indirection);
+           dec(d.dat.datatyp.indirectlevel);
+          end;
           d.dat.datatyp.typedata:= typ;
           d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
@@ -2527,7 +2529,7 @@ begin
       end;
       with pfielddataty(po2)^ do begin
        if isgetfact then begin
-        if af_classfield in flags then begin
+        if flags*[af_objectfield,af_classfield] <> [] then begin
          if not getselfvar(ele2) then begin
           errormessage(err_noclass,[],0);
           goto endlab;

@@ -297,8 +297,11 @@ type
  recordinfoty = record
   fieldoffset: dataoffsty;
  end;
+ objflagty = (obf_class);
+ objflagsty = set of objflagty;
+ 
  classinfoty = record
-  isclass: boolean;
+  flags: objflagsty;
   visibility: visikindsty;
   intfindex: integer;
   fieldoffset: dataoffsty;

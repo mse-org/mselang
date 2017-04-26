@@ -103,7 +103,8 @@ type
 //                  af_managedtemp,
                   af_openarray,
                   af_withindirect,
-                  af_classfield,af_stack,af_segmentpo,af_aggregate,
+                  af_classfield,af_objectfield,
+                  af_stack,af_segmentpo,af_aggregate,
                   af_startoffset, //for indirection
                   af_arrayop //typeallocinfoty.size = count
                   {af_getaddress}
@@ -117,7 +118,7 @@ const
  addresscompflags = addresskindflags + [af_nil];
 
 type 
- propflagty = (pof_readfield,pof_readsub,pof_writefield,pof_writesub,
+ propflagty = (pof_class,pof_readfield,pof_readsub,pof_writefield,pof_writesub,
                        pof_default);
  propflagsty = set of propflagty;
 const
