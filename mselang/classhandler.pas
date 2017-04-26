@@ -630,35 +630,75 @@ begin
 end;
 
 procedure handlemethprocedureentry();
+var
+ sf1: subflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('METHPROCEDUREENTRY');
 {$endif}
- initsubdef([sf_header,sf_method]);
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_header,sf_method];
+  end
+  else begin
+   sf1:= [sf_header,sf_method];
+  end;
+ end;
+ initsubdef(sf1);
 end;
 
 procedure handlemethfunctionentry();
+var
+ sf1: subflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('METHFUNCTIONENTRY');
 {$endif}
- initsubdef([sf_function,sf_header,sf_method]);
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_function,sf_header,sf_method];
+  end
+  else begin
+   sf1:= [sf_function,sf_header,sf_method];
+  end;
+ end;
+ initsubdef(sf1);
 end;
 
 procedure handlemethconstructorentry();
+var
+ sf1: subflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('METHCONSTRUCTORENTRY');
 {$endif}
- initsubdef([sf_header,sf_method,sf_constructor]);
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_header,sf_method,sf_constructor];
+  end
+  else begin
+   sf1:= [sf_header,sf_method,sf_constructor];
+  end;
+ end;
+ initsubdef(sf1);
 end;
 
 procedure handlemethdestructorentry();
+var
+ sf1: subflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('METHDESTRUCTORENTRY');
 {$endif}
- initsubdef([sf_header,sf_method,sf_destructor]);
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_header,sf_method,sf_destructor];
+  end
+  else begin
+   sf1:= [sf_header,sf_method,sf_destructor];
+  end;
+ end;
+ initsubdef(sf1);
 end;
 
 procedure handleconstructorentry();

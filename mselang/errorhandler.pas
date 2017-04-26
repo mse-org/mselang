@@ -173,7 +173,7 @@ const
   (level: erl_error; message: 'Can''t assign values to an address'),
   (level: erl_error; message: 'Can''t take the address of expression'),
   (level: erl_error; message: 'Invalid dereference'),
-  (level: erl_error; message: 'Expresssion type must be class or record type'),
+  (level: erl_error; message: 'Expresssion type must be object, class or record type'),
   (level: erl_fatal; message: 'Can not find include file'),
   (level: erl_error; message: 'Too many nested include files'),
   (level: erl_fatal; message: 'Can not read file "%s", error:'+lineend+
@@ -181,7 +181,7 @@ const
   (level: erl_fatal; message: 'Can not write file "%s", error:'+lineend+
                               '%s'),
   (level: erl_fatal; message: 'Anonymous class definitions are not allowed'),
-  (level: erl_fatal; message: 'Class identifier expected'),
+  (level: erl_fatal; message: 'Object or class identifier expected'),
   (level: erl_error; message: 'Class field expected'),
   (level: erl_error; message: 'Class expected'),
   (level: erl_error; message: 

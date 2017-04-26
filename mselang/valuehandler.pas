@@ -2288,7 +2288,18 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         getvalue(adatacontext,das_none); //get class instance
+         if [sf_class,sf_interface] * psubdataty(po4)^.flags <> [] then begin
+          if not getvalue(adatacontext,das_none) then begin 
+                                             //get class instance
+           exit;
+          end;
+         end
+         else begin
+          if not getaddress(adatacontext,true) then begin
+                                             //get object address
+           exit;
+          end;
+         end;
          include(subflags,dsf_instanceonstack);
         end;
         ek_type: begin

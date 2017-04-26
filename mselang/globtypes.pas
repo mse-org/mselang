@@ -221,7 +221,7 @@ type
  end; 
  ptypeallocinfoty = ^typeallocinfoty;
 
- subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
+ subflagty = (sf_function,sf_method,sf_class,sf_constructor,sf_destructor,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
               sf_named, //has llvm name
@@ -241,7 +241,8 @@ type
  pdatakindty = ^datakindty;
 
 const
- compatiblesubflags = [sf_function,sf_method,sf_constructor,sf_destructor];
+ compatiblesubflags = [sf_function,
+                       sf_method,sf_class,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string];

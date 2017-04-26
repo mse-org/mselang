@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
- c=7
+ a=0,665,5,testdir
+ c=8
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=23
    (
    kind=1
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72EB698
+    ao=An unhandled exception occured at $B7281698
     ae=
     aec=123
     ie=0
@@ -4832,7 +4832,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,665,5,sub
    c=37
     (
     kind=1
@@ -5998,8 +5998,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,params
-    teststate=1
+    a=0,648,2,params
+    teststate=2
     path=params.mla
     comment=
     cc=${mlc}
@@ -6013,15 +6013,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,params llvm
-    teststate=1
+    a=0,648,2,params llvm
+    teststate=2
     path=params.mla
     comment=
     cc=${mlc_llvm}
@@ -6036,8 +6036,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  9044 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
@@ -6128,7 +6128,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -6907,7 +6907,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -6925,7 +6925,71 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,665,4,object
+  c=2
+   (
+   kind=2
+   a=0,648,1,object1
+   teststate=1
+   path=object1.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object1 llvm
+   teststate=1
+   path=object1.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=1
+  path=object/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ao=0
+  ee=
+  ae=0
+  eec=
+  cdef=
+  pdef=
+  )
+  (
+  kind=1
+  a=0,665,5,class
   c=26
    (
    kind=1
@@ -7609,7 +7673,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,calls
+   a=0,664,4,calls
    c=4
     (
     kind=2
@@ -7717,7 +7781,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,5,methods
    c=14
     (
     kind=2
@@ -7986,7 +8050,7 @@ c=3
     (
     kind=2
     a=0,648,1,interfacemethod
-    teststate=1
+    teststate=2
     path=interfacemethod.mla
     comment=
     cc=${mlc}
@@ -8000,15 +8064,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,interfacemethod llvm
-    teststate=1
+    teststate=2
     path=interfacemethod.mla
     comment=
     cc=${mlc_llvm}
@@ -8023,11 +8087,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16015 Segmentation fault      $2
+    aec=139
     ie=0
     )
-   teststate=1
+   teststate=2
    path=methods/
    comment=
    cc=
@@ -8045,12 +8109,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,interface
+   a=0,664,5,interface
    c=10
     (
     kind=2
     a=0,648,1,classinterface
-    teststate=1
+    teststate=2
     path=classinterface.mla
     comment=
     cc=${mlc}
@@ -8064,15 +8128,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinterface llvm
-    teststate=1
+    teststate=2
     path=classinterface.mla
     comment=
     cc=${mlc_llvm}
@@ -8087,14 +8151,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16192 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinterface2
-    teststate=1
+    teststate=2
     path=classinterface2.mla
     comment=
     cc=${mlc}
@@ -8108,15 +8172,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinterface2 llvm
-    teststate=1
+    teststate=2
     path=classinterface2.mla
     comment=
     cc=${mlc_llvm}
@@ -8131,14 +8195,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16408 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinterfacevirt
-    teststate=1
+    teststate=2
     path=classinterfacevirt.mla
     comment=
     cc=${mlc}
@@ -8152,15 +8216,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinterfacevirt llvm
-    teststate=1
+    teststate=2
     path=classinterfacevirt.mla
     comment=
     cc=${mlc_llvm}
@@ -8175,14 +8239,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16594 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinhinterface
-    teststate=1
+    teststate=2
     path=classinhinterface.mla
     comment=
     cc=${mlc}
@@ -8196,15 +8260,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Access violation
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinhinterface llvm
-    teststate=1
+    teststate=2
     path=classinhinterface.mla
     comment=
     cc=${mlc_llvm}
@@ -8219,14 +8283,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16752 Segmentation fault      $2
+    aec=139
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinhinterface1
-    teststate=1
+    teststate=2
     path=classinhinterface1.mla
     comment=
     cc=${mlc}
@@ -8240,15 +8304,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=Interpreter AV
     ae=
-    aec=123
+    aec=1
     ie=0
     )
     (
     kind=2
     a=0,648,1,classinhinterface1 llvm
-    teststate=1
+    teststate=2
     path=classinhinterface1.mla
     comment=
     cc=${mlc_llvm}
@@ -8263,11 +8327,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 16995 Segmentation fault      $2
+    aec=139
     ie=0
     )
-   teststate=1
+   teststate=2
    path=interface/
    comment=
    cc=
@@ -8725,8 +8789,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classsubcalls
-   teststate=1
+   a=0,648,2,classsubcalls
+   teststate=2
    path=classsubcalls.mla
    comment=
    cc=${mlc}
@@ -8740,15 +8804,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
+   ao=Interpreter AV
    ae=
-   aec=123
+   aec=1
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classsubcalls llvm
-   teststate=1
+   a=0,648,2,classsubcalls llvm
+   teststate=2
    path=classsubcalls.mla
    comment=
    cc=${mlc_llvm}
@@ -8763,11 +8827,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 18585 Segmentation fault      $2
+   aec=139
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -9277,7 +9341,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -9400,22 +9464,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=127
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=112
  0 0
  0 0
  0 0

@@ -603,7 +603,7 @@ begin
    else begin
     po1:= ele.eleinfoabs(ele1);
     if (po1^.header.kind <> ek_type) or 
-               (ptypedataty(@po1^.data)^.h.kind <> dk_class) then begin
+      not (ptypedataty(@po1^.data)^.h.kind in [dk_object,dk_class]) then begin
      errormessage(err_classidentexpected,[],1);
     end
     else begin

@@ -1,0 +1,24 @@
+program object1;
+type
+ obj1ty = object
+  private
+   f2: int32;
+  public
+   f1: int32;
+   function sub1(par: int32): int32;
+   property p2: int32 read f2 write f2;
+ end;
+
+var
+ obj1: obj1ty;
+
+function obj1ty.sub1(par: int32): int32;
+begin
+ result:= f1+p2+par;
+end;
+
+begin
+ obj1.f1:= 100;
+ obj1.p2:= 20;
+ exitcode:= obj1.sub1(3);
+end.
