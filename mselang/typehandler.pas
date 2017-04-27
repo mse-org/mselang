@@ -446,13 +446,13 @@ var
     handlefields(h.ancestor,fieldoffset);
    end;
    ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
+   i2:= info.s.ssa.nextindex-1;
    while ele1 <> 0 do begin
     field1:= ele.eledataabs(ele1);
     typ2:= ele.eledataabs(field1^.vf.typ);
     if typ2^.h.manageproc <> nil then begin
      fieldoffset:= field1^.offset - fieldoffset;
      if fieldoffset > 0 then begin
-      i2:= info.s.ssa.nextindex-1;
       with additem(oc_offsetpoimm)^ do begin
        setimmint32(fieldoffset,par.imm);
        par.ssas1:= i2;
