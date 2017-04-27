@@ -272,16 +272,14 @@ type
    dk_record,dk_object,dk_class:(
     fieldchain: elementoffsetty;
     case datakindty of
-     dk_record:(
+     dk_record,dk_class,dk_object:(
       recordmanagehandlers: array[managedopty] of elementoffsetty;
                     //offset to handler subinfoty,
-     );
-     dk_class,dk_object:(
-//      classancestor: elementoffsetty;
       case datakindty of
-       dk_class:(
+       dk_class,dk_object:(
+  //      classancestor: elementoffsetty;
         infoclass: infoclassty;
-       );
+      );
      );
    );
    dk_interface:(

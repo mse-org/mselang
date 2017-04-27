@@ -334,6 +334,9 @@ begin
       errormessage(err_classnotresolved,[]);
      end;
      po1^.h.ancestor:= ele.eledatarel(po2);
+     if tf_needsmanage in po2^.h.flags then begin
+      include(po1^.h.flags,tf_needsmanage);
+     end;
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end
@@ -496,7 +499,7 @@ begin
    with typ1^ do begin
     include(infoclass.flags,icf_defvalid);
     regclass(d.typ.typedata);
-    h.flags:= d.typ.flags;
+    h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
     classinfo1:= @contextstack[s.stackindex].d.cla;
  
@@ -565,6 +568,10 @@ begin
     end;
     if not (icf_class in infoclass.flags) then begin
      updatetypedatabyte(typ1^,infoclass.allocsize);
+     reversefieldchain(typ1);
+     if tf_needsmanage in h.flags then begin
+      createrecordmanagehandler(d.typ.typedata);
+     end;
     end;
    end;
   {

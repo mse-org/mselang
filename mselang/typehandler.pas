@@ -18,7 +18,7 @@ unit typehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}{$endif}
 interface
 uses
- globtypes,parserglob;
+ globtypes,parserglob,handlerglob;
 
 procedure handletype();
 procedure handlegettypetypestart();
@@ -56,10 +56,12 @@ procedure checkrecordfield(const avisibility: visikindsty;
 procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
 procedure checkpendingmanagehandlers();
+procedure reversefieldchain(const atyp: ptypedataty);
+procedure createrecordmanagehandler(const atyp: elementoffsetty);
 
 implementation
 uses
- handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
+ elements,errorhandler,handlerutils,parser,opcode,stackops,
  grammar,opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
  segmentutils,__mla__internaltypes;
 
@@ -427,15 +429,52 @@ begin
 end;
 
 procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
+
+var
+ ad1: addressrefty;
+ op1: managedopty;
+
+ procedure handlefields(const atyp: elementoffsetty; var fieldoffset: int32);
+ var
+  ele1: elementoffsetty;
+  field1: pfielddataty;
+  typ2: ptypedataty;
+  i2: int32;
+ begin
+  with ptypedataty(ele.eledataabs(atyp))^ do begin
+   if (h.kind = dk_object) and (h.ancestor <> 0) then begin
+    handlefields(h.ancestor,fieldoffset);
+   end;
+   ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
+   while ele1 <> 0 do begin
+    field1:= ele.eledataabs(ele1);
+    typ2:= ele.eledataabs(field1^.vf.typ);
+    if typ2^.h.manageproc <> nil then begin
+     fieldoffset:= field1^.offset - fieldoffset;
+     if fieldoffset > 0 then begin
+      i2:= info.s.ssa.nextindex-1;
+      with additem(oc_offsetpoimm)^ do begin
+       setimmint32(fieldoffset,par.imm);
+       par.ssas1:= i2;
+      end;
+     end;
+     ad1.typ:= typ2;
+     ad1.ssaindex:= info.s.ssa.nextindex-1;
+     ad1.contextindex:= info.s.stacktop;
+     typ2^.h.manageproc(op1,{typ2,}ad1);
+     fieldoffset:= field1^.offset; 
+    end;
+    ele1:= field1^.vf.next;
+   end;
+  end;
+ end;//handlefields
+
 var
  ele1,typele1: elementoffsetty;
- field1: pfielddataty;
- typ1,typ2: ptypedataty;
+ typ1: ptypedataty;
  sub1: pinternalsubdataty;
- op1: managedopty;
- ad1: addressrefty;
  locad1: memopty;
- i1,i2: int32;
+ i1: int32;
 begin
  with info do begin
   with locad1 do begin
@@ -463,32 +502,12 @@ begin
     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
                                 //fetch globid from subbegin op
    end;
-   ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
    with additem(oc_pushlocpo)^.par do begin
     memop:= locad1; 
    end;
 //   pushtemppo(locad1);
    i1:= 0; //field offset
-   while ele1 <> 0 do begin
-    field1:= ele.eledataabs(ele1);
-    typ2:= ele.eledataabs(field1^.vf.typ);
-    if typ2^.h.manageproc <> nil then begin
-     i1:= field1^.offset - i1;
-     if i1 > 0 then begin
-      i2:= s.ssa.nextindex-1;
-      with additem(oc_offsetpoimm)^ do begin
-       setimmint32(i1,par.imm);
-       par.ssas1:= i2;
-      end;
-     end;
-     ad1.typ:= typ2;
-     ad1.ssaindex:= s.ssa.nextindex-1;
-     ad1.contextindex:= s.stacktop;
-     typ2^.h.manageproc(op1,{typ2,}ad1);
-     i1:= field1^.offset; 
-    end;
-    ele1:= field1^.vf.next;
-   end;
+   handlefields(atyp,i1);
    poptemp(pointersize);
    endsimplesub(true);
   end;
@@ -505,6 +524,8 @@ begin
  with info do begin
   ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= @managerecord;
   ele1:= ele.elementparent;
+  ele.elementparent:= atyp;
+{
   with s.unitinfo^ do begin
    if us_implementation in state then begin
     ele.elementparent:= implementationelement;
@@ -513,10 +534,11 @@ begin
     ele.elementparent:= interfaceelement;
    end;
   end;
+}
   ele.checkcapacity(ek_internalsub,ord(high(op1))+1);
   typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to high(op1) do begin
-   sub1:= ele.addelementdata(managedopids[op1],ek_internalsub,allvisi);
+   ele.addelementduplicatedata(managedopids[op1],ek_internalsub,allvisi,sub1);
    sub1^.address:= 0;
    sub1^.calllinks:= 0;
    typ1^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
@@ -558,12 +580,28 @@ begin
  end;
 end;
 
+procedure reversefieldchain(const atyp: ptypedataty);
+var
+ offs1,offs2,offs3: elementoffsetty;
+begin
+ offs1:= atyp^.fieldchain;
+ offs3:= 0;
+ while offs1 <> 0 do begin      //reverse order
+  with pfielddataty(ele.eledataabs(offs1))^ do begin
+   offs2:= vf.next;
+   vf.next:= offs3;
+  end;
+  offs3:= offs1;
+  offs1:= offs2;
+ end;
+ atyp^.fieldchain:= offs3;
+end;
+
 procedure handlerecordtype();
 var
  int1: integer;
  int2: dataoffsty;
  ty1: ptypedataty;
- offs1,offs2,offs3: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDTYPE');
@@ -575,17 +613,7 @@ begin
    inittypedatabyte(ty1^,dk_record,d.typ.indirectlevel,
                      contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
    resolveforwardtype(ty1);
-   offs1:= ty1^.fieldchain;
-   offs3:= 0;
-   while offs1 <> 0 do begin      //reverse order
-    with pfielddataty(ele.eledataabs(offs1))^ do begin
-     offs2:= vf.next;
-     vf.next:= offs3;
-    end;
-    offs3:= offs1;
-    offs1:= offs2;
-   end;
-   ty1^.fieldchain:= offs3;
+   reversefieldchain(ty1);
    with ty1^ do begin
     if tf_needsmanage in h.flags then begin
      createrecordmanagehandler(d.typ.typedata);

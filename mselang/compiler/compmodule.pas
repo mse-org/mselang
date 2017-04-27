@@ -43,7 +43,7 @@ uses
 const
  startupmessage =
 'MSElang Compiler version 0.0'+lineend+
-'Copyright (c) 2013-2016 by Martin Schreiber';
+'Copyright (c) 2013-2017 by Martin Schreiber';
 
 procedure tcompmo.createexe(const sender: TObject);
 begin
