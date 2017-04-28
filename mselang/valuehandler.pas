@@ -198,6 +198,7 @@ var
  isallconst: boolean;
  poalloc: plistitemallocinfoty;
  alloc1: dataoffsty;
+ i1: int32;
 begin
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
@@ -239,7 +240,7 @@ begin
      end;
     {$endif}
      if co_llvm in info.o.compileoptions then begin
-      poalloc^.ssaindex:= d.dat.fact.ssaindex;
+      poalloc^.ssaoffs:= d.dat.fact.ssaindex;
       inc(poalloc);
      end;
     end;
@@ -286,6 +287,15 @@ begin
   end
   else begin
    initfactcontext(acontext);
+   if co_llvm in info.o.compileoptions then begin
+    poe:= poalloc;
+    poalloc:= poalloc-acontext^.d.list.itemcount;
+    i1:= acontext^.d.dat.fact.ssaindex;
+    while poalloc < poe do begin
+     poalloc^.ssaoffs:= poalloc^.ssaoffs-i1; //relative ssa
+     inc(poalloc);
+    end;
+   end;
    with insertitem(oc_listtoopenar,poitem1,0,
                itemcount1*getssa(ocssa_listtoopenaritem))^ do begin
                                        //at start of next context
@@ -1058,7 +1068,8 @@ begin
     d.dat.datatyp.indirectlevel:= destindirectlevel;
     d.dat.datatyp.typedata:= ele.eledatarel(dest);
     if needsmanagedtemp then begin
-     addmanagedtemp(s.stackindex+stackoffset);
+     addmanagedtemp(acontext);
+//     addmanagedtemp(s.stackindex+stackoffset);
     end;
    end;
   end;

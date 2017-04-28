@@ -1730,50 +1730,53 @@ end;
 procedure listtoopenarop();
 var
  po1,poe: plistitemallocinfoty;
- i1: int32;
+// i1: int32;
+ ssabase: int32;
 begin
  with pc^.par do begin
+  ssabase:= bcstream.ssaindex;
   bcstream.emitalloca(bcstream.ptypeval(listtoopenar.arraytype)); //1 ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                   //1 ssa
-  i1:= bcstream.relval(0);
+//  i1:= bcstream.relval(0);
   po1:= getsegmentpo(seg_localloc,listinfo.allocs);
   poe:= po1 + listinfo.alloccount;
   while po1 < poe do begin
    bcstream.emitbitcast(bcstream.relval(0),
                    bcstream.ptypeval(listtoopenar.itemtype));     //1 ssa
-   bcstream.emitstoreop(bcstream.ssaval(po1^.ssaindex),bcstream.relval(0));
+   bcstream.emitstoreop(ssabase+po1^.ssaoffs-1,bcstream.relval(0));
    bcstream.emitgetelementptr(bcstream.relval(0),
                          bcstream.constval(listinfo.itemsize));   //2 ssa
    inc(po1);
   end;
   callcompilersub(cs_arraytoopenar,true,
-                [bcstream.constval(listtoopenar.allochigh),i1]);  //1 ssa
+         [bcstream.constval(listtoopenar.allochigh),ssabase+2-1]); //1 ssa
  end;
 end;
 
 procedure concatstring(const asub: compilersubty);
 var
- i1: int32;
+// i1: int32;
  p1,pe: plistitemallocinfoty;
+ ssabase: int32;
 begin
  with pc^.par do begin
+  ssabase:= bcstream.ssaindex;
   bcstream.emitalloca(bcstream.ptypeval(concatstring.arraytype)); //1 ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                   //1 ssa
-  i1:= bcstream.relval(0);
   p1:= getsegmentpo(seg_localloc,listinfo.allocs);
   pe:= p1 + listinfo.alloccount;
   while p1 < pe do begin
    bcstream.emitbitcast(bcstream.relval(0),
                               bcstream.pptypeval(ord(das_8)));     //1 ssa
-   bcstream.emitstoreop(bcstream.ssaval(p1^.ssaindex),bcstream.relval(0));
+   bcstream.emitstoreop(ssabase+p1^.ssaoffs-1,bcstream.relval(0));
    bcstream.emitgetelementptr(bcstream.relval(0),
                    bcstream.constval(bcstream.pointersizeconst));   //2 ssa
    inc(p1);
   end;
   callcompilersub(asub,true,
-                [bcstream.constval(concatstring.alloccount),i1]);  //1 ssa
+           [bcstream.constval(concatstring.alloccount),ssabase+2-1]);  //1 ssa
  end;
 end;
 

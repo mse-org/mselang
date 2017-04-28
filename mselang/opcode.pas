@@ -976,6 +976,7 @@ begin
      end;
     end
     else begin
+    {
      if po1^.op.op in listops then begin
       listpo:= getsegmentpo(seg_localloc,po1^.par.listinfo.allocs);
       endpo:= listpo + po1^.par.listinfo.alloccount;
@@ -986,6 +987,7 @@ begin
        inc(listpo);
       end;
      end;
+    }
     end;
     inc(po1);
    end;

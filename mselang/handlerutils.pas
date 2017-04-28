@@ -158,7 +158,7 @@ function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
 procedure poptemp(const asize: int32);
 function allocllvmtemp(const atypeid: int32): int32;
-procedure addmanagedtemp(const aindex: int32);
+procedure addmanagedtemp(const acontext: pcontextitemty);
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -1432,18 +1432,20 @@ begin
  end;
 end;
 
-procedure addmanagedtemp(const aindex: int32);
+procedure addmanagedtemp(const acontext: pcontextitemty);
 var
  ref1: addressrefty;
  i1: int32;
+ index1: int32;
 begin
- with info,contextstack[aindex] do begin
+ with info,acontext^ do begin
  {$ifdef mse_checkinternalerror}
   if not (d.kind in factcontexts) then begin
    internalerror(ie_handler,'2070406H');
   end;
  {$endif}
 //  i1:= d.dat.fact.ssaindex;
+  index1:= acontext-pcontextitemty(pointer(contextstack));
   ref1.offset:= 0;
   ref1.kind:= ark_local;
   if co_llvm in o.compileoptions then begin
@@ -1454,9 +1456,9 @@ begin
    ref1.address:= managedtempref+managedtempcount*pointersize;
   end;
   ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
-  ref1.contextindex:= aindex;
+  ref1.contextindex:= index1;
   writemanagedtypeop(mo_fini,ref1.typ,ref1);
-  with insertitem(oc_storemanagedtemp,aindex,-1)^.par do begin
+  with insertitem(oc_storemanagedtemp,index1,-1)^.par do begin
    ssas1:= d.dat.fact.ssaindex;
    if co_llvm in o.compileoptions then begin
 //    setimmint32(ref1.address-managedtempref,voffset);

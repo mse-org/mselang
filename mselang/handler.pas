@@ -2444,22 +2444,25 @@ begin
 end;
 
 procedure concatterms(const wanted,terms: pcontextitemty);
-var
- wantedtype: systypety;
- pa: ptypedataty;
- pt,p1,pe: pcontextitemty;
- i1: int32;
- palloc: plistitemallocinfoty;
- op1: opcodety;
-begin
-{$ifdef mse_checkinternalerror}
- if not (terms^.d.kind in datacontexts) then begin
-  internalerror(ie_handler,'20170405A');
- end;
-{$endif}
- if terms^.d.dat.termgroupstart <> 0 then begin
+
+ procedure doconcat(const wanted,terms: pcontextitemty);
+ var
+  wantedtype: systypety;
+  pa: ptypedataty;
+  pt,p1,pe: pcontextitemty;
+  i1,i2,i3: int32;
+  palloc: plistitemallocinfoty;
+  op1: opcodety;
+//  termsindex: int32;
+ begin
+//  termsindex:= terms-pcontextitemty(pointer(info.contextstack));
   pt:= @info.contextstack[terms^.d.dat.termgroupstart];
-  pe:= @info.contextstack[info.s.stacktop];
+ {$ifdef mse_checkinternalerror}
+  if not (pt^.d.kind in datacontexts) then begin
+   internalerror(ie_handler,'20170427B');
+  end;
+ {$endif}
+  pe:= terms;
 
   if wanted <> nil then begin
  {$ifdef mse_checkinternalerror}
@@ -2565,29 +2568,65 @@ begin
    end;
    inc(p1);
   end;
-  with additem(op1,getssa(ocssa_concattermsitem)*i1)^ do begin
+ {$ifdef mse_checkinternalerror}
+  if not (terms^.d.kind = ck_fact) then begin
+   internalerror(ie_handler,'20170428A');
+  end;
+ {$endif}
+  p1:= pt;
+  if co_llvm in info.o.compileoptions then begin
+   i2:= terms^.d.dat.fact.ssaindex;
+   i3:= allocsegmentoffset(seg_localloc,sizeof(listitemallocinfoty)*i1,palloc);
+   while p1 <= pe do begin
+    if p1^.d.kind <> ck_space then begin
+     palloc^.ssaoffs:= p1^.d.dat.fact.ssaindex-i2;
+     inc(palloc);
+     if p1 <> pe then begin
+      p1^.d.kind:= ck_space;
+     end;
+    end;
+    inc(p1);
+   end;
+  end
+  else begin
+   while p1 < pe do begin
+    p1^.d.kind:= ck_space;
+    inc(p1);
+   end;
+  end;
+  with insertitem(op1,terms,-1,getssa(ocssa_concattermsitem)*i1)^ do begin
    par.listinfo.alloccount:= i1;
    if co_llvm in info.o.compileoptions then begin
     setimmint32(i1,par.concatstring.alloccount);
     par.concatstring.arraytype:= info.s.unitinfo^.
             llvmlists.typelist.addbytevalue(i1*pointersize);
-   palloc:= allocsegmentpo(seg_localloc,sizeof(listitemallocinfoty)*i1);
-   par.listinfo.allocs:= getsegmentoffset(seg_localloc,palloc);
-   p1:= pt;
-   while p1 <= pe do begin
-    if p1^.d.kind <> ck_space then begin
-     palloc^.ssaindex:= p1^.d.dat.fact.ssaindex;
-     inc(palloc);
-    end;
-    inc(p1);
+    par.listinfo.allocs:= i3;
    end;
-   end;
+   addmanagedtemp(terms);
+   terms^.d.dat.termgroupstart:= 0;
   end;
+  {
   with info do begin
    pt^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    info.s.stacktop:= terms^.d.dat.termgroupstart;
    addmanagedtemp(info.s.stacktop);
   end;
+  }
+ end;//doconcat
+ 
+begin
+{$ifdef mse_checkinternalerror}
+ if not (wanted^.d.kind in datacontexts) or 
+                          not (terms^.d.kind in datacontexts) then begin
+  internalerror(ie_handler,'20170405A');
+ end;
+{$endif}
+ if wanted^.d.dat.termgroupstart <> 0 then begin
+  doconcat(terms,wanted);
+ end;
+ if terms^.d.dat.termgroupstart <> 0 then begin
+  doconcat(wanted,terms);
+//  info.s.stacktop:= terms^.d.dat.termgroupstart;
  end;
 end;
 
@@ -3054,7 +3093,7 @@ var
  end; //decref
 
 var
- potop: pcontextitemty;
+// potop: pcontextitemty;
  i2: int32;
  flags1: dosubflagsty;
 label
@@ -3065,7 +3104,7 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   ad1.contextindex:= s.stacktop;
-  potop:= @contextstack[s.stacktop];
+//  potop:= @contextstack[s.stacktop];
   if not errorfla then begin
    if not getnextnospace(s.stackindex+1,dest) or 
                                not getnextnospace(dest+1,source) then begin
@@ -3074,6 +3113,7 @@ begin
 //   if (source^.d.kind = ck_list) and not listtoset(source) then begin
 //    goto endlab;
 //   end;
+//   concatterms(dest,source);
    with dest^ do begin
     if d.kind = ck_prop then begin
      

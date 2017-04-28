@@ -958,7 +958,7 @@ type
  end;
 
  listitemallocinfoty = record
-  ssaindex: int32;
+  ssaoffs: int32;
  end;
  plistitemallocinfoty = ^listitemallocinfoty;
  

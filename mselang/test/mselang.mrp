@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=463
- y=476
+ x=1017
+ y=348
  cx=879
  cy=396
 macros.sta=9
@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=8
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=23
    (
    kind=1
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7218698
+    ao=An unhandled exception occured at $B72B2698
     ae=
     aec=123
     ie=0
@@ -4680,7 +4680,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
+   a=0,665,5,string
    c=6
     (
     kind=2
@@ -4794,8 +4794,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,stringconcat llvm
-    teststate=1
+    a=0,648,2,stringconcat llvm
+    teststate=2
     path=stringconcat.mla
     comment=
     cc=${mlc_llvm}
@@ -4810,11 +4810,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=string/
    comment=
    cc=
@@ -4832,7 +4832,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=37
     (
     kind=1
@@ -6254,7 +6254,7 @@ c=3
     eec=1
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2016 by Martin Schreiber
+    +Copyright (c) 2013-2017 by Martin Schreiber
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     aec=1
     ie=0
@@ -6907,7 +6907,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -6926,7 +6926,7 @@ c=3
   (
   kind=1
   a=0,665,4,object
-  c=2
+  c=6
    (
    kind=2
    a=0,648,1,object1
@@ -6969,6 +6969,94 @@ c=3
    ao=
    ae=
    aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object2
+   teststate=1
+   path=object2.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object2 llvm
+   teststate=1
+   path=object2.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object3
+   teststate=1
+   path=object3.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=abcdef
+   ao=0
+   ee=
+   ae=0
+   eec=0
+   cr=0
+   ao=abcdef
+   ae=
+   aec=0
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object3 llvm
+   teststate=1
+   path=object3.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=abcdef
+   ao=0
+   ee=
+   ae=0
+   eec=0
+   cr=0
+   ao=abcdef
+   ae=
+   aec=0
    ie=0
    )
   teststate=1
@@ -8113,7 +8201,7 @@ c=3
    c=10
     (
     kind=2
-    a=0,648,2,classinterface
+    a=0,648,1,classinterface
     teststate=1
     path=classinterface.mla
     comment=
@@ -8135,7 +8223,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterface llvm
+    a=0,648,1,classinterface llvm
     teststate=1
     path=classinterface.mla
     comment=
@@ -8157,7 +8245,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterface2
+    a=0,648,1,classinterface2
     teststate=1
     path=classinterface2.mla
     comment=
@@ -8179,7 +8267,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterface2 llvm
+    a=0,648,1,classinterface2 llvm
     teststate=1
     path=classinterface2.mla
     comment=
@@ -8201,7 +8289,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt
+    a=0,648,1,classinterfacevirt
     teststate=1
     path=classinterfacevirt.mla
     comment=
@@ -8223,7 +8311,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt llvm
+    a=0,648,1,classinterfacevirt llvm
     teststate=1
     path=classinterfacevirt.mla
     comment=
@@ -8245,7 +8333,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface
+    a=0,648,1,classinhinterface
     teststate=1
     path=classinhinterface.mla
     comment=
@@ -8267,7 +8355,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface llvm
+    a=0,648,1,classinhinterface llvm
     teststate=1
     path=classinhinterface.mla
     comment=
@@ -8289,7 +8377,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface1
+    a=0,648,1,classinhinterface1
     teststate=1
     path=classinhinterface1.mla
     comment=
@@ -8311,7 +8399,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface1 llvm
+    a=0,648,1,classinhinterface1 llvm
     teststate=1
     path=classinhinterface1.mla
     comment=
@@ -9153,7 +9241,7 @@ c=3
     eec=1
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2016 by Martin Schreiber
+    +Copyright (c) 2013-2017 by Martin Schreiber
     ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     aec=1
     ie=0
@@ -9176,7 +9264,7 @@ c=3
     eec=0
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2016 by Martin Schreiber
+    +Copyright (c) 2013-2017 by Martin Schreiber
     ae=
     aec=0
     ie=0
@@ -9341,7 +9429,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -9451,7 +9539,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -9464,34 +9552,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=126
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=99
  0 0
  0 0
  0 0

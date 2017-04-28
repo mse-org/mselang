@@ -1,0 +1,23 @@
+program object3;
+type
+ obj1ty = object()
+  public
+   f1: string8;
+ end;
+ obj2ty = object(obj1ty)
+  public
+   f2: string8;
+ end;
+var
+ obj1,obj2: obj2ty;
+ s1: string16;
+ s2: string8;
+begin
+
+ s1:= 'abc';
+ s2:= s1;
+ obj1.f1:= s2;
+ obj1.f2:= 'def';
+ obj2:= obj1;
+ writeln(obj1.f1,obj1.f2);
+end.

@@ -648,11 +648,11 @@ begin
  end
  else begin
   if invalidindex(aindex) then begin
-   raise exception.create('Invalid type '+inttostr(aindex));
+   error('Invalid type '+inttostr(aindex));
   end;
   with ptypeinfoty(pointer(fdata)+aindex*sizeof(typeinfoty))^ do begin
    if (ord(kind) < 0) or (kind > high(typecodenames)) then begin
-    raise exception.create('Invalid type '+inttostr(ord(kind)));
+    error('Invalid type '+inttostr(ord(kind)));
    end;
    case kind of
     TYPE_CODE_POINTER: begin
