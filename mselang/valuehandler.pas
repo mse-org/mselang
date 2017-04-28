@@ -286,16 +286,16 @@ begin
    end;
   end
   else begin
-   initfactcontext(acontext);
    if co_llvm in info.o.compileoptions then begin
     poe:= poalloc;
     poalloc:= poalloc-acontext^.d.list.itemcount;
-    i1:= acontext^.d.dat.fact.ssaindex;
+    i1:= (plistitemallocinfoty(poe)-1)^.ssaoffs; //last item is base
     while poalloc < poe do begin
      poalloc^.ssaoffs:= poalloc^.ssaoffs-i1; //relative ssa
      inc(poalloc);
     end;
    end;
+   initfactcontext(acontext);
    with insertitem(oc_listtoopenar,poitem1,0,
                itemcount1*getssa(ocssa_listtoopenaritem))^ do begin
                                        //at start of next context

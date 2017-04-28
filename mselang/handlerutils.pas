@@ -1457,9 +1457,10 @@ begin
   end;
   ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
   ref1.contextindex:= index1;
+  i1:= d.dat.fact.ssaindex;
   writemanagedtypeop(mo_fini,ref1.typ,ref1);
-  with insertitem(oc_storemanagedtemp,index1,-1)^.par do begin
-   ssas1:= d.dat.fact.ssaindex;
+  with insertitem(oc_storemanagedtemp,index1-s.stackindex,-1)^.par do begin
+   ssas1:= i1;
    if co_llvm in o.compileoptions then begin
 //    setimmint32(ref1.address-managedtempref,voffset);
     voffset:= ref1.offset;
@@ -1469,7 +1470,7 @@ begin
     voffset:= ref1.address-managedtempref;
    end;
   end;
-//  d.dat.fact.ssaindex:= i1;
+  d.dat.fact.ssaindex:= i1;
   with pmanagedtempitemty(
                addlistitem(managedtemplist,managedtempchain))^ do begin
    typ:= d.dat.datatyp.typedata;

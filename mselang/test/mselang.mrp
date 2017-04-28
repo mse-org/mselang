@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72B2698
+    ao=An unhandled exception occured at $B723C698
     ae=
     aec=123
     ie=0
@@ -4681,7 +4681,7 @@ c=3
    (
    kind=1
    a=0,665,5,string
-   c=6
+   c=8
     (
     kind=2
     a=0,648,1,stringtest
@@ -4794,8 +4794,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringconcat llvm
-    teststate=2
+    a=0,648,1,stringconcat llvm
+    teststate=1
     path=stringconcat.mla
     comment=
     cc=${mlc_llvm}
@@ -4810,8 +4810,52 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,stringconcat1
+    teststate=2
+    path=stringconcat1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=********** Memory alloc error 1 blocks
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringconcat1 llvm
+    teststate=1
+    path=stringconcat1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
     ie=0
     )
    teststate=2
@@ -4832,7 +4876,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
+   a=0,665,4,sub
    c=37
     (
     kind=1
@@ -5032,7 +5076,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,openarray
+    a=0,665,4,openarray
     c=14
      (
      kind=2
@@ -9539,7 +9583,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -9552,7 +9596,60 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=99
+rowstate=152
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

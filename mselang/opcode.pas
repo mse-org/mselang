@@ -382,7 +382,8 @@ begin
  if (ab1 = ab_local) and (lev1 >= 0) then begin
   ssaext1:= ssaext1 + getssa(ocssa_nestedvar);
  end;
- with insertitem(opsar[arop][ab1],aref.contextindex,-1,ssaext1)^ do begin
+ with insertitem(opsar[arop][ab1],
+                    aref.contextindex-info.s.stackindex,-1,ssaext1)^ do begin
   par.ssas1:= aref.ssaindex;
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= af1;

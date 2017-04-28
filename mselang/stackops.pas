@@ -83,7 +83,7 @@ uses
  segmentutils,classhandler,interfacehandler,__mla__internaltypes;
 
 const
- temprefcount = 0;
+ temprefcount = 1;
    
 type
  cputy = record
