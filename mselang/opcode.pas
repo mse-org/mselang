@@ -260,7 +260,7 @@ procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
                                                     {const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 var
- i1,ssaext1: int32;
+ i1,ssaext1,ssabefore: int32;
  ab1: addressbasety;
  seg1: segmentty;
  ad1: dataoffsty;
@@ -268,8 +268,10 @@ var
  af1: addressflagsty;
  typ1: ptypedataty;
  lev1: int32;
+ context1: pcontextitemty;
 begin
  ssaext1:= 0;
+ context1:= @info.contextstack[aref.contextindex];
  case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aref.vardata)^ do begin 
@@ -382,6 +384,9 @@ begin
  if (ab1 = ab_local) and (lev1 >= 0) then begin
   ssaext1:= ssaext1 + getssa(ocssa_nestedvar);
  end;
+ if context1^.d.kind = ck_fact then begin
+  ssabefore:= context1^.d.dat.fact.ssaindex;
+ end;
  with insertitem(opsar[arop][ab1],
                     aref.contextindex-info.s.stackindex,-1,ssaext1)^ do begin
   par.ssas1:= aref.ssaindex;
@@ -422,6 +427,10 @@ begin
    par.memop.t.flags:= [af_arrayop]; //size = count
   end;
  end;
+ if context1^.d.kind = ck_fact then begin
+  context1^.d.dat.fact.ssaindex:= ssabefore;
+ end;
+
 (*
  i1:= 0;
  if af_aggregate in aaddress.flags then begin
