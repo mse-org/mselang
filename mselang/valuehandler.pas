@@ -699,6 +699,20 @@ begin
        dk_record: begin
         result:= issametype(dest,source1);
        end;
+       dk_object,dk_class,dk_interface: begin
+        result:= false;
+        po1:= source1;
+        while true do begin
+         if po1 = dest then begin
+          result:= true;
+          break;
+         end;
+         if po1^.h.ancestor = 0 then begin
+          break;
+         end;
+         po1:= ele.eledataabs(po1^.h.ancestor);
+        end;
+       end;
       end;
       if not result then begin
        exit; //no conversion possible
