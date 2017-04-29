@@ -518,6 +518,7 @@ const
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
 function basetype(const atype: ptypedataty): elementoffsetty;
+function basetype1(const atype: ptypedataty): ptypedataty;
 function basetype(const atype: elementoffsetty): elementoffsetty;
 
 procedure inittypedata(var atype: typedataty; akind: datakindty;
@@ -562,6 +563,16 @@ begin
  result:= ptypedataty(ele.eledataabs(atype))^.h.base;
  if result = 0 then begin
   result:= atype;
+ end;
+end;
+
+function basetype1(const atype: ptypedataty): ptypedataty;
+begin
+ if atype^.h.base = 0 then begin
+  result:= atype;
+ end
+ else begin
+  result:= ele.eledataabs(atype^.h.base);
  end;
 end;
 

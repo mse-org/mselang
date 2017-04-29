@@ -28,7 +28,7 @@ end;
 var
  cla: tcla;
 begin
- cla:= tcla1.create();
+ cla:= tcla.create();
  exitcode:= cla.a;
  cla.destroy();
 end.

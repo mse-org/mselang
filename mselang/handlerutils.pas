@@ -286,6 +286,8 @@ function getbasetypedata(const abitsize: databitsizety): ptypedataty;
 function getbasetypeele(const abitsize: databitsizety): elementoffsetty;
 function issametype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
+function issamebasetype(const a,b: ptypedataty): boolean; 
+                                        //follow typex = typey chain
 function issametype(const a,b: elementoffsetty): boolean; 
 
 function getsystypeele(const atype: systypety): elementoffsetty;
@@ -1064,6 +1066,18 @@ function issametype(const a,b: ptypedataty): boolean;
                                         //follow typex = typey chain
 begin
  result:= (a = b) or (a^.h.indirectlevel = b^.h.indirectlevel) and
+  (
+   (a^.h.base <> 0) and 
+       ((a^.h.base = b^.h.base) or (ele.eledatarel(b) = a^.h.base)) or
+   (b^.h.base <> 0) and 
+       ((b^.h.base = a^.h.base) or (ele.eledatarel(a) = b^.h.base))
+  );
+end;
+
+function issamebasetype(const a,b: ptypedataty): boolean; 
+                                        //follow typex = typey chain
+begin
+ result:= (a = b) or 
   (
    (a^.h.base <> 0) and 
        ((a^.h.base = b^.h.base) or (ele.eledatarel(b) = a^.h.base)) or

@@ -591,7 +591,7 @@ function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
 var                     //todo: optimize, use tables, complete
- source1,po1: ptypedataty;
+ source1,po1,po2: ptypedataty;
  stackoffset: int32;
 
  procedure convertsize(const atable: convertsizetablety);
@@ -697,13 +697,14 @@ begin
         result:= checkcompatiblesub(source1,dest);
        end;
        dk_record: begin
-        result:= issametype(dest,source1);
+        result:= issamebasetype(dest,source1);
        end;
        dk_object,dk_class,dk_interface: begin
         result:= false;
-        po1:= source1;
+        po1:= basetype1(source1);
+        po2:= basetype1(dest);
         while true do begin
-         if po1 = dest then begin
+         if po1 = po2 then begin
           result:= true;
           break;
          end;
