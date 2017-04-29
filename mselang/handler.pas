@@ -162,6 +162,8 @@ procedure handlechar();
 
 procedure setconstcontext(const aitem: pcontextitemty; const avalue: dataty);
 function getpoptempop(const asize: databitsizety): opcodety;
+procedure concatterms(const wanted,terms: pcontextitemty); 
+        //wanted = nil -> use first term
 
 implementation
 uses
@@ -2284,6 +2286,10 @@ begin
 {$endif}
  with info do begin
   toppo:= @contextstack[s.stacktop];
+  if (stf_params in s.currentstatementflags) and 
+                               (toppo^.d.kind in datacontexts) then begin
+   concatterms(nil,toppo);
+  end;
   with toppo^ do begin
    if not (hf_propindex in d.handlerflags) then begin
  //   resolveshortcuts(0,1); //todo: ck_space handling
@@ -2443,9 +2449,10 @@ begin
  end;
 end;
 
-procedure concatterms(const wanted,terms: pcontextitemty);
+procedure concatterms(const wanted,terms: pcontextitemty); 
+        //wanted = nil -> use first term
 
- procedure doconcat(const wanted,terms: pcontextitemty);
+ procedure doconcat(wanted,terms: pcontextitemty);
  var
   wantedtype: systypety;
   pa: ptypedataty;
@@ -2457,6 +2464,9 @@ procedure concatterms(const wanted,terms: pcontextitemty);
  begin
 //  termsindex:= terms-pcontextitemty(pointer(info.contextstack));
   pt:= @info.contextstack[terms^.d.dat.termgroupstart];
+  if wanted = nil then begin
+   wanted:= pt;
+  end;
  {$ifdef mse_checkinternalerror}
   if not (pt^.d.kind in datacontexts) then begin
    internalerror(ie_handler,'20170427B');
@@ -2464,60 +2474,61 @@ procedure concatterms(const wanted,terms: pcontextitemty);
  {$endif}
   pe:= terms;
 
-  if wanted <> nil then begin
+//  if wanted <> nil then begin
  {$ifdef mse_checkinternalerror}
-   if not (wanted^.d.kind in datacontexts) then begin
-    internalerror(ie_handler,'20170405B');
-   end;
+  if not (wanted^.d.kind in datacontexts) then begin
+   internalerror(ie_handler,'20170405B');
+  end;
  {$endif}
-   if wanted^.d.kind = ck_const then begin
-    pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
-   {$ifdef mse_checkinternalerror}
-    if pa^.h.kind <> dk_string then begin
-     internalerror(ie_handler,'20170406C');
+  if wanted^.d.kind = ck_const then begin
+   pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if pa^.h.kind <> dk_string then begin
+    internalerror(ie_handler,'20170406C');
+   end;
+  {$endif}
+   case pa^.itemsize of
+    1: begin
+     wantedtype:= st_string8;
     end;
-   {$endif}
-    case pa^.itemsize of
-     1: begin
-      wantedtype:= st_string8;
-     end;
-     2: begin
-      wantedtype:= st_string16;
-     end;
-     4: begin
-      wantedtype:= st_string32;
-     end
-     else begin
-      internalerror(ie_handler,'20170405G');
-     end;
+    2: begin
+     wantedtype:= st_string16;
     end;
-    if not tryconvert(wanted,wantedtype,[]) then begin
-     internalerror(ie_handler,'20170406A');
+    4: begin
+     wantedtype:= st_string32;
+    end
+    else begin
+     internalerror(ie_handler,'20170405G');
     end;
-   end
-   else begin
-    pa:= ele.eledataabs(pe^.d.dat.datatyp.typedata);
-   {$ifdef mse_checkinternalerror}
-    if pa^.h.kind <> dk_string then begin
-     internalerror(ie_handler,'20170406B');
-    end;
-   {$endif}
-    case pa^.itemsize of
-     1: begin
-      wantedtype:= st_string8;
-     end;
-     2: begin
-      wantedtype:= st_string16;
-     end;
-     4: begin
-      wantedtype:= st_string32;
-     end
-     else begin
-      internalerror(ie_handler,'20170405G');
-     end;
-    end;
+   end;
+   if not tryconvert(wanted,wantedtype,[]) then begin
+    internalerror(ie_handler,'20170406A');
    end;
   end
+  else begin
+   pa:= ele.eledataabs(pe^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if pa^.h.kind <> dk_string then begin
+    internalerror(ie_handler,'20170406B');
+   end;
+  {$endif}
+   case pa^.itemsize of
+    1: begin
+     wantedtype:= st_string8;
+    end;
+    2: begin
+     wantedtype:= st_string16;
+    end;
+    4: begin
+     wantedtype:= st_string32;
+    end
+    else begin
+     internalerror(ie_handler,'20170405G');
+    end;
+   end;
+  end;
+//  end;
+ (*
   else begin
    pa:= ele.eledataabs(pt^.d.dat.datatyp.typedata);
   {$ifdef mse_checkinternalerror}
@@ -2540,6 +2551,7 @@ procedure concatterms(const wanted,terms: pcontextitemty);
     end;
    end;
   end;
+ *)
   case wantedtype of 
    st_string8: begin
     op1:= oc_concatstring8;
@@ -2616,12 +2628,12 @@ procedure concatterms(const wanted,terms: pcontextitemty);
  
 begin
 {$ifdef mse_checkinternalerror}
- if not (wanted^.d.kind in datacontexts) or 
+ if (wanted <> nil) and not (wanted^.d.kind in datacontexts) or 
                           not (terms^.d.kind in datacontexts) then begin
   internalerror(ie_handler,'20170405A');
  end;
 {$endif}
- if wanted^.d.dat.termgroupstart <> 0 then begin
+ if (wanted <> nil) and (wanted^.d.dat.termgroupstart <> 0) then begin
   doconcat(terms,wanted);
  end;
  if terms^.d.dat.termgroupstart <> 0 then begin
@@ -3103,17 +3115,20 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
  with info do begin       //todo: use direct move if possible
-  ad1.contextindex:= s.stacktop;
 //  potop:= @contextstack[s.stacktop];
   if not errorfla then begin
+   ad1.contextindex:= s.stacktop;
    if not getnextnospace(s.stackindex+1,dest) or 
-                               not getnextnospace(dest+1,source) then begin
+          not getpreviousnospace(s.stacktop,source) then begin
+//                               not getnextnospace(dest+1,source) then begin
     internalerror1(ie_handler,'20160607A');
    end;
 //   if (source^.d.kind = ck_list) and not listtoset(source) then begin
 //    goto endlab;
 //   end;
-//   concatterms(dest,source);
+   if source^.d.kind <> ck_list then begin
+    concatterms(dest,source);
+   end;
    with dest^ do begin
     if d.kind = ck_prop then begin
      

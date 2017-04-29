@@ -227,6 +227,9 @@ function getstackindex(const acontext: pcontextitemty): int32;
 function getstackoffset(const acontext: pcontextitemty): int32;
 function getpreviousnospace(const astackindex: int32): int32;
 function getpreviousnospace(const apo: pcontextitemty): pcontextitemty;
+function getpreviousnospace(const astackindex: int32;
+                                   out  apo: pcontextitemty): boolean;
+                                            //true if found
 function getnextnospace(const current: pcontextitemty): pcontextitemty;
 function getnextnospace(const astackindex: int32): int32;
 function getnextnospace(const astackindex: int32; 
@@ -2329,6 +2332,26 @@ begin
   dec(po1);
  end;
  result:= po1;
+end;
+
+function getpreviousnospace(const astackindex: int32;
+                                   out  apo: pcontextitemty): boolean;
+                                            //true if found
+var
+ p1,pe: pcontextitemty;
+begin
+ result:= false;
+ pe:= pointer(info.contextstack);
+ p1:= pe+astackindex;
+ while p1 >= pe do begin
+  if (p1^.d.kind <> ck_space) and 
+                  not (hf_listitem in p1^.d.handlerflags) then begin
+   result:= true;
+   break;
+  end;
+  dec(p1);
+ end;
+ apo:= p1;
 end;
 
 function getnextnospace(const astackindex: int32;

@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=8
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -2720,7 +2720,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,4,dynarray
    c=14
     (
     kind=2
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B723C698
+    ao=An unhandled exception occured at $B722A698
     ae=
     aec=123
     ie=0
@@ -4396,7 +4396,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,set
+   a=0,665,4,set
    c=12
     (
     kind=2
@@ -4680,7 +4680,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=8
     (
     kind=2
@@ -4816,8 +4816,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringconcat1
-    teststate=2
+    a=0,648,1,stringconcat1
+    teststate=1
     path=stringconcat1.mla
     comment=
     cc=${mlc}
@@ -4831,7 +4831,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=********** Memory alloc error 1 blocks
+    ao=
     ae=
     aec=123
     ie=0
@@ -4858,7 +4858,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -6951,7 +6951,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -9473,7 +9473,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -9589,14 +9589,40 @@ visible=1
 propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=203
+width1=207
 sortdescend1=0
 width2=157
 sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=152
+rowstate=178
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
