@@ -696,6 +696,9 @@ begin
        dk_sub: begin
         result:= checkcompatiblesub(source1,dest);
        end;
+       dk_record: begin
+        result:= issametype(dest,source1);
+       end;
       end;
       if not result then begin
        exit; //no conversion possible
