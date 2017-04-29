@@ -3218,7 +3218,11 @@ begin
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
-
+     if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
+            not tryconvert(source,destvar.typ,indilev1,[]) then begin
+      assignmenterror(source^.d,destvar);
+      goto endlab;
+     end;
      needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
      if needsmanage and isconst and 
        ((destvar.typ^.h.kind = dk_dynarray) and

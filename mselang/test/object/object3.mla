@@ -3,6 +3,7 @@ type
  obj1ty = object()
   public
    f1: string8;
+   i1: int32;
  end;
  obj2ty = object(obj1ty)
   public
@@ -10,6 +11,7 @@ type
  end;
 var
  obj1,obj2: obj2ty;
+ obj3: obj1ty;
  s1: string16;
  s2: string8;
 begin
@@ -18,6 +20,9 @@ begin
  s2:= s1;
  obj1.f1:= s2;
  obj1.f2:= 'def';
+ obj1.i1:= 123;
  obj2:= obj1;
- writeln(obj1.f1,obj1.f2);
+ obj3:= obj1;
+ writeln(obj3.f1,obj1.f2);
+ exitcode:= obj3.i1;
 end.
