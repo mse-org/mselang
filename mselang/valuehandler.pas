@@ -56,11 +56,11 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack);
+                dsf_instanceonstack,dsf_readsub,dsf_writesub);
  dosubflagsty = set of dosubflagty;
 
-procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
-                                              const aflags: dosubflagsty);
+procedure dosub(const adestindex: int32; asub: psubdataty;
+                 const paramstart,paramco: int32; const aflags: dosubflagsty);
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty): boolean;
 
@@ -1376,8 +1376,8 @@ begin
  end;
 end;
 
-procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
-                                              const aflags: dosubflagsty);
+procedure dosub(const adestindex: int32; asub: psubdataty;
+              const paramstart,paramco: int32; const aflags: dosubflagsty);
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -1605,6 +1605,7 @@ var
  subdata1: psubdataty;
  cost1,matchcount1: int32;
  needsvarcheck: boolean;
+ destoffset: int32;
 
  procedure dodefaultparams();
  var
@@ -1660,9 +1661,10 @@ var
 
 var
  realparamco: int32; //including defaults
- {poparams,}indpo,poitem1{,pe}: pcontextitemty;
+ {poparams,indpo,}poitem1{,pe}: pcontextitemty;
  stacksize,resultsize: int32;
  isfactcontext: boolean;
+ ismethod: boolean;
  opoffset1: int32;
  methodtype1: ptypedataty;
  instancetype1: ptypedataty;
@@ -1675,9 +1677,11 @@ begin
  outhandle('dosub');
 {$endif}
  with info do begin
-  indpo:= @contextstack[s.stackindex];
+//  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
-  with indpo^ do begin //classinstance, result
+  destoffset:= adestindex-s.stackindex;
+  with contextstack[adestindex] do begin //classinstance, result
+   instancessa:= d.dat.fact.ssaindex; //for sf_method
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
     needsvarcheck:= true;
@@ -1705,7 +1709,7 @@ begin
      bo1:= false;
      if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
                 (totparamco <= subdata1^.paramcount) then begin 
-      poitem1:= indpo+2;
+      poitem1:= @contextstack[adestindex+2]; //????
       while subparams1 < subparamse do begin //find best parameter match
        if not getnextnospace(poitem1+1,poitem1) then begin
         poitem1:= nil; //needs default param
@@ -1759,14 +1763,14 @@ begin
     if dsf_instanceonstack in aflags then begin
                                      //get method
     {$ifdef mse_checkinternalerror}
-     if indpo^.d.kind <> ck_fact then begin
+     if d.kind <> ck_fact then begin
       internalerror(ie_handler,'20160916A');
      end;
     {$endif}
-     i1:= indpo^.d.dat.fact.ssaindex;
-     instancetype1:= ele.eledataabs(indpo^.d.dat.datatyp.typedata);
+     i1:= d.dat.fact.ssaindex;
+     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
     end;
-    initdatacontext(indpo^.d,ck_ref);
+    initdatacontext(d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
     d.dat.datatyp.indirectlevel:= 0;
     d.dat.datatyp.flags:= [tf_subad];
@@ -1777,7 +1781,7 @@ begin
     if dsf_instanceonstack in aflags then begin //get method
      case instancetype1^.h.kind of
       dk_interface: begin
-       with insertitem(oc_getintfmethod,indpo,-1)^ do begin
+       with insertitem(oc_getintfmethod,destoffset,-1)^ do begin
         par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
                                                         sizeof(intfdefheaderty);
         if co_llvm in info.o.compileoptions then begin
@@ -1787,12 +1791,12 @@ begin
                           adddataoffs(par.getvirtsubad.virtoffset).listid;
         end;
        end;
-       initfactcontext(indpo);
+       initfactcontext(destoffset);
       end;
       dk_class: begin
        d.dat.ref.c.address.segaddress.address:= asub^.globid;
        if asub^.flags * [sf_virtual,sf_override] <> [] then begin
-        with insertitem(oc_getvirtsubad,indpo,-1)^ do begin
+        with insertitem(oc_getvirtsubad,destoffset,-1)^ do begin
          par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                            virtualtableoffset;
          if co_llvm in info.o.compileoptions then begin
@@ -1802,18 +1806,18 @@ begin
                            adddataoffs(par.getvirtsubad.virtoffset).listid;
          end;
         end;
-        initfactcontext(indpo);
+        initfactcontext(destoffset);
        end
        else begin
-        getaddress(indpo,true);
+        getaddress(@contextstack[adestindex],true);
        end;
       {$ifdef mse_checkinternalerror}
-       if indpo^.d.kind <> ck_fact then begin
+       if d.kind <> ck_fact then begin
         internalerror(ie_handler,'20160916A');
        end;
       {$endif}
-       i2:= indpo^.d.dat.fact.ssaindex;
-       with insertitem(oc_combinemethod,indpo,-1)^ do begin
+       i2:= d.dat.fact.ssaindex;
+       with insertitem(oc_combinemethod,destoffset,-1)^ do begin
         par.ssas1:= i1;
         par.ssas2:= i2;
        end;
@@ -1833,10 +1837,9 @@ begin
    end
    else begin
     isfactcontext:= d.kind in factcontexts;
-    instancessa:= d.dat.fact.ssaindex; //for sf_method
+    ismethod:= asub^.flags * [sf_method,sf_ofobject] = [sf_method];
 
-    if (asub^.flags * [sf_method,sf_ofobject] = [sf_method]) and 
-                                    (dsf_ownedmethod in aflags) then begin
+    if ismethod and (dsf_ownedmethod in aflags) then begin
                //owned method
     {$ifdef mse_checkinternalerror}
      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
@@ -1846,23 +1849,44 @@ begin
      ele.findcurrent(tk_self,[],allvisi,vardata1);
     {$endif}
 //     with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
-     with insertitem(oc_pushlocpo,0,-1)^ do begin
+     with insertitem(oc_pushlocpo,destoffset,-1)^ do begin
       par.memop.t:= bitoptypes[das_pointer];
       par.memop.locdataaddress.a.framelevel:= -1;
       par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
       par.memop.locdataaddress.offset:= 0;
       instancessa:= par.ssad;
      end;
+    end
+    else begin
+     if aflags*[dsf_instanceonstack,dsf_indirect,
+                            dsf_readsub,dsf_writesub] = [] then begin
+      if ismethod and isfactcontext then begin
+       if (sf_class in asub^.flags) then begin
+        if d.dat.datatyp.indirectlevel <> 0 then begin
+         errormessage(err_classinstanceexpected,[]);
+        end;
+       end
+       else begin
+        if d.dat.datatyp.indirectlevel <> 0 then begin
+         errormessage(err_objectpointerexpected,[]);
+        end;
+       end;
+      end;
+      inc(d.dat.indirection);              //instance pointer
+      inc(d.dat.datatyp.indirectlevel);
+      getvalue(@contextstack[adestindex],das_none);
+     end;
+     instancessa:= d.dat.fact.ssaindex; //for sf_method
     end;
 
     if dsf_indirect in aflags then begin
      if co_llvm in o.compileoptions then begin
       if sf_ofobject in asub^.flags then begin //method pointer call
-       with insertitem(oc_getmethodcode,indpo,-1)^ do begin
+       with insertitem(oc_getmethodcode,destoffset,-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
        end;
        callssa:= d.dat.fact.ssaindex;
-       with insertitem(oc_getmethoddata,indpo,-1)^ do begin
+       with insertitem(oc_getmethoddata,destoffset,-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
        end;
        instancessa:= d.dat.fact.ssaindex;
@@ -1901,7 +1925,7 @@ begin
        internalerror(ie_handler,'20150325A'); 
       end;
      {$endif}     
-      with insertitem(oc_initclass,0,-1)^,par.initclass do begin
+      with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
        classdef:= resulttype1^.infoclass.defs.address;
       end;
       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
@@ -2008,7 +2032,7 @@ begin
      end;
      }
      if hasresult then begin
-      with insertitem(oc_pushstackaddr,0,opoffset1)^.
+      with insertitem(oc_pushstackaddr,destoffset,opoffset1)^.
                                      par.memop.tempdataaddress do begin
                                               //result var param
        a.address:= -stacksize{-tempsize};
@@ -2019,7 +2043,7 @@ begin
      end;
      if (sf_method in asub^.flags) then begin
           //param order is [returnvaluepointer],instancepo,{params}
-      with insertitem(oc_pushduppo,0,opoffset1)^ do begin
+      with insertitem(oc_pushduppo,destoffset,opoffset1)^ do begin
        if hasresult then begin
         par.voffset:= -2*vpointersize;
        end
@@ -2237,6 +2261,7 @@ var
  isinherited: boolean;
  isgetfact: boolean;
  subflags: dosubflagsty;
+ poind,pob,potop: pcontextitemty;
   
 // procedure donotfound(const typeele: elementoffsetty);
  procedure donotfound(const adatacontext: pcontextitemty;
@@ -2324,9 +2349,19 @@ var
           end;
          end
          else begin
-          if not getaddress(adatacontext,true) then begin
-                                             //get object address
-           exit;
+          if psubdataty(po4)^.flags * [sf_destructor,sf_class] = 
+                                           [sf_destructor,sf_class] then begin
+           if not getvalue(adatacontext,das_none) then begin 
+                                              //get object pointer
+                                              //todo: check indirectlevel
+            exit;
+           end;
+          end
+          else begin
+           if not getaddress(adatacontext,true) then begin
+                                              //get object address
+            exit;
+           end;
           end;
          end;
          include(subflags,dsf_instanceonstack);
@@ -2342,7 +2377,7 @@ var
          internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
-       dosub(psubdataty(po4),paramstart,paramco,subflags);
+       dosub(s.stackindex,psubdataty(po4),paramstart,paramco,subflags);
        exit;
       end;
       else begin
@@ -2373,7 +2408,6 @@ var
  paramco1: integer;
  origparent: elementoffsetty;
  ssabefore: int32;
- poind,pob,potop: pcontextitemty;
  pocontext1: pcontextitemty;
  i1,i2: int32;
  bo1: boolean;
@@ -2528,7 +2562,9 @@ begin
   if isinherited then begin
    include(subflags,dsf_isinherited);
   end;
-  if idents.high = 0 then begin
+  if (idents.high = 0) and not 
+      ((pob^.d.kind = ck_fact) and (pob^.d.dat.indirection < 0)) then begin
+                                             //correct?
    include(subflags,dsf_ownedmethod);
   end;
   po2:= @po1^.data;
@@ -2674,7 +2710,8 @@ begin
          if po3^.h.kind = dk_method then begin
           include(subflags,dsf_instanceonstack);
          end;
-         dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,subflags);
+         dosub(s.stackindex,ele.eledataabs(po3^.infosub.sub),
+                                         paramstart,paramco,subflags);
         end;
        end;     
       end;
@@ -2688,7 +2725,13 @@ begin
      end;
     end;
     ek_sub: begin
-     dosub(psubdataty(po2),paramstart,paramco,subflags);
+     if isgetfact then begin
+      i1:= s.stackindex;
+     end
+     else begin
+      i1:= s.stackindex-1;
+     end;
+     dosub(i1,psubdataty(po2),paramstart,paramco,subflags);
     end;
     ek_sysfunc: begin //todo: handle ff_address
      with contextstack[s.stackindex] do begin

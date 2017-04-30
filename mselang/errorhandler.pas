@@ -71,7 +71,7 @@ type
             err_ignoreddirective,err_definehasnovalue,
             err_typecastdifferentsize,err_classnotresolved,
             err_invalidutf8,err_objecttypeexpected,
-            err_recursiveancestor);
+            err_recursiveancestor,err_objectpointerexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -262,7 +262,8 @@ const
   (level: erl_error; message: 
                     'Invalid utf-8 sequence'),
   (level: erl_error; message: 'Object type expected'),
-  (level: erl_error; message: 'Recursive ancestor "%s"')
+  (level: erl_error; message: 'Recursive ancestor "%s"'),
+  (level: erl_error; message: 'Object pointer expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

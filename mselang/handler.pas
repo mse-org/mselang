@@ -3154,8 +3154,8 @@ begin
         getvalue(source,das_none);
         i1:= s.stackindex;
         s.stackindex:= getstackindex(dest);
-        dosub(psubdataty(ele.eledataabs(writeele)),s.stackindex+1,
-                                            i2,[dsf_indexedsetter]{flags1});
+        dosub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
+                   s.stackindex+1,i2,[dsf_indexedsetter,dsf_writesub]{flags1});
         s.stackindex:= i1;
         ele.popelementparent();
        end
@@ -3532,7 +3532,7 @@ begin
 //      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
     end;
-    ck_subcall,ck_controltoken: begin
+    ck_space,ck_subcall,ck_controltoken: begin
     end;
     else begin
      errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);

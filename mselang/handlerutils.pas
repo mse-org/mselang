@@ -2859,7 +2859,8 @@ begin                    //todo: optimize
         i1:= pocont1^.d.index.count;
         pocont1^.d.kind:= ck_space;
        end;
-       dosub(psubdataty(ele.eledataabs(readele)),s.stackindex+1,i1,[]);
+       dosub(s.stackindex,psubdataty(ele.eledataabs(readele)),
+                                     s.stackindex+1,i1,[dsf_readsub]);
        while i1 > 0 do begin //clear index params
        {$ifdef mse_checkinternalerror}
         if pocont1 > @contextstack[s.stacktop] then begin

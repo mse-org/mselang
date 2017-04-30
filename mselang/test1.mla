@@ -1,49 +1,35 @@
-program untyped;
-{$internaldebug on}
+program object4;
 
 type
- ppint32 = ^^int32;
-(*
-function comparestring(constref l,r: int32{: flo64}): int32;
-//{$dumpelements}
-begin
-// exitcode:= int32(l) + int32(r);
-// exitcode:= ppint32(l)^^+ppint32(r)^^
-end;
-*)
+ objty = class
+  f1: int32;
+  constructor create(a: int32);
+  destructor destroy();
+  procedure test(const a: int32);
+ end;
 
-function test1(p0,p1: {array of} int32): int32;
+constructor objty.create(a: int32);
 begin
-// result:= p[0]+p[1];
- result:= p0+p1;
+ f1:= a;
 end;
 
-function test2(const p: int32): int32;
+destructor objty.destroy();
 begin
- result:= 2*p;
 end;
-{
-procedure test2(const p: int32);
+
+procedure objty.test(a: int32);
 begin
- exitcode:= 2*p;
+ f1:= f1 * a;
 end;
-}
+
 var
- p1,p2: pointer;
- i1,i2: int32;
+ obj1: ^objty;
+ obja: objty;
 begin
-
- i1:= 100;
-// i2:= 23;
-{
- p1:= @i1;
- p2:= @i2;
- comparestring(@p1,@p2)
-}
-// exitcode:= test2(test1([i1,23]));//);
-// exitcode:= test2(test1(i1,23);
- exitcode:= test2(test1(i1,23);
-// comparestring(100,23)
-// comparestring(i1,i2);
-// comparestring(100.0,23.0);
+{$internaldebug on}
+ obja:= objty.create(123);
+ obj1:= @obja;
+ obj1^.test(10);
+ exitcode:= obj1^.f1 div 10;
+ obja.destroy();
 end.
