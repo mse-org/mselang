@@ -2368,7 +2368,7 @@ var
  int1,int2,int3: integer;
  si1: datasizety;
 // offs1: dataoffsty;
- indirect1: indirectlevelty;
+// indilev1: indirectlevelty;
  stacksize1: datasizety;
  paramco1: integer;
  origparent: elementoffsetty;
@@ -2412,8 +2412,12 @@ begin
     end;
     ck_ref,ck_fact,ck_subres: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
+     if po3^.h.kind = dk_class then begin
+      dec(d.dat.datatyp.indirectlevel);
+      dec(d.dat.indirection);
+     end;
      if (d.dat.datatyp.indirectlevel <> 0) or 
-                                (po3^.h.kind <> dk_record) then begin
+                 not(po3^.h.kind in [dk_record,dk_object,dk_class]) then begin
       errormessage(err_illegalqualifier,[]);
       goto endlab;
      end
