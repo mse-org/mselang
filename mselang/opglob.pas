@@ -691,8 +691,12 @@ type
 //  result: dataoffsty;   //stackoffset to result pointer
  end;
 
+ destroyclassflagty = (dcf_nofreemem); //for object destroy
+ destroyclassflagsty = set of destroyclassflagty;
+ 
  destroyclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
+  flags: destroyclassflagsty;
  end;
 
  getvirtsubadinfoty = record

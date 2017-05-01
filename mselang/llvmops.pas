@@ -3807,7 +3807,9 @@ end;
 procedure destroyclassop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_free,false,[bcstream.ssaval(ssas1)]);
+  if not (dcf_nofreemem in destroyclass.flags) then begin
+   callcompilersub(cs_free,false,[bcstream.ssaval(ssas1)]);
+  end;
 //  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
 //                                                    [bcstream.ssaval(ssas1)]);
  end;

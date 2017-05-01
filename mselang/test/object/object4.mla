@@ -1,0 +1,36 @@
+program object4;
+
+type
+ objty = object
+  f1: int32;
+  constructor create(a: int32);
+  destructor destroy();
+  procedure test(const a: int32);
+ end;
+
+constructor objty.create(a: int32);
+begin
+ f1:= a;
+end;
+
+destructor objty.destroy();
+begin
+ write('abc');
+end;
+
+procedure objty.test(a: int32);
+begin
+ f1:= f1 * a;
+end;
+
+var
+ obj1: ^objty;
+ obja: objty;
+begin
+ obja.destroy();
+ obj1:= objty.create(113);
+ obja.create(10);
+ obj1^.test(10);
+ exitcode:= obj1^.f1 div 10 + obja.f1;
+ obj1.destroy();
+end.

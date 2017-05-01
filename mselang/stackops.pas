@@ -5074,7 +5074,12 @@ end;
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
-  intfreemem(ppointer(stackpop(sizeof(pointer)))^);
+  if dcf_nofreemem in destroyclass.flags then begin
+   stackpop(sizeof(pointer));
+  end
+  else begin
+   intfreemem(ppointer(stackpop(sizeof(pointer)))^);
+  end;
  end;
 end;
 

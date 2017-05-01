@@ -56,7 +56,8 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,dsf_readsub,dsf_writesub);
+                dsf_instanceonstack,dsf_nofreemem, //for object destructor
+                dsf_readsub,dsf_writesub);
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
@@ -2208,6 +2209,10 @@ begin
                           not (dsf_isinherited in aflags) then begin
      with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
+      par.destroyclass.flags:= [];
+      if dsf_nofreemem in aflags then begin
+       include(par.destroyclass.flags,dcf_nofreemem);
+      end;
      end;
     end;
     if dsf_indirect in aflags then begin
@@ -2271,6 +2276,7 @@ var
  var
   offs1: dataoffsty;
   ele1: elementoffsetty;
+  pvar1: pvardataty;
 
  var
   int1: integer;
@@ -2342,7 +2348,17 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
+         pvar1:= eletodata(po1);
          if [sf_class,sf_interface] * psubdataty(po4)^.flags <> [] then begin
+          if pvar1^.address.indirectlevel <> 1 then begin
+           if sf_class in psubdataty(po4)^.flags then begin
+            errormessage(err_classinstanceexpected,[]);
+           end
+           else begin
+            errormessage(err_interfaceexpected,[]);
+           end;
+           exit;
+          end;
           if not getvalue(adatacontext,das_none) then begin 
                                              //get class instance
            exit;
@@ -2351,16 +2367,31 @@ var
          else begin
           if psubdataty(po4)^.flags * [sf_destructor,sf_class] = 
                                            [sf_destructor,sf_class] then begin
+           if pvar1^.address.indirectlevel <> 1 then begin
+            errormessage(err_classinstanceexpected,[]);
+           end;
            if not getvalue(adatacontext,das_none) then begin 
                                               //get object pointer
-                                              //todo: check indirectlevel
             exit;
            end;
           end
           else begin
-           if not getaddress(adatacontext,true) then begin
-                                              //get object address
-            exit;
+           if (sf_destructor in psubdataty(po4)^.flags) and 
+                  (pvar1^.address.indirectlevel = 1) then begin //object pointer
+            if not getvalue(adatacontext,das_none) then begin 
+                                              //get object pointer
+             exit;
+            end;
+           end
+           else begin
+            if pvar1^.address.indirectlevel <> 0 then begin
+             errormessage(err_objectexpected,[]);
+            end;
+            if not getaddress(adatacontext,true) then begin
+                                               //get object address
+             exit;
+            end;
+            include(subflags,dsf_nofreemem);
            end;
           end;
          end;
