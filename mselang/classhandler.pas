@@ -377,11 +377,34 @@ begin
 end;
 
 procedure handleclassdefattach();
+var
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFATTACH');
 {$endif}
- with info do begin
+ with info,contextstack[s.stackindex-1] do begin
+ {$ifdef checkinternalerror}
+  if d.kind <> ck_classdef then begin
+   internalerror('20170501A');
+  end;
+ {$endif}
+  for i1:= s.stackindex+3 to s.stacktop do begin
+  {$ifdef checkinternalerror}
+   if contextstack[i1].d.kind <> ck_cident then begin
+    internalerror('20170501A');
+   end;
+  {$endif}
+   case contextstack[i1].d.ident.ident of
+    tk_zeroed: begin
+     include(d.cla.flags,obf_zeroed);
+    end;
+    else begin
+     identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
+                                                err_invalidattachment);
+    end;
+   end;
+  end;
   dec(s.stackindex);
  end;
 end;
@@ -509,12 +532,16 @@ begin
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    with typ1^ do begin
     include(infoclass.flags,icf_defvalid);
+    with contextstack[s.stackindex] do begin
+     if obf_zeroed in d.cla.flags then begin
+      include(infoclass.flags,icf_zeroed);
+     end;
+    end;
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
     classinfo1:= @contextstack[s.stackindex].d.cla;
  
-                      
     intfcount:= 0;
     intfsubcount:= 0;
     ele1:= infoclass.interfacechain;

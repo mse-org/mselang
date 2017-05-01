@@ -64,7 +64,7 @@
  '.method'
 @.tokens
  'result','exitcode','sizeof','defined','break','continue','self'
- 'b','booleval','internaldebug'
+ 'b','booleval','internaldebug','zeroed'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-

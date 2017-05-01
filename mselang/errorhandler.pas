@@ -72,7 +72,7 @@ type
             err_typecastdifferentsize,err_classnotresolved,
             err_invalidutf8,err_objecttypeexpected,
             err_recursiveancestor,err_objectpointerexpected,
-            err_interfaceexpected,err_objectexpected);
+            err_interfaceexpected,err_objectexpected,err_invalidattachment);
             
  errorinfoty = record
   level: errorlevelty;
@@ -266,7 +266,8 @@ const
   (level: erl_error; message: 'Recursive ancestor "%s"'),
   (level: erl_error; message: 'Object pointer expected'),
   (level: erl_error; message: 'Interface expected'),
-  (level: erl_error; message: 'Object expected')
+  (level: erl_error; message: 'Object expected'),
+  (level: erl_error; message: 'Invalid attachment "%s"')
  );
 
 procedure message1(const atext: string; const values: array of const); 
