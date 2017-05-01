@@ -588,7 +588,7 @@ begin
     setimmint32(po1^.index*pointersize,ref1.offset);
    end
    else begin
-    ref1.address:= info.managedtempref+po1^.index*pointersize;
+    ref1.address:= {info.managedtempref+}po1^.index*pointersize;
    end;
    ref1.typ:= ele.eledataabs(po1^.typ);
    writemanagedtypeop(mo_decref,ref1.typ,ref1);
