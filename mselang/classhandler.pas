@@ -50,6 +50,7 @@ procedure handleclassdeferror();
 procedure handleclassdefreturn();
 procedure handleclassdefparam2();
 procedure handleclassdefparam3a();
+procedure handleclassdefattach();
 procedure handleclassprivate();
 procedure handleclassprotected();
 procedure handleclasspublic();
@@ -372,6 +373,16 @@ begin
  classheader(true); //interfacedef
  with info do begin
 //  dec(s.stackindex);
+ end;
+end;
+
+procedure handleclassdefattach();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFATTACH');
+{$endif}
+ with info do begin
+  dec(s.stackindex);
  end;
 end;
 

@@ -785,6 +785,7 @@ classdef,classdefa,handleclassdefstart,
 classdefa,classdef0,,
  ${whitespace}
  '(',classdefparam-*
+ '[',classdefattach-*
  ';',classdefforward
 classdefforward,,,handleclassdefforward
 classdef0,classdeferror,,
@@ -810,7 +811,7 @@ classdefparam,,,*
 classdefparam1,classdefparam2,,
  '',identpath^*
 classdefparam2,classdefparam2a,,handleclassdefparam2*
-classdefparam2a,,,*
+classdefparam2a,classdefparam4,,*
  ${whitespace}
  ',',classdefparam3-
  ')',-*
@@ -818,6 +819,18 @@ classdefparam2a,,,*
 classdefparam3,classdefparam3a,,
  '',identpath^*
 classdefparam3a,classdefparam2a,,handleclassdefparam3a*
+classdefparam4,,,
+ ${whitespace}
+ '[',classdefattach-*
+ 
+classdefattach,,,handleclassdefattach*
+ '',attach^*
+
+attach,attach1,,
+ '',commaidents^*
+attach1,,,^
+ ']',-*
+ '',!handleclosesquarebracketexpected
 
 classfield,,,handleclassfield^*
  '',vardef^*

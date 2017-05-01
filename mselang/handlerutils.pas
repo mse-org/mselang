@@ -1561,12 +1561,15 @@ begin
  case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aref.vardata)^ do begin 
+    result:= ele.eledataabs(vf.typ);
+    {
     if af_segment in address.flags then begin
      result:= ele.eledataabs(vf.typ);
     end
     else begin
      notimplementederror('');
     end;
+    }
    end;
   end;
   ark_contextdata: begin
@@ -1586,6 +1589,8 @@ var
  op1: popinfoty;
 
  procedure pushad(const ad: addressvaluety);
+ var
+  i1,i2: int32;
  begin
   if af_segment in ad.flags then begin
    op1:= additem(oc_pushsegaddr,
@@ -1598,7 +1603,18 @@ var
    end;
   end
   else begin
-   notimplementederror('');
+   i1:= info.sublevel-ad.locaddress.framelevel-1;
+   i2:= 0;
+   if i1 >= 0 then begin
+    i2:= getssa(ocssa_nestedvarad);
+   end;
+   op1:= additem(oc_pushlocaddr,i2);
+   with op1^.par.memop do begin
+    locdataaddress.a:= ad.locaddress;
+    locdataaddress.a.framelevel:= i1;
+    locdataaddress.offset:= aref.offset;
+    t:= bitoptypes[das_pointer];
+   end;
   end;
  end;
 
