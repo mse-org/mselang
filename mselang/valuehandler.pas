@@ -1934,6 +1934,7 @@ begin
        with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
         classdef:= resulttype1^.infoclass.defs.address;
        end;
+       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
       end
       else begin
        with resulttype1^.infoclass do begin
@@ -1941,16 +1942,25 @@ begin
          with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
           setimmint32(allocsize,par.imm);
          end;
+         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
         end
         else begin
-         with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
+         with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
           setimmint32(allocsize,par.imm);
          end;
-//          notimplemented; // call ini
+         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+         if tf_needsmanage in resulttype1^.h.flags then begin
+          adref1.offset:= 0;
+          adref1.ssaindex:= instancessa;
+          adref1.contextindex:= adestindex;
+          adref1.kind:= ark_stack;
+          adref1.address:= 0;
+          adref1.typ:= resulttype1;
+          writemanagedtypeop(mo_ini,resulttype1,adref1);
+         end;
         end;
        end;
       end;
-      instancessa:= d.dat.fact.ssaindex; //for sf_constructor
      end
      else begin
       resulttype1:= ele.eledataabs(asub^.resulttype.typeele);
