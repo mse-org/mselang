@@ -3792,6 +3792,21 @@ begin
  end;
 end;
 
+procedure getobjectmemop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_malloc,true,[bcstream.constval(imm.llvm.listid)]);
+ end;
+end;
+
+procedure getobjectzeromemop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_calloc,true,[bcstream.constval(imm.llvm.listid),
+                                         bcstream.constval(i32consts[1])]);
+ end;
+end;
+
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
@@ -4014,7 +4029,14 @@ begin
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
-
+{
+procedure getmem1op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_malloc,true,[bcstream.constval(imm.llvm.listid)]);
+ end;
+end;
+}
 procedure getzeromemop();
 begin
  with pc^.par do begin
@@ -4026,7 +4048,15 @@ begin
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
-
+{
+procedure getzeromem1op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_calloc,true,[bcstream.constval(imm.llvm.listid),
+                                         bcstream.constval(i32consts[1])]);
+ end;
+end;
+}
 procedure freememop();
 begin
  with pc^.par do begin
@@ -4579,6 +4609,8 @@ const
   returnssa = 0;
   returnfuncssa = 1;
 
+  getobjectmemssa = 1;
+  getobjectzeromemssa = 1;
   initclassssa = 3;
   destroyclassssa = 0;
   
@@ -4601,7 +4633,9 @@ const
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;
+//  getmem1ssa = 1;
   getzeromemssa = 2;
+//  getzeromem1ssa = 1;
   freememssa = 0;
   reallocmemssa = 3;
   setmemssa = 1;

@@ -115,6 +115,8 @@ type
   oc_callindi,
   oc_callfuncindi,
 
+  oc_getobjectmem,
+  oc_getobjectzeromem,
   oc_initclass,
   oc_destroyclass,
 
@@ -1185,7 +1187,8 @@ type
    oc_pushaddr,
    oc_increg0,oc_mulimmint,oc_addimmint,oc_offsetpoimm,
    oc_pop,
-   oc_arraytoopenar: (
+   oc_arraytoopenar,
+   oc_getobjectmem,oc_getobjectzeromem: (
     imm: immty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,
@@ -1304,7 +1307,8 @@ type
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar,
    oc_decrefsizesegdynar,oc_decrefsizelocdynar,
    oc_decrefsizereg0dynar,oc_decrefsizestackdynar,oc_decrefsizestackrefdynar,
-   oc_getmem,oc_getzeromem,oc_memcpy,
+   oc_getmem,oc_getzeromem, //ssas1 = dest, ssas2 = size
+   oc_memcpy,
    oc_incsegint,oc_incsegpo,
    oc_inclocint,oc_inclocpo,
    oc_incparint,oc_incparpo,

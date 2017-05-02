@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=8
   (
   kind=1
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B729A698
+    ao=An unhandled exception occured at $B7216698
     ae=
     aec=123
     ie=0
@@ -6969,7 +6969,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,665,5,object
   c=8
    (
    kind=2
@@ -7105,8 +7105,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,object4
-   teststate=1
+   a=0,648,2,object4
+   teststate=2
    path=object4.mla
    comment=
    cc=${mlc}
@@ -7120,9 +7120,9 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abcabc
+   ao=abcabcAccess violation
    ae=
-   aec=123
+   aec=1
    ie=0
    )
    (
@@ -7147,7 +7147,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=object/
   comment=
   cc=
@@ -9517,7 +9517,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=

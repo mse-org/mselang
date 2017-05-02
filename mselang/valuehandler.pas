@@ -1921,7 +1921,7 @@ begin
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     if hasresult then begin
      initfactcontext(0); //set ssaindex
-     if sf_constructor in asub^.flags then begin  //needs oc_initclass
+     if sf_constructor in asub^.flags then begin //needs memory
       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
                                                    firstnotfound1,idents1,1);
                                           //get class type
@@ -1929,9 +1929,26 @@ begin
       if not bo1 then begin 
        internalerror(ie_handler,'20150325A'); 
       end;
-     {$endif}     
-      with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
-       classdef:= resulttype1^.infoclass.defs.address;
+     {$endif}
+      if icf_class in resulttype1^.infoclass.flags then begin
+       with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
+        classdef:= resulttype1^.infoclass.defs.address;
+       end;
+      end
+      else begin
+       with resulttype1^.infoclass do begin
+        if icf_zeroed in flags then begin
+         with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
+          setimmint32(allocsize,par.imm);
+         end;
+        end
+        else begin
+         with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
+          setimmint32(allocsize,par.imm);
+         end;
+//          notimplemented; // call ini
+        end;
+       end;
       end;
       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
      end
@@ -2062,26 +2079,6 @@ begin
 
     if not hasresult then begin
      d.kind:= ck_subcall;
-(*
-     if (asub^.flags * [sf_method,sf_ofobject] = [sf_method]) and 
-                                     (dsf_ownedmethod in aflags) then begin
-                //owned method
-     {$ifdef mse_checkinternalerror}
-      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
-       internalerror(ie_value,'20140505A');
-      end;
-     {$else}
-      ele.findcurrent(tk_self,[],allvisi,vardata1);
-     {$endif}
-      with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
-       par.memop.t:= bitoptypes[das_pointer];
-       par.memop.locdataaddress.a.framelevel:= -1;
-       par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
-       par.memop.locdataaddress.offset:= 0;
-       selfpo^.ssaindex:= par.ssad;
-      end;
-     end;
-*)
      if (dsf_indexedsetter in aflags) and 
                              (co_mlaruntime in o.compileoptions) then begin
       with additem(oc_swapstack)^.par.swapstack do begin

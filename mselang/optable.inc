@@ -62,6 +62,10 @@
 //oc_callfuncindi
   (ssa: callfuncindissa; proc: @callfuncindiop; flags: []), 
 
+//oc_getobjectmem
+  (ssa: getobjectmemssa; proc: @getobjectmemop; flags: []), 
+//oc_getobjectzeromem
+  (ssa: getobjectzeromemssa; proc: @getobjectzeromemop; flags: []), 
 //oc_initclass
   (ssa: initclassssa; proc: @initclassop; flags: []), 
 //oc_destroyclass

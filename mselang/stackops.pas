@@ -5033,6 +5033,32 @@ begin
  returnop();
 end;
 
+procedure getobjectmemop();
+var
+ self1: ppointer;
+ po1: pointer;
+begin
+ with cpu.pc^.par do begin
+  self1:= stackpush(pointersize);
+  po1:= intgetmem(imm.vint32);
+  self1^:= po1;            //class instance
+  ppointer(cpu.stack-2*pointersize)^:= po1; //result
+ end;
+end;
+
+procedure getobjectzeromemop();
+var
+ self1: ppointer;
+ po1: pointer;
+begin
+ with cpu.pc^.par do begin
+  self1:= stackpush(pointersize);
+  po1:= intgetzeromem(imm.vint32);
+  self1^:= po1;            //class instance
+  ppointer(cpu.stack-2*pointersize)^:= po1; //result
+ end;
+end;
+
 procedure initclassop();
 var
  po1: pointer;
@@ -5991,7 +6017,17 @@ begin
  po1:= ppointer(stackpop(pointersize))^;
  po1^:= getmem1(int1); //todo: out of memory
 end;
-
+{
+procedure getmem1op();
+var
+ po1: ppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stackpush(pointersize);
+  po1^:= getmem1(imm.vint32); //todo: out of memory
+ end;
+end;
+}
 procedure getzeromemop();
 var
  int1: int32;
@@ -6002,7 +6038,17 @@ begin
  po1^:= intgetzeromem(int1);
 // getmem1(po1^,int1); //todo: out of memory
 end;
-
+{
+procedure getzeromem1op();
+var
+ po1: ppointer;
+begin
+ with cpu.pc^.par do begin
+  po1:= stackpush(pointersize);
+  po1^:= intgetzeromem(imm.vint32); //todo: out of memory
+ end;
+end;
+}
 procedure freememop();
 var
  po1: pointer;
@@ -6573,6 +6619,8 @@ const
   returnssa = 0;
   returnfuncssa = 0;
 
+  getobjectmemssa = 0;
+  getobjectzeromemssa = 0;
   initclassssa = 0;
   destroyclassssa = 0;
   
@@ -6595,7 +6643,9 @@ const
   finiexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 0;
+//  getmem1ssa = 0;
   getzeromemssa = 0;
+//  getzeromem1ssa = 0;
   freememssa = 0;
   reallocmemssa = 0;
   setmemssa = 0;
