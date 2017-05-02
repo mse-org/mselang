@@ -69,7 +69,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- controlhandler,identutils,msestrings,handler,
+ controlhandler,identutils,msestrings,handler,managedtypes,
  __mla__internaltypes,exceptionhandler,listutils;
 
 function listtoset(const acontext: pcontextitemty): boolean;
@@ -1670,6 +1670,7 @@ var
  methodtype1: ptypedataty;
  instancetype1: ptypedataty;
  i4: int32;
+ adref1: addressrefty;
 // tempsbefore: targetadty;
 label
  paramloopend;
@@ -1682,7 +1683,10 @@ begin
 //  pe:= @contextstack[s.stacktop];
   destoffset:= adestindex-s.stackindex;
   with contextstack[adestindex] do begin //classinstance, result
-   instancessa:= d.dat.fact.ssaindex; //for sf_method
+   if dsf_instanceonstack in aflags then begin
+    instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+    instancessa:= d.dat.fact.ssaindex; //for sf_method
+   end;
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
     needsvarcheck:= true;
@@ -1768,8 +1772,8 @@ begin
       internalerror(ie_handler,'20160916A');
      end;
     {$endif}
-     i1:= d.dat.fact.ssaindex;
-     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+//     i1:= d.dat.fact.ssaindex;
+//     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
     end;
     initdatacontext(d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
@@ -1786,7 +1790,7 @@ begin
         par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
                                                         sizeof(intfdefheaderty);
         if co_llvm in info.o.compileoptions then begin
-         par.ssas1:= i1; //class
+         par.ssas1:= instancessa; //class
          par.getvirtsubad.virtoffset:= 
                info.s.unitinfo^.llvmlists.constlist.
                           adddataoffs(par.getvirtsubad.virtoffset).listid;
@@ -1801,7 +1805,7 @@ begin
          par.getvirtsubad.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                            virtualtableoffset;
          if co_llvm in info.o.compileoptions then begin
-          par.ssas1:= i1; //class
+          par.ssas1:= instancessa; //class
           par.getvirtsubad.virtoffset:= 
                 info.s.unitinfo^.llvmlists.constlist.
                            adddataoffs(par.getvirtsubad.virtoffset).listid;
@@ -1819,7 +1823,7 @@ begin
       {$endif}
        i2:= d.dat.fact.ssaindex;
        with insertitem(oc_combinemethod,destoffset,-1)^ do begin
-        par.ssas1:= i1;
+        par.ssas1:= instancessa;
         par.ssas2:= i2;
        end;
       end;
@@ -2207,6 +2211,26 @@ begin
     end;
     if (sf_destructor in asub^.flags) and 
                           not (dsf_isinherited in aflags) then begin
+     if tf_needsmanage in instancetype1^.h.flags then begin
+      adref1.offset:= 0;
+      adref1.ssaindex:= instancessa;
+      adref1.contextindex:= adestindex;
+      adref1.kind:= ark_stack;
+      adref1.address:= 0; //instance removed by destroy()
+      adref1.typ:= instancetype1;
+      writemanagedtypeop(mo_decref,instancetype1,adref1);
+     {
+      with additem(oc_pushduppo)^ do begin
+       par.ssas1:= instancessa;
+       i1:= par.ssad;
+      end;
+      ad1.flags:= [af_stack];
+      ad1.indirectlevel:= 1;
+      ad1.tempaddress.address:= -pointersize;
+      ad1.tempaddress.ssaindex:= i1;
+      writemanagedtypeop(mo_decref,instancetype1,ad1,adestindex);
+     }
+     end;
      with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
       par.destroyclass.flags:= [];

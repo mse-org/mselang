@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D2698
+    ao=An unhandled exception occured at $B729A698
     ae=
     aec=123
     ie=0
@@ -6970,7 +6970,7 @@ c=3
   (
   kind=1
   a=0,665,4,object
-  c=6
+  c=8
    (
    kind=2
    a=0,648,1,object1
@@ -7099,6 +7099,50 @@ c=3
    eec=123
    cr=0
    ao=abcdef
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object4
+   teststate=1
+   path=object4.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=abcabc
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=abcabc
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,object4 llvm
+   teststate=1
+   path=object4.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=abcabc
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=abcabc
    ae=
    aec=123
    ie=0
@@ -9583,7 +9627,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -9596,7 +9640,9 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=123
+rowstate=125
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

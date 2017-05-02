@@ -606,10 +606,16 @@ begin
     end;
     if not (icf_class in infoclass.flags) then begin
      updatetypedatabyte(typ1^,infoclass.allocsize);
+    {
      reversefieldchain(typ1);
      if tf_needsmanage in h.flags then begin
       createrecordmanagehandler(d.typ.typedata);
      end;
+    }
+    end;
+    reversefieldchain(typ1);
+    if tf_needsmanage in h.flags then begin
+     createrecordmanagehandler(d.typ.typedata);
     end;
    end;
   {

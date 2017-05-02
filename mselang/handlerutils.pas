@@ -1576,7 +1576,10 @@ begin
    with pcontextdataty(aref.contextdata)^ do begin
     result:= ele.eledataabs(dat.datatyp.typedata);
    end;
-  end
+  end;
+  ark_stack: begin
+   result:= aref.typ;
+  end;
   else begin
    notimplementederror('');
   end;
@@ -1650,56 +1653,21 @@ begin
     end;
    end;
   end;
+  ark_stack: begin //for destructor, instance pointer on stack
+   if co_mlaruntime in info.o.compileoptions then begin
+    with additem(oc_pushduppo)^ do begin
+     par.voffset:= aref.address-pointersize;
+    end;
+   end;
+   result:= aref.ssaindex;
+   exit;
+  end;
   else begin
    notimplementederror('');
   end;
  end;
 // op1^.par.memop.t:= bitoptypes[das_pointer];
  result:= op1^.par.ssad;
-(*
- case avalue.base of
-  ab_segment: begin
-   op1:= additem(oc_pushsegaddr,
-                 pushsegaddrssaar[avalue.segment]);
-   with op1^.par.memop.segdataaddress do begin
-    a.address:= avalue.address;
-    offset:= avalue.offset;
-    a.segment:= avalue.segment;
-    a.element:= 0;
-   end;
-  end;
-  ab_frame: begin
-   op1:= additem(oc_pushlocaddr);
-   with op1^.par.memop.locdataaddress do begin
-    a.address:= avalue.address;
-    offset:= avalue.offset;
-    a.framelevel:= -1;
-   end;
-  end;
-  ab_stack: begin
-   op1:= additem(oc_pushstackaddr);
-   with op1^.par.memop do begin
-    tempdataaddress.a.address:= avalue.address; 
-                                  //todo: use common record type in
-                                  //addressrefty and tempdataaddressty
-    if co_llvm in info.compileoptions then begin
-     tempdataaddress.a.ssaindex:= assaindex;
-     t:= getopdatatype(atype,avalue.indirectlevel);
-     tempdataaddress.offset:= 
-        info.s.unitinfo^.llvmlists.constlist.adddataoffs(avalue.offset).listid;
-    end
-    else begin
-     tempdataaddress.offset:= avalue.offset;
-    end;
-   end;
-  end;
-  else begin
-   notimplementederror('20160314A');
-  end;
- end;
-// op1^.par.memop.t:= bitoptypes[das_pointer];
- result:= op1^.par.ssad;
-*)
 end;
 
 procedure pushins(const ains: boolean; const stackoffset: integer;
@@ -1796,7 +1764,7 @@ begin
    if not (d.kind in factcontexts) then begin
     internalerror(ie_handler,'20150913A');
    end;
-  {$endif}
+ {$endif}
    typ1:= getopdatatype(d.dat.datatyp.typedata,d.dat.datatyp.indirectlevel-1);
 //   with insertitem(pushstackindiops[typ1.kind],stackoffset,before)^ do begin
 //   end;
