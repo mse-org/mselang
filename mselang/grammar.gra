@@ -64,7 +64,7 @@
  '.method'
 @.tokens
  'result','exitcode','sizeof','defined','break','continue','self'
- 'b','booleval','internaldebug','zeroed'
+ 'b','booleval','internaldebug','zeroed','virtual'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
@@ -791,8 +791,8 @@ classdefforward,,,handleclassdefforward
 classdef0a,classdef0,,
  ${whitespace}
  '[',classdefattach-*
-
-classdef0,classdeferror,,
+classdef0,classdef0b,,handleclassdef0
+classdef0b,classdeferror,,
  ${whitespace}
  'private'.,!handleclassprivate-
  'protected'.,!handleclassprotected-

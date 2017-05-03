@@ -94,7 +94,7 @@ type
  end;
 
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_defvalid,icf_forward,
-                    icf_zeroed);
+                    icf_zeroed,icf_virtual);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   intfnamenode: elementoffsetty;
@@ -104,6 +104,7 @@ type
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;
   allocsize: dataoffsty;
+  virttaboffset: int32;
   virtualcount: integer;
   flags: infoclassflagsty;
   interfaceparent: elementoffsetty; //last parent with interface items

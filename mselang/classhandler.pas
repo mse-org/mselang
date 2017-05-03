@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ procedure handleobjectdefstart();
 procedure handleclassdefstart();
 procedure handleclassdefforward();
 procedure handleclassdeferror();
+procedure handleclassdef0();
 procedure handleclassdefreturn();
 procedure handleclassdefparam2();
 procedure handleclassdefparam3a();
@@ -160,15 +161,17 @@ begin
   end;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
-   d.cla.visibility:= classpublishedvisi;
+   d.cla.fieldoffset:= 0;
    d.cla.intfindex:= 0;
    if isclass then begin
-    d.cla.flags:= [obf_class];
-    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
+    d.cla.flags:= [obf_class,obf_zeroed,obf_virtual];
+    d.cla.visibility:= classpublishedvisi;
+//    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    end
    else begin
     d.cla.flags:= [];
-    d.cla.fieldoffset:= 0;
+    d.cla.visibility:= classpublicvisi;
+//    d.cla.fieldoffset:= 0;
    end;
    d.cla.virtualindex:= 0;
   end;
@@ -222,6 +225,7 @@ begin
      else begin
       infoclass.flags:= [];
      end;
+     infoclass.virttaboffset:= 0;
      infoclass.pendingdescends:= 0;
      infoclass.interfaceparent:= 0;
      infoclass.interfacecount:= 0;
@@ -336,11 +340,11 @@ begin
       errormessage(err_classnotresolved,[]);
      end;
      po1^.h.ancestor:= ele.eledatarel(po2);
-     if tf_needsmanage in po2^.h.flags then begin
-      include(po1^.h.flags,tf_needsmanage);
-     end;
+     po1^.h.flags:= po1^.h.flags + 
+                             po2^.h.flags * [tf_needsmanage,tf_needsini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
-                                   po2^.infoclass.flags * [icf_zeroed];
+                             po2^.infoclass.flags * [icf_zeroed,icf_virtual];
+     po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end
@@ -357,6 +361,37 @@ begin
    end;
   end;
   ele.elementparent:= ele1;
+ end;
+end;
+
+procedure handleclassdef0();
+var
+ typ1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEF0');
+{$endif}
+ with info do begin
+  typ1:= ptypedataty(ele.eledataabs(
+                     contextstack[s.stackindex-1].d.typ.typedata));
+  with typ1^,contextstack[s.stackindex] do begin
+   if obf_zeroed in d.cla.flags then begin
+    include(infoclass.flags,icf_zeroed);
+    include(h.flags,tf_needsini);
+   end;
+   if (obf_virtual in d.cla.flags) and 
+              not (icf_virtual in infoclass.flags) then begin
+    infoclass.virttaboffset:= d.cla.fieldoffset;
+    include(infoclass.flags,icf_virtual);
+    d.cla.fieldoffset:= d.cla.fieldoffset + pointersize;
+                      //pointer to virtual methodtable
+    include(h.flags,tf_needsini);
+   end;
+   if (d.cla.intfindex > 0) and 
+               not (icf_virtual in infoclass.flags) then begin
+    errormessage(err_missingobjectattachment,['virtual']);
+   end;
+  end;
  end;
 end;
 
@@ -417,6 +452,9 @@ begin
    case contextstack[i1].d.ident.ident of
     tk_zeroed: begin
      include(d.cla.flags,obf_zeroed);
+    end;
+    tk_virtual: begin
+     include(d.cla.flags,obf_virtual);
     end;
     else begin
      identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
@@ -552,11 +590,13 @@ begin
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    with typ1^ do begin
     include(infoclass.flags,icf_defvalid);
+   {
     with contextstack[s.stackindex] do begin
      if obf_zeroed in d.cla.flags then begin
       include(infoclass.flags,icf_zeroed);
      end;
     end;
+   }
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
@@ -628,7 +668,7 @@ begin
      updatetypedatabyte(typ1^,infoclass.allocsize);
     end;
     reversefieldchain(typ1);
-    if (tf_needsmanage in h.flags) or (icf_zeroed in infoclass.flags) then begin
+    if h.flags * [tf_needsmanage,tf_needsini] <> [] then begin
      createrecordmanagehandler(d.typ.typedata);
     end;
    end;

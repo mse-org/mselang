@@ -297,7 +297,7 @@ type
  recordinfoty = record
   fieldoffset: dataoffsty;
  end;
- objflagty = (obf_class,obf_zeroed);
+ objflagty = (obf_class,obf_zeroed,obf_virtual);
  objflagsty = set of objflagty;
  
  classinfoty = record
