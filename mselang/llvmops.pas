@@ -3792,6 +3792,15 @@ begin
  end;
 end;
 
+procedure zeromemop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memset]),
+            [bcstream.ssaval(ssas1),bcstream.constval(ord(nco_i32)),
+                                    bcstream.constval(imm.llvm.listid)]);
+ end;
+end;
+
 procedure getobjectmemop();
 begin
  with pc^.par do begin
@@ -4609,6 +4618,7 @@ const
   returnssa = 0;
   returnfuncssa = 1;
 
+  zeromemssa = 0;
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initclassssa = 3;

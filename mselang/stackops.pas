@@ -5033,6 +5033,13 @@ begin
  returnop();
 end;
 
+procedure zeromemop();
+begin
+ with cpu.pc^.par do begin
+  fillchar(pppointer(cpu.stack-pointersize)^^,imm.vint32,0);
+ end;
+end;
+
 procedure getobjectmemop();
 var
  self1: ppointer;
@@ -6619,6 +6626,7 @@ const
   returnssa = 0;
   returnfuncssa = 0;
 
+  zeromemssa = 0;
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
   initclassssa = 0;

@@ -1,0 +1,43 @@
+program object7;
+
+type
+ objty = object [zeroed]
+  f1: int32;
+  f2: int32;
+  s1: string8;
+  constructor create(a: int32);
+  destructor destroy();
+ end;
+
+ recty = record
+  f1: int32;
+  s1: string8;
+ end;
+
+constructor objty.create(a: int32);
+begin
+ f1:= a;
+end;
+
+destructor objty.destroy();
+begin
+ exitcode:= f1+f2;
+ writeln(s1);
+end;
+
+var
+ s1: string8;
+
+procedure test();
+var
+ obj1: objty;
+begin
+ obj1.create(123);
+ obj1.s1:= s1;
+ obj1.destroy();
+end;
+
+begin
+ s1:= 'abc'+s1;
+ test();
+end.

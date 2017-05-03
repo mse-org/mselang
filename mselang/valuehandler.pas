@@ -2217,7 +2217,7 @@ begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
     if (sf_destructor in asub^.flags) and 
-                          not (dsf_isinherited in aflags) then begin
+                     (aflags * [dsf_isinherited,dsf_nofreemem] = []) then begin
      if tf_needsmanage in instancetype1^.h.flags then begin
       adref1.offset:= 0;
       adref1.ssaindex:= instancessa;
@@ -2226,24 +2226,15 @@ begin
       adref1.address:= 0; //instance removed by destroy()
       adref1.typ:= instancetype1;
       writemanagedtypeop(mo_decref,instancetype1,adref1);
-     {
-      with additem(oc_pushduppo)^ do begin
-       par.ssas1:= instancessa;
-       i1:= par.ssad;
-      end;
-      ad1.flags:= [af_stack];
-      ad1.indirectlevel:= 1;
-      ad1.tempaddress.address:= -pointersize;
-      ad1.tempaddress.ssaindex:= i1;
-      writemanagedtypeop(mo_decref,instancetype1,ad1,adestindex);
-     }
      end;
      with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
       par.destroyclass.flags:= [];
+     { 
       if dsf_nofreemem in aflags then begin
        include(par.destroyclass.flags,dcf_nofreemem);
       end;
+     }
      end;
     end;
     if dsf_indirect in aflags then begin

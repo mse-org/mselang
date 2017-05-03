@@ -62,6 +62,8 @@
 //oc_callfuncindi
   (ssa: callfuncindissa; proc: @callfuncindiop; flags: []), 
 
+//oc_zeromem
+  (ssa: zeromemssa; proc: @zeromemop; flags: []), 
 //oc_getobjectmem
   (ssa: getobjectmemssa; proc: @getobjectmemop; flags: []), 
 //oc_getobjectzeromem

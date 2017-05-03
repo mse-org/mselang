@@ -115,6 +115,7 @@ type
   oc_callindi,
   oc_callfuncindi,
 
+  oc_zeromem,
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_initclass,
@@ -1188,7 +1189,8 @@ type
    oc_increg0,oc_mulimmint,oc_addimmint,oc_offsetpoimm,
    oc_pop,
    oc_arraytoopenar,
-   oc_getobjectmem,oc_getobjectzeromem: (
+   oc_getobjectmem,oc_getobjectzeromem,
+   oc_zeromem: (
     imm: immty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,
