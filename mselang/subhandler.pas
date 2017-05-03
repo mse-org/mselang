@@ -593,7 +593,8 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   b.flags:= s.currentstatementflags;
   b.eleparent:= ele.elementparent;
-  exclude(s.currentstatementflags,stf_needsmanage);
+  s.currentstatementflags:= s.currentstatementflags -
+                                     [stf_needsmanage,stf_needsini];
   int1:= s.stacktop-s.stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
@@ -1572,12 +1573,6 @@ begin
   initsubstartinfo();
   managedtempref:= d.subdef.varsize;
   managedtemparrayid:= locallocid;  
- {
-  managedtempref:= d.subdef.varsize;
-  managedtemparrayid:= locallocid;  
-  managedtempchain:= 0;
-  managedtempcount:= 0;
- }
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
   if d.subdef.match <> 0 then begin
@@ -1608,28 +1603,13 @@ begin
       po1^.trampolineid:= po1^.globid;
       po1^.globid:= info.s.unitinfo^.llvmlists.globlist.
                                      addtypecopy(po1^.globid); //real sub
-//      par.subbegin.trampoline.typeid:= 
-//              info.s.unitinfo^.llvmlists.globlist.gettype(par.subbegin.globid);
      end;
     end;
     po1^.address:= opcount;
    end;
-{
-   if co_llvm in compileoptions then begin
-    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
-          //nested subs first -> do not add to list in sub header
-   end;
-}
    po2^.address:= po1^.address;
    po2^.globid:= po1^.globid;
    po1^.flags:= po2^.flags;
-{
-   if (sf_named in po2^.flags) and (co_llvm in compileoptions) then begin
-//    setunitsubname(po1^.globid);
-    info.s.unitinfo^.llvmlists.globlist.namelist.
-                                     addname(s.unitinfo,po1^.globid);
-   end;
-}
    po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
    {$ifdef mse_checkinternalerror}
@@ -1728,14 +1708,7 @@ begin
   resetssa();
   addsubbegin(oc_subbegin,po1);
   stacktempoffset:= locdatapo;
- {
-  if d.subdef.varsize <> 0 then begin //alloc local variables
-   with additem(oc_locvarpush)^ do begin
-    par.stacksize:= d.subdef.varsize;
-   end;
-  end;
- }
-  if stf_needsmanage in s.currentstatementflags then begin
+  if s.currentstatementflags * [stf_needsmanage,stf_needsini] <> [] then begin
    writemanagedvarop(mo_ini,po1^.varchain,s.stacktop);
   end;           //todo: implicit try-finally
   if po1^.paramfinichain <> 0 then begin

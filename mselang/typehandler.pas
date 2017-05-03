@@ -532,6 +532,7 @@ var
  typ1: ptypedataty;
 begin
  with info do begin
+testvar:= ele.eledataabs(atyp);
   ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= @managerecord;
   ele1:= ele.elementparent;
   ele.elementparent:= atyp;

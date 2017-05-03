@@ -102,6 +102,10 @@ begin
       end;
       if address.indirectlevel = 0 then begin
        size1:= h.bytesize;
+       if (h.kind = dk_object) and (icf_zeroed in infoclass.flags) then begin
+        include(s.currentstatementflags,stf_needsini);
+        include(vf.flags,tf_needsini);
+       end;
        if tf_needsmanage in h.flags then begin
         include(s.currentstatementflags,stf_needsmanage);
         include(vf.flags,tf_needsmanage);

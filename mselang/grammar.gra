@@ -784,10 +784,14 @@ objectdef,classdefa,handleobjectdefstart,
 classdef,classdefa,handleclassdefstart,
 classdefa,classdef0,,
  ${whitespace}
- '(',classdefparam-*
+ '(',classdefparam-*,classdef0a
  '[',classdefattach-*
  ';',classdefforward
 classdefforward,,,handleclassdefforward
+classdef0a,classdef0,,
+ ${whitespace}
+ '[',classdefattach-*
+
 classdef0,classdeferror,,
  ${whitespace}
  'private'.,!handleclassprivate-
@@ -811,17 +815,14 @@ classdefparam,,,*
 classdefparam1,classdefparam2,,
  '',identpath^*
 classdefparam2,classdefparam2a,,handleclassdefparam2*
-classdefparam2a,classdefparam4,,*
+classdefparam2a,,,*
  ${whitespace}
  ',',classdefparam3-
  ')',-*
  '',!handlecloseroundbracketexpected
 classdefparam3,classdefparam3a,,
- '',identpath^*
+ '',identpath^*           
 classdefparam3a,classdefparam2a,,handleclassdefparam3a*
-classdefparam4,,,
- ${whitespace}
- '[',classdefattach-*
  
 classdefattach,,,handleclassdefattach*
  '',attach^*

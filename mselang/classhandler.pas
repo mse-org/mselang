@@ -50,6 +50,7 @@ procedure handleclassdeferror();
 procedure handleclassdefreturn();
 procedure handleclassdefparam2();
 procedure handleclassdefparam3a();
+procedure handleclassdefparam4entry();
 procedure handleclassdefattach();
 procedure handleclassprivate();
 procedure handleclassprotected();
@@ -338,6 +339,8 @@ begin
      if tf_needsmanage in po2^.h.flags then begin
       include(po1^.h.flags,tf_needsmanage);
      end;
+     po1^.infoclass.flags:= po1^.infoclass.flags + 
+                                   po2^.infoclass.flags * [icf_zeroed];
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end
@@ -373,6 +376,22 @@ begin
  classheader(true); //interfacedef
  with info do begin
 //  dec(s.stackindex);
+ end;
+end;
+
+procedure handleclassdefparam4entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFPARAM4ENTRY');
+{$endif}
+ with info do begin
+  s.stackindex:= s.stackindex-2;
+  s.stacktop:= s.stackindex;
+ {$ifdef checkinternalerror}
+  if info.contextstack[s.stackindex].d.kind <> ck_classdef then begin
+   internalerror('20170503A');
+  end;
+ {$endif}
  end;
 end;
 
@@ -607,23 +626,12 @@ begin
     end;
     if not (icf_class in infoclass.flags) then begin
      updatetypedatabyte(typ1^,infoclass.allocsize);
-    {
-     reversefieldchain(typ1);
-     if tf_needsmanage in h.flags then begin
-      createrecordmanagehandler(d.typ.typedata);
-     end;
-    }
     end;
     reversefieldchain(typ1);
-    if tf_needsmanage in h.flags then begin
+    if (tf_needsmanage in h.flags) or (icf_zeroed in infoclass.flags) then begin
      createrecordmanagehandler(d.typ.typedata);
     end;
    end;
-  {
-   ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
-   ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
-              //possible capacity change
-  }
   end;
     
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
