@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -629,7 +629,7 @@ begin
  end;
 end;
 
-function checkclassdef(): boolean;
+function checkclassdef(const avirtual: boolean): boolean;
 begin
  result:= true;
  with info,contextstack[s.stackindex-1] do begin
@@ -642,6 +642,16 @@ begin
     handleimplementationexpected();
    end
   end
+  else begin
+   if avirtual then begin
+    with ptypedataty(ele.eledataabs(info.currentcontainer))^ do begin
+     if not (icf_virtual in infoclass.flags) then begin
+      errormessage(err_missingobjectattachment,['virtual']);
+      result:= false;
+     end;
+    end;
+   end;
+  end
  end;
 end;
 
@@ -650,7 +660,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VIRTUAL');
 {$endif}
- if checkclassdef() then begin
+ if checkclassdef(true) then begin
   with info,contextstack[s.stackindex-1] do begin
    if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
     errormessage(err_procdirectiveconflict,['virtual']);
@@ -667,7 +677,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OVERRIDE');
 {$endif}
- if checkclassdef() then begin
+ if checkclassdef(true) then begin
   with info,contextstack[s.stackindex-1] do begin
    if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
     errormessage(err_procdirectiveconflict,['override']);
