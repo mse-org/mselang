@@ -363,7 +363,9 @@ begin
  {$ifdef mse_checkinternalerror}
   if (elecount < 1) or 
                (contextstack[s.stacktop].d.kind <> ck_fieldtype) then begin
-   internalerror(ie_type,'20140325C');
+   errormessage(err_fieldtypeexpected,[]);
+   exit;
+//   internalerror(ie_type,'20140325C');
   end;
  {$endif}
   for i1:= s.stackindex to s.stackindex + elecount - 1 do begin
