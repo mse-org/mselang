@@ -1,35 +1,62 @@
-program object4;
+program object8;
 
 type
- objty = class
+ objty = object [virtual]
   f1: int32;
-  constructor create(a: int32);
-  destructor destroy();
-  procedure test(const a: int32);
+{$dumpelements}
+{$internaldebug on}
+  procedure test(p: int32) [virtual];
  end;
 
-constructor objty.create(a: int32);
+ obj1ty = object(objty) [zeroed]
+  f2: int32;
+  s1: string8;
+  constructor create();
+  destructor destroy();
+  procedure test(p: int32) [override];
+  procedure afterconstruction() [afterconstruct];
+  procedure beforedestruction() [beforedestruct];
+ end;
+
+constructor obj1ty.create();
 begin
- f1:= a;
+ f1:= 1;
+ writeln('aaa');
 end;
 
-destructor objty.destroy();
+destructor obj1ty.destroy();
+begin
+ writeln(f1,'ddd');
+end;
+
+procedure objty.test(p: int32);
 begin
 end;
 
-procedure objty.test(a: int32);
+procedure obj1ty.test(p: int32);
 begin
- f1:= f1 * a;
+ exitcode:= f1+f2+p;
 end;
 
+procedure obj1ty.afterconstruction();
+begin
+ writeln(f1,'bbb');
+end;
+
+procedure obj1ty.beforedestruction();
+begin
+ writeln(f1,'ccc');
+end;
+
+procedure test();
 var
- obj1: ^objty;
- obja: objty;
+ ob1: obj1ty;
 begin
-{$internaldebug on}
- obja:= objty.create(123);
- obj1:= @obja;
- obj1^.test(10);
- exitcode:= obj1^.f1 div 10;
- obja.destroy();
+ ob1.create();
+// ob1.test(122);
+ ob1.destroy();
+end;
+
+begin
+ test();
 end.

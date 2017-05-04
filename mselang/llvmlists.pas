@@ -964,7 +964,7 @@ begin
     pe:= po1 + buffersize;
     po2:= fbuffer + buffer;
     while po1 < pe do begin
-     if po1^ > po2^ then begin
+     if po1^ <> po2^ then begin
       result:= false;
       exit;
      end;

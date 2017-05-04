@@ -1660,6 +1660,14 @@ var
   end;
  end;
 
+ procedure callclasssubattach(const asub: elementoffsetty);
+ begin
+  if asub <> 0 then begin
+   dosub(adestindex,ele.eledataabs(asub),paramstart,0,
+                                                    [dsf_instanceonstack]);
+  end;
+ end;
+ 
 var
  realparamco: int32; //including defaults
  {poparams,indpo,}poitem1{,pe}: pcontextitemty;
@@ -1686,6 +1694,9 @@ begin
    if dsf_instanceonstack in aflags then begin
     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
     instancessa:= d.dat.fact.ssaindex; //for sf_method
+    if (sf_destructor in asub^.flags) then begin
+     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+    end;
    end;
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
@@ -2256,6 +2267,9 @@ begin
     if co_mlaruntime in o.compileoptions then begin
 //     releasetempaddress(tempsize);
      locdatapo:= locdatapo - resultsize;
+    end;
+    if (sf_constructor in asub^.flags) then begin
+     callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);
     end;
    end;
   end;

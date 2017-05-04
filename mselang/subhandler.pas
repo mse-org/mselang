@@ -692,6 +692,7 @@ begin
 end;
 
 procedure handleclasubheaderattach();
+
 var
  i1: int32;
  subdefindex: int32;
@@ -733,6 +734,12 @@ begin
         include(d.subdef.flags,sf_override);
        end;
       end;
+     end;
+     tk_afterconstruct: begin
+      include(d.subdef.flags,sf_afterconstruct);
+     end;
+     tk_beforedestruct: begin
+      include(d.subdef.flags,sf_beforedestruct);
      end;
      else begin
       identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
@@ -1573,6 +1580,26 @@ begin
    s.stacktop:= s.stackindex;
   end
   else begin
+   if sf_afterconstruct in subflags then begin
+    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
+     errormessage(err_invalidsubforattach,['afterconstruct']);
+    end
+    else begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
+     end;
+    end;
+   end;
+   if sf_beforedestruct in subflags then begin
+    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
+     errormessage(err_invalidsubforattach,['beforedestruct']);
+    end
+    else begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
+     end;
+    end;
+   end;
    dec(s.stackindex,2);
    s.stacktop:= s.stackindex;
   end;

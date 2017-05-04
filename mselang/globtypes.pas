@@ -224,6 +224,7 @@ type
  subflagty = (sf_function,sf_method,sf_class,sf_constructor,sf_destructor,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
+              sf_afterconstruct,sf_beforedestruct, //object sub attachments
               sf_named, //has llvm name
               sf_nolineinfo, //for llvm
               sf_vararg,sf_proto, //for llvm

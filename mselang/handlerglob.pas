@@ -93,6 +93,10 @@ type
   i: arrayiteminfoty;
  end;
 
+ subattachty = record
+  afterconstruct,beforedestruct: elementoffsetty;
+ end;
+
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_defvalid,icf_forward,
                     icf_zeroed,icf_virtual);
  infoclassflagsty = set of infoclassflagty;  
@@ -111,6 +115,7 @@ type
   interfacecount: integer;
   interfacechain: elementoffsetty;
   interfacesubcount: integer;
+  subattach: subattachty;
  end;
  pinfoclassty = ^infoclassty;
 

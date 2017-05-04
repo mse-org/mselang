@@ -231,6 +231,7 @@ begin
      infoclass.interfacecount:= 0;
      infoclass.interfacechain:= 0;
      infoclass.interfacesubcount:= 0;
+     fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
     end;
    end;
   end;
@@ -345,6 +346,7 @@ begin
      po1^.infoclass.flags:= po1^.infoclass.flags + 
                              po2^.infoclass.flags * [icf_zeroed,icf_virtual];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
+     po1^.infoclass.subattach:= po2^.infoclass.subattach;
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end

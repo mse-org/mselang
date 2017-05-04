@@ -1624,7 +1624,9 @@ begin
                       ' virt:'+inttostrmse(infoclass.virtualcount)+
                       ' intf:'+inttostrmse(infoclass.interfacecount)+
                       ' isub:'+inttostrmse(infoclass.interfacesubcount)+
-                      ' defs:'+inttostrmse(infoclass.defs.address);
+                      ' defs:'+inttostrmse(infoclass.defs.address)+
+                      ' aftconst:'+inttostrmse(infoclass.subattach.afterconstruct)+
+                      ' befdest:'+inttostrmse(infoclass.subattach.beforedestruct);
          po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
          for int6:= 0 to infoclass.virtualcount-1 do begin
           if int6 mod 5 = 0 then begin
