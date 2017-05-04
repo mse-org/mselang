@@ -438,15 +438,15 @@ begin
  outhandle('CLASSDEFATTACH');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
- {$ifdef checkinternalerror}
+ {$ifdef mse_checkinternalerror}
   if d.kind <> ck_classdef then begin
-   internalerror('20170501A');
+   internalerror(ie_handler,'20170501A');
   end;
  {$endif}
   for i1:= s.stackindex+3 to s.stacktop do begin
-  {$ifdef checkinternalerror}
-   if contextstack[i1].d.kind <> ck_cident then begin
-    internalerror('20170501A');
+  {$ifdef mse_checkinternalerror}
+   if contextstack[i1].d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20170501A');
    end;
   {$endif}
    case contextstack[i1].d.ident.ident of

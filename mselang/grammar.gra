@@ -340,6 +340,7 @@ clasubheader2,clasubheader3,,
  ':',functiontype-^*
 clasubheader3,,,
  ${whitespace}
+ '[',clasubheaderattach-*>
  'virtual'.,!handlevirtual-
  'override'.,!handleoverride-
  'overload'.,!handleoverload-
@@ -354,6 +355,8 @@ clasubheader4,,,*
 virtual,clasubheader3,handlevirtual,
 override,clasubheader3,handleoverride,
 overload,clasubheader3,handleoverload, 
+clasubheaderattach,,,handleclasubheaderattach*
+ '',attach^*
 
 subtypedef,,,*               //no semicoloncheck
  '',subtypedef0*

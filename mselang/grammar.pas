@@ -664,6 +664,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'overload');
+ clasubheaderattachco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'clasubheaderattach');
  subtypedefco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -3895,7 +3900,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclasubheader3: array[0..10] of branchty = (
+ bclasubheader3: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handlevirtual); stack: nil; 
      keyword: $66EDD6E7{'virtual'}),
@@ -3936,6 +3941,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @clasubheaderattachco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4003,6 +4015,16 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handlesubheader); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bclasubheaderattach: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @attachco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -11423,6 +11445,8 @@ begin
  overloadco.branch:= nil;
  overloadco.next:= @clasubheader3co;
  overloadco.handleentry:= @handleoverload;
+ clasubheaderattachco.branch:= @bclasubheaderattach;
+ clasubheaderattachco.handleexit:= @handleclasubheaderattach;
  subtypedefco.branch:= @bsubtypedef;
  subtypedef0co.branch:= nil;
  subtypedef0co.next:= @subheader1co;
