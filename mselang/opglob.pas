@@ -118,6 +118,7 @@ type
   oc_zeromem,
   oc_getobjectmem,
   oc_getobjectzeromem,
+  oc_initobject,
   oc_initclass,
   oc_destroyclass,
 
@@ -652,6 +653,7 @@ type
 
  virtcallinfoty = record
   selfinstance: dataoffsty; //stackoffset
+  virttaboffset: dataoffsty;//offset in instance
   virtoffset: dataoffsty;   //offset in classdefinfoty
   typeid: int32; //for llvm
  end;
@@ -691,6 +693,7 @@ type
  initclassinfoty = record
 //  selfinstance: dataoffsty; //stackoffset
   classdef: dataoffsty;
+  virttaboffset: int32;
 //  result: dataoffsty;   //stackoffset to result pointer
  end;
 
@@ -1356,7 +1359,7 @@ type
       concatstring: concatstringty;
      );
    );
-   oc_initclass:(
+   oc_initclass,oc_initobject:(
     initclass: initclassinfoty;
    );
    oc_destroyclass:(

@@ -2132,6 +2132,9 @@ begin
      else begin
       po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
      end;
+     setimmint32(instancetype1^.infoclass.virttaboffset,
+                                 po1^.par.callinfo.virt.virttaboffset);
+                                    ;
      po1^.par.callinfo.linkcount:= -1;
     end
     else begin

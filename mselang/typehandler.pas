@@ -443,6 +443,7 @@ var
  begin
 testvar:= ele.eledataabs(atyp);
   with ptypedataty(ele.eledataabs(atyp))^ do begin
+ {
    if (op1 = mo_ini) and (icf_zeroed in infoclass.flags) then begin
     with additem(oc_zeromem)^ do begin
      par.ssas1:= info.s.ssa.nextindex-1;
@@ -450,6 +451,7 @@ testvar:= ele.eledataabs(atyp);
     end;
    end
    else begin
+  }
     if (h.kind = dk_object) and (h.ancestor <> 0) then begin
      handlefields(h.ancestor,fieldoffset);
     end;
@@ -475,7 +477,7 @@ testvar:= ele.eledataabs(atyp);
      ele1:= field1^.vf.next;
     end;
    end;
-  end;
+//  end;
  end;//handlefields
 
 var
@@ -517,7 +519,34 @@ begin
 //   pushtemppo(locad1);
    i1:= 0; //field offset
    baseadssa:= info.s.ssa.nextindex-1;
-   handlefields(atyp,i1);
+   if (op1 = mo_ini) then begin
+    if icf_zeroed in typ1^.infoclass.flags then begin
+     with additem(oc_zeromem)^ do begin
+      par.ssas1:= info.s.ssa.nextindex-1;
+      setimmint32(typ1^.infoclass.allocsize,par.imm);
+     end;
+     if(icf_virtual in typ1^.infoclass.flags) then begin
+      with additem(oc_initobject)^.par do begin
+       ssas1:= baseadssa;
+       setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+       initclass.classdef:= typ1^.infoclass.defs.address;
+      end;
+     end;
+    end
+    else begin
+     if(icf_virtual in typ1^.infoclass.flags) then begin
+      with additem(oc_initobject)^.par do begin
+       ssas1:= baseadssa;
+       setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+       initclass.classdef:= typ1^.infoclass.defs.address;
+      end;
+     end;
+     handlefields(atyp,i1); //does not touch vitual table address
+    end;
+   end
+   else begin
+    handlefields(atyp,i1);
+   end;
    poptemp(pointersize);
    endsimplesub(true);
   end;
@@ -536,16 +565,6 @@ testvar:= ele.eledataabs(atyp);
   ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= @managerecord;
   ele1:= ele.elementparent;
   ele.elementparent:= atyp;
-{
-  with s.unitinfo^ do begin
-   if us_implementation in state then begin
-    ele.elementparent:= implementationelement;
-   end
-   else begin
-    ele.elementparent:= interfaceelement;
-   end;
-  end;
-}
   ele.checkcapacity(ek_internalsub,ord(high(op1))+1);
   typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to high(op1) do begin

@@ -4912,8 +4912,9 @@ begin
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
  with cpu.pc^.par.callinfo.virt do begin
-  cpu.pc:= startpo+pptruint(pppointer(cpu.stack+selfinstance)^^+virtoffset)^;
-//  cpu.pc:= startpo+ptruint(ppppointer(cpu.stack+selfinstance)^^[virtindex]); 
+  cpu.pc:= startpo+pptruint(
+  ppointer(ppointer(cpu.stack+selfinstance)^+virttaboffset)^+virtoffset)^;
+//  cpu.pc:= startpo+pptruint(pppointer(cpu.stack+selfinstance)^^+virtoffset)^;
  end;
 end;
 
@@ -5063,6 +5064,37 @@ begin
   po1:= intgetzeromem(imm.vint32);
   self1^:= po1;            //class instance
   ppointer(cpu.stack-2*pointersize)^:= po1; //result
+ end;
+end;
+
+procedure initobjectop();
+var
+ po1: pointer;
+ po2: classdefinfopoty;
+ ps: popaddressty;
+ pd: ppointer;
+ pe: pointer;
+begin
+ with cpu.pc^.par do begin
+  po2:= classdefinfopoty(segments[seg_classdef].basepo+initclass.classdef);
+  po1:= ppointer(cpu.stack-pointersize)^; //object instance
+  ppointer(po1+initclass.virttaboffset)^:= po2;
+  repeat
+   pd:= po1 + po2^.header.allocs.instanceinterfacestart; //copy interface table
+   pe:= po1 + po2^.header.allocs.size;
+   ps:= (pointer(po2)+po2^.header.allocs.classdefinterfacestart);
+   while pd < pe do begin
+    pd^:= segments[seg_intf].basepo+ps^;
+    inc(pd);
+    inc(ps);
+   end;
+   if po2^.header.interfaceparent >= 0 then begin
+    po2:= segments[seg_classdef].basepo+po2^.header.interfaceparent;
+   end
+   else begin
+    po2:= nil;
+   end;
+  until po2 = nil;
  end;
 end;
 
@@ -6629,6 +6661,7 @@ const
   zeromemssa = 0;
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
+  initobjectssa = 0;
   initclassssa = 0;
   destroyclassssa = 0;
   

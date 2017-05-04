@@ -3467,7 +3467,11 @@ begin
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(0,idar);
-  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa **i8
+//  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa **i8
+  bcstream.emitgetelementptr(ids[0],               
+                    bcstream.constval(callinfo.virt.virttaboffset));//2ssa *i8
+  bcstream.emitbitcast(bcstream.relval(0),
+                            bcstream.ptypeval(pointertype)); //1ssa **i8
   bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
                //class def
   bcstream.emitgetelementptr(bcstream.relval(0),               
@@ -3816,13 +3820,24 @@ begin
  end;
 end;
 
+procedure initobjectop();
+begin
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.globval(
+            pint32(getsegmentpo(seg_classdef,initclass.classdef))^),
+                                                        bcstream.constval(0)); 
+                                                           //2ssa
+  callcompilersub(cs_initobject,false,
+         [bcstream.ssaval(ssas1),bcstream.constval(initclass.virttaboffset),
+                                                          bcstream.relval(0)]);
+ end;
+end;
+
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
-//  bcstream.emitpushconstsegad(classdef); //2ssa
   bcstream.emitgetelementptr(bcstream.globval(
-            pint32(getsegmentpo(seg_classdef,classdef))^),
-                bcstream.constval(info.s.unitinfo^.llvmlists.constlist.i8(0))); 
+            pint32(getsegmentpo(seg_classdef,classdef))^),bcstream.constval(0)); 
                                                            //2ssa
   callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
  end;
@@ -4599,8 +4614,8 @@ const
   callfuncssa = 1;
   calloutssa = 0;
   callfuncoutssa = 1;
-  callvirtssa = 7;
-  callvirtfuncssa = 8;
+  callvirtssa = 9;
+  callvirtfuncssa = 10;
   callintfssa = 11;
   callintffuncssa = 12;
   virttrampolinessa = 1;
@@ -4621,6 +4636,7 @@ const
   zeromemssa = 0;
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
+  initobjectssa = 2;
   initclassssa = 3;
   destroyclassssa = 0;
   
