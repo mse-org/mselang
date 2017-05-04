@@ -1930,9 +1930,11 @@ begin
        internalerror(ie_handler,'20150325A'); 
       end;
      {$endif}
+      instancetype1:= resulttype1;
       if icf_class in resulttype1^.infoclass.flags then begin
        with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
         classdef:= resulttype1^.infoclass.defs.address;
+        setimmint32(resulttype1^.infoclass.virttaboffset,virttaboffset);
        end;
        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
       end
