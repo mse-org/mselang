@@ -8,25 +8,27 @@ type
   procedure test(p: int32) [virtual];
  end;
 
- obj1ty = object(objty) [zeroed]
+ obj1ty = object(objty)// [zeroed]
   f2: int32;
   s1: string8;
   constructor create();
   destructor destroy();
   procedure test(p: int32) [override];
   procedure afterconstruction() [afterconstruct];
-  procedure beforedestruction() [beforedestruct];
+  procedure beforedestruction();// [beforedestruct];
+  procedure ini() [ini];
+  procedure fini() [fini];
  end;
 
 constructor obj1ty.create();
 begin
- f1:= 1;
- writeln('aaa');
+// f1:= 1;
+ writeln('create');
 end;
 
 destructor obj1ty.destroy();
 begin
- writeln(f1,'ddd');
+ writeln(f1,'destroy');
 end;
 
 procedure objty.test(p: int32);
@@ -35,25 +37,38 @@ end;
 
 procedure obj1ty.test(p: int32);
 begin
+ writeln(f1,'test');
  exitcode:= f1+f2+p;
 end;
 
 procedure obj1ty.afterconstruction();
 begin
- writeln(f1,'bbb');
+ writeln(f1,'aftconstruct');
 end;
 
 procedure obj1ty.beforedestruction();
 begin
- writeln(f1,'ccc');
+ writeln(f1,'befdestruct');
+end;
+
+procedure obj1ty.ini();
+begin
+ f1:= 2;
+ writeln(f1,'ini');
+end;
+
+procedure obj1ty.fini();
+begin
+ writeln(f1,'fini');
 end;
 
 procedure test();
 var
  ob1: obj1ty;
 begin
+ exitcode:= ob1.f1;
  ob1.create();
-// ob1.test(122);
+ ob1.test(122);
  ob1.destroy();
 end;
 

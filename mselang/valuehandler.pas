@@ -57,11 +57,13 @@ procedure handlevalueinherited();
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
                 dsf_instanceonstack,dsf_nofreemem, //for object destructor
-                dsf_readsub,dsf_writesub);
+                dsf_readsub,dsf_writesub,
+                dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
-                 const paramstart,paramco: int32; const aflags: dosubflagsty);
+                 const paramstart,paramco: int32; const aflags: dosubflagsty;
+                                                    const aobjssa: int32 = 0);
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty): boolean;
 
@@ -1378,7 +1380,8 @@ begin
 end;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
-              const paramstart,paramco: int32; const aflags: dosubflagsty);
+              const paramstart,paramco: int32; const aflags: dosubflagsty;
+                                                    const aobjssa: int32 = 0);
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -1691,7 +1694,8 @@ begin
 //  pe:= @contextstack[s.stacktop];
   ele.checkcapacity(ek_type); //for anonymus method def
   destoffset:= adestindex-s.stackindex;
-  with contextstack[adestindex] do begin //classinstance, result
+  with contextstack[adestindex] do begin //classinstance, result,
+                                         //classdefreturn for ini/fini
    if dsf_instanceonstack in aflags then begin
     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
     instancessa:= d.dat.fact.ssaindex; //for sf_method
@@ -1876,25 +1880,36 @@ begin
      instancetype1:= ele.eledataabs(vardata1^.vf.typ);
     end
     else begin
-     if aflags*[dsf_instanceonstack,dsf_indirect,
-                            dsf_readsub,dsf_writesub] = [] then begin
-      if ismethod and isfactcontext then begin
-       if (sf_class in asub^.flags) then begin
-        if d.dat.datatyp.indirectlevel <> 0 then begin
-         errormessage(err_classinstanceexpected,[]);
-        end;
-       end
-       else begin
-        if d.dat.datatyp.indirectlevel <> 0 then begin
-         errormessage(err_objectpointerexpected,[]);
-        end;
+     if aflags*[dsf_objini,dsf_objfini] <> [] then begin
+      if co_mlaruntime in o.compileoptions then begin
+       with additem(oc_pushduppo)^ do begin
+        par.voffset:= -vpointersize;
        end;
       end;
-      inc(d.dat.indirection);              //instance pointer
-      inc(d.dat.datatyp.indirectlevel);
-      getvalue(@contextstack[adestindex],das_none);
+      instancessa:= aobjssa;
+//      instancetype1:= aobjtypeele.eledataabs(vardata1^.vf.typ);
+     end
+     else begin
+      if aflags*[dsf_instanceonstack,dsf_indirect,
+                             dsf_readsub,dsf_writesub] = [] then begin
+       if ismethod and isfactcontext then begin
+        if (sf_class in asub^.flags) then begin
+         if d.dat.datatyp.indirectlevel <> 0 then begin
+          errormessage(err_classinstanceexpected,[]);
+         end;
+        end
+        else begin
+         if d.dat.datatyp.indirectlevel <> 0 then begin
+          errormessage(err_objectpointerexpected,[]);
+         end;
+        end;
+       end;
+       inc(d.dat.indirection);              //instance pointer
+       inc(d.dat.datatyp.indirectlevel);
+       getvalue(@contextstack[adestindex],das_none);
+      end;
+      instancessa:= d.dat.fact.ssaindex; //for sf_method
      end;
-     instancessa:= d.dat.fact.ssaindex; //for sf_method
     end;
 
     if dsf_indirect in aflags then begin
