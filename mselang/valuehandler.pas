@@ -1689,6 +1689,7 @@ begin
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
+  ele.checkcapacity(ek_type); //for anonymus method def
   destoffset:= adestindex-s.stackindex;
   with contextstack[adestindex] do begin //classinstance, result
    if dsf_instanceonstack in aflags then begin
@@ -1872,6 +1873,7 @@ begin
       par.memop.locdataaddress.offset:= 0;
       instancessa:= par.ssad;
      end;
+     instancetype1:= ele.eledataabs(vardata1^.vf.typ);
     end
     else begin
      if aflags*[dsf_instanceonstack,dsf_indirect,

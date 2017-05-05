@@ -342,7 +342,7 @@ begin
      end;
      po1^.h.ancestor:= ele.eledatarel(po2);
      po1^.h.flags:= po1^.h.flags + 
-                             po2^.h.flags * [tf_needsmanage,tf_needsini];
+                     po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
                              po2^.infoclass.flags * [icf_zeroed,icf_virtual];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
@@ -670,7 +670,7 @@ begin
      updatetypedatabyte(typ1^,infoclass.allocsize);
     end;
     reversefieldchain(typ1);
-    if h.flags * [tf_needsmanage,tf_needsini] <> [] then begin
+    if h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> [] then begin
      createrecordmanagehandler(d.typ.typedata);
     end;
    end;

@@ -595,7 +595,7 @@ begin
   b.flags:= s.currentstatementflags;
   b.eleparent:= ele.elementparent;
   s.currentstatementflags:= s.currentstatementflags -
-                                     [stf_needsmanage,stf_needsini];
+                                  [stf_needsmanage,stf_needsini,stf_needsfini];
   int1:= s.stacktop-s.stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
@@ -740,6 +740,12 @@ begin
      end;
      tk_beforedestruct: begin
       include(d.subdef.flags,sf_beforedestruct);
+     end;
+     tk_ini: begin
+      include(d.subdef.flags,sf_ini);
+     end;
+     tk_fini: begin
+      include(d.subdef.flags,sf_fini);
      end;
      else begin
       identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
@@ -1600,6 +1606,26 @@ begin
      end;
     end;
    end;
+   if sf_ini in subflags then begin
+    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
+     errormessage(err_invalidsubforattach,['ini']);
+    end
+    else begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.ini:= ele.eledatarel(sub1);
+     end;
+    end;
+   end;
+   if sf_fini in subflags then begin
+    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
+     errormessage(err_invalidsubforattach,['fini']);
+    end
+    else begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.fini:= ele.eledatarel(sub1);
+     end;
+    end;
+   end;
    dec(s.stackindex,2);
    s.stacktop:= s.stackindex;
   end;
@@ -1833,7 +1859,7 @@ begin
   end;
   addlabel();
   linkresolveopad(po1^.exitlinks,opcount-1);
-  if stf_needsmanage in s.currentstatementflags then begin
+  if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
    writemanagedvarop(mo_fini,po1^.varchain,s.stacktop);
   end;
   if po1^.paramfinichain <> 0 then begin

@@ -224,7 +224,8 @@ type
  subflagty = (sf_function,sf_method,sf_class,sf_constructor,sf_destructor,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
-              sf_afterconstruct,sf_beforedestruct, //object sub attachments
+              sf_ini,sf_fini,sf_afterconstruct,sf_beforedestruct,
+                                                    //object sub attachments
               sf_named, //has llvm name
               sf_nolineinfo, //for llvm
               sf_vararg,sf_proto, //for llvm
@@ -258,7 +259,7 @@ type
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
                tf_needsmanage, //has nested tf_managed or tf_managed set
-               tf_needsini,
+               tf_needsini,tf_needsfini,
                tf_lower,       //in range expression
                tf_upper,       //in range expression
                tf_subad,       //sub address

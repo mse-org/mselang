@@ -555,7 +555,8 @@ begin
   repeat
    po1:= ele.eledataabs(ele1);
    if (tf_needsmanage in po1^.vf.flags) or 
-                 (op = mo_ini) and (tf_needsini in po1^.vf.flags) then begin
+                 (op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
+                 (op = mo_fini) and (tf_needsfini in po1^.vf.flags) then begin
     ad1.vardata:= po1;
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
    end;

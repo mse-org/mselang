@@ -44,7 +44,7 @@ begin
 //  d.vari.flags:= [];
  end;
 end;
-
+var testvar: ptypedataty;
 procedure handlevar3();
 var
  po1: pvardataty;
@@ -95,6 +95,7 @@ begin
      vf.typ:= contextstack[s.stacktop].d.typ.typedata;
      po2:= ele.eleinfoabs(vf.typ);
      address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
+testvar:= ptypedataty(@po2^.data);
      with ptypedataty(@po2^.data)^ do begin
       datasize1:= h.datasize;
       if h.kind in pointervarkinds then begin
@@ -102,13 +103,24 @@ begin
       end;
       if address.indirectlevel = 0 then begin
        size1:= h.bytesize;
-       if (h.kind = dk_object) and (icf_zeroed in infoclass.flags) then begin
-        include(s.currentstatementflags,stf_needsini);
-        include(vf.flags,tf_needsini);
+      {
+       if (h.kind in [dk_object,dk_class]) then begin
+        if (icf_zeroed in infoclass.flags) then begin
+         include(s.currentstatementflags,stf_needsini);
+         include(vf.flags,tf_needsini);
+        end;
        end;
+      }
+       vf.flags:= vf.flags + 
+                   h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
        if tf_needsmanage in h.flags then begin
         include(s.currentstatementflags,stf_needsmanage);
-        include(vf.flags,tf_needsmanage);
+       end;
+       if tf_needsini in h.flags then begin
+        include(s.currentstatementflags,stf_needsini);
+       end;
+       if tf_needsfini in h.flags then begin
+        include(s.currentstatementflags,stf_needsfini);
        end;
       end
       else begin
