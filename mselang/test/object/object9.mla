@@ -1,4 +1,4 @@
-program object8;
+program object9;
 
 type
  objty = object [virtual]
@@ -41,8 +41,8 @@ end;
 procedure obj1ty.test(p: int32);
 begin
  i1:= i1+3;
- writeln(f1,'test');
-// exitcode:= f1+f2+p;
+// writeln(f1,'test');
+ exitcode:= f1+f2+p;
 end;
 
 procedure obj1ty.afterconstruction();

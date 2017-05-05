@@ -1668,6 +1668,11 @@ var
   if asub <> 0 then begin
    dosub(adestindex,ele.eledataabs(asub),paramstart,0,
                                                     [dsf_instanceonstack]);
+   if co_mlaruntime in info.o.compileoptions then begin
+    with additem(oc_push)^ do begin
+     par.imm.vsize:= pointersize; //compensate stackpop
+    end;
+   end;
   end;
  end;
  
@@ -1881,11 +1886,13 @@ begin
     end
     else begin
      if aflags*[dsf_objini,dsf_objfini] <> [] then begin
+     {
       if co_mlaruntime in o.compileoptions then begin
        with additem(oc_pushduppo)^ do begin
         par.voffset:= -vpointersize;
        end;
       end;
+     }
       instancessa:= aobjssa;
 //      instancetype1:= aobjtypeele.eledataabs(vardata1^.vf.typ);
      end
@@ -2287,6 +2294,13 @@ begin
     end;
     if (sf_constructor in asub^.flags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);
+    end;
+   end;
+  end;
+  if aflags*[dsf_objini,dsf_objfini] <> [] then begin
+   if co_mlaruntime in o.compileoptions then begin
+    with additem(oc_push)^ do begin
+     par.imm.vsize:= pointersize;    //compensate stack pop
     end;
    end;
   end;
