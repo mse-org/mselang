@@ -1613,6 +1613,7 @@ begin
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
       infoclass.subattach.ini:= ele.eledatarel(sub1);
+      include(h.flags,tf_needsini);
      end;
     end;
    end;
@@ -1623,6 +1624,7 @@ begin
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
       infoclass.subattach.fini:= ele.eledatarel(sub1);
+      include(h.flags,tf_needsfini);
      end;
     end;
    end;
@@ -1908,9 +1910,11 @@ begin
   addsubend(po1);
   locallocid:= d.subdef.locallocidbefore;
   po2:= getitem(po1^.address);
+ {
   if po2^.op.op = oc_initclass then begin
    inc(po2);
   end;
+ }
   with po2^ do begin
    if co_llvm in o.compileoptions then begin
     par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;

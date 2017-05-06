@@ -5097,7 +5097,7 @@ begin
   until po2 = nil;
  end;
 end;
-
+(*
 procedure initclassop();
 var
  po1: pointer;
@@ -5135,7 +5135,7 @@ begin
   until po2 = nil;
  end;
 end;
-
+*)
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
@@ -6662,7 +6662,7 @@ const
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
   initobjectssa = 0;
-  initclassssa = 0;
+//  initclassssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;

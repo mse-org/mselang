@@ -328,13 +328,8 @@ begin
     else begin
      ki1:= dk_object;
     end;
-    if po2^.h.kind <> ki1 then begin
-     if ki1 = dk_class then begin
-      errormessage(err_classtypeexpected,[]);
-     end
-     else begin
-      errormessage(err_objecttypeexpected,[]);
-     end;
+    if (ki1 <> dk_class) and (po2^.h.kind <> ki1) then begin
+     errormessage(err_objecttypeexpected,[]);
     end
     else begin
      if not (icf_defvalid in po2^.infoclass.flags) then begin

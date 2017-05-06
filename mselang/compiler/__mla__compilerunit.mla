@@ -87,8 +87,8 @@ function __mla__highstring(ref: pointer): int32;
 
 procedure __mla__initobject(const address: pointer; const virttaboffset: int32;
                                  const classinfo: classdefinfoty);
-function __mla__initclass(const classinfo: classdefinfoty): pointer;
-procedure __mla__finiclass(const instance: pointer);
+//function __mla__initclass(const classinfo: classdefinfoty): pointer;
+//procedure __mla__finiclass(const instance: pointer);
 procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
 function __mla__personality(version: cint;
@@ -1476,7 +1476,7 @@ begin
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
 end;
-
+(*
 //todo: use simplified version if there are no interfaces
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 var
@@ -1514,8 +1514,8 @@ begin
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
 end;
-
-procedure __mla__finiclass(const instance: pointer);
+*)
+procedure finiclass(const instance: pointer);
 begin
  freemem(instance); //todo: class.destroy
 end;
@@ -1538,7 +1538,7 @@ begin  //todo: handle out of memory situation
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
  freemem(po1);
- __mla__finiclass(data);
+finiclass(data);
  exitcode:= exco_unhandledexception; //no handler found
  halt();
 end;
@@ -1546,7 +1546,7 @@ end;
 procedure __mla__finiexception(const data: pointer);
 begin
  with pexceptinfoty(data)^ do begin
-  __mla__finiclass(data);
+  finiclass(data);
  end;
  freemem(data);
 end;

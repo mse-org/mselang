@@ -3832,7 +3832,7 @@ begin
                                                           bcstream.relval(0)]);
  end;
 end;
-
+{
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
@@ -3842,7 +3842,7 @@ begin
   callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
  end;
 end;
-
+}
 procedure destroyclassop();
 begin
  with pc^.par do begin
@@ -4637,7 +4637,7 @@ const
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initobjectssa = 2;
-  initclassssa = 3;
+//  initclassssa = 3;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;

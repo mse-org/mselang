@@ -58,6 +58,7 @@ type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
                 dsf_instanceonstack,dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
+                dsf_attach, //afterconstruct or beforedestruct
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
@@ -1667,7 +1668,7 @@ var
  begin
   if asub <> 0 then begin
    dosub(adestindex,ele.eledataabs(asub),paramstart,0,
-                                                    [dsf_instanceonstack]);
+                            [dsf_instanceonstack,dsf_attach],instancessa);
    if co_mlaruntime in info.o.compileoptions then begin
     with additem(oc_push)^ do begin
      par.imm.vsize:= pointersize; //compensate stackpop
@@ -1687,6 +1688,8 @@ var
  instancetype1: ptypedataty;
  i4: int32;
  adref1: addressrefty;
+ b1: boolean;
+ mo1: managedopty;
 // tempsbefore: targetadty;
 label
  paramloopend;
@@ -1885,7 +1888,7 @@ begin
      instancetype1:= ele.eledataabs(vardata1^.vf.typ);
     end
     else begin
-     if aflags*[dsf_objini,dsf_objfini] <> [] then begin
+     if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
      {
       if co_mlaruntime in o.compileoptions then begin
        with additem(oc_pushduppo)^ do begin
@@ -1966,6 +1969,7 @@ begin
       end;
      {$endif}
       instancetype1:= resulttype1;
+     {
       if icf_class in resulttype1^.infoclass.flags then begin
        with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
         classdef:= resulttype1^.infoclass.defs.address;
@@ -1974,29 +1978,33 @@ begin
        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
       end
       else begin
-       with resulttype1^.infoclass do begin
-        if (icf_zeroinit in flags) or not (icf_nozeroinit in flags) then begin
-         with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
-          setimmint32(allocsize,par.imm);
-         end;
-         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-        end
-        else begin
-         with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
-          setimmint32(allocsize,par.imm);
-         end;
-         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-         if tf_needsmanage in resulttype1^.h.flags then begin
-          adref1.offset:= 0;
-          adref1.ssaindex:= instancessa;
-          adref1.contextindex:= adestindex;
-          adref1.kind:= ark_stack;
-          adref1.address:= 0;
-          adref1.typ:= resulttype1;
-          writemanagedtypeop(mo_ini,resulttype1,adref1);
-         end;
+      }
+      with resulttype1^.infoclass do begin
+       if (icf_zeroinit in flags) or not (icf_nozeroinit in flags) then begin
+        with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
+         setimmint32(allocsize,par.imm);
         end;
+        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+        b1:= false;
+       end
+       else begin
+        with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
+         setimmint32(allocsize,par.imm);
+        end;
+        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+        b1:= true;
        end;
+       if b1 and (tf_needsmanage in resulttype1^.h.flags) or
+                          (tf_needsini in resulttype1^.h.flags) then begin
+        adref1.offset:= 0;
+        adref1.ssaindex:= instancessa;
+        adref1.contextindex:= adestindex;
+        adref1.kind:= ark_stack;
+        adref1.address:= 0;
+        adref1.typ:= resulttype1;
+        writemanagedtypeop(mo_ini,resulttype1,adref1);
+       end;
+//       end;
       end;
      end
      else begin
@@ -2124,7 +2132,8 @@ begin
      end;
     end;
 
-    if not hasresult then begin
+    if not hasresult and 
+            (aflags*[dsf_attach,dsf_objini,dsf_objfini] = []) then begin
      d.kind:= ck_subcall;
      if (dsf_indexedsetter in aflags) and 
                              (co_mlaruntime in o.compileoptions) then begin
@@ -2258,14 +2267,20 @@ begin
     end;
     if (sf_destructor in asub^.flags) and 
                      (aflags * [dsf_isinherited,dsf_nofreemem] = []) then begin
-     if tf_needsmanage in instancetype1^.h.flags then begin
+     if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
       adref1.offset:= 0;
       adref1.ssaindex:= instancessa;
       adref1.contextindex:= adestindex;
       adref1.kind:= ark_stack;
       adref1.address:= 0; //instance removed by destroy()
       adref1.typ:= instancetype1;
-      writemanagedtypeop(mo_decref,instancetype1,adref1);
+      if tf_needsfini in instancetype1^.h.flags then begin
+       mo1:= mo_fini;
+      end
+      else begin
+       mo1:= mo_decref;
+      end;
+      writemanagedtypeop(mo1,instancetype1,adref1);
      end;
      with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
@@ -2349,10 +2364,10 @@ var
   offs1: dataoffsty;
   ele1: elementoffsetty;
   pvar1: pvardataty;
-
- var
   int1: integer;
   po4: pointer;
+  subflags1: subflagsty;
+  typ1: ptypedataty;
 //  pind: pcontextitemty;
  begin //donotfond
   if firstnotfound <= idents.high then begin
@@ -2421,9 +2436,14 @@ var
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
          pvar1:= eletodata(po1);
-         if [sf_class,sf_interface] * psubdataty(po4)^.flags <> [] then begin
+         subflags1:= psubdataty(po4)^.flags;
+         typ1:= ele.eledataabs(pvar1^.vf.typ);
+         if typ1^.h.kind = dk_class then begin
+          include(subflags1,sf_class);
+         end;
+         if [sf_class,sf_interface] * subflags1 <> [] then begin
           if pvar1^.address.indirectlevel <> 1 then begin
-           if sf_class in psubdataty(po4)^.flags then begin
+           if sf_class in subflags1 then begin
             errormessage(err_classinstanceexpected,[]);
            end
            else begin
@@ -2437,7 +2457,7 @@ var
           end;
          end
          else begin
-          if psubdataty(po4)^.flags * [sf_destructor,sf_class] = 
+          if subflags1 * [sf_destructor,sf_class] = 
                                            [sf_destructor,sf_class] then begin
            if pvar1^.address.indirectlevel <> 1 then begin
             errormessage(err_classinstanceexpected,[]);
@@ -2448,7 +2468,7 @@ var
            end;
           end
           else begin
-           if (sf_destructor in psubdataty(po4)^.flags) and 
+           if (sf_destructor in subflags1) and 
                   (pvar1^.address.indirectlevel = 1) then begin //object pointer
             if not getvalue(adatacontext,das_none) then begin 
                                               //get object pointer

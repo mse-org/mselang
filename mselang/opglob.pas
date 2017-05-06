@@ -119,7 +119,7 @@ type
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_initobject,
-  oc_initclass,
+//  oc_initclass,
   oc_destroyclass,
 
   oc_beginparse,
@@ -1137,7 +1137,7 @@ const
 //  oc_callindi,
 //  oc_callfuncindi,
 
-  oc_initclass,
+//  oc_initclass,
   oc_destroyclass
  ];
  listops = [oc_listtoopenar,
@@ -1359,7 +1359,7 @@ type
       concatstring: concatstringty;
      );
    );
-   oc_initclass,oc_initobject:(
+   {oc_initclass,}oc_initobject:(
     initclass: initclassinfoty;
    );
    oc_destroyclass:(

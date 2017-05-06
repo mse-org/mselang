@@ -80,8 +80,8 @@ type
   cs_highopenarray,
   cs_highstring,
   cs_initobject,
-  cs_initclass,
-  cs_finiclass,
+//  cs_initclass,
+//  cs_finiclass,
   cs_raise,
   cs_personality,
   cs_finiexception
@@ -140,8 +140,8 @@ const
   '__mla__highopenarray',
   '__mla__highstring',
   '__mla__initobject',
-  '__mla__initclass',
-  '__mla__finiclass',
+//  '__mla__initclass',
+//  '__mla__finiclass',
   '__mla__raise',
   '__mla__personality',
   '__mla__finiexception'

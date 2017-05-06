@@ -71,7 +71,7 @@
 //oc_initobject
   (ssa: initobjectssa; proc: @initobjectop; flags: []), 
 //oc_initclass
-  (ssa: initclassssa; proc: @initclassop; flags: []), 
+//  (ssa: initclassssa; proc: @initclassop; flags: []), 
 //oc_destroyclass
   (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
 
