@@ -65,7 +65,8 @@
 @.tokens
  'result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
- 'zeroed','virtual','afterconstruct','beforedestruct','ini','fini'
+ 'nozeroinit','zeroinit','virtual'
+ 'afterconstruct','beforedestruct','ini','fini'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-

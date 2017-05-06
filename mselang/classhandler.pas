@@ -164,7 +164,7 @@ begin
    d.cla.fieldoffset:= 0;
    d.cla.intfindex:= 0;
    if isclass then begin
-    d.cla.flags:= [obf_class,obf_zeroed,obf_virtual];
+    d.cla.flags:= [obf_class,{obf_zeroed,}obf_virtual];
     d.cla.visibility:= classpublishedvisi;
 //    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    end
@@ -344,7 +344,7 @@ begin
      po1^.h.flags:= po1^.h.flags + 
                      po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
-                             po2^.infoclass.flags * [icf_zeroed,icf_virtual];
+              po2^.infoclass.flags * [icf_zeroinit,icf_nozeroinit,icf_virtual];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
      po1^.infoclass.subattach:= po2^.infoclass.subattach;
      if po2^.infoclass.interfacecount > 0 then begin
@@ -377,9 +377,12 @@ begin
   typ1:= ptypedataty(ele.eledataabs(
                      contextstack[s.stackindex-1].d.typ.typedata));
   with typ1^,contextstack[s.stackindex] do begin
-   if obf_zeroed in d.cla.flags then begin
-    include(infoclass.flags,icf_zeroed);
-    include(h.flags,tf_needsini);
+   if obf_zeroinit in d.cla.flags then begin
+    include(infoclass.flags,icf_zeroinit);
+//    include(h.flags,tf_needsini);
+   end;
+   if obf_nozeroinit in d.cla.flags then begin
+    include(infoclass.flags,icf_nozeroinit);
    end;
    if (obf_virtual in d.cla.flags) and 
               not (icf_virtual in infoclass.flags) then begin
@@ -452,8 +455,11 @@ begin
    end;
   {$endif}
    case contextstack[i1].d.ident.ident of
-    tk_zeroed: begin
-     include(d.cla.flags,obf_zeroed);
+    tk_zeroinit: begin
+     include(d.cla.flags,obf_zeroinit);
+    end;
+    tk_nozeroinit: begin
+     include(d.cla.flags,obf_nozeroinit);
     end;
     tk_virtual: begin
      include(d.cla.flags,obf_virtual);
@@ -592,6 +598,11 @@ begin
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    with typ1^ do begin
     include(infoclass.flags,icf_defvalid);
+    if (icf_zeroinit in infoclass.flags) or 
+                   not (icf_nozeroinit in infoclass.flags) then begin
+     include(h.flags,tf_needsini);
+    end;
+
    {
     with contextstack[s.stackindex] do begin
      if obf_zeroed in d.cla.flags then begin

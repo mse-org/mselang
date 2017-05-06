@@ -1975,7 +1975,7 @@ begin
       end
       else begin
        with resulttype1^.infoclass do begin
-        if icf_zeroed in flags then begin
+        if (icf_zeroinit in flags) or not (icf_nozeroinit in flags) then begin
          with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
           setimmint32(allocsize,par.imm);
          end;

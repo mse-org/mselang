@@ -1,11 +1,11 @@
 program object8;
 
 type
- objty = object [virtual]
+ objty = object [nozeroinit,virtual]
   f1: int32;
   procedure test(p: int32) virtual;
  end;
- obj1ty = object(objty) [zeroed]
+ obj1ty = object(objty) [zeroinit]
   f2: int32;
   s1: string8;
   procedure test(p: int32) override;

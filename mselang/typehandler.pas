@@ -514,52 +514,58 @@ begin
    i1:= 0; //field offset
    startssa:= info.s.ssa.nextindex-1;
    baseadssa:= startssa;
-   if (op1 = mo_ini) then begin
-    if icf_zeroed in typ1^.infoclass.flags then begin
-     with additem(oc_zeromem)^ do begin
-      par.ssas1:= info.s.ssa.nextindex-1;
-      setimmint32(typ1^.infoclass.allocsize,par.imm);
+   if typ1^.h.kind = dk_record then begin
+    handlefields(atyp,i1);
+   end
+   else begin //dk_object, dk_class
+    if (op1 = mo_ini) then begin
+     if (icf_zeroinit in typ1^.infoclass.flags) or 
+                    not (icf_nozeroinit in typ1^.infoclass.flags) then begin
+      with additem(oc_zeromem)^ do begin
+       par.ssas1:= info.s.ssa.nextindex-1;
+       setimmint32(typ1^.infoclass.allocsize,par.imm);
+      end;
+      if(icf_virtual in typ1^.infoclass.flags) then begin
+       with additem(oc_initobject)^.par do begin
+        ssas1:= baseadssa;
+        setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+        initclass.classdef:= typ1^.infoclass.defs.address;
+       end;
+      end;
+     end
+     else begin
+      if(icf_virtual in typ1^.infoclass.flags) then begin
+       with additem(oc_initobject)^.par do begin
+        ssas1:= baseadssa;
+        setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+        initclass.classdef:= typ1^.infoclass.defs.address;
+       end;
+      end;
+      handlefields(atyp,i1); //does not touch vitual table address
      end;
-     if(icf_virtual in typ1^.infoclass.flags) then begin
-      with additem(oc_initobject)^.par do begin
-       ssas1:= baseadssa;
-       setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
-       initclass.classdef:= typ1^.infoclass.defs.address;
+     with typ1^.infoclass.subattach do begin
+      if ini <> 0 then begin
+       if (i1 > 0) and (co_mlaruntime in o.compileoptions) then begin
+        with additem(oc_offsetpoimm)^ do begin
+         setimmint32(-i1,par.imm);
+        end;
+       end;
+       dosub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
+                                                    [dsf_objini],startssa);
       end;
      end;
     end
     else begin
-     if(icf_virtual in typ1^.infoclass.flags) then begin
-      with additem(oc_initobject)^.par do begin
-       ssas1:= baseadssa;
-       setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
-       initclass.classdef:= typ1^.infoclass.defs.address;
-      end;
-     end;
-     handlefields(atyp,i1); //does not touch vitual table address
-    end;
-    with typ1^.infoclass.subattach do begin
-     if ini <> 0 then begin
-      if (i1 > 0) and (co_mlaruntime in o.compileoptions) then begin
-       with additem(oc_offsetpoimm)^ do begin
-        setimmint32(-i1,par.imm);
+     if op1 = mo_fini then begin
+      with typ1^.infoclass.subattach do begin
+       if fini <> 0 then begin
+        dosub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
+                                                    [dsf_objfini],baseadssa);
        end;
       end;
-      dosub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
-                                                   [dsf_objini],startssa);
      end;
+     handlefields(atyp,i1);
     end;
-   end
-   else begin
-    if op1 = mo_fini then begin
-     with typ1^.infoclass.subattach do begin
-      if fini <> 0 then begin
-       dosub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
-                                                   [dsf_objfini],baseadssa);
-      end;
-     end;
-    end;
-    handlefields(atyp,i1);
    end;
    poptemp(pointersize);
    endsimplesub(true);

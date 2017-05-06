@@ -98,7 +98,7 @@ type
  end;
 
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_defvalid,icf_forward,
-                    icf_zeroed,icf_virtual);
+                    icf_zeroinit,icf_nozeroinit,icf_virtual);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   intfnamenode: elementoffsetty;

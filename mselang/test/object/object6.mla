@@ -1,7 +1,7 @@
 program object6;
 
 type
- objty = object [zeroed]
+ objty = object [zeroinit]
   f1: int32;
   f2: int32;
   s1: string8;
