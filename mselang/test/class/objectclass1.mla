@@ -22,10 +22,12 @@ var
  cla: tobjectclass;
 begin
  obj:= classobjectty.create();
- obj^.f1:= 123;
- obj.destroy();
+ obj^.f1:= 100;
 
  cla:= tobjectclass.create();
- cla.f1:= 123;
+ cla.f1:= 23;
+ exitcode:= obj^.f1+cla.f1;
  cla.destroy();
+ obj.destroy();
+ 
 end.

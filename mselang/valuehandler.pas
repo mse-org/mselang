@@ -2329,7 +2329,7 @@ begin
 end;
 
 //todo: simplify, use unified indirection handling
- 
+var testvar: pelementinfoty; 
 procedure handlevalueidentifier();
 var
  paramco,paramstart: integer;
@@ -2362,7 +2362,7 @@ var
 
  var
   offs1: dataoffsty;
-  ele1: elementoffsetty;
+  ele1,ele2: elementoffsetty;
   pvar1: pvardataty;
   int1: integer;
   po4: pointer;
@@ -2376,6 +2376,7 @@ var
    with info do begin
 //    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
+     ele2:= ele1; //parent backup
      case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
       ek_none: begin
        identerror(1+int1,err_identifiernotfound);
@@ -2383,10 +2384,13 @@ var
       end;
       ek_field: begin
        with adatacontext^,pfielddataty(po4)^ do begin
+        testvar:= ele.eleinfoabs(ele1);
         ele1:= vf.typ;
         case d.kind of
          ck_ref: begin
-          if af_classfield in flags then begin
+          typ1:= ele.eledataabs(ele2);
+          if typ1^.h.kind = dk_class then begin
+//          if af_classfield in flags then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end; //todo: handle indirection with existing offset

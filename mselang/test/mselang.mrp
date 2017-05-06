@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=8
   (
   kind=1
-  a=0,664,4,base
+  a=0,664,5,base
   c=23
    (
    kind=1
@@ -3176,7 +3176,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,exception
+   a=0,665,5,exception
    c=6
     (
     kind=2
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C0CDC
+    ao=An unhandled exception occured at $B7293BF0
     ae=
     aec=123
     ie=0
@@ -3290,8 +3290,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise3 llvm
-    teststate=1
+    a=0,648,2,raise3 llvm
+    teststate=2
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -3306,11 +3306,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid instruction with no BB
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=exception/
    comment=
    cc=
@@ -6951,7 +6951,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -6969,7 +6969,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=18
    (
    kind=2
@@ -7386,7 +7386,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=26
+  c=30
    (
    kind=1
    a=0,664,4,properties
@@ -8177,7 +8177,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=14
     (
     kind=2
@@ -8505,7 +8505,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,interface
+   a=0,664,4,interface
    c=10
     (
     kind=2
@@ -9227,6 +9227,94 @@ c=3
    aec=123
    ie=0
    )
+   (
+   kind=2
+   a=0,648,1,objectclass
+   teststate=1
+   path=objectclass.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,objectclass llvm
+   teststate=1
+   path=objectclass.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,objectclass1
+   teststate=1
+   path=objectclass1.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,objectclass1 llvm
+   teststate=1
+   path=objectclass1.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
   teststate=1
   path=class/
   comment=
@@ -9737,7 +9825,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -9850,55 +9938,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=594
+propcolwidthref=609
 width0=50
 sortdescend0=0
-width1=207
+width1=212
 sortdescend1=0
-width2=157
+width2=161
 sortdescend2=0
-width3=154
+width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=79
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=41
  0 0
  0 0
  0 0
