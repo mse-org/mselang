@@ -2305,8 +2305,7 @@ begin
       end;
       FUNC_CODE_INST_LANDINGPAD: begin
        checkmindatalen(rec1,4); //???
-       outssarecord(rec1[2],{opname(rec1[3])+','+}inttostr(rec1[4])+
-                                                      ','+inttostr(rec1[5]));
+       outssarecord(rec1[2],{opname(rec1[3])+','+}inttostr(rec1[4]));
       end;
       FUNC_CODE_INST_LANDINGPAD_OLD: begin
        checkmindatalen(rec1,5);
