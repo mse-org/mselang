@@ -581,11 +581,11 @@ begin
    end;
    include(d.subdef.flags,sf_functiontype);
   {$else} //msepas
-   if not (sf_function in d.subdef.flags) or 
+   if (d.subdef.flags * [sf_function,sf_methodtoken,sf_subtoken] = []) or 
                            (sf_functiontype in d.subdef.flags) then begin
     errormessage(err_syntax,[';']);
    end;
-   include(d.subdef.flags,sf_functiontype);
+   d.subdef.flags:= d.subdef.flags+[sf_functiontype,sf_function];
   {$endif}
   end;
  end;

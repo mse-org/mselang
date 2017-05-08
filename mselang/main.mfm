@@ -407,7 +407,7 @@ object mainfo: tmainfo
       ' ''SELF'' ''SET'' ''SHL'' ''SHR'''
       ' ''STDCALL'' ''STORED'' ''THEN'' ''THREADVAR'' ''TO'' ''TRUE'' ''TRY'' ''TYPE'' ''UNIT'' ''UNTIL'''
       ' ''USES'' ''VAR'' ''VIRTUAL'' ''WHILE'' ''WITH'' ''WRITE'' ''XOR'''
-      ' ''OVERLOAD'' ''OVERRIDE'''
+      ' ''OVERLOAD'' ''OVERRIDE'' ''SUB'' ''METHOD'''
       ''
       'scope option option'
       ' endtokens'

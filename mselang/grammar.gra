@@ -1214,6 +1214,8 @@ ident,ident0,,
  'var'.,reservedword
  'label'.,reservedword
  'begin'.,reservedword
+ 'method'.,reservedword
+ 'sub'.,reservedword
  'procedure'.,reservedword
  'function'.,reservedword
  'constructor'.,reservedword
