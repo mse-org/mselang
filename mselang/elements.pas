@@ -169,6 +169,8 @@ type
    procedure checkcapacity(const areserve: integer);
    procedure checkcapacity(const akind: elementkindty;
                                         const acount: integer = 1);
+   procedure checkcapacity(const akind: elementkindty;
+                               const acount: integer; var reloc: pointer);
    function addbuffer(const asize: int32): pointer;
    procedure enterbufferitem(const adata: pelementinfoty);
 
@@ -1792,6 +1794,16 @@ begin
   felementlen:= fnextelement*2+mindatasize+ele1;
   setlength(felementdata,felementlen);
  end;
+end;
+
+procedure telementhashdatalist.checkcapacity(const akind: elementkindty;
+               const acount: integer; var reloc: pointer);
+var
+ p1: pointer;
+begin
+ p1:= pointer(felementdata);
+ checkcapacity(akind,acount);
+ reloc:= reloc + (pointer(felementdata)-p1);
 end;
 
 function telementhashdatalist.addbuffer(const asize: int32): pointer;

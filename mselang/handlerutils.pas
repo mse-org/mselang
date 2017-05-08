@@ -3031,8 +3031,10 @@ begin
    d.dat.indirection:= 0;
    result:= linkdocasts(link1,acontext,acast);
    inc(d.dat.indirection,i1); //could be changed
-   acontext^.d.dat.datatyp:= datatypbefore;
-   acontext^.d.dat.ref.offset:= offsetbefore;
+   d.dat.datatyp:= datatypbefore;
+   if d.kind = ck_ref then begin 
+    d.dat.ref.offset:= offsetbefore; //???
+   end;
   end;
  end;
 end;

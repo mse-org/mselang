@@ -288,7 +288,8 @@ begin
   po1:= ele.eledataabs(currentcontainer);
   ele1:= ele.elementparent;
   ele.decelementparent(); //interface or implementation scope
-  if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
+  if (ainterface or (contextstack[s.stackindex+1].d.ident.ident <> tk_nil)) and 
+                       findkindelementsdata(1,[ek_type],allvisi,po2) then begin
    if ainterface then begin
     if po2^.h.kind <> dk_interface then begin
      errormessage(err_interfacetypeexpected,[]);

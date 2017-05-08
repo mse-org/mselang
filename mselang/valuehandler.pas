@@ -646,6 +646,7 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
  p1,p2: pcard8;
+ b1: boolean;
 begin
  result:= false;
  with info do begin
@@ -1008,10 +1009,12 @@ begin
      end;
     end
     else begin
-     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-           (d.dat.datatyp.indirectlevel = 1) and 
-              (source1^.h.kind = dk_class) and 
-                      (dest^.h.kind = dk_interface) then begin
+{    
+     if (d.kind in [ck_fact,ck_ref]) and 
+        (destindirectlevel = 0) and (dest^.h.kind = dk_interface) and
+        ((d.dat.datatyp.indirectlevel = 1) and (source1^.h.kind = dk_class) or
+         (d.dat.datatyp.indirectlevel = 0) and 
+                                      (source1^.h.kind = dk_object)) then begin
       i1:= ele.elementparent;
       po1:= source1;
       repeat
@@ -1041,6 +1044,7 @@ begin
       end;
      end
      else begin
+}     
       if (coo_type in aoptions) and 
               ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                (source1^.h.bitsize = pointerbitsize) or 
@@ -1060,24 +1064,60 @@ begin
         end;
        end;
       end;
-     end;
+//     end;
     end;
    end;
    if not result then begin
-    result:=                           //todo: optimise
-       ((dest^.h.kind in nilpointerdatakinds) and 
-                                      (destindirectlevel = 0) or
-               (dest^.h.kind = dk_pointer) and (destindirectlevel = 1)) and 
-                                             (source1^.h.kind = dk_pointer) or
-       ((dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
-         (source1^.h.kind = dk_sub) and (d.dat.datatyp.indirectlevel = 0)) or
-       (source1^.h.kind = dk_pointer) and 
-           (d.dat.datatyp.indirectlevel = 1) and (destindirectlevel > 0) or
-                     //untyped pointer to any pointer
-       (coo_type in aoptions) and (destindirectlevel > 0) and 
-                                         (d.dat.datatyp.indirectlevel > 0);
-                  //pointer type conversion
-    pointerconv:= result;
+    b1:= (source1^.h.kind = dk_class);
+    if (d.kind in [ck_fact,ck_subres,ck_ref]) and 
+       (destindirectlevel = 0) and (dest^.h.kind = dk_interface) and
+       (b1 and (d.dat.datatyp.indirectlevel = 1) or
+                     not b1 and (d.dat.datatyp.indirectlevel = 0)) then begin
+     i1:= ele.elementparent;
+     po1:= source1;
+     repeat
+      if getclassinterfaceoffset(po1,dest,i3) then begin
+       if b1 and getvalue(acontext,das_pointer) or
+             not b1 and getaddress(acontext,true) then begin
+        i2:= d.dat.fact.ssaindex;
+        with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
+         setimmint32(i3,par.imm);
+         par.ssas1:= i2;
+        end;
+        result:= true;
+        destindirectlevel:= 1;
+       end;
+       break;
+      end;
+      if po1^.infoclass.interfaceparent <> 0 then begin
+       ele.elementparent:= po1^.infoclass.interfaceparent;
+       po1:= ele.eledataabs(po1^.infoclass.interfaceparent);
+      end
+      else begin
+       po1:= nil;
+      end;
+     until po1 = nil;
+     ele.elementparent:= i1;
+     if po1 = nil then begin
+      exit;      //interface not found
+     end;
+    end
+    else begin
+     result:=                           //todo: optimise
+        ((dest^.h.kind in nilpointerdatakinds) and 
+                                       (destindirectlevel = 0) or
+                (dest^.h.kind = dk_pointer) and (destindirectlevel = 1)) and 
+                                              (source1^.h.kind = dk_pointer) or
+        ((dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
+          (source1^.h.kind = dk_sub) and (d.dat.datatyp.indirectlevel = 0)) or
+        (source1^.h.kind = dk_pointer) and 
+            (d.dat.datatyp.indirectlevel = 1) and (destindirectlevel > 0) or
+                      //untyped pointer to any pointer
+        (coo_type in aoptions) and (destindirectlevel > 0) and 
+                                          (d.dat.datatyp.indirectlevel > 0);
+                   //pointer type conversion
+     pointerconv:= result;
+    end;
    end;
    if not result and (coo_type in aoptions) then begin
     result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
@@ -1700,7 +1740,7 @@ begin
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
-  ele.checkcapacity(ek_type); //for anonymus method def
+  ele.checkcapacity(ek_type,1,asub); //for anonymus method def
   destoffset:= adestindex-s.stackindex;
   with contextstack[adestindex] do begin //classinstance, result,
                                          //classdefreturn for ini/fini
@@ -2909,8 +2949,11 @@ begin
                                     //do not remove tf_subad
           i1:= 0;
           if (h.kind = dk_interface) and (h.indirectlevel = 0) and
-                (po3^.h.kind = dk_class) and 
-                        (potop^.d.dat.datatyp.indirectlevel = 1) then begin
+                ((po3^.h.kind = dk_class) and 
+                        (potop^.d.dat.datatyp.indirectlevel = 1) or
+                 (po3^.h.kind = dk_object) and 
+                        (potop^.d.dat.datatyp.indirectlevel = 0))
+                         then begin
            i1:= 1;           //classinstance to interface
           end;
           potop^.d.dat.datatyp.indirectlevel:= 

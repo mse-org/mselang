@@ -63,7 +63,7 @@
  '.ini','.fini','.incref','.decref','.decrefindi'
  '.method'
 @.tokens
- 'result','exitcode','sizeof','defined','break','continue','self'
+ 'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual'
  'afterconstruct','beforedestruct','ini','fini'
