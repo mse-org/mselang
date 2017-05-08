@@ -2012,6 +2012,9 @@ var
    fbb:= 0;
   end;
   inc(fbb);
+  if fbb > bbcount then begin
+   error('BB bigger than BB-count');
+  end;
  end;
 
  procedure outrec();

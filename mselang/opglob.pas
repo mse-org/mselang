@@ -1138,6 +1138,10 @@ const
 //  oc_callfuncindi,
 
 //  oc_initclass,
+  oc_zeromem,
+  oc_getobjectmem,
+  oc_getobjectzeromem,
+  oc_initobject,
   oc_destroyclass
  ];
  listops = [oc_listtoopenar,

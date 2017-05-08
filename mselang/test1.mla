@@ -1,31 +1,39 @@
 program objectclass1;
+
 type
- classobjectty = object
-  f1: int32;
+
+ classobjectty = object [virtual,zeroinit]
   constructor create();
-  destructor destroy();
+  destructor destroy() [virtual];
+  procedure free();
+  procedure afterconstruction() [virtual,afterconstruct];
+  procedure beforedestruction() [virtual,beforedestruct];
+  procedure freeinstance() [virtual,fini];
+//[...]
  end;
 
- tobjectclass = class(classobjectty)
+ TObject = class(classobjectty)
  end;
 
-constructor classobjectty.create();
-begin
-end;
+  constructor classobjectty.create();
+  begin
+  end;
 
-destructor classobjectty.destroy();
-begin
-end;
+  destructor classobjectty.destroy();
+  begin
+  end;
+  procedure classobjectty.free();
+  begin
+  end;
+  procedure classobjectty.afterconstruction();
+  begin
+  end;
+  procedure classobjectty.beforedestruction();
+  begin
+  end;
+  procedure classobjectty.freeinstance();
+  begin
+  end;
 
-var
- obj: ^classobjectty;
- cla: tobjectclass;
 begin
- obj:= classobjectty.create();
- obj^.f1:= 123;
- obj.destroy();
-
- cla:= tobjectclass.create();
- cla.f1:= 123;
- cla.destroy();
 end.
