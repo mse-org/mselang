@@ -227,11 +227,13 @@ begin
   managedtempref:= 0;
   managedtemparrayid:= 0;
  }
-  if stf_needsmanage in s.currentstatementflags then begin
+  if s.currentstatementflags*[stf_needsmanage,stf_needsini] <> [] then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
     endsimplesub(false);
    end;
+  end;
+  if s.currentstatementflags*[stf_needsmanage,stf_needsfini] <> [] then begin
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
     writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,s.stacktop);
     endsimplesub(false);

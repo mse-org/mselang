@@ -939,12 +939,14 @@ parseend:
    freelist(externallinklist);
   end;
 }
-  if stf_needsmanage in s.currentstatementflags then begin
-   with s.unitinfo^ do begin
+  with s.unitinfo^ do begin
+   if [stf_needsmanage,stf_needsini] * s.currentstatementflags <> [] then begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
      writemanagedvarop(mo_ini,varchain,s.stacktop);
      endsimplesub(false);
     end;
+   end;
+   if [stf_needsmanage,stf_needsfini] * s.currentstatementflags <> [] then begin
     if getinternalsub(isub_fini,inifinisub) then begin //no finalization section
      writemanagedvarop(mo_fini,varchain,s.stacktop);
      endsimplesub(false);

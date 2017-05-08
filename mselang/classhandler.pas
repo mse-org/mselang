@@ -471,7 +471,7 @@ begin
  end;
 end;
 
-function checkinterface(const ainstanceoffset: int32;
+function checkinterface(const ainstanceoffset{,avirttaboffset}: int32;
                         const ainterface: pclassintfnamedataty): dataoffsty;
              //todo: name alias, delegation and the like
 
@@ -561,6 +561,7 @@ begin
  with pintfdefheaderty(pointer(scaninfo.sub)-
                              sizeof(intfdefheaderty))^ do begin
   instanceoffset:= ainstanceoffset;
+//  virttaboffset:= avirttaboffset;
  end;
 end;
 
@@ -668,7 +669,8 @@ begin
       while ele1 <> 0 do begin
        inc(int1,pointersize);
        dec(po1);
-       po1^:= checkinterface(int1,ele.eledataabs(ele1));
+       po1^:= checkinterface(int1,{infoclass.virttaboffset,}
+                                                 ele.eledataabs(ele1));
        ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
       end;
      end;

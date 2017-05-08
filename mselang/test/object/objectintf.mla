@@ -1,0 +1,27 @@
+program objectintf;
+
+type
+ itest = interface
+  procedure test();
+ end;
+
+ objaty = object
+  a: int32;
+ end;
+ objty = object(objaty,itest) [virtual]
+  procedure test();
+ end;
+
+procedure objty.test();
+begin
+ exitcode:= a;
+end;
+
+var
+ obj1: objty;
+ i1: itest;
+begin
+ obj1.a:= 123;
+ i1:= itest(obj1);
+ i1.test();
+end.
