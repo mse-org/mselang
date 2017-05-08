@@ -23,6 +23,8 @@
  'begin'.,*
  'procedure'.,*
  'function'.,*
+ 'sub'.,*
+ 'method'.,*
  'constructor'.,*
  'destructor'.,*
  'end'.,*
@@ -123,6 +125,7 @@ start2,noimplementation,handleafterintfuses,
  'label'.,labeldef-*
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
+ 'method'.,submethodheader-*^>
 
 noimplementation,implementation,handlenoimplementationerror,
 
@@ -164,6 +167,7 @@ main1,,,handlemain
  'label'.,labeldef-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+ 'method'.,method-^*>
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
  'begin'.,progbegin-
@@ -318,7 +322,9 @@ paramdef4,,,handleparamdefault^
 
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
+submethodheader,subheader,handlemethodentry,
 
+methmethodheader,clasubheader,handlemethmethodentry,
 methfunctionheader,clasubheader,handlemethfunctionentry,
 methprocedureheader,clasubheader,handlemethprocedureentry,
 methconstructorheader,clasubheader,handlemethconstructorentry,
@@ -374,6 +380,7 @@ subheadera,,,*
 
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
+method,sub,handlemethodentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
 
@@ -803,6 +810,7 @@ classdef0b,classdeferror,,
  'protected'.,!handleclassprotected-
  'public'.,!handleclasspublic-
  'published'.,!handleclasspublished-
+ 'method'.,methmethodheader-*^>
  'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
  'constructor'.,methconstructorheader-*^>
@@ -904,6 +912,7 @@ interfacedef,interfacedef0,handleinterfacedefstart,
  '(',interfacedefparam-^*
 interfacedef0,interfacedeferror,,
  ${whitespace}
+ 'method'.,methmethodheader-*^>
  'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
  'end'.,interfacedefreturn-

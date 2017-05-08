@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=8
   (
   kind=1
-  a=0,664,5,base
+  a=0,664,4,base
   c=23
    (
    kind=1
@@ -3176,7 +3176,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,exception
+   a=0,665,4,exception
    c=6
     (
     kind=2
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7293BF0
+    ao=An unhandled exception occured at $B7260BF0
     ae=
     aec=123
     ie=0
@@ -3290,8 +3290,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise3 llvm
-    teststate=2
+    a=0,648,1,raise3 llvm
+    teststate=1
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -3306,11 +3306,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid instruction with no BB
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -6951,7 +6951,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -6969,8 +6969,8 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,object
-  c=18
+  a=0,665,4,object
+  c=20
    (
    kind=2
    a=0,648,1,object1
@@ -7350,6 +7350,50 @@ c=3
    a=0,648,1,object9 llvm
    teststate=1
    path=object9.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,objectintf
+   teststate=1
+   path=objectintf.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,objectintf llvm
+   teststate=1
+   path=objectintf.mla
    comment=
    cc=${mlc_llvm}
    cd=
@@ -9825,7 +9869,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -9935,20 +9979,40 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
-propcolwidthref=609
+propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=212
+width1=207
 sortdescend1=0
-width2=161
+width2=157
 sortdescend2=0
-width3=158
+width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=41
+rowstate=61
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

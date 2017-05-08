@@ -222,6 +222,7 @@ type
  ptypeallocinfoty = ^typeallocinfoty;
 
  subflagty = (sf_function,sf_method,sf_class,sf_constructor,sf_destructor,
+              sf_methodtoken,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
               sf_ini,sf_fini,sf_afterconstruct,sf_beforedestruct,

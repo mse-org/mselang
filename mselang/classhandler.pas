@@ -58,6 +58,7 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
+procedure handlemethmethodentry();
 procedure handlemethfunctionentry();
 procedure handlemethprocedureentry();
 procedure handlemethconstructorentry();
@@ -758,6 +759,24 @@ begin
   checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,
                                    contextstack[s.stackindex-2].d.typ.flags);
  end;
+end;
+
+procedure handlemethmethodentry();
+var
+ sf1: subflagsty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('METHFUNCTIONENTRY');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_methodtoken,sf_header,sf_method];
+  end
+  else begin
+   sf1:= [sf_methodtoken,sf_header,sf_method];
+  end;
+ end;
+ initsubdef(sf1);
 end;
 
 procedure handlemethprocedureentry();

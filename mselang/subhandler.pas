@@ -47,6 +47,7 @@ procedure handleparamsend();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
+procedure handlemethodentry();
 procedure handleproceduretypedefentry();
 procedure handlefunctiontypedefentry();
 procedure handlesubtypedef0entry();
@@ -490,6 +491,14 @@ begin
  outhandle('PROCEDUREENTRY');
 {$endif}
  initsubdef([]);
+end;
+
+procedure handlemethodentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('METHODENTRY');
+{$endif}
+ initsubdef([sf_methodtoken]);
 end;
 
 procedure handleproceduretypedefentry();
