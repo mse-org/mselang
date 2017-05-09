@@ -74,7 +74,7 @@ type
             err_recursiveancestor,err_objectpointerexpected,
             err_interfaceexpected,err_objectexpected,err_invalidattachment,
             err_missingobjectattachment,err_fieldtypeexpected,
-            err_invalidsubforattach,err_objectorclasstypeexpected,
+            err_invalidmethodforattach,err_objectorclasstypeexpected,
             err_classmethodexpected);
             
  errorinfoty = record
@@ -273,7 +273,7 @@ const
   (level: erl_error; message: 'Invalid attachment "%s"'),
   (level: erl_error; message: 'Missing object attachment "%s"'),
   (level: erl_error; message: 'Fieldtype expected'),
-  (level: erl_error; message: 'Invalid sub type for attachment "%s"'),
+  (level: erl_error; message: 'Invalid method type for attachment "%s"'),
   (level: erl_error; message: 'Object or class type name expexted'),
   (level: erl_error; message: 'Class method expected')
  );

@@ -1684,8 +1684,9 @@ begin
   end
   else begin
    if sf_afterconstruct in subflags then begin
-    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
-     errormessage(err_invalidsubforattach,['afterconstruct']);
+    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or
+                                                    (paramco <> 1) then begin
+     errormessage(err_invalidmethodforattach,['afterconstruct']);
     end
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
@@ -1694,8 +1695,9 @@ begin
     end;
    end;
    if sf_beforedestruct in subflags then begin
-    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
-     errormessage(err_invalidsubforattach,['beforedestruct']);
+    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
+                                                    (paramco <> 1) then begin
+     errormessage(err_invalidmethodforattach,['beforedestruct']);
     end
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
@@ -1704,8 +1706,9 @@ begin
     end;
    end;
    if sf_ini in subflags then begin
-    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
-     errormessage(err_invalidsubforattach,['ini']);
+    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
+                                                    (paramco <> 1) then begin
+     errormessage(err_invalidmethodforattach,['ini']);
     end
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
@@ -1715,8 +1718,9 @@ begin
     end;
    end;
    if sf_fini in subflags then begin
-    if not isclass or (sf_function in subflags) or (paramco <> 1) then begin
-     errormessage(err_invalidsubforattach,['fini']);
+    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
+                                                    (paramco <> 1) then begin
+     errormessage(err_invalidmethodforattach,['fini']);
     end
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
