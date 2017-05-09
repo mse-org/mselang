@@ -45,8 +45,11 @@ procedure handleparamdefault();
 procedure handleparamsend();
 //procedure handlesubheader();
 
-procedure handlefunctionentry();
+procedure handleclassprocedureentry();
+procedure handleclassfunctionentry();
+procedure handleclassmethodentry();
 procedure handleprocedureentry();
+procedure handlefunctionentry();
 procedure handlemethodentry();
 procedure handlesubentry();
 procedure handleproceduretypedefentry();
@@ -69,7 +72,7 @@ procedure handleforward();
 procedure handleofobjectexpected();
 procedure subofentry();
 procedure handlesubheader();
-procedure subbody4entry();
+//procedure subbody4entry();
 procedure handlesubbody5a();
 procedure handlesubbody6();
 
@@ -489,12 +492,44 @@ begin
 }
 end;
 
+procedure handleclassprocedureentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROCEDUREENTRY');
+{$endif}
+ initsubdef([sf_classmethod]);
+end;
+
+procedure handleclassfunctionentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSFUNCTIONENTRY');
+{$endif}
+ initsubdef([sf_classmethod,sf_function]);
+end;
+
+procedure handleclassmethodentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSMETHODENTRY');
+{$endif}
+ initsubdef([sf_classmethod,sf_methodtoken,sf_method]);
+end;
+
 procedure handleprocedureentry();
 begin
 {$ifdef mse_debugparser}
  outhandle('PROCEDUREENTRY');
 {$endif}
  initsubdef([]);
+end;
+
+procedure handlefunctionentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FUNCTIONENTRY');
+{$endif}
+ initsubdef([sf_function]);
 end;
 
 procedure handlemethodentry();
@@ -558,13 +593,6 @@ begin
  end;
 end;
 
-procedure handlefunctionentry();
-begin
-{$ifdef mse_debugparser}
- outhandle('FUNCTIONENTRY');
-{$endif}
- initsubdef([sf_function]);
-end;
 (*
 procedure handleclasubheaderentry();
 begin
@@ -1567,9 +1595,20 @@ begin
       ele.pushelementparent(currentcontainer);
       bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
                                   allvisi,@checkequalparam,paramdata);
-      ele.popelementparent();       
+      ele.popelementparent();
       if not bo1 then begin
        errormessage(err_methodexpected,[],1);
+      end
+      else begin
+       if sf_classmethod in (paramdata.match^.flags >< sub1^.flags) then begin
+        bo1:= false;
+        if sf_classmethod in sub1^.flags then begin
+         errormessage(err_methodexpected,[],1);
+        end
+        else begin
+         errormessage(err_classmethodexpected,[],1);
+        end;
+       end;
       end;
      end
      else begin
@@ -1691,7 +1730,7 @@ begin
   end;
  end;
 end;
-
+(*
 procedure subbody4entry();
 var
  po1: pelementinfoty;
@@ -1702,6 +1741,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUBBODY4ENTRY');
 {$endif}
+*)
 (*
  with info do begin
   if s.debugoptions * [do_proginfo,do_name] <> [] then begin
@@ -1725,7 +1765,7 @@ begin
   end;
  end;
 *)
-end;
+//end;
 
 procedure handlesubbody5a();
 var

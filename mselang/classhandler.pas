@@ -58,6 +58,10 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
+
+procedure handleclassmethmethodentry();
+procedure handleclassmethfunctionentry();
+procedure handleclassmethprocedureentry();
 procedure handlemethmethodentry();
 procedure handlemethfunctionentry();
 procedure handlemethprocedureentry();
@@ -760,6 +764,61 @@ begin
                                    contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
+
+procedure handleclassmethmethodentry();
+var
+ sf1: subflagsty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSMETHFUNCTIONENTRY');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_methodtoken,sf_header,sf_method,sf_classmethod];
+  end
+  else begin
+   sf1:= [sf_methodtoken,sf_header,sf_method,sf_classmethod];
+  end;
+ end;
+ initsubdef(sf1);
+end;
+
+procedure handleclassmethfunctionentry();
+var
+ sf1: subflagsty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSMETHPROCEDUREENTRY');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_header,sf_method,sf_classmethod];
+  end
+  else begin
+   sf1:= [sf_header,sf_method,sf_classmethod];
+  end;
+ end;
+ initsubdef(sf1);
+end;
+
+procedure handleclassmethprocedureentry();
+var
+ sf1: subflagsty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSMETHFUNCTIONENTRY');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if obf_class in d.cla.flags then begin
+   sf1:= [sf_class,sf_function,sf_header,sf_method,sf_classmethod];
+  end
+  else begin
+   sf1:= [sf_function,sf_header,sf_method,sf_classmethod];
+  end;
+ end;
+ initsubdef(sf1);
+end;
+
 
 procedure handlemethmethodentry();
 var

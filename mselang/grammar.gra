@@ -24,6 +24,7 @@
  'procedure'.,*
  'function'.,*
  'sub'.,*
+ 'class'.,*
  'method'.,*
  'constructor'.,*
  'destructor'.,*
@@ -123,11 +124,16 @@ start2,noimplementation,handleafterintfuses,
  'const'.,const-*
  'var'.,var-*
  'label'.,labeldef-*
+ 'class'.,start2class-
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
  'method'.,submethodheader-*^>
  'sub'.,subsubheader-*^>
-
+start2class,start2,,
+ ${whitespace}
+ 'procedure'.,subclassprocedureheader-*^
+ 'function'.,subclassfunctionheader-*^
+ 'method'.,subclassmethodheader-*^
 noimplementation,implementation,handlenoimplementationerror,
 
 implementation,implementation1,handleimplementationentry,
@@ -166,13 +172,19 @@ main1,,,handlemain
  'const'.,const-*>
  'var'.,var-*>
  'label'.,labeldef-*>
+ 'class'.,main1class-
  'procedure'.,procedure-^*>
  'function'.,function-^*>
- 'sub'.,subsub-^*>
  'method'.,method-^*>
+ 'sub'.,subsub-^*>
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
  'begin'.,progbegin-
+main1class,main1,,
+ ${whitespace}
+ 'procedure'.,classprocedure-^*
+ 'function'.,classfunction-^*
+ 'method'.,classclamethod-^*
 curlycomment0,,,handlecommentend^>
  '}',-*
  '',-
@@ -322,11 +334,17 @@ paramdef3,,,handleparamdef3^
 paramdef4,,,handleparamdefault^
  '',exp^*
 
+subclassfunctionheader,subheader,handleclassfunctionentry,
+subclassprocedureheader,subheader,handleclassprocedureentry,
+subclassmethodheader,subheader,handleclassmethodentry,
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
-subsubheader,subheader,handlesubentry,
 submethodheader,subheader,handlemethodentry,
+subsubheader,subheader,handlesubentry,
 
+classmethmethodheader,clasubheader,handleclassmethmethodentry,
+classmethfunctionheader,clasubheader,handleclassmethfunctionentry,
+classmethprocedureheader,clasubheader,handleclassmethprocedureentry,
 methmethodheader,clasubheader,handlemethmethodentry,
 methfunctionheader,clasubheader,handlemethfunctionentry,
 methprocedureheader,clasubheader,handlemethprocedureentry,
@@ -383,10 +401,13 @@ subheadera,,,*
  ';',-*
  '',semicolonexpected
 
+classfunction,sub,handleclassfunctionentry,
+classprocedure,sub,handleclassprocedureentry,
+classclamethod,sub,handleclassmethodentry,
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
-subsub,sub,handlesubentry,
 method,sub,handlemethodentry,
+subsub,sub,handlesubentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
 
@@ -446,7 +467,7 @@ functiontypea,,, //same layout as parameter
  ${whitespace}
  @identstart,ident^*
 
-subbody4,,subbody4entry,handlebeginexpected*
+subbody4,,,handlebeginexpected*
  ${whitespace}
  'type'.,type-*>
  'const'.,const-*>
@@ -819,6 +840,7 @@ classdef0b,classdeferror,,
  'protected'.,!handleclassprotected-
  'public'.,!handleclasspublic-
  'published'.,!handleclasspublished-
+ 'class'.,classmethod-
  'method'.,methmethodheader-*^>
  'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
@@ -827,7 +849,12 @@ classdef0b,classdeferror,,
  'property'.,classproperty-*^>
  @identstart,classfield^*>
  'end'.,classdefreturn-
-classdeferror,,handleclassdeferror,^
+classmethod,classdef0b,,
+ ${whitespace}
+ 'method'.,classmethmethodheader-*^
+ 'procedure'.,classmethprocedureheader-*^
+ 'function'.,classmethfunctionheader-*^
+classdeferror,,handleclassdeferror,
 classdefreturn,,handleclassdefreturn,*^
 classdefparam,,,*
  ${whitespace}
@@ -1223,6 +1250,7 @@ ident,ident0,,
  'var'.,reservedword
  'label'.,reservedword
  'begin'.,reservedword
+ 'class'.,reservedword
  'method'.,reservedword
  'sub'.,reservedword
  'procedure'.,reservedword

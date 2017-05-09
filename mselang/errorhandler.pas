@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,8 @@ type
             err_recursiveancestor,err_objectpointerexpected,
             err_interfaceexpected,err_objectexpected,err_invalidattachment,
             err_missingobjectattachment,err_fieldtypeexpected,
-            err_invalidsubforattach,err_objectorclasstypeexpected);
+            err_invalidsubforattach,err_objectorclasstypeexpected,
+            err_classmethodexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -273,7 +274,8 @@ const
   (level: erl_error; message: 'Missing object attachment "%s"'),
   (level: erl_error; message: 'Fieldtype expected'),
   (level: erl_error; message: 'Invalid sub type for attachment "%s"'),
-  (level: erl_error; message: 'Object or class type name expexted')
+  (level: erl_error; message: 'Object or class type name expexted'),
+  (level: erl_error; message: 'Class method expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 
