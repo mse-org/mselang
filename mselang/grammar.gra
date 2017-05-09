@@ -126,6 +126,7 @@ start2,noimplementation,handleafterintfuses,
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
  'method'.,submethodheader-*^>
+ 'sub'.,subsubheader-*^>
 
 noimplementation,implementation,handlenoimplementationerror,
 
@@ -167,6 +168,7 @@ main1,,,handlemain
  'label'.,labeldef-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+ 'sub'.,subsub-^*>
  'method'.,method-^*>
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
@@ -322,6 +324,7 @@ paramdef4,,,handleparamdefault^
 
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
+subsubheader,subheader,handlesubentry,
 submethodheader,subheader,handlemethodentry,
 
 methmethodheader,clasubheader,handlemethmethodentry,
@@ -331,6 +334,8 @@ methconstructorheader,clasubheader,handlemethconstructorentry,
 methdestructorheader,clasubheader,handlemethdestructorentry,
 proceduretypedef,subtypedef,handleproceduretypedefentry,
 functiontypedef,subtypedef,handlefunctiontypedefentry,
+subsubtypedef,subtypedef,handlesubtypedefentry,
+methodtypedef,subtypedef,handlemethodtypedefentry,
 
 clasubheader,,,*
  '',callclasubheader*
@@ -380,6 +385,7 @@ subheadera,,,*
 
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
+subsub,sub,handlesubentry,
 method,sub,handlemethodentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
@@ -448,6 +454,7 @@ subbody4,,subbody4entry,handlebeginexpected*
  'label'.,labeldef-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+ 'sub'.,subsub-^*>
  'begin'.,subbody5a-
 subbody5a,subbody5,handlesubbody5a, //set procstartaddress
 subbody5,subbody5b,,
@@ -712,6 +719,8 @@ gettype,,,*^
  'interface'.,interfacedef-^*
  'procedure'.,proceduretypedef-^*
  'function'.,functiontypedef-^*
+ 'sub'.,subtypedef-^*
+ 'method'.,methodtypedef-^*
  '',simpletype^*
 typedefreturn,,,*>
 //

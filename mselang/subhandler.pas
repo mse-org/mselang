@@ -48,8 +48,11 @@ procedure handleparamsend();
 procedure handlefunctionentry();
 procedure handleprocedureentry();
 procedure handlemethodentry();
+procedure handlesubentry();
 procedure handleproceduretypedefentry();
 procedure handlefunctiontypedefentry();
+procedure handlesubtypedefentry();
+procedure handlemethodtypedefentry();
 procedure handlesubtypedef0entry();
 
 procedure callsubheaderentry();
@@ -501,10 +504,18 @@ begin
  initsubdef([sf_methodtoken]);
 end;
 
+procedure handlesubentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBENTRY');
+{$endif}
+ initsubdef([sf_subtoken]);
+end;
+
 procedure handleproceduretypedefentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDURETYPEENTRY');
+ outhandle('PROCEDURETYPEDEFENTRY');
 {$endif}
  initsubdef([sf_typedef,sf_header]);
 end;
@@ -512,9 +523,25 @@ end;
 procedure handlefunctiontypedefentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('FUNCTIONTYPEENTRY');
+ outhandle('FUNCTIONTYPEDEFENTRY');
 {$endif}
  initsubdef([sf_typedef,sf_header,sf_function]);
+end;
+
+procedure handlesubtypedefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBTYPEDFENTRY');
+{$endif}
+ initsubdef([sf_typedef,sf_header,sf_subtoken]);
+end;
+
+procedure handlemethodtypedefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('METHODTYPEDFENTRY');
+{$endif}
+ initsubdef([sf_typedef,sf_header,sf_methodtoken]);
 end;
 
 procedure handlesubtypedef0entry();
