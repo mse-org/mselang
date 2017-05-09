@@ -55,6 +55,7 @@ procedure handlesubtypedefentry();
 procedure handlemethodtypedefentry();
 procedure handlesubtypedef0entry();
 
+//procedure handleclasubheaderentry();
 procedure callsubheaderentry();
 
 procedure checkfunctiontype();
@@ -501,7 +502,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHODENTRY');
 {$endif}
- initsubdef([sf_methodtoken]);
+ initsubdef([sf_methodtoken,sf_method]);
 end;
 
 procedure handlesubentry();
@@ -541,7 +542,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHODTYPEDFENTRY');
 {$endif}
- initsubdef([sf_typedef,sf_header,sf_methodtoken]);
+ initsubdef([sf_typedef,sf_header,sf_methodtoken,sf_method,sf_ofobject]);
 end;
 
 procedure handlesubtypedef0entry();
@@ -564,7 +565,17 @@ begin
 {$endif}
  initsubdef([sf_function]);
 end;
-
+(*
+procedure handleclasubheaderentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASUBHEADERENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_objsubheader;
+ end;
+end;
+*)
 procedure callsubheaderentry();
 var
  po1: pcontextdataty;
@@ -576,7 +587,7 @@ begin
   po1:= @contextstack[s.stackindex-1].d;
   kind:= ck_subdef;
   subdef.flags:= po1^.subdef.flags;
-  po1^.kind:= ck_none;
+  po1^.kind:= ck_objsubheader;//ck_none;
  end;
 end;
 
@@ -661,6 +672,17 @@ begin
    end;
   end
   else begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_subdef then begin
+    internalerror(ie_handler,'20170509A');
+   end;
+  {$endif}
+   if sf_method in d.subdef.flags then begin
+    if not (contextstack[parent].d.kind in 
+                        [ck_typetype,ck_objsubheader]) then begin
+     errormessage(err_objectorclasstypeexpected,[]);
+    end;
+   end;
    exclude(s.currentstatementflags,stf_objimp);
   end;
  end;

@@ -1,0 +1,29 @@
+program objmethod;
+
+type
+ methty = method (a: int32): int32;
+
+ objty = object
+  a: int32;
+  method test(p: int32): int32;
+ end;
+
+method objty.test(p: int32): int32;
+begin
+ result:= a+p;
+end;
+
+sub test(a: int32): int32;
+begin
+ result:= a;
+end;
+
+var
+ obj1: objty;
+ meth1: methty;
+begin
+ obj1.a:= 60;
+ meth1:= @obj1.test;
+ exitcode:= meth1(40);
+ exitcode:= exitcode + test(23);
+end.

@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7260BF0
+    ao=An unhandled exception occured at $B72ADBF0
     ae=
     aec=123
     ie=0
@@ -6970,7 +6970,71 @@ c=3
   (
   kind=1
   a=0,665,4,object
-  c=20
+  c=21
+   (
+   kind=1
+   a=0,665,4,methods
+   c=2
+    (
+    kind=2
+    a=0,648,1,method
+    teststate=1
+    path=method.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,method llvm
+    teststate=1
+    path=method.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=methods/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
    (
    kind=2
    a=0,648,1,object1
@@ -9979,7 +10043,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -9992,7 +10056,10 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=61
+rowstate=64
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
