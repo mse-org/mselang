@@ -553,7 +553,8 @@ begin
     end
     else begin
      if pt1^.kind in byteopdatakinds then begin
-      if pt1^.header.buffer = 0 then begin
+//      if pt1^.header.buffer = 0 then begin
+      if pt1^.header.buffer = ptruint(ptrint(-1)) then begin
        emitrec(ord(TYPE_CODE_VOID),[]);     
        emitrec(ord(TYPE_CODE_VOID),[]); //dummy *type
        emitrec(ord(TYPE_CODE_VOID),[]); //dummy **type

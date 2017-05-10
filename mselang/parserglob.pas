@@ -51,7 +51,7 @@ const
  );
 
  bitopsizes: array[databitsizety] of int32 = (
-  0,             //das_none
+  -1,            //das_none
   1,             //das_1
   7,             //das_2_7
   8,             //das_8

@@ -1125,10 +1125,14 @@ begin
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
+  fvoid:= 0;
+{
   t1.header.size:= -1;
-  t1.header.data:= nil;
+  t1.header.data:= pointer(ptrint(-1)); //nil;
+//  t1.header.data:= pointer(ptrint(0)); //nil;
   t1.kind:= das_none;
   fvoid:= addvalue(t1)^.data.header.listindex;
+}
 {
   params1.count:= 0;
   params1.items:= nil;
