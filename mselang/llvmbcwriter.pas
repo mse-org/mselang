@@ -71,6 +71,7 @@ type
    fpointertype: int32;
    fpointersizeconst: int32;
    fconstseg: int32;
+   fclassdefs: pointer;
    flastdebugloc: debuglocty;
    fconststart: int32;      //start of global constants
    fsubstart: int32;        //start of sub values (params)
@@ -269,6 +270,7 @@ type
 //                                                   write fgetexceptionpointer;
        //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
    property constseg: int32 read fconstseg write fconstseg;
+   property classdefs: pointer read fclassdefs write fclassdefs;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
    property nodebugloc: boolean read fnodebugloc write fnodebugloc;
@@ -1675,7 +1677,11 @@ begin
    emitgetelementptr(relval(0),constval(aaddress.segdataaddress.offset));
   end;
   seg_classdef: begin
-   notimplementederror('20150327A');
+   emitgetelementptr(globval(
+       pint32(fclassdefs+aaddress.segdataaddress.a.address)^),
+                                      constval(aaddress.segdataaddress.offset)); 
+                                                           //2ssa
+//   notimplementederror('20150327A');
   end;
   seg_nil: begin
    emitpushconst(nullconst);

@@ -487,7 +487,8 @@ begin
              info.s.unitinfo^.llvmlists.constlist.
              addvalue(getsegmentpo(seg_globconst,0)^,int1).listid,constlinkage);
  end;
-
+ bcstream.classdefs:= getsegmentbase(seg_classdef);
+ 
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
                                              //llvm utility functions
   with internalfuncconsts[funcs1] do begin
@@ -4685,7 +4686,7 @@ const
   pushsegaddrnilssa = 0;
   pushsegaddrglobvarssa = 1;
   pushsegaddrglobconstssa = 3;
-  pushsegaddrclassdefssa = 3;
+  pushsegaddrclassdefssa = 1;
   listtoopenaritemssa = 3;
   concattermsitemssa = 3;
   

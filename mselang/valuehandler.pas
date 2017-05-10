@@ -2523,9 +2523,21 @@ var
             if pvar1^.address.indirectlevel <> 0 then begin
              errormessage(err_objectexpected,[]);
             end;
-            if not getaddress(adatacontext,true) then begin
-                                               //get object address
-             exit;
+            if sf_classmethod in subflags1 then begin
+             with insertitem(oc_pushsegaddr,adatacontext,-1,
+                                     pushsegaddrssaar[seg_classdef])^ do begin
+              par.memop.segdataaddress.a:= typ1^.infoclass.defs;
+              par.memop.segdataaddress.offset:= 0;
+              par.memop.t:= bitoptypes[das_pointer];
+             end;
+             initfactcontext(adatacontext);
+             adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+            end
+            else begin
+             if not getaddress(adatacontext,true) then begin
+                                                //get object address
+              exit;
+             end;
             end;
             include(subflags,dsf_nofreemem);
            end;
