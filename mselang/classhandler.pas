@@ -597,11 +597,13 @@ begin
  with info do begin
   s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
   with contextstack[s.stackindex-1] do begin
+   classinfo1:= @contextstack[s.stackindex].d.cla;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    with typ1^ do begin
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
-                   not (icf_nozeroinit in infoclass.flags) then begin
+                   not (icf_nozeroinit in infoclass.flags) and 
+                                    (classinfo1^.fieldoffset > 0) then begin
      include(h.flags,tf_needsini);
     end;
 
@@ -615,7 +617,6 @@ begin
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
-    classinfo1:= @contextstack[s.stackindex].d.cla;
  
     intfcount:= 0;
     intfsubcount:= 0;
