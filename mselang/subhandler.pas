@@ -689,6 +689,9 @@ begin
      end
      else begin     //class sub
       include(s.currentstatementflags,stf_objimp);
+      if sf_classmethod in d.subdef.flags then begin
+       include(s.currentstatementflags,stf_classmethod);
+      end;
       currentcontainer:= ele1;
       contextstack[s.stackindex+1].d.ident:= 
                                        contextstack[s.stackindex+2].d.ident;
@@ -711,7 +714,8 @@ begin
      errormessage(err_objectorclasstypeexpected,[]);
     end;
    end;
-   exclude(s.currentstatementflags,stf_objimp);
+   s.currentstatementflags:= s.currentstatementflags -
+                                                [stf_objimp,stf_classmethod];
   end;
  end;
 end;
@@ -1592,6 +1596,7 @@ begin
     if sublevel = 1 then begin
      paramdata.match:= nil;
      if isclass then begin
+      currentclass:= currentcontainer;
       ele.pushelementparent(currentcontainer);
       bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
                                   allvisi,@checkequalparam,paramdata);

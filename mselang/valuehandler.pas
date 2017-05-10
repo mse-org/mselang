@@ -2546,11 +2546,13 @@ var
          include(subflags,dsf_instanceonstack);
         end;
         ek_type: begin
+        {???
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
           errormessage(err_classref,[],int1+1);
           exit;
          end;
-         pushinsert(0,-1,sysdatatypes[st_pointer],nilad,0);
+        }
+//         pushinsert(0,-1,sysdatatypes[st_pointer],nilad,0);
         end;
         else begin
          internalerror1(ie_notimplemented,'20140417A');
@@ -2571,6 +2573,35 @@ var
    end;
   end; 
  end;//donotfound
+ 
+ function checknoclassmethod(const aitem: pelementinfoty): boolean;
+ var
+  p1,p2: pelementinfoty;
+ begin
+  result:= not (stf_classmethod in info.s.currentstatementflags) or
+    (aitem^.header.kind = ek_sub) and 
+        (sf_classmethod in psubdataty(ele.eledataabs(
+                        ptypedataty(eletodata(aitem))^.infosub.sub))^.flags);
+     
+  if not result then begin
+   p2:= ele.eleinfoabs(aitem^.header.parent);
+   p1:= ele.eleinfoabs(info.currentclass);
+   while true do begin
+    if p1 = p2 then begin
+     errormessage(err_classmethod,[]);
+     exit;
+    end;
+    if (p1^.header.parent = 0) then begin
+     break; //not element of current class
+    end;
+    p1:= ele.eledataabs(po1^.header.parent);
+    if p1^.header.kind <> ek_type then begin
+     break; //not element of current class
+    end;
+   end;
+   result:= true;
+  end;
+ end;
   
 var
  po3: ptypedataty;
@@ -2685,7 +2716,8 @@ begin
     goto endlab;
    end;
   end;
-  bo1:= findkindelements(1,[],allvisi,po1,firstnotfound,idents);
+  bo1:= findkindelements(1,[],allvisi+[vik_stoponstarttype],po1,
+                                                     firstnotfound,idents);
   paramstart:= s.stackindex+2+idents.high;
   paramco:= 0;
   pocontext1:= @contextstack[paramstart];
@@ -2760,6 +2792,9 @@ begin
        errormessage(err_noclass,[],0);
        goto endlab;
       end;
+      if not checknoclassmethod(po1) then begin
+       goto endlab;
+      end;
       initdatacontext(poind^.d,ck_prop);
       d.dat.prop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
@@ -2780,6 +2815,9 @@ begin
     end;
     ek_var,ek_field: begin
      if po1^.header.kind in [ek_field] then begin
+      if not checknoclassmethod(po1) then begin
+       goto endlab;
+      end;
       if not isgetfact and 
                (pob^.d.dat.indirection < 0) then begin
        if not getaddress(pob,true) then begin
@@ -2904,6 +2942,9 @@ begin
      end;
     end;
     ek_sub: begin
+     if not checknoclassmethod(po1) then begin
+      goto endlab;
+     end;
      if isgetfact then begin
       i1:= s.stackindex;
      end

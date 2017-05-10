@@ -74,7 +74,7 @@ type
 
  opaddressty = ptruint;         //todo: use target size
  popaddressty = ^opaddressty;
- dataaddressty = ptruint;
+ dataaddressty = ptruint;       //todo: use target size
  pdataaddressty = ^dataaddressty;
  pdataoffsty = ^dataoffsty;
  datasizety = ptruint;

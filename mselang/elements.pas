@@ -912,7 +912,8 @@ var
  parentbefore: elementoffsetty;
  pathbefore: identty;
  ele1: elementoffsetty;
- po1: pointer;
+ po1: pelementinfoty;
+ b1: boolean;
 begin //todo: optimize
  result:= false;
  element:= -1;
@@ -925,7 +926,7 @@ begin //todo: optimize
     parentbefore:= felementparent;
     pathbefore:= felementpath;
     po1:= pointer(felementdata)+element;
-    with pelementinfoty(po1)^.header do begin
+    with po1^.header do begin
      if kind = ek_uses then begin
       element:= pusesdataty(po1+eledatashift)^.ref;
      end;
@@ -934,7 +935,21 @@ begin //todo: optimize
     with pelementinfoty(pointer(felementdata)+element)^.header do begin
      felementpath:= path + name;
     end;
+    b1:= false;
     while true do begin
+     if vik_stoponstarttype in avislevel then begin
+      po1:= pointer(felementdata)+element;
+      with po1^.header do begin
+       if not b1 then begin
+        if kind = ek_type then begin
+         break;
+        end;
+        if kind = ek_var then begin
+         b1:= true;
+        end;
+       end;
+      end;
+     end;
      if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
       break;
      end;

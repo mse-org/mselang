@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=8
   (
   kind=1
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72E8BF0
+    ao=An unhandled exception occured at $B72EAC3C
     ae=
     aec=123
     ie=0
@@ -4876,7 +4876,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=37
     (
     kind=1
@@ -6969,7 +6969,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=21
    (
    kind=1
@@ -7493,7 +7493,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,665,5,class
   c=30
    (
    kind=1
@@ -8285,7 +8285,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,methods
+   a=0,665,5,methods
    c=14
     (
     kind=2
@@ -8333,8 +8333,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,method2
-    teststate=1
+    a=0,648,2,method2
+    teststate=2
     path=method2.mla
     comment=
     cc=${mlc}
@@ -8347,16 +8347,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=3
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,method2 llvm
-    teststate=1
+    a=0,648,2,method2 llvm
+    teststate=2
     path=method2.mla
     comment=
     cc=${mlc_llvm}
@@ -8369,9 +8369,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=3
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -8595,7 +8595,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=methods/
    comment=
    cc=
@@ -9423,7 +9423,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -9933,7 +9933,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -10056,16 +10056,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=64
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=55
  0 0
  0 0
  0 0

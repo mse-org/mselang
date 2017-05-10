@@ -73,7 +73,8 @@ type
  movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);
 
  visikindty = (vik_global,vik_sameunit,vik_descendent,
-               vik_published,vik_ancestor,vik_units);
+               vik_published,vik_ancestor,vik_units,
+               vik_stoponstarttype); //used by handlevalueidentifier,
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
@@ -165,7 +166,11 @@ type
                     stf_condition,stf_invalidcondition,
                     stf_leftreference,stf_proccall,
                     stf_loop,{stf_propindex,}
-                    stf_objdef,stf_class,stf_objimp,stf_interfacedef,
+                    stf_objdef,stf_class,
+                    stf_objimp,        //in method implementation
+                    stf_classmethod,   //current method implementation 
+                                       //is class method
+                    stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
                     stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted);
@@ -738,6 +743,7 @@ type
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
   currentcontainer: elementoffsetty;
+  currentclass: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;

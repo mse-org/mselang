@@ -809,10 +809,17 @@ begin
 end;
 
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
+var
+ i1: int32;
 begin
  aimm.datasize:= das_pointer;
  if co_llvm in info.o.compileoptions then begin
-  notimplementederror('20150109C');
+  if sizeof(dataaddressty) = 8 then begin
+   aimm.vpointer:= info.s.unitinfo^.llvmlists.constlist.addi64(value).listid;
+  end
+  else begin
+   aimm.vpointer:= info.s.unitinfo^.llvmlists.constlist.addi32(value).listid;
+  end;
  end
  else begin
   aimm.vpointer:= value;

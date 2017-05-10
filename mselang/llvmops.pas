@@ -3128,7 +3128,10 @@ end;
 
 procedure pushaddrop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.constval(imm.vpointer),
+                  bcstream.typeval(bcstream.pointertype),CAST_INTTOPTR); //1ssa
+ end;
 end;
 
 procedure pushlocaddrop();

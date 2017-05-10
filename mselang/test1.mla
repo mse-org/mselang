@@ -1,40 +1,39 @@
 program objectintf;
-
+uses
+ __mla__internaltypes;
+{$internaldebug on}
 type
- objty = object
+ objty = object [nozeroinit]
   f1: int32;
-  f2: int32;
-  constructor create();
-  destructor destroy();
- end;
- pobjty = ^objty;
-
- TObj = class(objty)
+  class method test();
+  class method test1();
+  method test2();
  end;
 
-constructor objty.create();
+var
+ i1: int32;
+class method objty.test();
 begin
+// test1();
+// exitcode:= i1;
+// writeln(pointer(self),' ',pclassdefinfoty(self)^.header.allocs.size);
 end;
 
-destructor objty.destroy();
+class method objty.test1();
+begin
+// writeln('abc');
+end;
+
+method objty.test2();
 begin
 end;
 
 var
  obj1: objty;  //an instance on stack, needs no create() or destroy()
- obj2: ^objty; //on heap
- obj3: pobjty;
- obj4: TObj;   //on heap
 begin
- obj1.f1:= 123; //no create() call necessary, no destroy() call necessary
-
- obj2:= objty.create();
- obj2^.f1:= 123;       //note the '^' dereference
- obj3:= objty.create();
- obj3^.f1:= 123;       //note the '^' dereference
- obj4:= TObj.create();
- obj4.f1:= 123;        //no '^' dereference
- obj2.destroy();
- obj3.destroy();
- obj4.destroy();
+// obj1.test();
+{$internaldebug on}
+// exitcode:= objty.f1;
+ obj1.test2();
+ writeln(@obj1);
 end.
