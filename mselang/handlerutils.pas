@@ -207,6 +207,7 @@ procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
                        const aopoffset: int32; const adatasize: databitsizety);
 
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+procedure offsetad(const acontext: pcontextitemty; const aoffset: dataoffsty);
 procedure checkneedsunique(const stackoffset: int32);
 
 
@@ -1357,18 +1358,23 @@ begin
  end;
 end;
 
-procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+procedure offsetad(const acontext: pcontextitemty; const aoffset: dataoffsty);
 var
  ssabefore: int32;
 begin
  if aoffset <> 0 then begin
-  with info do begin
-   ssabefore:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
-   with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
-    setimmint32(aoffset,par.imm);
-    par.ssas1:= ssabefore;
-   end;
+  ssabefore:= acontext^.d.dat.fact.ssaindex;
+  with insertitem(oc_offsetpoimm,acontext,-1)^ do begin
+   setimmint32(aoffset,par.imm);
+   par.ssas1:= ssabefore;
   end;
+ end;
+end;
+
+procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+begin
+ with info do begin
+  offsetad(@contextstack[s.stackindex+stackoffset],aoffset);
  end;
 end;
 
@@ -2879,7 +2885,10 @@ begin                    //todo: optimize
    ck_subres,ck_fact: begin
     if d.dat.indirection < 0 then begin
      for i1:= d.dat.indirection+2 to 0 do begin
-      insertitem(oc_indirectpo,stackoffset,-1);
+      i2:= d.dat.fact.ssaindex;
+      with insertitem(oc_indirectpo,stackoffset,-1)^ do begin
+       par.ssas1:= i2;
+      end;
      end;
      d.dat.indirection:= 0;
      doindirect();

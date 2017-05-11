@@ -2361,7 +2361,7 @@ begin
   end;
  end;
 end;
-
+var testvar: ptypedataty; testvar1: psubdataty;
 function getselfvar(out aele: elementoffsetty): boolean;
 begin
  result:= ele.findcurrent(tks_self,[],allvisi,aele);
@@ -2369,7 +2369,6 @@ begin
 end;
 
 //todo: simplify, use unified indirection handling
-var testvar: pelementinfoty; 
 procedure handlevalueidentifier();
 var
  paramco,paramstart: integer;
@@ -2399,7 +2398,24 @@ var
  procedure donotfound(const adatacontext: pcontextitemty;
                                                const atype: elementoffsetty);
 
-
+  procedure pushclassdef(const atyp: ptypedataty);
+  begin
+  {$ifdef mse_checkinternalerror}
+   if not (atyp^.h.kind in [dk_object,dk_class]) then begin
+    internalerror(ie_handler,'20170510A');
+   end;
+  {$endif} 
+   with insertitem(oc_pushsegaddr,adatacontext,-1,
+                           pushsegaddrssaar[seg_classdef])^ do begin
+    par.memop.segdataaddress.a:= atyp^.infoclass.defs;
+    par.memop.segdataaddress.offset:= 0;
+    par.memop.t:= bitoptypes[das_pointer];
+   end;
+   initfactcontext(adatacontext);
+   adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+   include(subflags,dsf_instanceonstack);
+  end;//pushclassdef
+  
  var
   offs1: dataoffsty;
   ele1,ele2: elementoffsetty;
@@ -2408,6 +2424,7 @@ var
   po4: pointer;
   subflags1: subflagsty;
   typ1: ptypedataty;
+  i2: int32;
 //  pind: pcontextitemty;
  begin //donotfond
   if firstnotfound <= idents.high then begin
@@ -2424,11 +2441,10 @@ var
       end;
       ek_field: begin
        with adatacontext^,pfielddataty(po4)^ do begin
-        testvar:= ele.eleinfoabs(ele1);
         ele1:= vf.typ;
+        typ1:= ele.eledataabs(ele2);
         case d.kind of
          ck_ref: begin
-          typ1:= ele.eledataabs(ele2);
           if typ1^.h.kind = dk_class then begin
 //          if af_classfield in flags then begin
            dec(d.dat.indirection);
@@ -2441,7 +2457,13 @@ var
          end;
         {$ifdef mse_checkinternalerror}
          else begin
-          internalerror(ie_value,'20140427A');
+          if typ1^.h.kind in [dk_object,dk_class] then begin
+           errormessage(err_classreference,[]);
+          end
+          else begin
+           errormessage(err_typeidentnotallowed,[]);
+          end;
+          exit;
          end;
         {$endif}
         end;
@@ -2524,14 +2546,20 @@ var
              errormessage(err_objectexpected,[]);
             end;
             if sf_classmethod in subflags1 then begin
-             with insertitem(oc_pushsegaddr,adatacontext,-1,
-                                     pushsegaddrssaar[seg_classdef])^ do begin
-              par.memop.segdataaddress.a:= typ1^.infoclass.defs;
-              par.memop.segdataaddress.offset:= 0;
-              par.memop.t:= bitoptypes[das_pointer];
+             if icf_virtual in typ1^.infoclass.flags then begin
+              if not getaddress(adatacontext,true) then begin
+               exit;
+              end;
+              offsetad(adatacontext,typ1^.infoclass.virttaboffset);
+              i2:= adatacontext^.d.dat.fact.ssaindex;
+              with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
+               par.ssas1:= i2;
+              end;
+              include(subflags,dsf_instanceonstack);
+             end
+             else begin
+              pushclassdef(typ1);
              end;
-             initfactcontext(adatacontext);
-             adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
             end
             else begin
              if not getaddress(adatacontext,true) then begin
@@ -2553,6 +2581,10 @@ var
          end;
         }
 //         pushinsert(0,-1,sysdatatypes[st_pointer],nilad,0);
+         if not (stf_getaddress in info.s.currentstatementflags) and 
+               not (sf_constructor in psubdataty(po4)^.flags) then begin
+          pushclassdef(eletodata(po1));
+         end;
         end;
         else begin
          internalerror1(ie_notimplemented,'20140417A');
@@ -2578,10 +2610,11 @@ var
  var
   p1,p2: pelementinfoty;
  begin
+  testvar1:= eletodata(aitem);
+//  testvar1:= ele.eledataabs(testvar^.infosub.sub);
   result:= not (stf_classmethod in info.s.currentstatementflags) or
     (aitem^.header.kind = ek_sub) and 
-        (sf_classmethod in psubdataty(ele.eledataabs(
-                        ptypedataty(eletodata(aitem))^.infosub.sub))^.flags);
+        (sf_classmethod in psubdataty(eletodata(aitem))^.flags);
      
   if not result then begin
    p2:= ele.eleinfoabs(aitem^.header.parent);

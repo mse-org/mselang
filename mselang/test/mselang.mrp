@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=8
   (
   kind=1
@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72EAC3C
+    ao=An unhandled exception occured at $B72D4BF0
     ae=
     aec=123
     ie=0
@@ -6299,6 +6299,19 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
+    +<<<<<<< typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     aec=1
     ie=0
@@ -6969,12 +6982,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,object
+  a=0,665,4,object
   c=21
    (
    kind=1
    a=0,665,4,methods
-   c=2
+   c=4
     (
     kind=2
     a=0,648,1,method
@@ -7002,6 +7015,50 @@ c=3
     a=0,648,1,method llvm
     teststate=1
     path=method.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classmethod
+    teststate=1
+    path=classmethod.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classmethod llvm
+    teststate=1
+    path=classmethod.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -7493,7 +7550,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=30
    (
    kind=1
@@ -8285,7 +8342,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,methods
+   a=0,665,4,methods
    c=14
     (
     kind=2
@@ -8333,8 +8390,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,method2
-    teststate=2
+    a=0,648,1,method2
+    teststate=1
     path=method2.mla
     comment=
     cc=${mlc}
@@ -8347,16 +8404,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=3
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,method2 llvm
-    teststate=2
+    a=0,648,1,method2 llvm
+    teststate=1
     path=method2.mla
     comment=
     cc=${mlc_llvm}
@@ -8369,9 +8426,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=3
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -8595,7 +8652,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=methods/
    comment=
    cc=
@@ -9423,7 +9480,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -9746,6 +9803,19 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
+    +<<<<<<< missingend.mla(6,4) Fatal: Syntax error, ";" expected
     ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     aec=1
     ie=0
@@ -9769,6 +9839,18 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
+    +
+    +***************************************** uses
+    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
     ae=
     aec=0
     ie=0
@@ -9933,7 +10015,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -10056,7 +10138,32 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=55
+rowstate=80
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

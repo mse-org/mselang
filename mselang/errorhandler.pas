@@ -75,7 +75,8 @@ type
             err_interfaceexpected,err_objectexpected,err_invalidattachment,
             err_missingobjectattachment,err_fieldtypeexpected,
             err_invalidmethodforattach,err_objectorclasstypeexpected,
-            err_classmethodexpected,err_classmethod);
+            err_classmethodexpected,err_classmethod,err_classreference,
+            err_typeidentnotallowed);
             
  errorinfoty = record
   level: errorlevelty;
@@ -277,7 +278,11 @@ const
   (level: erl_error; message: 'Object or class type name expexted'),
   (level: erl_error; message: 'Class method expected'),
   (level: erl_error; message: 
-                    'Only class methods can be accessed in class methods')
+                    'Only class methods can be accessed in class methods'),
+  (level: erl_error; message: 
+                    'Only class methods can be referred with object/class type references'),
+  (level: erl_error; message: 
+                    'Type identifier not allowed here')
  );
 
 procedure message1(const atext: string; const values: array of const); 
