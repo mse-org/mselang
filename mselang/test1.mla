@@ -1,39 +1,62 @@
-program objectintf;
+program classmethod;
 uses
  __mla__internaltypes;
-{$internaldebug on}
 type
- objty = object [nozeroinit]
+ objty = object [nozeroinit,virtual]
   f1: int32;
-  class method test();
+  class method test(a: int32);
   class method test1();
-  method test2();
  end;
+ objaty = object(objty)
+ end;
+{$internaldebug on}
 
 var
  i1: int32;
-class method objty.test();
+ p1: pointer;
+
+class method objty.test(a: int32);
 begin
-// test1();
-// exitcode:= i1;
-// writeln(pointer(self),' ',pclassdefinfoty(self)^.header.allocs.size);
+ p1:= pointer(self);
+ test1();
+ exitcode:= exitcode + i1+a+pclassdefinfoty(self)^.header.allocs.size;
 end;
 
 class method objty.test1();
 begin
-// writeln('abc');
-end;
-
-method objty.test2();
-begin
+ exitcode:= exitcode+1;
 end;
 
 var
- obj1: objty;  //an instance on stack, needs no create() or destroy()
+ obj1: objty;
+ obj2: objaty;
+ p2,p3,p4,p5,p6: pointer;
 begin
+ obj1.test(10);
+ p2:= p1;
+ obj2.test(20);
+ p3:= p1;
+ obj1:= obj2;
+ obj1.test(30);
+ p4:= p1;
+ objty.test(40);
+ p5:= p1;
+ objaty.test(50);
+ p6:= p1;
+ exitcode:= exitcode + 123 -(10+20+30+40+50+8+8+8+8+8+1+1+1+1+1);
+//writeln(p2,' ',p3,' ',p4,' ',p5,' ',p6);
+ if (p2 = p3) or (p3 <> p4) or (p5 <> p2) or (p6 <> p3) then begin
+  exitcode:= 1;
+ end;
+{
+ i1:= 123;
+// obj1:= obj2;
+ obj1.test();
+ objty.test();
+ obj2.test();
+ objaty.test();
 // obj1.test();
-{$internaldebug on}
-// exitcode:= objty.f1;
- obj1.test2();
+// obj1.test2();
  writeln(@obj1);
+}
 end.

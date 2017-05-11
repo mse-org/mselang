@@ -429,7 +429,7 @@ begin
                             contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
-var testvar: ptypedataty;
+
 procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
 
 var
@@ -443,7 +443,6 @@ var
   field1: pfielddataty;
   typ2: ptypedataty;
  begin
-testvar:= ele.eledataabs(atyp);
   with ptypedataty(ele.eledataabs(atyp))^ do begin
     if (h.kind = dk_object) and (h.ancestor <> 0) then begin
      handlefields(h.ancestor,fieldoffset);
@@ -581,7 +580,6 @@ var
  typ1: ptypedataty;
 begin
  with info do begin
-testvar:= ele.eledataabs(atyp);
   ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= @managerecord;
   ele1:= ele.elementparent;
   ele.elementparent:= atyp;

@@ -2361,7 +2361,7 @@ begin
   end;
  end;
 end;
-var testvar: ptypedataty; testvar1: psubdataty;
+
 function getselfvar(out aele: elementoffsetty): boolean;
 begin
  result:= ele.findcurrent(tks_self,[],allvisi,aele);
@@ -2610,8 +2610,6 @@ var
  var
   p1,p2: pelementinfoty;
  begin
-  testvar1:= eletodata(aitem);
-//  testvar1:= ele.eledataabs(testvar^.infosub.sub);
   result:= not (stf_classmethod in info.s.currentstatementflags) or
     (aitem^.header.kind = ek_sub) and 
         (sf_classmethod in psubdataty(eletodata(aitem))^.flags);

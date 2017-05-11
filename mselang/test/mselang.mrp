@@ -3195,7 +3195,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D4BF0
+    ao=An unhandled exception occured at $B7254BF0
     ae=
     aec=123
     ie=0
@@ -6299,19 +6299,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +<<<<<<< typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     aec=1
     ie=0
@@ -9803,19 +9790,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +<<<<<<< missingend.mla(6,4) Fatal: Syntax error, ";" expected
     ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     aec=1
     ie=0
@@ -9839,18 +9813,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2017 by Martin Schreiber
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
     ae=
     aec=0
     ie=0
