@@ -45,6 +45,9 @@ procedure handlereservedword();
 procedure handleillegalexpression();
 
 procedure handlenoidenterror();
+procedure handleattachitemsentry();
+procedure handlestringattach();
+procedure handlenoattachitemerror();
 
 procedure handleprogbegin();
 procedure handleprogblock();
@@ -2189,6 +2192,33 @@ begin
  outhandle('NOIDENTERROR');
 {$endif}
  errormessage(err_identexpected,[],minint,0,erl_fatal);
+end;
+
+procedure handleattachitemsentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ATTACHITEMENTRY');
+{$endif}
+ info.stringbuffer:= '';
+end;
+
+procedure handlestringattach();
+begin
+{$ifdef mse_debugparser}
+ outhandle('STRINGATTACH');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  d.kind:= ck_stringident;
+  d.ident.ident:= getident(info.stringbuffer);
+ end;
+end;
+
+procedure handlenoattachitemerror();
+begin
+{$ifdef mse_debugparser}
+ outhandle('NOATTACHITEMERROR');
+{$endif}
+ errormessage(err_attachitemexpected,[],minint,0,erl_fatal);
 end;
 
 procedure handlecommentend();

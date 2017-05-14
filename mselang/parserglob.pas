@@ -99,11 +99,25 @@ const
  
  dummyaddress = 0;
 
+type
+ objectoperatorty = (oa_add);
+ objectoperatorsty = set of objectoperatorty;
+ objectoperatordefty = record
+  token: string;
+ end;
+const
+ objectoperatordefs: array[objectoperatorty] of objectoperatordefty = (
+ //oa_add
+   (token: '+'));
+var
+ objectoperatoridents: array[objectoperatorty] of identty;
+
 type 
  contextkindty = (ck_none,ck_error,ck_space,
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_end,
-                  ck_ident,ck_number,ck_str,ck_subdef,ck_objsubheader,ck_list,
+                  ck_ident,ck_stringident,ck_number,ck_str,
+                  ck_subdef,ck_objsubheader,ck_list,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
                   ck_subres,ck_subcall,ck_controltoken,
                   ck_getfact,ck_getindex,ck_label,
@@ -434,7 +448,7 @@ type
    ck_block:(
     block: blockinfoty;
    );
-   ck_ident:(
+   ck_ident,ck_stringident:(
     ident: identinfoty;
    );
    ck_number:(
@@ -745,6 +759,8 @@ type
   currentcontainer: elementoffsetty;
   currentclass: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
+  currentoperators: objectoperatorsty;
+  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;

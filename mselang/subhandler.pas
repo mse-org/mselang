@@ -780,12 +780,15 @@ begin
   end;
  end;
 end;
-
+ 
 procedure handleclasubheaderattach();
 
 var
  i1: int32;
+ o1: objectoperatorty;
  subdefindex: int32;
+ p1: pcontextitemty;
+ id1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASUBHEADERATTACH');
@@ -799,47 +802,64 @@ begin
    end;
   {$endif}
    for i1:= s.stackindex+3 to s.stacktop do begin
-   {$ifdef mse_checkinternalerror}
-    if contextstack[i1].d.kind <> ck_ident then begin
-     internalerror(ie_handler,'20170501A');
-    end;
-   {$endif}
-    case contextstack[i1].d.ident.ident of
-     tk_virtual: begin
-      if checkclassdef(subdefindex,true) then begin
-       if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
-        errormessage(err_procdirectiveconflict,['virtual']);
-       end
-       else begin
-        include(d.subdef.flags,sf_virtual);
+    p1:= @contextstack[i1];
+    case p1^.d.kind of
+     ck_stringident: begin
+      if not (sf_operator in d.subdef.flags) then begin
+       info.currentoperators:= [];
+       info.currentconversionoperatorcount:= 0;
+       include(d.subdef.flags,sf_operator);
+      end;
+      id1:= p1^.d.ident.ident;
+      for o1:= low(o1) to high(o1) do begin
+       if id1 = objectoperatoridents[o1] then begin
+        include(info.currentoperators,o1);
+        break;
        end;
       end;
      end;
-     tk_override: begin
-      if checkclassdef(subdefindex,true) then begin
-       if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
-        errormessage(err_procdirectiveconflict,['override']);
-       end
+     ck_ident: begin
+      case p1^.d.ident.ident of
+       tk_virtual: begin
+        if checkclassdef(subdefindex,true) then begin
+         if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
+          errormessage(err_procdirectiveconflict,['virtual']);
+         end
+         else begin
+          include(d.subdef.flags,sf_virtual);
+         end;
+        end;
+       end;
+       tk_override: begin
+        if checkclassdef(subdefindex,true) then begin
+         if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
+          errormessage(err_procdirectiveconflict,['override']);
+         end
+         else begin
+          include(d.subdef.flags,sf_override);
+         end;
+        end;
+       end;
+       tk_afterconstruct: begin
+        include(d.subdef.flags,sf_afterconstruct);
+       end;
+       tk_beforedestruct: begin
+        include(d.subdef.flags,sf_beforedestruct);
+       end;
+       tk_ini: begin
+        include(d.subdef.flags,sf_ini);
+       end;
+       tk_fini: begin
+        include(d.subdef.flags,sf_fini);
+       end;
        else begin
-        include(d.subdef.flags,sf_override);
+        identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
+                                                   err_invalidattachment);
        end;
       end;
-     end;
-     tk_afterconstruct: begin
-      include(d.subdef.flags,sf_afterconstruct);
-     end;
-     tk_beforedestruct: begin
-      include(d.subdef.flags,sf_beforedestruct);
-     end;
-     tk_ini: begin
-      include(d.subdef.flags,sf_ini);
-     end;
-     tk_fini: begin
-      include(d.subdef.flags,sf_fini);
      end;
      else begin
-      identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
-                                                 err_invalidattachment);
+      internalerror(ie_handler,'20170501A');
      end;
     end;
    end;

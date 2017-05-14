@@ -876,8 +876,26 @@ classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 classdefattach,,,handleclassdefattach*
  '',attach^*
 
+//comma separated items on stack
+attachitems,attachitemsnoitemerror,handleattachitemsentry, 
+ ${whitespace}
+ @identstart,attachident
+ '''',attachstring-
+ '#',attachchar-
+attachident,attachitems2,,
+ '',ident^*
+attachstring,attachitems2a,,
+ '',string*
+attachchar,attachitems2a,,
+ '',char*
+attachitems2a,attachitems2,handlestringattach,
+attachitems2,,,^
+ ${whitespace}
+ ',',attachitems-
+attachitemsnoitemerror,,,handlenoattachitemerror
+
 attach,attach1,,
- '',commaidents^*
+ '',attachitems^*
 attach1,,,^
  ']',-*
  '',!handleclosesquarebracketexpected

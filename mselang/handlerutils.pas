@@ -3205,6 +3205,7 @@ var
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
+ o1: objectoperatorty;
 begin
  ele.addelement(tks_units,ek_none,globalvisi,unitsele);
  po2:= ele.addelementdata(tks_method,ek_type,globalvisi);
@@ -3232,7 +3233,9 @@ begin
    end;
   end;
  end;
- 
+ for o1:= low(objectoperatorty) to high(objectoperatorty) do begin
+  objectoperatoridents[o1]:= getident(objectoperatordefs[o1].token);
+ end; 
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
    po1:= ele.addelement(getident(name),ek_const,globalvisi);
@@ -3932,7 +3935,7 @@ begin
       ck_label: begin
        write('lab:'+inttostrmse(d.dat.lab));
       end;
-      ck_ident: begin
+      ck_ident,ck_stringident: begin
        write('$',hextostr(d.ident.ident,8),':',d.ident.len);
        write(' ',getidentname(d.ident.ident));
        write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
@@ -3961,6 +3964,14 @@ begin
       ck_reffact: begin
        writedat(d.dat);
        writetype(d);
+      end;
+      ck_str: begin
+       if length(info.stringbuffer) > 30 then begin
+        write('"'+copy(info.stringbuffer,1,30)+'"...');
+       end
+       else begin
+        write('"'+info.stringbuffer+'"');
+       end;
       end;
       ck_const: begin
        writedat(d.dat);
