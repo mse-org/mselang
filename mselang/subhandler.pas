@@ -782,13 +782,11 @@ begin
 end;
  
 procedure handleclasubheaderattach();
-
 var
  i1: int32;
  o1: objectoperatorty;
  subdefindex: int32;
  p1: pcontextitemty;
- id1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASUBHEADERATTACH');
@@ -806,16 +804,11 @@ begin
     case p1^.d.kind of
      ck_stringident: begin
       if not (sf_operator in d.subdef.flags) then begin
-       info.currentoperators:= [];
-       info.currentconversionoperatorcount:= 0;
        include(d.subdef.flags,sf_operator);
-      end;
-      id1:= p1^.d.ident.ident;
-      for o1:= low(o1) to high(o1) do begin
-       if id1 = objectoperatoridents[o1] then begin
-        include(info.currentoperators,o1);
-        break;
-       end;
+       currentoperator:= p1^.d.ident.ident;
+      end
+      else begin
+       errormessage(err_multipleoperators,[],i1-s.stackindex);
       end;
      end;
      ck_ident: begin
@@ -1313,6 +1306,7 @@ var
  i1: int32;
  element1: pelementinfoty;
  poind: pcontextitemty;
+ poper1: poperatordataty;
 
 begin
 {$ifdef mse_debugparser}
@@ -1752,6 +1746,18 @@ begin
       infoclass.subattach.fini:= ele.eledatarel(sub1);
       include(h.flags,tf_needsfini);
      end;
+    end;
+   end;
+   if sf_operator in subflags then begin
+    if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
+     ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
+    end;
+    if ele.adduniquechilddata(ele1,[currentoperator],ek_operator,
+                                                   allvisi,poper1) then begin
+     
+    end
+    else begin
+     errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
     end;
    end;
    dec(s.stackindex,2);

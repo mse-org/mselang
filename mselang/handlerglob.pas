@@ -227,7 +227,10 @@ type
  infostringty = record
   dummy2: byte; //for systypeinfos list 
  end;
- 
+
+ infooperatorty = record
+ end;
+  
  typedataty = record
   h: typedataheaderty;
   case datakindty of 
@@ -438,6 +441,10 @@ type
  end;
  psysfuncdataty = ^sysfuncdataty;
 
+ operatordataty = record
+ end;
+ poperatordataty = ^operatordataty;
+ 
  globaldataty = record
  end;
  pglobaldataty = ^globaldataty;

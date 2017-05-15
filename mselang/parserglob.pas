@@ -759,8 +759,9 @@ type
   currentcontainer: elementoffsetty;
   currentclass: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
-  currentoperators: objectoperatorsty;
-  currentconversionoperatorcount: int32;
+  currentoperator: elementoffsetty;
+//  currentoperators: objectoperatorsty;
+//  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;
