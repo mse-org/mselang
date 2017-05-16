@@ -1140,6 +1140,16 @@ begin
 *)
 end;
 
+function checkoperatorparam(const var1: pvardataty): boolean;
+begin    
+ result:= (var1^.address.flags*[af_paramvar,af_paramout] = []) and
+          ((var1^.address.indirectlevel = 0) and 
+              not (af_paramindirect in var1^.address.flags) or
+           (var1^.address.indirectlevel = 1) and 
+              (af_paramindirect in var1^.address.flags)) and
+          (var1^.vf.typ = info.currentcontainer);
+end;
+
 procedure handlesubheader();
 var                       //todo: move after doparam
  sub1: psubdataty;
@@ -1299,7 +1309,7 @@ var                       //todo: move after doparam
     curstackindex:= i1+1; //next ck_paramsdef
    end;
   end; //lastparamindex
- end; //doparam
+ end; //doparams
 
 var
  lstr1: lstringty;  
@@ -1749,15 +1759,26 @@ begin
     end;
    end;
    if sf_operator in subflags then begin
-    if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
-     ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
-    end;
-    if ele.adduniquechilddata(ele1,[currentoperator],ek_operator,
-                                                   allvisi,poper1) then begin
-     
+    if (sub1^.paramcount = 4) and
+       (sub1^.flags * [sf_method,sf_function] =
+                                         [sf_function,sf_method]) and
+        checkoperatorparam(
+              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1])) and
+        checkoperatorparam(
+              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[2])) then begin
+     if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
+      ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
+     end;
+     if ele.adduniquechilddata(ele1,[currentoperator],ek_operator,
+                                                    allvisi,poper1) then begin
+      poper1^.methodele:= ele.eledatarel(sub1);
+     end
+     else begin
+      errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
+     end;
     end
     else begin
-     errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
+     errormessage(err_invalidoperatormethod,[]);
     end;
    end;
    dec(s.stackindex,2);

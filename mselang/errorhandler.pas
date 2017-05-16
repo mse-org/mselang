@@ -77,7 +77,8 @@ type
             err_invalidmethodforattach,err_objectorclasstypeexpected,
             err_classmethodexpected,err_classmethod,err_classreference,
             err_typeidentnotallowed,err_attachitemexpected,
-            err_multipleoperators,err_operatoralreadydefined);
+            err_multipleoperators,err_operatoralreadydefined,
+            err_invalidoperatormethod);
             
  errorinfoty = record
   level: errorlevelty;
@@ -285,7 +286,8 @@ const
   (level: erl_error; message: 'Type identifier not allowed here'),
   (level: erl_error; message: 'Attachment item expected'),
   (level: erl_error; message: 'Multiple operators not allowed'),
-  (level: erl_error; message: 'Operator "%s" aleady defined')
+  (level: erl_error; message: 'Operator "%s" aleady defined'),
+  (level: erl_error; message: 'Invalid operator method')
  );
 
 procedure message1(const atext: string; const values: array of const); 

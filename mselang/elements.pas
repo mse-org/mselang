@@ -1685,6 +1685,11 @@ begin
      end;
     end;
    end;
+   ek_operator: begin
+    with poperatordataty(@po1^.data)^ do begin
+     mstr1:= mstr1+' m:'+inttostrmse(methodele);
+    end;
+   end;
    ek_uses: begin
     with pusesdataty(@po1^.data)^ do begin
      mstr1:= mstr1 + ' U:'+inttostrmse(ref);

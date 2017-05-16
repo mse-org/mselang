@@ -442,6 +442,7 @@ type
  psysfuncdataty = ^sysfuncdataty;
 
  operatordataty = record
+  methodele: elementoffsetty;
  end;
  poperatordataty = ^operatordataty;
  
