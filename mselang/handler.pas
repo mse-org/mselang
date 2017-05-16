@@ -934,40 +934,40 @@ const
   (ops: (oc_none, oc_none,    oc_none,  oc_mulcard,oc_mulint,oc_mulflo,
        //sdk_set32,sdk_string8
          oc_and,oc_none);
-   wantedtype: st_none; opname: '*');
+   wantedtype: st_none; opname: '*'; objop: oa_mul);
 
  divops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_divcard,oc_divint,oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
-   wantedtype: st_none; opname: 'div');
+   wantedtype: st_none; opname: 'div'; objop: oa_none);
 
  divisionops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,    oc_divflo,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
-   wantedtype: st_flo64; opname: '/');
+   wantedtype: st_flo64; opname: '/'; objop: oa_div);
 
  andops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
   (ops: (oc_none, oc_none,    oc_and1,  oc_and,  oc_and, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
-   wantedtype: st_none; opname: 'and');
+   wantedtype: st_none; opname: 'and'; objop: oa_and);
  shlops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_shl,  oc_shl, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
-   wantedtype: st_none; opname: 'shl');
+   wantedtype: st_none; opname: 'shl'; objop: oa_shl);
  shrops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_shr,  oc_shr, oc_none,
        //sdk_set32,sdk_string8
          oc_none,  oc_none);
-   wantedtype: st_none; opname: 'shr');
+   wantedtype: st_none; opname: 'shr'; objop: oa_shr);
  
 procedure handlemulfact();
 begin
@@ -1106,33 +1106,33 @@ const
  (ops: (oc_none, oc_none,    oc_none,  oc_addint,oc_addint,oc_addflo,
       //sdk_set32,sdk_string8
         oc_or,  oc_none);
-  wantedtype: st_none; opname: '+');
+  wantedtype: st_none; opname: '+'; objop: oa_add);
  subops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
  (ops: (oc_none, oc_subpo,   oc_none,  oc_subint,oc_subint,oc_subflo,
        //sdk_set32, sdk_string8
          oc_diffset,oc_none);
-  wantedtype: st_none; opname: '-');
+  wantedtype: st_none; opname: '-'; objop: oa_sub);
  orops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
  (ops: (oc_none, oc_none,   oc_or1,    oc_or,   oc_or,  oc_none,
       //sdk_set32,sdk_string8
         oc_none,  oc_none);
-  wantedtype: st_none; opname: 'or');
+  wantedtype: st_none; opname: 'or'; objop: oa_or);
 
  xorops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
  (ops: (oc_none, oc_none,    oc_xor1,  oc_xor,  oc_xor, oc_none,
       //sdk_set32,sdk_string8
         oc_none,  oc_none);
-  wantedtype: st_none; opname: 'xor');
+  wantedtype: st_none; opname: 'xor'; objop: oa_xor);
 
  xorsetops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
  (ops: (oc_none, oc_none,    oc_none,  oc_none,  oc_none, oc_none,
       //sdk_set32,sdk_string8
         oc_xorset,oc_none);
-  wantedtype: st_none; opname: '><');
+  wantedtype: st_none; opname: '><'; objop: oa_none);
 
 procedure addsubterm(const issub: boolean);
              //special inc(), dec(), pointer arithmetic

@@ -100,15 +100,35 @@ const
  dummyaddress = 0;
 
 type
- objectoperatorty = (oa_add);
- objectoperatorsty = set of objectoperatorty;
+ objectoperatorty = (oa_none,oa_mul,oa_div,oa_and,oa_add,oa_sub,oa_or,oa_xor,
+                     oa_shl,oa_shr);
+// objectoperatorsty = set of objectoperatorty;
  objectoperatordefty = record
   token: string;
  end;
 const
  objectoperatordefs: array[objectoperatorty] of objectoperatordefty = (
+ //oa_none
+  (token: ''),
+ //oa_mul
+  (token: '*'),
+ //oa_div
+  (token: '/'),
+ //oa_and
+  (token: 'and'),
  //oa_add
-   (token: '+'));
+  (token: '+'),
+ //oa_sub
+  (token: '-'),
+ //oa_or
+  (token: 'or'),
+ //oa_xor
+  (token: 'xor'),
+ //oa_shl
+  (token: 'shl'),
+ //oa_shr
+  (token: 'shr')
+ );
 var
  objectoperatoridents: array[objectoperatorty] of identty;
 

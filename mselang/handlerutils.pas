@@ -38,6 +38,7 @@ type
   ops: array[stackdatakindty] of opcodety;
   wantedtype: systypety;
   opname: string;
+  objop: objectoperatorty;
  end;
 
 var
@@ -3364,6 +3365,8 @@ var
  si1: databitsizety;
  po2: pointer;
  poa,pob: pcontextitemty;
+ opera1: poperatordataty;
+ sub1: psubdataty;
 label
  endlab;
 begin
@@ -3455,6 +3458,15 @@ begin
     end;
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
+     if (sd1 = sdk_none) and (po1^.h.kind = dk_object) and 
+                             (d.dat.datatyp.indirectlevel = 0) and 
+                                        (opsinfo.objop <> oa_none) then begin
+      if ele.findchilddata(d.dat.datatyp.typedata,[tks_operators,
+              objectoperatoridents[opsinfo.objop]],[],allvisi,opera1) then begin
+       sub1:= ele.eledataabs(opera1^.methodele);
+//       dosub(0,sub1,0,3,[]);
+      end;
+     end;
      operationnotsupportederror(d,pob^.d,opsinfo.opname);
      s.stacktop:= s.stackindex-1;
     end
