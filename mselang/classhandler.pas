@@ -59,6 +59,7 @@ procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
 
+procedure handleclasubheaderentry();
 procedure handleclassmethmethodentry();
 procedure handleclassmethfunctionentry();
 procedure handleclassmethprocedureentry();
@@ -579,25 +580,26 @@ var
  interfacealloc: int32;
 begin
  with atyp^ do begin
-  if not (icf_allocvalid in infoclass.flags) then begin
-   include(infoclass.flags,icf_allocvalid);
-   intfcount:= 0;
-   intfsubcount:= 0;
-   ele1:= infoclass.interfacechain;
-   while ele1 <> 0 do begin          //count interfaces
-    with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
-     intfsubcount:= intfsubcount + 
-            ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
-     ele1:= next;
-    end;
-    inc(intfcount);
+  include(infoclass.flags,icf_allocvalid);
+  intfcount:= 0;
+  intfsubcount:= 0;
+  ele1:= infoclass.interfacechain;
+  while ele1 <> 0 do begin          //count interfaces
+   with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
+    intfsubcount:= intfsubcount + 
+           ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
+    ele1:= next;
    end;
-   infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
-   infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
+   inc(intfcount);
+  end;
+  infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
+  infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
 
-         //alloc classinfo
-   interfacealloc:= infoclass.interfacecount*pointersize;
-   infoclass.allocsize:= aclassinfo^.fieldoffset + interfacealloc;
+        //alloc classinfo
+  interfacealloc:= infoclass.interfacecount*pointersize;
+  infoclass.allocsize:= aclassinfo^.fieldoffset + interfacealloc;
+  if not (icf_class in infoclass.flags) then begin
+   updatetypedatabyte(atyp^,infoclass.allocsize);
   end;
  end;
 end;
@@ -649,7 +651,9 @@ begin
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
-    updateobjalloc(typ1,classinfo1);
+    if not (icf_allocvalid in infoclass.flags) then begin
+     updateobjalloc(typ1,classinfo1);
+    end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
     int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                      //interfacetable start
@@ -696,9 +700,9 @@ begin
       end;
      end;
     end;
-    if not (icf_class in infoclass.flags) then begin
-     updatetypedatabyte(typ1^,infoclass.allocsize);
-    end;
+//    if not (icf_class in infoclass.flags) then begin
+//     updatetypedatabyte(typ1^,infoclass.allocsize);
+//    end;
     reversefieldchain(typ1);
     if h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> [] then begin
      createrecordmanagehandler(d.typ.typedata);
@@ -778,6 +782,21 @@ begin
   end;
   checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,
                                    contextstack[s.stackindex-2].d.typ.flags);
+ end;
+end;
+
+procedure handleclasubheaderentry();
+var
+ p1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASUBHEADERENTRY');
+{$endif}
+ with info do begin
+  p1:= ele.eledataabs(currentcontainer);
+  if not (icf_allocvalid in p1^.infoclass.flags) then begin
+   updateobjalloc(p1,@contextstack[s.stackindex-1].d.cla);
+  end;
  end;
 end;
 

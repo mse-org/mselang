@@ -355,7 +355,7 @@ functiontypedef,subtypedef,handlefunctiontypedefentry,
 subsubtypedef,subtypedef,handlesubtypedefentry,
 methodtypedef,subtypedef,handlemethodtypedefentry,
 
-clasubheader,,,*
+clasubheader,,handleclasubheaderentry,*
  '',callclasubheader*
 callclasubheader,suba,callsubheaderentry,
 //suba can be canceled by dec(stackindex)
