@@ -97,7 +97,8 @@ type
   ini,fini,afterconstruct,beforedestruct: elementoffsetty;
  end;
 
- infoclassflagty = (icf_class,icf_virtualtablevalid,icf_defvalid,icf_forward,
+ infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,
+                    icf_forward,
                     icf_zeroinit,icf_nozeroinit,icf_virtual);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record

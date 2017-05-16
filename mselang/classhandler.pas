@@ -570,6 +570,38 @@ begin
  end;
 end;
 
+procedure updateobjalloc(const atyp: ptypedataty; 
+                                    const aclassinfo: pclassinfoty); 
+var
+ ele1: elementoffsetty;
+ intfcount: integer;
+ intfsubcount: integer;
+ interfacealloc: int32;
+begin
+ with atyp^ do begin
+  if not (icf_allocvalid in infoclass.flags) then begin
+   include(infoclass.flags,icf_allocvalid);
+   intfcount:= 0;
+   intfsubcount:= 0;
+   ele1:= infoclass.interfacechain;
+   while ele1 <> 0 do begin          //count interfaces
+    with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
+     intfsubcount:= intfsubcount + 
+            ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
+     ele1:= next;
+    end;
+    inc(intfcount);
+   end;
+   infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
+   infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
+
+         //alloc classinfo
+   interfacealloc:= infoclass.interfacecount*pointersize;
+   infoclass.allocsize:= aclassinfo^.fieldoffset + interfacealloc;
+  end;
+ end;
+end;
+
 //class instance layout:
 // header, pointer to virtual table
 // fields
@@ -582,12 +614,12 @@ var
  classdefs1: segaddressty;
  classinfo1: pclassinfoty;
  parentinfoclass1: pinfoclassty;
- intfcount: integer;
- intfsubcount: integer;
+// intfcount: integer;
+// intfsubcount: integer;
  fla1: addressflagsty;
  int1: integer;
  po1: pdataoffsty;
- interfacealloc: int32;
+// interfacealloc: int32;
  typ1: ptypedataty;
  
 begin
@@ -617,29 +649,12 @@ begin
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
- 
-    intfcount:= 0;
-    intfsubcount:= 0;
-    ele1:= infoclass.interfacechain;
-    while ele1 <> 0 do begin          //count interfaces
-     with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
-      intfsubcount:= intfsubcount + 
-             ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
-      ele1:= next;
-     end;
-     inc(intfcount);
-    end;
-    infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
-    infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
- 
-          //alloc classinfo
-    interfacealloc:= infoclass.interfacecount*pointersize;
-    infoclass.allocsize:= classinfo1^.fieldoffset + interfacealloc;
+    updateobjalloc(typ1,classinfo1);
     infoclass.virtualcount:= classinfo1^.virtualindex;
     int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                      //interfacetable start
     classdefs1:= getclassinfoaddress(
-                                  int1+interfacealloc,infoclass.interfacecount);
+            int1+infoclass.interfacecount*pointersize,infoclass.interfacecount);
     infoclass.defs:= classdefs1;
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
      header.allocs.size:= infoclass.allocsize;
@@ -667,7 +682,7 @@ begin
              infoclass.interfaceparent))^.infoclass.defs.address;
                                                           //todo: relocate
      end;
-     if intfcount <> 0 then begin       //alloc interface table
+     if infoclass.interfacecount <> 0 then begin       //alloc interface table
       po1:= pointer(@header) + header.allocs.classdefinterfacestart;
       inc(po1,infoclass.interfacecount); //top - down
       int1:= -infoclass.allocsize; 
