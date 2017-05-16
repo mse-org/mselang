@@ -78,7 +78,7 @@ type
             err_classmethodexpected,err_classmethod,err_classreference,
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
-            err_invalidoperatormethod);
+            err_invalidoperatormethod,err_objectforwardnotallowed);
             
  errorinfoty = record
   level: errorlevelty;
@@ -287,7 +287,8 @@ const
   (level: erl_error; message: 'Attachment item expected'),
   (level: erl_error; message: 'Multiple operators not allowed'),
   (level: erl_error; message: 'Operator "%s" aleady defined'),
-  (level: erl_error; message: 'Invalid operator method')
+  (level: erl_error; message: 'Invalid operator method'),
+  (level: erl_error; message: 'Object forward definition is not allowed')
  );
 
 procedure message1(const atext: string; const values: array of const); 

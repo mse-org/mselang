@@ -198,13 +198,14 @@ begin
    currentcontainer:= d.typ.typedata;
    ele.elementparent:= d.typ.typedata;
 //   inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+   resolveforwardtype(po1);
    if not bo1 then begin
     if icf_defvalid in po1^.infoclass.flags then begin
      identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
-    end
-    else begin
-     resolveforwardtype(po1);
     end;
+//    else begin
+//     resolveforwardtype(po1);
+//    end;
    end
    else begin
     ele1:= ele.addelementduplicate1(tks_classintfname,
@@ -271,6 +272,9 @@ begin
     identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_error);
    end;
    include(infoclass.flags,icf_forward);
+   if not (icf_class in infoclass.flags) then begin
+    errormessage(err_objectforwardnotallowed,[]);
+   end;
   end;
   markforwardtype(ele.parentdata,ele.parentelement^.header.name);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;

@@ -1,29 +1,19 @@
-program classmethod;
- 
+program objparam;
 type
  objty = object
-  f1: int32;
-  constructor create();
-  destructor destroy();
+  f1,f2: int32;
+  method add(const a,b: objty): objty ['+'];
  end;
- 
-constructor objty.create();
+
+method objty.add(const a,b: objty): objty;
 begin
+ exitcode:= a.f1+b.f2;
 end;
- 
-destructor objty.destroy();
-begin
- writeln('abc ',f1);
-end;
- 
+
 var
- obj1: objty; //auf dem stack, braucht kein create
- obj2: ^objty;
+ obj1: objty;
 begin
- obj1.f1:= 123;
- obj1.create();
- obj2:= objty.create(); //im heap
- obj2^.f1:= 456;
- obj2.destroy();
- obj1.destroy();
+ obj1.f1:= 100;
+ obj1.f2:= 23;
+ obj1.add(obj1,obj1);
 end.

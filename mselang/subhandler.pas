@@ -1144,6 +1144,12 @@ begin
 *)
 end;
 
+function checkoperatorreturntype(const var1: pvardataty): boolean;
+begin    
+ result:= (var1^.address.indirectlevel = 1) and
+                              (var1^.vf.typ = info.currentcontainer);
+end;
+
 function checkoperatorparam(const var1: pvardataty): boolean;
 begin    
  result:= (var1^.address.flags*[af_paramvar,af_paramout] = []) and
@@ -1766,10 +1772,12 @@ begin
     if (sub1^.paramcount = 4) and
        (sub1^.flags * [sf_method,sf_function] =
                                          [sf_function,sf_method]) and
-        checkoperatorparam(
+        checkoperatorreturntype(
               ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1])) and
         checkoperatorparam(
-              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[2])) then begin
+              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[2])) and
+        checkoperatorparam(
+              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[3])) then begin
      if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
       ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
      end;
