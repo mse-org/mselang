@@ -212,6 +212,7 @@ var
  offs1: ptruint;
  var1,varref: pvardataty;
  int1: integer;
+ pa,pb: pvardataty;
 // start,stop: integer;
 begin
  result:= true;
@@ -238,8 +239,11 @@ begin
   end;
  end;
  for int1:= int1 to ref^.paramcount-1 do begin
-  if pvardataty(par1^[int1]+offs1)^.vf.typ <> 
-                  pvardataty(parref^[int1]+offs1)^.vf.typ then begin
+  pa:= pvardataty(par1^[int1]+offs1);
+  pb:= pvardataty(parref^[int1]+offs1);
+  if (pa^.vf.typ <> pb^.vf.typ) or 
+         ((pa^.address.flags >< pb^.address.flags) *
+                                     compatibleparamflags <> []) then begin
    result:= false;
    exit;
   end;

@@ -11959,6 +11959,7 @@ begin
  methodtypedefco.next:= @subtypedefco;
  methodtypedefco.handleentry:= @handlemethodtypedefentry;
  clasubheaderco.branch:= @bclasubheader;
+ clasubheaderco.handleentry:= @handleclasubheaderentry;
  callclasubheaderco.branch:= @bcallclasubheader;
  callclasubheaderco.next:= @subaco;
  callclasubheaderco.handleentry:= @callsubheaderentry;

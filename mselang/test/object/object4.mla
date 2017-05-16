@@ -18,7 +18,7 @@ begin
  write('abc');
 end;
 
-procedure objty.test(a: int32);
+procedure objty.test(const a: int32);
 begin
  f1:= f1 * a;
 end;
