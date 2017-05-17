@@ -63,7 +63,7 @@ type
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
-                 const paramstart,paramco: int32; const aflags: dosubflagsty;
+                 const paramstart,paramco: int32; aflags: dosubflagsty;
                                                     const aobjssa: int32 = 0);
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty): boolean;
@@ -1421,7 +1421,7 @@ begin
 end;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
-              const paramstart,paramco: int32; const aflags: dosubflagsty;
+              const paramstart,paramco: int32; aflags: dosubflagsty;
                                                     const aobjssa: int32 = 0);
 var
  paramsize1: int32;
@@ -1716,6 +1716,20 @@ var
    end;
   end;
  end;
+
+var
+ instancetype1: ptypedataty;
+
+ procedure doinstanceonstack();
+ begin
+  with info.contextstack[adestindex] do begin
+   instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+   instancessa:= d.dat.fact.ssaindex; //for sf_method
+   if (sf_destructor in asub^.flags) then begin
+    callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+   end;
+  end;
+ end;
  
 var
  realparamco: int32; //including defaults
@@ -1725,7 +1739,6 @@ var
  ismethod: boolean;
  opoffset1: int32;
  methodtype1: ptypedataty;
- instancetype1: ptypedataty;
  i4: int32;
  adref1: addressrefty;
  b1: boolean;
@@ -1745,11 +1758,7 @@ begin
   with contextstack[adestindex] do begin //classinstance, result,
                                          //classdefreturn for ini/fini
    if dsf_instanceonstack in aflags then begin
-    instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
-    instancessa:= d.dat.fact.ssaindex; //for sf_method
-    if (sf_destructor in asub^.flags) then begin
-     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
-    end;
+    doinstanceonstack();
    end;
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
@@ -1954,9 +1963,21 @@ begin
          end;
         end;
        end;
-       inc(d.dat.indirection);              //instance pointer
-       inc(d.dat.datatyp.indirectlevel);
-       getvalue(@contextstack[adestindex],das_none);
+       if ismethod and isfactcontext and (d.dat.indirection = 0) then begin
+        with insertitem(oc_pushstackaddr,destoffset,-1)^.
+                                       par.memop.tempdataaddress do begin
+         a.address:= -alignsize(ptypedataty(
+                        ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize);
+         offset:= 0;
+        end;
+        include(aflags,dsf_instanceonstack);
+        doinstanceonstack();
+       end
+       else begin
+        inc(d.dat.indirection);              //instance pointer
+        inc(d.dat.datatyp.indirectlevel);
+        getvalue(@contextstack[adestindex],das_none);
+       end;
       end;
       instancessa:= d.dat.fact.ssaindex; //for sf_method
      end;

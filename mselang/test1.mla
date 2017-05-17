@@ -2,18 +2,40 @@ program objparam;
 type
  objty = object
   f1,f2: int32;
-  method add(const a,b: objty): objty ['+'];
+  method add(const b: objty): objty ['+'];
+  method test();
  end;
-
-method objty.add(const a,b: objty): objty;
+{$dumpelements}
+//{$abort}
+method objty.add(const b: objty): objty;
 begin
- exitcode:= a.f1+b.f2;
+// exitcode:= a.f1+b.f2;
+end;
+
+method objty.test();
+begin
+ exitcode:= f1+f2;
+end;
+
+sub test(): objty;
+begin
+ result.f1:= 100;
+ result.f2:= 23;
 end;
 
 var
  obj1: objty;
+ obj2: objty;
 begin
+{$internaldebug on}
+{$dumpelements}
+ test().test();
+// obj1:= test();
+// obj1.test();
+{
  obj1.f1:= 100;
  obj1.f2:= 23;
- obj1.add(obj1,obj1);
+ obj2:= obj1 + obj1;
+}
+// obj1.add(obj1,obj1);
 end.
