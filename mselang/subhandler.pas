@@ -1786,7 +1786,7 @@ begin
     else begin
      p1:= @operparamids[0];
      p1^:= currentoperator;
-     inc(p1); äpoop ä9pu 
+     inc(p1); 
      if sf_function in subflags then begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]));
      end
@@ -1803,7 +1803,7 @@ begin
       ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
      end;
      identbuf1.po:= @operparamids[0];
-     identbuf1.high:= (sub1^.paramcount-1)*2;
+     identbuf1.high:= (p1-identbuf1.po)-1;
      if ele.adduniquechilddata(ele1,identbuf1,
                                          ek_operator,allvisi,poper1) then begin
       poper1^.methodele:= ele.eledatarel(sub1);

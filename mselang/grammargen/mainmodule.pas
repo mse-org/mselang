@@ -89,7 +89,9 @@ implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
  mseformatstr,msearrayutils,msemacros,{parserglob,}typinfo,mselfsr;
- 
+
+const
+ numidcount = 256; 
 type
  paramty = (pa_grammarfile,pa_pasfile);
 
@@ -437,11 +439,13 @@ begin
   intokendef:= false;
   tokendefs:= nil;
   usesdef:= '';
+
   id:= idstart; //invalid
   nextid;
-  for i1:= 0 to 255 do begin //numidents
+  for i1:= 0 to numidcount -1 do begin //numidents
    nextid();
   end;
+
   repeat
    readline(str1);
    if (str1 <> '') then begin
@@ -973,6 +977,9 @@ lineend+
   end;
   id:= idstart;
   nextid;
+  for i1:= 0 to numidcount-1 do begin
+   nextid();
+  end;
   str5:= 
 'const'+lineend+
 ' tks_none = 0;'+lineend;
