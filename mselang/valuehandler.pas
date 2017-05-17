@@ -1743,6 +1743,7 @@ var
  adref1: addressrefty;
  b1: boolean;
  mo1: managedopty;
+ typ1: ptypedataty;
 // tempsbefore: targetadty;
 label
  paramloopend;
@@ -1964,11 +1965,14 @@ begin
         end;
        end;
        if ismethod and isfactcontext and (d.dat.indirection = 0) then begin
+        i1:= d.dat.fact.ssaindex;
+        typ1:= ele.eledataabs(d.dat.datatyp.typedata);
         with insertitem(oc_pushstackaddr,destoffset,-1)^.
-                                       par.memop.tempdataaddress do begin
-         a.address:= -alignsize(ptypedataty(
-                        ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize);
-         offset:= 0;
+                                       par.memop do begin
+         tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
+         tempdataaddress.offset:= 0;
+         tempdataaddress.a.ssaindex:= i1;
+         t:= getopdatatype(typ1,0);
         end;
         include(aflags,dsf_instanceonstack);
         doinstanceonstack();
