@@ -60,7 +60,7 @@
  'varhandler','exceptionhandler','controlhandler','handlerutils'
  'valuehandler','interfacehandler','directivehandler'
 @.internaltokens
- '.classes','.private','.protected','.public','.published'
+ '.void','.classes','.private','.protected','.public','.published'
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.fini','.incref','.decref','.decrefindi'

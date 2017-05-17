@@ -50,10 +50,11 @@ type
  end;
   
 function getident(): identty; overload;
-function getident(const astart,astop: pchar): identty; overload;
-function getident(const aname: lstringty): identty; overload;
-function getident(const aname: pchar; const alen: integer): identty; overload;
-function getident(const aname: string): identty; overload;
+function getident(const astart,astop: pchar): identty;
+function getident(const aname: lstringty): identty;
+function getident(const aname: pchar; const alen: integer): identty;
+function getident(const aname: string): identty;
+function getident(const anum: int32): identty; //0..255
 
 function getidentname(const aident: identty; out name: identnamety): boolean;
                              //true if found
@@ -73,7 +74,7 @@ procedure init();
       
 implementation
 uses
- mselfsr,parserglob,errorhandler,elements;
+ mselfsr,parserglob,errorhandler,elements,mseformatstr;
 type
  identoffsetty = int32;
 
@@ -185,6 +186,19 @@ begin
  lstr1.po:= pointer(aname);
  lstr1.len:= length(aname);
  result:= identlist.getident(lstr1)^.data.data;
+end;
+
+var
+ numidents: array[0..255] of identty;
+ 
+function getident(const anum: int32): identty;
+begin
+{$ifdef mse_checkinternalerror}
+ if (anum < 0) or (anum > high(numidents)) then begin
+  internalerror(ie_idents,'20170516A');
+ end;
+{$endif}
+ result:= numidents[anum];
 end;
 
 function nametolstring(const aname: identnamety): lstringty;
@@ -349,9 +363,14 @@ begin
 end;
 
 procedure init();
+var
+ i1: int32;
 begin
  stringident:= idstart; //invalid
  nextident();
+ for i1:= 0 to high(numidents) do begin
+  numidents[i1]:= getident(inttostr(i1));
+ end;
 end;
 
 { tidenthashdatalist }
@@ -540,8 +559,8 @@ begin
 end;
 
 initialization
- init();
  identlist:= tindexidenthashdatalist.create;
+ init();
 finalization
  clear();
  identlist.free();

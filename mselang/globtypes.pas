@@ -91,6 +91,7 @@ type
  
 const
  branchkeymaxcount = 4;
+ noident = 0;
  firstident = 256;
  idstart = $12345678;
  storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,

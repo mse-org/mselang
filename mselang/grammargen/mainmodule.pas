@@ -424,6 +424,7 @@ var
  chars1: charsetty;
  kw1: keywordty;
  outstr: string;
+ i1: int32;
 const
  contlast = 3; 
 begin
@@ -438,6 +439,9 @@ begin
   usesdef:= '';
   id:= idstart; //invalid
   nextid;
+  for i1:= 0 to 255 do begin //numidents
+   nextid();
+  end;
   repeat
    readline(str1);
    if (str1 <> '') then begin

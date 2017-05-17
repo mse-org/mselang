@@ -78,7 +78,8 @@ type
             err_classmethodexpected,err_classmethod,err_classreference,
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
-            err_invalidoperatormethod,err_objectforwardnotallowed);
+            err_invalidoperatormethod,err_objectforwardnotallowed,
+            err_toomanyoperparams);
             
  errorinfoty = record
   level: errorlevelty;
@@ -94,6 +95,7 @@ type
                         ie_managed,  //error in managed types handler
                         ie_sub,      //error in subhadler
                         ie_value,    //error in value handler
+                        ie_idents,   //error in ident generator
                         ie_elements, //error in element list
                         ie_rtti,     //error in rtti handler
                         ie_segment,  //error in segment handler
@@ -109,8 +111,8 @@ const
      '',     'N',              'P',      'H',       'R',     'U',    
  //ie_type,ie_managed
      'T',    'M',
- //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
-     'SUB',   'V',   'E',        'I',    'SEG',     'BC',     'LLVM',
+ //ie_sub,ie_value,ie_idents,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
+     'SUB',   'V',   'I',       'E',        'I',    'SEG',     'BC',     'LLVM',
  //ie_llvmlist,ie_llvmmeta,ie_module
      'LLVML',  'LLVMME',   'MO'
  );
@@ -288,7 +290,8 @@ const
   (level: erl_error; message: 'Multiple operators not allowed'),
   (level: erl_error; message: 'Operator "%s" aleady defined'),
   (level: erl_error; message: 'Invalid operator method'),
-  (level: erl_error; message: 'Object forward definition is not allowed')
+  (level: erl_error; message: 'Object forward definition is not allowed'),
+  (level: erl_error; message: 'Too many operator parameters')
  );
 
 procedure message1(const atext: string; const values: array of const); 

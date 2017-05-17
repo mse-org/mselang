@@ -1160,6 +1160,14 @@ begin
           (var1^.vf.typ = info.currentcontainer);
 end;
 
+procedure setoperparamid(var dest: pidentty; const avar: pvardataty);
+begin
+ dest^:= getident(avar^.address.indirectlevel);
+ inc(dest);
+ dest^:= ptypedataty(ele.eledataabs(basetype(avar^.vf.typ)))^.h.signature;
+ inc(dest);
+end;
+
 procedure handlesubheader();
 var                       //todo: move after doparam
  sub1: psubdataty;
@@ -1327,7 +1335,10 @@ var
  element1: pelementinfoty;
  poind: pcontextitemty;
  poper1: poperatordataty;
-
+ poperid: pidentty;
+ operparamids: array[0..15] of identty;
+ identbuf1: identbufty;
+ p1: pidentty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -1769,28 +1780,37 @@ begin
     end;
    end;
    if sf_operator in subflags then begin
-    if (sub1^.paramcount = 3) and
-       (sub1^.flags * [sf_method,sf_function] =
-                                         [sf_function,sf_method]) and
-        checkoperatorreturntype(
-              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1])) and
-        checkoperatorparam(
-              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[2])){ and
-        checkoperatorparam(
-              ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[3]))} then begin
+    if sub1^.paramcount >= high(operparamids)-1 then begin
+     errormessage(err_toomanyoperparams,[]);
+    end
+    else begin
+     p1:= @operparamids[0];
+     p1^:= currentoperator;
+     inc(p1); äpoop ä9pu 
+     if sf_function in subflags then begin
+      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]));
+     end
+     else begin
+      p1^:= tks_void;
+      inc(p1);
+      p1^:= getident(0);
+      inc(p1);
+     end;
+     for i1:= 2 to sub1^.paramcount-1 do begin
+      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[i1]));
+     end;
      if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
       ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
      end;
-     if ele.adduniquechilddata(ele1,[currentoperator],ek_operator,
-                                                    allvisi,poper1) then begin
+     identbuf1.po:= @operparamids[0];
+     identbuf1.high:= (sub1^.paramcount-1)*2;
+     if ele.adduniquechilddata(ele1,identbuf1,
+                                         ek_operator,allvisi,poper1) then begin
       poper1^.methodele:= ele.eledatarel(sub1);
      end
      else begin
       errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
      end;
-    end
-    else begin
-     errormessage(err_invalidoperatormethod,[]);
     end;
    end;
    dec(s.stackindex,2);

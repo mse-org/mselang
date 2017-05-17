@@ -223,6 +223,7 @@ type
   bytesize: integer;
   datasize: databitsizety;
   next: elementoffsetty; //for pending manageproc chain
+  signature: identty;    //for operator overload
  end;
 
  infostringty = record
@@ -497,7 +498,11 @@ type
  end;
  pvisibledataty = ^visibledataty;
 
-
+ identbufty = record
+  po: pidentty;
+  high: int32;
+ end;
+ 
 const 
  datasizes: array[0..64] of databitsizety = (
  //   0        1     2       3       4       5       6       7
@@ -556,7 +561,7 @@ procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 
 implementation
 uses
- elements;
+ elements,identutils;
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
@@ -603,6 +608,7 @@ begin
  atype.h.ancestor:= aancestor;
  atype.h.kind:= akind;
  atype.h.manageproc:= nil;
+ atype.h.signature:= getident();
 end;
 
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
