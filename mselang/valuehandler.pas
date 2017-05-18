@@ -1918,73 +1918,75 @@ begin
     isfactcontext:= d.kind in factcontexts;
     ismethod:= asub^.flags * [sf_method,sf_ofobject] = [sf_method];
 
-    if ismethod and (dsf_ownedmethod in aflags) then begin
+    if ismethod then begin
+     if (dsf_ownedmethod in aflags) then begin
                //owned method
-    {$ifdef mse_checkinternalerror}
-     if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
-      internalerror(ie_value,'20140505A');
-     end;
-    {$else}
-     ele.findcurrent(tk_self,[],allvisi,vardata1);
-    {$endif}
-//     with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
-     with insertitem(oc_pushlocpo,destoffset,-1)^ do begin
-      par.memop.t:= bitoptypes[das_pointer];
-      par.memop.locdataaddress.a.framelevel:= -1;
-      par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
-      par.memop.locdataaddress.offset:= 0;
-      instancessa:= par.ssad;
-     end;
-     instancetype1:= ele.eledataabs(vardata1^.vf.typ);
-    end
-    else begin
-     if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
-     {
-      if co_mlaruntime in o.compileoptions then begin
-       with additem(oc_pushduppo)^ do begin
-        par.voffset:= -vpointersize;
-       end;
+     {$ifdef mse_checkinternalerror}
+      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
+       internalerror(ie_value,'20140505A');
       end;
-     }
-      instancessa:= aobjssa;
-//      instancetype1:= aobjtypeele.eledataabs(vardata1^.vf.typ);
+     {$else}
+      ele.findcurrent(tk_self,[],allvisi,vardata1);
+     {$endif}
+ //     with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
+      with insertitem(oc_pushlocpo,destoffset,-1)^ do begin
+       par.memop.t:= bitoptypes[das_pointer];
+       par.memop.locdataaddress.a.framelevel:= -1;
+       par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
+       par.memop.locdataaddress.offset:= 0;
+       instancessa:= par.ssad;
+      end;
+      instancetype1:= ele.eledataabs(vardata1^.vf.typ);
      end
      else begin
-      if aflags*[dsf_instanceonstack,dsf_indirect,
-                             dsf_readsub,dsf_writesub] = [] then begin
-       if ismethod and isfactcontext then begin
-        if (sf_class in asub^.flags) then begin
-         if d.dat.datatyp.indirectlevel <> 0 then begin
-          errormessage(err_classinstanceexpected,[]);
+      if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
+      {
+       if co_mlaruntime in o.compileoptions then begin
+        with additem(oc_pushduppo)^ do begin
+         par.voffset:= -vpointersize;
+        end;
+       end;
+      }
+       instancessa:= aobjssa;
+ //      instancetype1:= aobjtypeele.eledataabs(vardata1^.vf.typ);
+      end
+      else begin
+       if aflags*[dsf_instanceonstack,dsf_indirect,
+                              dsf_readsub,dsf_writesub] = [] then begin
+        if ismethod and isfactcontext then begin
+         if (sf_class in asub^.flags) then begin
+          if d.dat.datatyp.indirectlevel <> 0 then begin
+           errormessage(err_classinstanceexpected,[]);
+          end;
+         end
+         else begin
+          if d.dat.datatyp.indirectlevel <> 0 then begin
+           errormessage(err_objectpointerexpected,[]);
+          end;
          end;
+        end;
+        if ismethod and isfactcontext and (d.dat.indirection = 0) then begin
+         i1:= d.dat.fact.ssaindex;
+         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+         with insertitem(oc_pushstackaddr,destoffset,-1)^.
+                                        par.memop do begin
+          tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
+          tempdataaddress.offset:= 0;
+          tempdataaddress.a.ssaindex:= i1;
+          t:= getopdatatype(typ1,0);
+         end;
+         include(aflags,dsf_instanceonstack);
+         doinstanceonstack();
         end
         else begin
-         if d.dat.datatyp.indirectlevel <> 0 then begin
-          errormessage(err_objectpointerexpected,[]);
-         end;
+         inc(d.dat.indirection);              //instance pointer
+         inc(d.dat.datatyp.indirectlevel);
+         getvalue(@contextstack[adestindex],das_none);
         end;
        end;
-       if ismethod and isfactcontext and (d.dat.indirection = 0) then begin
-        i1:= d.dat.fact.ssaindex;
-        typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-        with insertitem(oc_pushstackaddr,destoffset,-1)^.
-                                       par.memop do begin
-         tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
-         tempdataaddress.offset:= 0;
-         tempdataaddress.a.ssaindex:= i1;
-         t:= getopdatatype(typ1,0);
-        end;
-        include(aflags,dsf_instanceonstack);
-        doinstanceonstack();
-       end
-       else begin
-        inc(d.dat.indirection);              //instance pointer
-        inc(d.dat.datatyp.indirectlevel);
-        getvalue(@contextstack[adestindex],das_none);
-       end;
+       instancessa:= d.dat.fact.ssaindex; //for sf_method
       end;
-      instancessa:= d.dat.fact.ssaindex; //for sf_method
-     end;
+     end; //ismethod
     end;
 
     if dsf_indirect in aflags then begin
