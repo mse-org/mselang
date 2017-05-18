@@ -2023,7 +2023,7 @@ begin
           not isfactcontext and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     if hasresult then begin
-     initfactcontext(0); //set ssaindex
+     initfactcontext(adestindex-s.stackindex); //set ssaindex
      if sf_constructor in asub^.flags then begin //needs memory
       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
                                                    firstnotfound1,idents1,1);
@@ -2101,7 +2101,7 @@ begin
      end;
      inc(subparams1); //first param
     end;
-    opoffset1:= getcontextopcount(0);
+    opoffset1:= getcontextopcount(adestindex-s.stackindex);
     if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;

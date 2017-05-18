@@ -3431,6 +3431,19 @@ begin
     goto endlab; //errorstate
    end;
 
+   bo2:= true;
+   if d.kind <> ck_const then begin
+    bo2:= getvalue(poa,das_none);
+   end;
+   if pob^.d.kind <> ck_const then begin
+    if not getvalue(pob,das_none) then begin
+     bo2:= false;
+    end;
+   end;
+   if not bo2 then begin
+    goto endlab;
+   end;
+
    if opsinfo.objop <> oa_none then begin
     pta:= ele.eledataabs(d.dat.datatyp.typedata);
     ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
@@ -3446,31 +3459,21 @@ begin
       operatorsig.high:= 5;
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
                               operatorsig,[],allvisi,oper1) then begin
-       if not getvalue(poa,das_none) then begin
-        goto endlab;
-       end;
+//       if not getvalue(poa,das_none) then begin
+//        goto endlab;
+//       end;
        pushinsertstackaddress(getstackindex(poa)-s.stackindex,-1);
        sub1:= ele.eledataabs(oper1^.methodele);
        dosub(getstackindex(poa),sub1,getstackindex(pob),1,
                                                  [dsf_instanceonstack]);
+       poa^.d.kind:= ck_subres;
+       result:= nil;
        goto endlab;
       end;
      end;
     end;
    end;
 
-   bo2:= true;
-   if d.kind <> ck_const then begin
-    bo2:= getvalue(poa,das_none);
-   end;
-   if pob^.d.kind <> ck_const then begin
-    if not getvalue(pob,das_none) then begin
-     bo2:= false;
-    end;
-   end;
-   if not bo2 then begin
-    goto endlab;
-   end;
    int1:= d.dat.datatyp.indirectlevel;
    if opsinfo.wantedtype <> st_none then begin
     if not tryconvert(pob,opsinfo.wantedtype) then begin

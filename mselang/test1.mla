@@ -1,14 +1,14 @@
 program objparam;
 type
- objty = object
+ objty = object[nozeroinit]
   f1,f2: int32;
-  method add(const b: objty): objty ['+'];
+  method add(const b: objty) ['+'];
   method test();
  end;
-{$dumpelements}
-//{$abort}
-method objty.add(const b: objty): objty;
+
+method objty.add(const b: objty);
 begin
+ writeln(self);
 // exitcode:= a.f1+b.f2;
 end;
 
@@ -29,7 +29,7 @@ var
 begin
 {$internaldebug on}
 {$dumpelements}
- test().test();
+ obj1:= obj1 + obj2;
 // obj1:= test();
 // obj1.test();
 {
