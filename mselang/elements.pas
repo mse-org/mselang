@@ -35,6 +35,12 @@ type
   high: integer;
   d: array[0..maxidentvector] of identty;
  end;
+{
+ identbufty = record
+  po: pidentty;
+  high: int32;
+ end;
+}
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  
@@ -162,6 +168,19 @@ type
    procedure setelementparent(const element: elementoffsetty);
    procedure checkbuffersize; inline;
    function getrecordsize: int32 override;
+   function findchild(aparent: elementoffsetty;
+               const achildtree: pidentty; const ahigh: int32; 
+               const akinds: elementkindsty;
+               avislevel: visikindsty; out element: elementoffsetty): boolean;
+   function findchilddata(const aparent: elementoffsetty;
+               const achildtree: pidentty; const ahigh: int32;
+               const akinds: elementkindsty;
+               const avislevel: visikindsty; out adata: pointer): boolean;
+   function adduniquechilddata(const aparent: elementoffsetty;
+               const achild: pidentty; const ahigh: int32; 
+               const akind: elementkindty;const avislevel: visikindsty;
+                                            out aelementdata: pointer): boolean;
+
   public
 //todo: use faster calling, less parameters
    constructor create();
@@ -221,7 +240,7 @@ type
                  avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
    function findchild(aparent: elementoffsetty; 
-                 const achildtree: identbufty;
+                 const achildtree: identvecty;
                  const akinds: elementkindsty;
                  avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
@@ -231,7 +250,7 @@ type
                  const avislevel: visikindsty; 
                                out adata: pointer): boolean;
    function findchilddata(const aparent: elementoffsetty; 
-                 const achildtree: identbufty;
+                 const achildtree: identvecty;
                  const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out adata: pointer): boolean;
@@ -314,7 +333,7 @@ type
                            out aelementdata: pointer): boolean;
                                           //true if new
    function adduniquechilddata(const aparent: elementoffsetty;
-                           const achild: identbufty; 
+                           const achild: identvecty; 
                            const akind: elementkindty;
                            const avislevel: visikindsty;
                            out aelementdata: pointer): boolean;
@@ -1149,7 +1168,8 @@ begin
 end;
 }
 function telementhashdatalist.findchild(aparent: elementoffsetty;
-               const achildtree: identbufty; const akinds: elementkindsty;
+               const achildtree: pidentty; const ahigh: int32; 
+               const akinds: elementkindsty;
                avislevel: visikindsty; out element: elementoffsetty): boolean;
 var
  int1: integer;
@@ -1161,13 +1181,13 @@ label
  next;
 begin
  result:= false;
- if achildtree.high >= 0 then begin
+ if ahigh >= 0 then begin
   repeat
    with pelementinfoty(pointer(felementdata)+aparent)^ do begin
     id1:= header.path + header.name;
    end;
-   for int1:= 0 to achildtree.high do begin
-    id1:= id1 + achildtree.po[int1];
+   for int1:= 0 to ahigh do begin
+    id1:= id1 + achildtree[int1];
    end;
    uint1:= fhashtable[id1 and fmask];
    if uint1 <> 0 then begin
@@ -1179,8 +1199,8 @@ begin
        po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
       end;
       po3:= po2; //searched child
-      for int1:= achildtree.high downto 0 do begin
-       if (po2^.header.name <> achildtree.po[int1]) or 
+      for int1:= ahigh downto 0 do begin
+       if (po2^.header.name <> achildtree[int1]) or 
               (po2^.header.visibility*avislevel = []) then begin
         goto next;
        end;
@@ -1203,30 +1223,44 @@ begin
  end;
 end;
 
+function telementhashdatalist.findchild(aparent: elementoffsetty;
+               const achildtree: identvecty; const akinds: elementkindsty;
+               avislevel: visikindsty; out element: elementoffsetty): boolean;
+begin
+ result:= findchild(aparent,@achildtree.d[0],achildtree.high,
+                                                  akinds,avislevel,element);
+end;
+
 function telementhashdatalist.findchild(aparent: elementoffsetty; 
                  const achildtree: array of identty;
                  const akinds: elementkindsty;
                  avislevel: visikindsty;
                                out element: elementoffsetty): boolean;
-var
- buf1: identbufty;
 begin
- buf1.po:= @achildtree[0];
- buf1.high:= high(achildtree);
- result:= findchild(aparent,buf1,akinds,avislevel,element);
+ result:= findchild(aparent,@achildtree[0],high(achildtree),
+                                                akinds,avislevel,element);
 end;
 
 function telementhashdatalist.findchilddata(const aparent: elementoffsetty;
-               const achildtree: identbufty; const akinds: elementkindsty;
+               const achildtree: pidentty; const ahigh: int32;
+               const akinds: elementkindsty;
                const avislevel: visikindsty; out adata: pointer): boolean;
 var
  ele1: elementoffsetty;
 begin
  adata:= nil;
- result:= findchild(aparent,achildtree,akinds,avislevel,ele1);
+ result:= findchild(aparent,achildtree,ahigh,akinds,avislevel,ele1);
  if result then begin
   adata:= ele1+pointer(felementdata)+eledatashift;
  end;
+end;
+
+function telementhashdatalist.findchilddata(const aparent: elementoffsetty;
+               const achildtree: identvecty; const akinds: elementkindsty;
+               const avislevel: visikindsty; out adata: pointer): boolean;
+begin
+ result:= findchilddata(aparent,@achildtree.d[0],achildtree.high,
+                                                   akinds,avislevel,adata);
 end;
 
 function telementhashdatalist.findchilddata(const aparent: elementoffsetty; 
@@ -1234,12 +1268,9 @@ function telementhashdatalist.findchilddata(const aparent: elementoffsetty;
                  const akinds: elementkindsty;
                  const avislevel: visikindsty;
                                out adata: pointer): boolean;
-var
- buf1: identbufty;
 begin
- buf1.po:= @achildtree[0];
- buf1.high:= high(achildtree);
- result:= findchilddata(aparent,buf1,akinds,avislevel,adata);
+ result:= findchilddata(aparent,@achildtree[0],high(achildtree),
+                                                   akinds,avislevel,adata);
 end;
 
 function telementhashdatalist.findchild(aparent: elementoffsetty; 
@@ -2101,29 +2132,37 @@ begin
 end;
 
 function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
-               const achild: identbufty; const akind: elementkindty;
-               const avislevel: visikindsty;
-               out aelementdata: pointer): boolean;
+               const achild: pidentty; const ahigh: int32; 
+               const akind: elementkindty;const avislevel: visikindsty;
+                                            out aelementdata: pointer): boolean;
 var
  parentbefore: elementoffsetty;
  i1: int32;
  ele1: elementoffsetty;
 begin
- result:= not findchilddata(aparent,achild,[akind],avislevel,aelementdata);
+ result:= not findchilddata(aparent,achild,ahigh,[akind],avislevel,aelementdata);
  if result then begin
   parentbefore:= felementparent;
   ele1:= aparent;
-  for i1:= 0 to achild.high - 1 do begin
-   if not findchild(ele1,[achild.po[i1]],[],allvisi,ele1) then begin
+  for i1:= 0 to ahigh - 1 do begin
+   if not findchild(ele1,[achild[i1]],[],allvisi,ele1) then begin
     elementparent:= ele1;
-    ele1:= addelementduplicate1(achild.po[i1],ek_none,allvisi);
+    ele1:= addelementduplicate1(achild[i1],ek_none,allvisi);
    end;
   end;
   elementparent:= ele1;
-  aelementdata:= addelementduplicatedata1(achild.po[achild.high],
-                                                          akind,avislevel);
+  aelementdata:= addelementduplicatedata1(achild[ahigh],akind,avislevel);
   elementparent:= parentbefore;
  end;
+end;
+
+function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
+               const achild: identvecty; const akind: elementkindty;
+               const avislevel: visikindsty;
+               out aelementdata: pointer): boolean;
+begin
+ result:= adduniquechilddata(aparent,@achild.d[0],achild.high,
+                                               akind,avislevel,aelementdata);
 end;
 
 function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
@@ -2131,12 +2170,9 @@ function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
                            const akind: elementkindty;
                            const avislevel: visikindsty;
                            out aelementdata: pointer): boolean;
-var
- buf1: identbufty;
 begin
- buf1.po:= @achild[0];
- buf1.high:= high(achild);
- result:= adduniquechilddata(aparent,buf1,akind,avislevel,aelementdata);
+ result:= adduniquechilddata(aparent,@achild[0],high(achild),
+                                              akind,avislevel,aelementdata);
 end;
 
 function telementhashdatalist.addchildduplicatedata(

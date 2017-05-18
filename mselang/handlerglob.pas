@@ -497,12 +497,6 @@ type
  visibledataty = record
  end;
  pvisibledataty = ^visibledataty;
-
- identbufty = record
-  po: pidentty;
-  high: int32;
- end;
- 
 const 
  datasizes: array[0..64] of databitsizety = (
  //   0        1     2       3       4       5       6       7

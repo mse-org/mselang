@@ -323,6 +323,7 @@ implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler,
+ subhandler,
  identutils,llvmbitcodes,llvmlists;
    
 const
@@ -3367,6 +3368,9 @@ var
  poa,pob: pcontextitemty;
  opera1: poperatordataty;
  sub1: psubdataty;
+ pta,ptb: ptypedataty;
+ b1,b2: boolean;
+ operatorsig: identvecty;
 label
  endlab;
 begin
@@ -3393,6 +3397,23 @@ begin
                              (pob^.d.dat.datatyp.typedata <= 0) then begin
     goto endlab; //errorstate
    end;
+
+   if opsinfo.objop <> oa_none then begin
+    pta:= ele.eledataabs(d.dat.datatyp.typedata);
+    ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+    b1:= (pta^.h.kind = dk_object) and (d.dat.datatyp.indirectlevel = 0);
+                                                    //todo: classes
+    b2:= (ptb^.h.kind = dk_object) and (pob^.d.dat.datatyp.indirectlevel = 0);
+    if b1 or b2 then begin
+     operatorsig.d[0]:= tks_operators;
+     operatorsig.d[1]:= objectoperatoridents[opsinfo.objop];
+     if b1 then begin
+      setoperparamid(@operatorsig.d[2],pob^.d.dat.datatyp.indirectlevel,ptb);
+      operatorsig.high:= 3; 
+     end;
+    end;
+   end;
+
    bo2:= true;
    if d.kind <> ck_const then begin
     bo2:= getvalue(poa,das_none);

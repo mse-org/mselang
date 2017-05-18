@@ -93,6 +93,8 @@ procedure initsubstartinfo();
 function startsimplesub(const aname: identty;
                         const pointerparam: boolean): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
+procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
+                                                     const atyp: ptypedataty);
 
 implementation
 uses
@@ -1160,6 +1162,13 @@ begin
           (var1^.vf.typ = info.currentcontainer);
 end;
 
+procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
+                                                     const atyp: ptypedataty);
+begin
+ dest^:= getident(aindirectlevel);
+ (dest+1)^:= basetype1(atyp)^.h.signature;
+end;
+
 procedure setoperparamid(var dest: pidentty; const avar: pvardataty);
 begin
  dest^:= getident(avar^.address.indirectlevel);
@@ -1336,8 +1345,7 @@ var
  poind: pcontextitemty;
  poper1: poperatordataty;
  poperid: pidentty;
- operparamids: array[0..15] of identty;
- identbuf1: identbufty;
+ operparamids: identvecty;
  p1: pidentty;
 begin
 {$ifdef mse_debugparser}
@@ -1780,11 +1788,11 @@ begin
     end;
    end;
    if sf_operator in subflags then begin
-    if sub1^.paramcount >= high(operparamids)-1 then begin
+    if sub1^.paramcount*2 >= high(operparamids.d)-1 then begin
      errormessage(err_toomanyoperparams,[]);
     end
     else begin
-     p1:= @operparamids[0];
+     p1:= @operparamids.d[0];
      p1^:= currentoperator;
      inc(p1); 
      if sf_function in subflags then begin
@@ -1802,9 +1810,8 @@ begin
      if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
       ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
      end;
-     identbuf1.po:= @operparamids[0];
-     identbuf1.high:= (p1-identbuf1.po)-1;
-     if ele.adduniquechilddata(ele1,identbuf1,
+     operparamids.high:= (p1-pidentty(@operparamids.d[0]))-1;
+     if ele.adduniquechilddata(ele1,operparamids,
                                          ek_operator,allvisi,poper1) then begin
       poper1^.methodele:= ele.eledatarel(sub1);
      end
