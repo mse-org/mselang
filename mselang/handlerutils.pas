@@ -202,6 +202,9 @@ procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
 procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
 procedure pushinserttempaddress(const aaddress: tempaddressty;
                            const stackoffset: integer; const aopoffset: int32);
+procedure pushinsertstackaddress(const stackoffset: int32; 
+                                             const aopoffset: int32);
+
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                               const adatasize: databitsizety);
 procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
@@ -953,6 +956,35 @@ begin
   include(par.memop.t.flags,af_stacktemp);
   par.memop.tempdataaddress.a:= aaddress;
   par.memop.tempdataaddress.offset:= 0;
+ end;
+end;
+
+procedure pushinsertstackaddress(const stackoffset: int32; 
+                                            const aopoffset: int32);
+var
+ i1: int32;
+ pt1: ptypedataty;
+begin
+ with info,contextstack[stackoffset+s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) or 
+                  (d.dat.datatyp.indirectlevel < 0) then begin
+   internalerror(ie_handler,'20170518A');
+  end;
+ {$endif}
+  pt1:= ele.eledataabs(d.dat.datatyp.typedata);
+  i1:= d.dat.fact.ssaindex;
+  with insertitem(oc_pushstackaddr,stackoffset,aopoffset)^.par.memop do begin
+   if d.dat.datatyp.indirectlevel > 0 then begin
+    tempdataaddress.a.address:= -pointersize;
+   end
+   else begin
+    tempdataaddress.a.address:= -alignsize(pt1^.h.bytesize);
+   end;
+   tempdataaddress.offset:= 0;
+   tempdataaddress.a.ssaindex:= i1;
+   t:= getopdatatype(pt1,d.dat.datatyp.indirectlevel);
+  end;
  end;
 end;
 
@@ -3371,6 +3403,7 @@ var
  pta,ptb: ptypedataty;
  b1,b2: boolean;
  operatorsig: identvecty;
+ oper1: poperatordataty;
 label
  endlab;
 begin
@@ -3408,8 +3441,20 @@ begin
      operatorsig.d[0]:= tks_operators;
      operatorsig.d[1]:= objectoperatoridents[opsinfo.objop];
      if b1 then begin
-      setoperparamid(@operatorsig.d[2],pob^.d.dat.datatyp.indirectlevel,ptb);
-      operatorsig.high:= 3; 
+      setoperparamid(@operatorsig.d[2],0,nil); //no return value
+      setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
+      operatorsig.high:= 5;
+      if ele.findchilddata(basetype(d.dat.datatyp.typedata),
+                              operatorsig,[],allvisi,oper1) then begin
+       if not getvalue(poa,das_none) then begin
+        goto endlab;
+       end;
+       pushinsertstackaddress(getstackindex(poa)-s.stackindex,-1);
+       sub1:= ele.eledataabs(oper1^.methodele);
+       dosub(getstackindex(poa),sub1,getstackindex(pob),1,
+                                                 [dsf_instanceonstack]);
+       goto endlab;
+      end;
      end;
     end;
    end;

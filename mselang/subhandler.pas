@@ -95,6 +95,7 @@ function startsimplesub(const aname: identty;
 procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
+                                                        //nil -> void
 
 implementation
 uses
@@ -1166,12 +1167,22 @@ procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
 begin
  dest^:= getident(aindirectlevel);
- (dest+1)^:= basetype1(atyp)^.h.signature;
+ if atyp = nil then begin
+  (dest+1)^:= tks_void;
+ end
+ else begin
+  (dest+1)^:= basetype1(atyp)^.h.signature;
+ end;
 end;
 
 procedure setoperparamid(var dest: pidentty; const avar: pvardataty);
 begin
- dest^:= getident(avar^.address.indirectlevel);
+ if af_paramindirect in avar^.address.flags then begin
+  dest^:= getident(avar^.address.indirectlevel-1);
+ end
+ else begin
+  dest^:= getident(avar^.address.indirectlevel);
+ end;
  inc(dest);
  dest^:= ptypedataty(ele.eledataabs(basetype(avar^.vf.typ)))^.h.signature;
  inc(dest);
@@ -1797,14 +1808,16 @@ begin
      inc(p1); 
      if sf_function in subflags then begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]));
+      i1:= 2;
      end
      else begin
-      p1^:= tks_void;
-      inc(p1);
       p1^:= getident(0);
       inc(p1);
+      p1^:= tks_void;
+      inc(p1);
+      i1:= 1;
      end;
-     for i1:= 2 to sub1^.paramcount-1 do begin
+     for i1:= 1 to sub1^.paramcount-1 do begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[i1]));
      end;
      if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
