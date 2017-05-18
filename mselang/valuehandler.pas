@@ -1561,6 +1561,19 @@ var
      ck_ref: begin
       pushinsertaddress(stackoffset,-1);
      end;
+     ck_fact,ck_subres: begin
+      with context1^ do begin
+       if d.dat.indirection = 0 then begin
+       end
+       else begin
+        if d.dat.indirection < -1 then begin
+         inc(d.dat.indirection);
+         inc(d.dat.datatyp.indirectlevel);
+         getvalue(context1,si1);
+        end;
+       end;
+      end;
+     end;
     end;
    end
    else begin
