@@ -58,7 +58,7 @@ type
  internalfuncty = (if_printf,
                    {if_malloc,if_free,if_calloc,}if_realloc,if_memset,if_memcpy,
                    if__exit,
-                   if_sin64);
+                   if_sin64,if_fabs64);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -127,7 +127,8 @@ const
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
   (name: 'memcpy'; flags: [sf_proto,sf_function]; params: @memcpyparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
-  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
+  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
+  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
  );
 
 type
@@ -1879,6 +1880,27 @@ begin
   bcstream.emitbinop(BINOP_SUB,
                    bcstream.constval(ord(nullconsts[stackop.t.kind])),
                                                     bcstream.ssaval(ssas1));
+ end;
+end;
+
+procedure absintop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_ASHR,bcstream.ssaval(ssas1),
+                   bcstream.constval(ord(ashrconsts[stackop.t.kind])));
+     //mask = 0 if positive, ~0 if negative
+  bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.relval(0));
+     //value xor mask
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(0),bcstream.relval(1));
+     //(value xor mask)-mask
+ end;
+end;
+
+procedure absfloop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_fabs64]),
+                                                  [bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -4317,6 +4339,9 @@ const
   negcardssa = 1;
   negintssa = 1;
   negflossa = 1;
+  
+  absintssa = 3;
+  absflossa = 1;
 
   mulcardssa = 1;
   mulintssa = 1;

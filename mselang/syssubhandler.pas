@@ -28,6 +28,7 @@ procedure handlewrite(const paramco: integer);
 procedure handlesizeof(const paramco: integer);
 procedure handleinc(const paramco: integer);
 procedure handledec(const paramco: integer);
+procedure handleabs(const paramco: integer);
 procedure handlegetmem(const paramco: integer);
 procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
@@ -50,8 +51,10 @@ const
   @handlesetlength,@handleunique,
   //syf_sizeof,
   @handlesizeof,
-  //syf_inc, syf_de     syf_getmem,   syf_getzeromem,   syf_freemem
-  @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
+  //syf_inc,  syf_dec    syf_abs,   
+  @handleinc,@handledec,@handleabs,
+  //syf_getmem,  syf_getzeromem,   syf_freemem
+  @handlegetmem,@handlegetzeromem,@handlefreemem,
   //syf_reallocmem
   @handlereallocmem,
   //syf_setmem,  syf_memcpy,
@@ -407,6 +410,71 @@ end;
 procedure handledec(const paramco: integer);
 begin
  handleincdec(paramco,true);
+end;
+
+procedure handleabs(const paramco: integer);
+var
+ typ1: ptypedataty;
+ op1: opcodety;
+ i1: int32;
+begin
+ if checkparamco(1,paramco) then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20170519A');
+   end;
+  {$endif}
+   typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+   if (d.dat.datatyp.indirectlevel <> 0) or 
+              not (typ1^.h.kind in numericdatakinds)  then begin
+    incompatibletypeserror('numerical type',s.stacktop-s.stackindex);
+   end
+   else begin
+    if typ1^.h.kind <> dk_cardinal then begin //else nothing to do
+     case d.kind of
+      ck_const: begin
+       case typ1^.h.kind of
+        dk_integer: begin
+         d.dat.constval.vinteger:= abs(d.dat.constval.vinteger);
+        end;
+        dk_float: begin
+         d.dat.constval.vfloat:= abs(d.dat.constval.vfloat);
+        end;
+        else begin
+         internalerror(ie_handler,'20170519D');
+        end;
+       end;
+       contextstack[s.stackindex].d:= d; //todo: optimize
+      end;
+      else begin
+       if getvalue(@contextstack[s.stacktop],das_none) then begin
+        case typ1^.h.kind of
+         dk_integer: begin
+          op1:= oc_absint;
+         end;
+         dk_float: begin
+          op1:= oc_absflo;
+         end;
+         else begin
+          internalerror(ie_handler,'20170519E');
+         end;
+        end;
+        i1:= d.dat.fact.ssaindex;
+        with additem(op1)^ do begin
+         par.ssas1:= i1;
+         par.stackop.t:= getopdatatype(typ1,d.dat.datatyp.indirectlevel);
+         d.kind:= ck_subres;
+         d.dat.fact.ssaindex:= par.ssad;
+        end;
+       end;
+       contextstack[s.stackindex].d:= d; //todo: optimize
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure handleexit(const paramco: integer);
@@ -1081,6 +1149,7 @@ const
    (name: 'sizeof'; data: (func: syf_sizeof)),
    (name: 'inc'; data: (func: syf_inc)),
    (name: 'dec'; data: (func: syf_dec)),
+   (name: 'abs'; data: (func: syf_abs)),
    (name: 'getmem'; data: (func: syf_getmem)),
    (name: 'getzeromem'; data: (func: syf_getzeromem)),
    (name: 'freemem'; data: (func: syf_freemem)),

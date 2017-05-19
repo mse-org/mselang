@@ -1,0 +1,10 @@
+program updatesize;
+
+var
+ a,b: int32;
+
+begin
+ a:= 62;
+ b:= 92;
+ exitcode:= 33+a+b-(187-123);
+end.

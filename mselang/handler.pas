@@ -2415,32 +2415,32 @@ const
   (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint,oc_cmpint,                        
        //sdk_flo64,    sdk_set32,    sdk_string8
          oc_cmpflo,oc_cmpint,oc_cmpstring);
-   wantedtype: st_none; opname: '='),
+   wantedtype: st_none; opname: '='; objop: oa_eq),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
   (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint,oc_cmpint,
        //sdk_flo64,    sdk_set32,    sdk_string8
          oc_cmpflo,oc_cmpint,oc_cmpstring);
-   wantedtype: st_none; opname: '<>'),
+   wantedtype: st_none; opname: '<>'; objop: oa_ne),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
   (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
          oc_cmpflo,oc_none,  oc_cmpstring);
-   wantedtype: st_none; opname: '>'),
+   wantedtype: st_none; opname: '>'; objop: oa_gt),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
   (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
          oc_cmpflo,oc_none,  oc_cmpstring);
-   wantedtype: st_none; opname: '<'),
+   wantedtype: st_none; opname: '<'; objop: oa_lt),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,sdk_string8
          oc_cmpflo,oc_none,  oc_cmpstring);
-   wantedtype: st_none; opname: '>='),
+   wantedtype: st_none; opname: '>='; objop: oa_ge),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,
        //sdk_flo64,    sdk_set32,    sdk_string8
          oc_cmpflo,oc_setcontains,oc_cmpstring);
-   wantedtype: st_none; opname: '<='){,
+   wantedtype: st_none; opname: '<='; objop: oa_le){,
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,
        //sdk_flo64,    sdk_set32,sdk_string8

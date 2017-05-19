@@ -162,7 +162,7 @@ function checkparamsbase(const po1,ref: psubdataty): boolean;
 var
  par1,parref: pelementoffsetaty;
  pva,pvb: pvardataty;
- offs1: ptruint;
+ offs1: ptrint;
  var1,varref: pvardataty;
  int1: integer;
 // start,stop: integer;
@@ -212,7 +212,7 @@ function checkparams(const po1,ref: psubdataty): boolean;
 //                                  {$ifndef mse_debugparser} inline;{$endif}
 var
  par1,parref: pelementoffsetaty;
- offs1: ptruint;
+ offs1: ptrint;
  var1,varref: pvardataty;
  int1: integer;
  pa,pb: pvardataty;

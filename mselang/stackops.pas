@@ -3859,6 +3859,51 @@ begin
  end;
 end;
 
+procedure absintop();
+var
+ po1,po3: pointer;
+begin
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= abs(int8(po1^));
+   end;
+   das_16: begin
+    int16(po3^):= abs(int16(po1^));
+   end;
+   das_32: begin
+    int32(po3^):= abs(int32(po1^));
+   end;
+   das_64: begin
+    int64(po3^):= abs(int64(po1^));
+   end;
+   else begin
+    internalerror('20170519C');
+   end;
+  end;
+ end;
+end;
+
+procedure absfloop();
+var
+ po1,po3: pointer;
+begin
+ po1:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_f64: begin
+    flo64(po3^):= abs(flo64(po1^));
+   end;
+   else begin
+    internalerror('20170519D');
+   end;
+  end;
+ end;
+end;
+
 procedure pushnilop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
@@ -6339,6 +6384,9 @@ const
   negintssa = 0;
   negflossa = 0;
 
+  absintssa = 0;
+  absflossa = 0;
+  
   mulcardssa = 0;
   mulintssa = 0;
   divcardssa = 0;

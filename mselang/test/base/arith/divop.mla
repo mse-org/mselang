@@ -1,0 +1,7 @@
+program divop;
+var
+ i1: int32;
+begin
+ i1:= 123 * 4 div 2;
+ exitcode:= i1 div 2;
+end.

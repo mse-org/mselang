@@ -395,6 +395,10 @@
   (ssa: negintssa; proc: @negintop; flags: []), 
 //oc_negflo
   (ssa: negflossa; proc: @negfloop; flags: []), 
+//oc_absint
+  (ssa: absintssa; proc: @absintop; flags: []), 
+//oc_absflo
+  (ssa: absflossa; proc: @absfloop; flags: []), 
 
 //oc_mulcard
   (ssa: mulcardssa; proc: @mulcardop; flags: []), 

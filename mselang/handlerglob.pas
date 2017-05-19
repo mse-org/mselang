@@ -430,7 +430,7 @@ type
  sysfuncty = (syf_exit,syf_write,syf_writeln,
               syf_setlength,syf_unique,
               syf_sizeof,
-              syf_inc,syf_dec,
+              syf_inc,syf_dec,syf_abs,
               syf_getmem,syf_getzeromem,syf_freemem,syf_reallocmem,syf_setmem,
               syf_memcpy,
               syf_halt,

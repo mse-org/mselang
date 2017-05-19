@@ -335,6 +335,8 @@ procedure illegalconversionerror(const source: contextdataty;
 procedure incompatibletypeserror(const expected,got: contextdataty);
 procedure incompatibletypeserror(const expected: typeinfoty;
                                                    const astackoffset: int32);
+procedure incompatibletypeserror(const expected: string;
+                                                   const astackoffset: int32);
 procedure incompatibletypeserror(const expected,got: ptypedataty; 
                                           const astackoffset: int32 = minint);
 procedure incompatibletypeserror(const expected,got: elementoffsetty;
@@ -691,15 +693,13 @@ end;
 function typeinfoname(const context: contextdataty): string;
 begin
  with context do begin
-  case kind of
-   ck_const,ck_fact: begin
-    result:= charstring('^',dat.datatyp.indirectlevel)+
+  if kind in datacontexts then begin
+   result:= charstring('^',dat.datatyp.indirectlevel)+
                     charstring('@',-dat.datatyp.indirectlevel)+
                                    typeinfoname(dat.datatyp.typedata);
-   end
-   else begin
-    result:= '';
-   end;
+  end
+  else begin
+   result:= 'unknown type';
   end;
  end;
 end;
@@ -742,8 +742,18 @@ begin
                                                    typeinfoname(expected)]);
 end;
 
+procedure incompatibletypeserror(const expected: string;
+                                                   const astackoffset: int32);
+begin
+ with info do begin
+  errormessage(err_incompatibletypes,
+        [typeinfoname(contextstack[s.stackindex+astackoffset].d),expected],
+                                                                 astackoffset);
+ end;
+end;
+
 procedure incompatibletypeserror(const expected: typeinfoty;
-                                                   const astackoffset: int32); //stackoffset
+                                      const astackoffset: int32); //stackoffset
 begin
  with info do begin
   errormessage(err_incompatibletypes,

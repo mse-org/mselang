@@ -337,20 +337,20 @@ const
  systypeinfos: array[systypety] of systypeinfoty = (
    (name: '._none'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
    (name: '._nil'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
    (name: '._forward'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; manageproc: nil; flags: [tf_forward]; indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; next: 0);
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
    (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 1;
 //       bitsize: pointerbitsize; bytesize: pointersize;
-       bitsize: 8; bytesize: 1; datasize: das_pointer; next: 0);
+       bitsize: 8; bytesize: 1; datasize: das_pointer; next: 0; signature: 0);
        dummy1: 0)),
 {
    (name: 'tmethod'; data: (h: (ancestor: 0; kind: dk_method;
@@ -361,73 +361,73 @@ const
 }
    (name: 'bool1'; data: (h: (ancestor: 0; kind: dk_boolean;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 1; bytesize: 1; datasize: das_1; next: 0);
+       bitsize: 1; bytesize: 1; datasize: das_1; next: 0; signature: 0);
        dummy1: 0)),
    (name: 'int8'; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0;  rtti: 0; manageproc: nil; flags: [];indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; next: 0);
+       bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infoint8:(min: int8($80); max: $7f))),
    (name: 'int16'; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 16; bytesize: 2; datasize: das_16; next: 0);
+       bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infoint16:(min: int16($8000); max: $7fff))),
    (name: 'int32'; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32; next: 0);
+       bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
       infoint32:(min: int32($80000000); max: $7fffffff))),
    (name: 'int64'; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64; next: 0);
+       bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infoint64:(min: int64($8000000000000000); max: $7fffffffffffffff))),
    (name: 'card8'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; manageproc: nil; flags: [];indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; next: 0);
+       bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infocard8:(min: int8($00); max: $ff))),
    (name: 'card16'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 16; bytesize: 2; datasize: das_16; next: 0);
+       bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infocard16:(min: int16($0000); max: $ffff))),
    (name: 'card32'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32; next: 0);
+       bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
       infocard32:(min: int32($00000000); max: $ffffffff))),
    (name: 'card64'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64; next: 0);
+       bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infocard64:(min: $0000000000000000; max: card64($ffffffffffffffff)))),
    (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_f64; next: 0);
+       bitsize: 64; bytesize: 8; datasize: das_f64; next: 0; signature: 0);
        infofloat64:(min: mindouble; max: maxdouble))),
    (name: 'char8'; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; next: 0);
+       bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infochar8:(min: int8($00000000); max: $ff))),
    (name: 'char16'; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 16; bytesize: 2; datasize: das_16; next: 0);
+       bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infochar16:(min: int16($00000000); max: $ffff))),
    (name: 'char32'; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32; next: 0);
+       bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
        infochar32:(min: int32($00000000); max: $ffffffff))),
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize;
-                                          datasize: das_pointer; next: 0);
+                            datasize: das_pointer; next: 0; signature: 0);
        itemsize: 1; infostring: (dummy2: 0))),
    (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize;
-                                          datasize: das_pointer; next: 0);
+                            datasize: das_pointer; next: 0; signature: 0);
        itemsize: 2; infostring: (dummy2: 0))),
    (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize;
-                                          datasize: das_pointer; next: 0);
+                            datasize: das_pointer; next: 0; signature: 0);
        itemsize: 4; infostring: (dummy2: 0)))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (

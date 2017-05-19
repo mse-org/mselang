@@ -871,6 +871,14 @@ const
 //das_sub, das_meta
   mco_none,mco_none);
 
+ ashrconsts: array[databitsizety] of ashrconstty = (
+//das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
+  asco_none,asco_i1,asco_none,asco_i8,asco_none, asco_i16,asco_none, asco_i32,               
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
+  asco_none, asco_i64,asco_none,   asco_none,asco_none,asco_none,
+//das_sub, das_meta
+  asco_none,asco_none);
+
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 
 implementation
@@ -1425,6 +1433,11 @@ begin
   addi16(1);   //oc_i16
   addi32(1);   //oc_i32
   addi64(1);   //oc_i64
+//  addi1(false);//asco_i1
+//  addi8(7);    //asco_i8
+  addi16(15);  //asco_i16
+  addi32(31);  //asco_i32
+  addi64(65);  //asco_i64
   if target64 then begin
    fpointersize:= addi64(globtypes.pointersize).listid;
   end

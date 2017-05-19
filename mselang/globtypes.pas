@@ -249,6 +249,7 @@ const
  compatiblesubflags = [sf_function,
                        sf_method,sf_class,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
+ numericdatakinds = [dk_cardinal,dk_integer,dk_float];
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string];
  nilpointerdatakinds = pointerdatakinds+[dk_sub];
@@ -427,10 +428,13 @@ type
           nco_pointer,nco_method);
  maxconstty = (mco_none = 0,
                mco_i1 = ord(high(nullconstty))+1, mco_i8=255,
-                              mco_i16=ord(mco_i1)+1,mco_i32, mco_i64);
+                          mco_i16=ord(mco_i1)+1, mco_i32, mco_i64);
  oneconstty = (oco_none = 0,
                oco_i1 = ord(mco_i1), oco_i8=1,
-                              oco_i16=ord(high(maxconstty))+1,oco_i32, oco_i64);
+                          oco_i16=ord(high(maxconstty))+1, oco_i32, oco_i64);
+ ashrconstty = (asco_none = 0,
+               asco_i1 = ord(nco_i1), asco_i8=7,
+                          asco_i16=ord(high(oneconstty))+1, asco_i32, asco_i64);
  pointeroffsetconstty = 
        (poc_0=256,poc_1,poc_2,poc_3,poc_4,poc_5,poc_6,poc_7,poc_8,poc_9,
         poc_10,poc_11,poc_12,poc_13,poc_14,poc_15,poc_16,poc_17,poc_18,poc_19,

@@ -250,6 +250,9 @@ type
   oc_negint,
   oc_negflo,
 
+  oc_absint,
+  oc_absflo,
+  
   oc_mulcard,
   oc_mulint,
   oc_divcard,
@@ -965,6 +968,10 @@ type
    1: ( //llvm
     llvm: suballocllvmty;
    );
+   3: (
+    dummy: record
+    end;
+   );
  end;
 
  listitemallocinfoty = record
@@ -1001,6 +1008,7 @@ const
   nestedallocs: 0;
   nestedalloccount: 0;
   nestedallocstypeindex: -1;
+  dummy: ();
  );
  param1poallocs: suballocinfoty = (
   allocs: -1;       //must be set individually
@@ -1009,6 +1017,7 @@ const
   nestedallocs: 0;
   nestedalloccount: 0;
   nestedallocstypeindex: -1;
+  dummy: ();
  );
  par0name: lstringty = (
   po: '.par0';
@@ -1267,6 +1276,7 @@ type
    oc_chartostring8,
    
    oc_negcard,oc_negint,oc_negflo,
+   oc_absint,oc_absflo,
    oc_mulcard,oc_mulint,oc_mulflo,
    oc_divcard,oc_divint,oc_divflo,
    oc_addint,oc_addflo,
