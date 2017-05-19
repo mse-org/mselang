@@ -249,7 +249,7 @@ c=3
    (
    kind=1
    a=0,664,4,arith
-   c=34
+   c=36
     (
     kind=1
     a=0,664,4,bool
@@ -1520,6 +1520,50 @@ c=3
     )
     (
     kind=2
+    a=0,648,1,abs
+    teststate=1
+    path=abs.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,abs llvm
+    teststate=1
+    path=abs.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,andorxor1
     teststate=1
     path=andorxor1.mla
@@ -2304,8 +2348,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
-   c=18
+   a=0,665,4,conversions
+   c=20
     (
     kind=2
     a=0,648,1,potoint32
@@ -2465,6 +2509,50 @@ c=3
     a=0,648,1,pointercast llvm
     teststate=1
     path=pointercast.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,ord
+    teststate=1
+    path=ord.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,ord llvm
+    teststate=1
+    path=ord.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3176,7 +3264,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=6
     (
     kind=2
@@ -3195,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7301BF0
+    ao=An unhandled exception occured at $B7258BF0
     ae=
     aec=123
     ie=0
@@ -4876,7 +4964,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=39
     (
     kind=1
@@ -10175,7 +10263,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -10188,32 +10276,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=123
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=98
  0 0
  0 0
  0 0

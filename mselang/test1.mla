@@ -28,7 +28,7 @@ var
  lwo1,lwo2: longword;
 begin
 {$internaldebug on}
- lwo1:= abs('q'{value});
+ lwo1:= abs(value);
  if lwo1 = 0 then begin
   result:= '0';
   exit;

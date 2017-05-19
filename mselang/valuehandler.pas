@@ -21,7 +21,8 @@ uses
  globtypes,parserglob,handlerglob,msetypes;
 
 type
- convertoptionty = (coo_type,coo_enum,coo_set,coo_notrunk);
+ convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,coo_set,
+                    coo_notrunk);
  convertoptionsty = set of convertoptionty;
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
@@ -802,6 +803,20 @@ begin
               end;
               vcardinal:= venum.value;
              end;
+             {
+             dk_boolean: begin
+              if coo_boolean in aoptions then begin
+               result:= true;
+              end;
+              vboolean:= venum.value <> 0;
+             end;
+             }
+             dk_character: begin
+              if coo_character in aoptions then begin
+               result:= true;
+              end;
+              vcardinal:= vcharacter;
+             end;
              dk_set: begin //todo: arbitrary size
               if coo_set in aoptions then begin
                result:= true;
@@ -823,6 +838,25 @@ begin
                result:= true;
               end;
               vinteger:= venum.value;
+             end;
+             {
+             dk_boolean: begin
+              if coo_boolean in aoptions then begin
+               result:= true;
+              end;
+              if vboolean then begin
+               vinteger:= 1;
+              end
+              else begin
+               vinteger:= 0;
+              end;
+             end;
+             }
+             dk_character: begin
+              if coo_character in aoptions then begin
+               result:= true;
+              end;
+              vinteger:= vcharacter;
              end;
              dk_set: begin //todo: arbitrary size
               if coo_set in aoptions then begin
@@ -938,6 +972,18 @@ begin
              convertsize(inttocard);
             end;
            end;
+           {
+           dk_boolean: begin
+            if coo_boolean in aoptions then begin
+             convertsize(inttocard);
+            end;
+           end;
+           }
+           dk_character: begin
+            if coo_character in aoptions then begin
+             convertsize(cardtocard);
+            end;
+           end;
           end;
          end;
          dk_integer: begin
@@ -951,6 +997,18 @@ begin
            dk_enum: begin
             if coo_enum in aoptions then begin
              convertsize(inttoint);
+            end;
+           end;
+           {
+           dk_boolean: begin
+            if coo_boolean in aoptions then begin
+             convertsize(inttoint);
+            end;
+           end;
+           }
+           dk_character: begin
+            if coo_character in aoptions then begin
+             convertsize(cardtoint);
             end;
            end;
           end;

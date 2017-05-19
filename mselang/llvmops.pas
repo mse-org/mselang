@@ -1665,6 +1665,14 @@ begin
  //dummy
 end;
 
+procedure card1toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_ZEXT);
+ end;
+end;
+
 procedure string8to16op();
 begin
  with pc^.par do begin
@@ -4312,7 +4320,9 @@ const
   int64tocard16ssa = 1;
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
-  
+
+  card1toint32ssa = 1;
+    
   string8to16ssa = 1;
   string8to32ssa = 1;
   string16to8ssa = 1;

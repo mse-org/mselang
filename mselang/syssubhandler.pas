@@ -26,6 +26,7 @@ procedure handleexit(const paramco: integer);
 procedure handlewriteln(const paramco: integer);
 procedure handlewrite(const paramco: integer);
 procedure handlesizeof(const paramco: integer);
+procedure handleord(const paramco: integer);
 procedure handleinc(const paramco: integer);
 procedure handledec(const paramco: integer);
 procedure handleabs(const paramco: integer);
@@ -49,8 +50,8 @@ const
   @handlewrite,@handlewriteln,
   //syf_setlength,  syf_unique
   @handlesetlength,@handleunique,
-  //syf_sizeof,
-  @handlesizeof,
+  //syf_sizeof,  syf_ord
+  @handlesizeof, @handleord,
   //syf_inc,  syf_dec    syf_abs,   
   @handleinc,@handledec,@handleabs,
   //syf_getmem,  syf_getzeromem,   syf_freemem
@@ -70,7 +71,7 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils,llvmlists,valuehandler,identutils,unithandler;
+ segmentutils,llvmlists,valuehandler,identutils,unithandler,msestrings;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin
@@ -412,6 +413,100 @@ begin
  handleincdec(paramco,true);
 end;
 
+procedure handleord(const paramco: integer);
+
+ procedure ordinalerror();
+ begin
+  errormessage(err_ordinalexpexpected,[],info.s.stacktop-info.s.stackindex);
+ end; //ordinalerror
+
+var
+ typ1: ptypedataty;
+ lstr1: lstringty;
+ p1,p2: pcard8;
+ c1: card32;
+ i1: int32;
+begin
+ if checkparamco(1,paramco) then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20170519A');
+   end;
+  {$endif}
+   if (d.dat.datatyp.indirectlevel <> 0) or 
+                          (hf_listitem in d.handlerflags) then begin
+    ordinalerror();
+   end
+   else begin
+    typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+    case d.kind of
+     ck_const: begin
+      case typ1^.h.kind of
+       dk_integer: begin //nothing to do
+       end;
+       dk_cardinal: begin
+        d.dat.constval.vinteger:= d.dat.constval.vcardinal;
+       end;
+       dk_boolean: begin
+        if d.dat.constval.vboolean then begin
+         d.dat.constval.vinteger:= 1;
+        end
+        else begin
+         d.dat.constval.vinteger:= 0;
+        end;
+       end;
+       dk_enum: begin
+        d.dat.constval.vinteger:= d.dat.constval.venum.value;
+       end;
+       dk_character: begin
+        d.dat.constval.vinteger:= d.dat.constval.vcharacter;
+       end;
+       dk_string: begin 
+        lstr1:= getstringconst(d.dat.constval.vstring);
+        if lstr1.len > 0 then begin
+         p1:= pointer(lstr1.po);
+         p2:= p1 + lstr1.len;
+         if not getcodepoint(p1,p2,c1) or (p1 <> p2) then begin
+          ordinalerror();
+         end;
+         d.dat.constval.vinteger:= c1;
+        end;
+       end;
+       else begin
+        ordinalerror();
+       end;
+      end;
+      d.dat.constval.kind:= dk_integer;
+      d.dat.datatyp:= sysdatatypes[st_int32];
+     end;
+     else begin
+      if getvalue(@contextstack[s.stacktop],das_none) then begin
+       if typ1^.h.kind = dk_boolean then begin
+        i1:= d.dat.fact.ssaindex;
+        with additem(oc_card1toint32)^ do begin
+         par.ssas1:= i1;
+         par.stackop.t:= getopdatatype(typ1,d.dat.datatyp.indirectlevel);
+         d.kind:= ck_subres;
+         d.dat.fact.ssaindex:= par.ssad;
+         d.dat.datatyp:= sysdatatypes[st_int32];
+        end;
+       end
+       else begin
+        if not tryconvert(@contextstack[s.stacktop],st_int32,
+                            [coo_enum,{coo_boolean,}coo_character]) then begin
+         ordinalerror();
+        end;
+       end;
+      end;
+     end;
+    end;
+    contextstack[s.stackindex].d:= d; //todo: optimize
+   end;
+  end;
+ end;
+end;
+
 procedure handleabs(const paramco: integer);
 var
  typ1: ptypedataty;
@@ -445,7 +540,6 @@ begin
          internalerror(ie_handler,'20170519D');
         end;
        end;
-       contextstack[s.stackindex].d:= d; //todo: optimize
       end;
       else begin
        if getvalue(@contextstack[s.stacktop],das_none) then begin
@@ -468,10 +562,10 @@ begin
          d.dat.fact.ssaindex:= par.ssad;
         end;
        end;
-       contextstack[s.stackindex].d:= d; //todo: optimize
       end;
      end;
     end;
+    contextstack[s.stackindex].d:= d; //todo: optimize
    end;
   end;
  end;
@@ -1147,6 +1241,7 @@ const
    (name: 'setlength'; data: (func: syf_setlength)),
    (name: 'unique'; data: (func: syf_unique)),
    (name: 'sizeof'; data: (func: syf_sizeof)),
+   (name: 'ord'; data: (func: syf_ord)),
    (name: 'inc'; data: (func: syf_inc)),
    (name: 'dec'; data: (func: syf_dec)),
    (name: 'abs'; data: (func: syf_abs)),

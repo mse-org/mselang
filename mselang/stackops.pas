@@ -3159,6 +3159,19 @@ begin
  //dummy
 end;
 
+procedure card1toint32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int8));
+ if odd(pcard8(po1)^) then begin
+  pint32(po1)^:= 1;
+ end
+ else begin
+  pint32(po1)^:= 0;
+ end;
+end;
+
 function getcodepoint(var ps: pcard8; const pe: pcard8; 
                                   out ares: card32): boolean;
 
@@ -6356,6 +6369,8 @@ const
   int64tocard16ssa = 0;
   int64tocard32ssa = 0;
   int64tocard64ssa = 0;
+  
+  card1toint32ssa = 0;
 
   string8to16ssa = 0;
   string8to32ssa = 0;

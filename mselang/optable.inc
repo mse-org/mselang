@@ -344,6 +344,9 @@
 //oc_int64tocard64
   (ssa: int64tocard64ssa; proc: @int64tocard64op; flags: []), 
 
+//oc_card1toint32
+  (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 
+
 //oc_string8to16
   (ssa: string8to16ssa; proc: @string8to16op; flags: []), 
 //oc_string8to32

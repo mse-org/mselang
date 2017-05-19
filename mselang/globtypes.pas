@@ -289,7 +289,7 @@ type
  end;
 
  enumvaluety = record
-  value: integer;
+  value: int32;
   enum: elementoffsetty;
  end; 
 
