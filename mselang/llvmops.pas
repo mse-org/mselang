@@ -2820,7 +2820,7 @@ end;
 
 procedure popparop();
 begin
- notimplemented();
+ storeloc();
 end;
 
 procedure popparindi8op();

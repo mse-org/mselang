@@ -1440,6 +1440,58 @@ var
     internalerror1(ie_handler,'20160519A');
    end;
   end; //doconvert
+
+  procedure storetempgetaddress(); 
+           //store stack value in local var and get address on stack
+  var
+   i1,i2,i3: int32;
+   si1: databitsizety;
+   sourcetype: ptypedataty;
+   ad1: addressvaluety;
+   ty1: typeallocinfoty;
+  begin
+   sourcetype:= ele.eledataabs(context1^.d.dat.datatyp.typedata);
+              //dest can be untyped
+   i3:= context1^.d.dat.fact.ssaindex; //data ssa
+   if context1^.d.dat.datatyp.indirectlevel > 1 then begin
+    i2:= pointersize;
+    si1:= das_pointer;
+   end
+   else begin
+    i2:= sourcetype^.h.bytesize;
+    si1:= sourcetype^.h.datasize;
+   end;
+   ad1:= gettempaddress(i2);
+   ty1:= getopdatatype(sourcetype,vardata1^.address.indirectlevel-1);
+   if co_llvm in info.o.compileoptions then begin
+    with insertitem(oc_tempalloc,context1,-1)^ do begin
+     par.tempalloc.typid:= ty1.listindex;
+     i1:= par.ssad;
+    end;
+   end;
+   with insertitem(getpoptempop(si1),context1,-1)^ do begin
+    par.memop.t:= getopdatatype(sourcetype,
+                 vardata1^.address.indirectlevel-1);
+    include(par.memop.t.flags,af_stacktemp);
+    if co_llvm in info.o.compileoptions then begin
+     par.ssas1:= i3;
+     par.memop.tempdataaddress.a.ssaindex:= i1; //alloc ssa
+    end
+    else begin
+     par.memop.tempdataaddress.a:= ad1.tempaddress;
+    end;
+    par.memop.tempdataaddress.offset:= 0;
+   end;
+   if not (co_llvm in info.o.compileoptions) then begin
+    pushinserttempaddress(ad1.tempaddress,getstackoffset(context1),-1);
+   end
+   else begin
+    with insertitem(oc_potopo,context1,-1)^ do begin
+     par.ssas1:= i1;
+     context1^.d.dat.fact.ssaindex:= par.ssad;
+    end;
+   end;
+  end; //storetempgetaddress
   
  var
   desttype: ptypedataty;
@@ -1452,8 +1504,6 @@ var
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
-  ad1: addressvaluety;
-  ty1: typeallocinfoty;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -1509,48 +1559,7 @@ var
         if not getvalue(context1,das_none) then begin
          internalerror1(ie_handler,'20170424A');
         end;
-        sourcetype:= ele.eledataabs(context1^.d.dat.datatyp.typedata);
-                   //dest can be untyped
-        i3:= context1^.d.dat.fact.ssaindex; //data ssa
-        if context1^.d.dat.datatyp.indirectlevel > 1 then begin
-         i2:= pointersize;
-         si1:= das_pointer;
-        end
-        else begin
-         i2:= sourcetype^.h.bytesize;
-         si1:= sourcetype^.h.datasize;
-        end;
-        ad1:= gettempaddress(i2);
-        ty1:= getopdatatype(sourcetype,vardata1^.address.indirectlevel-1);
-        if co_llvm in o.compileoptions then begin
-         with insertitem(oc_tempalloc,context1,-1)^ do begin
-          par.tempalloc.typid:= ty1.listindex;
-          i1:= par.ssad;
-         end;
-        end;
-        with insertitem(getpoptempop(si1),context1,-1)^ do begin
-         par.memop.t:= getopdatatype(sourcetype,
-                      vardata1^.address.indirectlevel-1);
-         include(par.memop.t.flags,af_stacktemp);
-         if co_llvm in o.compileoptions then begin
-          par.ssas1:= i3;
-          par.memop.tempdataaddress.a.ssaindex:= i1; //alloc ssa
-         end
-         else begin
-          par.memop.tempdataaddress.a:= ad1.tempaddress;
-         end;
-         par.memop.tempdataaddress.offset:= 0;
-        end;
-        if not (co_llvm in o.compileoptions) then begin
-         pushinserttempaddress(ad1.tempaddress,
-                  context1-pcontextitemty(pointer(contextstack)),-1);
-        end
-        else begin
-         with insertitem(oc_potopo,context1,-1)^ do begin
-          par.ssas1:= i1;
-          context1^.d.dat.fact.ssaindex:= par.ssad;
-         end;
-        end;
+        storetempgetaddress(); //get data pointer
        end
        else begin
         errormessage(err_variableexpected,[],stackoffset);
@@ -1564,6 +1573,7 @@ var
      ck_fact,ck_subres: begin
       with context1^ do begin
        if d.dat.indirection = 0 then begin
+        storetempgetaddress();
        end
        else begin
         if d.dat.indirection < -1 then begin
