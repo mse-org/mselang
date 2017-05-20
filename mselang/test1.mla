@@ -36,7 +36,7 @@ begin
  int1:= high(buffer);
  while lwo1 > 0 do begin
   lwo2:= lwo1 div 10;
-  buffer[int1]:= char(lwo1 - lwo2 * 10 + ord('0'));
+  buffer[int1]:= char(card8(lwo1 - lwo2 * 10 + ord('0')));
   lwo1:= lwo2;
   dec(int1);
  end;

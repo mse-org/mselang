@@ -1,4 +1,4 @@
-{ MSEpas Copyright (c) 2014-2016 by Martin Schreiber
+{ MSEpas Copyright (c) 2014-2017 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -11,6 +11,14 @@ unit system;
 interface
 
 type
+{$ifdef cpu64}
+ intptr = int64;
+ cardptr = card64;
+{$else}
+ intptr = int32;
+ cardptr = card32;
+{$endif}
+
  boolean = bool1;
 
  byte = card8;

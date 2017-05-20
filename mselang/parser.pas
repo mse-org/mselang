@@ -61,7 +61,7 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit;
+ identutils,compilerunit,msearrayutils;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -1046,6 +1046,7 @@ var
  i1: integer;
  pcond: pconditiondataty;
  lstr1: lstringty;
+ rtlunit1: rtlunitty;
 begin
  result:= false;
 // init();
@@ -1117,15 +1118,27 @@ begin
     else begin
      beginparser(stackops.getoptable());
     end;
-    result:= parsecompilerunit(systemunitname,info.systemunit);
+    result:= parsecompilerunit(rtlunitnames[rtl_system],
+                                          info.rtlunits[rtl_system]);
     if result then begin
-     po1:= info.systemunit;
+//     po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
-     unit1^.interfaceuses[0]:= po1;
+     unit1^.interfaceuses[0]:= info.rtlunits[rtl_system];
      if result and not (co_nocompilerunit in aoptions) then begin
       result:= parsecompilerunit(memhandlerunitname,unit2);
       if result  then begin
        result:= parsecompilerunit(compilerunitname,unit2);
+      end;
+     end;
+     if result and not (co_nortlunits in aoptions)then begin
+      rtlunit1:= rtl_system;
+      inc(rtlunit1);
+      for rtlunit1:= rtlunit1 to high(rtlunits) do begin
+       result:= parsecompilerunit(rtlunitnames[rtlunit1],unit2);
+       if not result then begin
+        break;
+       end;
+       msearrayutils.additem(pointerarty(unit1^.interfaceuses),pointer(unit2));
       end;
      end;
      if result then begin

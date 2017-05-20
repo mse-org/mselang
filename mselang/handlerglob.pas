@@ -432,7 +432,7 @@ type
               syf_sizeof,syf_ord,
               syf_inc,syf_dec,syf_abs,
               syf_getmem,syf_getzeromem,syf_freemem,syf_reallocmem,syf_setmem,
-              syf_memcpy,
+              syf_memcpy,syf_memmove,
               syf_halt,
               syf_low,syf_high,syf_length,
               syf_sin);

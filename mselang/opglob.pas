@@ -615,6 +615,7 @@ type
   oc_reallocmem,
   oc_setmem,
   oc_memcpy,
+  oc_memmove,
   
   oc_sin,
 

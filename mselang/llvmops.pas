@@ -56,7 +56,8 @@ type
   params: pparamsty;
  end;
  internalfuncty = (if_printf,
-                   {if_malloc,if_free,if_calloc,}if_realloc,if_memset,if_memcpy,
+                   {if_malloc,if_free,if_calloc,}if_realloc,if_memset,
+                   if_memcpy,if_memmove,
                    if__exit,
                    if_sin64,if_fabs64);
 const
@@ -92,13 +93,31 @@ const
               (typelistindex: sizetype; flags: [])     //n count
  );
  memsetparams: paramsty = (count: 4; items: @memsetpar);
+{
  memcpypar: array[0..3] of paramitemty = (
               (typelistindex: pointertype; flags: []), //result
               (typelistindex: pointertype; flags: []), //dest
               (typelistindex: pointertype; flags: []), //source
               (typelistindex: sizetype; flags: [])     //count
+}
+
+ memcpypar: array[0..4] of paramitemty = (
+              (typelistindex: pointertype; flags: []), //dest
+              (typelistindex: pointertype; flags: []), //source
+              (typelistindex: ord(das_32); flags: []), //count
+              (typelistindex: ord(das_32); flags: []), //align
+              (typelistindex: ord(das_1);  flags: [])  //isvolatile
  );
- memcpyparams: paramsty = (count: 4; items: @memcpypar);
+ memcpyparams: paramsty = (count: 5; items: @memcpypar);
+
+ memmovepar: array[0..4] of paramitemty = (
+              (typelistindex: pointertype; flags: []), //dest
+              (typelistindex: pointertype; flags: []), //source
+              (typelistindex: ord(das_32); flags: []), //count
+              (typelistindex: ord(das_32); flags: []), //align
+              (typelistindex: ord(das_1);  flags: [])  //isvolatile
+ );
+ memmoveparams: paramsty = (count: 5; items: @memmovepar);
 
  _exitpar: array[0..0] of paramitemty = (
               (typelistindex: inttype; flags: [])      //status
@@ -125,7 +144,10 @@ const
 //  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'realloc'; flags: [sf_proto,sf_function]; params: @reallocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
-  (name: 'memcpy'; flags: [sf_proto,sf_function]; params: @memcpyparams),
+  (name: 'llvm.memcpy.p0i8.p0i8.i32'; flags: [sf_proto];
+                                                  params: @memcpyparams),
+  (name: 'llvm.memmove.p0i8.p0i8.i32'; flags: [sf_proto];
+                                                  params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
   (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
@@ -4144,13 +4166,24 @@ begin
  end;
 end;
 
-procedure memcpyop();
+procedure memtransfer(const asub: internalfuncty);
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memcpy]),
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[asub]),
             [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
-                                                    bcstream.ssaval(ssas3)]);
+             bcstream.ssaval(ssas3),bcstream.constval(ord(nco_i32)),
+             bcstream.constval(ord(nco_i1))]);
  end;
+end;
+
+procedure memcpyop();
+begin
+ memtransfer(if_memcpy);
+end;
+
+procedure memmoveop();
+begin
+ memtransfer(if_memmove);
 end;
 
 procedure sin64op();
@@ -4704,7 +4737,8 @@ const
   freememssa = 0;
   reallocmemssa = 3;
   setmemssa = 1;
-  memcpyssa = 1;
+  memcpyssa = 0;
+  memmovessa = 0;
   
   sin64ssa = 1;
   

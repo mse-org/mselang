@@ -60,6 +60,7 @@ type
    opted: tstringedit;
    nocompilerunited: tbooleanedit;
    tbutton3: tbutton;
+   nortlunitsed: tbooleanedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -144,6 +145,9 @@ begin
  end;
  if nocompilerunited.value then begin
   include(compoptions,co_nocompilerunit);
+ end;
+ if nortlunitsed.value then begin
+  include(compoptions,co_nortlunits);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try

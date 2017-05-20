@@ -24,6 +24,8 @@ uses
 type
  compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
  compilerswitchesty = set of compilerswitchty;
+ rtlunitty = (rtl_system,rtl_base,rtl_fpccompatibility);
+ 
 const
  defaultcompilerswitches = [];
 
@@ -180,7 +182,7 @@ const
 
 type 
  compileoptionty = (co_mlaruntime, //mla interpreter
-                    co_nocompilerunit,
+                    co_nocompilerunit,co_nortlunits,
                     co_llvm,co_hasfunction,
                     co_writeunits,     //write unitfiles
                     co_readunits,      //read unitfiles
@@ -798,7 +800,8 @@ type
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;
-  systemunit: punitinfoty;
+//  systemunit: punitinfoty;
+  rtlunits: array[rtlunitty] of punitinfoty;
  end;
 
 const

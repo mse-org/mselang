@@ -9,7 +9,7 @@ const
  mliextension = 'mli';
  llvmbcextension = 'bc'; 
 type
- paramty = (pa_source,pa_llvm,pa_nocompilerunit,
+ paramty = (pa_source,pa_llvm,pa_nocompilerunit,pa_nortlunits,
             pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine); 
             //item number in sysenv
  
@@ -84,6 +84,9 @@ begin
    end;
    if sysenv.defined[ord(pa_nocompilerunit)] then begin
     include(compoptions,co_nocompilerunit);
+   end;
+   if sysenv.defined[ord(pa_nortlunits)] then begin
+    include(compoptions,co_nortlunits);
    end;
    if parse(str1,filename1,compoptions) then begin
     if co_llvm in compoptions then begin

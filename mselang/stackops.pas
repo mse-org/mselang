@@ -6187,6 +6187,11 @@ begin
  move(ps^,pd^,count);
 end;
 
+procedure memmoveop();
+begin
+ memcpyop();
+end;
+
 procedure sin64op();
 var
  po1: pflo64;
@@ -6754,6 +6759,7 @@ const
   reallocmemssa = 0;
   setmemssa = 0;
   memcpyssa = 0;
+  memmovessa = 0;
   
   sin64ssa = 0;
   

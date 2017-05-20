@@ -2971,7 +2971,7 @@ begin
    if defunit = nil then begin
 //    file1:= dummymeta; //internal type
 //    context1:= dummymeta;
-    file1:= info.systemunit^.filepathmeta; //internal type
+    file1:= info.rtlunits[rtl_system]^.filepathmeta; //internal type
 //    context1:= info.systemunit^.compileunitmeta; 
     context1:= file1;
    end

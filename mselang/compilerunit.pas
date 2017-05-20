@@ -18,13 +18,14 @@ unit compilerunit;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob;
-
+ globtypes,parserglob,msestrings;
 const
 // systemunitname = '__mla__system';
- systemunitname = 'system';
+// systemunitname = 'system';
  memhandlerunitname = '__mla__debugmemhandler';
  compilerunitname = '__mla__compilerunit';
+ rtlunitnames: array[rtlunitty] of msestring = 
+            ('system','rtlbase','rtlfpccompatibility');
  
 type
  compilersubty = (

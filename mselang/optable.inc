@@ -1059,6 +1059,8 @@
   (ssa: setmemssa; proc: @setmemop; flags: []), 
 //oc_memcpy
   (ssa: memcpyssa; proc: @memcpyop; flags: []), 
+//oc_memmove
+  (ssa: memmovessa; proc: @memmoveop; flags: []), 
   
 //oc_sin64
   (ssa: sin64ssa; proc: @sin64op; flags: []), 

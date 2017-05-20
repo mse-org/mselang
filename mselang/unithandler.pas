@@ -902,14 +902,23 @@ end;
 function tunitlist.newunit(const aname: identty): punitinfoty;
 var
  po1: punithashdataty;
+ rtlunit1: rtlunitty;
 begin
  po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty));
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
+{
  if info.systemunit <> nil then begin
   setlength(result^.interfaceuses,1);
   result^.interfaceuses[0]:= info.systemunit;
+ end;
+}
+ for rtlunit1:= low(info.rtlunits) to high(info.rtlunits) do begin
+  if info.rtlunits[rtlunit1] <> nil then begin
+   msearrayutils.additem(pointerarty(result^.interfaceuses),
+                                           info.rtlunits[rtlunit1]);
+  end;
  end;
  po1^.data:= result;
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
@@ -1529,7 +1538,7 @@ function getexitcodeaddress: segaddressty;
 var
  ele1: elementoffsetty;
 begin
- if not ele.findchild(info.systemunit^.interfaceelement,tk_exitcode,
+ if not ele.findchild(info.rtlunits[rtl_system]^.interfaceelement,tk_exitcode,
                                            [ek_var],allvisi,ele1) then begin
   internalerror1(ie_parser,'20150831A');
  end;

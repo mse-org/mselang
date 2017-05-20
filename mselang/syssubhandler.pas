@@ -20,27 +20,28 @@ interface
 uses
  globtypes,handlerglob,opglob,managedtypes,msetypes;
 type
- syssubty = procedure (const paramco: integer);
+ syssubty = procedure (const paramco: int32);
  
-procedure handleexit(const paramco: integer);
-procedure handlewriteln(const paramco: integer);
-procedure handlewrite(const paramco: integer);
-procedure handlesizeof(const paramco: integer);
-procedure handleord(const paramco: integer);
-procedure handleinc(const paramco: integer);
-procedure handledec(const paramco: integer);
-procedure handleabs(const paramco: integer);
-procedure handlegetmem(const paramco: integer);
-procedure handlegetzeromem(const paramco: integer);
-procedure handlefreemem(const paramco: integer);
-procedure handlereallocmem(const paramco: integer);
-procedure handlesetmem(const paramco: integer);
-procedure handlememcpy(const paramco: integer);
-procedure handlehalt(const paramco: integer);
-procedure handlelow(const paramco: integer);
-procedure handlehigh(const paramco: integer);
-procedure handlelength(const paramco: integer);
-procedure handlesin(const paramco: integer);
+procedure handleexit(const paramco: int32);
+procedure handlewriteln(const paramco: int32);
+procedure handlewrite(const paramco: int32);
+procedure handlesizeof(const paramco: int32);
+procedure handleord(const paramco: int32);
+procedure handleinc(const paramco: int32);
+procedure handledec(const paramco: int32);
+procedure handleabs(const paramco: int32);
+procedure handlegetmem(const paramco: int32);
+procedure handlegetzeromem(const paramco: int32);
+procedure handlefreemem(const paramco: int32);
+procedure handlereallocmem(const paramco: int32);
+procedure handlesetmem(const paramco: int32);
+procedure handlememcpy(const paramco: int32);
+procedure handlememmove(const paramco: int32);
+procedure handlehalt(const paramco: int32);
+procedure handlelow(const paramco: int32);
+procedure handlehigh(const paramco: int32);
+procedure handlelength(const paramco: int32);
+procedure handlesin(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -58,8 +59,8 @@ const
   @handlegetmem,@handlegetzeromem,@handlefreemem,
   //syf_reallocmem
   @handlereallocmem,
-  //syf_setmem,  syf_memcpy,
-  @handlesetmem,@handlememcpy,
+  //syf_setmem,  syf_memcpy,  syf_memmove,
+  @handlesetmem,@handlememcpy,@handlememmove,
   //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin
   @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin);
 
@@ -852,7 +853,7 @@ begin
  end;
 end;
 
-procedure handlememcpy(const paramco: integer);
+procedure domemtransfer(const paramco: int32; const aop: opcodety);
 var
  po1,po2,po3: pcontextitemty;
  i1: int32;
@@ -863,13 +864,23 @@ begin
   po1:= getpreviousnospace(po2-1);
   if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
            getbasevalue(po2,das_pointer) and getbasevalue(po3,das_32) then begin
-   with additem(oc_memcpy)^ do begin
+   with additem(aop)^ do begin        //todo: alignment
     par.ssas1:= po1^.d.dat.fact.ssaindex; //dest
     par.ssas2:= po2^.d.dat.fact.ssaindex; //source
     par.ssas3:= po3^.d.dat.fact.ssaindex; //count
    end;
   end;
  end;
+end;
+
+procedure handlememcpy(const paramco: int32);
+begin
+ domemtransfer(paramco,oc_memcpy);
+end;
+
+procedure handlememmove(const paramco: int32);
+begin
+ domemtransfer(paramco,oc_memmove);
 end;
 
 procedure handlehalt(const paramco: integer);
@@ -1251,6 +1262,7 @@ const
    (name: 'reallocmem'; data: (func: syf_reallocmem)),
    (name: 'setmem'; data: (func: syf_setmem)),
    (name: 'memcpy'; data: (func: syf_memcpy)),
+   (name: 'memmove'; data: (func: syf_memmove)),
    (name: 'halt'; data: (func: syf_halt)),
    (name: 'low'; data: (func: syf_low)),
    (name: 'high'; data: (func: syf_high)),
