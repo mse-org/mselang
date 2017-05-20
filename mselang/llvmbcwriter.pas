@@ -744,9 +744,12 @@ begin
        emitintconst(pint64(consts.absdata(pc2^.header.buffer))^);
      {$endif}
       end;
+      das_f32: begin
+       emitfloatconst(flo32(pc2^.header.buffer));
+      end;
       das_f64: begin
      {$ifdef cpu64}
-       emitfloatconst(pflo64(@(pc2^.header.buffer)^));
+       emitfloatconst(flo64(pc2^.header.buffer));
      {$else}
        emitfloatconst(pflo64(consts.absdata(pc2^.header.buffer))^);
      {$endif}

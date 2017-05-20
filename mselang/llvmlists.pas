@@ -301,6 +301,7 @@ type
    function addi16(const avalue: int16): llvmvaluety;
    function addi32(const avalue: int32): llvmvaluety;
    function addi64(const avalue: int64): llvmvaluety;
+   function addf32(const avalue: flo32): llvmvaluety;
    function addf64(const avalue: flo64): llvmvaluety;
    function adddataoffs(const avalue: dataoffsty): llvmvaluety;
    function addvalue(const avalue; const asize: int32): llvmvaluety;
@@ -1570,6 +1571,21 @@ begin
  end;
 // result:= addvalue(avalue,8);
 {$endif}
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
+end;
+
+function tconsthashdatalist.addf32(const avalue: flo32): llvmvaluety;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= ppointer(@avalue)^;
+ alloc1.typeid:= ord(das_f32);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
  result.listid:= po1^.data.header.listindex;
  result.typeid:= po1^.data.typeid;
 end;

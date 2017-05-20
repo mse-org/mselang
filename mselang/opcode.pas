@@ -65,7 +65,8 @@ procedure setimmint8(const value: int8; var aimm: immty);
 procedure setimmint16(const value: int16; var aimm: immty);
 procedure setimmint32(const value: int32; var aimm: immty);
 procedure setimmint64(const value: int64; var aimm: immty);
-procedure setimmfloat64(const value: float64; var aimm: immty);
+procedure setimmfloat32(const value: flo32; var aimm: immty);
+procedure setimmfloat64(const value: flo64; var aimm: immty);
 procedure setimmsize(const value: datasizety; var aimm: immty);
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
@@ -791,7 +792,18 @@ begin
  end;
 end;
 
-procedure setimmfloat64(const value: float64; var aimm: immty);
+procedure setimmfloat32(const value: flo32; var aimm: immty);
+begin
+ aimm.datasize:= das_f32;
+ if co_llvm in info.o.compileoptions then begin
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf32(value);
+ end
+ else begin
+  aimm.vflo32:= value;
+ end;
+end;
+
+procedure setimmfloat64(const value: flo64; var aimm: immty);
 begin
  aimm.datasize:= das_f64;
  if co_llvm in info.o.compileoptions then begin

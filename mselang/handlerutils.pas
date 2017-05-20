@@ -55,7 +55,7 @@ const
  //das_none,das_1,   das_2_7,das_8,  das_9_15,das_16,  das_17_31,das_32,
   st_none,  st_bool1,st_none,st_int8,st_int16,st_int16,st_int32, st_int32,
 //das_33_63,das_64,  das_pointer,das_f16,das_f32,das_f64,   das_sub,das_meta
-  st_int64, st_int64,st_pointer, st_none,st_none,st_flo64,st_none,st_none
+  st_int64, st_int64,st_pointer, st_none,st_flo32,st_flo64,st_none,st_none
  );
 
  stackdatakinds: array[datakindty] of stackdatakindty = (
@@ -330,8 +330,10 @@ uses
  identutils,llvmbitcodes,llvmlists;
    
 const
- mindouble = -1.7e308;
- maxdouble = 1.7e308; //todo: use exact values
+ minflo32 = -3.4e38;
+ maxflo32 = 3.4e38; //todo: use exact values
+ minflo64 = -1.7e308;
+ maxflo64 = 1.7e308; //todo: use exact values
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
@@ -395,10 +397,14 @@ const
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infocard64:(min: $0000000000000000; max: card64($ffffffffffffffff)))),
+   (name: 'flo32'; data: (h: (ancestor: 0; kind: dk_float;
+       base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_f32; next: 0; signature: 0);
+       infofloat32:(min: minflo32; max: maxflo32))),
    (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_f64; next: 0; signature: 0);
-       infofloat64:(min: mindouble; max: maxdouble))),
+       infofloat64:(min: minflo64; max: maxflo64))),
    (name: 'char8'; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
@@ -1209,9 +1215,17 @@ begin
     end;
    end;
    dk_float: begin
-    si1:= das_f64;
-    with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
-     setimmfloat64(constval.vfloat,par.imm);
+    if adatasize = das_f32 then begin
+     si1:= das_f32;
+     with insertitem(oc_pushimmf32,stackoffset,aopoffset)^ do begin
+      setimmfloat32(constval.vfloat,par.imm);
+     end;
+    end
+    else begin
+     si1:= das_f64;
+     with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
+      setimmfloat64(constval.vfloat,par.imm);
+     end;
     end;
    end;
    dk_string: begin

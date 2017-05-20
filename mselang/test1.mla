@@ -4,6 +4,7 @@ type
  longint = int32;
  smallint = int16;
  string = string8;
+ single = flo32;
 {$endif}
 
 const
@@ -101,7 +102,29 @@ begin
     end;
 end;
 
+procedure makeMap( ) ;
+var x,y,z,i : longword;
+    yd,zd,th : single;
+begin
+    // add random blocks to the map
+    for x := 0 to 63 do begin
+        for y := 0 to 63 do begin
+             for z := 0 to 63 do begin
+                i := (z shl 12) or (y shl 6) or x;
+               yd := (y - 32.5) * 0.4;
+               zd := (z - 32.5) * 0.4;
+               map[i] := random( 16 );
+               th := random( 256 ) / 256.0;
+
+              if (th > sqrt( sqrt( yd * yd + zd * zd ) ) - 0.8) or (th < 0.5) then
+                 map[i] := 0;
+              end;
+        end;
+    end;
+end;
 
 begin
- writeln(inttostr(123));
+ maketextures();
+ makemap();
+ writeln(texmap[100]);
 end.

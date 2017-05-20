@@ -648,6 +648,7 @@ var
  lstr1: lstringty;
  p1,p2: pcard8;
  b1: boolean;
+ op1: opcodety;
 begin
  result:= false;
  with info do begin
@@ -953,6 +954,19 @@ begin
             i1:= d.dat.fact.ssaindex;
             with insertitem(convtoflo64[source1^.h.kind = dk_integer,
                               source1^.h.datasize],stackoffset,-1)^ do begin
+             par.ssas1:= i1;
+            end;
+            result:= true;
+           end;
+           dk_float: begin
+            if source1^.h.datasize = das_f32 then begin
+             op1:= oc_flo32toflo64;
+            end
+            else begin
+             op1:= oc_flo64toflo32;
+            end;
+            i1:= d.dat.fact.ssaindex;
+            with insertitem(op1,stackoffset,-1)^ do begin
              par.ssas1:= i1;
             end;
             result:= true;

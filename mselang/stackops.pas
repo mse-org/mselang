@@ -617,6 +617,11 @@ begin
  write(int64((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
+procedure writefloat32op();
+begin
+ write(flo32((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
 procedure writefloat64op();
 begin
  write(vfloatty((cpu.stack+cpu.pc^.par.voffset)^));
@@ -855,6 +860,11 @@ end;
 procedure pushimm64op();
 begin
  pint64(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
+end;
+
+procedure pushimmf32op();
+begin
+ pflo32(stackpush(4))^:= cpu.pc^.par.imm.vflo32; 
 end;
 
 procedure pushimmf64op();
@@ -3214,6 +3224,23 @@ procedure int64tocard64op();
 begin
  //dummy
 end;
+
+procedure flo32toflo64op();
+var
+ da1: flo32;
+begin
+ da1:= pflo32(stackpop(sizeof(flo32)))^;
+ pflo64(stackpush(sizeof(flo64)))^:= da1;
+end;
+
+procedure flo64toflo32op();
+var
+ da1: flo64;
+begin
+ da1:= pflo64(stackpop(sizeof(flo64)))^;
+ pflo32(stackpush(sizeof(flo32)))^:= da1;
+end;
+
 
 procedure card1toint32op();
 var
@@ -6325,6 +6352,7 @@ const
   writeinteger16ssa = 0;
   writeinteger32ssa = 0;
   writeinteger64ssa = 0;
+  writefloat32ssa = 0;
   writefloat64ssa = 0;
   writechar8ssa = 0;
   writechar16ssa = 0;
@@ -6346,6 +6374,7 @@ const
   pushimm16ssa = 0;
   pushimm32ssa = 0;
   pushimm64ssa = 0;
+  pushimmf32ssa = 0;
   pushimmf64ssa = 0;
   pushimmdatakindssa = 0;
   
@@ -6433,6 +6462,9 @@ const
   int64tocard16ssa = 0;
   int64tocard32ssa = 0;
   int64tocard64ssa = 0;
+
+  flo32toflo64ssa = 0;
+  flo64toflo32ssa = 0;
   
   card1toint32ssa = 0;
 

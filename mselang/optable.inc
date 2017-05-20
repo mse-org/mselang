@@ -139,6 +139,8 @@
   (ssa: writeinteger32ssa; proc: @writeinteger32op; flags: []), 
 //oc_writeinteger64
   (ssa: writeinteger64ssa; proc: @writeinteger64op; flags: []), 
+//oc_writefloat32
+  (ssa: writefloat32ssa; proc: @writefloat32op; flags: []), 
 //oc_writefloat64
   (ssa: writefloat64ssa; proc: @writefloat64op; flags: []), 
 //oc_writechar8
@@ -179,6 +181,8 @@
   (ssa: pushimm32ssa; proc: @pushimm32op; flags: []), 
 //oc_pushimm64
   (ssa: pushimm64ssa; proc: @pushimm64op; flags: []), 
+//oc_pushimmf32
+  (ssa: pushimmf32ssa; proc: @pushimmf32op; flags: []), 
 //oc_pushimmf64
   (ssa: pushimmf64ssa; proc: @pushimmf64op; flags: []), 
 //oc_pushimmdatakind
@@ -343,6 +347,11 @@
   (ssa: int64tocard32ssa; proc: @int64tocard32op; flags: []), 
 //oc_int64tocard64
   (ssa: int64tocard64ssa; proc: @int64tocard64op; flags: []), 
+
+//oc_flo32toflo64
+  (ssa: flo32toflo64ssa; proc: @flo32toflo64op; flags: []), 
+//oc_flo64toflo32
+  (ssa: flo64toflo32ssa; proc: @flo64toflo32op; flags: []), 
 
 //oc_card1toint32
   (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 

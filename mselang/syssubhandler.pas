@@ -652,8 +652,19 @@ begin
        end;
       end;
       dk_float: begin
-       po1:=  additem(oc_writefloat64);
-       po1^.par.voffset:= alignsize(sizeof(float64));
+       case po2^.h.datasize of
+        das_f32: begin
+         po1:=  additem(oc_writefloat32);
+         po1^.par.voffset:= alignsize(sizeof(float32));
+        end;
+        das_f64: begin
+         po1:=  additem(oc_writefloat64);
+         po1^.par.voffset:= alignsize(sizeof(float64));
+        end;
+        else begin
+         goto errlab;
+        end;
+       end;
       end;
       dk_string: begin
        case po2^.itemsize of

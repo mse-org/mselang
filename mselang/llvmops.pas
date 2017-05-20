@@ -1,3 +1,4 @@
+
 { MSElang Copyright (c) 2014-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
@@ -158,7 +159,7 @@ type
   text: string;
  end;
  internalstringty = (is_ret,is_card32,is_int8,is_int16,is_int32,is_int64,
-                     is_char8,is_string8,is_pointer,is_flo64);
+                     is_char8,is_string8,is_pointer,is_flo32,is_flo64);
 const
  internalstringconsts: array[internalstringty] of internalstringinfoty = (
   (text: #$a#0),        //is_ret,
@@ -170,6 +171,7 @@ const
   (text: '%c'#0),       //is_char8,
   (text: '%s'#0),       //is_string8,
   (text: '%p'#0),       //is_pointer
+  (text: '%e'#0),       //is_flo32
   (text: '%e'#0)        //is_flo64
  );  
 
@@ -881,6 +883,16 @@ begin
  writeintegerop(is_int64);
 end;
 
+procedure writefloat32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_flo32]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure writefloat64op();
 begin
  with pc^.par do begin
@@ -1015,6 +1027,13 @@ begin
 end;
 
 procedure pushimm64op();
+begin
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
+end;
+
+procedure pushimmf32op();
 begin
  with pc^.par do begin
   bcstream.emitpushconst(imm.llvm);
@@ -1695,6 +1714,22 @@ end;
 procedure int64tocard64op();
 begin
  //dummy
+end;
+
+procedure flo32toflo64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_f64)),CAST_FPEXT);
+ end;
+end;
+
+procedure flo64toflo32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_f32)),CAST_FPTRUNC);
+ end;
 end;
 
 procedure card1toint32op();
@@ -4255,6 +4290,7 @@ const
   writeinteger16ssa = 1;
   writeinteger32ssa = 1;
   writeinteger64ssa = 1;
+  writefloat32ssa = 1;
   writefloat64ssa = 1;
   writechar8ssa = 1;
   writechar16ssa = 1;
@@ -4276,6 +4312,7 @@ const
   pushimm16ssa = 1;
   pushimm32ssa = 1;
   pushimm64ssa = 1;
+  pushimmf32ssa = 1;
   pushimmf64ssa = 1;
   pushimmdatakindssa = 1;
   
@@ -4363,6 +4400,9 @@ const
   int64tocard16ssa = 1;
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
+
+  flo32toflo64ssa = 1;
+  flo64toflo32ssa = 1;
 
   card1toint32ssa = 1;
     

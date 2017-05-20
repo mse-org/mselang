@@ -157,6 +157,7 @@ type
   oc_writeinteger16,
   oc_writeinteger32,
   oc_writeinteger64,
+  oc_writefloat32,
   oc_writefloat64,
   oc_writechar8,
   oc_writechar16,
@@ -178,6 +179,7 @@ type
   oc_pushimm16,
   oc_pushimm32,
   oc_pushimm64,
+  oc_pushimmf32,
   oc_pushimmf64,
   oc_pushimmdatakind,
   
@@ -226,6 +228,8 @@ type
   oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
   
+  oc_flo32toflo64,oc_flo64toflo32,
+
   oc_card1toint32,
   
   oc_string8to16,oc_string8to32,
@@ -760,11 +764,12 @@ type
    7: (vint16: int16);
    8: (vint32: int32);
    9: (vint64: int64);
-  10: (vflo64: flo64);
-  11: (vsize: datasizety);
-  12: (vpointer: dataaddressty);
-  13: (voffset: dataoffsty);
-  14: (vdatakind: datakindty);
+  10: (vflo32: flo32);
+  11: (vflo64: flo64);
+  12: (vsize: datasizety);
+  13: (vpointer: dataaddressty);
+  14: (voffset: dataoffsty);
+  15: (vdatakind: datakindty);
  end;
  
  swapstackty = record
@@ -1134,6 +1139,7 @@ const
   oc_writeinteger16,
   oc_writeinteger32,
   oc_writeinteger64,
+  oc_writefloat32,
   oc_writefloat64,
   oc_writestring8,oc_writestring16,oc_writestring32,
   oc_writechar8,
@@ -1239,7 +1245,7 @@ type
     vaddress: dataaddressty;
    );}
    oc_increg0,oc_writeboolean,oc_writeinteger8,oc_writeinteger16,
-   oc_writeinteger32,oc_writeinteger64,oc_writefloat64,
+   oc_writeinteger32,oc_writeinteger64,oc_writefloat32,oc_writefloat64,
    oc_writechar8,oc_writestring8,oc_writestring16,oc_writestring32,
    oc_writepointer,oc_writeclass,oc_writeenum,
    {oc_pushstackaddrindi,}oc_pushduppo,oc_storemanagedtemp,
@@ -1274,6 +1280,8 @@ type
    oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
 
+   oc_flo32toflo64,oc_flo64toflo32,
+   
    oc_card1toint32,
    
    oc_string8to16,oc_string8to32,
