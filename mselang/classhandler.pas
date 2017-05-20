@@ -798,7 +798,8 @@ begin
 {$endif}
  with info do begin
   p1:= ele.eledataabs(currentcontainer);
-  if not (icf_allocvalid in p1^.infoclass.flags) then begin
+  if (p1^.h.kind in [dk_object,dk_class]) and 
+                   not (icf_allocvalid in p1^.infoclass.flags) then begin
    updateobjalloc(p1,@contextstack[s.stackindex-1].d.cla);
   end;
  end;

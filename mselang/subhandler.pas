@@ -859,7 +859,7 @@ begin
       end;
      end;
      else begin
-      internalerror(ie_handler,'20170501A');
+      internalerror1(ie_handler,'20170501A');
      end;
     end;
    end;

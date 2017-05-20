@@ -538,7 +538,7 @@ begin
          d.dat.constval.vfloat:= abs(d.dat.constval.vfloat);
         end;
         else begin
-         internalerror(ie_handler,'20170519D');
+         internalerror1(ie_handler,'20170519D');
         end;
        end;
       end;
@@ -552,7 +552,7 @@ begin
           op1:= oc_absflo;
          end;
          else begin
-          internalerror(ie_handler,'20170519E');
+          internalerror1(ie_handler,'20170519E');
          end;
         end;
         i1:= d.dat.fact.ssaindex;
