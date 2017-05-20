@@ -1256,6 +1256,8 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
          const desttypedata: elementoffsetty; const destaddress: addressvaluety;
            const options: compatibilitycheckoptionsty;
              out conversioncost: int32; out destindirectlevel: int32): boolean;
+const
+ maxsizeconversioncost = ord(das_64)-ord(das_1);
 var
  source,dest: ptypedataty;
  sourceitem{,destitem}: ptypedataty;
@@ -1392,12 +1394,16 @@ begin
                         //todo: stringsizes !!!!!!!!!!!!
     if result and (source^.h.datasize <> dest^.h.datasize) then begin
      inc(conversioncost);          //2
-     if source^.h.datasize > dest^.h.datasize then begin
-      inc(conversioncost);         //3
-     end;
+     if source^.h.datasize < dest^.h.datasize then begin
+      inc(conversioncost,ord(dest^.h.datasize)-ord(source^.h.datasize));         //3
+     end
+     else begin
+      inc(conversioncost,-(ord(dest^.h.datasize)-ord(source^.h.datasize))
+                                                      + maxsizeconversioncost); 
+     end;                                                         //3
     end;
     if not result then begin
-     inc(conversioncost,2);        //4
+     inc(conversioncost,2+maxsizeconversioncost+maxsizeconversioncost); //4
      result:= (source^.h.kind = dk_cardinal) and 
                                 (dest^.h.kind = dk_integer) or
               (source^.h.kind = dk_integer) and 
