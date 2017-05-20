@@ -123,6 +123,7 @@ procedure handlenegfact();
 procedure handlenotfact();
 procedure handlemulfact();
 procedure handledivfact();
+procedure handlemodfact();
 procedure handledivisionfact();
 procedure handlelistfact();
 
@@ -943,6 +944,13 @@ const
          oc_none,  oc_none);
    wantedtype: st_none; opname: 'div'; objop: oa_none);
 
+ modops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_modcard,oc_modint,oc_none,
+       //sdk_set32,sdk_string8
+         oc_none,  oc_none);
+   wantedtype: st_none; opname: 'mod'; objop: oa_none);
+
  divisionops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,    oc_divflo,
@@ -983,6 +991,14 @@ begin
  outhandle('DIVFACT');
 {$endif}
  updateop(divops);
+end;
+
+procedure handlemodfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('MODFACT');
+{$endif}
+ updateop(modops);
 end;
 
 procedure handledivisionfact();

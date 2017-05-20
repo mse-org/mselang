@@ -1164,6 +1164,16 @@ begin
  outbinop(BINOP_SDIV);
 end;
 
+procedure modcardop();
+begin
+ outbinop(BINOP_UREM);
+end;
+
+procedure modintop();
+begin
+ outbinop(BINOP_SREM);
+end;
+
 procedure mulimmintop();
 begin
  with pc^.par do begin
@@ -4390,6 +4400,8 @@ const
   mulintssa = 1;
   divcardssa = 1;
   divintssa = 1;
+  modcardssa = 1;
+  modintssa = 1;
   mulflossa = 1;
   divflossa = 1;
   addintssa = 1;

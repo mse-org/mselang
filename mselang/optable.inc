@@ -411,6 +411,10 @@
   (ssa: divcardssa; proc: @divcardop; flags: []), 
 //oc_divint
   (ssa: divintssa; proc: @divintop; flags: []), 
+//oc_modcard
+  (ssa: modcardssa; proc: @modcardop; flags: []), 
+//oc_modint
+  (ssa: modintssa; proc: @modintop; flags: []), 
 //oc_mulflo
   (ssa: mulflossa; proc: @mulfloop; flags: []), 
 //oc_divflo

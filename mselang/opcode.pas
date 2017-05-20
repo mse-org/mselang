@@ -406,7 +406,7 @@ begin
      offset:= offs1;
     end;
    end;
-   ab_local: begin
+   ab_local,ab_localindi: begin
     with par.memop.locdataaddress do begin
      a.address:= ad1;
      a.framelevel:= lev1;

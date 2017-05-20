@@ -1308,16 +1308,25 @@ var                       //todo: move after doparam
             include(address.flags,af_const);
            end;
            if resultvar and impl1 and (d.typ.indirectlevel = 0) and 
-                     (tf_needsmanage in typ1^.h.flags) then begin
+                     (typ1^.h.flags*[tf_needsini,tf_needsmanage] <> []) then begin
             include(vf.flags,tf_needsini);
             include(s.currentstatementflags,stf_needsini);
            end;
           end
           else begin
-           if impl1 and (d.typ.indirectlevel = 0) and 
-                     (tf_needsmanage in typ1^.h.flags) then begin
-            include(vf.flags,tf_needsmanage);
-           end;                     
+           if impl1 and (d.typ.indirectlevel = 0) then begin
+            if resultvar then begin
+             if typ1^.h.flags*[tf_needsini,tf_needsmanage] <> [] then begin
+              include(vf.flags,tf_needsini);
+              include(s.currentstatementflags,stf_needsini);
+             end;
+            end
+            else begin 
+             if tf_needsmanage in typ1^.h.flags then begin
+              include(vf.flags,tf_needsmanage);
+             end;
+            end;
+           end;
           end;
          end;
          if (typ1^.h.kind = dk_none) and 

@@ -259,6 +259,8 @@ type
   oc_mulint,
   oc_divcard,
   oc_divint,
+  oc_modcard,
+  oc_modint,
   oc_mulflo,
   oc_divflo,
   oc_addint,

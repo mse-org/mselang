@@ -1238,6 +1238,62 @@ begin
  end;
 end;
 
+procedure modcardop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    card8(po3^):= card8(po2^) mod card8(po1^);
+   end;
+   das_16: begin
+    card16(po3^):= card16(po2^) mod card16(po1^);
+   end;
+   das_32: begin
+    card32(po3^):= card32(po2^) mod card32(po1^);
+   end;
+   das_64: begin
+    card64(po3^):= card64(po2^) mod card64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
+procedure modintop();
+var
+ po1,po2,po3: pointer;
+begin
+ po1:= popbinop();
+ po2:= popbinop();
+ po3:= pushbinop();
+ with cpu.pc^.par do begin
+  case stackop.t.kind of
+   das_8: begin
+    int8(po3^):= int8(po2^) mod int8(po1^);
+   end;
+   das_16: begin
+    int16(po3^):= int16(po2^) mod int16(po1^);
+   end;
+   das_32: begin
+    int32(po3^):= int32(po2^) mod int32(po1^);
+   end;
+   das_64: begin
+    int64(po3^):= int64(po2^) mod int64(po1^);
+   end;
+   else begin
+    internalerror('20160716A');
+   end;
+  end;
+ end;
+end;
+
 procedure mulimmintop();
 var
  po2,po3: pointer;
@@ -6414,6 +6470,8 @@ const
   mulintssa = 0;
   divcardssa = 0;
   divintssa = 0;
+  modcardssa = 0;
+  modintssa = 0;
   mulflossa = 0;
   divflossa = 0;
   addintssa = 0;

@@ -20,35 +20,88 @@ procedure  plot(x,y,c : LongInt) {$ifdef FPC}inline{$endif};
 begin
   screen[x, y] := c;
 end;
-
-function inttostr(const value: integer): string;
+procedure makeTextures();
 var
- buffer: array[0..22] of char;
- int1,int2: integer;
- lwo1,lwo2: longword;
+   j,m,k,i1,i2,i3,n : LongInt;
 begin
-{$internaldebug on}
- lwo1:= abs(value);
- if lwo1 = 0 then begin
-  result:= '0';
-  exit;
- end;
- int1:= high(buffer);
- while lwo1 > 0 do begin
-  lwo2:= lwo1 div 10;
-  buffer[int1]:= char(card8(lwo1 - lwo2 * 10 + ord('0')));
-  lwo1:= lwo2;
-  dec(int1);
- end;
- if value < 0 then begin
-  buffer[int1]:= char('-');
-  dec(int1);
- end;
- int2:= (high(buffer))-int1;
- setlength(result,int2);
- move(buffer[int1+1],pointer(result)^,int2*sizeof(char));
+
+    // each texture
+    for j:=0 to 15 do begin
+
+        k := 255 - random(96);
+
+        // each pixel in the texture
+        for m:=0  to (16 * 3)-1 do
+            for n :=0 to 15 do begin
+
+                i1 := $966C4A;
+                i2 := 0;
+                i3 := 0;
+
+                if (j = 4) then
+                    i1 := $7F7F7F;
+                if ((j <> 4) or (random(3) = 0)) then
+                    k := 255 - random(96);
+                if ( j = 1 ) then
+                begin
+                    if m < ((((n * n * 3 + n * 81) shr 2) and $3) + 18) then
+                        i1 := $6AAA40
+                    else if m < ((((n * n * 3 + n * 81) shr 2) and $3) + 19) then
+                        k := k * 2 div 3;
+                end;
+                if (j = 7) then
+                begin
+                    i1 := $675231;
+                    if ((n > 0) and (n < 15) and (((m > 0) and (m < 15)) or ((m > 32) and (m < 47)))) then
+                    begin
+                        i1 := $BC9862;
+                        i2 := n - 7;
+                        i3 := (m and $F) - 7;
+                        if (i2 < 0.0) then
+                            i2 := 1 - i2;
+
+                        if (i3 < 0.0) then
+                            i3 := 1 - i3;
+
+                        if (i3 > i2) then
+                            i2 := i3;
+
+                        k := 196 - random(32) + i2 mod 3 * 32;
+                    end
+                    else if (random(2) = 0) then
+                        k := k * (150 - (n and $1) * 100) div 100;
+                end;
+                if (j = 5) then
+                begin
+                    i1 := $B53A15;
+                    if (((n + m div 4 * 4) mod 8 = 0) or (m mod 4 = 0)) then
+                        i1 := $BCAFA5;
+                end;
+                i2 := k;
+                if (m >= 32) then
+                    i2 := i2 div 2;
+                if (j = 8) then
+                begin
+                    i1 := 5298487;
+                    if (random(2) = 0) then
+                    begin
+                        i1 := 0;
+                        i2 := 255;
+                    end;
+                end;
+
+                // fixed point colour multiply between i1 and i2
+                i3 :=
+                    ((((i1 shr 16) and $FF) * i2 div 255) shl 16) or
+                    ((((i1 shr  8) and $FF) * i2 div 255) shl  8) or
+                      ((i1        and $FF) * i2 div 255);
+                // pack the colour away
+                texmap[ n + m * 16 + j * 256 * 3 ] := i3;
+            end;
+    end;
 end;
 
 
 begin
+ writeln(inttostr(123));
 end.
