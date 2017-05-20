@@ -98,7 +98,7 @@ const
                    seg_classintfcount,seg_intfitemcount];
 type
  addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_managedtemp,
-                  af_param,af_paramindirect,af_const,
+                  af_param,af_paramindirect,af_const,af_resultvar,
                   af_paramconst,af_paramconstref,af_paramvar,af_paramout, 
                                               //for paramkindty match test
 //                  af_managedtemp,

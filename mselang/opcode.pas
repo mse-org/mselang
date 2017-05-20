@@ -186,72 +186,72 @@ end;
 const
  storenilops: aropadsty = (
   (    //aro_none
-  //ab_segment,   ab_local,      ab_reg0,
-   oc_storesegnil,oc_storelocnil,oc_storereg0nil,
+  //ab_segment,   ab_local,      ab_locindi,
+   oc_storesegnil,oc_storelocnil,oc_storelocindinil,
   //ab_stack,      ab_stackref
    oc_storestacknil,oc_storestackrefnil),
   (    //aro_static
-  //ab_segment,     ab_local,        ab_reg0,
-   oc_storesegnilar,oc_storelocnilar,oc_storereg0nilar,
+  //ab_segment,     ab_local,        ab_locindi,
+   oc_storesegnilar,oc_storelocnilar,oc_storelocindinilar,
   //ab_stack,       ab_stackref
    oc_storestacknilar,oc_storestackrefnilar),
   (    //aro_dynamic
-  //ab_segment,     ab_local,        ab_reg0,
-   oc_storesegnildynar,oc_storelocnildynar,oc_storereg0nildynar,
+  //ab_segment,     ab_local,        ab_locindi,
+   oc_storesegnildynar,oc_storelocnildynar,oc_storelocindinildynar,
   //ab_stack,       ab_stackref
    oc_storestacknildynar,oc_storestackrefnildynar)
  );
 
  finirefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_reg0,
-   oc_finirefsizeseg,oc_finirefsizeloc,oc_finirefsizereg0,
+  //ab_segment,         ab_local,            ab_locindi,
+   oc_finirefsizeseg,oc_finirefsizeloc,oc_finirefsizelocindi,
   //ab_stack,           ab_stackref
    oc_finirefsizestack,oc_finirefsizestackref),
   (     //aro_static
-  //ab_segment,           ab_local,              ab_reg0,
-   oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizereg0ar,
+  //ab_segment,           ab_local,              ab_locindi,
+   oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizelocindiar,
   //ab_stack,             ab_stackref
    oc_finirefsizestackar,oc_finirefsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_local,              ab_reg0,
-   oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizereg0dynar,
+  //ab_segment,           ab_local,              ab_locindi,
+   oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizelocindidynar,
   //ab_stack,             ab_stackref
    oc_finirefsizestackdynar,oc_finirefsizestackrefdynar)
  );
 
  increfsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_reg0,
-   oc_increfsizeseg,oc_increfsizeloc,oc_increfsizereg0,
+  //ab_segment,         ab_local,            ab_locindi,
+   oc_increfsizeseg,oc_increfsizeloc,oc_increfsizelocindi,
   //ab_stack,           ab_stackref
    oc_increfsizestack,oc_increfsizestackref),
   (     //aro_static
-  //ab_segment,           ab_local,              ab_reg0,
-   oc_increfsizesegar,oc_increfsizelocar,oc_increfsizereg0ar,
+  //ab_segment,           ab_local,              ab_locindi,
+   oc_increfsizesegar,oc_increfsizelocar,oc_increfsizelocindiar,
   //ab_stack,             ab_stackref
    oc_increfsizestackar,oc_increfsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_local,              ab_reg0,
-   oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizereg0dynar,
+  //ab_segment,           ab_local,              ab_locindi,
+   oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizelocindidynar,
   //ab_stack,             ab_stackref
    oc_increfsizestackdynar,oc_increfsizestackrefdynar)
  );
 
  decrefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_reg0,
-   oc_decrefsizeseg,oc_decrefsizeloc,oc_decrefsizereg0,
+  //ab_segment,         ab_local,            ab_locindi,
+   oc_decrefsizeseg,oc_decrefsizeloc,oc_decrefsizelocindi,
   //ab_stack,           ab_stackref
    oc_decrefsizestack,oc_decrefsizestackref),
   (     //aro_static
-  //ab_global,           ab_local,              ab_reg0,
-   oc_decrefsizesegar,oc_decrefsizelocar,oc_decrefsizereg0ar,
+  //ab_global,           ab_local,              ab_locindi,
+   oc_decrefsizesegar,oc_decrefsizelocar,oc_decrefsizelocindiar,
   //ab_stack,             ab_stackref
    oc_decrefsizestackar,oc_decrefsizestackrefar),
   (     //aro_dynamic
-  //ab_global,           ab_local,              ab_reg0,
-   oc_decrefsizesegdynar,oc_decrefsizelocdynar,oc_decrefsizereg0dynar,
+  //ab_global,           ab_local,              ab_locindi,
+   oc_decrefsizesegdynar,oc_decrefsizelocdynar,oc_decrefsizelocindidynar,
   //ab_stack,             ab_stackref
    oc_decrefsizestackdynar,oc_decrefsizestackrefdynar)
  );
@@ -291,7 +291,13 @@ begin
       tracklocalaccess(address.locaddress,ele.eledatarel(aref.vardata),
                                                       bitoptypes[das_pointer]);
       lev1:= info.sublevel - address.locaddress.framelevel - 1;
-      ab1:= ab_local;
+      if (co_mlaruntime in info.o.compileoptions) and 
+          (af_resultvar in pvardataty(aref.vardata)^.address.flags) then begin
+       ab1:= ab_localindi;
+      end
+      else begin
+       ab1:= ab_local;
+      end;
       ad1:= address.locaddress.address;
      end
      else begin

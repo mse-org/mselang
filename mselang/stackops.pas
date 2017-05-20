@@ -4032,9 +4032,9 @@ begin
  ppointer(getlocaddress(cpu.pc^.par.memop))^:= nil;
 end;
 
-procedure storereg0nilop();
+procedure storelocindinilop();
 begin
- ppointer(reg0+getmanagedaddressoffset())^:= nil;
+ pppointer(getlocaddress(cpu.pc^.par.memop))^^:= nil;
 end;
 
 procedure storestacknilop();
@@ -4069,15 +4069,15 @@ begin
  end;
 end;
 
-procedure storereg0nilarop();
+procedure storelocindinilarop();
 begin
-{$ifdef cpu64}
- fillqword(ppointer(reg0+getmanagedaddressoffset())^,
-                                            cpu.pc^.par.memop.t.size,0);
-{$else}
- filldword(ppointer(reg0+getmanagedaddressoffset())^,
-                                            cpu.pc^.par.memop.t.size,0);
-{$endif}
+ with cpu.pc^.par do begin
+ {$ifdef cpu64}
+  fillqword(ppointer(getlocaddress(memop))^^,memop.t.size,0);
+ {$else}
+  fillqword(ppointer(getlocaddress(memop))^^,memop.t.size,0);
+ {$endif}
+ end;
 end;
 
 procedure storestacknilarop();
@@ -4136,12 +4136,12 @@ begin
  end;
 end;
 
-procedure storereg0nildynarop();
+procedure storelocindinildynarop();
 var
  po1: pointer;
  i1: int32;
 begin
- po1:= ppointer(reg0+getmanagedaddressoffset())^;
+ po1:= pppointer(getlocaddress(cpu.pc^.par.memop))^^;
  if po1 <> nil then begin
   i1:= (pdynarraysizety(po1)-1)^;
 {$ifdef cpu64}
@@ -5479,9 +5479,9 @@ begin
  finirefsize(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure finirefsizereg0op();
+procedure finirefsizelocindiop();
 begin
- finirefsize(ppointer(reg0+getmanagedaddressoffset()));
+ finirefsize(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure finirefsizestackop();
@@ -5507,10 +5507,11 @@ begin
  end;
 end;
 
-procedure finirefsizereg0arop();
+procedure finirefsizelocindiarop();
 begin
- finirefsizear(ppointer(reg0+getmanagedaddressoffset()),
-                                                 cpu.pc^.par.memop.t.size);
+ with cpu.pc^.par do begin
+  finirefsizear(pppointer(getlocaddress(memop))^,memop.t.size);
+ end;
 end;
 
 procedure finirefsizestackarop();
@@ -5535,9 +5536,9 @@ begin
  finirefsizedynar(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure finirefsizereg0dynarop();
+procedure finirefsizelocindidynarop();
 begin
- finirefsizedynar(ppointer(reg0+getmanagedaddressoffset()));
+ finirefsizedynar(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure finirefsizestackdynarop();
@@ -5560,9 +5561,9 @@ begin
  increfsize(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure increfsizereg0op();
+procedure increfsizelocindiop();
 begin
- increfsize(ppointer(reg0+getmanagedaddressoffset()));
+ increfsize(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure increfsizestackop();
@@ -5588,10 +5589,11 @@ begin
  end;
 end;
 
-procedure increfsizereg0arop();
+procedure increfsizelocindiarop();
 begin
- increfsizear(ppointer(reg0+getmanagedaddressoffset()),
-                                             cpu.pc^.par.memop.t.size);
+ with cpu.pc^.par do begin
+  increfsizear(pppointer(getlocaddress(memop))^,memop.t.size);
+ end;
 end;
 
 procedure increfsizestackarop();
@@ -5616,9 +5618,9 @@ begin
  increfsizedynar(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure increfsizereg0dynarop();
+procedure increfsizelocindidynarop();
 begin
- increfsizedynar(ppointer(reg0+getmanagedaddressoffset()));
+ increfsizedynar(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure increfsizestackdynarop();
@@ -5641,9 +5643,9 @@ begin
  decrefsize(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure decrefsizereg0op();
+procedure decrefsizelocindiop();
 begin
- decrefsize(ppointer(reg0+getmanagedaddressoffset()));
+ decrefsize(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure decrefsizestackop();
@@ -5669,10 +5671,11 @@ begin
  end;
 end;
 
-procedure decrefsizereg0arop();
+procedure decrefsizelocindiarop();
 begin
- decrefsizear(ppointer(reg0+getmanagedaddressoffset()),
-                                                cpu.pc^.par.memop.t.size);
+ with cpu.pc^.par do begin
+  decrefsizear(pppointer(getlocaddress(memop))^,memop.t.size);
+ end;
 end;
 
 procedure decrefsizestackarop();
@@ -5697,9 +5700,9 @@ begin
  decrefsizedynar(ppointer(getlocaddress(cpu.pc^.par.memop)));
 end;
 
-procedure decrefsizereg0dynarop();
+procedure decrefsizelocindidynarop();
 begin
- decrefsizedynar(ppointer(reg0+getmanagedaddressoffset()));
+ decrefsizedynar(pppointer(getlocaddress(cpu.pc^.par.memop))^);
 end;
 
 procedure decrefsizestackdynarop();
@@ -6485,74 +6488,74 @@ const
   setinssa = 0;
 
   storesegnilssa = 0;
-  storereg0nilssa = 0;
+  storelocindinilssa = 0;
   storelocnilssa = 0;
   storestacknilssa = 0;
   storestackrefnilssa = 0;
 
   storesegnilarssa = 0;
   storelocnilarssa = 0;
-  storereg0nilarssa = 0;
+  storelocindinilarssa = 0;
   storestacknilarssa = 0;
   storestackrefnilarssa = 0;
 
   storesegnildynarssa = 0;
   storelocnildynarssa = 0;
-  storereg0nildynarssa = 0;
+  storelocindinildynarssa = 0;
   storestacknildynarssa = 0;
   storestackrefnildynarssa = 0;
 
   finirefsizesegssa = 0;
   finirefsizelocssa = 0;
-  finirefsizereg0ssa = 0;
+  finirefsizelocindissa = 0;
   finirefsizestackssa = 0;
   finirefsizestackrefssa = 0;
 
   finirefsizesegarssa = 0;
   finirefsizelocarssa = 0;
-  finirefsizereg0arssa = 0;
+  finirefsizelocindiarssa = 0;
   finirefsizestackarssa = 0;
   finirefsizestackrefarssa = 0;
 
   finirefsizesegdynarssa = 0;
   finirefsizelocdynarssa = 0;
-  finirefsizereg0dynarssa = 0;
+  finirefsizelocindidynarssa = 0;
   finirefsizestackdynarssa = 0;
   finirefsizestackrefdynarssa = 0;
 
   increfsizesegssa = 0;
   increfsizelocssa = 0;
-  increfsizereg0ssa = 0;
+  increfsizelocindissa = 0;
   increfsizestackssa = 0;
   increfsizestackrefssa = 0;
 
   increfsizesegarssa = 0;
   increfsizelocarssa = 0;
-  increfsizereg0arssa = 0;
+  increfsizelocindiarssa = 0;
   increfsizestackarssa = 0;
   increfsizestackrefarssa = 0;
 
   increfsizesegdynarssa = 0;
   increfsizelocdynarssa = 0;
-  increfsizereg0dynarssa = 0;
+  increfsizelocindidynarssa = 0;
   increfsizestackdynarssa = 0;
   increfsizestackrefdynarssa = 0;
 
   decrefsizesegssa = 0;
   decrefsizelocssa = 0;
-  decrefsizereg0ssa = 0;
+  decrefsizelocindissa = 0;
   decrefsizestackssa = 0;
   decrefsizestackrefssa = 0;
 
   decrefsizesegarssa = 0;
   decrefsizelocarssa = 0;
-  decrefsizereg0arssa = 0;
+  decrefsizelocindiarssa = 0;
   decrefsizestackarssa = 0;
   decrefsizestackrefarssa = 0;
 
   decrefsizesegdynarssa = 0;
   decrefsizelocdynarssa = 0;
-  decrefsizereg0dynarssa = 0;
+  decrefsizelocindidynarssa = 0;
   decrefsizestackdynarssa = 0;
   decrefsizestackrefdynarssa = 0;
   

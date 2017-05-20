@@ -2305,7 +2305,7 @@ begin
  end;
 end;
 
-procedure storereg0nilop();
+procedure storelocindinilop();
 begin
  notimplemented();
 end;
@@ -2357,7 +2357,7 @@ procedure storelocnilarop();
 begin
  notimplemented();
 end;
-procedure storereg0nilarop();
+procedure storelocindinilarop();
 begin
  notimplemented();
 end;
@@ -2379,7 +2379,7 @@ begin
  loadloc(false);
  callcompilersub(cs_storenildynar,false,[bcstream.relval(0)]);
 end;
-procedure storereg0nildynarop();
+procedure storelocindinildynarop();
 begin
  notimplemented();
 end;
@@ -2411,7 +2411,7 @@ begin
  end;
 end;
 
-procedure finirefsizereg0op();
+procedure finirefsizelocindiop();
 begin
  notimplemented();
 end;
@@ -2446,7 +2446,7 @@ procedure finirefsizelocarop();
 begin
  notimplemented();
 end;
-procedure finirefsizereg0arop();
+procedure finirefsizelocindiarop();
 begin
  notimplemented();
 end;
@@ -2471,7 +2471,7 @@ begin
  callcompilersub(cs_finirefsizedynar,false,[bcstream.relval(0)]);
 end;
 
-procedure finirefsizereg0dynarop();
+procedure finirefsizelocindidynarop();
 begin
  notimplemented();
 end;
@@ -2500,7 +2500,7 @@ begin
  callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
 end;
 
-procedure increfsizereg0op();
+procedure increfsizelocindiop();
 begin
  notimplemented();
 end;
@@ -2529,7 +2529,7 @@ procedure increfsizelocarop();
 begin
  notimplemented();
 end;
-procedure increfsizereg0arop();
+procedure increfsizelocindiarop();
 begin
  notimplemented();
 end;
@@ -2550,7 +2550,7 @@ procedure increfsizelocdynarop();
 begin
  notimplemented();
 end;
-procedure increfsizereg0dynarop();
+procedure increfsizelocindidynarop();
 begin
  notimplemented();
 end;
@@ -2581,7 +2581,7 @@ begin
  end;
 end;
 
-procedure decrefsizereg0op();
+procedure decrefsizelocindiop();
 begin
  notimplemented();
 end;
@@ -2611,7 +2611,7 @@ procedure decrefsizelocarop();
 begin
  notimplemented();
 end;
-procedure decrefsizereg0arop();
+procedure decrefsizelocindiarop();
 begin
  notimplemented();
 end;
@@ -2632,7 +2632,7 @@ procedure decrefsizelocdynarop();
 begin
  notimplemented();
 end;
-procedure decrefsizereg0dynarop();
+procedure decrefsizelocindidynarop();
 begin
  notimplemented();
 end;
@@ -4464,74 +4464,74 @@ const
   setinssa = 3;
 
   storesegnilssa = 0;
-  storereg0nilssa = 1;
+  storelocindinilssa = 1;
   storelocnilssa = 0;
   storestacknilssa = 1;
   storestackrefnilssa = 1;
 
   storesegnilarssa = 1;
   storelocnilarssa = 1;
-  storereg0nilarssa = 1;
+  storelocindinilarssa = 1;
   storestacknilarssa = 1;
   storestackrefnilarssa = 2;
 
   storesegnildynarssa = 1;
   storelocnildynarssa = 1;
-  storereg0nildynarssa = 1;
+  storelocindinildynarssa = 1;
   storestacknildynarssa = 1;
   storestackrefnildynarssa = 2;
 
   finirefsizesegssa = 1;
   finirefsizelocssa = 2;
-  finirefsizereg0ssa = 1;
+  finirefsizelocindissa = 1;
   finirefsizestackssa = 1;
   finirefsizestackrefssa = 0;
 
   finirefsizesegarssa = 1;
   finirefsizelocarssa = 1;
-  finirefsizereg0arssa = 1;
+  finirefsizelocindiarssa = 1;
   finirefsizestackarssa = 1;
   finirefsizestackrefarssa = 2;
 
   finirefsizesegdynarssa = 1;
   finirefsizelocdynarssa = 1;
-  finirefsizereg0dynarssa = 1;
+  finirefsizelocindidynarssa = 1;
   finirefsizestackdynarssa = 1;
   finirefsizestackrefdynarssa = 2;
 
   increfsizesegssa = 1;
   increfsizelocssa = 1;
-  increfsizereg0ssa = 1;
+  increfsizelocindissa = 1;
   increfsizestackssa = 0;
   increfsizestackrefssa = 2;
 
   increfsizesegarssa = 1;
   increfsizelocarssa = 1;
-  increfsizereg0arssa = 1;
+  increfsizelocindiarssa = 1;
   increfsizestackarssa = 1;
   increfsizestackrefarssa = 1;
 
   increfsizesegdynarssa = 1;
   increfsizelocdynarssa = 1;
-  increfsizereg0dynarssa = 1;
+  increfsizelocindidynarssa = 1;
   increfsizestackdynarssa = 1;
   increfsizestackrefdynarssa = 1;
 
   decrefsizesegssa = 1;
   decrefsizelocssa = 1;
-  decrefsizereg0ssa = 1;
+  decrefsizelocindissa = 1;
   decrefsizestackssa = 1;
   decrefsizestackrefssa = 2;
 
   decrefsizesegarssa = 1;
   decrefsizelocarssa = 1;
-  decrefsizereg0arssa = 1;
+  decrefsizelocindiarssa = 1;
   decrefsizestackarssa = 1;
   decrefsizestackrefarssa = 1;
 
   decrefsizesegdynarssa = 1;
   decrefsizelocdynarssa = 1;
-  decrefsizereg0dynarssa = 1;
+  decrefsizelocindidynarssa = 1;
   decrefsizestackdynarssa = 1;
   decrefsizestackrefdynarssa = 1;
 

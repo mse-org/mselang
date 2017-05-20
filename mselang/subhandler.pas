@@ -1263,7 +1263,8 @@ var                       //todo: move after doparam
       if s.stopparser then begin
        exit; //recursive ancestor
       end;
-      curparam^:= elementoffsetty(var1); //absoluteaddress
+      curparam^:= elementoffsetty(var1); 
+                    //absoluteaddress, will be qualified later
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
         typ1:= ele.eledataabs(d.typ.typedata);
@@ -1280,6 +1281,9 @@ var                       //todo: move after doparam
           si1:= typ1^.h.bytesize;
          end;
          address.flags:= [af_param];
+         if resultvar then begin
+          include(var1^.address.flags,af_resultvar);
+         end;
          if typ1^.h.kind = dk_openarray then begin
           include(address.flags,af_openarray);
          end;
@@ -1302,6 +1306,11 @@ var                       //todo: move after doparam
            si1:= pointersize;
            if paramkind1 = pk_constref then begin
             include(address.flags,af_const);
+           end;
+           if resultvar and impl1 and (d.typ.indirectlevel = 0) and 
+                     (tf_needsmanage in typ1^.h.flags) then begin
+            include(vf.flags,tf_needsini);
+            include(s.currentstatementflags,stf_needsini);
            end;
           end
           else begin
@@ -1577,9 +1586,6 @@ begin
      dec(var1^.address.locaddress.address,frameoffset);
      curparam^:= ptruint(var1)-eledatabase;
      if tf_needsmanage in var1^.vf.flags then begin
-//      writemanagedvarop(mo_incref,var1);
-//      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
-//                                                        var1^.address);
       var1^.vf.next:= sub1^.paramfinichain;
       sub1^.paramfinichain:= ele.eledatarel(var1);
      end;
