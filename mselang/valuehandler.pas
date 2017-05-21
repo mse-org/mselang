@@ -945,8 +945,13 @@ begin
           end;
          end;
          else begin
-          if getvalue(acontext,das_none,false) then begin
-           result:= tryconvert(acontext,dest,destindirectlevel,aoptions);
+          if (destindirectlevel = 0) and
+                not (dest^.h.kind in structdatakinds) and
+                not (source1^.h.kind in structdatakinds) then begin
+                           //otherwise probably address calculation
+           if getvalue(acontext,das_none,false) then begin
+            result:= tryconvert(acontext,dest,destindirectlevel,aoptions);
+           end;
           end;
          end;
         end;

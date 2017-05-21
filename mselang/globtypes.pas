@@ -253,6 +253,8 @@ const
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string];
  nilpointerdatakinds = pointerdatakinds+[dk_sub];
+ structdatakinds = [dk_array,dk_dynarray,dk_record,
+                                    dk_object,dk_class,dk_method];
  ancestordatakinds = [dk_object,dk_class];
  ancestorchaindatakinds = [dk_interface];
  stringdatakinds = [dk_string];
