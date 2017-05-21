@@ -11,6 +11,7 @@ unit system;
 interface
 
 type
+ datetimety = flo64;
 {$ifdef cpu64}
  intptr = int64;
  cardptr = card64;

@@ -141,7 +141,8 @@ end;
 
 procedure render(  );
 var
-   tnow,xRot,yRot,yCos,
+   tnow: tdatetime;
+   xRot,yRot,yCos,
    ySin,xCos,xSin,___xd,
    __yd,__zd,___zd,_yd,
   _xd,_zd,ddist,closest,
@@ -151,7 +152,7 @@ var
    x,y ,col,br,d,tex,u,v,cc: longword;
 begin
   { tnow := (SDL_GetTicks( ) mod 10000) / 10000; }
-  tnow:=frac(time * 8640 {24 * 60 * 60 / 10});
+  tnow:= now();
 
   xRot := sin(tnow * math_pi * 2) * 0.4 + math_pi / 2;
   yRot := cos(tnow * math_pi * 2) * 0.4;

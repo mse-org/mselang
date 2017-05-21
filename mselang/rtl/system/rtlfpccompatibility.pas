@@ -10,17 +10,38 @@
 unit rtlfpccompatibility;
 interface
 //FPC compatibility
-
+uses
+ rtlsystem;
+ 
 type
  sizeint = intptr;
+ tdatetime = datetimety;
  
 procedure move(const source; var dest; count: sizeint);
+function now(): tdatetime;
+function trunc(d: flo64): int64;
+function round(d: flo64): int64;
 
 implementation
 
 procedure move(const source; var dest; count: sizeint);
 begin
  memmove(@dest,@source,count);
+end;
+
+function now(): tdatetime;
+begin
+ result:= nowutc();
+end;
+
+function trunc(d: flo64): int64;
+begin
+ result:= trunci64(d);
+end;
+
+function round(d: flo64): int64;
+begin
+ result:= trunc(nearbyint(d));
 end;
 
 end.

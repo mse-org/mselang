@@ -11,23 +11,39 @@ unit rtlsystem;
 //system functions, preliminary ad-hoc implementation
 interface
 
-function timeutc(): datetimety;
+function nowutc(): datetimety;
 
 implementation
 
-function timeutc(): datetimety;
-begin
+type
+ __time_t = int32;
+ __suseconds_t = int32;
+
+ timezone = record
+  tz_minuteswest: int32;
+  tz_dsttime: int32;
+ end;
+ ptimezone = ^timezone;
+
+ timeval = record
+  tv_sec : __time_t;
+  tv_usec : __suseconds_t;
+ end;
+ ptimeval = ^timeval;
+
+function gettimeofday(__tv: ptimeval; __tz: ptimezone): int32 external;
+
+const
+ unidatetimeoffset = -25569;
+
+function nowutc(): datetimety;
 var
  ti: timeval;
+ f1,f2: flo64;
 begin
  gettimeofday(@ti,nil);
-{$ifdef FPC}
- result:= ti.tv_sec / (double(24.0)*60.0*60.0) + 
-          ti.tv_usec / (double(24.0)*60.0*60.0*1e6) - unidatetimeoffset;
-{$else}
- result:= ti.tv_sec / (24.0*60.0*60.0) + 
-          ti.tv_usec / (24.0*60.0*60.0*1e6) - unidatetimeoffset;
-{$endif}
+ result:= ti.tv_sec / (flo64(24.0)*60.0*60.0) + 
+          ti.tv_usec / (flo64(24.0)*60.0*60.0*1e6) - unidatetimeoffset;
 end;
 
 end.

@@ -42,7 +42,13 @@ procedure handlelow(const paramco: int32);
 procedure handlehigh(const paramco: int32);
 procedure handlelength(const paramco: int32);
 procedure handlesin(const paramco: int32);
+procedure handlecos(const paramco: int32);
 procedure handlesqrt(const paramco: int32);
+procedure handlefloor(const paramco: int32);
+procedure handleround(const paramco: int32);
+procedure handlenearbyint(const paramco: int32);
+procedure handletrunci32(const paramco: int32);
+procedure handletrunci64(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -62,10 +68,12 @@ const
   @handlereallocmem,
   //syf_setmem,  syf_memcpy,  syf_memmove,
   @handlesetmem,@handlememcpy,@handlememmove,
-  //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin
-  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin,
-  //syf_sqrt
-  @handlesqrt
+  //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin, //syf_cos
+  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin,@handlecos,
+  //syf_sqrt, syf_floor,   syf_round,   syf_nearbyint,
+  @handlesqrt,@handlefloor,@handleround,@handlenearbyint,
+  //syf_trunci32,syf_trunci64
+  @handletrunci32,@handletrunci64
  );
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1257,14 +1265,84 @@ begin
  end;
 end;
 
+procedure i32floatsysfunc(const paramco: integer; const aop: opcodety);
+var
+ po1: pcontextitemty;
+begin
+ with info do begin
+  if checkparamco(1,paramco) and 
+          getbasevalue(@contextstack[s.stacktop],das_f64) then begin
+   with additem(aop)^ do begin
+    par.ssas1:= info.s.ssa.index-1;
+   end;
+   po1:= @contextstack[s.stackindex];
+   initdatacontext(po1^.d,ck_subres);
+   with po1^ do begin
+    d.dat.fact.ssaindex:= info.s.ssa.index;
+    d.dat.datatyp:= sysdatatypes[st_int32];
+   end;
+  end;
+ end;
+end;
+
+procedure i64floatsysfunc(const paramco: integer; const aop: opcodety);
+var
+ po1: pcontextitemty;
+begin
+ with info do begin
+  if checkparamco(1,paramco) and 
+          getbasevalue(@contextstack[s.stacktop],das_f64) then begin
+   with additem(aop)^ do begin
+    par.ssas1:= info.s.ssa.index-1;
+   end;
+   po1:= @contextstack[s.stackindex];
+   initdatacontext(po1^.d,ck_subres);
+   with po1^ do begin
+    d.dat.fact.ssaindex:= info.s.ssa.index;
+    d.dat.datatyp:= sysdatatypes[st_int64];
+   end;
+  end;
+ end;
+end;
+
 procedure handlesin(const paramco: integer);
 begin
  floatsysfunc(paramco,oc_sin64);
 end;
 
+procedure handlecos(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_cos64);
+end;
+
 procedure handlesqrt(const paramco: integer);
 begin
  floatsysfunc(paramco,oc_sqrt64);
+end;
+
+procedure handlefloor(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_floor64);
+end;
+
+procedure handleround(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_round64);
+end;
+
+procedure handlenearbyint(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_nearbyint64);
+end;
+
+procedure handletrunci32(const paramco: integer);
+begin
+ i32floatsysfunc(paramco,oc_trunci32flo64);
+end;
+
+procedure handletrunci64(const paramco: integer);
+begin
+ i64floatsysfunc(paramco,oc_trunci64flo64);
 end;
 
 type
@@ -1296,7 +1374,13 @@ const
    (name: 'high'; data: (func: syf_high)),
    (name: 'length'; data: (func: syf_length)),
    (name: 'sin'; data: (func: syf_sin)),
-   (name: 'sqrt'; data: (func: syf_sqrt))
+   (name: 'cos'; data: (func: syf_cos)),
+   (name: 'sqrt'; data: (func: syf_sqrt)),
+   (name: 'floor'; data: (func: syf_floor)),
+   (name: 'round'; data: (func: syf_round)),
+   (name: 'nearbyint'; data: (func: syf_nearbyint)),
+   (name: 'trunci32'; data: (func: syf_trunci32)),
+   (name: 'trunci64'; data: (func: syf_trunci64))   
   );
 
 procedure init();

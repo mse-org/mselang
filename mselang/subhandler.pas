@@ -1610,6 +1610,7 @@ begin
    if not isinterface then begin
     if sf_external in subflags then begin
      include(sub1^.flags,sf_proto);
+     sub1^.linkage:= li_external;
 {
      with pexternallinkinfoty(addlistitem(
              s.unitinfo^.externallinklist,s.unitinfo^.externalchain))^ do begin

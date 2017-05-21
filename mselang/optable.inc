@@ -352,6 +352,10 @@
   (ssa: flo32toflo64ssa; proc: @flo32toflo64op; flags: []), 
 //oc_flo64toflo32
   (ssa: flo64toflo32ssa; proc: @flo64toflo32op; flags: []), 
+//oc_trunci32flo64
+  (ssa: trunci32flo64ssa; proc: @trunci32flo64op; flags: []), 
+//oc_trunci64flo64
+  (ssa: trunci64flo64ssa; proc: @trunci64flo64op; flags: []), 
 
 //oc_card1toint32
   (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 
@@ -1077,8 +1081,16 @@
   
 //oc_sin64
   (ssa: sin64ssa; proc: @sin64op; flags: []), 
+//oc_cos64
+  (ssa: cos64ssa; proc: @cos64op; flags: []), 
 //oc_sqrt64
   (ssa: sqrt64ssa; proc: @sqrt64op; flags: []), 
+//oc_floor64
+  (ssa: floor64ssa; proc: @floor64op; flags: []), 
+//oc_round64
+  (ssa: round64ssa; proc: @round64op; flags: []), 
+//oc_nearbyint64
+  (ssa: nearbyint64ssa; proc: @nearbyint64op; flags: []), 
   
 //oc_lineinfo
   (ssa: lineinfossa; proc: @lineinfoop; flags: []), 

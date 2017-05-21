@@ -60,7 +60,8 @@ type
                    {if_malloc,if_free,if_calloc,}if_realloc,if_memset,
                    if_memcpy,if_memmove,
                    if__exit,
-                   if_sin64,if_fabs64,if_sqrt64);
+                   if_sin64,if_cos64,if_fabs64,if_sqrt64,if_floor64,
+                   if_round64,if_nearbyint64);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -151,9 +152,16 @@ const
                                                   params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
+  (name: 'llvm.cos.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
   (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function];
                                                  params: @ffunc64params),
   (name: 'llvm.sqrt.f64'; flags: [sf_proto,sf_function];
+                                                 params: @ffunc64params),
+  (name: 'llvm.floor.f64'; flags: [sf_proto,sf_function];
+                                                 params: @ffunc64params),
+  (name: 'llvm.round.f64'; flags: [sf_proto,sf_function];
+                                                 params: @ffunc64params),
+  (name: 'llvm.nearbyint.f64'; flags: [sf_proto,sf_function];
                                                  params: @ffunc64params)
  );
 
@@ -1732,6 +1740,22 @@ begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),
                                 bcstream.typeval(ord(das_f32)),CAST_FPTRUNC);
+ end;
+end;
+
+procedure trunci32flo64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_FPTOSI);
+ end;
+end;
+
+procedure trunci64flo64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_FPTOSI);
  end;
 end;
 
@@ -4242,6 +4266,14 @@ begin
  end;
 end;
 
+procedure cos64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_cos64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure sqrt64op();
 begin
  with pc^.par do begin
@@ -4250,6 +4282,29 @@ begin
  end;
 end;
 
+procedure floor64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_floor64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure round64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_round64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure nearbyint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_nearbyint64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
 
 procedure lineinfoop();
 begin
@@ -4415,6 +4470,8 @@ const
 
   flo32toflo64ssa = 1;
   flo64toflo32ssa = 1;
+  trunci32flo64ssa = 1;
+  trunci64flo64ssa = 1;
 
   card1toint32ssa = 1;
     
@@ -4805,7 +4862,11 @@ const
   memmovessa = 0;
   
   sin64ssa = 1;
+  cos64ssa = 1;
   sqrt64ssa = 1;
+  floor64ssa = 1;
+  round64ssa = 1;
+  nearbyint64ssa = 1;
   
   lineinfossa = 0;
 

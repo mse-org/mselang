@@ -3265,6 +3265,21 @@ begin
  pflo32(stackpush(sizeof(flo32)))^:= da1;
 end;
 
+procedure trunci32flo64op();
+var
+ da1: flo64;
+begin
+ da1:= pflo64(stackpop(sizeof(flo64)))^;
+ pint32(stackpush(sizeof(int32)))^:= trunc(da1);
+end;
+
+procedure trunci64flo64op();
+var
+ da1: flo64;
+begin
+ da1:= pflo64(stackpop(sizeof(flo64)))^;
+ pint64(stackpush(sizeof(int64)))^:= trunc(da1);
+end;
 
 procedure card1toint32op();
 var
@@ -6310,12 +6325,67 @@ begin
  po1^:= sin(po1^);
 end;
 
+procedure cos64op();
+var
+ po1: pflo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ po1^:= cos(po1^);
+end;
+
 procedure sqrt64op();
 var
  po1: pflo64;
 begin
  po1:= cpu.stack - 64 div 8;
  po1^:= sqrt(po1^);
+end;
+
+procedure floor64op();
+var
+ po1: pflo64;
+ f1: flo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ f1:= frac(po1^);
+ po1^:= po1^-f1;
+ if f1 < 0 then begin
+  po1^:= po1^-1;
+ end;
+end;
+
+procedure round64op();
+var
+ po1: pflo64;
+ f1: flo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ f1:= po1^;
+ if f1 < 0 then begin
+  f1:= f1-0.5;
+ end
+ else begin
+  f1:= f1+0.5;
+ end;  
+ f1:= frac(po1^);
+ po1^:= po1^-f1;
+end;
+
+procedure nearbyint64op();
+var
+ po1: pflo64;
+ f1: flo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ f1:= po1^;
+ if f1 < 0 then begin
+  f1:= f1-0.5;
+ end
+ else begin
+  f1:= f1+0.5;
+ end;  
+ f1:= frac(po1^);   //todo: bankers rounding
+ po1^:= po1^-f1;
 end;
 
 procedure lineinfoop();
@@ -6497,6 +6567,8 @@ const
 
   flo32toflo64ssa = 0;
   flo64toflo32ssa = 0;
+  trunci32flo64ssa = 0;
+  trunci64flo64ssa = 0;
   
   card1toint32ssa = 0;
 
@@ -6887,7 +6959,11 @@ const
   memmovessa = 0;
   
   sin64ssa = 0;
+  cos64ssa = 0;
   sqrt64ssa = 0;
+  floor64ssa = 0;
+  round64ssa = 0;
+  nearbyint64ssa = 0;
   
   lineinfossa = 0;
 
