@@ -944,6 +944,11 @@ begin
            end;
           end;
          end;
+         else begin
+          if getvalue(acontext,das_none,false) then begin
+           result:= tryconvert(acontext,dest,destindirectlevel,aoptions);
+          end;
+         end;
         end;
        end;
        ck_fact,ck_subres: begin
