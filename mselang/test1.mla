@@ -123,8 +123,145 @@ begin
     end;
 end;
 
+// fixed point byte byte multiply
+function fxmul( a,b : LongInt ):LongInt ; {$ifdef FPC}inline;{$endif}
+begin
+    result := (a*b) shr 8;
+end;
+
+// fixed point 8bit packed colour multiply
+function  rgbmul(a,b : LongInt ):LongInt;
+var _r,_g,_b : LongInt;
+begin
+    _r := (((a shr 16) and $ff) * b) shr 8;
+    _g := (((a shr 8) and $ff) * b) shr 8;
+    _b := (((a    ) and $ff) * b) shr 8;
+    result := (_r shl 16) or (_g shl 8) or _b;
+end;
+
+procedure render(  );
+var
+   tnow,xRot,yRot,yCos,
+   ySin,xCos,xSin,___xd,
+   __yd,__zd,___zd,_yd,
+  _xd,_zd,ddist,closest,
+  ox,oy,oz,dimLength,ll,
+  xd,yd,zd,initial,dist,
+  xp,yp,zp: single;
+   x,y ,col,br,d,tex,u,v,cc: longword;
+begin
+  { tnow := (SDL_GetTicks( ) mod 10000) / 10000; }
+  tnow:=frac(time * 8640 {24 * 60 * 60 / 10});
+
+  xRot := sin(tnow * math_pi * 2) * 0.4 + math_pi / 2;
+  yRot := cos(tnow * math_pi * 2) * 0.4;
+  yCos := cos(yRot);
+  ySin := sin(yRot);
+  xCos := cos(xRot);
+  xSin := sin(xRot);
+
+  ox := 32.5 + tnow * 64.0;
+  oy := 32.5;
+  oz := 32.5;
+
+  // for each column
+  for x :=0 to s_w -1 do begin
+    // get the x axis delta
+    ___xd := (x - s_w / 2) / s_h;
+    // for each row
+    for y :=0 to s_h-1 do begin
+      // get the y axis delta
+      __yd := (y - s_h / 2) / s_h;
+      __zd := 1;
+      ___zd :=  __zd * yCos +  __yd * ySin;
+      _yd :=  __yd * yCos -  __zd * ySin;
+      _xd := ___xd * xCos + ___zd * xSin;
+      _zd := ___zd * xCos - ___xd * xSin;
+
+      col := 0;
+      br := 255;
+      ddist := 0;
+
+      closest := 32.0;
+
+      // for each principle axis  x,y,z
+      for d :=0 to 2 do begin
+        dimLength := _xd;
+        if (d = 1) then
+          dimLength := _yd
+        else if (d = 2) then
+          dimLength := _zd;
+        if dimLength < 0.0 then
+          dimLength := -dimLength;
+        ll := 1.0 / dimLength;
+        xd := _xd * ll;
+        yd := _yd * ll;
+        zd := _zd * ll;
+
+        initial := ox - floor(ox);
+        if (d = 1) then initial := oy - floor(oy);
+        if (d = 2) then initial := oz - floor(oz);
+
+        if (dimLength > 0.0) then initial := 1 - initial;
+
+        dist := ll * initial;
+
+        xp := ox + xd * initial;
+        yp := oy + yd * initial;
+        zp := oz + zd * initial;
+
+        if (dimLength < 0.0) then begin
+          if (d = 0) then xp:=xp-1;
+          if (d = 1) then yp:=yp-1;
+          if (d = 2) then zp:=zp-1;
+        end;
+
+        // while we are concidering a ray that is still closer then the best so far
+        while (dist < closest) do begin
+          // quantize to the map grid
+          tex := map[ ((trunc(zp) and 63) shl 12) or ((trunc(yp) and 63) shl 6) or (trunc(xp) and 63) ];
+
+          // if this voxel has a texture applied
+          if (tex > 0) then begin
+            // find the uv coordinates of the intersection point
+            u := (round((xp + zp) * 16)) and 15;
+            v := (round(yp    * 16)  and 15) + 16;
+
+            // fix uvs for alternate directions?
+            if (d = 1) then begin
+              u :=  (round(xp * 16)) and 15;
+              v := ((round(zp * 16)) and 15);
+              if (yd < 0.0) then
+                inc(v, 32);
+            end;
+
+            //find the colour at the intersection point
+            cc := texmap[ u + v * 16 + tex * 256 * 3 ];
+            // if the colour is not transparent
+            if (cc > 0) then begin
+              col := cc;
+              ddist := 255 - ((dist / 32 * 255));
+              br := 255 * (255 - ((d + 2) mod 3) * 50) div 255;
+              //we now have the closest hit point (also terminates this ray)
+              closest := dist;
+            end;
+          end;
+          // advance the ray
+          xp:=xp+xd;
+          yp:=yp+yd;
+          zp:=zp+zd;
+          dist:=dist+ll;
+        end;
+      end;
+
+      plot( x, y, rgbmul( col, fxmul( br, round(ddist) ) ) );
+    end;
+  end;
+end;
+
 begin
  maketextures();
  makemap();
  writeln(texmap[100]);
+ writeln(map[100]);
 end.
