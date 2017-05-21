@@ -623,7 +623,8 @@ type
   oc_memcpy,
   oc_memmove,
   
-  oc_sin,
+  oc_sin64,
+  oc_sqrt64,
 
   oc_lineinfo,
     

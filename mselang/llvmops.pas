@@ -60,7 +60,7 @@ type
                    {if_malloc,if_free,if_calloc,}if_realloc,if_memset,
                    if_memcpy,if_memmove,
                    if__exit,
-                   if_sin64,if_fabs64);
+                   if_sin64,if_fabs64,if_sqrt64);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -151,7 +151,10 @@ const
                                                   params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
-  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
+  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function];
+                                                 params: @ffunc64params),
+  (name: 'llvm.sqrt.f64'; flags: [sf_proto,sf_function];
+                                                 params: @ffunc64params)
  );
 
 type
@@ -4239,6 +4242,15 @@ begin
  end;
 end;
 
+procedure sqrt64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_sqrt64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+
 procedure lineinfoop();
 begin
  with pc^.par.lineinfo do begin
@@ -4793,6 +4805,7 @@ const
   memmovessa = 0;
   
   sin64ssa = 1;
+  sqrt64ssa = 1;
   
   lineinfossa = 0;
 

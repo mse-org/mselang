@@ -435,7 +435,7 @@ type
               syf_memcpy,syf_memmove,
               syf_halt,
               syf_low,syf_high,syf_length,
-              syf_sin);
+              syf_sin,syf_sqrt);
 
  sysfuncdataty = record
   func: sysfuncty;

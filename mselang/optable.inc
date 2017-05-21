@@ -1077,6 +1077,8 @@
   
 //oc_sin64
   (ssa: sin64ssa; proc: @sin64op; flags: []), 
+//oc_sqrt64
+  (ssa: sqrt64ssa; proc: @sqrt64op; flags: []), 
   
 //oc_lineinfo
   (ssa: lineinfossa; proc: @lineinfoop; flags: []), 

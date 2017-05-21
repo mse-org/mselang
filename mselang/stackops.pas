@@ -1343,6 +1343,9 @@ begin
    das_f64: begin
     flo64(po3^):= flo64(po2^) * flo64(po1^);
    end;
+   das_f32: begin
+    flo32(po3^):= flo32(po2^) * flo32(po1^);
+   end;
    else begin
     internalerror('20160716A');
    end;
@@ -2464,6 +2467,9 @@ begin
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ = pflo64(po1)^;
      end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ = pflo32(po1)^;
+     end;
      else begin
       internalerror('20160716A');
      end;
@@ -2473,6 +2479,9 @@ begin
     case stackop.t.kind of
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ <> pflo64(po1)^;
+     end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ <> pflo32(po1)^;
      end;
      else begin
       internalerror('20160716A');
@@ -2484,6 +2493,9 @@ begin
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ > pflo64(po1)^;
      end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ > pflo32(po1)^;
+     end;
      else begin
       internalerror('20160716A');
      end;
@@ -2493,6 +2505,9 @@ begin
     case stackop.t.kind of
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ < pflo64(po1)^;
+     end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ < pflo32(po1)^;
      end;
      else begin
       internalerror('20160716A');
@@ -2504,6 +2519,9 @@ begin
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ >= pflo64(po1)^;
      end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ >= pflo32(po1)^;
+     end;
      else begin
       internalerror('20160716A');
      end;
@@ -2513,6 +2531,9 @@ begin
     case stackop.t.kind of
      das_f64: begin
       vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo64(po2)^ <= pflo64(po1)^;
+     end;
+     das_f32: begin
+      vbooleanty(stackpush(sizeof(vbooleanty))^):= pflo32(po2)^ <= pflo32(po1)^;
      end;
      else begin
       internalerror('20160716A');
@@ -2747,6 +2768,9 @@ begin
   case stackop.t.kind of
    das_f64: begin
     flo64(po3^):= flo64(po2^) + flo64(po1^);
+   end;
+   das_f32: begin
+    flo32(po3^):= flo32(po2^) + flo32(po1^);
    end;
    else begin
     internalerror('20160716A');
@@ -6286,6 +6310,14 @@ begin
  po1^:= sin(po1^);
 end;
 
+procedure sqrt64op();
+var
+ po1: pflo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ po1^:= sqrt(po1^);
+end;
+
 procedure lineinfoop();
 begin
  //dummy
@@ -6855,6 +6887,7 @@ const
   memmovessa = 0;
   
   sin64ssa = 0;
+  sqrt64ssa = 0;
   
   lineinfossa = 0;
 

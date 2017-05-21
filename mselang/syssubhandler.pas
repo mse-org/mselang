@@ -42,6 +42,7 @@ procedure handlelow(const paramco: int32);
 procedure handlehigh(const paramco: int32);
 procedure handlelength(const paramco: int32);
 procedure handlesin(const paramco: int32);
+procedure handlesqrt(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -62,7 +63,10 @@ const
   //syf_setmem,  syf_memcpy,  syf_memmove,
   @handlesetmem,@handlememcpy,@handlememmove,
   //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin
-  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin);
+  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin,
+  //syf_sqrt
+  @handlesqrt
+ );
 
 function checkparamco(const wanted, actual: integer): boolean;
   
@@ -1255,7 +1259,12 @@ end;
 
 procedure handlesin(const paramco: integer);
 begin
- floatsysfunc(paramco,oc_sin);
+ floatsysfunc(paramco,oc_sin64);
+end;
+
+procedure handlesqrt(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_sqrt64);
 end;
 
 type
@@ -1286,7 +1295,8 @@ const
    (name: 'low'; data: (func: syf_low)),
    (name: 'high'; data: (func: syf_high)),
    (name: 'length'; data: (func: syf_length)),
-   (name: 'sin'; data: (func: syf_sin))
+   (name: 'sin'; data: (func: syf_sin)),
+   (name: 'sqrt'; data: (func: syf_sqrt))
   );
 
 procedure init();
