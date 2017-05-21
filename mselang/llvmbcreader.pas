@@ -99,7 +99,13 @@ type
       intconst: valuety;
      );
      CST_CODE_FLOAT: (
-      floatconst: flo64;
+      case floatsize: databitsizety of
+       das_f32: (
+        flo32const: flo32;
+       );
+       das_f64: (
+        flo64const: flo64;
+       );
      );
    );
    gk_var: (
@@ -1338,6 +1344,8 @@ var
  blocklevelbefore: int32;
  po1: ptypeinfoty;
  countbefore: int32; 
+ s1: string;
+ isflo32: boolean;
 begin
  output(ok_begin,blockidnames[CONSTANTS_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1353,8 +1361,14 @@ begin
     if constantscodes(rec1[1]) = CST_CODE_SETTYPE then begin
      checkdatalen(rec1,2);
      alist.fsettype:= rec1[2];
-     output(ok_beginend,constantscodesnames[constantscodes(rec1[1])]+':'+
-                                       ftypelist.typename(alist.fsettype));
+     s1:= ftypelist.typename(alist.fsettype);
+     if pos('FLOAT',s1) > 0 then begin
+      isflo32:= true;
+     end;
+     if pos('DOUBLE',s1) > 0 then begin
+      isflo32:= false;
+     end;
+     output(ok_beginend,constantscodesnames[constantscodes(rec1[1])]+':'+s1);
     end
     else begin
      with pglobinfoty(alist.add())^ do begin
@@ -1374,9 +1388,17 @@ begin
          outconst([inttostr(intconst)]);
         end;
         CST_CODE_FLOAT: begin
-         floatconst:= pflo64(@rec1[2])^;
-         outconst([realtostrmse(floatconst)]);
-        end
+         if isflo32 then begin
+          floatsize:= das_f32;
+          flo32const:= pflo32(@rec1[2])^;
+          outconst([realtostrmse(flo32const)]);
+         end
+         else begin
+          floatsize:= das_f64;
+          flo64const:= pflo64(@rec1[2])^;
+          outconst([realtostrmse(flo64const)]);
+         end;
+        end;
         else begin
          outconst(dynarraytovararray(copy(rec1,2,bigint)));
         end;
@@ -1821,7 +1843,14 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
       result:= result+inttostr(intconst);
      end;
      CST_CODE_FLOAT: begin              //todo: size
-      result:= result+ansistring(realtostrmse(floatconst));
+      case floatsize of
+       das_f32: begin
+        result:= result+ansistring(realtostrmse(flo32const));
+       end;
+       das_f64: begin
+        result:= result+ansistring(realtostrmse(flo64const));
+       end;
+      end;
      end;
      CST_CODE_NULL: begin
       result:= result+'NULL';

@@ -114,6 +114,7 @@ type
    procedure emittypeid(const avalue: int32);
    procedure emitintconst(const avalue: int32);
    procedure emitintconst(const avalue: int64);
+   procedure emitfloatconst(const avalue: flo32);
    procedure emitfloatconst(const avalue: flo64);
    procedure emitdataconst(const avalue; const asize: int32);
    procedure emitpointercastconst(const avalue: int32; const atype: int32);
@@ -745,11 +746,11 @@ begin
      {$endif}
       end;
       das_f32: begin
-       emitfloatconst(flo32(pc2^.header.buffer));
+       emitfloatconst(pflo32(@pc2^.header.buffer)^);
       end;
       das_f64: begin
      {$ifdef cpu64}
-       emitfloatconst(flo64(pc2^.header.buffer));
+       emitfloatconst(pflo64(pc2^.header.buffer)^);
      {$else}
        emitfloatconst(pflo64(consts.absdata(pc2^.header.buffer))^);
      {$endif}
@@ -1366,6 +1367,13 @@ begin
  emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
  emitvbr6(signedvbr(avalue));
+end;
+
+procedure tllvmbcwriter.emitfloatconst(const avalue: flo32);
+begin
+ emitcode(ord(mabconst_int));
+ emitvbr6(ord(CST_CODE_FLOAT));
+ emitvbr6(pint32(@avalue)^);
 end;
 
 procedure tllvmbcwriter.emitfloatconst(const avalue: flo64);

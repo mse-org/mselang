@@ -171,7 +171,7 @@ const
   (text: '%c'#0),       //is_char8,
   (text: '%s'#0),       //is_string8,
   (text: '%p'#0),       //is_pointer
-  (text: '%g'#0),       //is_flo32
+  (text: '%g'#0),       //is_flo32 //wrong! libc printf has no flo32 support
   (text: '%g'#0)        //is_flo64
  );  
 

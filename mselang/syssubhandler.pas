@@ -598,7 +598,15 @@ begin
   poe:= @contextstack[s.stacktop];
   poitem:= @contextstack[s.stackindex+2];
   while getnextnospace(poitem+1,poitem) do begin
-   getvalue(poitem,das_none);
+   if (poitem^.d.kind in datacontexts) and 
+         (poitem^.d.dat.datatyp.indirectlevel = 0) then begin
+    getvalue(poitem,
+            ptypedataty(ele.eledataabs(
+                          poitem^.d.dat.datatyp.typedata))^.h.datasize);
+   end
+   else begin
+    getvalue(poitem,das_none);
+   end;
   end;
   poitem:= @contextstack[s.stackindex+2];
   while getnextnospace(poitem+1,poitem) do begin
