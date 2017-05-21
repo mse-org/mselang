@@ -1718,7 +1718,7 @@ var
        doconvert();
       end;
      end;
-     ck_fact: begin
+     ck_fact,ck_subres: begin
       if context1^.d.dat.indirection < 0 then begin //pending dereference
        getvalue(context1,si1);                       
       end;

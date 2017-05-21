@@ -647,6 +647,10 @@ begin
        end;
       end;
      end;
+     if not result then begin
+      ele.elementparent:= info.systemelement;
+      result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+     end;
      ele.elementparent:= ele2;
     end;
    end;
@@ -3256,6 +3260,8 @@ var
  o1: objectoperatorty;
 begin
  ele.addelement(tks_units,ek_none,globalvisi,unitsele);
+ ele.pushelement(tks_system,ek_none,allvisi,info.systemelement);
+
  po2:= ele.addelementdata(tks_method,ek_type,globalvisi);
 {$ifdef mse_checkinternalerror}
  if po2 = nil then begin
@@ -3300,6 +3306,8 @@ begin
  emptyset.typedata:= ele.eledatarel(po2);
  
  syssubhandler.init();
+ 
+ ele.popelement();
 end;
 
 procedure deinit;

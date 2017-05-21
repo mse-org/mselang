@@ -751,6 +751,7 @@ type
   s: savedparseinfoty;
   o: parseoptionsty;
   rootelement: elementoffsetty;
+  systemelement: elementoffsetty;
   currentscopemeta: metavaluety;
   scopemetastack: metavaluearty;
   scopemetaindex: int32;

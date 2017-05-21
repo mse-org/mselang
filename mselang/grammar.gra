@@ -64,7 +64,7 @@
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.fini','.incref','.decref','.decrefindi'
- '.method','.operators'
+ '.method','.operators','.system'
 @.tokens
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
