@@ -852,7 +852,7 @@ const
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   nco_none,nco_i1,nco_none,nco_i8,nco_none, nco_i16,nco_none, nco_i32,               
 //das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  nco_none, nco_i64,nco_none,   nco_none,nco_none,nco_none,
+  nco_none, nco_i64,nco_none,   nco_none,nco_f32,nco_f64,
 //das_sub, das_meta
   nco_none,nco_none);
 
@@ -860,7 +860,7 @@ const
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   oco_none,oco_i1,oco_none,oco_i8,oco_none, oco_i16,oco_none, oco_i32,               
 //das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  oco_none, oco_i64,oco_none,   oco_none,oco_none,oco_none,
+  oco_none, oco_i64,oco_none,   oco_none,oco_f32,oco_f64,
 //das_sub, das_meta
   oco_none,oco_none);
 
@@ -1422,6 +1422,8 @@ begin
   addnullvalue(ord(das_16));        //nco_i16
   addnullvalue(ord(das_32));        //nco_i32
   addnullvalue(ord(das_64));        //nco_i64
+  addnullvalue(ord(das_f32));       //nco_f32
+  addnullvalue(ord(das_f64));       //nco_f64
   addnullvalue(ord(das_pointer));   //nco_pointer
   addnullvalue(methodtype);         //nco_method
   addi1(true); //mc_i1                   
@@ -1434,6 +1436,8 @@ begin
   addi16(1);   //oc_i16
   addi32(1);   //oc_i32
   addi64(1);   //oc_i64
+  addf32(1);   //oc_f32
+  addf64(1);   //oc_f64
 //  addi1(false);//asco_i1
 //  addi8(7);    //asco_i8
   addi16(15);  //asco_i16

@@ -427,13 +427,15 @@ const
 type 
  nullconstty = (nco_none = 0,
           nco_i1 = 256+maxpointeroffset+1, nco_i8, nco_i16, nco_i32, nco_i64,
+          nco_f32,nco_f64,
           nco_pointer,nco_method);
  maxconstty = (mco_none = 0,
                mco_i1 = ord(high(nullconstty))+1, mco_i8=255,
                           mco_i16=ord(mco_i1)+1, mco_i32, mco_i64);
  oneconstty = (oco_none = 0,
                oco_i1 = ord(mco_i1), oco_i8=1,
-                          oco_i16=ord(high(maxconstty))+1, oco_i32, oco_i64);
+                          oco_i16=ord(high(maxconstty))+1, oco_i32, oco_i64,
+                          oco_f32,oco_f64);
  ashrconstty = (asco_none = 0,
                asco_i1 = ord(nco_i1), asco_i8=7,
                           asco_i16=ord(high(oneconstty))+1, asco_i32, asco_i64);
