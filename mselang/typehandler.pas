@@ -132,7 +132,15 @@ begin
   ele.checkcapacity(ek_type);
   bo1:= (d.typ.indirectlevel > 0) and (s.stacktop-s.stackindex = 1);
                                         //simple type name only
-  bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
+  if (stf_paramsdef in info.s.currentstatementflags) and
+                (s.stacktop-s.stackindex = 1) and (d.typ.indirectlevel = 0) and
+                 (contextstack[s.stacktop].d.ident.ident = tk_const) then begin
+   po2:= ele.eleinfoabs(getsystypeele(st_forward));
+   bo2:= true;
+  end
+  else begin
+   bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
+  end;
   forward1:= not bo2 and bo1;
   if forward1 then begin //forward pointer
    po2:= ele.eleinfoabs(getsystypeele(st_forward));
