@@ -190,6 +190,7 @@ type
    fssatypes: integerarty; //negative values -> pointer
    fconststart: int32;
    fcurrentconstlist: tgloblist;
+   fopnum: int32;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -564,11 +565,15 @@ begin
  end;
 end;
 
+var
+ reader: tllvmbcreader;
+ 
 procedure error(const message: string);
 begin
  writeln('********** error '+message);
+ writeln('Opnum ',reader.fopnum);
  flush(output);
- raise exception.create(message+'.');
+ raise exception.create(message+'. Opnum: '+inttostr(reader.fopnum));
 end;
 
 function valueartostring(const avalue: valuearty; const start: int32): string;
@@ -2385,6 +2390,7 @@ begin
      end;
     end;
    end;
+   inc(fopnum);
   end;
  end;
  fmetalist.count:= metacountbefore;
@@ -2810,6 +2816,8 @@ var
  startoffset: int32;
  iswrapped: boolean;
 begin
+ reader:= self;
+ fopnum:= 0;
  exitcode:= 1;
  iswrapped:= false;
  ca1:= read32();
@@ -2835,6 +2843,7 @@ begin
  while not finished do begin
   readitem();
  end;
+ writeln('Opcount: '+inttostr(fopnum));
  if iswrapped and (position <> 
                        fwrapsize + startoffset + sizeof(bc_header)) then begin
   wrappererror();

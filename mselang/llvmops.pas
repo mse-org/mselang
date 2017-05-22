@@ -200,9 +200,13 @@ begin
  end;
 end;
 
+var
+ stop: boolean;
+
 procedure notimplemented();
 begin
- raise exception.create('LLVM OP not implemented');
+ notimplementederror(' LLVM OP not implemented');
+ stop:= true;
 end;
 
 procedure storeseg(const source: int32);
@@ -1063,7 +1067,65 @@ begin
  notimplemented();
 end;
 
-procedure ordtoflo64();
+procedure cardtoflo32();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f32),
+                                                               CAST_UITOFP);
+ end;
+end;
+
+procedure inttoflo32();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f32),
+                                                               CAST_SITOFP);
+ end;
+end;
+
+procedure card8toflo32op();
+begin
+ cardtoflo32();
+end;
+procedure card16toflo32op();
+begin
+ cardtoflo32();
+end;
+procedure card32toflo32op();
+begin
+ cardtoflo32();
+end;
+procedure card64toflo32op();
+begin
+ cardtoflo32();
+end;
+
+procedure int8toflo32op();
+begin
+ inttoflo32();
+end;
+procedure int16toflo32op();
+begin
+ inttoflo32();
+end;
+procedure int32toflo32op();
+begin
+ inttoflo32();
+end;
+procedure int64toflo32op();
+begin
+ inttoflo32();
+end;
+
+procedure cardtoflo64();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f64),
+                                                               CAST_UITOFP);
+ end;
+end;
+
+procedure inttoflo64();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f64),
@@ -1073,36 +1135,36 @@ end;
 
 procedure card8toflo64op();
 begin
- ordtoflo64();
+ cardtoflo64();
 end;
 procedure card16toflo64op();
 begin
- ordtoflo64();
+ cardtoflo64();
 end;
 procedure card32toflo64op();
 begin
- ordtoflo64();
+ cardtoflo64();
 end;
 procedure card64toflo64op();
 begin
- ordtoflo64();
+ cardtoflo64();
 end;
 
 procedure int8toflo64op();
 begin
- ordtoflo64();
+ inttoflo64();
 end;
 procedure int16toflo64op();
 begin
- ordtoflo64();
+ inttoflo64();
 end;
 procedure int32toflo64op();
 begin
- ordtoflo64();
+ inttoflo64();
 end;
 procedure int64toflo64op();
 begin
- ordtoflo64();
+ inttoflo64();
 end;
 
 procedure potoint32op();
@@ -4383,6 +4445,16 @@ const
   pushimmf64ssa = 1;
   pushimmdatakindssa = 1;
   
+  card8toflo32ssa = 1;
+  card16toflo32ssa = 1;
+  card32toflo32ssa = 1;
+  card64toflo32ssa = 1;
+
+  int8toflo32ssa = 1;
+  int16toflo32ssa = 1;
+  int32toflo32ssa = 1;
+  int64toflo32ssa = 1;
+
   card8toflo64ssa = 1;
   card16toflo64ssa = 1;
   card32toflo64ssa = 1;
@@ -4894,16 +4966,18 @@ procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 var
  endpo: pointer;
  lab: shortstring;
+ opnum: int32;
 begin
  bcstream:= atarget;
  codestarted:= false;
+ stop:= false;
  ismain:= amain;
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  if amain then begin
   inc(pc,startupoffset);
  end;
- while pc < endpo do begin
+ while (pc < endpo) and not stop do begin
   optable[pc^.op.op].proc();
   inc(pc);
  end;

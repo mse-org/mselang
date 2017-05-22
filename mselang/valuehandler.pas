@@ -516,6 +516,25 @@ const
   )
  );
 
+ convtoflo32: convertnumtablety = (
+  (//unsigned
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card8toflo32,oc_none, oc_card16toflo32,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card32toflo32,oc_none,  oc_card64toflo32,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
+  ),
+  (//signed
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_int8toflo32,oc_none, oc_int16toflo32,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_int32toflo32,oc_none,  oc_int64toflo32,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
+  )
+ );
+
  convtoflo64: convertnumtablety = (
   (//unsigned
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
@@ -962,8 +981,15 @@ begin
           case source1^.h.kind of
            dk_integer,dk_cardinal: begin //todo: data size
             i1:= d.dat.fact.ssaindex;
-            with insertitem(convtoflo64[source1^.h.kind = dk_integer,
-                              source1^.h.datasize],stackoffset,-1)^ do begin
+            if dest^.h.datasize = das_f32 then begin
+             op1:= convtoflo32[source1^.h.kind = dk_integer,
+                               source1^.h.datasize];
+            end
+            else begin
+             op1:= convtoflo64[source1^.h.kind = dk_integer,
+                               source1^.h.datasize];
+            end;
+            with insertitem(op1,stackoffset,-1)^ do begin
              par.ssas1:= i1;
             end;
             result:= true;

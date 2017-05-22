@@ -245,7 +245,7 @@ const
   oc_decparindipo,oc_decindipo);
  
 procedure handleincdec(const paramco: integer; const adec: boolean);
-
+                             //todo: operand sizes
 var
  par2isconst: boolean;
 
@@ -334,7 +334,23 @@ var
    end;
    if co_llvm in o.compileoptions then begin
     with po3^.par.memimm do begin
-     llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+     case po1^.h.datasize of
+      das_8: begin
+       llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(vint32);
+      end;
+      das_16: begin
+       llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(vint32);
+      end;
+      das_32: begin
+       llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+      end;
+      das_64: begin
+       llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(vint32);
+      end;
+      else begin
+       llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+      end;
+     end;
     end;
    end;
   end;

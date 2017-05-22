@@ -79,7 +79,7 @@ function getoptable: poptablety;
 implementation
 uses
  msestrings,sysutils,handlerglob,mseformatstr,msetypes,internaltypes,
- mserttiutils,
+ mserttiutils,errorhandler,
  segmentutils,classhandler,interfacehandler,__mla__internaltypes;
 
 const
@@ -154,7 +154,8 @@ end;
 
 procedure notimplemented();
 begin
- raise exception.create('stackops OP not implemented');
+ notimplementederror(' Stackops OP not implemented');
+ cpu.stop:= true;
 end;
  
 procedure internalerror(const atext: string);
@@ -876,6 +877,70 @@ procedure pushimmdatakindop();
 begin
  vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= 
                                        cpu.pc^.par.imm.vdatakind; 
+end;
+
+procedure card8toflo32op();       //todo: 32bit!
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card8));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card8(po1^);
+end;
+
+procedure card16toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card16));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card16(po1^);
+end;
+
+procedure card32toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card32));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card32(po1^);
+end;
+
+procedure card64toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card64));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card64(po1^);
+end;
+
+procedure int8toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int8));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int8(po1^);
+end;
+
+procedure int16toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int16));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int16(po1^);
+end;
+
+procedure int32toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int32));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int32(po1^);
+end;
+
+procedure int64toflo32op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int64));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int64(po1^);
 end;
 
 procedure card8toflo64op();
@@ -6480,15 +6545,25 @@ const
   pushimmf64ssa = 0;
   pushimmdatakindssa = 0;
   
+  card8toflo32ssa = 0;
+  card16toflo32ssa = 0;
+  card32toflo32ssa = 0;
+  card64toflo32ssa = 0;
+
+  int8toflo32ssa = 0;
+  int16toflo32ssa = 0;
+  int32toflo32ssa = 0;
+  int64toflo32ssa = 0;
+
   card8toflo64ssa = 0;
   card16toflo64ssa = 0;
   card32toflo64ssa = 0;
   card64toflo64ssa = 0;
 
-  int8toflo64ssa = 1;
-  int16toflo64ssa = 1;
-  int32toflo64ssa = 1;
-  int64toflo64ssa = 1;
+  int8toflo64ssa = 0;
+  int16toflo64ssa = 0;
+  int32toflo64ssa = 0;
+  int64toflo64ssa = 0;
 
   potoint32ssa = 0;
   inttopossa = 0;

@@ -83,6 +83,10 @@ type
    fcurrentbb: int32;
    flandingpadblock: int32;
 //   fgetexceptionpointer: int32;
+  {$ifdef mse_debugparser}
+   finsub: boolean;
+   fopnum: int32;
+  {$endif} 
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -1094,6 +1098,11 @@ end;
 procedure tllvmbcwriter.emitcode(const avalue: int32);
 begin
  emit(fblockstackpo^.idsize,avalue);
+{$ifdef mse_debugparser}
+ if finsub then begin
+  inc(fopnum);
+ end;
+{$endif}
 end;
 
 procedure tllvmbcwriter.emitdata(const avalue: bcdataty);
@@ -1884,6 +1893,10 @@ begin
   fsubopindex:= fsuballocstart; //pending allocs done in llvmops.subbeginop()
  end;
  beginblock(FUNCTION_BLOCK_ID,3);
+{$ifdef mse_debugparser}
+ finsub:= true;
+{$endif}
+
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
 end;
 
@@ -1895,6 +1908,9 @@ end;
 procedure tllvmbcwriter.endsub();
 begin
  endblock();
+{$ifdef mse_debugparser}
+ finsub:= false;
+{$endif}
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean;

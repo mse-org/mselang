@@ -1235,6 +1235,9 @@ begin
 //     dec(india);
 //    end;
     if not getvalue(poa,das_none) then begin //call possible pending conversions
+//    if not getvalue(poa,ptypedataty(
+//            ele.eledataabs(pob^.d.dat.datatyp.typedata))^.h.datasize) then begin
+                             //call possible pending conversions
      goto errlab;
     end;
 //    india:= india + d.dat.datatyp.indirectlevel - i1; 
