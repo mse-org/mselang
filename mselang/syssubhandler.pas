@@ -1049,7 +1049,8 @@ var
     op1:= oc_highopenar;
    end;
    else begin
-    typeerror();
+    checktype(po1^.infoarray.indextypedata);
+//    typeerror();
     exit;
    end;
   end;
@@ -1071,13 +1072,13 @@ begin
    dest1^.d.dat.datatyp:= sysdatatypes[st_int32]; //default
    ptop:= @contextstack[s.stacktop];
    with ptop^ do begin
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
     case d.kind of
      ck_ref: begin
       if d.dat.datatyp.indirectlevel <> 0 then begin
        typeerror();
       end
       else begin
-       po1:= ele.eledataabs(d.dat.datatyp.typedata);
        case po1^.h.kind of
         dk_array: begin
          checktype(po1^.infoarray.indextypedata);

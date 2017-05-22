@@ -998,6 +998,7 @@ end;
 procedure handleindexstart();
 var
  po1,po2: pcontextitemty;
+ b1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
@@ -1032,7 +1033,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if d.kind <> ck_prop then begin
- {$ifdef msecheckinternalerror}
+ {$ifdef mse_checkinternalerror}
    if (d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1) then begin
     internalerror(ie_handler,'20160227D');
    end;
