@@ -9,9 +9,11 @@
 }
 unit rtlbase;
 //base functions, preliminary ad-hoc implementation
-
 interface
 
+type
+ filenamety = string16;
+ 
 function inttostr(const value: integer): string;
 function random(const limit: int32): int32;
 function random(const limit: int64): int64;

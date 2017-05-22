@@ -1050,6 +1050,7 @@ var
    end;
    else begin
     checktype(po1^.infoarray.indextypedata);
+                //todo: remove not used indexing ops
 //    typeerror();
     exit;
    end;
