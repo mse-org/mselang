@@ -44,12 +44,12 @@ type
                );
 
 function nowutc(): datetimety;
-
+{
 function fileopen(const path: filenamety; const openmode: fileopenmodety;
           const accessmode: fileaccessmodesty;
           const rights: filerightsty; out handle: integer): syserrorty;
 function fileclose(const handle: integer): syserrorty;
-
+}
 implementation
 uses
  rtllibc;
@@ -66,16 +66,23 @@ begin
  result:= ti.tv_sec / (flo64(24.0)*60.0*60.0) + 
           ti.tv_usec / (flo64(24.0)*60.0*60.0*1e6) - unidatetimeoffset;
 end;
+(*
+const
+ openmodes: array[fileopenmodety] of longword =
+//    fm_none,fm_read, fm_write,fm_readwrite,fm_create,
+     (0,      o_rdonly,o_wronly,o_rdwr,      o_rdwr or o_creat or o_trunc,
+//    fm_append
+      o_rdwr or o_creat {or o_trunc});
 
 function fileopen(const path: filenamety; const openmode: fileopenmodety;
           const accessmode: fileaccessmodesty;
           const rights: filerightsty; out handle: integer): syserrorty;
 var
  str1: string;
- str2: msestring;
- stat1: _stat;
-const
- defaultopenflags = o_cloexec; 
+ str2: string16;
+// stat1: _stat;
+//const
+// defaultopenflags = o_cloexec; 
 begin
 {
  str2:= path;
@@ -83,9 +90,10 @@ begin
  str1:= tosys(str2);
 }
  str1:= path;
- handle:= Integer(mselibc.open(PChar(str1), openmodes[openmode] or 
+ handle:= Integer(mselibc.open(pchar8(str1), openmodes[openmode] or 
                             defaultopenflags,[getfilerights(rights)]));
  if handle >= 0 then begin
+ {
   if fstat(handle,@stat1) = 0 then begin  
    if s_isdir(stat1.st_mode) then begin
     mselibc.__close(handle);
@@ -102,10 +110,12 @@ begin
    handle:= -1;
    result:= syelasterror;
   end;
+ }
+  result:= gue_ok;
  end
  else begin
   result:= syelasterror;
  end;
 end;
-
+*)
 end.

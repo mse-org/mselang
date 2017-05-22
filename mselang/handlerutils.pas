@@ -3252,6 +3252,22 @@ begin
 end;
 
 procedure init();
+ procedure addsystype(const aitem: systypety);
+ var
+  po1: pelementinfoty;
+  po2: ptypedataty;
+ begin
+  with systypeinfos[aitem] do begin
+   po1:= ele.addelement(getident(name),ek_type,globalvisi);
+   po2:= @po1^.data;
+   po2^:= data;
+   with sysdatatypes[aitem] do begin
+    flags:= data.h.flags;
+    indirectlevel:= data.h.indirectlevel;
+    typedata:= ele.eleinforel(po1);
+   end;
+  end;
+ end; //addsystype
 var
  ty1: systypety;
  po1: pelementinfoty;
@@ -3260,8 +3276,6 @@ var
  o1: objectoperatorty;
 begin
  ele.addelement(tks_units,ek_none,globalvisi,unitsele);
- ele.pushelement(tks_system,ek_none,allvisi,info.systemelement);
-
  po2:= ele.addelementdata(tks_method,ek_type,globalvisi);
 {$ifdef mse_checkinternalerror}
  if po2 = nil then begin
@@ -3275,17 +3289,12 @@ begin
   indirectlevel:= 0;
   typedata:= ele.eledatarel(po2);
  end;
- for ty1:= low(systypety) to high(systypety) do begin
-  with systypeinfos[ty1] do begin
-   po1:= ele.addelement(getident(name),ek_type,globalvisi);
-   po2:= @po1^.data;
-   po2^:= data;
-   with sysdatatypes[ty1] do begin
-    flags:= data.h.flags;
-    indirectlevel:= data.h.indirectlevel;
-    typedata:= ele.eleinforel(po1);
-   end;
-  end;
+ for ty1:= low(systypety) to pred(firstrealsystype) do begin
+  addsystype(ty1);
+ end;
+ ele.pushelement(tks_system,ek_none,allvisi,info.systemelement);
+ for ty1:= firstrealsystype to high(systypety) do begin
+  addsystype(ty1);
  end;
  for o1:= low(objectoperatorty) to high(objectoperatorty) do begin
   objectoperatoridents[o1]:= getident(objectoperatordefs[o1].token);
