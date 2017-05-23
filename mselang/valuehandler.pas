@@ -2336,6 +2336,7 @@ begin
          break;
         end;
        end;
+       allocsegmentpo(seg_localloc,varargcount*sizeof(parallocinfoty));
        break;
       end;
      end;

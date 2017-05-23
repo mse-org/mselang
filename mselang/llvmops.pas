@@ -3583,7 +3583,7 @@ begin
   end;
  end;
 end;
-
+var testvar: int32;
 procedure docall(const outlinkcount: integer; const aindirect: boolean);
 var
  ids: idsarty;
@@ -3591,6 +3591,9 @@ var
  i1: int32;
 begin
  with pc^.par do begin               //todo: calling convention
+if sf_vararg in callinfo.flags then begin
+testvar:= 1;
+end;
   idar.ids:= @ids;
   if aindirect then begin
    bcstream.emitbitcast(bcstream.ssaval(ssas1),                     //1ssa

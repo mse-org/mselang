@@ -210,8 +210,9 @@ var
 begin
  stacksize1:= astackcount*sizeof(contextitemty);
  acontext:= getmem(sizeof(parsercontextty)+stacksize1);
- fillchar(acontext^,sizeof(acontext),0);
+ fillchar(acontext^,sizeof(acontext^),0);
  with acontext^ do begin
+  compilerswitches:= info.s.compilerswitches;
   source:= info.s.input;
   sourceoffset:= info.s.source.po-info.s.sourcestart;
   sourceline:= info.s.source.line;
@@ -241,6 +242,7 @@ begin
     parent:= parent + delta1;
    end;
   end;
+  info.s.compilerswitches:= compilerswitches;
   info.s.input:= source;
   info.s.sourcestart:= pchar(source);
   info.s.source.po:= info.s.sourcestart + sourceoffset;

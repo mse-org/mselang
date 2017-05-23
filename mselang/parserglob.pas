@@ -606,6 +606,7 @@ type
  end;
 }
  parsercontextty = record
+  compilerswitches: compilerswitchesty;
   source: string;
   sourceoffset: integer;
   sourceline: integer;
