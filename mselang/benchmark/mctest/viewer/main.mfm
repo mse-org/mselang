@@ -1,0 +1,72 @@
+object mainfo: tmainfo
+  bounds_x = 291
+  bounds_y = 247
+  bounds_cx = 662
+  bounds_cy = 467
+  container.frame.localprops = []
+  container.frame.localprops1 = []
+  container.bounds = (
+    0
+    0
+    662
+    467
+  )
+  statfile = tstatfile1
+  moduleclassname = 'tmainform'
+  object ima: timage
+    color = -1610612730
+    frame.localprops = []
+    frame.localprops1 = []
+    bounds_x = 8
+    bounds_y = 8
+    bounds_cx = 640
+    bounds_cy = 400
+  end
+  object tbutton1: tbutton
+    taborder = 1
+    bounds_x = 600
+    bounds_y = 440
+    bounds_cx = 50
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'load'
+    onexecute = loadexe
+  end
+  object fname: tfilenameedit
+    frame.caption = 'File'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.buttons.count = 1
+    frame.buttons.items = <    
+      item
+        imagenr = 17
+      end>
+    frame.button.imagenr = 17
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 2
+    bounds_x = 8
+    bounds_y = 423
+    bounds_cx = 580
+    bounds_cy = 37
+    statfile = tstatfile1
+    value = 'test.pix'
+    controller.filename = 'test.pix'
+    controller.filterlist.data = (
+      (
+        'Screen data'
+        '*.pix'
+      )
+    )
+    reffontheight = 14
+  end
+  object tstatfile1: tstatfile
+    filename = 'status.sta'
+    left = 88
+    top = 192
+  end
+end
