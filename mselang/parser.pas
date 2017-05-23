@@ -976,7 +976,7 @@ parseend:
     end;
    end;
    if us_implementationparsed in aunit^.state then begin
-    result:= endunit(aunit);
+    result:= endunit(aunit) and result;
    end;
   end;
   popcurrentscope();

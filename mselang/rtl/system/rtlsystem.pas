@@ -12,6 +12,9 @@ unit rtlsystem;
 interface
 uses
  rtlbase;
+
+const
+ invalidfilehandle = -1;
  
 type
  fileopenmodety = (fm_none,fm_read,fm_write,fm_readwrite,fm_create,fm_append);
@@ -44,18 +47,24 @@ type
                );
 
 function nowutc(): datetimety;
-{
-function fileopen(const path: filenamety; const openmode: fileopenmodety;
+
+function fileopen(const path: string8{filenamety}; const openmode: fileopenmodety;
           const accessmode: fileaccessmodesty;
-          const rights: filerightsty; out handle: integer): syserrorty;
-function fileclose(const handle: integer): syserrorty;
-}
+          const rights: filerightsty; out fd: int32): syserrorty;
+function fileclose(const fd: int32): syserrorty;
+function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
+
 implementation
 uses
  rtllibc;
   
 const
  unidatetimeoffset = -25569;
+
+function syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
+begin
+ result:= sye_lasterror; //todo
+end;
 
 function nowutc(): datetimety;
 var
@@ -73,26 +82,49 @@ const
      (0,      o_rdonly,o_wronly,o_rdwr,      o_rdwr or o_creat or o_trunc,
 //    fm_append
       o_rdwr or o_creat {or o_trunc});
+*)
+sub getopenmodes(amode: fileopenmodety): card32; //todo: use array
+begin
+ result:= 0;
+ case amode of 
+  fm_read: begin
+   result:= o_rdonly;
+  end;
+  fm_write: begin
+   result:= o_wronly;
+  end;
+  fm_readwrite: begin
+   result:= o_rdwr;
+  end;
+  fm_create: begin
+   result:= o_rdwr or o_creat or o_trunc;
+  end;
+  fm_append: begin
+   result:= o_rdwr or o_creat;
+  end;
+ end;
+end;
 
-function fileopen(const path: filenamety; const openmode: fileopenmodety;
+function fileopen(const path: string8{filenamety}; const openmode: fileopenmodety;
           const accessmode: fileaccessmodesty;
-          const rights: filerightsty; out handle: integer): syserrorty;
+          const rights: filerightsty; out fd: int32): syserrorty;
 var
- str1: string;
- str2: string16;
+// str1: string;
+// str2: string16;
 // stat1: _stat;
-//const
-// defaultopenflags = o_cloexec; 
+const
+ defaultopenflags = o_cloexec; 
 begin
 {
  str2:= path;
  sys_tosysfilepath(str2);
  str1:= tosys(str2);
 }
- str1:= path;
- handle:= Integer(mselibc.open(pchar8(str1), openmodes[openmode] or 
-                            defaultopenflags,[getfilerights(rights)]));
- if handle >= 0 then begin
+// str1:= path;
+ fd:= open(pcchar(path), getopenmodes(openmode) or defaultopenflags);
+// handle:= open(pcchar(str1), openmodes[openmode] or 
+//                            defaultopenflags,[getfilerights(rights)]);
+ if fd >= 0 then begin
  {
   if fstat(handle,@stat1) = 0 then begin  
    if s_isdir(stat1.st_mode) then begin
@@ -111,11 +143,54 @@ begin
    result:= syelasterror;
   end;
  }
-  result:= gue_ok;
+  result:= sye_ok;
  end
  else begin
   result:= syelasterror;
  end;
 end;
-*)
+
+function fileclose(const fd: int32): syserrorty;
+var
+ i1: cint;
+begin
+ result:= sye_ok;
+ if (fd <> invalidfilehandle) then begin
+  if close(fd) <> 0 then begin
+   result:= sye_lasterror;
+  end;
+ end;
+{
+  repeat
+   int1:= mselibc.__close(handle);
+  until (int1 = 0) or (sys_getlasterror <> EINTR);
+  if int1 <> 0 then begin
+   result:= syelasterror;
+  end;
+ end;
+}
+end;
+
+function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
+var
+ i1: int32;
+begin
+ result:= write(fd,buf,nbytes);
+{
+ result:= nbytes;
+ repeat
+  i1:= mselibc.__write(fd,buf^,nbytes);
+  if int1 = -1 then begin
+   if sys_getlasterror <> eintr then begin
+    result:= int1;
+    break;
+   end;
+   continue;
+  end;
+  inc(pchar(buf),int1);
+  dec(nbytes,int1);
+ until integer(nbytes) <= 0;
+}
+end;
+
 end.
