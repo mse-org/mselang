@@ -74,7 +74,7 @@ uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,handler,managedtypes,
- __mla__internaltypes,exceptionhandler,listutils;
+ __mla__internaltypes,exceptionhandler,listutils,llvmlists;
 
 function listtoset(const acontext: pcontextitemty): boolean;
 var
@@ -1544,8 +1544,10 @@ var
  paramschecked: boolean;
 // tempsize: int32;
  
- procedure doparam(var context1: pcontextitemty;
-         const subparams1: pelementoffsetty; const parallocpo: pparallocinfoty);
+ function doparam(var context1: pcontextitemty;
+                               const subparams1: pelementoffsetty; 
+                               const parallocpo: pparallocinfoty): boolean;
+                                              //false if skipped
  var
   vardata1: pvardataty;
   
@@ -1616,11 +1618,12 @@ var
   conversioncost1: int32;
   err1: errorty;
   opref1: int32;
-  po1: pcontextitemty;
+  p1,pe: pcontextitemty;
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
  begin
+  result:= true; //not skipped
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
    if vardata1^.vf.typ = 0 then begin
@@ -1643,8 +1646,8 @@ var
      err1:= err_callbyvarexact;
     end;
     i2:= 1;
-    po1:= @contextstack[context1^.parent];
-    while getnextnospace(po1+1,po1) and (po1 <> context1) do begin
+    p1:= @contextstack[context1^.parent];
+    while getnextnospace(p1+1,p1) and (p1 <> context1) do begin
      inc(i2);
     end;
     if context1^.d.kind = ck_list then begin
@@ -1721,6 +1724,21 @@ var
        conversioncost1:= 0;
       end;
       dk_openarray: begin
+       if sf_vararg in asub^.flags then begin
+        pe:= context1+context1^.d.list.contextcount;
+        p1:= context1+1;
+        while p1 < pe do begin
+         if p1^.d.kind = ck_list then begin
+          p1:= p1+p1^.d.list.contextcount;
+         end
+         else begin
+          exclude(p1^.d.handlerflags,hf_listitem);
+          inc(p1);
+         end;
+        end;
+        result:= false; //skip
+        exit;
+       end;
        if not listtoopenarray(context1,desttype) then begin
         exit;
        end;
@@ -1883,13 +1901,15 @@ var
  b1: boolean;
  mo1: managedopty;
  typ1: ptypedataty;
-// tempsbefore: targetadty;
+ varargcount: int32;
+ varargs: array[0..maxparamcount] of int32;
 label
  paramloopend;
 begin
 {$ifdef mse_debugparser}
  outhandle('dosub');
 {$endif}
+ varargcount:= 0;
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
@@ -2223,8 +2243,14 @@ begin
      d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
     end;
 
-    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
+    if sf_vararg in asub^.flags then begin
+     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*maxparamcount);
                                                              //max
+    end
+    else begin
+     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
+                                                             //max
+    end;
     parallocstart:= getsegmenttopoffs(seg_localloc);    
 
     if sf_function in asub^.flags then begin
@@ -2289,12 +2315,28 @@ begin
     else begin
      while i1 > 0 do begin
       getnextnospace(poitem1+1,poitem1);
-      doparam(poitem1,subparams1,parallocpo);
-      inc(subparams1);
-      inc(parallocpo);
-      dec(i1);
+      if doparam(poitem1,subparams1,parallocpo) then begin 
+                                     //vararg list skipped?
+       inc(subparams1);              //no
+       inc(parallocpo);
+       dec(i1);
+      end
+      else begin
+       i1:= maxparamcount-asub^.paramcount;
+       while getnextnospace(poitem1+1,poitem1) do begin
+        getvalue(poitem1,das_none);
+        parallocpo^.ssaindex:= poitem1^.d.dat.fact.ssaindex;
+        inc(varargcount);
+        inc(parallocpo);
+        if varargcount >= i1 then begin
+         errormessage(err_toomanyparams,[]);
+         break;
+        end;
+       end;
+       break;
+      end;
      end;
-     dodefaultparams();
+     dodefaultparams(); //varargs can not have defaultparams
     end;
 //    locdatapo:= tempsbefore;
     
@@ -2464,7 +2506,12 @@ begin
       internalerror(ie_handler,'20160522A');
      end;
     {$endif}
-     par.callinfo.paramcount:= asub^.paramcount;
+     if sf_vararg in asub^.flags then begin
+      par.callinfo.paramcount:= asub^.paramcount - 1 + varargcount;
+     end
+     else begin
+      par.callinfo.paramcount:= asub^.paramcount;
+     end;
      par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
      par.callinfo.ad.globid:= trackaccess(asub);
     end;
