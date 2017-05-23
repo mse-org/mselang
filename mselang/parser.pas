@@ -573,7 +573,7 @@ begin
     start.line:= 0;
     parent:= s.stackindex;
    end;
- 
+   aunit^.stackstart:= s.stacktop;
    beginunit(aunit);
    
    if (s.debugoptions <> []) then begin

@@ -670,7 +670,8 @@ type
   interfacestart: markinfoty;
   interfaceend: markinfoty;
   reloc: unitrelocty;
-  
+
+  stackstart: int32;  
   implementationstart: markinfoty;
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;

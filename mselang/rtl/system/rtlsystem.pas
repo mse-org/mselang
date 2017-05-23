@@ -53,8 +53,8 @@ function fileopen(const path: string8{filenamety}; const openmode: fileopenmodet
           const rights: filerightsty; out fd: int32): syserrorty;
 function fileclose(const fd: int32): syserrorty;
 function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
-{$internaldebug on}
 implementation
+//{$internaldebug on}
 uses
  rtllibc;
   
