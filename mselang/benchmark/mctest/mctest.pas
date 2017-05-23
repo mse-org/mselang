@@ -306,6 +306,9 @@ begin
  fw:= defaultmwcseedw;
  fz:= defaultmwcseedz;
 
+ maketextures();
+ makemap();
+
  i2:= 0;
  for i1:= 0 to high(texmap) do begin
   i2:= i2 + (texmap[i1] xor i1);
@@ -317,8 +320,6 @@ begin
  end;
  writeln('Map checksum: ',i2);
 
- maketextures();
- makemap();
  loopcount:= 0;
 
  ti1:= now();
