@@ -336,7 +336,7 @@ begin
  writeln('Loopcount: ',loopcount,' Screen checksum: ',i3);
 
  writeln(10/((ti2-ti1)*24*60*60),' FPS');
- i1:= fpopen(pchar('test.bmp'),o_rdwr or o_creat or o_trunc);
+ i1:= fpopen(pchar('test.pix'),o_rdwr or o_creat or o_trunc);
  fpwrite(i1,pchar(@screen),sizeof(screen));
  fpclose(i1);
 end.
