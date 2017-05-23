@@ -1158,6 +1158,7 @@ begin
                (source1^.h.bitsize = pointerbitsize) or 
                       (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
        if source1^.h.kind in [dk_string,dk_dynarray] then begin
+        result:= getvalue(acontext,das_pointer);
         result:= true; //todo: pchar handling
        end
        else begin
