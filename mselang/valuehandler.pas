@@ -259,7 +259,7 @@ begin
   infodynarray.i.itemtypedata:= ele.eledatarel(aitemtype);
  end;
  with acontext^ do begin
-  if isallconst then begin
+  if isallconst and not (tf_untyped in itemtype1^.h.flags) then begin
    initdatacontext(d,ck_const);
    podata1:= initopenarrayconst(d.dat.constval,itemcount1,
                                                 itemtype1^.h.bytesize);
@@ -1324,9 +1324,11 @@ begin
  {$endif}
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
-  if dest^.h.kind = dk_none then begin
+  if (dest^.h.kind = dk_none) and 
+              (not (hf_listitem in d.handlerflags) or 
+                             (af_listitem in destaddress.flags)) then begin
   {$ifdef mse_checkinternalerror}
-   if not (af_param in destaddress.flags) then begin
+   if destaddress.flags*[af_param,af_listitem] = [] then begin
     internalerror(ie_parser,'20170420A');
    end;
   {$endif}
@@ -1347,7 +1349,7 @@ begin
    end;
    pocont1:= sourcecontext+1;
    poe:= sourcecontext + sourcecontext^.d.list.contextcount;
-   addr1.flags:= [];
+   addr1.flags:= [af_listitem];
    i1:= conversioncost;
    case dest^.h.kind of
     dk_set: begin

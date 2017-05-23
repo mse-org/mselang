@@ -102,7 +102,7 @@ type
                   af_paramconst,af_paramconstref,af_paramvar,af_paramout, 
                                               //for paramkindty match test
 //                  af_managedtemp,
-                  af_openarray,
+                  af_openarray,af_listitem,af_vararg,
                   af_withindirect,
                   af_classfield,af_objectfield,
                   af_stack,af_segmentpo,af_aggregate,

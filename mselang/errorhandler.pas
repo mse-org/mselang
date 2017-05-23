@@ -79,7 +79,7 @@ type
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
             err_invalidoperatormethod,err_objectforwardnotallowed,
-            err_toomanyoperparams);
+            err_toomanyoperparams,err_varargmustbelast);
             
  errorinfoty = record
   level: errorlevelty;
@@ -291,7 +291,9 @@ const
   (level: erl_error; message: 'Operator "%s" aleady defined'),
   (level: erl_error; message: 'Invalid operator method'),
   (level: erl_error; message: 'Object forward definition is not allowed'),
-  (level: erl_error; message: 'Too many operator parameters')
+  (level: erl_error; message: 'Too many operator parameters'),
+  (level: erl_error; message: 
+                 'Variable arguments must be at end of parameter list')
  );
 
 procedure message1(const atext: string; const values: array of const); 

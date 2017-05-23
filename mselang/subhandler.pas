@@ -1267,7 +1267,20 @@ var                       //todo: move after doparam
                     //absoluteaddress, will be qualified later
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
+        if sf_vararg in sub1^.flags then begin
+         errormessage(err_varargmustbelast,[]);
+        end;
         typ1:= ele.eledataabs(d.typ.typedata);
+        if (typ1^.h.kind = dk_openarray) and 
+           (tf_untyped in ptypedataty(ele.eledataabs(
+                       typ1^.infodynarray.i.itemtypedata))^.h.flags) then begin
+         if not (sf_external in sub1^.flags) then begin //todo: check "cdecl"
+          notimplementederror('20170521B');
+         end
+         else begin
+          include(sub1^.flags,sf_vararg);
+         end;
+        end;
         with var1^ do begin
          vf.defaultconst:= defaultconst1;
          if defaultconst1 >= 0 then begin
@@ -1286,6 +1299,9 @@ var                       //todo: move after doparam
          end;
          if typ1^.h.kind = dk_openarray then begin
           include(address.flags,af_openarray);
+          if sf_vararg in sub1^.flags then begin
+           include(address.flags,af_vararg);
+          end;
          end;
          if typ1^.h.datasize = das_none then begin
           include(address.flags,af_aggregate);

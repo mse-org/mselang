@@ -154,7 +154,7 @@ type
  end;
  psubtypeheaderty = ^subtypeheaderty;
 
- paramitemflagty = (pif_dumy);
+ paramitemflagty = (pif_dumy{,pif_vararg});
  paramitemflagsty = set of paramitemflagty;
  paramitemty = record
   typelistindex: int32;
@@ -1257,6 +1257,7 @@ var
  parbuf: subtypebufferty;
  po2: pelementoffsetty;
  i1: int32;
+ var1: pvardataty;
 begin
  if avalue = nil then begin //main()
   with parbuf do begin
@@ -1272,6 +1273,9 @@ begin
   with parbuf do begin
    header.flags:= avalue^.flags;
    header.paramcount:= avalue^.paramcount;
+   if sf_vararg in header.flags then begin
+    dec(header.paramcount);
+   end;
    i1:= avalue^.allocs.nestedalloccount+1; 
             //first item is possible pointer to outer frame
    if i1 > 1 then begin
@@ -1307,7 +1311,15 @@ begin
    for i1:= i1 to header.paramcount - 1 do begin
     with params[i1] do begin
      flags:= [];
-     typelistindex:= addvarvalue(ele.eledataabs(po2^));
+     var1:= ele.eledataabs(po2^);
+     {
+     if af_vararg in var1^.address.flags then begin
+      include(flags,pif_vararg);
+     end
+     else begin
+     }
+      typelistindex:= addvarvalue(var1);
+//     end;
     end;
     inc(po2);
    end;

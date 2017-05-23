@@ -680,6 +680,9 @@ begin
      for i1:= subparamindex to subparamindex+subparamcount-1 do begin
       result:= result+typename(fsubparams[i1])+',';
      end;
+     if subvararg then begin
+      result:= result + '...,';
+     end;
      setlength(result,length(result)-1);
      result:= result+')';
     end;

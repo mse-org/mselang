@@ -135,7 +135,7 @@ begin
   if (stf_paramsdef in info.s.currentstatementflags) and
                 (s.stacktop-s.stackindex = 1) and (d.typ.indirectlevel = 0) and
                  (contextstack[s.stacktop].d.ident.ident = tk_const) then begin
-   po2:= ele.eleinfoabs(getsystypeele(st_forward));
+   po2:= ele.eleinfoabs(getsystypeele(st_none));
    bo2:= true;
   end
   else begin
