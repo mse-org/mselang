@@ -2309,7 +2309,9 @@ begin
        end;
        if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
                                                  not vararg1 then begin
-        error('Invalid param count');
+        outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+        error('Invalid param count: '+
+                  inttostr(high(rec1)-i4+1)+' should be: '+inttostr(i3));
        end;
        str1:= str1+'(';
        for i1:= i4+1 to high(rec1) do begin

@@ -1903,6 +1903,7 @@ var
  typ1: ptypedataty;
  varargcount: int32;
  varargs: array[0..maxparamcount] of int32;
+ isvararg: boolean;
 label
  paramloopend;
 begin
@@ -1910,6 +1911,7 @@ begin
  outhandle('dosub');
 {$endif}
  varargcount:= 0;
+ isvararg:= sf_vararg in asub^.flags;
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
@@ -2174,8 +2176,9 @@ begin
     if sf_method in asub^.flags then begin
      inc(totparamco); //self parameter
     end;
-    if (totparamco < asub^.paramcount - asub^.defaultparamcount) or 
-                (totparamco > asub^.paramcount) then begin 
+    if ((totparamco < asub^.paramcount - asub^.defaultparamcount) or 
+                (totparamco > asub^.paramcount)) and 
+         not (isvararg and (asub^.paramcount-totparamco = 1)) then begin 
                                          //todo: use correct source pos
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
@@ -2243,7 +2246,7 @@ begin
      d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
     end;
 
-    if sf_vararg in asub^.flags then begin
+    if isvararg then begin
      checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*maxparamcount);
                                                              //max
     end
@@ -2336,7 +2339,9 @@ begin
        break;
       end;
      end;
-     dodefaultparams(); //varargs can not have defaultparams
+     if not isvararg then begin
+      dodefaultparams(); //varargs can not have defaultparams
+     end;
     end;
 //    locdatapo:= tempsbefore;
     
@@ -2506,7 +2511,7 @@ begin
       internalerror(ie_handler,'20160522A');
      end;
     {$endif}
-     if sf_vararg in asub^.flags then begin
+     if isvararg then begin
       par.callinfo.paramcount:= asub^.paramcount - 1 + varargcount;
      end
      else begin
