@@ -250,7 +250,7 @@ begin
    if do_proginfo in info.s.debugoptions then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
-           info.{s.}currentscopemeta,
+           info.s.currentscopemeta,
            n1,info.s.currentfilemeta,
            info.contextstack[info.s.stackindex].start.line+1,i1,
            llvmlists.metadatalist.adddisubroutinetype(nil{,

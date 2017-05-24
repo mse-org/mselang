@@ -213,6 +213,7 @@ begin
  fillchar(acontext^,sizeof(acontext^),0);
  with acontext^ do begin
   compilerswitches:= info.s.compilerswitches;
+  currentscopemeta:= info.s.currentscopemeta;
   source:= info.s.input;
   sourceoffset:= info.s.source.po-info.s.sourcestart;
   sourceline:= info.s.source.line;
@@ -243,6 +244,7 @@ begin
    end;
   end;
   info.s.compilerswitches:= compilerswitches;
+  info.s.currentscopemeta:= currentscopemeta;
   info.s.input:= source;
   info.s.sourcestart:= pchar(source);
   info.s.source.po:= info.s.sourcestart + sourceoffset;
@@ -418,7 +420,7 @@ begin
   with additem(oc_lineinfo)^.par.lineinfo do begin
    loc.line:= info.s.source.line;
    loc.col:= 0;
-   loc.scope:= info.{s.}currentscopemeta.id;
+   loc.scope:= info.s.currentscopemeta.id;
   end;
  end;
 end;
@@ -433,7 +435,7 @@ begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
-     loc.scope:= info.{s.}currentscopemeta.id;
+     loc.scope:= info.s.currentscopemeta.id;
     end;
    end;
   end;
@@ -586,6 +588,7 @@ begin
        compileunitmeta:= adddicompileunit(
           filepathmeta,dwarflangid,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);
+       s.currentscopemeta:= compileunitmeta;
        addnamednode(stringtolstring('llvm.dbg.cu'),
                                             [compileunitmeta.id]);
        if not hasmoduleflags then begin
@@ -642,7 +645,8 @@ begin
    s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
    if do_proginfo in info.o.debugoptions then begin
-    pushcurrentscope(filepathmeta);
+    pushcurrentscope(compileunitmeta);
+//    pushcurrentscope(filepathmeta);
 //    setcurrentscope(filepathmeta);
    end
    else begin

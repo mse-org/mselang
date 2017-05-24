@@ -3837,7 +3837,7 @@ begin
    setlength(scopemetastack,scopemetaindex*2+256);
   end;
   scopemetastack[scopemetaindex]:= ascope;
-  currentscopemeta:= ascope;
+  s.currentscopemeta:= ascope;
  end;
  postlineinfo();
 end;
@@ -3849,7 +3849,7 @@ begin
   if scopemetaindex < 0 then begin 
    internalerror1(ie_unit,'20160229A');
   end;               
-  currentscopemeta:= scopemetastack[scopemetaindex];
+  s.currentscopemeta:= scopemetastack[scopemetaindex];
  end;
 // postlineinfo();
 end;

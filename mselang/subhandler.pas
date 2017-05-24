@@ -1004,7 +1004,7 @@ begin
     m1:= s.unitinfo^.llvmlists.metadatalist.noparamssubtyp;
    end;
    pushcurrentscope(s.unitinfo^.llvmlists.metadatalist.adddisubprogram(
-           currentscopemeta,getidentname2(aname),
+           s.currentscopemeta,getidentname2(aname),
               s.currentfilemeta,s.source.line,-1,m1,[],true));
   end;
   initsubstartinfo();
@@ -1032,7 +1032,7 @@ begin
      end;
      if do_proginfo in s.debugoptions then begin
       with pdisubprogramty(llvmlists.metadatalist.getdata(
-                                      currentscopemeta))^ do begin
+                                      s.currentscopemeta))^ do begin
        _function:= llvmlists.metadatalist.addglobvalue(subbegin.globid);
       end;
      end;
@@ -1128,7 +1128,7 @@ begin
   end;
  end;
  with additem(oc_subend)^ do begin
-  par.subend.submeta:= info.currentscopemeta;
+  par.subend.submeta:= info.s.currentscopemeta;
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
  end;
@@ -1769,11 +1769,11 @@ begin
       with s.unitinfo^ do begin
        if do_proginfo in s.debugoptions then begin
         pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-            {s.}currentscopemeta,getidentname2(element1^.header.name),
+            s.currentscopemeta,getidentname2(element1^.header.name),
             s.currentfilemeta,
             info.contextstack[info.s.stackindex].start.line,-1,
             dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
-        sub1^.submeta:= currentscopemeta;
+        sub1^.submeta:= s.currentscopemeta;
        end;
       end;
      end;
@@ -2186,7 +2186,7 @@ begin
     m2:= llvmlists.metadatalist.adddisubroutinetype(
                                    po1{,filepathmeta,debugfilemeta});
     with pdisubprogramty(llvmlists.metadatalist.getdata(
-                                                {s.}currentscopemeta))^ do begin
+                                                s.currentscopemeta))^ do begin
      _function:= m1;
      _type:= m2;
     end;

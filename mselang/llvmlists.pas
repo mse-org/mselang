@@ -545,8 +545,7 @@ type
  end;
  pdisubrangety = ^disubrangety;
 
- diderivedtypekindty = (didk_pointertype,didk_referencetype,didk_member,
-                        didk_set);
+ diderivedtypekindty = (didk_pointertype,didk_referencetype,didk_member);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
@@ -3237,7 +3236,7 @@ begin
     kind:= divk_autovariable;
     arg:= 0;
    end;
-   scope:= info.{s.}currentscopemeta;
+   scope:= info.s.currentscopemeta;
    name:= m1;
    _file:= info.s.currentfilemeta;
    linenumber:= alinenumber;

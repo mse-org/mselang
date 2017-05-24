@@ -607,6 +607,7 @@ type
 }
  parsercontextty = record
   compilerswitches: compilerswitchesty;
+  currentscopemeta: metavaluety;
   source: string;
   sourceoffset: integer;
   sourceline: integer;
@@ -721,6 +722,7 @@ type
  
  savedparseinfoty = record
   filename: filenamety;
+  currentscopemeta: metavaluety;
   input: string;
   source: sourceinfoty;
 {$ifdef mse_debugparser}
@@ -754,7 +756,7 @@ type
   o: parseoptionsty;
   rootelement: elementoffsetty;
   systemelement: elementoffsetty;
-  currentscopemeta: metavaluety;
+//  currentscopemeta: metavaluety;
   scopemetastack: metavaluearty;
   scopemetaindex: int32;
 //  compilerswitches: compilerswitchesty;
