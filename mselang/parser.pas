@@ -588,7 +588,7 @@ begin
        compileunitmeta:= adddicompileunit(
           filepathmeta,dwarflangid,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);
-       s.currentscopemeta:= compileunitmeta;
+//       s.currentscopemeta:= compileunitmeta;
        addnamednode(stringtolstring('llvm.dbg.cu'),
                                             [compileunitmeta.id]);
        if not hasmoduleflags then begin

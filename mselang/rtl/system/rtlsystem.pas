@@ -11,7 +11,7 @@ unit rtlsystem;
 //system functions, preliminary ad-hoc implementation
 interface
 uses
- rtlbase;
+ rtlbase,rtllibc;
 
 const
  invalidfilehandle = -1;
@@ -55,8 +55,9 @@ function fileclose(const fd: int32): syserrorty;
 function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
 implementation
 //{$internaldebug on}
-uses
- rtllibc;
+//uses                           //todo: error with llvm debuginfo:
+// rtllibc;                      //"Unable to find compile unit!"
+                               //must be in interface
   
 const
  unidatetimeoffset = -25569;
