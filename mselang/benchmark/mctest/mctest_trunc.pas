@@ -258,18 +258,18 @@ begin
         // while we are concidering a ray that is still closer then the best so far
         while (dist < closest) do begin
           // quantize to the map grid
-          tex := map[ ((trunc(zp) and 63) shl 12) or ((trunc(yp) and 63) shl 6) or (trunc(xp) and 63) ];
+          tex := map[ ((trunci32(zp) and 63) shl 12) or ((trunci32(yp) and 63) shl 6) or (trunci32(xp) and 63) ];
 
           // if this voxel has a texture applied
           if (tex > 0) then begin
             // find the uv coordinates of the intersection point
-            u := (round((xp + zp) * 16)) and 15;
-            v := (round(yp    * 16)  and 15) + 16;
+            u := (trunci32((xp + zp) * 16)) and 15;
+            v := (trunci32(yp    * 16)  and 15) + 16;
 
             // fix uvs for alternate directions?
             if (d = 1) then begin
-              u :=  (round(xp * 16)) and 15;
-              v := ((round(zp * 16)) and 15);
+              u :=  (trunci32(xp * 16)) and 15;
+              v := ((trunci32(zp * 16)) and 15);
               if (yd < 0.0) then
                 inc(v, 32);
             end;

@@ -25,7 +25,8 @@ uses
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
- msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode;
+ msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode,mseact,
+ msememodialog;
 
 const
  llvmbindir = 
@@ -57,10 +58,11 @@ type
    builded: tbooleanedit;
    proginfoed: tbooleanedit;
    nameed: tbooleanedit;
-   opted: tstringedit;
    nocompilerunited: tbooleanedit;
    tbutton3: tbutton;
    nortlunitsed: tbooleanedit;
+   opted: tmemodialoghistoryedit;
+   llced: tmemodialoghistoryedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -97,8 +99,8 @@ uses
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
-const
- llcopt = '-debugger-tune=gdb ';
+//const
+// llcopt = '-debugger-tune=gdb ';
 var
  errstream,outstream: ttextstream;
  mlistream: tmsefilestream;
@@ -178,7 +180,7 @@ begin
          int1:= 0;
         end;
         if int1 = 0 then begin
-         int1:= getprocessoutput(llvmbindir+'llc '+llcopt+'-o '+
+         int1:= getprocessoutput(llvmbindir+'llc '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -204,7 +206,8 @@ begin
                 quotefilename(ar1),'',str1);
        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        if int1 = 0 then begin
-        int1:= getprocessoutput(llvmbindir+'llc '+llcopt+filename2,'',str1);
+        int1:= getprocessoutput(llvmbindir+'llc '+llced.value+' '+
+                                                        filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if int1 = 0 then begin
          int1:= getprocessoutput('gcc -lm -o'+filenamebase(filename1)+'.bin '+
