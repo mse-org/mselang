@@ -372,6 +372,8 @@
   (ssa: flo64toflo32ssa; proc: @flo64toflo32op; flags: []), 
 //oc_trunci32flo64
   (ssa: trunci32flo64ssa; proc: @trunci32flo64op; flags: []), 
+//oc_trunci32flo32
+  (ssa: trunci32flo32ssa; proc: @trunci32flo32op; flags: []), 
 //oc_trunci64flo64
   (ssa: trunci64flo64ssa; proc: @trunci64flo64op; flags: []), 
 

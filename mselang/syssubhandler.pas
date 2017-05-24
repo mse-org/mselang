@@ -1283,21 +1283,36 @@ begin
  end;
 end;
 
-procedure i32floatsysfunc(const paramco: integer; const aop: opcodety);
+procedure i32floatsysfunc(const paramco: integer; const aop64: opcodety;
+                                              const aop32: opcodety = oc_none);
 var
  po1: pcontextitemty;
+ si1: databitsizety;
+ op1: opcodety;
 begin
  with info do begin
-  if checkparamco(1,paramco) and 
-          getbasevalue(@contextstack[s.stacktop],das_f64) then begin
-   with additem(aop)^ do begin
-    par.ssas1:= info.s.ssa.index-1;
+  if checkparamco(1,paramco) then begin
+   po1:= @contextstack[s.stacktop];
+   if (aop32 = oc_none) or (po1^.d.kind in datacontexts) and
+    (ptypedataty(ele.eledataabs(po1^.d.dat.datatyp.typedata))^.h.datasize <>
+                                                           das_f32) then begin
+    si1:= das_f64;
+    op1:= aop64;
+   end
+   else begin
+    si1:= das_f32;
+    op1:= aop32;
    end;
-   po1:= @contextstack[s.stackindex];
-   initdatacontext(po1^.d,ck_subres);
-   with po1^ do begin
-    d.dat.fact.ssaindex:= info.s.ssa.index;
-    d.dat.datatyp:= sysdatatypes[st_int32];
+   if getbasevalue(@contextstack[s.stacktop],si1) then begin
+    with additem(op1)^ do begin
+     par.ssas1:= info.s.ssa.index-1;
+    end;
+    po1:= @contextstack[s.stackindex];
+    initdatacontext(po1^.d,ck_subres);
+    with po1^ do begin
+     d.dat.fact.ssaindex:= info.s.ssa.index;
+     d.dat.datatyp:= sysdatatypes[st_int32];
+    end;
    end;
   end;
  end;
@@ -1355,7 +1370,7 @@ end;
 
 procedure handletrunci32(const paramco: integer);
 begin
- i32floatsysfunc(paramco,oc_trunci32flo64);
+ i32floatsysfunc(paramco,oc_trunci32flo64,oc_trunci32flo32);
 end;
 
 procedure handletrunci64(const paramco: integer);

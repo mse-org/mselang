@@ -3338,6 +3338,14 @@ begin
  pint32(stackpush(sizeof(int32)))^:= trunc(da1);
 end;
 
+procedure trunci32flo32op();
+var
+ da1: flo32;
+begin
+ da1:= pflo32(stackpop(sizeof(flo32)))^;
+ pint32(stackpush(sizeof(int32)))^:= trunc(da1);
+end;
+
 procedure trunci64flo64op();
 var
  da1: flo64;
@@ -6643,6 +6651,7 @@ const
   flo32toflo64ssa = 0;
   flo64toflo32ssa = 0;
   trunci32flo64ssa = 0;
+  trunci32flo32ssa = 0;
   trunci64flo64ssa = 0;
   
   card1toint32ssa = 0;

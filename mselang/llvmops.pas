@@ -1813,6 +1813,14 @@ begin
  end;
 end;
 
+procedure trunci32flo32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_FPTOSI);
+ end;
+end;
+
 procedure trunci64flo64op();
 begin
  with pc^.par do begin
@@ -4546,6 +4554,7 @@ const
   flo32toflo64ssa = 1;
   flo64toflo32ssa = 1;
   trunci32flo64ssa = 1;
+  trunci32flo32ssa = 1;
   trunci64flo64ssa = 1;
 
   card1toint32ssa = 1;
