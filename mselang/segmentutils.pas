@@ -117,7 +117,6 @@ function getsegmenttop(const asegment: segmentty): pointer;
 function getsegmenttopoffs(const asegment: segmentty): dataoffsty;
 function getsegmentsize(const asegment: segmentty): integer;
 
-function getoppo(const opindex: integer): popinfoty;
                                
 procedure init();
 procedure deinit();
@@ -673,11 +672,6 @@ function getsegaddress(const asegment: segmentty;
 begin
  result.segment:= asegment;
  result.address:= aref-segments[asegment].data;
-end;
-
-function getoppo(const opindex: integer): popinfoty;
-begin
- result:= getsegmentpo(seg_op,opindex*sizeof(opinfoty));
 end;
 
 function getsegmentbase(const asegment: segmentty): pointer;

@@ -95,7 +95,11 @@ function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
                           const ssaextension: integer = 0): popinfoty;
 }
-function getitem(const index: integer): popinfoty;
+function getoppo(const opindex: integer): popinfoty;
+function getoppo(const ref: int32; offset: int32): popinfoty;
+                           //skips op_lineinfo
+//function getitem(const index: integer): popinfoty;
+function opoffset(const ref: int32; offset: int32): int32; //skips lineinfo
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 {
@@ -1093,10 +1097,63 @@ begin
  end;
 end;
 }
+{
 function getitem(const index: integer): popinfoty;
 begin
  result:= getsegmentbase(seg_op);
  inc(result,index);
+end;
+}
+function getoppo(const opindex: integer): popinfoty;
+begin
+ result:= getsegmentpo(seg_op,opindex*sizeof(opinfoty));
+end;
+
+function getoppo(const ref: int32; offset: int32): popinfoty; //skips lineinfo
+var
+ p1: popinfoty;
+begin
+ p1:= getsegmentbase(seg_op);
+ inc(p1,ref);
+ if offset > 0 then begin
+  inc(p1);
+  dec(offset);
+  while true do begin
+   while p1^.op.op = oc_lineinfo do begin
+    inc(p1);
+   end;
+   if offset = 0 then begin
+    break;
+   end;
+   dec(offset);
+  end;
+ end
+ else begin
+  if offset < 0 then begin
+   dec(p1);
+   inc(offset);
+   while true do begin
+    while p1^.op.op = oc_lineinfo do begin
+     dec(p1);
+    end;
+    if offset = 0 then begin
+     break;
+    end;
+    inc(offset);
+   end;
+  end
+  else begin
+   while p1^.op.op = oc_lineinfo do begin
+    dec(p1);
+   end;
+  end;   
+ end;
+ result:= p1;
+end;
+
+function opoffset(const ref: int32; offset: int32): int32; //skips lineinfo
+begin
+ result:= getoppo(ref,offset) - popinfoty(getsegmentbase(seg_op));
 end;
 
 procedure addlabel();

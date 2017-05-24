@@ -752,16 +752,17 @@ begin
     end;
    {$endif}
     with contextstack[int1] do begin
-     po1^.par.cmpjmpimm.destad.opaddress:= opmark.address-1;
+     po1^.par.cmpjmpimm.destad.opaddress:= opoffset(opmark.address,-1);
      if isrange then begin
      {$ifdef mse_checkinternalerror}
       if not checkop((po1-1)^.op,oc_cmpjmploimm4) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
-      (po1-1)^.par.cmpjmpimm.destad.opaddress:= opmark.address-1; //tf_lower
+      (po1-1)^.par.cmpjmpimm.destad.opaddress:= opoffset(opmark.address,-1);
+                                                     //tf_lower
      end;
-     with getoppo(opmark.address-1)^ do begin
+     with getoppo(opmark.address,-1)^ do begin
      {$ifdef mse_checkinternalerror}
       if not checkop(op,oc_goto) then begin
        internalerror(ie_handler,'20140530A');
@@ -773,7 +774,7 @@ begin
     inc(int1,3);
    end;
    if int1 - s.stacktop = 3 then begin
-    with getoppo(opcount-1)^ do begin
+    with getoppo(opcount,-1)^ do begin
     {$ifdef mse_checkinternalerror}
      if not checkop(op,oc_goto) then begin
       internalerror(ie_handler,'20140530B');

@@ -1095,7 +1095,7 @@ begin
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*pointersize; 
-  with getitem(simplesubstart)^ do begin
+  with getoppo(simplesubstart)^ do begin
    if co_llvm in o.compileoptions then begin
     if managedtempsize1 > 0 then begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
@@ -2147,7 +2147,7 @@ begin
   s.currentstatementflags:= b.flags;
   addsubend(po1);
   locallocid:= d.subdef.locallocidbefore;
-  po2:= getitem(po1^.address);
+  po2:= getoppo(po1^.address);
  {
   if po2^.op.op = oc_initclass then begin
    inc(po2);

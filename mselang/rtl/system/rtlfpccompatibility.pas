@@ -47,7 +47,7 @@ end;
 
 function round(d: flo64): int64;
 begin
- result:= trunc(nearbyint(d));
+ result:= trunci64(nearbyint(d));
 end;
 
 function fpopen (path : pchar; flags : cint):cint;

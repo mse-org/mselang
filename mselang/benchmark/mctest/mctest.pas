@@ -299,6 +299,8 @@ begin
   end;
 end;
 
+const
+ runs = 10;
 var
  ti1,ti2: tdatetime;
  i1,i2,i3: int32;
@@ -323,7 +325,7 @@ begin
  loopcount:= 0;
 
  ti1:= now();
- for i1:= 0 to 9 do begin
+ for i1:= 0 to runs-1 do begin
   render();
  end;
  ti2:= now();
@@ -336,7 +338,7 @@ begin
  end;
  writeln('Loopcount: ',loopcount,' Screen checksum: ',i3);
 
- writeln(10/((ti2-ti1)*24*60*60),' FPS');
+ writeln(runs/((ti2-ti1)*24*60*60),' FPS');
  i1:= fpopen(pchar('test.pix'),o_rdwr or o_creat or o_trunc);
  fpwrite(i1,pchar(@screen),sizeof(screen));
  fpclose(i1);

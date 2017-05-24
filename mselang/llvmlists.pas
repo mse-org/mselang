@@ -545,7 +545,8 @@ type
  end;
  pdisubrangety = ^disubrangety;
 
- diderivedtypekindty = (didk_pointertype,didk_referencetype,didk_member);
+ diderivedtypekindty = (didk_pointertype,didk_referencetype,didk_member,
+                        didk_set);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
@@ -2126,7 +2127,7 @@ begin
   typeindex:= i1;
  end;
  end;
- with opcode.getitem(avalue^.address)^ do begin
+ with opcode.getoppo(avalue^.address)^ do begin
   par.subbegin.typeid:= i1;
   par.subbegin.sub.allocs:= avalue^.allocs;
  end;
@@ -3066,6 +3067,16 @@ begin
       m2:= addbuffer();
       m1:= adddicompositetype(dick_enumtype,lstr1,file1,0,context1,
                                    dummymeta,po2^.h.bitsize,0,0,0,m2);      
+     end;
+     dk_set: begin
+       m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,
+                                                     DW_ATE_unsigned);
+                  //todo!
+     {
+      m2:= addtype(po2^.infoset.itemtype,0);
+      m1:= adddiderivedtype(didk_set,file1,context1,
+                      lstr1,0,po2^.h.bitsize,0,0,0,m2);
+     }
      end;
      dk_array: begin
       m2:= addtype(po2^.infoarray.i.itemtypedata,
