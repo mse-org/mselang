@@ -1257,7 +1257,7 @@ var                       //todo: move after doparam
       if (isclass and
           ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
               addvar(d.ident.ident,allvisi,sub1^.varchain,var1) then begin
-       identerror(curstackindex,err_duplicateidentifier);
+       identerror(curstackindex-s.stackindex,err_duplicateidentifier);
        err1:= true;
       end;
       if s.stopparser then begin
