@@ -1805,7 +1805,7 @@ begin
  end;
 end;
 
-procedure trunci32flo64op();
+procedure truncint32flo64op();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),
@@ -1813,7 +1813,7 @@ begin
  end;
 end;
 
-procedure trunci32flo32op();
+procedure truncint32flo32op();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),
@@ -1821,7 +1821,7 @@ begin
  end;
 end;
 
-procedure trunci64flo64op();
+procedure truncint64flo64op();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),
@@ -4553,9 +4553,9 @@ const
 
   flo32toflo64ssa = 1;
   flo64toflo32ssa = 1;
-  trunci32flo64ssa = 1;
-  trunci32flo32ssa = 1;
-  trunci64flo64ssa = 1;
+  truncint32flo64ssa = 1;
+  truncint32flo32ssa = 1;
+  truncint64flo64ssa = 1;
 
   card1toint32ssa = 1;
     

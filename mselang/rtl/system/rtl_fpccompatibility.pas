@@ -42,12 +42,12 @@ end;
 
 function trunc(d: flo64): int64;
 begin
- result:= trunci64(d);
+ result:= truncint64(d);
 end;
 
 function round(d: flo64): int64;
 begin
- result:= trunci64(nearbyint(d));
+ result:= truncint64(nearbyint(d));
 end;
 
 function fpopen (path : pchar; flags : cint):cint;

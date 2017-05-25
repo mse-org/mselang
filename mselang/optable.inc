@@ -370,12 +370,12 @@
   (ssa: flo32toflo64ssa; proc: @flo32toflo64op; flags: []), 
 //oc_flo64toflo32
   (ssa: flo64toflo32ssa; proc: @flo64toflo32op; flags: []), 
-//oc_trunci32flo64
-  (ssa: trunci32flo64ssa; proc: @trunci32flo64op; flags: []), 
-//oc_trunci32flo32
-  (ssa: trunci32flo32ssa; proc: @trunci32flo32op; flags: []), 
-//oc_trunci64flo64
-  (ssa: trunci64flo64ssa; proc: @trunci64flo64op; flags: []), 
+//oc_truncint32flo64
+  (ssa: truncint32flo64ssa; proc: @truncint32flo64op; flags: []), 
+//oc_truncint32flo32
+  (ssa: truncint32flo32ssa; proc: @truncint32flo32op; flags: []), 
+//oc_truncint64flo64
+  (ssa: truncint64flo64ssa; proc: @truncint64flo64op; flags: []), 
 
 //oc_card1toint32
   (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 

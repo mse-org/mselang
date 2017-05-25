@@ -47,8 +47,8 @@ procedure handlesqrt(const paramco: int32);
 procedure handlefloor(const paramco: int32);
 procedure handleround(const paramco: int32);
 procedure handlenearbyint(const paramco: int32);
-procedure handletrunci32(const paramco: int32);
-procedure handletrunci64(const paramco: int32);
+procedure handletruncint32(const paramco: int32);
+procedure handletruncint64(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -72,8 +72,8 @@ const
   @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin,@handlecos,
   //syf_sqrt, syf_floor,   syf_round,   syf_nearbyint,
   @handlesqrt,@handlefloor,@handleround,@handlenearbyint,
-  //syf_trunci32,syf_trunci64
-  @handletrunci32,@handletrunci64
+  //syf_truncint32,syf_truncint64
+  @handletruncint32,@handletruncint64
  );
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1368,14 +1368,14 @@ begin
  floatsysfunc(paramco,oc_nearbyint64);
 end;
 
-procedure handletrunci32(const paramco: integer);
+procedure handletruncint32(const paramco: integer);
 begin
- i32floatsysfunc(paramco,oc_trunci32flo64,oc_trunci32flo32);
+ i32floatsysfunc(paramco,oc_truncint32flo64,oc_truncint32flo32);
 end;
 
-procedure handletrunci64(const paramco: integer);
+procedure handletruncint64(const paramco: integer);
 begin
- i64floatsysfunc(paramco,oc_trunci64flo64);
+ i64floatsysfunc(paramco,oc_truncint64flo64);
 end;
 
 type
@@ -1412,8 +1412,8 @@ const
    (name: 'floor'; data: (func: syf_floor)),
    (name: 'round'; data: (func: syf_round)),
    (name: 'nearbyint'; data: (func: syf_nearbyint)),
-   (name: 'trunci32'; data: (func: syf_trunci32)),
-   (name: 'trunci64'; data: (func: syf_trunci64))   
+   (name: 'truncint32'; data: (func: syf_truncint32)),
+   (name: 'truncint64'; data: (func: syf_truncint64))   
   );
 
 procedure init();

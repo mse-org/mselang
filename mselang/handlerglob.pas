@@ -436,7 +436,7 @@ type
               syf_halt,
               syf_low,syf_high,syf_length,
               syf_sin,syf_cos,syf_sqrt,syf_floor,syf_round,syf_nearbyint,
-              syf_trunci32,syf_trunci64);
+              syf_truncint32,syf_truncint64);
 
  sysfuncdataty = record
   func: sysfuncty;

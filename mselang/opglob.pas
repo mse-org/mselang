@@ -239,8 +239,8 @@ type
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
   
   oc_flo32toflo64,oc_flo64toflo32,
-  oc_trunci32flo64,oc_trunci32flo32,
-  oc_trunci64flo64,
+  oc_truncint32flo64,oc_truncint32flo32,
+  oc_truncint64flo64,
 
   oc_card1toint32,
   
@@ -1298,7 +1298,7 @@ type
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
 
    oc_flo32toflo64,oc_flo64toflo32,
-   oc_trunci32flo64,oc_trunci64flo64,
+   oc_truncint32flo64,oc_truncint64flo64,
    
    oc_card1toint32,
    
