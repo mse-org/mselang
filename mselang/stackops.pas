@@ -32,8 +32,10 @@ type
  pvcardinalty = ^vcardinalty;
  vintegerty = int32;
  pvintegerty = ^vintegerty;
- vfloatty = flo64;
- pvfloatty = ^vfloatty;
+// vfloat64ty = flo64;
+// pvfloat64ty = ^vfloat64ty;
+// vfloat32ty = flo32;
+// pvfloat32ty = ^vfloat32ty;
  vpointerty = pointer;
  pvpointerty = ^vpointerty;
  vsizety = ptrint;
@@ -625,7 +627,7 @@ end;
 
 procedure writefloat64op();
 begin
- write(vfloatty((cpu.stack+cpu.pc^.par.voffset)^));
+ write(flo64((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
 procedure writechar8op();
@@ -884,7 +886,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card8));
- vfloatty(stackpush(sizeof(vfloatty))^):= card8(po1^);
+ flo32(stackpush(sizeof(flo32))^):= card8(po1^);
 end;
 
 procedure card16toflo32op();
@@ -892,7 +894,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card16));
- vfloatty(stackpush(sizeof(vfloatty))^):= card16(po1^);
+ flo32(stackpush(sizeof(flo32))^):= card16(po1^);
 end;
 
 procedure card32toflo32op();
@@ -900,7 +902,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card32));
- vfloatty(stackpush(sizeof(vfloatty))^):= card32(po1^);
+ flo32(stackpush(sizeof(flo32))^):= card32(po1^);
 end;
 
 procedure card64toflo32op();
@@ -908,7 +910,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card64));
- vfloatty(stackpush(sizeof(vfloatty))^):= card64(po1^);
+ flo32(stackpush(sizeof(flo32))^):= card64(po1^);
 end;
 
 procedure int8toflo32op();
@@ -916,7 +918,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int8));
- vfloatty(stackpush(sizeof(vfloatty))^):= int8(po1^);
+ flo32(stackpush(sizeof(flo32))^):= int8(po1^);
 end;
 
 procedure int16toflo32op();
@@ -924,7 +926,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int16));
- vfloatty(stackpush(sizeof(vfloatty))^):= int16(po1^);
+ flo32(stackpush(sizeof(flo32))^):= int16(po1^);
 end;
 
 procedure int32toflo32op();
@@ -932,7 +934,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int32));
- vfloatty(stackpush(sizeof(vfloatty))^):= int32(po1^);
+ flo32(stackpush(sizeof(flo32))^):= int32(po1^);
 end;
 
 procedure int64toflo32op();
@@ -940,7 +942,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int64));
- vfloatty(stackpush(sizeof(vfloatty))^):= int64(po1^);
+ flo32(stackpush(sizeof(flo32))^):= int64(po1^);
 end;
 
 procedure card8toflo64op();
@@ -948,7 +950,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card8));
- vfloatty(stackpush(sizeof(vfloatty))^):= card8(po1^);
+ flo64(stackpush(sizeof(flo64))^):= card8(po1^);
 end;
 
 procedure card16toflo64op();
@@ -956,7 +958,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card16));
- vfloatty(stackpush(sizeof(vfloatty))^):= card16(po1^);
+ flo64(stackpush(sizeof(flo64))^):= card16(po1^);
 end;
 
 procedure card32toflo64op();
@@ -964,7 +966,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card32));
- vfloatty(stackpush(sizeof(vfloatty))^):= card32(po1^);
+ flo64(stackpush(sizeof(flo64))^):= card32(po1^);
 end;
 
 procedure card64toflo64op();
@@ -972,7 +974,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(card64));
- vfloatty(stackpush(sizeof(vfloatty))^):= card64(po1^);
+ flo64(stackpush(sizeof(flo64))^):= card64(po1^);
 end;
 
 procedure int8toflo64op();
@@ -980,7 +982,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int8));
- vfloatty(stackpush(sizeof(vfloatty))^):= int8(po1^);
+ flo64(stackpush(sizeof(flo64))^):= int8(po1^);
 end;
 
 procedure int16toflo64op();
@@ -988,7 +990,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int16));
- vfloatty(stackpush(sizeof(vfloatty))^):= int16(po1^);
+ flo64(stackpush(sizeof(flo64))^):= int16(po1^);
 end;
 
 procedure int32toflo64op();
@@ -996,7 +998,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int32));
- vfloatty(stackpush(sizeof(vfloatty))^):= int32(po1^);
+ flo64(stackpush(sizeof(flo64))^):= int32(po1^);
 end;
 
 procedure int64toflo64op();
@@ -1004,7 +1006,7 @@ var
  po1: pointer;
 begin
  po1:= stackpop(sizeof(int64));
- vfloatty(stackpush(sizeof(vfloatty))^):= int64(po1^);
+ flo64(stackpush(sizeof(flo64))^):= int64(po1^);
 end;
 
 procedure potoint32op();
