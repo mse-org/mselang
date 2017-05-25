@@ -7,7 +7,7 @@ type
  card32 = longword;
 {$else}
 uses
- rtllibc,rtlfpccompatibility;
+ rtl_libc,rtl_fpccompatibility;
 
 type
  longint = int32;
@@ -300,7 +300,7 @@ begin
 end;
 
 const
- runs = 100;
+ runs = 10;
 var
  ti1,ti2: tdatetime;
  i1,i2,i3: int32;

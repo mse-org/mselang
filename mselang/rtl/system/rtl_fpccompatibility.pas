@@ -7,11 +7,11 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-unit rtlfpccompatibility;
+unit rtl_fpccompatibility;
 interface
 //FPC compatibility
 uses
- rtlsystem,rtllibc;
+ rtl_system,rtl_libc;
  
 type
  pchar = ^char8;

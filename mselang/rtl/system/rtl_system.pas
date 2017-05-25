@@ -7,11 +7,11 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-unit rtlsystem;
+unit rtl_system;
 //system functions, preliminary ad-hoc implementation
 interface
 uses
- rtlbase,rtllibc;
+ rtl_base,rtl_libc;
 
 const
  invalidfilehandle = -1;
@@ -56,8 +56,8 @@ function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
 implementation
 //{$internaldebug on}
 //uses                           //todo: error with llvm debuginfo:
-// rtllibc;                      //"Unable to find compile unit!"
-                               //must be in interface
+// rtl_libc;                     //"Unable to find compile unit!"
+                                 //must be in interface
   
 const
  unidatetimeoffset = -25569;

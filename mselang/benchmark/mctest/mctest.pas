@@ -7,7 +7,7 @@ type
  card32 = longword;
 {$else}
 uses
- rtllibc,rtlfpccompatibility;
+ rtl_libc,rtl_fpccompatibility;
 
 type
  longint = int32;

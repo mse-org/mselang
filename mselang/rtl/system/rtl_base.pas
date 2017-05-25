@@ -7,7 +7,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-unit rtlbase;
+unit rtl_base;
 //base functions, preliminary ad-hoc implementation
 interface
 

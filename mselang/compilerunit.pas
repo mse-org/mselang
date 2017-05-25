@@ -25,7 +25,7 @@ const
  memhandlerunitname = '__mla__debugmemhandler';
  compilerunitname = '__mla__compilerunit';
  rtlunitnames: array[rtlunitty] of msestring = 
-            ('system','rtlbase','rtlfpccompatibility');
+            ('system','rtl_base','rtl_fpccompatibility');
  
 type
  compilersubty = (
