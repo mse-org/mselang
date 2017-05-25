@@ -241,6 +241,8 @@ type
   oc_flo32toflo64,oc_flo64toflo32,
   oc_truncint32flo64,oc_truncint32flo32,
   oc_truncint64flo64,
+  oc_trunccard32flo64,oc_trunccard32flo32,
+  oc_trunccard64flo64,
 
   oc_card1toint32,
   

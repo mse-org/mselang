@@ -1829,6 +1829,30 @@ begin
  end;
 end;
 
+procedure trunccard32flo64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_FPTOUI);
+ end;
+end;
+
+procedure trunccard32flo32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_FPTOUI);
+ end;
+end;
+
+procedure trunccard64flo64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_FPTOUI);
+ end;
+end;
+
 procedure card1toint32op();
 begin
  with pc^.par do begin
@@ -4556,6 +4580,9 @@ const
   truncint32flo64ssa = 1;
   truncint32flo32ssa = 1;
   truncint64flo64ssa = 1;
+  trunccard32flo64ssa = 1;
+  trunccard32flo32ssa = 1;
+  trunccard64flo64ssa = 1;
 
   card1toint32ssa = 1;
     

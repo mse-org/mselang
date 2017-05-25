@@ -376,6 +376,12 @@
   (ssa: truncint32flo32ssa; proc: @truncint32flo32op; flags: []), 
 //oc_truncint64flo64
   (ssa: truncint64flo64ssa; proc: @truncint64flo64op; flags: []), 
+//oc_trunccard32flo64
+  (ssa: trunccard32flo64ssa; proc: @trunccard32flo64op; flags: []), 
+//oc_truncint32flo32
+  (ssa: trunccard32flo32ssa; proc: @trunccard32flo32op; flags: []), 
+//oc_truncint64flo64
+  (ssa: trunccard64flo64ssa; proc: @trunccard64flo64op; flags: []), 
 
 //oc_card1toint32
   (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 

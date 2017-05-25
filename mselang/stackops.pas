@@ -3356,6 +3356,31 @@ begin
  pint64(stackpush(sizeof(int64)))^:= trunc(da1);
 end;
 
+procedure trunccard32flo64op();
+var
+ da1: flo64;
+begin
+ da1:= pflo64(stackpop(sizeof(flo64)))^;
+ pcard32(stackpush(sizeof(int32)))^:= trunc(da1);
+end;
+
+procedure trunccard32flo32op();
+var
+ da1: flo32;
+begin
+ da1:= pflo32(stackpop(sizeof(flo32)))^;
+ pcard32(stackpush(sizeof(int32)))^:= trunc(da1);
+end;
+
+procedure trunccard64flo64op();
+var
+ da1: flo64;
+begin
+ da1:= pflo64(stackpop(sizeof(flo64)))^;
+ pcard64(stackpush(sizeof(int64)))^:= trunc(da1);
+end;
+
+
 procedure card1toint32op();
 var
  po1: pointer;
@@ -6655,6 +6680,9 @@ const
   truncint32flo64ssa = 0;
   truncint32flo32ssa = 0;
   truncint64flo64ssa = 0;
+  trunccard32flo64ssa = 0;
+  trunccard32flo32ssa = 0;
+  trunccard64flo64ssa = 0;
   
   card1toint32ssa = 0;
 

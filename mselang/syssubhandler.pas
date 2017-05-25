@@ -49,6 +49,8 @@ procedure handleround(const paramco: int32);
 procedure handlenearbyint(const paramco: int32);
 procedure handletruncint32(const paramco: int32);
 procedure handletruncint64(const paramco: int32);
+procedure handletrunccard32(const paramco: int32);
+procedure handletrunccard64(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -73,7 +75,9 @@ const
   //syf_sqrt, syf_floor,   syf_round,   syf_nearbyint,
   @handlesqrt,@handlefloor,@handleround,@handlenearbyint,
   //syf_truncint32,syf_truncint64
-  @handletruncint32,@handletruncint64
+  @handletruncint32,@handletruncint64,
+  //syf_trunccard32,syf_trunccard64
+  @handletrunccard32,@handletrunccard64
  );
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1378,6 +1382,17 @@ begin
  i64floatsysfunc(paramco,oc_truncint64flo64);
 end;
 
+procedure handletrunccard32(const paramco: integer);
+begin
+ i32floatsysfunc(paramco,oc_trunccard32flo64,oc_trunccard32flo32);
+end;
+
+procedure handletrunccard64(const paramco: integer);
+begin
+ i64floatsysfunc(paramco,oc_trunccard64flo64);
+end;
+
+
 type
  sysfuncinfoty = record
   name: string;
@@ -1413,7 +1428,9 @@ const
    (name: 'round'; data: (func: syf_round)),
    (name: 'nearbyint'; data: (func: syf_nearbyint)),
    (name: 'truncint32'; data: (func: syf_truncint32)),
-   (name: 'truncint64'; data: (func: syf_truncint64))   
+   (name: 'truncint64'; data: (func: syf_truncint64)),
+   (name: 'trunccard32'; data: (func: syf_trunccard32)),
+   (name: 'trunccard64'; data: (func: syf_trunccard64))   
   );
 
 procedure init();
