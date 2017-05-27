@@ -1,4 +1,3 @@
-
 { MSElang Copyright (c) 2014-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
@@ -3447,6 +3446,13 @@ begin
  end;
 end;
 
+procedure loadallocaop();
+begin
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.ssaval(ssas1));
+ end;
+end;
+
 procedure indirect8op();
 begin
  loadindirect();
@@ -4891,6 +4897,7 @@ const
   
   pushduppossa = 1;
   storemanagedtempssa = 3;
+  loadallocassa = 1;
 
   indirect8ssa = 2;
   indirect16ssa = 2;

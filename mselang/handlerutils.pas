@@ -3421,7 +3421,7 @@ function updateop(const opsinfo: opsinfoty): popinfoty;
  
 var
  kinda,kindb: datakindty;
- int1: integer;
+ indilev1: integer;
  sd1: stackdatakindty;
  op1: opcodety;
  po1: ptypedataty;
@@ -3435,6 +3435,7 @@ var
  b1,b2: boolean;
  operatorsig: identvecty;
  oper1: poperatordataty;
+ i1: int32;
 label
  endlab;
 begin
@@ -3493,11 +3494,22 @@ begin
 //       if not getvalue(poa,das_none) then begin
 //        goto endlab;
 //       end;
+      {$ifdef mse_checkinternalerror}
+       if not (poa^.d.kind in factcontexts) then begin
+        internalerror(ie_handler,'20170527A');
+       end;
+      {$endif}
+       i1:= poa^.d.dat.fact.ssaindex;
        pushinsertstackaddress(getstackindex(poa)-s.stackindex,-1);
+                              //alloca + pointer to alloc
        sub1:= ele.eledataabs(oper1^.methodele);
        dosub(getstackindex(poa),sub1,getstackindex(pob),1,
                                                  [dsf_instanceonstack]);
-       poa^.d.kind:= ck_subres;
+       with additem(oc_loadalloca)^ do begin
+        par.ssas1:= i1+1; //ssa of alloca
+        poa^.d.kind:= ck_subres;
+        poa^.d.dat.fact.ssaindex:= par.ssad;
+       end;
        result:= nil;
        goto endlab;
       end;
@@ -3505,7 +3517,7 @@ begin
     end;
    end;
 
-   int1:= d.dat.datatyp.indirectlevel;
+   indilev1:= d.dat.datatyp.indirectlevel;
    if opsinfo.wantedtype <> st_none then begin
     if not tryconvert(pob,opsinfo.wantedtype) then begin
      operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
@@ -3520,12 +3532,12 @@ begin
    end
    else begin   
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if not tryconvert(pob,po1,int1,[coo_notrunk]) then begin
+    if not tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
      with pob^ do begin
       po1:= ele.eledataabs(d.dat.datatyp.typedata);
-      int1:= d.dat.datatyp.indirectlevel;
+      indilev1:= d.dat.datatyp.indirectlevel;
      end;
-     if tryconvert(poa,po1,int1,[coo_notrunk]) then begin
+     if tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
       bo1:= true;
      end;
     end
@@ -3538,7 +3550,7 @@ begin
     goto endlab;
    end
    else begin
-    if int1 > 0 then begin //indirectlevel
+    if indilev1 > 0 then begin //indirectlevel
      si1:= das_pointer;
      sd1:= sdk_pointer;
     end

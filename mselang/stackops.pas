@@ -4913,6 +4913,11 @@ begin
  ppointer((cpu.managedtemp+cpu.pc^.par.voffset))^:= (ppointer(cpu.stack)-1)^;
 end;
 
+procedure loadallocaop();
+begin
+ //dummy
+end;
+
 procedure indirect8op();
 var
  po1: pointer;
@@ -6991,6 +6996,7 @@ const
 
   pushduppossa = 0;
   storemanagedtempssa = 0;
+  loadallocassa = 0;
   
   indirect8ssa = 0;
   indirect16ssa = 0;

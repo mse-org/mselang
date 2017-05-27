@@ -581,6 +581,7 @@ type
 
   oc_pushduppo,
   oc_storemanagedtemp,
+  oc_loadalloca,
   
   oc_indirect8,
   oc_indirect16,

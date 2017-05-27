@@ -1003,6 +1003,8 @@
   (ssa: pushduppossa; proc: @pushduppoop; flags: []), 
 //oc_storemanagedtemp
   (ssa: storemanagedtempssa; proc: @storemanagedtempop; flags: []), 
+//oc_loadalloca
+  (ssa: loadallocassa; proc: @loadallocaop; flags: []), 
 
 //oc_indirect8
   (ssa: indirect8ssa; proc: @indirect8op; flags: []), 
