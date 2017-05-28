@@ -3490,7 +3490,7 @@ begin
       setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
       operatorsig.high:= 5;
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
-                              operatorsig,[],allvisi,oper1) then begin
+                         operatorsig,[ek_operator],allvisi,oper1) then begin
 //       if not getvalue(poa,das_none) then begin
 //        goto endlab;
 //       end;
