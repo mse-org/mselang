@@ -116,7 +116,7 @@ c=3
  c=8
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=23
    (
    kind=1
@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=36
     (
     kind=1
@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D8F6C
+    ao=An unhandled exception occured at $B72E1F6C
     ae=
     aec=123
     ie=0
@@ -7102,10 +7102,10 @@ c=3
   (
   kind=1
   a=0,665,4,object
-  c=21
+  c=22
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=6
     (
     kind=2
@@ -7241,6 +7241,70 @@ c=3
     )
    teststate=1
    path=methods/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,665,4,operators
+   c=2
+    (
+    kind=2
+    a=0,648,1,operator1
+    teststate=1
+    path=operator1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,operator1 llvm
+    teststate=1
+    path=operator1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=operators/
    comment=
    cc=
    cd=
@@ -7713,7 +7777,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=30
    (
    kind=1
@@ -10266,196 +10330,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=594
+propcolwidthref=609
 width0=50
 sortdescend0=0
-width1=202
+width1=207
 sortdescend1=0
-width2=157
+width2=161
 sortdescend2=0
-width3=154
+width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=214
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=35
  0 0
  0 0
  0 0

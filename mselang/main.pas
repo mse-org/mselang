@@ -269,7 +269,12 @@ end;
 
 procedure tmainfo.loadexe(const sender: TObject);
 begin
- ed.loadfromfile(filena.value);
+ try
+  ed.loadfromfile(filena.value);
+ except
+  application.handleexception;
+  application.terminated:= false;
+ end;
 end;
 
 procedure tmainfo.aftreadexe(const sender: TObject);
