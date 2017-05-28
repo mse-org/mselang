@@ -3435,7 +3435,7 @@ var
  b1,b2: boolean;
  operatorsig: identvecty;
  oper1: poperatordataty;
- i1: int32;
+ i1,i2: int32;
 label
  endlab;
 begin
@@ -3491,20 +3491,17 @@ begin
       operatorsig.high:= 5;
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
                          operatorsig,[ek_operator],allvisi,oper1) then begin
-//       if not getvalue(poa,das_none) then begin
-//        goto endlab;
-//       end;
       {$ifdef mse_checkinternalerror}
        if not (poa^.d.kind in factcontexts) then begin
         internalerror(ie_handler,'20170527A');
        end;
       {$endif}
        i1:= poa^.d.dat.fact.ssaindex;
-       pushinsertstackaddress(getstackindex(poa)-s.stackindex,-1);
+       i2:= getstackindex(poa);
+       pushinsertstackaddress(i2-s.stackindex,-1);
                               //alloca + pointer to alloc
        sub1:= ele.eledataabs(oper1^.methodele);
-       dosub(getstackindex(poa),sub1,getstackindex(pob),1,
-                                                 [dsf_instanceonstack]);
+       dosub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
        with additem(oc_loadalloca)^ do begin
         par.ssas1:= i1+1; //ssa of alloca
         poa^.d.kind:= ck_subres;

@@ -1761,11 +1761,54 @@ begin
  end;
 end;
 *)
+function checkunioperator(const aop: objectoperatorty;
+           const acontext: pcontextitemty; const atype: ptypedataty): boolean;
+var
+ operatorsig: identvecty;
+ oper1: poperatordataty;
+ i1,i2: int32;
+ sub1: psubdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CHECKUNIOPERATOR');
+{$endif}
+ result:= false;
+ if (atype^.h.kind = dk_object) and 
+                      (acontext^.d.dat.datatyp.indirectlevel = 0) then begin
+  operatorsig.d[0]:= tks_operators;
+  operatorsig.d[1]:= objectoperatoridents[aop];
+  setoperparamid(@operatorsig.d[2],0,nil); //no return value
+  operatorsig.high:= 3;
+
+  if ele.findchilddata(basetype(ele.eledatarel(atype)),
+                          operatorsig,[ek_operator],allvisi,oper1) then begin
+  {$ifdef mse_checkinternalerror}
+   if not (acontext^.d.kind in factcontexts) then begin
+    internalerror(ie_handler,'20170528A');
+   end;
+  {$endif}
+   i1:= acontext^.d.dat.fact.ssaindex;
+   i2:= getstackindex(acontext);
+   pushinsertstackaddress(i2-info.s.stackindex,-1);   
+                                        //alloca + pointer to alloc
+   sub1:= ele.eledataabs(oper1^.methodele);
+   dosub(i2,sub1,i2,0,[dsf_instanceonstack]);
+   with additem(oc_loadalloca)^ do begin
+    par.ssas1:= i1+1; //ssa of alloca
+    acontext^.d.kind:= ck_subres;
+    acontext^.d.dat.fact.ssaindex:= par.ssad;
+   end;
+   result:= true;
+  end;
+ end;
+end;
+
 procedure handlenegfact();
 var
  po1: ptypedataty;
  i1: int32;
  poa: pcontextitemty;
+ op1: opcodety;
 label
  errlab;
 begin
@@ -1801,14 +1844,19 @@ begin
    else begin
     if getvalue(poa,das_none) then begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
-     i1:= d.dat.fact.ssaindex;
-     with insertitem(negops[po1^.h.kind],s.stacktop-s.stackindex,-1)^ do begin
-      if op.op = oc_none then begin
+     op1:= negops[po1^.h.kind];
+     if op1 = oc_none then begin
+      if not checkunioperator(oa_sub,poa,po1) then begin
        errormessage(err_negnotpossible,[],s.stacktop-s.stackindex);
       end;
-      par.ssas1:= i1;
-      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
-                                              d.dat.datatyp.indirectlevel);
+     end
+     else begin
+      i1:= d.dat.fact.ssaindex;
+      with insertitem(op1,s.stacktop-s.stackindex,-1)^ do begin
+       par.ssas1:= i1;
+       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                               d.dat.datatyp.indirectlevel);
+      end;
      end;
     end;
    end;
@@ -1824,6 +1872,7 @@ var
  po1: ptypedataty;
  i1: int32;
  poa: pcontextitemty;
+ op1: opcodety;
 label
  errlab;
 begin
@@ -1859,14 +1908,19 @@ begin
    else begin
     if getvalue(poa,das_none) then begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
-     i1:= d.dat.fact.ssaindex;
-     with insertitem(notops[po1^.h.kind],s.stacktop-s.stackindex,-1)^ do begin
-      if op.op = oc_none then begin
+     op1:= notops[po1^.h.kind];
+     if op1 = oc_none then begin
+      if not checkunioperator(oa_not,poa,po1) then begin
        errormessage(err_notnotpossible,[],s.stacktop-s.stackindex);
       end;
-      par.ssas1:= i1;
-      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
-                                              d.dat.datatyp.indirectlevel);
+     end
+     else begin
+      i1:= d.dat.fact.ssaindex;
+      with insertitem(op1,s.stacktop-s.stackindex,-1)^ do begin
+       par.ssas1:= i1;
+       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                               d.dat.datatyp.indirectlevel);
+      end;
      end;
     end;
    end;

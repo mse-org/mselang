@@ -102,7 +102,8 @@ const
  dummyaddress = 0;
 
 type
- objectoperatorty = (oa_none,oa_mul,oa_div,oa_and,oa_add,oa_sub,oa_or,oa_xor,
+ objectoperatorty = (oa_none,oa_mul,oa_div,oa_and,oa_add,oa_sub,
+                     oa_not,oa_or,oa_xor,
                      oa_shl,oa_shr,
                      oa_eq,oa_ne,oa_gt,oa_lt,oa_ge,oa_le);
 // objectoperatorsty = set of objectoperatorty;
@@ -123,6 +124,8 @@ const
   (token: '+'),
  //oa_sub
   (token: '-'),
+ //oa_not
+  (token: 'not'),
  //oa_or
   (token: 'or'),
  //oa_xor
