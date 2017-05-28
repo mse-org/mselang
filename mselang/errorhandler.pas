@@ -79,7 +79,7 @@ type
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
             err_invalidoperatormethod,err_objectforwardnotallowed,
-            err_toomanyoperparams,err_varargmustbelast);
+            err_toomanyoperparams,err_varargmustbelast,err_stringexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -293,7 +293,8 @@ const
   (level: erl_error; message: 'Object forward definition is not allowed'),
   (level: erl_error; message: 'Too many operator parameters'),
   (level: erl_error; message: 
-                 'Variable arguments must be at end of parameter list')
+                 'Variable arguments must be at end of parameter list'),
+  (level: erl_error; message: 'String expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 
@@ -313,6 +314,12 @@ procedure errormessage(const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
 
+procedure errormessage(const aerror: errorty; const values: array of const;
+                   const acontext: pcontextitemty;
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
+
+
 function checksysok(const asyserror: syserrorty; const aerror: errorty; 
                                    const values: array of const;
                      const aerrorlevel: errorlevelty = erl_none): boolean;
@@ -323,6 +330,9 @@ procedure identerror(const astackoffset: integer;const aerror: errorty;
 procedure identerror(const aident: identty; const aerror: errorty;
                              const aerrorlevel: errorlevelty = erl_none);
 procedure identerror(const astackoffset: integer; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
+procedure identerror(const acontext: pcontextitemty; const aident: identty; 
                                    const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
 
@@ -577,6 +587,18 @@ begin
  end;
 end;
 
+procedure errormessage(const aerror: errorty; const values: array of const;
+                   const acontext: pcontextitemty;
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
+
+begin
+ with info do begin
+  errormessage(aerror,values,acontext-
+                      pcontextitemty(@contextstack[s.stackindex]));
+ end;
+end;
+
 function checksysok(const asyserror: syserrorty; const aerror: errorty; 
                      const values: array of const;
                      const aerrorlevel: errorlevelty = erl_none): boolean;
@@ -623,6 +645,16 @@ procedure identerror(const astackoffset: integer; const aident: identty;
                                    const aerrorlevel: errorlevelty = erl_none);
 begin
  errormessage(aerror,[getidentname(aident)],astackoffset,0,aerrorlevel);
+end;
+
+procedure identerror(const acontext: pcontextitemty; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
+begin
+ with info do begin
+  identerror(acontext-pcontextitemty(@contextstack[s.stackindex]),
+                                                aident,aerror,aerrorlevel);
+ end;
 end;
 
 procedure tokenexpectederror(const atoken: string;

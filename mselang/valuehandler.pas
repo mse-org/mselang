@@ -2948,7 +2948,7 @@ begin
     po1:= ele.parentelement;
    {$ifdef mse_checkinternalerror}
     if (po1^.header.kind <> ek_type) or 
-        (ptypedataty(@po1^.data)^.h.kind <> dk_class) then begin
+       not (ptypedataty(@po1^.data)^.h.kind in [dk_class,dk_object]) then begin
      internalerror(ie_parser,'20150401B');
     end;
    {$endif}

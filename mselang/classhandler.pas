@@ -53,6 +53,7 @@ procedure handleclassdefparam2();
 procedure handleclassdefparam3a();
 procedure handleclassdefparam4entry();
 procedure handleclassdefattach();
+
 procedure handleclassprivate();
 procedure handleclassprotected();
 procedure handleclasspublic();

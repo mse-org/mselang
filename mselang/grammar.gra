@@ -69,7 +69,7 @@
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual'
- 'afterconstruct','beforedestruct','ini','fini'
+ 'afterconstruct','beforedestruct','ini','fini','operator'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
@@ -880,17 +880,29 @@ classdefattach,,,handleclassdefattach*
 attachitems,attachitemsnoitemerror,handleattachitemsentry, 
  ${whitespace}
  @identstart,attachident
- '''',attachstring-
- '#',attachchar-
+// '''',attachstring-
+// '#',attachchar-
 attachident,attachitems2,,
  '',ident^*
-attachstring,attachitems2a,,
- '',string*
-attachchar,attachitems2a,,
- '',char*
-attachitems2a,attachitems2,handlestringattach,
 attachitems2,,,^
  ${whitespace}
+ ',',attachitems-
+ '=',attachitems3-
+attachitems3,attachitems2a,,handleattachvalue
+ '',stringvalue^*
+// ${whitespace}
+// '''',attachstring-
+// '#',attachchar-
+//attachstring,attachitems2a,,
+// '',string*
+//attachchar,attachitems2a,,
+// '',char*
+stringvalue,,,^
+ ${whitespace}
+ '''',string-*
+ '#',char-*
+ 
+attachitems2a,,,^
  ',',attachitems-
 attachitemsnoitemerror,,,handlenoattachitemerror
 

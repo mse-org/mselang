@@ -790,10 +790,10 @@ end;
  
 procedure handleclasubheaderattach();
 var
- i1: int32;
+// i1: int32;
  o1: objectoperatorty;
  subdefindex: int32;
- p1: pcontextitemty;
+ p1,pe: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASUBHEADERATTACH');
@@ -806,9 +806,11 @@ begin
     internalerror(ie_handler,'20170504A');
    end;
   {$endif}
-   for i1:= s.stackindex+3 to s.stacktop do begin
-    p1:= @contextstack[i1];
+   p1:= @contextstack[s.stackindex+3];
+   pe:= @contextstack[s.stacktop];
+   while p1 <= pe do begin
     case p1^.d.kind of
+    {
      ck_stringident: begin
       if not (sf_operator in d.subdef.flags) then begin
        include(d.subdef.flags,sf_operator);
@@ -818,8 +820,27 @@ begin
        errormessage(err_multipleoperators,[],i1-s.stackindex);
       end;
      end;
+    }
      ck_ident: begin
       case p1^.d.ident.ident of
+       tk_operator: begin
+        inc(p1);
+        if (p1 <= pe) and (p1^.d.kind = ck_stringident) then begin
+         if not (sf_operator in d.subdef.flags) then begin
+          include(d.subdef.flags,sf_operator);
+          currentoperator:= p1^.d.ident.ident;
+         end
+         else begin
+          errormessage(err_multipleoperators,[],p1);
+         end;
+        end
+        else begin
+         if p1 > pe then begin
+          dec(p1);
+         end;
+         errormessage(err_stringexpected,[],p1);
+        end;
+       end;
        tk_virtual: begin
         if checkclassdef(subdefindex,true) then begin
          if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
@@ -853,8 +874,7 @@ begin
         include(d.subdef.flags,sf_fini);
        end;
        else begin
-        identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
-                                                   err_invalidattachment);
+        identerror(p1,p1^.d.ident.ident,err_invalidattachment);
        end;
       end;
      end;
@@ -862,6 +882,7 @@ begin
       internalerror1(ie_handler,'20170501A');
      end;
     end;
+    inc(p1);
    end;
   end;
   dec(s.stackindex);

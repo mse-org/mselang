@@ -46,7 +46,9 @@ procedure handleillegalexpression();
 
 procedure handlenoidenterror();
 procedure handleattachitemsentry();
+procedure handleattachvalue();
 procedure handlestringattach();
+procedure handlestringexpected();
 procedure handlenoattachitemerror();
 
 procedure handleprogbegin();
@@ -2221,6 +2223,22 @@ begin
  info.stringbuffer:= '';
 end;
 
+procedure handleattachvalue();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ATTACHVALUE');
+{$endif}
+ with info do begin
+  if contextstack[s.stacktop].d.kind = ck_str then begin
+   with contextstack[s.stacktop-1] do begin
+    d.kind:= ck_stringident;
+    d.ident.ident:= getident(info.stringbuffer); 
+   end;
+  end;
+  s.stacktop:= s.stacktop-1;
+ end;
+end;
+
 procedure handlestringattach();
 begin
 {$ifdef mse_debugparser}
@@ -2229,6 +2247,16 @@ begin
  with info,contextstack[s.stacktop] do begin
   d.kind:= ck_stringident;
   d.ident.ident:= getident(info.stringbuffer);
+ end;
+end;
+
+procedure handlestringexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('STRINGEXPECTED');
+{$endif}
+ with info do begin
+  errormessage(err_stringexpected,[],s.stacktop-s.stackindex);
  end;
 end;
 

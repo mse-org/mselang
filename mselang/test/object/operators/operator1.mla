@@ -1,0 +1,35 @@
+program operator1;
+
+type
+ objty = object [nozeroinit,virtual]
+  fa,fb: int32;
+  method add(b: objty) [operator='+',virtual];
+ end;
+
+ obj1ty = object(objty)
+  method add(b: objty) [override];
+ end;
+
+method objty.add(b: objty);
+begin
+ fa:= fa+b.fa;
+ fb:= fb+b.fb;
+end;
+
+method obj1ty.add(b: objty);
+begin
+ inherited add(b);
+ fa:= fa * 10;
+end;
+
+var
+ a: obj1ty;
+ b,c: objty;
+begin
+ a.fa:= 9;
+ a.fb:= 100;
+ b.fa:= 3;
+ b.fb:= 11;
+ c:= a+b;
+ exitcode:= c.fa div 10 + c.fb;
+end.
