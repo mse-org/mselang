@@ -1,0 +1,34 @@
+program operator4;
+
+type
+ recty = record
+  a,b,c: int32;
+ end;
+
+ objty = object [nozeroinit]
+  fa,fb: int32;
+  method add(const a: int32) [operator='+',operatorright='+'];
+  method add1(const a: recty) [operator='+',operatorright='+'];
+ end;
+
+method objty.add(const a: int32);
+begin
+ fb:= fb+a;
+end;
+
+method objty.add1(const a: recty);
+begin
+ fb:= fb+a.b;
+end;
+
+var
+ a,c: objty;
+ r: recty;
+ i1: int32;
+begin
+ a.fb:= 22;
+ r.b:= 100;
+ i1:= 1;
+ c:= r+(a+i1);
+ exitcode:= c.fb;
+end.

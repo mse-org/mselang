@@ -1,0 +1,21 @@
+program operator3;
+
+type
+ objty = object [nozeroinit]
+  fa,fb: int32;
+  method add(b: int32) [operator='+'];
+ end;
+
+method objty.add(b: int32);
+begin
+ fb:= fb+b;
+end;
+
+var
+ a,c: objty;
+begin
+ a.fa:= 9;
+ a.fb:= 100;
+ c:= a + int32(123-9-100);
+ exitcode:= c.fa + c.fb;
+end.

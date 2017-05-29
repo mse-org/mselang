@@ -1,0 +1,22 @@
+program operator2;
+
+type
+ objty = object [nozeroinit,virtual]
+  fa,fb: int32;
+  method neg() [operator='-'];
+ end;
+
+method objty.neg();
+begin
+ fa:= -fa;
+ fb:= -fb;
+end;
+
+var
+ a,c: objty;
+begin
+ a.fa:= 23;
+ a.fb:= 100;
+ c:= -a;
+ exitcode:= -c.fa + -c.fb;
+end.
