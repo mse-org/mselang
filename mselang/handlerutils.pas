@@ -984,16 +984,17 @@ begin
  {$endif}
   pt1:= ele.eledataabs(d.dat.datatyp.typedata);
   i1:= d.dat.fact.ssaindex;
-  with insertitem(oc_pushstackaddr,stackoffset,aopoffset)^.par.memop do begin
+  with insertitem(oc_pushstackaddr,stackoffset,aopoffset)^.par do begin
    if d.dat.datatyp.indirectlevel > 0 then begin
-    tempdataaddress.a.address:= -pointersize;
+    memop.tempdataaddress.a.address:= -pointersize;
    end
    else begin
-    tempdataaddress.a.address:= -alignsize(pt1^.h.bytesize);
+    memop.tempdataaddress.a.address:= -alignsize(pt1^.h.bytesize);
    end;
-   tempdataaddress.offset:= 0;
-   tempdataaddress.a.ssaindex:= i1;
-   t:= getopdatatype(pt1,d.dat.datatyp.indirectlevel);
+   memop.tempdataaddress.offset:= 0;
+   ssas1:= i1;
+//   tempdataaddress.a.ssaindex:= i1;
+   memop.t:= getopdatatype(pt1,d.dat.datatyp.indirectlevel);
   end;
  end;
 end;
@@ -3526,7 +3527,6 @@ begin
          internalerror(ie_handler,'20170529A');
         end;
        {$endif}
-        i1:= pob^.d.dat.fact.ssaindex;
         i2:= getstackindex(pob);
         i3:= i2-s.stackindex;
         sub1:= ele.eledataabs(oper1^.methodele);
@@ -3572,7 +3572,7 @@ begin
         else begin
          dosub(i2,sub1,getstackindex(poa),1,[dsf_instanceonstack]);
          with additem(oc_loadalloca)^ do begin
-          par.ssas1:= i1+1; //ssa of alloca
+          par.ssas1:= pob^.d.dat.fact.ssaindex-2; //ssa of alloca
           pob^.d.kind:= ck_subres;
           pob^.d.dat.fact.ssaindex:= par.ssad;
          end;

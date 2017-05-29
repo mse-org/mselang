@@ -2131,12 +2131,12 @@ begin
         if ismethod and isfactcontext and (d.dat.indirection = 0) then begin
          i1:= d.dat.fact.ssaindex;
          typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-         with insertitem(oc_pushstackaddr,destoffset,-1)^.
-                                        par.memop do begin
-          tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
-          tempdataaddress.offset:= 0;
-          tempdataaddress.a.ssaindex:= i1;
-          t:= getopdatatype(typ1,0);
+         with insertitem(oc_pushstackaddr,destoffset,-1)^.par do begin
+          memop.tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
+          memop.tempdataaddress.offset:= 0;
+//          tempdataaddress.a.ssaindex:= i1;
+          ssas1:= i1;
+          memop.t:= getopdatatype(typ1,0);
          end;
          include(aflags,dsf_instanceonstack);
          doinstanceonstack();
@@ -2345,6 +2345,10 @@ begin
       end;
       if not isvararg then begin
        dodefaultparams(); //varargs can not have defaultparams
+      end;
+      if dsf_instanceonstack in aflags then begin
+       selfpo^.ssaindex:= d.dat.fact.ssaindex; 
+               //could be shifted by right side operator param
       end;
      end;
     end;

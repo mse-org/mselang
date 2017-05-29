@@ -3406,12 +3406,11 @@ end;
 }
 procedure pushstackaddrop();
 begin
- with pc^.par.memop do begin
-  bcstream.emitalloca(bcstream.ptypeval(t.listindex));
-  bcstream.emitstoreop(bcstream.ssaval(tempdataaddress.a.ssaindex),
-                                                        bcstream.relval(0));
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(memop.t.listindex));        //1ssa
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
   bcstream.emitgetelementptr(bcstream.relval(0),
-                           bcstream.constval(tempdataaddress.offset))
+                   bcstream.constval(memop.tempdataaddress.offset)) //2ssa
  end;
 // bcstream.emitsegdataaddress(memop);
 end;
