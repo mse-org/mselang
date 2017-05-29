@@ -3573,8 +3573,8 @@ begin
          dosub(i2,sub1,getstackindex(poa),1,[dsf_instanceonstack]);
          with additem(oc_loadalloca)^ do begin
           par.ssas1:= i1+1; //ssa of alloca
-          poa^.d.kind:= ck_subres;
-          poa^.d.dat.fact.ssaindex:= par.ssad;
+          pob^.d.kind:= ck_subres;
+          pob^.d.dat.fact.ssaindex:= par.ssad;
          end;
         end;
         poa^.d:= pob^.d; //todo: is big copy
