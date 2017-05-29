@@ -4893,6 +4893,17 @@ begin
  po1:= getstackaddress(cpu.pc^.par.memop.tempdataaddress);
  ppointer(stackpush(sizeof(pointer)))^:= po1;
 end;
+
+procedure pushstackop();
+var
+ po1,po2: pointer;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getstackaddress(tempdataaddress);
+  po2:= stackpush(t.size);
+  move(po1^,po2^,t.size);
+ end;
+end;
 {
 procedure pushstackaddrindiop();
 begin
@@ -6993,6 +7004,8 @@ const
 //  pushsegaddrindissa = 0;
   pushstackaddrssa = 0;
 //  pushstackaddrindissa = 0;
+
+  pushstackssa = 0;
 
   pushduppossa = 0;
   storemanagedtempssa = 0;

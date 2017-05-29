@@ -578,6 +578,7 @@ type
 //  oc_pushsegaddrindi,
   oc_pushstackaddr,
 //  oc_pushstackaddrindi,
+  oc_pushstack,
 
   oc_pushduppo,
   oc_storemanagedtemp,

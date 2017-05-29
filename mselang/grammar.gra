@@ -64,12 +64,12 @@
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.fini','.incref','.decref','.decrefindi'
- '.method','.operators','.system'
+ '.method','.operators','.operatorsright','.system'
 @.tokens
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual'
- 'afterconstruct','beforedestruct','ini','fini','operator'
+ 'afterconstruct','beforedestruct','ini','fini','operator','operatorright'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-

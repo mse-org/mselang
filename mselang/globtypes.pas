@@ -226,7 +226,7 @@ type
 
  subflagty = (sf_function,sf_method,sf_classmethod,sf_class,
               sf_constructor,sf_destructor,
-              sf_methodtoken,sf_subtoken,sf_operator,
+              sf_methodtoken,sf_subtoken,sf_operator,sf_operatorright,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
               sf_ini,sf_fini,sf_afterconstruct,sf_beforedestruct,

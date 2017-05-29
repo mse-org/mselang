@@ -802,7 +802,7 @@ type
   currentcontainer: elementoffsetty;
   currentclass: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
-  currentoperator: elementoffsetty;
+  currentoperator,currentoperatorright: elementoffsetty;
 //  currentoperators: objectoperatorsty;
 //  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type

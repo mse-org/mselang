@@ -3261,6 +3261,7 @@ procedure init();
    po1:= ele.addelement(getident(name),ek_type,globalvisi);
    po2:= @po1^.data;
    po2^:= data;
+   po2^.h.signature:= getident();
    with sysdatatypes[aitem] do begin
     flags:= data.h.flags;
     indirectlevel:= data.h.indirectlevel;
@@ -3435,7 +3436,7 @@ var
  b1,b2: boolean;
  operatorsig: identvecty;
  oper1: poperatordataty;
- i1,i2: int32;
+ i1,i2,i3,i4: int32;
 label
  endlab;
 begin
@@ -3483,14 +3484,15 @@ begin
                                                     //todo: classes
     b2:= (ptb^.h.kind = dk_object) and (pob^.d.dat.datatyp.indirectlevel = 0);
     if b1 or b2 then begin
-     operatorsig.d[0]:= tks_operators;
+     result:= nil;
      operatorsig.d[1]:= objectoperatoridents[opsinfo.objop];
+     setoperparamid(@operatorsig.d[2],0,nil); //no return value
+     operatorsig.high:= 5;
      if b1 then begin
-      setoperparamid(@operatorsig.d[2],0,nil); //no return value
+      operatorsig.d[0]:= tks_operators;
       setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
-      operatorsig.high:= 5;
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
-                         operatorsig,[ek_operator],allvisi,oper1) then begin
+                          operatorsig,[ek_operator],allvisi,oper1) then begin
       {$ifdef mse_checkinternalerror}
        if not (poa^.d.kind in factcontexts) then begin
         internalerror(ie_handler,'20170527A');
@@ -3499,7 +3501,7 @@ begin
        i1:= poa^.d.dat.fact.ssaindex;
        i2:= getstackindex(poa);
        pushinsertstackaddress(i2-s.stackindex,-1);
-                              //alloca + pointer to alloc
+                              //alloca + store + pointer to alloc
        sub1:= ele.eledataabs(oper1^.methodele);
        dosub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
        with additem(oc_loadalloca)^ do begin
@@ -3507,10 +3509,67 @@ begin
         poa^.d.kind:= ck_subres;
         poa^.d.dat.fact.ssaindex:= par.ssad;
        end;
-       result:= nil;
        goto endlab;
       end;
      end;
+     if b2 then begin //right side
+      operatorsig.d[0]:= tks_operatorsright;
+      setoperparamid(@operatorsig.d[4],poa^.d.dat.datatyp.indirectlevel,pta);
+      if ele.findchilddata(basetype(pob^.d.dat.datatyp.typedata),
+                           operatorsig,[ek_operator],allvisi,oper1) then begin
+       {$ifdef mse_checkinternalerror}
+        if not (pob^.d.kind in factcontexts) then begin
+         internalerror(ie_handler,'20170527B');
+        end;
+        if not (poa^.d.kind in factcontexts) then begin
+         internalerror(ie_handler,'20170529A');
+        end;
+       {$endif}
+        i1:= pob^.d.dat.fact.ssaindex;
+        i2:= getstackindex(pob);
+        i3:= i2-s.stackindex;
+        sub1:= ele.eledataabs(oper1^.methodele);
+        pushinsertstackaddress(i3,-1);
+                               //alloca + pointer to alloc
+        if co_mlaruntime in info.o.compileoptions then begin
+         if poa^.d.dat.datatyp.indirectlevel > 0 then begin
+          i4:= pointersize;
+         end
+         else begin
+          i4:= alignsize(pta^.h.bytesize);
+         end;
+         with insertitem(oc_pushstack,pob,-1)^.par.memop do begin
+          t.size:= pta^.h.bytesize;
+          tempdataaddress.a.address:= 
+                      -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
+          tempdataaddress.offset:= 0;
+         end;
+         dosub(i2,sub1,getstackindex(poa),1,
+                         [dsf_instanceonstack,dsf_noinstancecopy]);
+         with additem(oc_push)^ do begin
+          par.imm.vsize:= pointersize; //compensate missing instance copy
+         end;
+         with additem(oc_movestack)^.par.swapstack do begin
+          size:= alignsize(ptb^.h.bytesize);
+          offset:= -i4;
+         end;
+         with additem(oc_pop)^ do begin
+          par.imm.vsize:= i4;
+         end;
+        end
+        else begin
+         dosub(i2,sub1,getstackindex(poa),1,[dsf_instanceonstack]);
+         with additem(oc_loadalloca)^ do begin
+          par.ssas1:= i1+1; //ssa of alloca
+          poa^.d.kind:= ck_subres;
+          poa^.d.dat.fact.ssaindex:= par.ssad;
+         end;
+        end;
+        poa^.d:= pob^.d; //todo: is big copy
+        poa^.d.kind:= ck_fact;
+        goto endlab;
+      end;
+     end;     
     end;
    end;
 

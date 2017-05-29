@@ -3421,6 +3421,11 @@ begin
  notimplemented();
 end;
 }
+procedure pushstackop();
+begin
+ notimplemented();
+end;
+
 procedure pushduppoop();
 begin
  with pc^.par do begin
@@ -4894,6 +4899,7 @@ const
 //  pushsegaddrindissa = 3;
   pushstackaddrssa = 3;
 //  pushstackaddrindissa = 1;
+  pushstackssa = 1;
   
   pushduppossa = 1;
   storemanagedtempssa = 3;

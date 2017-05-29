@@ -57,7 +57,8 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,dsf_nofreemem, //for object destructor
+                dsf_instanceonstack,dsf_noinstancecopy,
+                dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
@@ -2373,7 +2374,8 @@ begin
       inc(opoffset1);
       stacksize:= stacksize + vpointersize;
      end;
-     if (sf_method in asub^.flags) then begin
+     if (sf_method in asub^.flags) and 
+                not (dsf_noinstancecopy in aflags) then begin
           //param order is [returnvaluepointer],instancepo,{params}
       with insertitem(oc_pushduppo,destoffset,opoffset1)^ do begin
        if hasresult then begin

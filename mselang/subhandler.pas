@@ -810,17 +810,6 @@ begin
    pe:= @contextstack[s.stacktop];
    while p1 <= pe do begin
     case p1^.d.kind of
-    {
-     ck_stringident: begin
-      if not (sf_operator in d.subdef.flags) then begin
-       include(d.subdef.flags,sf_operator);
-       currentoperator:= p1^.d.ident.ident;
-      end
-      else begin
-       errormessage(err_multipleoperators,[],i1-s.stackindex);
-      end;
-     end;
-    }
      ck_ident: begin
       case p1^.d.ident.ident of
        tk_operator: begin
@@ -829,6 +818,26 @@ begin
          if not (sf_operator in d.subdef.flags) then begin
           include(d.subdef.flags,sf_operator);
           currentoperator:= p1^.d.ident.ident;
+          
+         end
+         else begin
+          errormessage(err_multipleoperators,[],p1);
+         end;
+        end
+        else begin
+         if p1 > pe then begin
+          dec(p1);
+         end;
+         errormessage(err_stringexpected,[],p1);
+        end;
+       end;
+       tk_operatorright: begin
+        inc(p1);
+        if (p1 <= pe) and (p1^.d.kind = ck_stringident) then begin
+         if not (sf_operatorright in d.subdef.flags) then begin
+          include(d.subdef.flags,sf_operatorright);
+          currentoperatorright:= p1^.d.ident.ident;
+          
          end
          else begin
           errormessage(err_multipleoperators,[],p1);
@@ -1851,14 +1860,12 @@ begin
      end;
     end;
    end;
-   if sf_operator in subflags then begin
+   if subflags * [sf_operator,sf_operatorright] <> [] then begin
     if sub1^.paramcount*2 >= high(operparamids.d)-1 then begin
      errormessage(err_toomanyoperparams,[]);
     end
     else begin
-     p1:= @operparamids.d[0];
-     p1^:= currentoperator;
-     inc(p1); 
+     p1:= @operparamids.d[1];
      if sf_function in subflags then begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]));
       i1:= 2;
@@ -1873,16 +1880,32 @@ begin
      for i1:= 1 to sub1^.paramcount-1 do begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[i1]));
      end;
-     if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
-      ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
-     end;
      operparamids.high:= (p1-pidentty(@operparamids.d[0]))-1;
-     if ele.adduniquechilddata(ele1,operparamids,
-                                         ek_operator,allvisi,poper1) then begin
-      poper1^.methodele:= ele.eledatarel(sub1);
-     end
-     else begin
-      errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
+     if sf_operator in subflags then begin
+      operparamids.d[0]:= currentoperator;
+      if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
+       ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
+      end;
+      if ele.adduniquechilddata(ele1,operparamids,
+                                          ek_operator,allvisi,poper1) then begin
+       poper1^.methodele:= ele.eledatarel(sub1);
+      end
+      else begin
+       errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
+      end;
+     end;
+     if sf_operatorright in subflags then begin
+      operparamids.d[0]:= currentoperatorright;
+      if not ele.findcurrent(tks_operatorsright,[],allvisi,ele1) then begin
+       ele1:= ele.addelementduplicate1(tks_operatorsright,ek_none,allvisi);
+      end;
+      if ele.adduniquechilddata(ele1,operparamids,
+                                          ek_operator,allvisi,poper1) then begin
+       poper1^.methodele:= ele.eledatarel(sub1);
+      end
+      else begin
+       errormessage(err_operatoralreadydefined,[getidentname(currentoperator)]);
+      end;
      end;
     end;
    end;

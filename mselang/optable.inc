@@ -998,6 +998,8 @@
   (ssa: pushsegaddrssa; proc: @pushsegaddrop; flags: [of_relocseg]),
 //oc_pushstackaddr
   (ssa: pushstackaddrssa; proc: @pushstackaddrop; flags: []), 
+//oc_pushstack
+  (ssa: pushstackssa; proc: @pushstackop; flags: []), 
 
 //oc_pushduppo
   (ssa: pushduppossa; proc: @pushduppoop; flags: []), 
