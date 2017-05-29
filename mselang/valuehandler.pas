@@ -57,7 +57,7 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,dsf_noinstancecopy,
+                dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
                 dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
@@ -2318,32 +2318,34 @@ begin
      lastparamsize1:= paramsize1-lastparamsize1;
     end
     else begin
-     while i1 > 0 do begin
-      getnextnospace(poitem1+1,poitem1);
-      if doparam(poitem1,subparams1,parallocpo) then begin 
-                                     //vararg list skipped?
-       inc(subparams1);              //no
-       inc(parallocpo);
-       dec(i1);
-      end
-      else begin
-       i1:= maxparamcount-asub^.paramcount;
-       while getnextnospace(poitem1+1,poitem1) do begin
-        getvalue(poitem1,das_none);
-        parallocpo^.ssaindex:= poitem1^.d.dat.fact.ssaindex;
-        inc(varargcount);
+     if not (dsf_noparams in aflags) then begin
+      while i1 > 0 do begin
+       getnextnospace(poitem1+1,poitem1);
+       if doparam(poitem1,subparams1,parallocpo) then begin 
+                                      //vararg list skipped?
+        inc(subparams1);              //no
         inc(parallocpo);
-        if varargcount >= i1 then begin
-         errormessage(err_toomanyparams,[]);
-         break;
+        dec(i1);
+       end
+       else begin
+        i1:= maxparamcount-asub^.paramcount;
+        while getnextnospace(poitem1+1,poitem1) do begin
+         getvalue(poitem1,das_none);
+         parallocpo^.ssaindex:= poitem1^.d.dat.fact.ssaindex;
+         inc(varargcount);
+         inc(parallocpo);
+         if varargcount >= i1 then begin
+          errormessage(err_toomanyparams,[]);
+          break;
+         end;
         end;
+        allocsegmentpo(seg_localloc,varargcount*sizeof(parallocinfoty));
+        break;
        end;
-       allocsegmentpo(seg_localloc,varargcount*sizeof(parallocinfoty));
-       break;
       end;
-     end;
-     if not isvararg then begin
-      dodefaultparams(); //varargs can not have defaultparams
+      if not isvararg then begin
+       dodefaultparams(); //varargs can not have defaultparams
+      end;
      end;
     end;
 //    locdatapo:= tempsbefore;

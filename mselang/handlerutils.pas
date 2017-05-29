@@ -3437,6 +3437,7 @@ var
  operatorsig: identvecty;
  oper1: poperatordataty;
  i1,i2,i3,i4: int32;
+ var1: pvardataty;
 label
  endlab;
 begin
@@ -3529,6 +3530,8 @@ begin
         i2:= getstackindex(pob);
         i3:= i2-s.stackindex;
         sub1:= ele.eledataabs(oper1^.methodele);
+        var1:= ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]);
+                             //value param
         pushinsertstackaddress(i3,-1);
                                //alloca + pointer to alloc
         if co_mlaruntime in info.o.compileoptions then begin
@@ -3538,14 +3541,23 @@ begin
          else begin
           i4:= alignsize(pta^.h.bytesize);
          end;
-         with insertitem(oc_pushstack,pob,-1)^.par.memop do begin
-          t.size:= pta^.h.bytesize;
-          tempdataaddress.a.address:= 
-                      -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
-          tempdataaddress.offset:= 0;
+         if af_paramindirect in var1^.address.flags then begin
+          with insertitem(oc_pushstackaddr,pob,-1)^.par.memop do begin
+           tempdataaddress.a.address:= 
+                       -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
+           tempdataaddress.offset:= 0;
+          end;
+         end
+         else begin
+          with insertitem(oc_pushstack,pob,-1)^.par.memop do begin
+           t.size:= pta^.h.bytesize;
+           tempdataaddress.a.address:= 
+                       -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
+           tempdataaddress.offset:= 0;
+          end;
          end;
          dosub(i2,sub1,getstackindex(poa),1,
-                         [dsf_instanceonstack,dsf_noinstancecopy]);
+                         [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
          with additem(oc_push)^ do begin
           par.imm.vsize:= pointersize; //compensate missing instance copy
          end;
