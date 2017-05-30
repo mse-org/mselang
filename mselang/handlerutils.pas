@@ -147,6 +147,8 @@ function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 //function getassignaddress(const stackoffset: integer;
 //                                  const endaddress: boolean): boolean;
+procedure calloperatorright(const adest,aparam: pcontextitemty;
+                                                  const asub: psubdataty);
 procedure getclassvalue(const acontext: pcontextitemty);
 
 function pushtemp(const address: addressvaluety;
@@ -1636,7 +1638,7 @@ begin
     result:= ele.eledataabs(dat.datatyp.typedata);
    end;
   end;
-  ark_stack: begin
+  ark_stack,ark_stackref: begin
    result:= aref.typ;
   end;
   else begin
@@ -1719,6 +1721,18 @@ begin
     end;
    end;
    result:= aref.ssaindex;
+   exit;
+  end;
+  ark_stackref: begin //for destructor, instance pointer on stack
+   if co_mlaruntime in info.o.compileoptions then begin
+    with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
+     offset:= aref.offset;
+     a.address:= aref.address;
+    end;
+   end
+   else begin
+    notimplementederror('20170530A');
+   end; 
    exit;
   end;
   else begin
@@ -3412,6 +3426,74 @@ begin
  end;
 end;
 
+procedure calloperatorright(const adest,aparam: pcontextitemty;
+                                                  const asub: psubdataty);
+var
+ i2,i3,i4: int32;
+ var1: pvardataty;
+ ptdest,ptparam: ptypedataty;
+begin
+ with info do begin
+  i2:= getstackindex(adest);
+  i3:= i2-s.stackindex;
+ {$ifdef mse_checkinternalerror}
+  if asub^.paramcount <> 2 then begin
+   internalerror(ie_handler,'20170530B');
+  end;
+ {$endif}
+  ptdest:= ele.eledataabs(adest^.d.dat.datatyp.typedata);
+  ptparam:= ele.eledataabs(aparam^.d.dat.datatyp.typedata);
+  var1:= ele.eledataabs(pelementoffsetty(@asub^.paramsrel)[1]);
+                       //value param
+//        pushinsertstackaddress(i3,-1);
+//                               //alloca + pointer to alloc
+  if co_mlaruntime in info.o.compileoptions then begin
+   if aparam^.d.dat.datatyp.indirectlevel > 0 then begin
+    i4:= pointersize;
+   end
+   else begin
+    i4:= alignsize(ptparam^.h.bytesize);
+   end;
+   if af_paramindirect in var1^.address.flags then begin
+    with insertitem(oc_pushstackaddr,adest,-1)^.par.memop do begin
+     tempdataaddress.a.address:= 
+                 -(i4 + alignsize(ptdest^.h.bytesize)+pointersize);
+     tempdataaddress.offset:= 0;
+    end;
+   end
+   else begin
+    with insertitem(oc_pushstack,adest,-1)^.par.memop do begin
+     t.size:= ptparam^.h.bytesize;
+     tempdataaddress.a.address:= 
+                 -(i4 + alignsize(ptdest^.h.bytesize)+pointersize);
+     tempdataaddress.offset:= 0;
+    end;
+   end;
+   dosub(i2,asub,getstackindex(aparam),1,
+                   [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
+   with additem(oc_push)^ do begin
+    par.imm.vsize:= pointersize; //compensate missing instance copy
+   end;
+   with additem(oc_movestack)^.par.swapstack do begin
+    size:= alignsize(ptdest^.h.bytesize);
+    offset:= -i4;
+   end;
+   with additem(oc_pop)^ do begin
+    par.imm.vsize:= i4;
+   end;
+  end
+  else begin
+   dosub(i2,asub,getstackindex(aparam),1,[dsf_instanceonstack]);
+   with additem(oc_loadalloca)^ do begin
+    par.ssas1:= adest^.d.dat.fact.ssaindex-2; //ssa of alloca
+//    adest^.d.kind:= ck_subres;
+    adest^.d.dat.fact.ssaindex:= par.ssad;
+   end;
+  end;
+ end;
+ adest^.d.kind:= ck_fact;
+end;
+
 function updateop(const opsinfo: opsinfoty): popinfoty;
 
  procedure div0error();
@@ -3530,55 +3612,11 @@ begin
         i2:= getstackindex(pob);
         i3:= i2-s.stackindex;
         sub1:= ele.eledataabs(oper1^.methodele);
-        var1:= ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]);
-                             //value param
         pushinsertstackaddress(i3,-1);
                                //alloca + pointer to alloc
-        if co_mlaruntime in info.o.compileoptions then begin
-         if poa^.d.dat.datatyp.indirectlevel > 0 then begin
-          i4:= pointersize;
-         end
-         else begin
-          i4:= alignsize(pta^.h.bytesize);
-         end;
-         if af_paramindirect in var1^.address.flags then begin
-          with insertitem(oc_pushstackaddr,pob,-1)^.par.memop do begin
-           tempdataaddress.a.address:= 
-                       -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
-           tempdataaddress.offset:= 0;
-          end;
-         end
-         else begin
-          with insertitem(oc_pushstack,pob,-1)^.par.memop do begin
-           t.size:= pta^.h.bytesize;
-           tempdataaddress.a.address:= 
-                       -(i4 + alignsize(ptb^.h.bytesize)+pointersize);
-           tempdataaddress.offset:= 0;
-          end;
-         end;
-         dosub(i2,sub1,getstackindex(poa),1,
-                         [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
-         with additem(oc_push)^ do begin
-          par.imm.vsize:= pointersize; //compensate missing instance copy
-         end;
-         with additem(oc_movestack)^.par.swapstack do begin
-          size:= alignsize(ptb^.h.bytesize);
-          offset:= -i4;
-         end;
-         with additem(oc_pop)^ do begin
-          par.imm.vsize:= i4;
-         end;
-        end
-        else begin
-         dosub(i2,sub1,getstackindex(poa),1,[dsf_instanceonstack]);
-         with additem(oc_loadalloca)^ do begin
-          par.ssas1:= pob^.d.dat.fact.ssaindex-2; //ssa of alloca
-          pob^.d.kind:= ck_subres;
-          pob^.d.dat.fact.ssaindex:= par.ssad;
-         end;
-        end;
+        calloperatorright(pob,poa,ele.eledataabs(oper1^.methodele));
         poa^.d:= pob^.d; //todo: is big copy
-        poa^.d.kind:= ck_fact;
+//        poa^.d.kind:= ck_fact;
         goto endlab;
       end;
      end;     

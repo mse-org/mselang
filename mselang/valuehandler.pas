@@ -664,11 +664,16 @@ var                     //todo: optimize, use tables, complete
 var
  pointerconv: boolean;
  needsmanagedtemp: boolean;
- i1,i2,i3: integer;
+ i1,i2,i3,i4: integer;
  lstr1: lstringty;
  p1,p2: pcard8;
  b1: boolean;
  op1: opcodety;
+ operatorsig: identvecty;
+ oper1: poperatordataty;
+ sub1: psubdataty;
+ ad1: addressrefty;
+ var1: pvardataty;
 begin
  result:= false;
  with info do begin
@@ -687,6 +692,11 @@ begin
     end;
    end;
   end;
+ {$ifdef mse_checkinternalerror}
+  if not (acontext^.d.kind in datacontexts) then begin
+   internalerror(ie_handler,'20170530A');
+  end;
+ {$endif}
   with acontext^ do begin
    if (acontext^.d.kind = ck_const) and 
        ((destindirectlevel > 0) or (dest^.h.kind in nilpointerdatakinds)) and 
@@ -703,6 +713,90 @@ begin
                                 (tf_untyped in dest^.h.flags) then begin
     result:= true; //untyped param
     exit;
+   end;
+   if (dest^.h.kind = dk_object) and (destindirectlevel = 0) then begin
+                     //check ":=" operator
+    operatorsig.d[0]:= tks_operators;
+    operatorsig.d[1]:= objectoperatoridents[oa_assign];
+    setoperparamid(@operatorsig.d[2],0,nil); //no return value
+    setoperparamid(@operatorsig.d[4],d.dat.datatyp.indirectlevel,source1);
+    operatorsig.high:= 5;
+    if ele.findchilddata(basetype(dest),
+                          operatorsig,[ek_operator],allvisi,oper1) then begin
+     result:= getvalue(acontext,das_none);
+     if result then begin
+      sub1:= ele.eledataabs(oper1^.methodele);
+      if co_mlaruntime in info.o.compileoptions then begin
+       i1:= alignsize(dest^.h.bytesize);
+       with insertitem(oc_push,acontext,-1)^ do begin //todo: managed temp
+        par.imm.vsize:= i1;
+       end;
+       {
+       with insertitem(oc_pushstackaddr,acontext,-1)^ do begin
+        memop.tempdataaddress.offset:= 0;
+        memop.tempdataaddress.a.address:= -i1;
+       end;
+       }
+       if tf_needsini in dest^.h.flags then begin
+        ad1.contextindex:= getstackindex(acontext);
+        ad1.offset:= 0;
+        ad1.kind:= ark_stackref;
+        ad1.address:= -i1;
+        ad1.typ:= dest;
+        writemanagedtypeop(mo_ini,dest,ad1);
+       end; 
+       if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
+        i4:= pointersize;
+       end
+       else begin
+        i4:= alignsize(source1^.h.bytesize);
+       end;
+      {$ifdef mse_checkinternalerror}
+       if sub1^.paramcount <> 2 then begin
+        internalerror(ie_handler,'20170530B');
+       end;
+      {$endif}
+       var1:= ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]);
+                            //value param
+       
+       if af_paramindirect in var1^.address.flags then begin
+        with insertitem(oc_pushstackaddr,acontext,-1)^.par.memop do begin
+         tempdataaddress.a.address:= 
+                     -(i4 + alignsize(dest^.h.bytesize)+pointersize);
+         tempdataaddress.offset:= 0;
+        end;
+       end
+       else begin
+        with insertitem(oc_pushstack,acontext,-1)^.par.memop do begin
+         t.size:= source1^.h.bytesize;
+         tempdataaddress.a.address:= 
+                     -(i4 + i1 + pointersize);
+         tempdataaddress.offset:= 0;
+        end;
+       end;
+       dosub(getstackindex(acontext),sub1,getstackindex(acontext),1,
+                       [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
+       with additem(oc_push)^ do begin
+        par.imm.vsize:= pointersize; //compensate missing instance copy
+       end;
+       with additem(oc_movestack)^.par.swapstack do begin
+        size:= i1;
+        offset:= -i4;
+       end;
+       with additem(oc_pop)^ do begin
+        par.imm.vsize:= i4;
+       end;
+      end
+      else begin
+       notimplementederror('asrefq');
+      end;
+      acontext^.d.kind:= ck_fact;
+      acontext^.d.dat.datatyp.typedata:= ele.eledatarel(dest);
+      acontext^.d.dat.datatyp.indirectlevel:= 0;
+      acontext^.d.dat.datatyp.flags:= source1^.h.flags;
+     end;
+     exit;
+    end;
    end;
    result:= destindirectlevel = d.dat.datatyp.indirectlevel;
    if result then begin
