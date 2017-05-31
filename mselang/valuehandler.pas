@@ -745,6 +745,11 @@ begin
         ad1.typ:= dest;
         writemanagedtypeop(mo_ini,dest,ad1);
        end; 
+       with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
+        memop.tempdataaddress.a.address:= -i1;
+        memop.tempdataaddress.offset:= 0;
+       end;
+
        if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
         i4:= pointersize;
        end
