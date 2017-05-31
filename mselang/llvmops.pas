@@ -3414,6 +3414,16 @@ begin
  end;
 // bcstream.emitsegdataaddress(memop);
 end;
+
+procedure pushallocaddrop();
+begin
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.constval(0));
+                                                                   //2ssa
+ end;
+// bcstream.emitsegdataaddress(memop);
+end;
+
 {
 procedure pushstackaddrindiop();
 begin
@@ -4897,6 +4907,7 @@ const
   pushsegaddrssa = 1;
 //  pushsegaddrindissa = 3;
   pushstackaddrssa = 3;
+  pushallocaddrssa = 2;
 //  pushstackaddrindissa = 1;
   pushstackssa = 1;
   

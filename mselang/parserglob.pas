@@ -263,6 +263,7 @@ type
  
  factinfoty = record
   ssaindex: int32;
+  instancessa: int32; //for inplace object type conversion
 //  bbindex: int32;
   opdatatype: typeallocinfoty;
   case integer of

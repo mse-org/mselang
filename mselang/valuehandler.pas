@@ -57,7 +57,9 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
+                dsf_instanceonstack,
+                dsf_usedestinstance, //use d.dat.fact.instancessa
+                dsf_noinstancecopy,dsf_noparams,
                 dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
@@ -726,17 +728,16 @@ begin
      result:= getvalue(acontext,das_none);
      if result then begin
       sub1:= ele.eledataabs(oper1^.methodele);
+     {$ifdef mse_checkinternalerror}
+      if sub1^.paramcount <> 2 then begin
+       internalerror(ie_handler,'20170530B');
+      end;
+     {$endif}
       if co_mlaruntime in info.o.compileoptions then begin
        i1:= alignsize(dest^.h.bytesize);
        with insertitem(oc_push,acontext,-1)^ do begin //todo: managed temp
         par.imm.vsize:= i1;
        end;
-       {
-       with insertitem(oc_pushstackaddr,acontext,-1)^ do begin
-        memop.tempdataaddress.offset:= 0;
-        memop.tempdataaddress.a.address:= -i1;
-       end;
-       }
        if tf_needsini in dest^.h.flags then begin
         ad1.contextindex:= getstackindex(acontext);
         ad1.offset:= 0;
@@ -756,11 +757,6 @@ begin
        else begin
         i4:= alignsize(source1^.h.bytesize);
        end;
-      {$ifdef mse_checkinternalerror}
-       if sub1^.paramcount <> 2 then begin
-        internalerror(ie_handler,'20170530B');
-       end;
-      {$endif}
        var1:= ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]);
                             //value param
        
@@ -792,13 +788,35 @@ begin
         par.imm.vsize:= i4;
        end;
       end
-      else begin
-       notimplementederror('asrefq');
+      else begin //llvm
+       i1:= acontext^.d.dat.fact.ssaindex; //source
+       with insertitem(oc_tempalloc,acontext,-1)^ do begin //todo: managed temp
+        par.tempalloc.typid:= 
+               s.unitinfo^.llvmlists.typelist.addbytevalue(dest^.h.bytesize);
+        i2:= par.ssad;
+       end;
+       with insertitem(oc_pushallocaddr,acontext,-1)^ do begin
+        par.ssas1:= i2;
+        acontext^.d.dat.fact.instancessa:= par.ssad;
+       end;
+       {
+       inc(s.stacktop); //for instancepointer
+       initfactcontext(s.stacktop-s.stackindex);
+       contextstack[s.stacktop].d.dat.datatyp:= sysdatatypes[st_pointer];
+       }
+       acontext^.d.dat.fact.ssaindex:= i1; //source
+       i1:= getstackindex(acontext);
+       dosub(i1,sub1,i1,1,[dsf_instanceonstack,dsf_usedestinstance]);
+//       dec(s.stacktop);
+       with insertitem(oc_loadalloca,acontext,-1)^ do begin //todo: managed temp
+        par.ssas1:= i2;
+        acontext^.d.dat.fact.ssaindex:= par.ssad; //result object
+       end;
       end;
       acontext^.d.kind:= ck_fact;
       acontext^.d.dat.datatyp.typedata:= ele.eledatarel(dest);
       acontext^.d.dat.datatyp.indirectlevel:= 0;
-      acontext^.d.dat.datatyp.flags:= source1^.h.flags;
+      acontext^.d.dat.datatyp.flags:= dest^.h.flags;
      end;
      exit;
     end;
@@ -1982,7 +2000,12 @@ var
  begin
   with info.contextstack[adestindex] do begin
    instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
-   instancessa:= d.dat.fact.ssaindex; //for sf_method
+   if dsf_usedestinstance in aflags then begin
+    instancessa:= d.dat.fact.instancessa; //for sf_method
+   end
+   else begin
+    instancessa:= d.dat.fact.ssaindex; //for sf_method
+   end;
    if (sf_destructor in asub^.flags) then begin
     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
    end;
@@ -2246,7 +2269,12 @@ begin
          getvalue(@contextstack[adestindex],das_none);
         end;
        end;
-       instancessa:= d.dat.fact.ssaindex; //for sf_method
+       if dsf_usedestinstance in aflags then begin
+        instancessa:= d.dat.fact.instancessa;
+       end
+       else begin
+        instancessa:= d.dat.fact.ssaindex; //for sf_method
+       end;
       end;
      end; //ismethod
     end;
@@ -2446,8 +2474,10 @@ begin
        dodefaultparams(); //varargs can not have defaultparams
       end;
       if dsf_instanceonstack in aflags then begin
-       selfpo^.ssaindex:= d.dat.fact.ssaindex; 
+       if not (dsf_usedestinstance in aflags) then begin
+        selfpo^.ssaindex:= d.dat.fact.ssaindex; 
                //could be shifted by right side operator param
+       end;
       end;
      end;
     end;

@@ -4894,6 +4894,11 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= po1;
 end;
 
+procedure pushallocaddrop();
+begin
+ notimplemented();
+end;
+
 procedure pushstackop();
 var
  po1,po2: pointer;
@@ -7003,6 +7008,7 @@ const
   pushsegaddrssa = 0;
 //  pushsegaddrindissa = 0;
   pushstackaddrssa = 0;
+  pushallocaddrssa = 0;
 //  pushstackaddrindissa = 0;
 
   pushstackssa = 0;

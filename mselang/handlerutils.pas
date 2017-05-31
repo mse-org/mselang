@@ -3572,7 +3572,7 @@ begin
      operatorsig.d[1]:= objectoperatoridents[opsinfo.objop];
      setoperparamid(@operatorsig.d[2],0,nil); //no return value
      operatorsig.high:= 5;
-     if b1 then begin
+     if b1 then begin //left side
       operatorsig.d[0]:= tks_operators;
       setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),

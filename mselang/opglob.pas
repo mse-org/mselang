@@ -577,6 +577,7 @@ type
   oc_pushsegaddr,
 //  oc_pushsegaddrindi,
   oc_pushstackaddr,
+  oc_pushallocaddr,
 //  oc_pushstackaddrindi,
   oc_pushstack,
 
