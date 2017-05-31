@@ -1,0 +1,25 @@
+program operator5;
+
+type
+ objty = object[nozeroinit]
+  fa,fb: int32;
+  method assigni32(const a: int32) [operator=':='];
+  method ini() [ini];
+ end;
+
+method objty.assigni32(const a: int32);
+begin
+ fb:= a+fa;
+end;
+
+method objty.ini();
+begin
+ fa:= 100;
+end;
+
+var
+ a: objty;
+begin
+ a:= int32(23);
+ exitcode:= a.fb;
+end.

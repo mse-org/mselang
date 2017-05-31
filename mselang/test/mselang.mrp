@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7250F6C
+    ao=An unhandled exception occured at $B72B9F6C
     ae=
     aec=123
     ie=0
@@ -7258,7 +7258,7 @@ c=3
    (
    kind=1
    a=0,665,4,operators
-   c=8
+   c=10
     (
     kind=2
     a=0,648,1,operator1
@@ -7418,6 +7418,50 @@ c=3
     a=0,648,1,operator4 llvm
     teststate=1
     path=operator4.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,operator5
+    teststate=1
+    path=operator5.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,operator5 llvm
+    teststate=1
+    path=operator5.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -10472,7 +10516,9 @@ sortdescend2=0
 width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=41
+rowstate=43
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

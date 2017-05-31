@@ -797,8 +797,16 @@ begin
        end;
        with insertitem(oc_pushallocaddr,acontext,-1)^ do begin
         par.ssas1:= i2;
-        acontext^.d.dat.fact.instancessa:= par.ssad;
+        i3:= par.ssad;
+        acontext^.d.dat.fact.instancessa:= i3;
        end;
+       if tf_needsini in dest^.h.flags then begin
+        ad1.contextindex:= getstackindex(acontext);
+        ad1.kind:= ark_stack;
+        ad1.ssaindex:= i3;
+        ad1.typ:= dest;
+        writemanagedtypeop(mo_ini,dest,ad1);
+       end; 
        {
        inc(s.stacktop); //for instancepointer
        initfactcontext(s.stacktop-s.stackindex);
