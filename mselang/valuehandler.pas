@@ -848,7 +848,10 @@ begin
      {$endif}
      end;
      i1:= alignsize(source1^.h.bytesize);  //object size
+     i2:= acontext^.d.dat.fact.ssaindex;
      with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
+      ssas1:= i2;
+      memop.t:= getopdatatype(source1,d.dat.datatyp.indirectlevel);
       memop.tempdataaddress.a.address:= -i1;
       memop.tempdataaddress.offset:= 0;
      end;

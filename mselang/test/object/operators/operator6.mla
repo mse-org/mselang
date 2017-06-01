@@ -1,0 +1,26 @@
+program operator6;
+
+type
+ objty = object[nozeroinit]
+  fa,fb: int32;
+  method assigni32(): int32 [operator=':='];
+  method ini() [ini];
+ end;
+
+method objty.assigni32(): int32;
+begin
+ result:= fb+fa;
+end;
+
+
+method objty.ini();
+begin
+ fa:= 100;
+end;
+
+var
+ a: objty;
+begin
+ a.fb:= 23;
+ exitcode:= a;
+end.
