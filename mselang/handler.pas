@@ -3120,7 +3120,7 @@ type
 const                //todo: segment and local indirect
  popoptable: array[movedestty] of array [databitsizety] of opcodety = (
 
- //das_none, das_1,     das_2_7,   das_8,                  //pd_segment
+ //das_none, das_1,     das_2_7,   das_8,                  //mdv_segment
   (oc_popseg,oc_popseg8,oc_popseg8,oc_popseg8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_popseg16,oc_popseg16,oc_popseg32,oc_popseg32,
@@ -3128,7 +3128,7 @@ const                //todo: segment and local indirect
    oc_popseg64,oc_popseg64,oc_popsegpo,oc_popsegf16,oc_popsegf32,oc_popsegf64,
  //das_sub,    das_meta
    oc_popsegpo,oc_none), 
- //das_none, das_1,     das_2_7,   das_8,                  //pd_local
+ //das_none, das_1,     das_2_7,   das_8,                  //mdv_local
   (oc_poploc,oc_poploc8,oc_poploc8,oc_poploc8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_poploc16,oc_poploc16,oc_poploc32,oc_poploc32,
@@ -3136,7 +3136,7 @@ const                //todo: segment and local indirect
    oc_poploc64,oc_poploc64,oc_poplocpo,oc_poplocf16,oc_poplocf32,oc_poplocf64,
  //das_sub,   ,das_meta
    oc_poplocpo,oc_none), 
- //das_none, das_1,     das_2_7,   das_8,                  //pd_param
+ //das_none, das_1,     das_2_7,   das_8,                  //mdv_param
   (oc_poppar,oc_poppar8,oc_poppar8,oc_poppar8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_poppar16,oc_poppar16,oc_poppar32,oc_poppar32,
@@ -3145,7 +3145,7 @@ const                //todo: segment and local indirect
  //das_sub,    das_meta
    oc_popparpo,oc_none
    ), 
- //das_none, das_1,     das_2_7,   das_8,                  //pd_paramindi
+ //das_none, das_1,     das_2_7,   das_8,                  //mdv_paramindi
   (oc_popparindi,oc_popparindi8,oc_popparindi8,oc_popparindi8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_popparindi16,oc_popparindi16,oc_popparindi32,oc_popparindi32,

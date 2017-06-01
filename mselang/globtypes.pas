@@ -140,7 +140,8 @@ type
  
  tempaddressty = record
   address: dataoffsty; //first, must map poaddress
-  ssaindex: int32; //for llvm temp var
+//  ssaindex: int32; //for llvm temp var 
+         //use ssas2 instead because of op insert tracking
  end;
   
  addressvaluety = record
