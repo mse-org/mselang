@@ -1764,10 +1764,10 @@ var
    with insertitem(getpoptempop(si1),context1,-1)^ do begin
     par.memop.t:= getopdatatype(sourcetype,
                  vardata1^.address.indirectlevel-1);
-    include(par.memop.t.flags,af_stacktemp);
+    par.memop.t.flags:= par.memop.t.flags + [af_stacktemp,af_ssas2];
     if co_llvm in info.o.compileoptions then begin
      par.ssas1:= i3;
-     par.memop.tempdataaddress.a.ssaindex:= i1; //alloc ssa
+     par.ssas2:= i1; //alloc ssa
     end
     else begin
      par.memop.tempdataaddress.a:= ad1.tempaddress;

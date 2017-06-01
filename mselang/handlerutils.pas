@@ -965,7 +965,8 @@ procedure pushinserttempaddress(const aaddress: tempaddressty;
 begin
  with insertitem(oc_pushlocaddr,stackoffset,aopoffset)^ do begin
   par.memop.t:= bitoptypes[das_pointer];
-  include(par.memop.t.flags,af_stacktemp);
+  par.memop.t.flags:= par.memop.t.flags + [af_stacktemp,af_ssas2];
+  par.ssas2:= aaddress.ssaindex;
   par.memop.tempdataaddress.a:= aaddress;
   par.memop.tempdataaddress.offset:= 0;
  end;

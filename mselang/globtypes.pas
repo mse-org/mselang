@@ -97,7 +97,10 @@ const
  storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
                    seg_classintfcount,seg_intfitemcount];
 type
- addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_managedtemp,
+ addressflagty = (af_nil,af_segment,af_local,af_stacktemp,
+                  af_ssas2, 
+                          //use par.ssas2 instead of tempdataaddress.a.ssaindex
+                  af_managedtemp,
                   af_param,af_paramindirect,af_const,af_resultvar,
                   af_paramconst,af_paramconstref,af_paramvar,af_paramout, 
                                               //for paramkindty match test
@@ -140,8 +143,7 @@ type
  
  tempaddressty = record
   address: dataoffsty; //first, must map poaddress
-//  ssaindex: int32; //for llvm temp var 
-         //use ssas2 instead because of op insert tracking
+  ssaindex: int32; //for llvm temp var 
  end;
   
  addressvaluety = record

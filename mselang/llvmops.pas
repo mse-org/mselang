@@ -249,12 +249,19 @@ begin
 end;
 
 procedure storeloc(const source: int32);
+var
+ i1: int32;
 begin
  with pc^.par do begin
   with memop do begin
    if af_stacktemp in t.flags then begin
-    bcstream.emitstoreop(bcstream.ssaval(ssas1),
-                           bcstream.ssaval(tempdataaddress.a.ssaindex));
+    if af_ssas2 in t.flags then begin
+     i1:= ssas2;
+    end
+    else begin
+     i1:= tempdataaddress.a.ssaindex;
+    end;
+    bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.ssaval(i1));
    end
    else begin
     with locdataaddress do begin
