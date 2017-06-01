@@ -717,7 +717,7 @@ begin
     exit;
    end;
    if (dest^.h.kind = dk_object) and (destindirectlevel = 0) then begin
-                     //check ":=" operator
+                     //check ":=" operator, convert to object
     operatorsig.d[0]:= tks_operators;
     operatorsig.d[1]:= objectoperatoridents[oa_assign];
     setoperparamid(@operatorsig.d[2],0,nil); //no return value
@@ -825,6 +825,50 @@ begin
       acontext^.d.dat.datatyp.typedata:= ele.eledatarel(dest);
       acontext^.d.dat.datatyp.indirectlevel:= 0;
       acontext^.d.dat.datatyp.flags:= dest^.h.flags;
+     end;
+     exit;
+    end;
+   end;
+   if (source1^.h.kind = dk_object) and 
+                     (d.dat.datatyp.indirectlevel = 0) then begin
+                    // check ":=" operator, convert from object
+    operatorsig.d[0]:= tks_operators;
+    operatorsig.d[1]:= objectoperatoridents[oa_assign];
+    setoperparamid(@operatorsig.d[2],destindirectlevel,dest); //return value
+    operatorsig.high:= 3;
+    if ele.findchilddata(basetype(source1),
+                          operatorsig,[ek_operator],allvisi,oper1) then begin
+     result:= getvalue(acontext,das_none);
+     if result then begin
+      sub1:= ele.eledataabs(oper1^.methodele);
+     {$ifdef mse_checkinternalerror}
+      if sub1^.paramcount <> 2 then begin
+       internalerror(ie_handler,'20170601A');
+      end;
+     {$endif}
+     end;
+     i1:= alignsize(source1^.h.bytesize);  //object size
+     with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
+      memop.tempdataaddress.a.address:= -i1;
+      memop.tempdataaddress.offset:= 0;
+     end;
+     i2:= getstackindex(acontext);
+     dosub(i2,sub1,i2,0,[dsf_instanceonstack]);
+     //todo: fini object
+     if co_mlaruntime in info.o.compileoptions then begin
+     {
+      with insertitem(oc_movestack,acontext,-1)^.par.swapstack do begin
+       if destindirectlevel > 0 then begin
+        size:= pointersize;
+       end
+       else begin
+        size:= dest^.h.bytesize;
+       end;
+       offset:= -(i1+pointersize);
+      end;
+      }
+     end
+     else begin //llvm
      end;
      exit;
     end;
@@ -2418,8 +2462,8 @@ begin
        i2:= 0; //insert result space before instance
        stacksize:= vpointersize;
       end;
-      resultsize:= pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
-                                                              resulttype1);
+      resultsize:= pushinsertvar(adestindex-s.stackindex,
+                              i2,asub^.resulttype.indirectlevel,resulttype1);
       inc(opoffset1);
       stacksize:= stacksize + resultsize; //alloc space for return value
       locdatapo:= locdatapo + resultsize;

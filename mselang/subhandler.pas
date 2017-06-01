@@ -818,7 +818,6 @@ begin
          if not (sf_operator in d.subdef.flags) then begin
           include(d.subdef.flags,sf_operator);
           currentoperator:= p1^.d.ident.ident;
-          
          end
          else begin
           errormessage(err_multipleoperators,[],p1);
@@ -837,7 +836,6 @@ begin
          if not (sf_operatorright in d.subdef.flags) then begin
           include(d.subdef.flags,sf_operatorright);
           currentoperatorright:= p1^.d.ident.ident;
-          
          end
          else begin
           errormessage(err_multipleoperators,[],p1);
@@ -1867,7 +1865,7 @@ begin
     else begin
      p1:= @operparamids.d[1];
      if sf_function in subflags then begin
-      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[1]));
+      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[0]));
       i1:= 2;
      end
      else begin
@@ -1877,7 +1875,7 @@ begin
       inc(p1);
       i1:= 1;
      end;
-     for i1:= 1 to sub1^.paramcount-1 do begin
+     for i1:= i1 to sub1^.paramcount-1 do begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[i1]));
      end;
      operparamids.high:= (p1-pidentty(@operparamids.d[0]))-1;
