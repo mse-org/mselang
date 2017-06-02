@@ -1,5 +1,7 @@
 unit unit1;
 interface
+type
+ intabc = int32;
 implementation
 {$internaldebug on}
 var

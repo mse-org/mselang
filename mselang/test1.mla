@@ -1,27 +1,30 @@
-program operator1;
-
+program recordcase1;
+uses
+ unit1;
 type
- objty = object
-  fa,fb: int32;
-  method add(b: objty) ['+'];
+ recty = record
+  aa: int32;
+  bb: int32;
+{$internaldebug on}
+  case intabc of
+   1,2: (a: int32;b:int32;d:record a,b: int32 end);
+   1: (e: int32;c: flo64;);
+   5: (f: record
+           case z: int32 of
+            1: (ww: int32;);
+            2: (rr,uu: int32;)
+          end;)
  end;
 
-method objty.add(b: objty);
-begin
-// fa:= fa+b.fa;
-// fb:= fb+b.fb;
-end;
-
 var
- a,b,c: objty;
+ r1: recty;
+ i1: unit1.intabc;
 begin
- c:= a+b;
-{
- a.fa:= 9;
- a.fb:= 100;
- b.fa:= 3;
- b.fb:= 11;
- c:= a+b;
- exitcode:= c.fa+c.fb;
-}
+ r1.aa:= 1;
+ r1.a:= 22;
+ r1.d.b:= 100;
+ exitcode:= r1.aa+r1.e+r1.d.b;
+ if sizeof(r1) <> 24 then begin
+  exitcode:= 1;
+ end;
 end.

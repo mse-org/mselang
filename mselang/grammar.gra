@@ -682,24 +682,25 @@ recorddef,recorddef1,handlerecorddefstart,
 recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
- 'case'.,recordcase-*
+ 'case'.,recordcase-
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
  '',fielddef^*                          
 recorddefreturn,,handlerecordtype,*^
 
-recordcase,recordcase0,handlerecordcasestart,
+recordcase,recordcase0,,
 recordcase0,recordcase1,,
- '',getident^*
-recordcase1,recordcase3,,handlerecordcase1
+ '',getidentpath^*
+recordcase1,recordcase3,,handlerecordcase1*
  ${whitespace}
  ':',recordcase2-
-recordcase2,recordcase3,,handlerecordcasetype
+recordcase2,recordcase3,,handlerecordcasetype*
  '',getfieldtype^*
 recordcase3,recorddef,,handlecaseofexpected*
  ${whitespace}
- 'of'.,recordcase4-
+ 'of'.,recordcase4a-*
+recordcase4a,recordcase4,handlerecordcasestart, //set ck_recordcase
 recordcase4,recordcase5,,handlerecordcase4*
  ${whitespace}
  'end'.,recordcaseend
@@ -710,7 +711,7 @@ recordcase5,,,handlerecordcase5*
 recordcase6,,,handlerecordcase6*
  ${whitespace}
  '(',recordcase7-
-recordcase7,,,handlerecordcase7*
+recordcase7,,handlerecordcaseitementry,handlerecordcase7*
  ${whitespace}
  @identstart,recordfield^*
  ')',recordcase8-

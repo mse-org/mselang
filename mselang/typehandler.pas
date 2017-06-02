@@ -40,6 +40,7 @@ procedure handlerecordcase4();
 procedure handlerecordcase5();
 procedure handlerecordcase6();
 procedure handlerecordcase7();
+procedure handlerecordcaseitementry();
 procedure handlerecordcaseitem();
 procedure handlerecordcase();
 
@@ -61,8 +62,8 @@ procedure handleenumitemvalue();
 procedure handlesettype();
 
 procedure checkrecordfield(const avisibility: visikindsty;
-                       const aflags: addressflagsty; var aoffset: dataoffsty;
-                                                  var atypeflags: typeflagsty);
+          const aflags: addressflagsty; var aoffset: dataoffsty;
+               var atypeflags: typeflagsty; const iscasekey: boolean = false);
 procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
 procedure checkpendingmanagehandlers();
@@ -364,7 +365,7 @@ end;
 
 procedure checkrecordfield(const avisibility: visikindsty;
            const aflags: addressflagsty; var aoffset: dataoffsty;
-                                      var atypeflags: typeflagsty);
+                      var atypeflags: typeflagsty; const iscasekey: boolean);
  //callstack:  |stackindex 1              2            3        3+identcount
  //            recordfield,checksemicolon,commaidents2,ident...,gettype
  //            |result ck_field...
@@ -377,22 +378,26 @@ var
  i1,elecount: int32;
 begin 
  with info do begin
-  elecount:= s.stacktop-s.stackindex-3;
- {$ifdef mse_checkinternalerror}
+  if iscasekey then begin
+   elecount:= 1;
+   i1:= s.stackindex+1;
+  end
+  else begin
+   elecount:= s.stacktop-s.stackindex-3;
+   i1:= s.stackindex+3;
+  end;
   if (elecount < 1) or 
                (contextstack[s.stacktop].d.kind <> ck_fieldtype) then begin
    errormessage(err_fieldtypeexpected,[]);
    exit;
-//   internalerror(ie_type,'20140325C');
   end;
- {$endif}
-  for i1:= s.stackindex to s.stackindex + elecount - 1 do begin
+  for i1:= i1 to i1 + elecount - 1 do begin
   {$ifdef mse_checkinternalerror}
-   if contextstack[i1+3].d.kind <> ck_ident then begin
+   if contextstack[i1].d.kind <> ck_ident then begin
     internalerror(ie_type,'20151016');
    end;
   {$endif}
-   if not ele.addelementduplicatedata(contextstack[i1+3].d.ident.ident,
+   if not ele.addelementduplicatedata(contextstack[i1].d.ident.ident,
                                             ek_field,avisibility,po1) then begin
     identerror(2,err_duplicateidentifier);
    end;
@@ -408,18 +413,9 @@ begin
     po1^.indirectlevel:= d.typ.indirectlevel;
     po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
     if po1^.indirectlevel = 0 then begin      //todo: alignment
-//     if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
      if tf_needsmanage in po2^.h.flags then begin
       include(atypeflags,tf_needsmanage);
       include(po1^.vf.flags,tf_needsmanage);
-      {
-      with pmanageddataty(
-              pointer(ele.addelementduplicate(tks_managed,[vik_managed],
-                                                                ek_managed))+
-                                             sizeof(elementheaderty))^ do begin
-       managedele:= ele.eledatarel(po1);
-      end;
-      }
      end;
      size1:= po2^.h.bytesize;
     end
@@ -428,12 +424,16 @@ begin
     end;
    end;
    aoffset:= aoffset+size1;
-   with contextstack[i1].d do begin
-    kind:= ck_field;
-    field.fielddata:= ele.eledatarel(po1);
+   if not iscasekey then begin
+    with contextstack[i1-3].d do begin
+     kind:= ck_field;
+     field.fielddata:= ele.eledatarel(po1);
+    end;
    end;
   end;
-  s.stacktop:= s.stackindex+elecount;
+  if not iscasekey then begin
+   s.stacktop:= s.stackindex+elecount;
+  end;
  end;
 end;
 
@@ -461,6 +461,30 @@ begin
  end;
 end;
 
+procedure handlerecordcasetype();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASETYPE');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  if (d.typ.indirectlevel <> 0) or 
+         not (ptypedataty(ele.eledataabs(d.typ.typedata))^.h.kind 
+                                           in ordinaldatakinds) then begin
+   errormessage(err_ordinaltypeexpected,[],s.stacktop-s.stackindex);
+  end
+  else begin
+   if idf_continued in contextstack[s.stackindex+1].d.ident.flags then begin
+    errormessage(err_illegalqualifier,[],2);
+   end
+   else begin
+    with contextstack[s.stackindex] do begin
+     checkrecordfield(allvisi,[],d.rec.fieldoffset,d.typ.flags,true);
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure handlerecordcasestart();
 begin
 {$ifdef mse_debugparser}
@@ -474,23 +498,15 @@ begin
 end;
 
 procedure handlerecordcase1();
+var
+ p1: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDCASE1');
 {$endif}
  with info do begin
- end;
-end;
-
-procedure handlerecordcasetype();
-begin
-{$ifdef mse_debugparser}
- outhandle('RECORDCASETYPE');
-{$endif}
- with info,contextstack[s.stacktop] do begin
-  if (d.typ.indirectlevel <> 0) or 
-         not (ptypedataty(ele.eledataabs(d.typ.typedata))^.h.kind 
-                                           in ordinaldatakinds) then begin
+  if findkindelements(1,[ek_type],allvisi,p1) and 
+      not (ptypedataty(eletodata(p1))^.h.kind in ordinaldatakinds) then begin
    errormessage(err_ordinaltypeexpected,[],s.stacktop-s.stackindex);
   end;
  end;
@@ -568,6 +584,16 @@ begin
  with info do begin
   tokenexpectederror(')',erl_fatal);
   dec(s.stackindex);
+ end;
+end;
+
+procedure handlerecordcaseitementry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASEITEM');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.rec.fieldoffset:= contextstack[s.stackindex-1].d.rec.fieldoffset;
  end;
 end;
 
