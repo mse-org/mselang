@@ -682,11 +682,37 @@ recorddef,recorddef1,handlerecorddefstart,
 recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
+ 'case'.,recordcase-*
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
- '',vardef^*
+ '',fielddef^*                          
 recorddefreturn,,handlerecordtype,*^
+
+recordcase,recordcase0,handlerecordcasestart,
+recordcase0,recordcase1,,
+ '',getident^*
+recordcase1,recordcase3,,handlerecordcase1
+ ${whitespace}
+ ':',recordcase2-
+recordcase2,recordcase3,,handlerecordcasetype
+ '',getfieldtype^*
+recordcase3,recorddef,,handlecaseofexpected*
+ ${whitespace}
+ 'of'.,recordcase4-
+recordcase4,recordcase5,,handlerecordcase4*
+ '',commasepexp^*
+recordcase5,,,handlerecordcase5*
+ ${whitespace}
+ ':',recordcase6-
+recordcase6,,,handlerecordcase6*
+ ${whitespace}
+ '(',recordcase7-
+recordcase7,,,handlerecordcase7*
+ ${whitespace}
+ @identstart,recordfield^*
+ ')',recordcase8-
+recordcase8,recorddef1,,handlerecordcase*
 
 arraydef,arraydef1,,
  'of'.,arraydef2-
@@ -804,13 +830,18 @@ var2,var3,,
  '',getfieldtype^*
 var3,checksemicolon2,,handlevar3
 
-vardef,vardef0,,
+fielddef,vardef0,,
  '',commaidents^*
 vardef0,,handlevardefstart,
  ${whitespace}
  ':',vardef1-
-vardef1,checksemicolon,,
+vardef1,vardef2,,
  '',getfieldtype^*
+vardef2,checksemicolon,,
+ ${whitespace}
+ 'end'.,vardef3
+ ';',vardef3-
+vardef3,,,^
 
 getrange,getrange1,,
  '',exp^*
@@ -913,7 +944,7 @@ attach1,,,^
  '',!handleclosesquarebracketexpected
 
 classfield,,,handleclassfield^*
- '',vardef^*
+ '',fielddef^*
 //
 // properties
 //

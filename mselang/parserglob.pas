@@ -165,7 +165,8 @@ type
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,ck_shortcutexp,
-                  ck_recorddef,ck_classdef,ck_classprop,
+                  ck_recorddef,ck_recordcase,
+                  ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
                   ck_paramdef,ck_params,ck_index,ck_casebranch);
  stackdatakindty = (sdk_none,
@@ -535,7 +536,7 @@ type
    ck_typetype,ck_fieldtype,ck_typearg:(
     typ: typeinfoty;
    );
-   ck_recorddef:(
+   ck_recorddef,ck_recordcase:(
     rec: recordinfoty;
    );
    ck_classdef:(

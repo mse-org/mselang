@@ -4246,7 +4246,7 @@ begin
                        ' def:',defaultconst);
        end;
       end;
-      ck_recorddef: begin
+      ck_recorddef,ck_recordcase: begin
        write('foffs:',d.rec.fieldoffset);
       end;
       ck_classdef: begin

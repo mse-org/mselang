@@ -32,6 +32,15 @@ procedure handlerecorddefstart();
 procedure handlerecorddeferror();
 procedure handlerecordtype();
 procedure handlerecordfield();
+procedure handlerecordcasestart();
+procedure handlerecordcase1();
+procedure handlerecordcasetype();
+procedure handlecaseofexpected();
+procedure handlerecordcase4();
+procedure handlerecordcase5();
+procedure handlerecordcase6();
+procedure handlerecordcase7();
+procedure handlerecordcase();
 
 procedure handlearraytype();
 procedure handlearraydeferror1();
@@ -428,13 +437,139 @@ begin
 end;
 
 procedure handlerecordfield();
+var
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDFIELD');
 {$endif}
  with info do begin
-  checkrecordfield(allvisi,[],contextstack[s.stackindex-1].d.rec.fieldoffset,
-                            contextstack[s.stackindex-2].d.typ.flags);
+  i1:= s.stackindex-2;
+  with contextstack[s.stackindex-1] do begin
+   if d.kind = ck_recordcase then begin
+    dec(i1);
+   end;
+   checkrecordfield(allvisi,[],d.rec.fieldoffset,contextstack[i1].d.typ.flags);
+  end;
+ end;
+end;
+
+procedure handlerecordcasestart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASESTART');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_recordcase;
+  d.rec:= contextstack[s.stackindex-1].d.rec;
+ end;
+end;
+
+procedure handlerecordcase1();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE1');
+{$endif}
+ with info do begin
+ end;
+end;
+
+procedure handlerecordcasetype();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASETYPE');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  if (d.typ.indirectlevel <> 0) or 
+         not (ptypedataty(ele.eledataabs(d.typ.typedata))^.h.kind 
+                                           in ordinaldatakinds) then begin
+   errormessage(err_ordinaltypeexpected,[],s.stacktop-s.stackindex);
+  end;
+ end;
+end;
+
+procedure handlecaseofexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEOFEXPECTED');
+{$endif}
+ with info do begin
+  errormessage(err_syntax,['of']);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlerecordcase4();
+var
+ p1,pe: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE4');
+{$endif}
+ with info do begin
+  p1:= @contextstack[s.stackindex+2]; //skip ck_recordcase and ck_fieldtype;
+  pe:= @contextstack[s.stacktop];
+  while (p1 <= pe) and (p1^.d.kind <> ck_space) do begin //skip ck_ident
+   inc(p1);
+  end;
+  while p1 <= pe do begin
+   while (p1^.d.kind = ck_space) and (p1 <= pe) do begin
+    inc(p1);
+   end;
+   if p1 <= pe then begin
+    if (p1^.d.kind = ck_const) and 
+       ((p1^.d.dat.datatyp.indirectlevel <> 0) or
+        not(ptypedataty(ele.eledataabs(p1^.d.dat.datatyp.typedata))^.h.kind in 
+                                          ordinaldatakinds)) or 
+                                            (p1^.d.kind <> ck_const) then begin
+     errormessage(err_illegalexpression,[],p1);
+    end;
+    inc(p1);
+   end;
+  end;
+ end;
+end;
+
+procedure handlerecordcase5();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE5');
+{$endif}
+ with info do begin
+  tokenexpectederror(':',erl_fatal);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlerecordcase6();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE6');
+{$endif}
+ with info do begin
+  tokenexpectederror('(',erl_fatal);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlerecordcase7();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE7');
+{$endif}
+ with info do begin
+  tokenexpectederror(')',erl_fatal);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlerecordcase();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASE');
+{$endif}
+ with info do begin
+  dec(s.stackindex);
  end;
 end;
 
@@ -832,7 +967,7 @@ begin
       if (d.typ.indirectlevel <> 0) or (po1^.h.indirectlevel <> 0) or
         not (po1^.h.kind in ordinaldatakinds) or 
                                          (po1^.h.bitsize > 32) then begin
-       err(err_ordtypeexpected);
+       err(err_ordinaltypeexpected);
        goto endlab;
       end;
       if (po1^.h.kind = dk_enum) and 
