@@ -116,7 +116,7 @@ c=3
  c=8
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -2348,7 +2348,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=20
     (
     kind=2
@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7252F6C
+    ao=An unhandled exception occured at $B7317F6C
     ae=
     aec=123
     ie=0
@@ -4244,8 +4244,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
-   c=10
+   a=0,665,4,record
+   c=12
     (
     kind=2
     a=0,648,1,recordfield
@@ -4449,6 +4449,50 @@ c=3
     a=0,648,1,recordcopy llvm
     teststate=1
     path=recordcopy.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,case
+    teststate=1
+    path=case.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,case llvm
+    teststate=1
+    path=case.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -10594,17 +10638,105 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=609
+propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=207
+width1=202
 sortdescend1=0
-width2=161
+width2=157
 sortdescend2=0
-width3=158
+width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=47
+rowstate=135
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -80,7 +80,8 @@ type
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
             err_invalidoperatormethod,err_objectforwardnotallowed,
-            err_toomanyoperparams,err_varargmustbelast,err_stringexpected);
+            err_toomanyoperparams,err_varargmustbelast,err_stringexpected,
+            err_managednotallowed);
             
  errorinfoty = record
   level: errorlevelty;
@@ -295,7 +296,8 @@ const
   (level: erl_error; message: 'Too many operator parameters'),
   (level: erl_error; message: 
                  'Variable arguments must be at end of parameter list'),
-  (level: erl_error; message: 'String expected')
+  (level: erl_error; message: 'String expected'),
+  (level: erl_error; message: 'Managed data types can not be used in variant parts')
  );
 
 procedure message1(const atext: string; const values: array of const); 

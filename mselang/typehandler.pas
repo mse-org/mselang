@@ -40,6 +40,7 @@ procedure handlerecordcase4();
 procedure handlerecordcase5();
 procedure handlerecordcase6();
 procedure handlerecordcase7();
+procedure handlerecordcaseitem();
 procedure handlerecordcase();
 
 procedure handlearraytype();
@@ -439,17 +440,23 @@ end;
 procedure handlerecordfield();
 var
  i1: int32;
+ f1: typeflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDFIELD');
 {$endif}
  with info do begin
-  i1:= s.stackindex-2;
   with contextstack[s.stackindex-1] do begin
+   f1:= [];
+   checkrecordfield(allvisi,[],d.rec.fieldoffset,f1);
+   i1:= s.stackindex-2;
    if d.kind = ck_recordcase then begin
     dec(i1);
+    if f1*managedtypeflags <> [] then begin
+     errormessage(err_managednotallowed,[]);
+    end;
    end;
-   checkrecordfield(allvisi,[],d.rec.fieldoffset,contextstack[i1].d.typ.flags);
+   contextstack[i1].d.typ.flags:= contextstack[i1].d.typ.flags + f1;
   end;
  end;
 end;
@@ -462,6 +469,7 @@ begin
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_recordcase;
   d.rec:= contextstack[s.stackindex-1].d.rec;
+  d.rec.fieldoffsetmax:= d.rec.fieldoffset;
  end;
 end;
 
@@ -563,12 +571,27 @@ begin
  end;
 end;
 
+procedure handlerecordcaseitem();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDCASEITEM');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  if d.rec.fieldoffset > d.rec.fieldoffsetmax then begin
+   d.rec.fieldoffsetmax:= d.rec.fieldoffset;
+   d.rec.fieldoffset:= contextstack[s.stackindex-1].d.rec.fieldoffset;
+  end;
+ end;
+end;
+
 procedure handlerecordcase();
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDCASE');
 {$endif}
  with info do begin
+  contextstack[s.stackindex-1].d.rec.fieldoffset:= 
+        contextstack[s.stackindex].d.rec.fieldoffsetmax;
   dec(s.stackindex);
  end;
 end;

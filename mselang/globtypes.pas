@@ -278,7 +278,9 @@ type
                tf_untyped,tf_forward
                ); 
  typeflagsty = set of typeflagty;   
- 
+const
+ managedtypeflags = [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini];
+type
  typeinfoty = record
   flags: typeflagsty;
   typedata: elementoffsetty;

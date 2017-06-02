@@ -4248,6 +4248,9 @@ begin
       end;
       ck_recorddef,ck_recordcase: begin
        write('foffs:',d.rec.fieldoffset);
+       if d.kind = ck_recordcase then begin
+        write(' foffsmax:',d.rec.fieldoffsetmax);
+       end;
       end;
       ck_classdef: begin
        write('flags:',settostring(ptypeinfo(typeinfo(objflagsty)),

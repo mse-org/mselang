@@ -358,6 +358,8 @@ type
 }
  recordinfoty = record
   fieldoffset: dataoffsty;
+  case contextkindty of
+   ck_recordcase: (fieldoffsetmax: int32);
  end;
  objflagty = (obf_class,obf_zeroinit,obf_nozeroinit,obf_virtual);
  objflagsty = set of objflagty;

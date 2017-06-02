@@ -701,6 +701,8 @@ recordcase3,recorddef,,handlecaseofexpected*
  ${whitespace}
  'of'.,recordcase4-
 recordcase4,recordcase5,,handlerecordcase4*
+ ${whitespace}
+ 'end'.,recordcaseend
  '',commasepexp^*
 recordcase5,,,handlerecordcase5*
  ${whitespace}
@@ -712,7 +714,10 @@ recordcase7,,,handlerecordcase7*
  ${whitespace}
  @identstart,recordfield^*
  ')',recordcase8-
-recordcase8,recorddef1,,handlerecordcase*
+recordcase8,recordcase4,handlerecordcaseitem,
+ ${whitespace}
+ ';',recordcase4-
+recordcaseend,recorddef1,,handlerecordcase*
 
 arraydef,arraydef1,,
  'of'.,arraydef2-

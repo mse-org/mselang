@@ -1,0 +1,18 @@
+program recordcase;
+type
+ recty = record
+  aa: int32;
+  bb: int32;
+  case i: int32 of
+   1,2: (a: int32;b:int32;d:flo64);
+   1: (e: int32;c: flo64;);
+ end;
+
+var
+ r1: recty;
+begin
+ r1.aa:= 1;
+ r1.a:= 22;
+ r1.b:= 100;
+ exitcode:= r1.aa+r1.e+r1.b;
+end.
