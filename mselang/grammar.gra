@@ -683,6 +683,7 @@ recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
  'case'.,recordcase-
+ '(',recordca6a*
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
@@ -719,6 +720,20 @@ recordcase8,recordcase4,handlerecordcaseitem,
  ${whitespace}
  ';',recordcase4-
 recordcaseend,recorddef1,,handlerecordcase*
+
+recordca6a,recordca6,handlerecordcasestart,
+recordca6,,,handlerecordcase6*
+ ${whitespace}
+ 'end'.,recordcaseend
+ '(',recordca7-
+recordca7,,handlerecordcaseitementry,handlerecordcase7*
+ ${whitespace}
+ @identstart,recordfield^*
+ ')',recordca8-
+recordca8,recordca6,handlerecordcaseitem,
+ ${whitespace}
+ ';',recordca6-
+ 'end'.,recordcaseend
 
 arraydef,arraydef1,,
  'of'.,arraydef2-
