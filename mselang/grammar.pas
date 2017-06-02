@@ -7647,7 +7647,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bvardef2: array[0..7] of branchty = (
+ bvardef2: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @vardef3co); stack: nil; 
      keyword: $1EC95DBE{'end'}),
@@ -7682,6 +7682,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @vardef3co); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])

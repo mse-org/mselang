@@ -840,6 +840,7 @@ vardef1,vardef2,,
 vardef2,checksemicolon,,
  ${whitespace}
  'end'.,vardef3
+ ')',vardef3
  ';',vardef3-
 vardef3,,,^
 
