@@ -904,7 +904,12 @@ begin
         po2:= basetype1(dest);
         while true do begin
          if po1 = po2 then begin
-          result:= true;
+          if (destindirectlevel > 0) or 
+                 not (icf_virtual in source1^.infoclass.flags) or
+                            (source1^.infoclass.allocsize =
+                                        po1^.infoclass.allocsize) then begin
+           result:= true;
+          end;
           break;
          end;
          if po1^.h.ancestor = 0 then begin
