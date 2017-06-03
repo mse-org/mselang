@@ -61,27 +61,27 @@ const
  tk_nozeroinit = $885A1C3D;
  tk_zeroinit = $10B4387B;
  tk_virtual = $216870F6;
- tk_afterconstruct = $42D0E1EC;
- tk_beforedestruct = $85A1C3D9;
- tk_ini = $0B4387B2;
- tk_fini = $16870F64;
- tk_operator = $2D0E1EC9;
- tk_operatorright = $5A1C3D92;
- tk_unit = $B4387B25;
- tk_program = $6870F64A;
- tk_interface = $D0E1EC95;
- tk_implementation = $A1C3D92B;
- tk_uses = $4387B257;
- tk_type = $870F64AE;
- tk_const = $0E1EC95D;
- tk_var = $1C3D92BB;
- tk_label = $387B2576;
- tk_class = $70F64AED;
- tk_procedure = $E1EC95DB;
- tk_function = $C3D92BB7;
- tk_method = $87B2576F;
- tk_sub = $0F64AEDF;
- tk_end = $1EC95DBE;
+ tk_end = $42D0E1EC;
+ tk_afterconstruct = $85A1C3D9;
+ tk_beforedestruct = $0B4387B2;
+ tk_ini = $16870F64;
+ tk_fini = $2D0E1EC9;
+ tk_operator = $5A1C3D92;
+ tk_operatorright = $B4387B25;
+ tk_unit = $6870F64A;
+ tk_program = $D0E1EC95;
+ tk_interface = $A1C3D92B;
+ tk_implementation = $4387B257;
+ tk_uses = $870F64AE;
+ tk_type = $0E1EC95D;
+ tk_const = $1C3D92BB;
+ tk_var = $387B2576;
+ tk_label = $70F64AED;
+ tk_class = $E1EC95DB;
+ tk_procedure = $C3D92BB7;
+ tk_function = $87B2576F;
+ tk_method = $0F64AEDF;
+ tk_sub = $1EC95DBE;
  tk_initialization = $3D92BB7D;
  tk_finalization = $7B2576FA;
  tk_constructor = $F64AEDF5;
@@ -159,39 +159,39 @@ const
   '.nestedvarref','.defines','.ini','.fini','.incref','.decref','.decrefindi',
   '.method','.operators','.operatorsright','.system',
   'nil','result','exitcode','sizeof','defined','break','continue','self','b',
-  'booleval','internaldebug','nozeroinit','zeroinit','virtual','afterconstruct',
-  'beforedestruct','ini','fini','operator','operatorright','unit','program',
-  'interface','implementation','uses','type','const','var','label','class',
-  'procedure','function','method','sub','end','initialization','finalization',
-  'constructor','destructor','begin','dumpelements','dumpopcode','abort',
-  'stoponerror','nop','include','define','undef','ifdef','ifndef','if','else',
-  'endif','ifend','h','mode','inline','on','off','default','constref','out',
-  'override','overload','of','object','external','forward','finally','except',
-  'do','with','case','while','repeat','for','try','raise','goto','then','until',
-  'to','downto','set','record','array','private','protected','public',
-  'published','property','read','write','div','mod','and','shl','shr','or',
-  'xor','in','not','is','as','inherited');
+  'booleval','internaldebug','nozeroinit','zeroinit','virtual','end',
+  'afterconstruct','beforedestruct','ini','fini','operator','operatorright',
+  'unit','program','interface','implementation','uses','type','const','var',
+  'label','class','procedure','function','method','sub','initialization',
+  'finalization','constructor','destructor','begin','dumpelements','dumpopcode',
+  'abort','stoponerror','nop','include','define','undef','ifdef','ifndef','if',
+  'else','endif','ifend','h','mode','inline','on','off','default','constref',
+  'out','override','overload','of','object','external','forward','finally',
+  'except','do','with','case','while','repeat','for','try','raise','goto',
+  'then','until','to','downto','set','record','array','private','protected',
+  'public','published','property','read','write','div','mod','and','shl','shr',
+  'or','xor','in','not','is','as','inherited');
 
  tokenids: array[0..128] of identty = (
-  $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
-  $1A2B3C66,$345678CD,$68ACF19B,$D159E337,$A2B3C66E,$45678CDD,$8ACF19BB,
-  $159E3376,$2B3C66ED,$5678CDDB,$ACF19BB7,$59E3376E,$B3C66EDD,$678CDDBA,
-  $CF19BB75,$9E3376EB,$3C66EDD6,$78CDDBAD,$F19BB75B,$E3376EB7,$C66EDD6E,
-  $8CDDBADC,$19BB75B9,$3376EB73,$66EDD6E7,$CDDBADCE,$9BB75B9C,$376EB739,
-  $6EDD6E73,$DDBADCE6,$BB75B9CC,$76EB7398,$EDD6E730,$DBADCE61,$B75B9CC3,
-  $6EB73986,$DD6E730C,$BADCE618,$75B9CC31,$EB739862,$D6E730C4,$ADCE6188,
-  $5B9CC311,$B7398622,$6E730C44,$DCE61888,$B9CC3111,$73986223,$E730C447,
-  $CE61888E,$9CC3111C,$39862239,$730C4472,$E61888E5,$CC3111CB,$98622397,
-  $30C4472F,$61888E5F,$C3111CBE,$8622397D,$0C4472FA,$1888E5F4,$3111CBE8,
-  $622397D0,$C4472FA0,$888E5F41,$111CBE83,$22397D07,$4472FA0E,$88E5F41C,
-  $11CBE839,$2397D073,$472FA0E7,$8E5F41CE,$1CBE839C,$397D0738,$72FA0E70,
-  $E5F41CE0,$CBE839C1,$97D07383,$2FA0E707,$5F41CE0F,$BE839C1E,$7D07383D,
-  $FA0E707A,$F41CE0F5,$E839C1EA,$D07383D4,$A0E707A9,$41CE0F52,$839C1EA5,
-  $07383D4B,$0E707A96,$1CE0F52D,$39C1EA5A,$7383D4B4,$E707A969,$CE0F52D2,
-  $9C1EA5A4,$383D4B49,$707A9693,$E0F52D27,$C1EA5A4E,$83D4B49C,$07A96939,
-  $0F52D272,$1EA5A4E4,$3D4B49C9,$7A969392,$F52D2724,$EA5A4E49,$D4B49C93,
-  $A9693927,$52D2724F,$A5A4E49F,$4B49C93F,$9693927E,$2D2724FC,$5A4E49F8,
-  $B49C93F1,$693927E2,$D2724FC4);
+  $00000000,$4FC6E54B,$9F8DCA96,$3F1B952D,$7E372A5B,$FC6E54B6,$F8DCA96C,
+  $F1B952D8,$E372A5B1,$C6E54B62,$8DCA96C4,$1B952D88,$372A5B10,$6E54B621,
+  $DCA96C42,$B952D885,$72A5B10B,$E54B6216,$CA96C42D,$952D885A,$2A5B10B4,
+  $54B62168,$A96C42D0,$52D885A1,$A5B10B43,$4B621687,$96C42D0E,$2D885A1C,
+  $5B10B438,$B6216870,$6C42D0E1,$D885A1C3,$B10B4387,$6216870F,$C42D0E1E,
+  $885A1C3D,$10B4387B,$216870F6,$42D0E1EC,$85A1C3D9,$0B4387B2,$16870F64,
+  $2D0E1EC9,$5A1C3D92,$B4387B25,$6870F64A,$D0E1EC95,$A1C3D92B,$4387B257,
+  $870F64AE,$0E1EC95D,$1C3D92BB,$387B2576,$70F64AED,$E1EC95DB,$C3D92BB7,
+  $87B2576F,$0F64AEDF,$1EC95DBE,$3D92BB7D,$7B2576FA,$F64AEDF5,$EC95DBEB,
+  $D92BB7D6,$B2576FAC,$64AEDF59,$C95DBEB3,$92BB7D66,$2576FACC,$4AEDF598,
+  $95DBEB31,$2BB7D662,$576FACC5,$AEDF598A,$5DBEB315,$BB7D662B,$76FACC56,
+  $EDF598AC,$DBEB3159,$B7D662B3,$6FACC566,$DF598ACD,$BEB3159B,$7D662B37,
+  $FACC566E,$F598ACDD,$EB3159BB,$D662B376,$ACC566EC,$598ACDD8,$B3159BB1,
+  $662B3762,$CC566EC4,$98ACDD89,$3159BB13,$62B37626,$C566EC4C,$8ACDD898,
+  $159BB130,$2B376261,$566EC4C3,$ACDD8987,$59BB130E,$B376261D,$66EC4C3A,
+  $CDD89874,$9BB130E8,$376261D1,$6EC4C3A3,$DD898746,$BB130E8C,$76261D18,
+  $EC4C3A30,$D8987460,$B130E8C1,$6261D183,$C4C3A306,$8987460D,$130E8C1A,
+  $261D1834,$4C3A3068,$987460D0,$30E8C1A1,$61D18343,$C3A30686,$87460D0D,
+  $0E8C1A1B,$1D183437,$3A30686F);
 
 var
  startco: contextty = (branch: nil; 
@@ -2394,10 +2394,10 @@ const
  bstart: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @unit0co); stack: nil; 
-     keyword: $B4387B25{'unit'}),
+     keyword: $6870F64A{'unit'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @program0co); stack: nil; 
-     keyword: $6870F64A{'program'}),
+     keyword: $D0E1EC95{'program'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2528,10 +2528,10 @@ const
  bunit3: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @start1co); stack: nil; 
-     keyword: $D0E1EC95{'interface'}),
+     keyword: $A1C3D92B{'interface'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationco); stack: nil; 
-     keyword: $A1C3D92B{'implementation'}),
+     keyword: $4387B257{'implementation'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2780,7 +2780,7 @@ const
  bstart1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @uses0co); stack: @start2aco; 
-     keyword: $4387B257{'uses'}),
+     keyword: $870F64AE{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2841,34 +2841,34 @@ const
  bstart2: array[0..15] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationco); stack: nil; 
-     keyword: $A1C3D92B{'implementation'}),
+     keyword: $4387B257{'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @typeco); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @constco); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @varco); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @start2classco); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subprocedureheaderco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subfunctionheaderco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @submethodheaderco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subsubheaderco); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2909,13 +2909,13 @@ const
  bstart2class: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassprocedureheaderco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassfunctionheaderco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassmethodheaderco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2966,7 +2966,7 @@ const
  bimplementation1: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @initializationco); stack: nil; 
      keyword: $3D92BB7D{'initialization'}),
@@ -3026,7 +3026,7 @@ const
      keyword: $7B2576FA{'finalization'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3077,7 +3077,7 @@ const
  bfinalization1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bimplementationend1: array[0..7] of branchty = (
@@ -3135,7 +3135,7 @@ const
  bmain: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implusesco); stack: nil; 
-     keyword: $4387B257{'uses'}),
+     keyword: $870F64AE{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3186,31 +3186,31 @@ const
  bmain1: array[0..17] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @typeco); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @constco); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @varco); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @main1classco); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @functionco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @methodco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @constructorco); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -3260,13 +3260,13 @@ const
  bmain1class: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classprocedureco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classfunctionco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classclamethodco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3966,13 +3966,13 @@ const
  bparamdef0: array[0..10] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat,bf_continue];
      dest: (handler: @setconstparam); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat,bf_continue];
      dest: (handler: @setconstrefparam); stack: nil; 
      keyword: $FACC566E{'constref'}),
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat,bf_continue];
      dest: (handler: @setvarparam); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat,bf_continue];
      dest: (handler: @setoutparam); stack: nil; 
      keyword: $F598ACDD{'out'}),
@@ -4905,25 +4905,25 @@ const
  bsubbody4: array[0..13] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @typeco); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @constco); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @varco); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @functionco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @subbody5aco); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
@@ -4977,7 +4977,7 @@ const
  bsubbody5b: array[0..1] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @subbody6co); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcheckterminator: array[0..6] of branchty = (
@@ -5162,7 +5162,7 @@ const
  bcheckend: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5363,7 +5363,7 @@ const
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @blockendco); stack: nil; 
-     keyword: $1EC95DBE{ 'end'}),
+     keyword: $42D0E1EC{ 'end'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @blockendco); stack: nil; 
      keyword: $BB7D662B{'else'}),
@@ -5470,7 +5470,7 @@ const
  bstatementblock1: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @blockendco); stack: nil; 
-     keyword: $1EC95DBE{ 'end'}),
+     keyword: $42D0E1EC{ 'end'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @blockendco); stack: nil; 
      keyword: $BB7D662B{'else'}),
@@ -5865,7 +5865,7 @@ const
      keyword: $BB7D662B{'else'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @caseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5971,7 +5971,7 @@ const
      keyword: $BB7D662B{'else'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @caseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6019,7 +6019,7 @@ const
  bcaseelse: array[0..2] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @caseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -6215,7 +6215,7 @@ const
      keyword: $C566EC4C{'case'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @recorddefreturnco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6386,7 +6386,7 @@ const
  brecordcase4: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @recordcaseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6621,7 +6621,7 @@ const
  brecordca6: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @recordcaseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6721,7 +6721,7 @@ const
  brecordca8: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @recordcaseendco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -7036,22 +7036,22 @@ const
      keyword: $598ACDD8{'object'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classdefco); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @interfacedefco); stack: nil; 
-     keyword: $D0E1EC95{'interface'}),
+     keyword: $A1C3D92B{'interface'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @proceduretypedefco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @functiontypedefco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @subtypedefco); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @methodtypedefco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -7113,37 +7113,37 @@ const
  btype: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $A1C3D92B{ 'implementation'}),
+     keyword: $4387B257{ 'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -7152,7 +7152,7 @@ const
      keyword: $EC95DBEB{'destructor'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $3D92BB7D{'initialization'}),
@@ -7323,37 +7323,37 @@ const
  blabeldef: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $A1C3D92B{ 'implementation'}),
+     keyword: $4387B257{ 'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -7362,7 +7362,7 @@ const
      keyword: $EC95DBEB{'destructor'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $3D92BB7D{'initialization'}),
@@ -7485,37 +7485,37 @@ const
  bconst: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $A1C3D92B{ 'implementation'}),
+     keyword: $4387B257{ 'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -7524,7 +7524,7 @@ const
      keyword: $EC95DBEB{'destructor'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $3D92BB7D{'initialization'}),
@@ -7695,37 +7695,37 @@ const
  bvar: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $A1C3D92B{ 'implementation'}),
+     keyword: $4387B257{ 'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -7734,7 +7734,7 @@ const
      keyword: $EC95DBEB{'destructor'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $3D92BB7D{'initialization'}),
@@ -7918,7 +7918,7 @@ const
  bvardef2: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @vardef3co); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -8154,16 +8154,16 @@ const
      keyword: $D8987460{'published'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classmethodco); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methprocedureheaderco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methfunctionheaderco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methconstructorheaderco); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -8175,7 +8175,7 @@ const
      keyword: $B130E8C1{'property'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefreturnco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -8223,13 +8223,13 @@ const
  bclassmethod: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethmethodheaderco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethprocedureheaderco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethfunctionheaderco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -8696,7 +8696,7 @@ const
  bpropind0: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat,bf_continue];
      dest: (handler: @setconstparam); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -9185,16 +9185,16 @@ const
  binterfacedef0: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methprocedureheaderco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methfunctionheaderco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @interfacedefreturnco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -11926,37 +11926,37 @@ const
  bident: array[0..19] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $A1C3D92B{'implementation'}),
+     keyword: $4387B257{'implementation'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $870F64AE{'type'}),
+     keyword: $0E1EC95D{'type'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $0E1EC95D{'const'}),
+     keyword: $1C3D92BB{'const'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $1C3D92BB{'var'}),
+     keyword: $387B2576{'var'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $387B2576{'label'}),
+     keyword: $70F64AED{'label'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $D92BB7D6{'begin'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $70F64AED{'class'}),
+     keyword: $E1EC95DB{'class'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $87B2576F{'method'}),
+     keyword: $0F64AEDF{'method'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $0F64AEDF{'sub'}),
+     keyword: $1EC95DBE{'sub'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $E1EC95DB{'procedure'}),
+     keyword: $C3D92BB7{'procedure'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $C3D92BB7{'function'}),
+     keyword: $87B2576F{'function'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $F64AEDF5{'constructor'}),
@@ -11965,7 +11965,7 @@ const
      keyword: $EC95DBEB{'destructor'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $1EC95DBE{'end'}),
+     keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $BB7D662B{'else'}),

@@ -1026,6 +1026,9 @@ lineend+
 
   id:= idstart;
   nextid;
+  for i1:= 0 to numidcount -1 do begin //numidents
+   nextid();
+  end;
   str5:= str5+
 ' tokenids: array[0..'+inttostr(int3)+'] of identty = ('+lineend;
   str2:=

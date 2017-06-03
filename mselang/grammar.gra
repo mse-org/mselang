@@ -68,7 +68,7 @@
 @.tokens
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
- 'nozeroinit','zeroinit','virtual'
+ 'nozeroinit','zeroinit','virtual','end'
  'afterconstruct','beforedestruct','ini','fini','operator','operatorright'
 start,nounit,,
  ${whitespace}
