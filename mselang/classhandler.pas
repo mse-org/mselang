@@ -62,6 +62,8 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
+procedure handleclassvariantentry();
+procedure handleclassvariant();
 
 procedure handleclasubheaderentry();
 procedure handleclassmethmethodentry();
@@ -806,6 +808,7 @@ var
  po2: ptypedataty;
  ele1: elementoffsetty;
  af1: addressflagsty;
+ tf1: typeflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSFIELD');
@@ -817,8 +820,50 @@ begin
   else begin
    af1:= [af_objectfield];
   end;
-  checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,
-                                   contextstack[s.stackindex-2].d.typ.flags);
+  tf1:= [];
+  checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,tf1);
+  if obf_variant in d.cla.flags then begin
+   if not (obf_variantitem in d.cla.flags) then begin
+    errormessage(err_tokenexpected,['('],0);
+   end
+   else begin
+    if tf1 * managedtypeflags <> [] then begin
+     errormessage(err_managednotallowed,[]);
+    end;
+   end;
+  end;
+  contextstack[s.stackindex-2].d.typ.flags:= 
+            contextstack[s.stackindex-2].d.typ.flags + tf1;
+ end;
+end;
+
+procedure handleclassvariantentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSVARIANTENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  if not (obf_variant in d.cla.flags) then begin
+   include(d.cla.flags,obf_variant);
+   d.cla.variantstart:= d.cla.fieldoffset;
+   d.cla.fieldoffsetmax:= d.cla.fieldoffset;
+  end;
+  d.cla.fieldoffset:= d.cla.variantstart;
+  d.cla.flags:= d.cla.flags+[obf_variant,obf_variantitem];
+ end;
+end;
+
+procedure handleclassvariant();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSVARIANT');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  exclude(d.cla.flags,obf_variantitem);
+  if d.cla.fieldoffset > d.cla.fieldoffsetmax then begin
+   d.cla.fieldoffsetmax:= d.cla.fieldoffset;
+  end;
+  d.cla.fieldoffset:= d.cla.fieldoffsetmax;
  end;
 end;
 
