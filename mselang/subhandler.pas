@@ -1407,7 +1407,7 @@ var                       //todo: move after doparam
              addlistitem(selfobjparams,selfobjparamchain))^ do begin
          methodelement:= ele.eledatarel(sub1);
          paramindex:= curparam-pelementoffsetty(@sub1^.paramsrel);
-//         paramsize:= si1;
+         paramsize:= alignsize(si1);
         end;
        end;
        inc(paramsize1,alignsize(si1));

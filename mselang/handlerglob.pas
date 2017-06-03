@@ -124,7 +124,7 @@ type
   header: linkheaderty;
   methodelement: elementoffsetty;
   paramindex: int32;
-//  paramsize: int32;
+  paramsize: int32;
  end;
  pselfobjparamitemty = ^selfobjparamitemty;
 

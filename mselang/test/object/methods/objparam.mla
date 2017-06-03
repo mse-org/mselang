@@ -1,0 +1,19 @@
+program objparam;
+type
+ objty = object
+  f1,f2: int32;
+  method test(a: objty);
+ end;
+
+method objty.test(a: objty);
+begin
+ exitcode:= a.f1+a.f2;
+end;
+
+var
+ obj1: objty;
+begin
+ obj1.f1:= 100;
+ obj1.f2:= 23;
+ obj1.test(obj1);
+end.

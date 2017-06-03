@@ -625,19 +625,20 @@ var
  
 procedure resolveselfobjparam(var item);
 var
- i1,i2: int32;
+ i1,i2,i3: int32;
  p1: psubdataty;
  p2: pvardataty;
  p3: pelementoffsetty;
 begin
  testvar:= selfobjparamitemty(item);
  with selfobjparamitemty(item) do begin
+  i3:= realobjsize-paramsize;
   p1:= ele.eledataabs(methodelement);
-  inc(p1^.paramsize,realobjsize);
+  inc(p1^.paramsize,i3);
   p3:= @p1^.paramsrel;
   for i1:= paramindex+1 to p1^.paramcount-1 do begin
    p2:= ele.eledataabs(p3[i1]);
-   inc(p2^.address.locaddress.address,realobjsize);
+   inc(p2^.address.locaddress.address,i3);
   end;
  end;
 end;
@@ -664,7 +665,6 @@ begin
   with contextstack[s.stackindex-1] do begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
-   updateobjalloc(typ1,classinfo1);
    s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
    with typ1^ do begin
     exclude(h.flags,tf_sizeinvalid);
@@ -685,7 +685,9 @@ begin
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
-    if not (icf_allocvalid in infoclass.flags) then begin
+    if not (icf_allocvalid in infoclass.flags) or 
+             (typ1^.h.bytesize <> classinfo1^.fieldoffset) then begin
+                          //there are fields after methods
      updateobjalloc(typ1,classinfo1);
     end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
@@ -827,7 +829,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASUBHEADERENTRY');
 {$endif}
-{
  with info do begin
   p1:= ele.eledataabs(currentcontainer);
   if (p1^.h.kind in [dk_object,dk_class]) and 
@@ -835,7 +836,6 @@ begin
    updateobjalloc(p1,@contextstack[s.stackindex-1].d.cla);
   end;
  end;
-}
 end;
 
 procedure handleclassmethmethodentry();

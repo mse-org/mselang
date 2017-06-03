@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7292F6C
+    ao=An unhandled exception occured at $B7291F6C
     ae=
     aec=123
     ie=0
@@ -7193,8 +7193,8 @@ c=3
   c=22
    (
    kind=1
-   a=0,664,4,methods
-   c=6
+   a=0,665,4,methods
+   c=8
     (
     kind=2
     a=0,648,1,method
@@ -7310,6 +7310,50 @@ c=3
     a=0,648,1,objparam llvm
     teststate=1
     path=objparam.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,objfield1
+    teststate=1
+    path=objfield1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,objfield1 llvm
+    teststate=1
+    path=objfield1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -10692,7 +10736,15 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=137
+rowstate=145
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
