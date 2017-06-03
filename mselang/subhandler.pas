@@ -1401,6 +1401,15 @@ var                       //todo: move after doparam
         err1:= true;
         internalerror1(ie_parser,'20150212A');
        end;
+       if (co_mlaruntime in o.compileoptions) and 
+                            (tf_sizeinvalid in typ1^.h.flags)  then begin
+        with pselfobjparamitemty(
+             addlistitem(selfobjparams,selfobjparamchain))^ do begin
+         methodelement:= ele.eledatarel(sub1);
+         paramindex:= curparam-pelementoffsetty(@sub1^.paramsrel);
+//         paramsize:= si1;
+        end;
+       end;
        inc(paramsize1,alignsize(si1));
        inc(curparam);
       end;

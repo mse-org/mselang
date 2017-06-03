@@ -48,7 +48,7 @@ type
 procedure clearlist(var alist: linklistty; const aitemsize: integer;
                                               const amincapacity: integer);
 procedure freelist(var alist: linklistty);
-function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+function addlistitem(var alist: linklistty; var achain: listadty): pointer;
 function getlistitem(const alist: linklistty; const aitem: listadty): pointer;
 function getnextlistitem(const alist: linklistty;
                                               const aitem: listadty): pointer;
@@ -93,7 +93,7 @@ begin
  end;
 end;
 
-function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+function addlistitem(var alist: linklistty; var achain: listadty): pointer;
 var
  li1: listadty;
 begin
@@ -112,8 +112,8 @@ begin
    result:= list+li1;
    deleted:= plinkheaderty(result)^.next;
   end;
-  plinkheaderty(result)^.next:= aitem;
-  aitem:= li1;  
+  plinkheaderty(result)^.next:= achain;
+  achain:= li1;  
  end; 
 end; 
 

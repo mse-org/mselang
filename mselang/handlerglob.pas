@@ -120,6 +120,14 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
+ selfobjparamitemty = record
+  header: linkheaderty;
+  methodelement: elementoffsetty;
+  paramindex: int32;
+//  paramsize: int32;
+ end;
+ pselfobjparamitemty = ^selfobjparamitemty;
+
  ancestorchaindataty = record
   next: elementoffsetty;  //chain, root = typedataty.ancestor
   intftype: elementoffsetty;

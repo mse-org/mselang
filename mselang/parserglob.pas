@@ -799,6 +799,9 @@ type
   managedtempcount: int32;
   managedtempref: targetcardty;
   managedtemparrayid: int32;
+  selfobjparamchain: listadty;
+    //for object methods with self as  parameter
+    //in case there are more fields after header definition
   frameoffset: targetcardty;
   stacktempoffset: targetcardty;
   simplesubstart: opaddressty;

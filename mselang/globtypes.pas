@@ -275,7 +275,7 @@ type
                tf_upper,       //in range expression
                tf_subad,       //sub address
                tf_subrange,
-               tf_untyped,tf_forward
+               tf_untyped,tf_forward,tf_sizeinvalid
                ); 
  typeflagsty = set of typeflagty;   
 const

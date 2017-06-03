@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,handlerglob,__mla__internaltypes,stackops;
+ globtypes,handlerglob,__mla__internaltypes,stackops,listutils;
 
 type
  classintfnamedataty = record
@@ -36,6 +36,9 @@ type
 const 
  virtualtableoffset = sizeof(classdefheaderty);
  constructorstacksize = vpointersize;
+
+var
+ selfobjparams: linklistty;
 
 procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
@@ -166,6 +169,7 @@ begin
   if sublevel > 0 then begin
    errormessage(err_localclassdef,[]);
   end;
+  selfobjparamchain:= 0;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.fieldoffset:= 0;
@@ -219,7 +223,8 @@ begin
      inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
     end
     else begin
-     inittypedatasize(po1^,dk_object,d.typ.indirectlevel,das_none);
+     inittypedatasize(po1^,dk_object,d.typ.indirectlevel,das_none,
+                                                          [tf_sizeinvalid]);
     end;
     with po1^ do begin
      fieldchain:= 0;
@@ -614,6 +619,28 @@ end;
 // fields
 // interface table  <- fieldsize
 //                  <- allocsize
+var testvar: selfobjparamitemty;
+var
+ realobjsize: int32;
+ 
+procedure resolveselfobjparam(var item);
+var
+ i1,i2: int32;
+ p1: psubdataty;
+ p2: pvardataty;
+ p3: pelementoffsetty;
+begin
+ testvar:= selfobjparamitemty(item);
+ with selfobjparamitemty(item) do begin
+  p1:= ele.eledataabs(methodelement);
+  inc(p1^.paramsize,realobjsize);
+  p3:= @p1^.paramsrel;
+  for i1:= paramindex+1 to p1^.paramcount-1 do begin
+   p2:= ele.eledataabs(p3[i1]);
+   inc(p2^.address.locaddress.address,realobjsize);
+  end;
+ end;
+end;
 
 procedure handleclassdefreturn();
 var
@@ -634,11 +661,13 @@ begin
  outhandle('CLASSDEFRETURN');
 {$endif}
  with info do begin
-  s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
   with contextstack[s.stackindex-1] do begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   updateobjalloc(typ1,classinfo1);
+   s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
    with typ1^ do begin
+    exclude(h.flags,tf_sizeinvalid);
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
                    not (icf_nozeroinit in infoclass.flags) and 
@@ -714,7 +743,8 @@ begin
     end;
    end;
   end;
-    
+  realobjsize:= alignsize(typ1^.h.bytesize);
+  resolvelist(selfobjparams,@resolveselfobjparam,selfobjparamchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
  end;
@@ -797,6 +827,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASUBHEADERENTRY');
 {$endif}
+{
  with info do begin
   p1:= ele.eledataabs(currentcontainer);
   if (p1^.h.kind in [dk_object,dk_class]) and 
@@ -804,6 +835,7 @@ begin
    updateobjalloc(p1,@contextstack[s.stackindex-1].d.cla);
   end;
  end;
+}
 end;
 
 procedure handleclassmethmethodentry();
