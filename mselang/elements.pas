@@ -949,12 +949,17 @@ var
  ele1: elementoffsetty;
  po1: pelementinfoty;
  b1: boolean;
+ k1: elementkindsty;
 begin //todo: optimize
  result:= false;
  element:= -1;
  firstnotfound:= 0;
  if aidents.high >= 0 then begin
-  result:= findupward(aidents.d[0],akinds,avislevel,element);
+  k1:= [];
+  if aidents.high = 0 then begin
+   k1:= akinds;
+  end;
+  result:= findupward(aidents.d[0],k1,avislevel,element);
   if result then begin
    firstnotfound:= 1;
    if aidents.high > 0 then begin
