@@ -40,6 +40,7 @@ type
   high: int32;
   data: elementoffsetty; //offset in identtdata
   element: elementoffsetty;
+  firstnotfound: int32;
  end;
  cachehashdataty = record
   header: hashheaderty;
@@ -61,9 +62,11 @@ type
    destructor destroy(); override;
    procedure clear override;
    procedure add(const aidents: identvecty;
-                                       const aelement: elementoffsetty);
+                                const aelement: elementoffsetty; 
+                                          const afirstnotfound: int32);
    function find(const aidents: identvecty; 
-                       out aelement: elementoffsetty): boolean;
+                           out aelement: elementoffsetty;
+                                    out afirstnotfound: int32): boolean;
  end;
  
 implementation
@@ -80,7 +83,7 @@ end;
 
 procedure telementcache.clear;
 begin
- inherited;
+ inherited; //todo: do not free buffer memory for implementation uses
  fidentcount:= 0;
 end;
 
@@ -129,7 +132,8 @@ begin
 end;
 
 procedure telementcache.add(const aidents: identvecty;
-                                       const aelement: elementoffsetty);
+                            const aelement: elementoffsetty; 
+                            const afirstnotfound: int32);
 var
  p1,p2,pe: pidentty;
  p0: pointer;
@@ -157,11 +161,12 @@ begin
   data.high:= aidents.high;
   data.data:= p0 - pointer(fidentdata);
   data.element:= aelement;
+  data.firstnotfound:= afirstnotfound;
  end;
 end;
 
 function telementcache.find(const aidents: identvecty;
-               out aelement: elementoffsetty): boolean;
+           out aelement: elementoffsetty; out afirstnotfound: int32): boolean;
 var
  p1: pcachehashdataty;
 begin
@@ -170,6 +175,7 @@ begin
  if p1 <> nil then begin
   result:= true;
   aelement:= p1^.data.element;
+  afirstnotfound:= p1^.data.firstnotfound;
  end;
 end;
 

@@ -630,11 +630,8 @@ begin
    else begin
     result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
     if not result then begin
-     if s.unitinfo^.usescache.find(idents,eleres) then begin
-      firstnotfound:= idents.high+1;
-      result:= true;
-     end
-     else begin
+     result:= s.unitinfo^.usescache.find(idents,eleres,firstnotfound);
+     if not result then begin
       ele2:= ele.elementparent;
       for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
        ele.elementparent:=
@@ -660,7 +657,7 @@ begin
       end;
       ele.elementparent:= ele2;
       if result then begin
-       s.unitinfo^.usescache.add(idents,eleres);
+       s.unitinfo^.usescache.add(idents,eleres,firstnotfound);
       end;
      end;
     end;
