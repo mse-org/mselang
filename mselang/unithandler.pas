@@ -474,6 +474,7 @@ begin
  outhandle('IMPLUSESENTRY');
 {$endif}
  with info do begin
+  s.unitinfo^.usescache.clear(); //overrid interface uses
   if s.interfaceonly then begin
    saveparsercontext(s.unitinfo^.implstart,s.stacktop-s.unitinfo^.stackstart);
    s.stopparser:= true;

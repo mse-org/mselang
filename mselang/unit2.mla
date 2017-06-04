@@ -1,9 +1,8 @@
 unit unit2;
 interface
-procedure test2();
+type
+ intabc = flo64;
+var
+ abc: flo64;
 implementation
-procedure test2();
-begin
- exitcode:= 123;
-end;
 end.

@@ -629,31 +629,40 @@ begin
    end
    else begin
     result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
-    if not result then begin //todo: use cache
-     ele2:= ele.elementparent;
-     for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
-      ele.elementparent:=
-        info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
-      result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
-      if result then begin
-       break;
-      end;
-     end;
-     if not result then begin
-      for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
+    if not result then begin
+     if s.unitinfo^.usescache.find(idents,eleres) then begin
+      firstnotfound:= idents.high+1;
+      result:= true;
+     end
+     else begin
+      ele2:= ele.elementparent;
+      for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
        ele.elementparent:=
-         info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
+         info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
        if result then begin
         break;
        end;
       end;
+      if not result then begin
+       for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
+        ele.elementparent:=
+          info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
+        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+        if result then begin
+         break;
+        end;
+       end;
+      end;
+      if not result then begin
+       ele.elementparent:= info.systemelement;
+       result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+      end;
+      ele.elementparent:= ele2;
+      if result then begin
+       s.unitinfo^.usescache.add(idents,eleres);
+      end;
      end;
-     if not result then begin
-      ele.elementparent:= info.systemelement;
-      result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
-     end;
-     ele.elementparent:= ele2;
     end;
    end;
   end;
