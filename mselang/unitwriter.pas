@@ -26,7 +26,7 @@ implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
- sysutils,llvmbcwriter,llvmops;
+ sysutils,llvmbcwriter,llvmops,elementcache;
 {
 type
  unitrecheaderty = record

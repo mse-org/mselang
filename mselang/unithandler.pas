@@ -175,7 +175,8 @@ uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,
- unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler;
+ unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler,
+ elementcache;
  
 type
  unithashdataty = record
@@ -908,6 +909,7 @@ begin
  getmem(result,sizeof(unitinfoty));
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
+ result^.usescache:= telementcache.create();
 {
  if info.systemunit <> nil then begin
   setlength(result^.interfaceuses,1);
@@ -1839,6 +1841,7 @@ begin
   if llvmlists <> globllvmlists then begin
    freeandnil(llvmlists);
   end;
+  usescache.free();
  end;
 end;
 

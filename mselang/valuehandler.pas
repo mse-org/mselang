@@ -76,7 +76,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- controlhandler,identutils,msestrings,handler,managedtypes,
+ controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
  __mla__internaltypes,exceptionhandler,listutils,llvmlists;
 
 function listtoset(const acontext: pcontextitemty): boolean;

@@ -176,7 +176,7 @@ uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
- llvmlists,llvmbitcodes,identutils,__mla__internaltypes;
+ llvmlists,llvmbitcodes,identutils,__mla__internaltypes,elementcache;
 
 procedure beginparser(const aoptable: poptablety);
 

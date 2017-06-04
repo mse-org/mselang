@@ -23,24 +23,18 @@ unit elements;
 interface
 uses
  msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils,globtypes,
- classhandler,mselist,llvmlists;
+ classhandler,mselist,llvmlists,elementcache;
 
 const
- maxidentvector = 200;
  pointertypeid = -1;
  
-type
- identarty = integerarty;
- identvecty = record
-  high: integer;
-  d: array[0..maxidentvector] of identty;
- end;
 {
  identbufty = record
   po: pidentty;
   high: int32;
  end;
 }
+type
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  

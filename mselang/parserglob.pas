@@ -19,7 +19,7 @@ unit parserglob;
 interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
- segmentutils,llvmbitcodes,opglob,msehash;
+ segmentutils,llvmbitcodes,opglob,msehash,elementcache;
 
 type
  compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
@@ -692,6 +692,7 @@ type
   globallocstart: int32; //first index in llvm globallocdatalist
 
   interfaceuses,implementationuses: unitinfopoarty;
+  usescache: telementcache;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
   llvmlists: tllvmlists;

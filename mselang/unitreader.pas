@@ -27,7 +27,7 @@ implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
- identutils,opglob,opcode,errorhandler,bcunitglob;
+ identutils,opglob,opcode,errorhandler,bcunitglob,elementcache;
 
 type
  relocinfoty = record

@@ -19,7 +19,7 @@ unit handlerutils;
 interface
 uses
  globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes,
- listutils;
+ listutils,elementcache;
 
 type
  datasizetyxx = type integer;

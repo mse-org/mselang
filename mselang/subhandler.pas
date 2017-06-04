@@ -102,7 +102,7 @@ uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser,
- valuehandler;
+ valuehandler,elementcache;
 
 type
  tmetadatalist1 = class(tmetadatalist);
