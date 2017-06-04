@@ -2,19 +2,7 @@ unit unit1;
 interface
 type
  intabc = int32;
-implementation
-{$internaldebug on}
 var
- s1,s2: string8;
- b1: boolean;
-finalization
-
- s1:= 'abc';
-
- b1:= 'abcabc' = s1+s2+s1;
-
- if b1 then begin
-  exitcode:= 123;
- end;
-
+ abc: int32;
+implementation
 end.

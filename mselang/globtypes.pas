@@ -157,7 +157,8 @@ type
  end;
  paddressvaluety = ^addressvaluety;
 const
- niladdress: addressvaluety = (flags: [af_nil]; indirectlevel: 1);
+ niladdress: addressvaluety = (flags: [af_nil]; indirectlevel: 1;
+                                                       poaddress: 0);
 
 type 
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,

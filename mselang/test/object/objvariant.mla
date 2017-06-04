@@ -2,8 +2,8 @@ program objvariant;
 type
  objty = object
   f1: int32;
-  (f2: int32; f3: int32);
-  (f4: int32)
+  (f2: int32; f3: int32;);
+  (f4: int32;);
  end;
 var
  obj1: objty;

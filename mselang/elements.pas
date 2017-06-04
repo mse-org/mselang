@@ -963,7 +963,7 @@ begin //todo: optimize
     po1:= pointer(felementdata)+element;
     with po1^.header do begin
      if kind = ek_uses then begin
-      element:= pusesdataty(po1+eledatashift)^.ref;
+      element:= pusesdataty(pointer(po1)+eledatashift)^.ref;
      end;
     end;
     felementparent:= element; //parentlevel
