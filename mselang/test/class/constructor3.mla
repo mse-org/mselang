@@ -1,7 +1,7 @@
 program constructor3;
 
 type
- ttest = class
+ ttest = class[virtual]
   private
    ffield: int32;
   public

@@ -3,7 +3,7 @@ program method5;
 type
  meth1ty = procedure (a,b: int32) of object;
 
- tcla = class
+ tcla = class[virtual]
   private
    f: int32;
   public

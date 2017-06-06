@@ -16,7 +16,7 @@ type
    destructor destroy();
  end;
 
- tc2 = class(tc1,itest1)
+ tc2 = class(tc1,itest1)[virtual]
   public
    procedure test();
  end;

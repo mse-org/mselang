@@ -3,7 +3,7 @@ program method6;
 type
  meth1ty = function (a,b: int32): int32 of object;
 
- tcla = class
+ tcla = class[virtual]
   private
    f: int32;
   public

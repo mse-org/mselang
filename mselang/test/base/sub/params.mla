@@ -6,7 +6,7 @@ type
   function test2(a,b: int32): int32;
  end;
 
- tobject = class
+ tobject = class [virtual]
   procedure test1(a,b: int32); virtual;
   function test2(a,b: int32): int32; virtual;
  end;

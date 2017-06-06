@@ -1,6 +1,6 @@
 program classvirtual;
 type
- tc1 = class
+ tc1 = class[virtual]
   public
    constructor create();
    destructor destroy();

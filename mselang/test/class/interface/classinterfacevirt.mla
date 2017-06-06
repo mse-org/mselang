@@ -12,7 +12,7 @@ type
    destructor destroy();
  end;
 
- tc2 = class(tc1,itest)
+ tc2 = class(tc1,itest)[virtual]
   private
   public
    f2: int32;

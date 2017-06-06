@@ -11,7 +11,7 @@ type
 
  tobject = class
  end;
- tc = class(tobject,itest)
+ tc = class(tobject,itest)[virtual]
   f1: int32;
  private
   constructor create();

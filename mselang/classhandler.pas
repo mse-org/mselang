@@ -181,7 +181,7 @@ begin
    include(d.handlerflags,hf_initvariant);
    d.cla.intfindex:= 0;
    if isclass then begin
-    d.cla.flags:= [obf_class,{obf_zeroed,}obf_virtual];
+    d.cla.flags:= [obf_class{,obf_zeroed,obf_virtual}];
     d.cla.visibility:= classpublishedvisi;
 //    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    end
@@ -376,6 +376,7 @@ begin
 //     po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
      with contextstack[s.stackindex-2] do begin
       d.cla.rec.fieldoffset:= po2^.infoclass.allocsize;
+      d.cla.rec.fieldoffsetmax:= d.cla.rec.fieldoffset;
       d.cla.virtualindex:= po2^.infoclass.virtualcount;
      end;
     end;
@@ -408,6 +409,7 @@ begin
     infoclass.virttaboffset:= d.cla.rec.fieldoffset;
     include(infoclass.flags,icf_virtual);
     d.cla.rec.fieldoffset:= d.cla.rec.fieldoffset + pointersize;
+    d.cla.rec.fieldoffsetmax:= d.cla.rec.fieldoffset;
                       //pointer to virtual methodtable
     include(h.flags,tf_needsini);
    end;

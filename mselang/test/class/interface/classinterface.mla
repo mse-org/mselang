@@ -8,7 +8,7 @@ type
   procedure test();
  end;
 
- tc1 = class
+ tc1 = class[virtual]
   private
    f: int32;
   public

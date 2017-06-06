@@ -9,7 +9,7 @@ type
  tc = class
  end;
 
- tcla = class(tc,itest)
+ tcla = class(tc,itest)[virtual]
   private
    f: int32;
   public
