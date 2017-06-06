@@ -1,0 +1,24 @@
+program reccase4;
+type
+ recty = record
+  a: int32;
+  (b2: int32; 
+   (d3: int32);
+   (d4,e4: int32);
+  );
+  (c2,d2,e2: int32);
+ end;
+var
+ r1: recty;
+begin
+ r1.a:= 1;
+ r1.b2:= 2;
+ r1.d3:= 3;
+ r1.e4:= 4;
+ with r1 do begin
+  exitcode:= a+c2+d2+e2 + 123-1-2-3-4;
+ end;
+ if sizeof(recty) <> 16 then begin
+  exitcode:= 1;
+ end;
+end.

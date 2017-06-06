@@ -683,7 +683,7 @@ recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
  'case'.,recordcase-*>
- '(',recordca6a*>
+ '(',recordca6a-*>
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
@@ -712,7 +712,7 @@ recordcase5,,,handlerecordcase5*
 recordcase6,,,handlerecordcase6*
  ${whitespace}
  '(',recordcase7-
-recordcase7,,handlerecordcaseitementry,handlerecordcase7*
+recordcase7,,handlerecordcaseitementry,handlerecordcase7* //")" expected
  ${whitespace}
  @identstart,recordfield^*
  'case'.,recordcase-*>
@@ -722,22 +722,20 @@ recordcase8,recordcase4,handlerecordcaseitem,
  ';',recordcase4-
 recordcaseend,,,handlerecordcase*
 
-recordca6a,recordca6,handlerecordcasestart, //without "case"
-recordca6,,,handlerecordcase6*
- ${whitespace}
- 'end'.,recordcaend
- ')',recordcaend-
- '(',recordca7-
-recordca7,,handlerecordcaseitementry,handlerecordcase7*
+recordca6a,recordca7,handlerecordcasestart, //without "case"
+recordca7,,handlerecordcaseitementry,handlerecordcase7* //")" expected
  ${whitespace}
  @identstart,recordfield^*
  ')',recordca8-
- '(',recordca6a*>
-recordca8,recordca6,handlerecordcaseitem,
+ '(',recordca6a-*>
+recordca8,,handlerecordcaseitem,handlesemicolonexpected
  ${whitespace}
- ';',recordca6-
- ')',recordcaend-
+ ';',recordca9-
+ ')',recordcaend
  'end'.,recordcaend
+recordca9,recordcaend,,
+ ${whitespace}
+ '(',recordca7-
 recordcaend,,,handlerecordcase*
 
 arraydef,arraydef1,,

@@ -869,7 +869,9 @@ handlelab:
      goto handlelab;    
     end;
 {$ifdef mse_debugparser1}
-    if not pc1^.continue and (s.pc^.next = nil) then begin
+    if not pc1^.continue and (s.pc^.next = nil) and 
+               not (bf_continue in 
+                      contextstack[s.stackindex].transitionflags) then begin
      writeinfoline('no next, no continue');
     end;
 {$endif}
