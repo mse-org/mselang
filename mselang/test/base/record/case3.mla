@@ -1,0 +1,26 @@
+program reccase3;
+type
+ recty = record
+  a: int32;
+  case b: int32 of 
+   0:(c,d,e,f: int32);
+   1:(c1: int32; d1: int32;
+      case x: int32 of 
+       0: (c2: int32);
+       1: (c3: int32; d3: int32);
+     );
+ end;
+var
+ r1: recty;
+begin
+ with r1 do begin
+  a:= 1;
+  b:= 2;
+  e:= 3;
+  f:= 4;
+  exitcode:= a+b+x+c2+(123-1-2-3-4);
+ end;
+ if sizeof(recty) <> 28 then begin
+  exitcode:= 1;
+ end;
+end.

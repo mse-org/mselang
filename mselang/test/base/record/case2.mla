@@ -1,0 +1,19 @@
+program recordcase2;
+type
+ recty = record
+  a: int32;
+  b: int32;
+  (c: int32; w:int32);
+  (d: int32);
+ end;
+var
+ r1: recty;
+begin
+ r1.b:= 100;
+ r1.c:= 20;
+ r1.w:= 3;
+ exitcode:= r1.b+r1.d+r1.w;
+ if sizeof(r1) <> 16 then begin
+  exitcode:= 1;
+ end;
+end.
