@@ -62,8 +62,8 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
-procedure handleclassvariantentry();
-procedure handleclassvariant();
+//procedure handleclassvariantentry();
+//procedure handleclassvariant();
 
 procedure handleclasubheaderentry();
 procedure handleclassmethmethodentry();
@@ -174,7 +174,7 @@ begin
   selfobjparamchain:= 0;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
-   d.cla.fieldoffset:= 0;
+   d.cla.rec.fieldoffset:= 0;
    d.cla.intfindex:= 0;
    if isclass then begin
     d.cla.flags:= [obf_class,{obf_zeroed,}obf_virtual];
@@ -370,7 +370,7 @@ begin
 //     po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
 //     po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
      with contextstack[s.stackindex-2] do begin
-      d.cla.fieldoffset:= po2^.infoclass.allocsize;
+      d.cla.rec.fieldoffset:= po2^.infoclass.allocsize;
       d.cla.virtualindex:= po2^.infoclass.virtualcount;
      end;
     end;
@@ -400,9 +400,9 @@ begin
    end;
    if (obf_virtual in d.cla.flags) and 
               not (icf_virtual in infoclass.flags) then begin
-    infoclass.virttaboffset:= d.cla.fieldoffset;
+    infoclass.virttaboffset:= d.cla.rec.fieldoffset;
     include(infoclass.flags,icf_virtual);
-    d.cla.fieldoffset:= d.cla.fieldoffset + pointersize;
+    d.cla.rec.fieldoffset:= d.cla.rec.fieldoffset + pointersize;
                       //pointer to virtual methodtable
     include(h.flags,tf_needsini);
    end;
@@ -609,7 +609,7 @@ begin
 
         //alloc classinfo
   interfacealloc:= infoclass.interfacecount*pointersize;
-  infoclass.allocsize:= aclassinfo^.fieldoffset + interfacealloc;
+  infoclass.allocsize:= aclassinfo^.rec.fieldoffset + interfacealloc;
   if not (icf_class in infoclass.flags) then begin
    updatetypedatabyte(atyp^,infoclass.allocsize);
   end;
@@ -673,7 +673,7 @@ begin
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
                    not (icf_nozeroinit in infoclass.flags) and 
-                                    (classinfo1^.fieldoffset > 0) then begin
+                                    (classinfo1^.rec.fieldoffset > 0) then begin
      include(h.flags,tf_needsini);
     end;
 
@@ -688,7 +688,7 @@ begin
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
     if not (icf_allocvalid in infoclass.flags) or 
-             (typ1^.h.bytesize <> classinfo1^.fieldoffset) then begin
+             (typ1^.h.bytesize <> classinfo1^.rec.fieldoffset) then begin
                           //there are fields after methods
      updateobjalloc(typ1,classinfo1);
     end;
@@ -700,7 +700,7 @@ begin
     infoclass.defs:= classdefs1;
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
      header.allocs.size:= infoclass.allocsize;
-     header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;
+     header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffset;
      header.allocs.classdefinterfacestart:= int1;
      header.parentclass:= -1;
      header.interfaceparent:= -1;
@@ -821,7 +821,8 @@ begin
    af1:= [af_objectfield];
   end;
   tf1:= [];
-  checkrecordfield(d.cla.visibility,af1,d.cla.fieldoffset,tf1);
+  checkrecordfield(d.cla.visibility,af1,d.cla.rec.fieldoffset,tf1);
+{
   if obf_variant in d.cla.flags then begin
    if not (obf_variantitem in d.cla.flags) then begin
     errormessage(err_tokenexpected,['('],0);
@@ -832,11 +833,12 @@ begin
     end;
    end;
   end;
+}
   contextstack[s.stackindex-2].d.typ.flags:= 
             contextstack[s.stackindex-2].d.typ.flags + tf1;
  end;
 end;
-
+(*
 procedure handleclassvariantentry();
 begin
 {$ifdef mse_debugparser}
@@ -866,7 +868,7 @@ begin
   d.cla.fieldoffset:= d.cla.fieldoffsetmax;
  end;
 end;
-
+*)
 procedure handleclasubheaderentry();
 var
  p1: ptypedataty;

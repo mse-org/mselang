@@ -1,0 +1,32 @@
+program objvariant1;
+
+type
+ objty = object
+  a: int32;
+  (b2: int32; 
+   (d3: int32);
+   (d4,e4: int32);
+  );
+  method test();
+  (c2,d2,e2: int32);
+ end;
+
+method objty.test();
+begin
+end;
+
+var
+ r1: objty;
+
+begin
+ r1.a:= 1;
+ r1.b2:= 2;
+ r1.d3:= 3;
+ r1.e4:= 4;
+ with r1 do begin
+  exitcode:= a+c2+d2+e2 + 123-1-2-3-4;
+ end;
+ if sizeof(objty) <> 16 then begin
+  exitcode:= 1;
+ end;
+end.

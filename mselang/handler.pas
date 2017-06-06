@@ -3588,7 +3588,7 @@ begin
     ck_ref,ck_fact: begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel = 1) and 
-                          (po1^.h.kind in [dk_record,dk_class]) then begin
+                  (po1^.h.kind in [dk_record,dk_object,dk_class]) then begin
       if d.kind = ck_ref then begin
        dec(d.dat.datatyp.indirectlevel);
        dec(d.dat.indirection);

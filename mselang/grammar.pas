@@ -1639,16 +1639,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'classdefreturn');
- classvariantco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'classvariant');
- classvariant1co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'classvariant1');
  classdefparamco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -8244,8 +8234,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat,bf_continue];
-     dest: (context: @classvariantco); stack: nil; keys: (
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @recordca6aco); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -8294,106 +8284,6 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bclassvariant: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @bracecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['(']),
-    (kind: bkk_char; chars: ['*']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @curlycomment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @classfieldco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @classvariant1co); stack: nil; keys: (
-    (kind: bkk_char; chars: [')']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bclassvariant1: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword];
-     dest: (context: @classdef0bco); stack: nil; 
-     keyword: $42D0E1EC{'end'}),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @bracecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['(']),
-    (kind: bkk_char; chars: ['*']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @curlycomment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @classdef0bco); stack: nil; keys: (
-    (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -13258,12 +13148,6 @@ begin
  classdeferrorco.handleentry:= @handleclassdeferror;
  classdefreturnco.branch:= nil;
  classdefreturnco.handleentry:= @handleclassdefreturn;
- classvariantco.branch:= @bclassvariant;
- classvariantco.handleentry:= @handleclassvariantentry;
- classvariantco.handleexit:= @handlecloseroundbracketexpected;
- classvariant1co.branch:= @bclassvariant1;
- classvariant1co.next:= @semicolonexpectedco;
- classvariant1co.handleentry:= @handleclassvariant;
  classdefparamco.branch:= @bclassdefparam;
  classdefparam1co.branch:= @bclassdefparam1;
  classdefparam1co.next:= @classdefparam2co;

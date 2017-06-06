@@ -904,7 +904,8 @@ classdef0b,classdeferror,,
  'destructor'.,methdestructorheader-*^>
  'property'.,classproperty-*^>
  @identstart,classfield^*>
- '(',classvariant->
+ '(',recordca6a-*>
+// '(',classvariant->
  'end'.,classdefreturn-
 classmethod,classdef0b,,
  ${whitespace}
@@ -913,14 +914,14 @@ classmethod,classdef0b,,
  'function'.,classmethfunctionheader-*^
 classdeferror,,handleclassdeferror,
 classdefreturn,,handleclassdefreturn,*^
-classvariant,,handleclassvariantentry,handlecloseroundbracketexpected*
- ${whitespace}
- @identstart,classfield^*>
- ')',classvariant1-
-classvariant1,semicolonexpected,handleclassvariant,
- ${whitespace}
- ';',classdef0b-
- 'end'.,classdef0b
+//classvariant,,handleclassvariantentry,handlecloseroundbracketexpected*
+// ${whitespace}
+// @identstart,classfield^*>
+// ')',classvariant1-
+//classvariant1,semicolonexpected,handleclassvariant,
+// ${whitespace}
+// ';',classdef0b-
+// 'end'.,classdef0b
 
 classdefparam,,,*
  ${whitespace}
