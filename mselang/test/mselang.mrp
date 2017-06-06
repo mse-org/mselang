@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=8
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B724CF6C
+    ao=An unhandled exception occured at $B72ECF6C
     ae=
     aec=123
     ie=0
@@ -5184,7 +5184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=39
     (
     kind=1
@@ -6394,7 +6394,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,params
+    a=0,648,2,params
     teststate=1
     path=params.mla
     comment=
@@ -6416,7 +6416,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,params llvm
+    a=0,648,2,params llvm
     teststate=1
     path=params.mla
     comment=
@@ -7321,11 +7321,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,665,5,object
   c=26
    (
    kind=1
-   a=0,664,4,methods
+   a=0,665,4,methods
    c=8
     (
     kind=2
@@ -8333,8 +8333,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,objvariant1
-   teststate=1
+   a=0,648,2,objvariant1
+   teststate=2
    path=objvariant1.mla
    comment=
    cc=${mlc}
@@ -8350,13 +8350,13 @@ c=3
    cr=0
    ao=
    ae=
-   aec=123
+   aec=1
    ie=0
    )
    (
    kind=2
-   a=0,648,1,objvariant1 llvm
-   teststate=1
+   a=0,648,2,objvariant1 llvm
+   teststate=2
    path=objvariant1.mla
    comment=
    cc=${mlc_llvm}
@@ -8372,10 +8372,10 @@ c=3
    cr=0
    ao=
    ae=
-   aec=123
+   aec=1
    ie=0
    )
-  teststate=1
+  teststate=2
   path=object/
   comment=
   cc=
@@ -10833,7 +10833,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -10946,17 +10946,68 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=609
+propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=207
+width1=202
 sortdescend1=0
-width2=161
+width2=157
 sortdescend2=0
-width3=158
+width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=37
+rowstate=88
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

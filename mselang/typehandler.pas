@@ -336,6 +336,8 @@ begin
    b.eleparent:= ele.elementparent;
    d.kind:= ck_recorddef;
    d.rec.fieldoffset:= 0;
+   d.rec.fieldoffsetmax:= 0;
+   include(d.handlerflags,hf_initvariant);
   end;
   with contextstack[s.stackindex-1] do begin
    if not ele.pushelementduplicatedata(
@@ -448,6 +450,9 @@ begin
  with info do begin
   with contextstack[s.stackindex-1] do begin
    f1:= [];
+   if d.kind <> ck_recordcase then begin
+    d.rec.fieldoffset:= d.rec.fieldoffsetmax;
+   end;
    checkrecordfield(allvisi,currentfieldflags,d.rec.fieldoffset,f1);
    i1:= s.stackindex-2;
    if d.kind = ck_recordcase then begin
@@ -455,6 +460,10 @@ begin
     if f1*managedtypeflags <> [] then begin
      errormessage(err_managednotallowed,[]);
     end;
+   end
+   else begin
+    d.rec.fieldoffsetmax:= d.rec.fieldoffset;
+    include(d.handlerflags,hf_initvariant);
    end;
    contextstack[i1].d.typ.flags:= contextstack[i1].d.typ.flags + f1;
   end;
@@ -488,14 +497,21 @@ begin
 end;
 
 procedure handlerecordcasestart();
+var
+ p1: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDCASESTART');
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_recordcase;
-  d.rec:= contextstack[s.stackindex-1].d.rec;
-  d.rec.fieldoffsetmax:= d.rec.fieldoffset;
+  p1:= @contextstack[s.stackindex-1];
+  d.rec:= p1^.d.rec;
+  exclude(d.handlerflags,hf_initvariant);
+  if hf_initvariant in p1^.d.handlerflags then begin
+   exclude(p1^.d.handlerflags,hf_initvariant);
+   d.rec.fieldoffsetmax:= d.rec.fieldoffset;
+  end;
  end;
 end;
 
@@ -618,7 +634,7 @@ begin
  outhandle('RECORDCASE');
 {$endif}
  with info do begin
-  contextstack[s.stackindex-1].d.rec.fieldoffset:= 
+  contextstack[s.stackindex-1].d.rec.fieldoffsetmax:= 
         contextstack[s.stackindex].d.rec.fieldoffsetmax;
   dec(s.stackindex);
   s.stacktop:= s.stackindex;

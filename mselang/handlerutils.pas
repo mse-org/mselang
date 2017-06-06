@@ -4254,14 +4254,16 @@ begin
       end;
       ck_recorddef,ck_recordcase: begin
        write('foffs:',d.rec.fieldoffset);
-       if d.kind = ck_recordcase then begin
+//       if d.kind = ck_recordcase then begin
         write(' foffsmax:',d.rec.fieldoffsetmax);
-       end;
+//       end;
       end;
       ck_classdef: begin
        write('flags:',settostring(ptypeinfo(typeinfo(objflagsty)),
                                                    integer(d.cla.flags),true),
-                   ' foffs:',d.cla.rec.fieldoffset,' virt:',d.cla.virtualindex);
+                   ' foffs:',d.cla.rec.fieldoffset,
+                   ' foffsmax:',d.cla.rec.fieldoffsetmax,
+                   ' virt:',d.cla.virtualindex);
       end;
       ck_classprop: begin
        write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),

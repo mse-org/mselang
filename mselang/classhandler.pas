@@ -177,6 +177,8 @@ begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.rec.fieldoffset:= 0;
+   d.cla.rec.fieldoffsetmax:= 0;
+   include(d.handlerflags,hf_initvariant);
    d.cla.intfindex:= 0;
    if isclass then begin
     d.cla.flags:= [obf_class,{obf_zeroed,}obf_virtual];
@@ -612,7 +614,7 @@ begin
 
         //alloc classinfo
   interfacealloc:= infoclass.interfacecount*pointersize;
-  infoclass.allocsize:= aclassinfo^.rec.fieldoffset + interfacealloc;
+  infoclass.allocsize:= aclassinfo^.rec.fieldoffsetmax + interfacealloc;
   if not (icf_class in infoclass.flags) then begin
    updatetypedatabyte(atyp^,infoclass.allocsize);
   end;
@@ -691,7 +693,7 @@ begin
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
     if not (icf_allocvalid in infoclass.flags) or 
-             (typ1^.h.bytesize <> classinfo1^.rec.fieldoffset) then begin
+             (typ1^.h.bytesize <> classinfo1^.rec.fieldoffsetmax) then begin
                           //there are fields after methods
      updateobjalloc(typ1,classinfo1);
     end;

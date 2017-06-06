@@ -487,7 +487,7 @@ type
 
  handlerflagty = (hf_listitem,hf_error,hf_down,hf_default,
                   hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
-                  hf_propindex,hf_needsunique);
+                  hf_propindex,hf_needsunique,hf_initvariant);
  handlerflagsty = set of handlerflagty;
    
  contextdataty = record
