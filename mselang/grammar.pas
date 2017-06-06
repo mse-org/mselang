@@ -1299,11 +1299,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'recordcase');
- recordcase0co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'recordcase0');
  recordcase1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -1319,11 +1314,6 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'recordcase3');
- recordcase4aco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'recordcase4a');
  recordcase4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -1374,6 +1364,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'recordca8');
+ recordcaendco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'recordcaend');
  arraydefco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -6220,7 +6215,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  brecorddef1: array[0..9] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @recordcaseco); stack: nil; 
      keyword: $C566EC4C{'case'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -6268,7 +6263,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_push,bf_continue];
      dest: (context: @recordca6aco); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
@@ -6287,7 +6282,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordcase0: array[0..1] of branchty = (
+ brecordcase: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentpathco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -6353,8 +6348,8 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  brecordcase3: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @recordcase4aco); stack: nil; 
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @recordcase4co); stack: nil; 
      keyword: $ACC566EC{'of'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -6393,7 +6388,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordcase4: array[0..7] of branchty = (
+ brecordcase4: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @recordcaseendco); stack: nil; 
      keyword: $42D0E1EC{'end'}),
@@ -6428,6 +6423,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @recordcaseendco); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6531,7 +6533,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordcase7: array[0..7] of branchty = (
+ brecordcase7: array[0..8] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @recordcaseco); stack: nil; 
+     keyword: $C566EC4C{'case'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6628,9 +6633,9 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordca6: array[0..7] of branchty = (
+ brecordca6: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword];
-     dest: (context: @recordcaseendco); stack: nil; 
+     dest: (context: @recordcaendco); stack: nil; 
      keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -6668,6 +6673,13 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
+     dest: (context: @recordcaendco); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
      dest: (context: @recordca7co); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
@@ -6676,7 +6688,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordca7: array[0..7] of branchty = (
+ brecordca7: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -6726,11 +6738,18 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_push,bf_continue];
+     dest: (context: @recordca6aco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- brecordca8: array[0..7] of branchty = (
+ brecordca8: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword];
-     dest: (context: @recordcaseendco); stack: nil; 
+     dest: (context: @recordcaendco); stack: nil; 
      keyword: $42D0E1EC{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -6770,6 +6789,13 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @recordca6co); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @recordcaendco); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -13094,10 +13120,9 @@ begin
  recordfieldco.handleexit:= @handlerecordfield;
  recorddefreturnco.branch:= nil;
  recorddefreturnco.handleentry:= @handlerecordtype;
- recordcaseco.branch:= nil;
- recordcaseco.next:= @recordcase0co;
- recordcase0co.branch:= @brecordcase0;
- recordcase0co.next:= @recordcase1co;
+ recordcaseco.branch:= @brecordcase;
+ recordcaseco.next:= @recordcase1co;
+ recordcaseco.handleentry:= @handlerecordcasestart;
  recordcase1co.branch:= @brecordcase1;
  recordcase1co.next:= @recordcase3co;
  recordcase1co.handleexit:= @handlerecordcase1;
@@ -13107,9 +13132,6 @@ begin
  recordcase3co.branch:= @brecordcase3;
  recordcase3co.next:= @recorddefco;
  recordcase3co.handleexit:= @handlecaseofexpected;
- recordcase4aco.branch:= nil;
- recordcase4aco.next:= @recordcase4co;
- recordcase4aco.handleentry:= @handlerecordcasestart;
  recordcase4co.branch:= @brecordcase4;
  recordcase4co.next:= @recordcase5co;
  recordcase4co.handleexit:= @handlerecordcase4;
@@ -13124,7 +13146,6 @@ begin
  recordcase8co.next:= @recordcase4co;
  recordcase8co.handleentry:= @handlerecordcaseitem;
  recordcaseendco.branch:= nil;
- recordcaseendco.next:= @recorddef1co;
  recordcaseendco.handleexit:= @handlerecordcase;
  recordca6aco.branch:= nil;
  recordca6aco.next:= @recordca6co;
@@ -13137,6 +13158,8 @@ begin
  recordca8co.branch:= @brecordca8;
  recordca8co.next:= @recordca6co;
  recordca8co.handleentry:= @handlerecordcaseitem;
+ recordcaendco.branch:= nil;
+ recordcaendco.handleexit:= @handlerecordcase;
  arraydefco.branch:= @barraydef;
  arraydefco.next:= @arraydef1co;
  arraydef1co.branch:= @barraydef1;

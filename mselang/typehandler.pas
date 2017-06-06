@@ -462,6 +462,8 @@ begin
 end;
 
 procedure handlerecordcasetype();
+var
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDCASETYPE');
@@ -477,7 +479,7 @@ begin
     errormessage(err_illegalqualifier,[],2);
    end
    else begin
-    with contextstack[s.stackindex] do begin
+    with contextstack[s.stackindex-1] do begin
      checkrecordfield(allvisi,[],d.rec.fieldoffset,d.typ.flags,true);
     end;
    end;
@@ -590,7 +592,7 @@ end;
 procedure handlerecordcaseitementry();
 begin
 {$ifdef mse_debugparser}
- outhandle('RECORDCASEITEM');
+ outhandle('RECORDCASEITEMENTRY');
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.rec.fieldoffset:= contextstack[s.stackindex-1].d.rec.fieldoffset;

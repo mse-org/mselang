@@ -682,16 +682,15 @@ recorddef,recorddef1,handlerecorddefstart,
 recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
- 'case'.,recordcase-
- '(',recordca6a*
+ 'case'.,recordcase-*>
+ '(',recordca6a*>
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
  '',fielddef^*                          
 recorddefreturn,,handlerecordtype,*^
 
-recordcase,recordcase0,,
-recordcase0,recordcase1,,
+recordcase,recordcase1,handlerecordcasestart,  //set ck_recordcase
  '',getidentpath^*
 recordcase1,recordcase3,,handlerecordcase1*
  ${whitespace}
@@ -700,11 +699,12 @@ recordcase2,recordcase3,,handlerecordcasetype*
  '',getfieldtype^*
 recordcase3,recorddef,,handlecaseofexpected*
  ${whitespace}
- 'of'.,recordcase4a-*
-recordcase4a,recordcase4,handlerecordcasestart, //set ck_recordcase
+ 'of'.,recordcase4-
+//recordcase4a,recordcase4,handlerecordcasestart, //set ck_recordcase
 recordcase4,recordcase5,,handlerecordcase4*
  ${whitespace}
  'end'.,recordcaseend
+ ')',recordcaseend
  '',commasepexp^*
 recordcase5,,,handlerecordcase5*
  ${whitespace}
@@ -715,25 +715,30 @@ recordcase6,,,handlerecordcase6*
 recordcase7,,handlerecordcaseitementry,handlerecordcase7*
  ${whitespace}
  @identstart,recordfield^*
+ 'case'.,recordcase-*>
  ')',recordcase8-
 recordcase8,recordcase4,handlerecordcaseitem,
  ${whitespace}
  ';',recordcase4-
-recordcaseend,recorddef1,,handlerecordcase*
+recordcaseend,,,handlerecordcase*
 
-recordca6a,recordca6,handlerecordcasestart,
+recordca6a,recordca6,handlerecordcasestart, //without "case"
 recordca6,,,handlerecordcase6*
  ${whitespace}
- 'end'.,recordcaseend
+ 'end'.,recordcaend
+ ')',recordcaend-
  '(',recordca7-
 recordca7,,handlerecordcaseitementry,handlerecordcase7*
  ${whitespace}
  @identstart,recordfield^*
  ')',recordca8-
+ '(',recordca6a*>
 recordca8,recordca6,handlerecordcaseitem,
  ${whitespace}
  ';',recordca6-
- 'end'.,recordcaseend
+ ')',recordcaend-
+ 'end'.,recordcaend
+recordcaend,,,handlerecordcase*
 
 arraydef,arraydef1,,
  'of'.,arraydef2-

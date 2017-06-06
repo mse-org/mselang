@@ -9,5 +9,61 @@
 }
 unit rtl_variants;
 interface
+const
+  VT_EMPTY = $0000;
+  VT_NULL = $0001;
+  VT_I2 = $0002;
+  VT_I4 = $0003;
+  VT_R4 = $0004;
+  VT_R8 = $0005;
+  VT_CY = $0006;
+  VT_DATE = $0007;
+  VT_BSTR = $0008;
+  VT_DISPATCH = $0009;
+  VT_ERROR = $000A;
+  VT_BOOL = $000B;
+  VT_VARIANT = $000C;
+  VT_UNKNOWN = $000D;
+  VT_DECIMAL = $000E;
+  VT_I1 = $0010;
+  VT_UI1 = $0011;
+  VT_UI2 = $0012;
+  VT_UI4 = $0013;
+  VT_I8 = $0014;
+  VT_UI8 = $0015;
+  VT_INT = $0016;
+  VT_UINT = $0017;
+  VT_VOID = $0018;
+  VT_HRESULT = $0019;
+  VT_PTR = $001A;
+  VT_SAFEARRAY = $001B;
+  VT_CARRAY = $001C;
+  VT_USERDEFINED = $001D;
+  VT_LPSTR = $001E;
+  VT_LPWSTR = $001F;
+  VT_RECORD = $0024;
+  VT_INT_PTR = $0025;
+  VT_UINT_PTR = $0026;
+  VT_ARRAY = $2000;
+  VT_BYREF = $4000;
+
+type  
+  variantty = object
+   vtype: card16;
+   (res1,res2,res3: card16;
+    (vint8: int8);     //VT_I1
+    (vint16: int16);   //VT_I2
+    (vint32: int32);   //VT_I4
+    (vint64: int64);   //VT_I8
+    (vcard8: card8);   //VT_UI1
+    (vcard16: card16); //VT_UI2
+    (vcard32: card32); //VT_UI4
+    (vcard64: card64); //VT_UI8
+    (vflo32: flo32);   //VT_R4
+    (vflo64: flo64);   //VT_R8
+   );
+   (vbytes: array[0..13] of card8);
+  end;
+
 implementation
 end.
