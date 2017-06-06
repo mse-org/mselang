@@ -448,7 +448,7 @@ begin
  with info do begin
   with contextstack[s.stackindex-1] do begin
    f1:= [];
-   checkrecordfield(allvisi,[],d.rec.fieldoffset,f1);
+   checkrecordfield(allvisi,currentfieldflags,d.rec.fieldoffset,f1);
    i1:= s.stackindex-2;
    if d.kind = ck_recordcase then begin
     dec(i1);
@@ -621,6 +621,7 @@ begin
   contextstack[s.stackindex-1].d.rec.fieldoffset:= 
         contextstack[s.stackindex].d.rec.fieldoffsetmax;
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 

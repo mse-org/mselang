@@ -61,7 +61,7 @@ procedure handleclassprivate();
 procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
-procedure handleclassfield();
+//procedure handleclassfield();
 //procedure handleclassvariantentry();
 //procedure handleclassvariant();
 
@@ -164,9 +164,11 @@ begin
  {$endif}
   if isclass then begin
    s.currentstatementflags:= s.currentstatementflags + [stf_objdef,stf_class];
+   currentfieldflags:= [af_classfield];
   end
   else begin
    s.currentstatementflags:= s.currentstatementflags + [stf_objdef];
+   currentfieldflags:= [af_objectfield];
   end;
   if sublevel > 0 then begin
    errormessage(err_localclassdef,[]);
@@ -275,6 +277,7 @@ begin
  outhandle('CLASSDEFFORWARD');
 {$endif}
  with info do begin
+  currentfieldflags:= [];
   with ptypedataty(ele.parentdata)^ do begin
    if icf_forward in infoclass.flags then begin
     identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_error);
@@ -751,6 +754,7 @@ begin
   resolvelist(selfobjparams,@resolveselfobjparam,selfobjparamchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
+  currentfieldflags:= [];
  end;
 end;
 
@@ -759,6 +763,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFERROR');
 {$endif}
+ info.currentfieldflags:= [];
  tokenexpectederror(tk_end);
 end;
 
@@ -801,7 +806,7 @@ begin
   d.cla.visibility:= classpublishedvisi;
  end;
 end;
-
+(*
 procedure handleclassfield();
 var
  po1: pvardataty;
@@ -838,6 +843,7 @@ begin
             contextstack[s.stackindex-2].d.typ.flags + tf1;
  end;
 end;
+*)
 (*
 procedure handleclassvariantentry();
 begin

@@ -736,7 +736,7 @@ recordca8,,handlerecordcaseitem,handlesemicolonexpected
 recordca9,recordcaend,,
  ${whitespace}
  '(',recordca7-
-recordcaend,,,handlerecordcase*
+recordcaend,,,handlerecordcase
 
 arraydef,arraydef1,,
  'of'.,arraydef2-
@@ -979,7 +979,8 @@ attach1,,,^
  ']',-*
  '',!handleclosesquarebracketexpected
 
-classfield,,,handleclassfield^*
+//classfield,,,handleclassfield^*
+classfield,,,handlerecordfield^*
  '',fielddef^*
 //
 // properties

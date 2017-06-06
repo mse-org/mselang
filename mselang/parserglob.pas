@@ -818,6 +818,7 @@ type
   currentclass: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
   currentoperator,currentoperatorright: elementoffsetty;
+  currentfieldflags: addressflagsty;
 //  currentoperators: objectoperatorsty;
 //  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type

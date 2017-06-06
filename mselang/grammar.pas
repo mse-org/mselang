@@ -1366,7 +1366,7 @@ var
                caption: 'recordca9');
  recordcaendco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'recordcaend');
  arraydefco: contextty = (branch: nil; 
@@ -13179,7 +13179,7 @@ begin
  attachco.next:= @attach1co;
  attach1co.branch:= @battach1;
  classfieldco.branch:= @bclassfield;
- classfieldco.handleexit:= @handleclassfield;
+ classfieldco.handleexit:= @handlerecordfield;
  propinddef1co.branch:= @bpropinddef1;
  propinddef1co.next:= @propinddef2co;
  propinddef2co.branch:= @bpropinddef2;
