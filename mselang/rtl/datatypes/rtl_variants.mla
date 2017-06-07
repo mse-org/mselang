@@ -9,6 +9,7 @@
 }
 unit rtl_variants;
 interface
+
 const
   VT_EMPTY = $0000;
   VT_NULL = $0001;
@@ -48,7 +49,7 @@ const
   VT_BYREF = $4000;
 
 type  
-  variantty = object
+  variantty = object [nozeroinit]
    vtype: card16;
    (res1,res2,res3: card16;
     (vint8: int8);     //VT_I1
@@ -63,7 +64,37 @@ type
     (vflo64: flo64);   //VT_R8
    );
    (vbytes: array[0..13] of card8);
+   method ini() [ini];
+   method fini() [fini];
+   method tovariant(const avalue: int8) [operator=':='];
+   method tovalue(): int8 [operator=':='];
   end;
 
 implementation
+
+method variantty.ini();
+begin
+ vtype:= VT_EMPTY;
+end;
+
+method variantty.fini();
+begin
+end;
+
+method variantty.tovariant(const avalue: int8);
+begin
+ fini();
+ vtype:= VT_I1;
+ vint8:= avalue;
+end;
+
+method variantty.tovalue(): int8;
+begin
+ if (vtype = VT_I1) or (vtype = VT_UI1) then begin
+  result:= vint8;
+ end
+ else begin
+ end;
+end;
+
 end.
