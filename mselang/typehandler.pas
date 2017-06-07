@@ -827,7 +827,7 @@ begin
    ele2:= ele1;
    ele1:= typ1^.h.next;
    case typ1^.h.kind of
-    dk_record: begin
+    dk_record,dk_object,dk_class: begin
      createrecordmanagehandlersubs(ele2);
     end;
     else begin
