@@ -628,7 +628,7 @@ end;
 // fields
 // interface table  <- fieldsize
 //                  <- allocsize
-var testvar: selfobjparamitemty;
+
 var
  realobjsize: int32;
  
@@ -639,7 +639,6 @@ var
  p2: pvardataty;
  p3: pelementoffsetty;
 begin
- testvar:= selfobjparamitemty(item);
  with selfobjparamitemty(item) do begin
   i3:= realobjsize-paramsize;
   p1:= ele.eledataabs(methodelement);
@@ -680,7 +679,7 @@ begin
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
                    not (icf_nozeroinit in infoclass.flags) and 
-                                    (classinfo1^.rec.fieldoffset > 0) then begin
+                                    (classinfo1^.rec.fieldoffsetmax > 0) then begin
      include(h.flags,tf_needsini);
     end;
 
@@ -707,7 +706,7 @@ begin
     infoclass.defs:= classdefs1;
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
      header.allocs.size:= infoclass.allocsize;
-     header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffset;
+     header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
      header.allocs.classdefinterfacestart:= int1;
      header.parentclass:= -1;
      header.interfaceparent:= -1;

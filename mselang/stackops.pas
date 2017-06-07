@@ -5258,11 +5258,13 @@ begin
  callintfop();
 end;
 
-
 procedure virttrampolineop();
 begin
  with cpu.pc^.par.subbegin.trampoline do begin
-  cpu.pc:= startpo+pptruint(pppointer(cpu.frame+selfinstance)^^+virtoffset)^;
+  cpu.pc:= startpo +
+     pptruint(
+      ppointer(ppointer(cpu.frame+selfinstance)^ + virttaboffset)^ + 
+                                                               virtoffset)^;
  end;
 end;
 

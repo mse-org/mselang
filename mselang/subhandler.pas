@@ -2004,12 +2004,18 @@ begin
      else begin
       par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
      end;
+     par.subbegin.trampoline.virttaboffset:= 
+          ptypedataty(ele.eledataabs(
+                datatoele(po2)^.header.parent))^.infoclass.virttaboffset;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
      if co_llvm in o.compileoptions then begin
       par.subbegin.trampoline.virtoffset:= 
            info.s.unitinfo^.llvmlists.constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
+      par.subbegin.trampoline.virttaboffset:= 
+           info.s.unitinfo^.llvmlists.constlist.adddataoffs(
+                                par.subbegin.trampoline.virttaboffset).listid;
       par.subbegin.globid:= po1^.globid;               //trampoline
       po1^.trampolineid:= po1^.globid;
       po1^.globid:= info.s.unitinfo^.llvmlists.globlist.

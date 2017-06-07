@@ -1058,8 +1058,9 @@ const
   
 type
  virttrampolineinfoty = record
-  selfinstance: dataoffsty; //frameoffset
-  virtoffset: dataoffsty;   //offset in classdefinfoty
+  selfinstance: dataoffsty;  //frameoffset
+  virttaboffset: dataoffsty; //from instance start
+  virtoffset: dataoffsty;    //offset in classdefinfoty
 //  typeid: int32;
  end;
 
