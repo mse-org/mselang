@@ -65,6 +65,24 @@ STRINGDEF -> PASCALSTRING['.']
 *)
 
 const
+ unitheader =
+'{ MSElang Copyright (c) 2013-2017 by Martin Schreiber'+lineend+
+'   '+lineend+
+'    This program is free software; you can redistribute it and/or modify'+lineend+
+'    it under the terms of the GNU General Public License as published by'+lineend+
+'    the Free Software Foundation; either version 2 of the License, or'+lineend+
+'    (at your option) any later version.'+lineend+
+''+lineend+
+'    This program is distributed in the hope that it will be useful,'+lineend+
+'    but WITHOUT ANY WARRANTY; without even the implied warranty of'+lineend+
+'    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the'+lineend+
+'    GNU General Public License for more details.'+lineend+
+''+lineend+
+'    You should have received a copy of the GNU General Public License'+lineend+
+'    along with this program; if not, write to the Free Software'+lineend+
+'    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.'+lineend+
+'}'+lineend;
+
  contextlinesyntax = 
 'CONTEXT,[NEXT][''-'']'',''[ENTRYHANDLER]'',''[EXITHANDLER][''^''|''!''][''+''][''*''][''>'']';
  branchlinesyntax = 
@@ -93,7 +111,7 @@ uses
 const
  numidcount = 256; 
 type
- paramty = (pa_grammarfile,pa_pasfile);
+ paramty = (pa_grammarfile,pa_pasglobfile,pa_pasfile);
 
 const
  b: array[0..0] of branchty = (
@@ -238,7 +256,7 @@ begin
  nextid;
 end;
 
-procedure creategrammar(const grammar,outfile: filenamety);
+procedure creategrammar(const grammar,globfile,outfile: filenamety);
 type
  contextinfoty = record
   cont: stringarty;
@@ -718,25 +736,10 @@ begin
     end;
    end;
   end;
+
   passtream:= ttextstream.create(outfile,fm_create);
   str1:= ''; //for error message
- outstr:= 
-'{ MSElang Copyright (c) 2013 by Martin Schreiber'+lineend+
-'   '+lineend+
-'    This program is free software; you can redistribute it and/or modify'+lineend+
-'    it under the terms of the GNU General Public License as published by'+lineend+
-'    the Free Software Foundation; either version 2 of the License, or'+lineend+
-'    (at your option) any later version.'+lineend+
-''+lineend+
-'    This program is distributed in the hope that it will be useful,'+lineend+
-'    but WITHOUT ANY WARRANTY; without even the implied warranty of'+lineend+
-'    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the'+lineend+
-'    GNU General Public License for more details.'+lineend+
-''+lineend+
-'    You should have received a copy of the GNU General Public License'+lineend+
-'    along with this program; if not, write to the Free Software'+lineend+
-'    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.'+lineend+
-'}'+lineend+
+ outstr:= unitheader+
 'unit '+ansistring(filenamebase(outfile))+';'+lineend+
 '{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
 'interface'+lineend+
@@ -744,7 +747,11 @@ begin
 ' globtypes,parserglob,elements;'+lineend+
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
-''+lineend;
+''+lineend+
+'implementation'+lineend+
+'uses'+lineend+
+' '+usesdef+';'+lineend;
+
 //  outstr:= outstr+
 //'const'+lineend;
   keywordsstart:= length(outstr);
@@ -827,13 +834,8 @@ begin
 '               caption: '''+cont[0]+''');'+lineend;
    end;
   end;
+
   outstr:= outstr+
-lineend+
-'implementation'+lineend+
-''+lineend+
-'uses'+lineend+
-' '+usesdef+';'+lineend+
-' '+lineend+
 'const'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
@@ -980,6 +982,7 @@ lineend+
   for i1:= 0 to numidcount-1 do begin
    nextid();
   end;
+{
   str5:= 
 'const'+lineend+
 ' tks_none = 0;'+lineend;
@@ -1047,7 +1050,7 @@ lineend+
   str5:= str5 + str2+');'+lineend+lineend;
 
   outstr:= copy(outstr,1,keywordsstart)+str5+copy(outstr,keywordsstart+1,bigint);
-
+}
   outstr:= outstr+
 'procedure init;'+lineend+
 'begin'+lineend;
@@ -1092,6 +1095,89 @@ lineend+
 lineend;
 
   passtream.write(outstr);
+  passtream.destroy();
+  
+   //globals
+  passtream:= ttextstream.create(globfile,fm_create);
+  outstr:= unitheader+
+'unit '+ansistring(filenamebase(globfile))+';'+lineend+
+'{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
+'interface'+lineend+
+'uses'+lineend+
+' globtypes,parserglob,elements;'+lineend+
+' '+lineend;
+
+  str5:= 
+'const'+lineend+
+' tks_none = 0;'+lineend;
+  for int2:= 0 to high(internaltokens) do begin
+   str2:= ansistring(pascalstringtostring(internaltokens[int2]));
+   if (str2 <> '') and (str2[1] = '.') then begin
+    str2:= copy(str2,2,bigint);
+   end;
+   str5:= str5+idstring('tks_'+str2);
+  end;
+  for int2:= 0 to high(keywords) do begin
+   str5:= str5+ idstring('tk_'+keywords[int2]);
+  end;
+  int3:= 2+high(internaltokens)+high(keywords);
+  str5:= str5+lineend+
+' tokens: array[0..'+inttostr(int3)+
+                      '] of string = ('''','+lineend;
+  str2:= 
+'  ';
+  for int2:= 0 to high(internaltokens) do begin
+   str3:= internaltokens[int2]+',';
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  str5:= str5 + str2 + lineend;
+
+  str2:= 
+'  ';
+  for int2:= 0 to high(keywords) do begin
+   str3:= ansistring(stringtopascalstring(msestring(keywords[int2])))+',';
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  setlength(str2,length(str2)-1);
+  str5:= str5 + str2+');'+lineend+lineend;
+
+  id:= idstart;
+  nextid;
+  for i1:= 0 to numidcount -1 do begin //numidents
+   nextid();
+  end;
+  str5:= str5+
+' tokenids: array[0..'+inttostr(int3)+'] of identty = ('+lineend;
+  str2:=
+'  $00000000,';
+  for int2:= 1 to int3 do begin
+   str3:= '$'+hextostr(id,8)+',';
+   nextid;
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  setlength(str2,length(str2)-1);
+  str5:= str5 + str2+');'+lineend+lineend;
+
+  outstr:= outstr+str5+
+'implementation'+lineend+
+'end.';
+  passtream.write(outstr);
+
  finally
   grammarstream.free;
   passtream.free;
@@ -1109,7 +1195,8 @@ end;
 procedure tmainmo.eventloopexe(const sender: TObject);
 begin
  with sysenv do begin
-  creategrammar(value[ord(pa_grammarfile)],value[ord(pa_pasfile)]);
+  creategrammar(value[ord(pa_grammarfile)],value[ord(pa_pasglobfile)],
+                                                       value[ord(pa_pasfile)]);
  end;
 end;
 

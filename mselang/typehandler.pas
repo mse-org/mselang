@@ -74,7 +74,7 @@ implementation
 uses
  elements,errorhandler,handlerutils,parser,opcode,stackops,
  grammar,opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
- segmentutils,__mla__internaltypes;
+ segmentutils,__mla__internaltypes,grammarglob;
 
 procedure handletype();
 begin

@@ -176,7 +176,8 @@ uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
- llvmlists,llvmbitcodes,identutils,__mla__internaltypes,elementcache;
+ llvmlists,llvmbitcodes,identutils,__mla__internaltypes,elementcache,
+ grammarglob;
 
 procedure beginparser(const aoptable: poptablety);
 
@@ -2010,7 +2011,8 @@ begin
               (contextstack[s.stacktop].d.kind <> ck_space) then begin
    with contextstack[s.stackindex] do begin
     d.kind:= ck_space;
-    context:= @dummyco;
+    context:= nil;
+//////////////////////    context:= @dummyco;
    end;
   end
   else begin

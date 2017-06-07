@@ -87,7 +87,7 @@ implementation
 uses
  parserglob,elements,handler,errorhandler,unithandler,grammar,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler,
- identutils,valuehandler;
+ identutils,valuehandler,grammarglob;
 {
 const
  vic_private = vis_3;

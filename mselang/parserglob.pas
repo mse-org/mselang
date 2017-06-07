@@ -747,6 +747,7 @@ type
   stackindex: integer; 
   stacktop: integer; 
   stackref1: int32; //for directiveentryhandler()/directivehandler()
+  contextref1: pcontextty;
   unitinfo: punitinfoty;
   ssa: ssainfoty;
   pc: pcontextty;

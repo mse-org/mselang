@@ -77,7 +77,7 @@ uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
- __mla__internaltypes,exceptionhandler,listutils,llvmlists;
+ __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob;
 
 function listtoset(const acontext: pcontextitemty): boolean;
 var
@@ -3554,7 +3554,8 @@ endlab:
   if stf_cutvalueident in s.currentstatementflags then begin
                      //todo: use something more elegant
    s.stacktop:= s.stackindex;
-   pob^.context:= @dummyco;
+   pob^.context:= nil;
+/////////////////////////////////////////////   pob^.context:= @dummyco;
   end;
  end;
 end;

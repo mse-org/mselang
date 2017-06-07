@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit,msearrayutils;
+ identutils,compilerunit,msearrayutils,grammarglob;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -806,7 +806,13 @@ handlelab:
          //call context termination handler
      i1:= s.stackindex;
      s.pc^.handleexit();
-     s.pc:= contextstack[s.stackindex].context; //stackindex could be changed
+     while true do begin
+      s.pc:= contextstack[s.stackindex].context; //stackindex could be changed
+      if s.pc <> nil then begin
+       break;
+      end;
+      dec(s.stackindex); //skip dummies
+     end;
      if s.stackindex < i1 then begin
       popped:= true;
      end;

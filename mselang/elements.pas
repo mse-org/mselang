@@ -384,7 +384,7 @@ implementation
 uses
  msearrayutils,sysutils,typinfo,grammar,mseformatstr,
  mselinklist,msesysutils,opcode,handlerutils,
- internaltypes,__mla__internaltypes,errorhandler,identutils;
+ internaltypes,__mla__internaltypes,errorhandler,identutils,grammarglob;
 
 const
  recursionmax = 1024;

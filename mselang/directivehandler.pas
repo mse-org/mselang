@@ -32,6 +32,7 @@ procedure handleundef();
 
 procedure handledirectiveentry();
 procedure handledirective();
+procedure handlestorenextcontext();
 procedure handleifdef();
 procedure handleifndef();
 procedure ifcondentry();
@@ -47,7 +48,7 @@ procedure handleignoreddirective();
 implementation
 uses
  msestrings,elements,parserglob,opcode,opglob,handlerutils,errorhandler,
- parser,grammar,handlerglob;
+ parser,grammar,handlerglob,grammarglob;
  
 procedure handledumpelements();
 begin
@@ -190,7 +191,7 @@ begin
    po1:= nil;
   end;
   if ((po1 = nil) or po1^.deleted) xor ifndef then begin
-   switchcontext(@skipifco);
+   switchcontext(s.contextref1);
   end;
  end;
 end;
@@ -209,6 +210,16 @@ begin
  outhandle('DIRECTIVE');
 {$endif}
  info.s.stacktop:= info.s.stackref1;
+end;
+
+procedure handlestorenextcontext();
+begin
+{$ifdef mse_debugparser}
+ outhandle('STORENEXTCONTEXT');
+{$endif}
+ with info do begin
+  s.contextref1:= s.pc^.next;
+ end;
 end;
 
 procedure handleifdef();
@@ -232,6 +243,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IFCONDENTRY');
 {$endif}
+ handlestorenextcontext();
  with info do begin
   include(s.currentstatementflags,stf_condition);
   exclude(s.currentstatementflags,stf_invalidcondition);
@@ -246,7 +258,7 @@ begin
  with info do begin
   exclude(s.currentstatementflags,stf_condition);
   if stf_invalidcondition in s.currentstatementflags then begin
-   switchcontext(@skipifco);
+   switchcontext(s.contextref1);
   end
   else begin
    with info.contextstack[s.stacktop] do begin
@@ -260,7 +272,7 @@ begin
      end
      else begin
       if not d.dat.constval.vboolean then begin
-       switchcontext(@skipifco);
+       switchcontext(s.contextref1);
       end;
      end;
     end;

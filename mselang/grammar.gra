@@ -243,12 +243,18 @@ define2,directiveend,,handledefinevalue
 undef,directiveend,,handleundef
  '',getident^*
 
-ifdef,directiveend,,handleifdef
- '',getident^*
-ifndef,directiveend,,handleifndef
- '',getident^*
-ifcond,directiveend,ifcondentry,handleifcond*
- '',exp^*
+ifdef,skipif,handlestorenextcontext,
+ '',getident^*,ifdef1
+ifdef1,directiveend,,handleifdef
+
+ifndef,skipif,handlestorenextcontext,
+ '',getident^*,ifndef1
+ifndef1,directiveend,,handleifndef
+ 
+ifcond,skipif,ifcondentry,
+ '',exp^*,ifcond1
+ifcond1,directiveend,,handleifcond*
+
 skipif,directiveend,,
  '}',skipif0-
  '',-
