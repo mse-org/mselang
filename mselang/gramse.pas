@@ -22,9 +22,6 @@ uses
  
 function startcontext: pcontextty;
 
-implementation
-uses
- handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils,valuehandler,interfacehandler,directivehandler;
 var
  startco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -896,6 +893,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'statement1');
+ labelcaseco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'labelcase');
+ checkcaselabelco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'checkcaselabel');
  assignmentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2251,6 +2258,9 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'numberexpected');
+implementation
+uses
+ handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils,valuehandler,interfacehandler,directivehandler;
 const
  bstart: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -5169,7 +5179,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstatement1: array[0..7] of branchty = (
+ bstatement1: array[0..9] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5198,6 +5208,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt];
+     dest: (context: @checkcaselabelco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['.']),
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
@@ -5213,8 +5230,15 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @labelco); stack: nil; keys: (
+     dest: (context: @labelcaseco); stack: nil; keys: (
     (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @checkcaselabelco); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5935,6 +5959,15 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcasebranch2a: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
+     dest: (context: @caseelseco); stack: nil; 
+     keyword: $DBEB3159{'else'}),
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @caseendco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcasebranch3: array[0..8] of branchty = (
@@ -12594,13 +12627,11 @@ begin
  undefco.handleexit:= @handleundef;
  ifdefco.branch:= @bifdef;
  ifdefco.next:= @skipifco;
- ifdefco.handleentry:= @handlestorenextcontext;
  ifdef1co.branch:= nil;
  ifdef1co.next:= @directiveendco;
  ifdef1co.handleexit:= @handleifdef;
  ifndefco.branch:= @bifndef;
  ifndefco.next:= @skipifco;
- ifndefco.handleentry:= @handlestorenextcontext;
  ifndef1co.branch:= nil;
  ifndef1co.next:= @directiveendco;
  ifndef1co.handleexit:= @handleifndef;
@@ -12875,6 +12906,12 @@ begin
  statement0co.handleentry:= @handlestatement0entry;
  statement1co.branch:= @bstatement1;
  statement1co.handleexit:= @handlestatementexit;
+ labelcaseco.branch:= nil;
+ labelcaseco.next:= @labelco;
+ labelcaseco.handleentry:= @handlecheckcaselabel;
+ checkcaselabelco.branch:= nil;
+ checkcaselabelco.handleentry:= @handlecheckcaselabel;
+ checkcaselabelco.handleexit:= @handlestatementexit;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;
@@ -12956,8 +12993,9 @@ begin
  casebranch2co.branch:= @bcasebranch2;
  casebranch2co.next:= @casebranch2aco;
  casebranch2co.handleentry:= @handlecasebranchentry;
- casebranch2aco.branch:= nil;
- casebranch2aco.handleentry:= @handlecasebranch;
+ casebranch2aco.branch:= @bcasebranch2a;
+ casebranch2aco.next:= @casebranch2co;
+ casebranch2aco.handleentry:= @handlecasebranch2entry;
  casebranch3co.branch:= @bcasebranch3;
  casebranch3co.next:= @casebranchco;
  casebranch3co.handleentry:= @handlecasebranch;

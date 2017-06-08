@@ -22,9 +22,6 @@ uses
  
 function startcontext: pcontextty;
 
-implementation
-uses
- handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils,valuehandler,interfacehandler,directivehandler;
 var
  startco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -2236,6 +2233,9 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'numberexpected');
+implementation
+uses
+ handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils,valuehandler,interfacehandler,directivehandler;
 const
  bstart: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -12527,13 +12527,11 @@ begin
  undefco.handleexit:= @handleundef;
  ifdefco.branch:= @bifdef;
  ifdefco.next:= @skipifco;
- ifdefco.handleentry:= @handlestorenextcontext;
  ifdef1co.branch:= nil;
  ifdef1co.next:= @directiveendco;
  ifdef1co.handleexit:= @handleifdef;
  ifndefco.branch:= @bifndef;
  ifndefco.next:= @skipifco;
- ifndefco.handleentry:= @handlestorenextcontext;
  ifndef1co.branch:= nil;
  ifndef1co.next:= @directiveendco;
  ifndef1co.handleexit:= @handleifndef;

@@ -247,11 +247,11 @@ define2,directiveend,,handledefinevalue
 undef,directiveend,,handleundef
  '',getident^*
 
-ifdef,skipif,handlestorenextcontext,
+ifdef,skipif,,
  '',getident^*,ifdef1
 ifdef1,directiveend,,handleifdef
 
-ifndef,skipif,handlestorenextcontext,
+ifndef,skipif,,
  '',getident^*,ifndef1
 ifndef1,directiveend,,handleifndef
  
@@ -552,7 +552,16 @@ statement0,statement1,handlestatement0entry,
 statement1,,,handlestatementexit
  ${whitespace}
  ':=',assignment-
+{$grapas}
  ':',label-
+{$}
+{$gramse}
+ ':',labelcase-
+ ',',checkcaselabel
+ '..',checkcaselabel
+labelcase,label,handlecheckcaselabel,
+checkcaselabel,,handlecheckcaselabel,handlestatementexit
+{$}
 assignment,,handleassignmententry,handleassignment
  '',exp^*
 label,,,handlelabel*>
@@ -686,7 +695,9 @@ casebranch2,casebranch3,handlecasebranchentry,*
 {$gramse}
 casebranch2,casebranch2a,handlecasebranchentry,*
  '',casestatementgroup^*
-casebranch2a,,handlecasebranch,
+casebranch2a,casebranch2,handlecasebranch2entry,
+ 'else'.,caseelse-*
+ 'end'.,caseend-
 {$}
 casebranch3,casebranch,handlecasebranch,
  ${whitespace}

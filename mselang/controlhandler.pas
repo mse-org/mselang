@@ -47,9 +47,11 @@ procedure handleforend();
 procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
+procedure handlecheckcaselabel();
 procedure handlecasebranch1entry();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
+procedure handlecasebranch2entry();
 procedure handlecase();
 procedure handlecasestatementgroupstart();
 
@@ -726,6 +728,34 @@ begin
  end;
 end;
 
+procedure handlecasebranch2entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEBRANCH2ENTRY');
+{$endif}
+ handlecasebranch();
+ with info do begin
+  s.stacktop:= s.stackindex;
+ end; 
+end;
+
+procedure handlecasestatementgroupstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASESTATEMENTGROUPSTART');
+{$endif}
+ with info do begin
+  contextstack[s.stackindex].d.kind:= ck_caseblock;
+ end;
+end;
+
+procedure handlecheckcaselabel();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CHECKCASELABEL');
+{$endif}
+end;
+
 procedure handlecase(); //todo: use jumptable and the like
                         //todo: check overlap and range direction
 var
@@ -834,16 +864,6 @@ begin
     end;
    end;
   end;
- end;
-end;
-
-procedure handlecasestatementgroupstart();
-begin
-{$ifdef mse_debugparser}
- outhandle('CASESTATEMENTGROUPSTART');
-{$endif}
- with info do begin
-  contextstack[s.stackindex].d.kind:= ck_caseblock;
  end;
 end;
 

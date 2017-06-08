@@ -439,7 +439,7 @@ var
  int1,int2,int3: integer;
  po1,po2,po3: pchar;
  setbefore,setafter: boolean;
- keywordsstart: integer;
+// keywordsstart: integer;
  macroname,macrotext: string;
  bo1: boolean;
  macrolist1: tmacrolist = nil;
@@ -472,8 +472,9 @@ begin
   grammarstream:= ttextstream.create(grammar,fm_read);
   macrolist1:= tmacrolist.create([mao_curlybraceonly]);
   for of1:= 0 to high(outfiles) do begin
-   dialect:= filenamebase(outfiles[of1]);
+   dialect:= ansistring(filenamebase(outfiles[of1]));
    conditionlevel:= 0;
+   disablelevel:= 0;
    disabled:= false;
    tokendefs:= nil;
    contexts:= nil;
@@ -819,14 +820,16 @@ begin
  ' '+lineend+
  'function startcontext: pcontextty;'+lineend+
  ''+lineend+
+ {
  'implementation'+lineend+
  'uses'+lineend+
  ' '+usesdef+';'+lineend;
  
  //  outstr:= outstr+
  //'const'+lineend;
-   keywordsstart:= length(outstr);
+//   keywordsstart:= length(outstr);
   outstr:= outstr+
+  }
  'var'+lineend;
    for int1:= 0 to high(contexts) do begin
     str2:= '';
@@ -907,6 +910,9 @@ begin
    end;
  
    outstr:= outstr+
+ 'implementation'+lineend+
+ 'uses'+lineend+
+ ' '+usesdef+';'+lineend+
  'const'+lineend;
    for int1:= 0 to high(contexts) do begin
     with contexts[int1] do begin

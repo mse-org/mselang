@@ -32,7 +32,7 @@ procedure handleundef();
 
 procedure handledirectiveentry();
 procedure handledirective();
-procedure handlestorenextcontext();
+//procedure handlestorenextcontext();
 procedure handleifdef();
 procedure handleifndef();
 procedure ifcondentry();
@@ -48,7 +48,7 @@ procedure handleignoreddirective();
 implementation
 uses
  msestrings,elements,parserglob,opcode,opglob,handlerutils,errorhandler,
- parser,handlerglob,grammarglob;
+ parser,handlerglob,grammarglob,gramse,grapas;
  
 procedure handledumpelements();
 begin
@@ -191,7 +191,11 @@ begin
    po1:= nil;
   end;
   if ((po1 = nil) or po1^.deleted) xor ifndef then begin
-   switchcontext(s.contextref1);
+   case s.dialect of
+    dia_mse: switchcontext(@gramse.skipifco);
+    dia_pas: switchcontext(@grapas.skipifco);
+    else internalerror(ie_handler,'20170608A');
+   end;
   end;
  end;
 end;
@@ -211,7 +215,7 @@ begin
 {$endif}
  info.s.stacktop:= info.s.stackref1;
 end;
-
+(*
 procedure handlestorenextcontext();
 begin
 {$ifdef mse_debugparser}
@@ -221,7 +225,7 @@ begin
   s.contextref1:= s.pc^.next;
  end;
 end;
-
+*)
 procedure handleifdef();
 begin
 {$ifdef mse_debugparser}
@@ -243,7 +247,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IFCONDENTRY');
 {$endif}
- handlestorenextcontext();
  with info do begin
   include(s.currentstatementflags,stf_condition);
   exclude(s.currentstatementflags,stf_invalidcondition);
@@ -258,7 +261,11 @@ begin
  with info do begin
   exclude(s.currentstatementflags,stf_condition);
   if stf_invalidcondition in s.currentstatementflags then begin
-   switchcontext(s.contextref1);
+   case s.dialect of
+    dia_mse: switchcontext(@gramse.skipifco);
+    dia_pas: switchcontext(@grapas.skipifco);
+    else internalerror(ie_handler,'20170608A');
+   end;
   end
   else begin
    with info.contextstack[s.stacktop] do begin
@@ -272,7 +279,11 @@ begin
      end
      else begin
       if not d.dat.constval.vboolean then begin
-       switchcontext(s.contextref1);
+       case s.dialect of
+        dia_mse: switchcontext(@gramse.skipifco);
+        dia_pas: switchcontext(@grapas.skipifco);
+        else internalerror(ie_handler,'20170608A');
+       end;
       end;
      end;
     end;
