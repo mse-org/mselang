@@ -40,11 +40,13 @@ procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 function parse(const input: string; const afilename: filenamety;
                                      const aoptions: compileoptionsty): boolean;
                               //true if ok
-function parseunit(const input: string; const aunit: punitinfoty;
+function parseunit(const input: string; const adialect: dialectty;
+                   const aunit: punitinfoty;
                    const ainterfaceonly: boolean): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
 procedure pushdummycontext(const akind: contextkindty);
+function getstartcontext(const adialect: dialectty): pcontextty;
 procedure switchcontext(const acontext: pcontextty);
 procedure saveparsercontext(var acontext: pparsercontextty; 
                                                const astackcount: int32);
@@ -61,7 +63,7 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit,msearrayutils,grammarglob,grapas;
+ identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -447,8 +449,21 @@ begin
  inc(achar);
 end;
 
-function parseunit(const input: string; const aunit: punitinfoty;
-                                      const ainterfaceonly: boolean): boolean;
+function getstartcontext(const adialect: dialectty): pcontextty;
+begin
+ case adialect of
+  dia_mse: begin
+   result:= gramse.startcontext();
+  end;
+  else begin
+   result:= grapas.startcontext();
+  end;
+ end;
+end;
+
+function parseunit(const input: string; const adialect: dialectty; 
+           const aunit: punitinfoty;
+           const ainterfaceonly: boolean): boolean;
 
 var
  popped: boolean;
@@ -485,8 +500,9 @@ var
       writeln(punitlinkinfoty(
              getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
     {$endif}
-     result:= parseunit('',punitlinkinfoty(
-                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,false);
+     result:= parseunit('',dia_none,punitlinkinfoty(
+                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,
+                                                      false);
      deletelistitem(intfparsedlinklist,intfparsedchain);
     end;
    end;
@@ -516,6 +532,7 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
+  s.dialect:= adialect;
   aunit^.dwarflangid:= DW_LANG_Pascal83;
   if o.compileoptions * [co_readunits,co_build] = [co_readunits] then begin
    if not (us_invalidunitfile in aunit^.state) and 
@@ -569,7 +586,7 @@ begin
    incstack();
    with contextstack[s.stackindex],d do begin
     kind:= ck_none;
-    context:= grapas.startcontext;
+    context:= getstartcontext(s.dialect);
     start.po:= pchar(input);
     debugstart:= start.po;
     start.line:= 0;
@@ -1156,7 +1173,7 @@ begin
       end;
      end;
      if result then begin
-      result:= parseunit(input,unit1,false);
+      result:= parseunit(input,defaultdialect(afilename),unit1,false);
      end;
     end;
     endparser();

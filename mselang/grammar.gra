@@ -66,6 +66,7 @@
  '.ini','.fini','.incref','.decref','.decrefindi'
  '.method','.operators','.operatorsright','.system'
 @.tokens
+ 'mselang','pascal'
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual','end'
@@ -192,6 +193,7 @@ bracecomment0,,,handlecommentend^>
  '*)',-*
  '',-
 directive,directive1,handledirectiveentry,*
+ 'mode'.,mode-*
  'dumpelements'.,dumpelements-*
  'dumpopcode'.,dumpopcode-*
  'abort'.,abort-*
@@ -232,6 +234,8 @@ nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 stoponerror,directiveend,handlestoponerror,
 
+mode,directiveend,,handlemode
+ '',getident^*
 define,define1,,
  '',getident^*
 define1,directiveend,,handledefine
@@ -450,13 +454,6 @@ subheader2a,subheader3,,
 subof,,subofentry,handleofobjectexpected*
  ${whitespace}
  'object'.,subheader3-
-
-
-{$ msepasx, mselang }
-
-
-{$}
-
 subheader3,,,
  ${whitespace}
  'external'.,!handleexternal-
@@ -596,6 +593,8 @@ if0,then,handleif0,
 then,,,handlethen
  ${whitespace}
  'then'.,then0-
+
+{$grapas}
 then0,then2,handlethen0,
  '',statementstack^*
 then2,,,handlethen2
@@ -604,6 +603,30 @@ then2,,,handlethen2
 else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
+{$}
+
+statementgroup,,,^
+ '',statement^*>
+ 'end'.,*
+ 'else'.,*
+ ';',->
+ 
+{$gramse}
+then0,then2,handlethen0,
+ '',statementgroup^*
+then2,,,handleendexpected
+ ${whitespace}
+ 'end',then2a-
+ 'else'.,else-
+then2a,,,handlethen2
+else,else1,handleelse0,
+ '',statementgroup^*
+else1,,,handleendexpected
+ ${whitespace}
+ 'end',else1a-
+else1a,,,handleelse
+{$}
+
 
 while,whiledo,handlewhilestart,
  '',exp^*
@@ -637,6 +660,12 @@ fordo,,,handledoexpected
 forbody,,handleforheader,handleforend*
  '',statementstack^*
 
+casestatementgroup,,handlecasestatementgroupstart,^
+ '',statement^*>
+ 'end'.,*
+ 'else'.,*
+ ';',->
+
 case,caseof,handlecasestart,
  '',exp^*
 caseof,,handlecaseexpression,handlecase*
@@ -650,8 +679,15 @@ casebranch,casebranch1,handlecasebranch1entry,
 casebranch1,,,handlecolonexpected
  ${whitespace}
  ':',casebranch2-*
+{$grapas}
 casebranch2,casebranch3,handlecasebranchentry,*
  '',statementstack^*
+{$}
+{$gramse}
+casebranch2,casebranch2a,handlecasebranchentry,*
+ '',casestatementgroup^*
+casebranch2a,,handlecasebranch,
+{$}
 casebranch3,casebranch,handlecasebranch,
  ${whitespace}
  ';',casebranch-

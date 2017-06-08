@@ -51,6 +51,7 @@ procedure handlecasebranch1entry();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
+procedure handlecasestatementgroupstart();
 
 procedure handlelabeldef();
 procedure handlelabel();
@@ -119,7 +120,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('THEN0');
 {$endif}
- conditionalcontrolop(oc_if);
+ with info do begin
+  conditionalcontrolop(oc_if);
+//  s.stacktop:= s.stackindex;
+ end;
 end;
 (*
 procedure handlethen1();
@@ -833,6 +837,16 @@ begin
  end;
 end;
 
+procedure handlecasestatementgroupstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASESTATEMENTGROUPSTART');
+{$endif}
+ with info do begin
+  contextstack[s.stackindex].d.kind:= ck_caseblock;
+ end;
+end;
+
 procedure handlelabel();
 var
  po1: plabeldefdataty;
@@ -851,7 +865,12 @@ begin
   potop:= @contextstack[s.stacktop];
   with potop^ do begin
    if d.kind <> ck_label then begin
-    handlesemicolonexpected();
+    if contextstack[contextstack[s.stackindex].parent].d.kind = 
+                                                 ck_caseblock then begin
+    end
+    else begin
+     handlesemicolonexpected();
+    end;
    end
    else begin
     po1:= ele.eledataabs(d.dat.lab);

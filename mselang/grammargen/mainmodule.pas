@@ -476,6 +476,7 @@ begin
    conditionlevel:= 0;
    disabled:= false;
    tokendefs:= nil;
+   contexts:= nil;
    grammarstream.position:= 0;
    macrolist1.clear;
    line:= 0;

@@ -25,6 +25,7 @@ type
  compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
  compilerswitchesty = set of compilerswitchty;
  rtlunitty = (rtl_system,rtl_base,rtl_fpccompatibility);
+ dialectty = (dia_none,dia_pas,dia_mse);
  
 const
  defaultcompilerswitches = [];
@@ -168,7 +169,7 @@ type
                   ck_recorddef,ck_recordcase,
                   ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
-                  ck_paramdef,ck_params,ck_index,ck_casebranch);
+                  ck_paramdef,ck_params,ck_index,ck_casebranch,ck_caseblock);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
                     sdk_boolean,
@@ -737,6 +738,7 @@ type
  
  savedparseinfoty = record
   filename: filenamety;
+  dialect: dialectty;
   currentscopemeta: metavaluety;
   input: string;
   source: sourceinfoty;

@@ -66,6 +66,8 @@ var
  intfparsedchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
+function defaultdialect(const afilename: filenamety): dialectty;
+
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 function getunitfile(const aunit: punitinfoty;
                                         const aname: filenamety): boolean;
@@ -102,6 +104,7 @@ procedure handleafterimpluses();
 procedure handleimplementation();
 procedure handleinclude();
 
+procedure handlemode();
 procedure handlecompilerswitchentry();
 procedure setcompilerswitch();
 procedure handlelongcompilerswitchentry();
@@ -537,6 +540,40 @@ begin
  end;
 end;
 
+procedure handlemode();
+var
+ dialect: dialectty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('MODE');
+{$endif}
+ with info do begin
+  if (s.stacktop < 2) or 
+    (contextstack[s.stackindex-2].context <> 
+                               getstartcontext(s.dialect)) then begin
+   errormessage(err_dialectatbeginofunit,[],0);
+  end
+  else begin
+   dialect:= dia_none;
+   case contextstack[s.stacktop].d.ident.ident of
+    tk_mselang: begin
+     dialect:= dia_mse;
+    end;
+    tk_pascal: begin
+     dialect:= dia_pas;
+    end;
+    else begin
+     errormessage(err_unknowndialect,[]);
+    end;
+   end;
+   if dialect <> dia_none then begin
+    s.dialect:= dialect;
+    contextstack[s.stackindex-2].context:= getstartcontext(dialect);
+   end;
+  end;
+ end;
+end;
+
 procedure handlecompilerswitchentry();
 begin
 {$ifdef mse_debugparser}
@@ -743,6 +780,14 @@ begin
  end;
 end;
 }
+function defaultdialect(const afilename: filenamety): dialectty;
+begin
+ result:= dia_pas;
+ if fileext(afilename) = 'mla' then begin
+  result:= dia_mse;
+ end;
+end;
+
 function parseusesunit(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
@@ -752,7 +797,8 @@ begin
   writeln(filepath);
 {$endif}
 //todo: use mmap(), problem: no terminating 0.
-  result:= parseunit(readfiledatastring(filepath),aunit,true);
+  result:= parseunit(readfiledatastring(filepath),defaultdialect(filepath),
+                                                                   aunit,true);
  end;
 end;
 
