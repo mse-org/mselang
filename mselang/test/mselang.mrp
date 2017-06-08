@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=8
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=23
    (
    kind=1
@@ -3283,7 +3283,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B724584C
+    ao=An unhandled exception occured at $B72F984C
     ae=
     aec=123
     ie=0
@@ -8393,7 +8393,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=30
    (
    kind=1
@@ -9513,7 +9513,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,interface
+   a=0,665,4,interface
    c=10
     (
     kind=2
@@ -9605,8 +9605,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt
-    teststate=2
+    a=0,648,1,classinterfacevirt
+    teststate=1
     path=classinterfacevirt.mla
     comment=
     cc=${mlc}
@@ -9620,15 +9620,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt llvm
-    teststate=2
+    a=0,648,1,classinterfacevirt llvm
+    teststate=1
     path=classinterfacevirt.mla
     comment=
     cc=${mlc_llvm}
@@ -9643,8 +9643,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 13821 Segmentation fault      $2
-    aec=139
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -9735,7 +9735,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=interface/
    comment=
    cc=
@@ -10323,7 +10323,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -10833,7 +10833,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -10956,7 +10956,125 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=69
+rowstate=187
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

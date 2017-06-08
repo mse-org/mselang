@@ -451,6 +451,12 @@ subof,,subofentry,handleofobjectexpected*
  ${whitespace}
  'object'.,subheader3-
 
+
+{$ msepasx, mselang }
+
+
+{$}
+
 subheader3,,,
  ${whitespace}
  'external'.,!handleexternal-
@@ -554,7 +560,7 @@ assignment,,handleassignmententry,handleassignment
  '',exp^*
 label,,,handlelabel*>
 
-dummy,,,
+//dummy,,,
 
 statement,,,*
  ${whitespace}

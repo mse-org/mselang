@@ -37,7 +37,7 @@ object mainmo: tmainmo
         ak_pararg
         'p'
         (        )
-        [arf_mandatory]
+        [arf_mandatory, arf_filenames]
         ''
         'PASCALFILE'
         ''
