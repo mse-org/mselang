@@ -172,7 +172,7 @@ procedure deinit(const freeunitlist: boolean);
 
 implementation
 uses
- msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
+ msehash,filehandler,errorhandler,parser,msefileutils,msestream,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,
  unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler,

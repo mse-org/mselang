@@ -327,7 +327,7 @@ procedure dumpelements();
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler,
+ syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
  subhandler,
  identutils,llvmbitcodes,llvmlists,grammarglob;
    

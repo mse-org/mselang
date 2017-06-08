@@ -18,7 +18,7 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,handlerglob,opglob,opcode,grammar,listutils,grammarglob;
+ globtypes,parserglob,handlerglob,opglob,opcode,listutils,grammarglob;
  
 type
  managedtempitemty = record

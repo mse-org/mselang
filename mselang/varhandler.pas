@@ -30,7 +30,7 @@ procedure handlepointervar();
 
 implementation
 uses
- handlerutils,elements,errorhandler,handlerglob,opcode,grammar,llvmlists,
+ handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,
  identutils,msestrings;
  
 procedure handlevardefstart();

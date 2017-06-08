@@ -14,7 +14,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-unit grammar;
+unit grapas;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
@@ -901,11 +901,6 @@ var
                continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'label');
- dummyco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'dummy');
  statementco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -12741,7 +12736,6 @@ begin
  assignmentco.handleexit:= @handleassignment;
  labelco.branch:= nil;
  labelco.handleexit:= @handlelabel;
- dummyco.branch:= nil;
  statementco.branch:= @bstatement;
  statementblockco.branch:= @bstatementblock;
  statementblockco.next:= @statementblock1co;

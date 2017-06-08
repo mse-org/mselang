@@ -73,7 +73,7 @@ procedure createrecordmanagehandler(const atyp: elementoffsetty);
 implementation
 uses
  elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
+ opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
  segmentutils,__mla__internaltypes,grammarglob;
 
 procedure handletype();

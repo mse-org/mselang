@@ -85,7 +85,7 @@ procedure handleclassproperty();
 
 implementation
 uses
- parserglob,elements,handler,errorhandler,unithandler,grammar,handlerutils,
+ parserglob,elements,handler,errorhandler,unithandler,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler,
  identutils,valuehandler,grammarglob;
 {

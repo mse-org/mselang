@@ -35,7 +35,7 @@ procedure handleinterfaceparam();
 
 implementation
 uses
- handlerutils,handlerglob,errorhandler,elements,grammar,grammarglob;
+ handlerutils,handlerglob,errorhandler,elements,grammarglob;
 
 procedure handleinterfacedefstart();
 var

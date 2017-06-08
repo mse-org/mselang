@@ -57,11 +57,11 @@ procedure postlineinfo();
 
 implementation
 uses
- typinfo,grammar,handler,elements,sysutils,handlerglob,
+ typinfo,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit,msearrayutils,grammarglob;
+ identutils,compilerunit,msearrayutils,grammarglob,grapas;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -569,7 +569,7 @@ begin
    incstack();
    with contextstack[s.stackindex],d do begin
     kind:= ck_none;
-    context:= startcontext;
+    context:= grapas.startcontext;
     start.po:= pchar(input);
     debugstart:= start.po;
     start.line:= 0;

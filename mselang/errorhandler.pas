@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,grammar,elements,handlerglob,msetypes,msestrings,
+ globtypes,parserglob,elements,handlerglob,msetypes,msestrings,
                                                                msesystypes;
 
 type

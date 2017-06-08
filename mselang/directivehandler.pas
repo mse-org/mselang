@@ -48,7 +48,7 @@ procedure handleignoreddirective();
 implementation
 uses
  msestrings,elements,parserglob,opcode,opglob,handlerutils,errorhandler,
- parser,grammar,handlerglob,grammarglob;
+ parser,handlerglob,grammarglob;
  
 procedure handledumpelements();
 begin

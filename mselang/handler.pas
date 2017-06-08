@@ -173,7 +173,7 @@ procedure concatterms(const wanted,terms: pcontextitemty);
 
 implementation
 uses
- stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
+ stackops,msestrings,elements,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
  llvmlists,llvmbitcodes,identutils,__mla__internaltypes,elementcache,

@@ -99,7 +99,7 @@ procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
 
 implementation
 uses
- errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
+ errorhandler,msetypes,handlerutils,elements,opcode,unithandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser,
  valuehandler,elementcache,grammarglob;
