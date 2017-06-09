@@ -4,7 +4,7 @@ var
 begin
  repeat
   inc(i1);
-  if i1 <= 5 then begin
+  if i1 <= 5 then
    continue;
   end;
   inc(i2);

@@ -11,7 +11,7 @@ var
  po1: precty;
 begin
  po1:= @r1;
- if po1 = @r1 then begin
+ if po1 = @r1 then
   po1^.a:= 1;
   po1^.b:= 122;
  end;

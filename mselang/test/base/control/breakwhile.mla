@@ -2,7 +2,7 @@ program breakwhile;
 var
  i1: int32;
 begin
- while i1 < 10 do begin
+ while i1 < 10 do
   if i1 = 5 then
    break;
   end;

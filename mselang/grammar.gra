@@ -677,8 +677,17 @@ forstop,fordo,,
  '',exp^*
 fordo,,,handledoexpected
  'do'.,forbody-
+{$grapas}
 forbody,,handleforheader,handleforend*
  '',statementstack^*
+{$}
+{$gramse}
+forbody,forbodya,handleforheader,
+ '',statementgroup^*
+forbodya,,,handleendexpected
+ 'end'.,forbodyb-
+forbodyb,,,handleforend*
+{$}
 
 casestatementgroup,,handlecasestatementgroupstart,^
  '',statement^*>

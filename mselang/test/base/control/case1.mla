@@ -11,7 +11,7 @@ begin
 end;
 
 begin
- if (p(1) = 11) and (p(2) = 20) and (p(3) = 30) and (p(4) = 44) then begin
+ if (p(1) = 11) and (p(2) = 20) and (p(3) = 30) and (p(4) = 44) then
   exitcode:= p(5);
  end;
 end.

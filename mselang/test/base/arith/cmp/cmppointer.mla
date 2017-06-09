@@ -5,28 +5,26 @@ var
 
 begin
  inc(po1);
- if po1 > po2 then begin
+ if po1 > po2 then
   exitcode:= 1;
  end;
  dec(po2);
- if po1 > po2 then begin
+ if po1 > po2 then
   exitcode:= 1;
- end
- else begin
+ else
   exitcode:= exitcode+122;
  end;
  po1:= nil;
  po2:= nil;
- if exitcode = 123 then begin
+ if exitcode = 123 then
   inc(po2);
-  if po1 < po2 then begin
+  if po1 < po2 then
    exitcode:= 1;
   end;
   dec(po1);
-  if po1 < po2 then begin
+  if po1 < po2 then
    exitcode:= 1;
-  end
-  else begin
+  else
    exitcode:= exitcode+122;
   end;
  end;

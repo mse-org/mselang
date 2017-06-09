@@ -3,17 +3,15 @@ var
  i1: int32;
 begin
  i1:= 123;
- if i1 = 123 then begin
+ if i1 = 123 then
   exitcode:= 1;
- end
- else begin
+ else
   exitcode:= 2;
  end;
- if exitcode = 1 then begin
-  if i1 <> 123 then begin
+ if exitcode = 1 then
+  if i1 <> 123 then
    exitcode:= 3;
-  end
-  else begin
+  else
    exitcode:= 99;
   end;
  end;

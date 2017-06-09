@@ -1055,9 +1055,19 @@ var
                caption: 'fordo');
  forbodyco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'forbody');
+ forbodyaco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'forbodya');
+ forbodybco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'forbodyb');
  casestatementgroupco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5849,12 +5859,18 @@ const
    );
  bforbody: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementstackco); stack: nil; keys: (
+     dest: (context: @statementgroupco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bforbodya: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @forbodybco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcasestatementgroup: array[0..4] of branchty = (
@@ -13013,8 +13029,12 @@ begin
  fordoco.branch:= @bfordo;
  fordoco.handleexit:= @handledoexpected;
  forbodyco.branch:= @bforbody;
+ forbodyco.next:= @forbodyaco;
  forbodyco.handleentry:= @handleforheader;
- forbodyco.handleexit:= @handleforend;
+ forbodyaco.branch:= @bforbodya;
+ forbodyaco.handleexit:= @handleendexpected;
+ forbodybco.branch:= nil;
+ forbodybco.handleexit:= @handleforend;
  casestatementgroupco.branch:= @bcasestatementgroup;
  casestatementgroupco.handleentry:= @handlecasestatementgroupstart;
  caseco.branch:= @bcase;

@@ -2,9 +2,9 @@ program continuewhile;
 var
  i1,i2: int32;
 begin
- while i1 < 10 do begin
+ while i1 < 10 do
   inc(i1);
-  if i1 <= 5 then begin
+  if i1 <= 5 then
    continue;
   end;
   inc(i2);
