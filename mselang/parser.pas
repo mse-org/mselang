@@ -297,6 +297,7 @@ function pushcont({const info: pparseinfoty}): boolean;
 var
  int1: integer;
  bo1: boolean;
+ canceled: boolean;
 {$ifdef mse_debugparser}
  ch1: char;
 {$endif}
@@ -350,6 +351,7 @@ begin
    opmark.address:= opcount;
   end;
   int1:= s.stackindex;
+  canceled:= false;
   while s.pc^.branch = nil do begin //handle transition chain
    if s.pc^.next = nil then begin
     result:= false;  //open transition chain
@@ -362,7 +364,7 @@ begin
      exit;
     end;
     if s.stackindex <> int1 then begin
-     result:= false;
+     canceled:= true;
      break;
     end;
    end;
@@ -373,27 +375,26 @@ begin
      exit;
     end;
     if s.stackindex <> int1 then begin
-     result:= false;
+     canceled:= true;
      break;
     end;
    end;
-   if result then begin
-    if s.pc^.nexteat then begin
-     contextstack[s.stackindex].start:= s.source;
-    end;
-    if s.pc^.cutafter or s.pc^.cutbefore then begin
-     s.stacktop:= s.stackindex;
-    end;
-    s.pc:= s.pc^.next;
-    contextstack[s.stackindex].context:= s.pc;
+   if s.pc^.nexteat then begin
+    contextstack[s.stackindex].start:= s.source;
    end;
+   if s.pc^.cutafter or s.pc^.cutbefore then begin
+    s.stacktop:= s.stackindex;
+   end;
+   s.pc:= s.pc^.next;
+   contextstack[s.stackindex].context:= s.pc;
   end;
-  if not result then begin
+  if canceled then begin
    s.pc:= contextstack[s.stackindex].context; //changed by handler
+   result:= false;
   end;
 
 {$ifdef mse_debugparser1}
-  if not result then begin
+  if canceled then begin
    writetransitioninfo('>*'+s.pc^.caption); //switch context
   end
   else begin
@@ -413,7 +414,7 @@ begin
   end;
 {$endif}
   pb:= s.pc^.branch;
-  if result and (s.pc^.handleentry <> nil) then begin
+  if not canceled and (s.pc^.handleentry <> nil) then begin
    s.pc^.handleentry();
    if s.stopparser then begin
     result:= false;
