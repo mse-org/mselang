@@ -543,7 +543,7 @@ with3,,,handlewith3*
  '',statement*
 
 endcontext,,,
-blockend,,,handleblockend^*
+blockend,,,^*
 
 simplestatement,,,*
  '',statement0*
@@ -616,24 +616,25 @@ else,,,handleelse
 {$}
 
 statementgroup,,,^
+ ${whitespace}
  '',statement^*>
  'end'.,*
  'else'.,*
- ';',->
+ ';',-
  
 {$gramse}
 then0,then2,handlethen0,
  '',statementgroup^*
 then2,,,handleendexpected
  ${whitespace}
- 'end',then2a-
+ 'end'.,then2a-
  'else'.,else-
 then2a,,,handlethen2
 else,else1,handleelse0,
  '',statementgroup^*
 else1,,,handleendexpected
  ${whitespace}
- 'end',else1a-
+ 'end'.,else1a-
 else1a,,,handleelse
 {$}
 
@@ -643,8 +644,17 @@ while,whiledo,handlewhilestart,
 whiledo,,,handledoexpected
  ${whitespace}
  'do'.,whiledo0-
+{$grapas}
 whiledo0,,handlewhileexpression,handlewhileend
  '',statementstack^*
+{$}
+{$gramse}
+whiledo0,whiledo0a,handlewhileexpression,
+ '',statementgroup^*
+whiledo0a,,,handleendexpected
+ 'end'.,whiledo0b-
+whiledo0b,,,handlewhileend
+{$}
 
 repeat,,handlerepeatstart,handleuntilexpected
  ${whitespace}

@@ -82,7 +82,7 @@ procedure handlefrac();
 procedure handleexponent();
 
 procedure handlestatementend();
-procedure handleblockend();
+//procedure handleblockend();
 procedure handleidentstart();
 procedure handleident();
 procedure handleidentpathstart();
@@ -2101,7 +2101,7 @@ begin
   kind:= ck_end;
  end;
 end;
-
+(*
 procedure handleblockend();
 begin
 {$ifdef mse_debugparser}
@@ -2111,6 +2111,7 @@ begin
 //  s.stackindex:= s.stackindex-2;
 // end;
 end;
+*)
 (*
 procedure handleparamstart0();
 begin
