@@ -5870,13 +5870,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcasebranch3: array[0..8] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @caseelseco); stack: nil; 
-     keyword: $DBEB3159{'else'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @caseendco); stack: nil; 
-     keyword: $0B4387B2{'end'}),
+ bcasebranch3: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),

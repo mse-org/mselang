@@ -90,6 +90,7 @@ function insertitem1(const aopcode: opcodety; const stackoffset: integer;
                           var aopoffset: int32; //-1 -> at end
                           const ssaextension: integer = 0): popinfoty;
                               //increments aopoffset if not at end
+procedure cutopend(const aindex: int32);
 {
 function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
@@ -1071,39 +1072,17 @@ begin
  end;
 end;
 
-(* problematic because of existing later controlops
-
-function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
-                          const before: boolean;
-                          const ssaextension: integer = 0): popinfoty;
+procedure cutopend(const aindex: int32);
 begin
 {$ifdef mse_checkinternalerror}
- if not (aopcode in controlops) then begin
-  internalerror(ie_parser,'20151016E');
+ if (info.opcount < aindex) or (aindex < 0) then begin
+  internalerror(ie_handler,'20170609A');
  end;
 {$endif}
- result:= insertitem(aopcode,stackoffset,before,ssaextension);
- inc(info.s.ssa.blockindex);
- result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+ setsegmenttop(seg_op,getsegmentbase(seg_op)+aindex*sizeof(opinfoty));
+ info.opcount:= aindex;
 end;
-*)
-{
-function addcallitem(const aopcode: opcodety;
-                               const ssaextension: integer = 0): popinfoty;
-begin
- result:= additem(aopcode,ssaextension);
- if info.s.trystacklevel > 0 then begin
-  inc(info.s.ssa.blockindex);
- end;
-end;
-}
-{
-function getitem(const index: integer): popinfoty;
-begin
- result:= getsegmentbase(seg_op);
- inc(result,index);
-end;
-}
+
 function getoppo(const opindex: integer): popinfoty;
 begin
  result:= getsegmentpo(seg_op,opindex*sizeof(opinfoty));

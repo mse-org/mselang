@@ -559,8 +559,9 @@ statement1,,,handlestatementexit
  ':',labelcase-
  ',',checkcaselabel
  '..',checkcaselabel
-labelcase,label,handlecheckcaselabel,
-checkcaselabel,,handlecheckcaselabel,handlestatementexit
+labelcase,label,,handlecheckcaselabel
+checkcaselabel,checkcaselabel1,,handlecheckcaselabel
+checkcaselabel1,,,handlestatementexit
 {$}
 assignment,,handleassignmententry,handleassignment
  '',exp^*
@@ -693,17 +694,18 @@ casebranch2,casebranch3,handlecasebranchentry,*
  '',statementstack^*
 {$}
 {$gramse}
-casebranch2,casebranch2a,handlecasebranchentry,*
+casebranch2,casebranch3,handlecasebranchentry,*
  '',casestatementgroup^*
-casebranch2a,casebranch2,handlecasebranch2entry,
- 'else'.,caseelse-*
- 'end'.,caseend-
+//casebranch2a,casebranch2,handlecasebranch2entry,
+// 'else'.,caseelse-*
+// 'end'.,caseend-
+casebranchrestart,casebranch3,,
 {$}
 casebranch3,casebranch,handlecasebranch,
  ${whitespace}
  ';',casebranch-
- 'else'.,caseelse-*
- 'end'.,caseend-
+// 'else'.,caseelse-*
+// 'end'.,caseend-
 caseelse,checkcaseend,,
  'end'.,caseend-
  '',statementblock^*

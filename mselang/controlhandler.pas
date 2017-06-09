@@ -64,7 +64,8 @@ function checkloopcommand(): boolean; //true if ok
 implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
- opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob;
+ opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
+ gramse;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -633,6 +634,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_casebranch;
+  opmark.address:= opcount;
  end;
 end;
 
@@ -750,10 +752,42 @@ begin
 end;
 
 procedure handlecheckcaselabel();
+var
+ p1: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKCASELABEL');
 {$endif}
+ with info do begin
+  if contextstack[s.stackindex-2].d.kind = ck_caseblock then begin
+   s.stackindex:= s.stackindex - 3; //casebranch2
+   p1:= @contextstack[s.stackindex+2]; //statementstart
+   cutopend(p1^.opmark.address);
+   with contextstack[s.stackindex] do begin
+    start:= p1^.start; //restart case label
+    s.source:= start;
+    debugstart:= p1^.debugstart;
+   end;
+//   s.stacktop:= s.stackindex;
+  {
+   s.stackindex:= s.stackindex-3;
+   with contextstack[s.stackindex] do begin
+    if s.dialect <> dia_mse then begin
+     internalerror(ie_handler,'20170608B');
+    end;
+    context:= @gramse.casebranchrestartco;
+    s.pc:= context;
+    p1:= @contextstack[s.stackindex+2];
+    start:= p1^.start; //simplestatement
+    debugstart:= p1^.debugstart; //simplestatement
+    opmark:= p1^.opmark;
+    cutopend(opmark.address);
+    s.source:= start;
+   end;
+   s.stacktop:= s.stackindex;
+  }
+  end;
+ end;
 end;
 
 procedure handlecase(); //todo: use jumptable and the like

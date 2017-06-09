@@ -349,7 +349,7 @@ begin
    parent:= int1;
    opmark.address:= opcount;
   end;
-
+  int1:= s.stackindex;
   while s.pc^.branch = nil do begin //handle transition chain
    if s.pc^.next = nil then begin
     result:= false;  //open transition chain
@@ -361,6 +361,10 @@ begin
      result:= false;
      exit;
     end;
+    if s.stackindex <> int1 then begin
+     result:= false;
+     break;
+    end;
    end;
    if s.pc^.handleexit <> nil then begin
     s.pc^.handleexit(); //transition handler
@@ -368,33 +372,48 @@ begin
      result:= false;
      exit;
     end;
+    if s.stackindex <> int1 then begin
+     result:= false;
+     break;
+    end;
    end;
-   if s.pc^.nexteat then begin
-    contextstack[s.stackindex].start:= s.source;
+   if result then begin
+    if s.pc^.nexteat then begin
+     contextstack[s.stackindex].start:= s.source;
+    end;
+    if s.pc^.cutafter or s.pc^.cutbefore then begin
+     s.stacktop:= s.stackindex;
+    end;
+    s.pc:= s.pc^.next;
+    contextstack[s.stackindex].context:= s.pc;
    end;
-   if s.pc^.cutafter or s.pc^.cutbefore then begin
-    s.stacktop:= s.stackindex;
-   end;
-   s.pc:= s.pc^.next;
-   contextstack[s.stackindex].context:= s.pc;
   end;
+  if not result then begin
+   s.pc:= contextstack[s.stackindex].context; //changed by handler
+  end;
+
 {$ifdef mse_debugparser1}
-  ch1:= ' ';
-  if bf_setparentbeforepush in pb^.flags then begin
-   ch1:= '-';
-  end;
-  if bf_setparentafterpush in pb^.flags then begin
-   ch1:= '+';
-  end;
-  if bo1 then begin
-   writetransitioninfo('^'+ch1+s.pc^.caption); //push context
+  if not result then begin
+   writetransitioninfo('>*'+s.pc^.caption); //switch context
   end
   else begin
-   writetransitioninfo('>'+ch1+s.pc^.caption); //switch context
+   ch1:= ' ';
+   if bf_setparentbeforepush in pb^.flags then begin
+    ch1:= '-';
+   end;
+   if bf_setparentafterpush in pb^.flags then begin
+    ch1:= '+';
+   end;
+   if bo1 then begin
+    writetransitioninfo('^'+ch1+s.pc^.caption); //push context
+   end
+   else begin
+    writetransitioninfo('>'+ch1+s.pc^.caption); //switch context
+   end;
   end;
 {$endif}
   pb:= s.pc^.branch;
-  if (s.pc^.handleentry <> nil) then begin
+  if result and (s.pc^.handleentry <> nil) then begin
    s.pc^.handleentry();
    if s.stopparser then begin
     result:= false;

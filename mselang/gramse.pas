@@ -903,6 +903,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'checkcaselabel');
+ checkcaselabel1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'checkcaselabel1');
  assignmentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1073,11 +1078,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'casebranch2');
- casebranch2aco: contextty = (branch: nil; 
+ casebranchrestartco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'casebranch2a');
+               caption: 'casebranchrestart');
  casebranch3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5961,22 +5966,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcasebranch2a: array[0..2] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @caseelseco); stack: nil; 
-     keyword: $DBEB3159{'else'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @caseendco); stack: nil; 
-     keyword: $0B4387B2{'end'}),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bcasebranch3: array[0..8] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @caseelseco); stack: nil; 
-     keyword: $DBEB3159{'else'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @caseendco); stack: nil; 
-     keyword: $0B4387B2{'end'}),
+ bcasebranch3: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -12908,10 +12898,12 @@ begin
  statement1co.handleexit:= @handlestatementexit;
  labelcaseco.branch:= nil;
  labelcaseco.next:= @labelco;
- labelcaseco.handleentry:= @handlecheckcaselabel;
+ labelcaseco.handleexit:= @handlecheckcaselabel;
  checkcaselabelco.branch:= nil;
- checkcaselabelco.handleentry:= @handlecheckcaselabel;
- checkcaselabelco.handleexit:= @handlestatementexit;
+ checkcaselabelco.next:= @checkcaselabel1co;
+ checkcaselabelco.handleexit:= @handlecheckcaselabel;
+ checkcaselabel1co.branch:= nil;
+ checkcaselabel1co.handleexit:= @handlestatementexit;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;
@@ -12991,11 +12983,10 @@ begin
  casebranch1co.branch:= @bcasebranch1;
  casebranch1co.handleexit:= @handlecolonexpected;
  casebranch2co.branch:= @bcasebranch2;
- casebranch2co.next:= @casebranch2aco;
+ casebranch2co.next:= @casebranch3co;
  casebranch2co.handleentry:= @handlecasebranchentry;
- casebranch2aco.branch:= @bcasebranch2a;
- casebranch2aco.next:= @casebranch2co;
- casebranch2aco.handleentry:= @handlecasebranch2entry;
+ casebranchrestartco.branch:= nil;
+ casebranchrestartco.next:= @casebranch3co;
  casebranch3co.branch:= @bcasebranch3;
  casebranch3co.next:= @casebranchco;
  casebranch3co.handleentry:= @handlecasebranch;
