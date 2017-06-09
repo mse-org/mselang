@@ -998,6 +998,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'whiledo0');
+ whiledo0aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'whiledo0a');
+ whiledo0bco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'whiledo0b');
  repeatco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5494,14 +5504,49 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstatementgroup: array[0..4] of branchty = (
+ bstatementgroup: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0B4387B2{'end'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $DBEB3159{'else'}),
-   (flags: [bf_nt,bf_eat,bf_continue];
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
@@ -5529,15 +5574,11 @@ const
    );
  bthen2: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @then2aco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
+   (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @elseco); stack: nil; 
      keyword: $DBEB3159{'else'}),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @then2aco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['e']),
-    (kind: bkk_charcontinued; chars: ['n']),
-    (kind: bkk_char; chars: ['d']),
-    (kind: bkk_none; chars: [])
-    )),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5586,13 +5627,9 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  belse1: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @else1aco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['e']),
-    (kind: bkk_charcontinued; chars: ['n']),
-    (kind: bkk_char; chars: ['d']),
-    (kind: bkk_none; chars: [])
-    )),
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @else1aco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5683,12 +5720,18 @@ const
    );
  bwhiledo0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementstackco); stack: nil; keys: (
+     dest: (context: @statementgroupco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bwhiledo0a: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @whiledo0bco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  brepeat: array[0..7] of branchty = (
@@ -12889,7 +12932,6 @@ begin
  with3co.handleexit:= @handlewith3;
  endcontextco.branch:= nil;
  blockendco.branch:= nil;
- blockendco.handleexit:= @handleblockend;
  simplestatementco.branch:= @bsimplestatement;
  statement0co.branch:= @bstatement0;
  statement0co.next:= @statement1co;
@@ -12941,8 +12983,12 @@ begin
  whiledoco.branch:= @bwhiledo;
  whiledoco.handleexit:= @handledoexpected;
  whiledo0co.branch:= @bwhiledo0;
+ whiledo0co.next:= @whiledo0aco;
  whiledo0co.handleentry:= @handlewhileexpression;
- whiledo0co.handleexit:= @handlewhileend;
+ whiledo0aco.branch:= @bwhiledo0a;
+ whiledo0aco.handleexit:= @handleendexpected;
+ whiledo0bco.branch:= nil;
+ whiledo0bco.handleexit:= @handlewhileend;
  repeatco.branch:= @brepeat;
  repeatco.handleentry:= @handlerepeatstart;
  repeatco.handleexit:= @handleuntilexpected;

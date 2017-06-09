@@ -153,7 +153,7 @@ const
   (level: erl_error; message: 'Identifier expected'),
   (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"'),
   (level: erl_error; message: 'Illegal qualifier'),
-  (level: erl_error; message: 'Illegal expression'),
+  (level: erl_fatal; message: 'Illegal expression'),
   (level: erl_error; message: 'Variable identifier expexted'),
   (level: erl_error; message: 'Argument can''t be assigned to'),
   (level: erl_fatal; message: 'Illegal character %s'),

@@ -4,7 +4,7 @@ var
 begin
  bo1:= false;
  bo1:= not bo1;
- if bo1 then begin
+ if bo1 then
   exitcode:= 123;
  end;
 end.

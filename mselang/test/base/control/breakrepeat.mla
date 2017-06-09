@@ -3,7 +3,7 @@ var
  i1: int32;
 begin
  repeat
-  if i1 = 5 then begin
+  if i1 = 5 then
    break;
   end;
   inc(i1);

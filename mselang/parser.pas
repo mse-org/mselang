@@ -860,7 +860,9 @@ handlelab:
      if s.pc^.cutbefore then begin
       s.stacktop:= s.stackindex;
      end;
-     if (s.pc^.next = nil) and s.pc^.pop then begin
+     if (s.pc^.next = nil) and s.pc^.pop and 
+              not (popped and (bf_continue in 
+                      contextstack[s.stackindex].transitionflags)) then begin
       popparent();
      end;
     end

@@ -10,10 +10,10 @@ var
  bo1: bool1;
 begin
  bo1:= false and false and andfu() or true;
- if bo1 and (exitcode = 0) then begin
+ if bo1 and (exitcode = 0) then
  {$booleval on}
   bo1:= false and false and andfu() or true;
-  if not bo1 then begin
+  if not bo1 then
    exitcode:= 111;
   end;
  end;
