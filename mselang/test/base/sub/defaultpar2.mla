@@ -27,15 +27,15 @@ var
 
 begin
  i1:= testpro(1,2,3);
- if (i2 = 1) and (i1 = 1+(2-3)) then begin
+ if (i2 = 1) and (i1 = 1+(2-3)) then
   i1:= testpro(1,2);
-  if (i2 = 1) and (i1 = 1+2-42) then begin
+  if (i2 = 1) and (i1 = 1+2-42) then
    i1:= testpro(1);
-   if (i2 = 2) and (i1 = 1) then begin
+   if (i2 = 2) and (i1 = 1) then
     f1:= testpro(1.0,2);
-    if (i2 = 2) and (f1 = 1+2-42) then begin
+    if (i2 = 2) and (f1 = 1+2-42) then
      f1:= testpro(1.0,2,3);
-     if (i2 = 2) and (f1 = 1+2-3) then begin
+     if (i2 = 2) and (f1 = 1+2-3) then
       exitcode:= 123;
      end;
     end;

@@ -2,7 +2,7 @@ program stringconcat1;
 
 procedure test(p1: int32; const p: string8; p2: int32);
 begin
- if (p = 'abcdefabc') and (p1 = 1) and (p2 = 2) then begin
+ if (p = 'abcdefabc') and (p1 = 1) and (p2 = 2) then
   exitcode:= 120+p1+p2;
  end;
 end;
@@ -16,7 +16,7 @@ begin
  s3:= 'defabc';
  s4:= 'def'+s2;
  b1:=  'def'+s2 = 'defabc';
- if b1 and (s3 = 'def'+s2) and ('def'+s2 = 'def'+s2) and (s3 = s4) then begin
+ if b1 and (s3 = 'def'+s2) and ('def'+s2 = 'def'+s2) and (s3 = s4) then
   test(1,s2+'def'+s2,2);
  end;
 end.

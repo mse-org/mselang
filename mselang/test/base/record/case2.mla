@@ -13,7 +13,7 @@ begin
  r1.c:= 20;
  r1.w:= 3;
  exitcode:= r1.b+r1.d+r1.w;
- if sizeof(r1) <> 16 then begin
+ if sizeof(r1) <> 16 then
   exitcode:= 1;
  end;
 end.

@@ -865,9 +865,19 @@ var
                caption: 'with2');
  with3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'with3');
+ with3aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'with3a');
+ with3bco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'with3b');
  endcontextco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5175,13 +5185,19 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bwith3: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @statementco); stack: nil; keys: (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @statementgroupco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bwith3a: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @with3bco); stack: nil; 
+     keyword: $0B4387B2{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bsimplestatement: array[0..1] of branchty = (
@@ -12945,7 +12961,11 @@ begin
  with2co.handleentry:= @handlewith2entry;
  with2co.handleexit:= @handledoexpected;
  with3co.branch:= @bwith3;
- with3co.handleexit:= @handlewith3;
+ with3co.next:= @with3aco;
+ with3aco.branch:= @bwith3a;
+ with3aco.handleexit:= @handleendexpected;
+ with3bco.branch:= nil;
+ with3bco.handleexit:= @handlewith3;
  endcontextco.branch:= nil;
  blockendco.branch:= nil;
  simplestatementco.branch:= @bsimplestatement;

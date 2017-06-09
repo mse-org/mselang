@@ -4,10 +4,9 @@ var
 
 function test1(constref l,r: int32): int32;
 begin
- if @l = @i1 then begin
+ if @l = @i1 then
   result:= l+r;
- end
- else begin
+ else
   result:= 1;
  end;
 end;

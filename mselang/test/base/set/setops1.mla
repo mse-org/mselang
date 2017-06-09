@@ -7,11 +7,11 @@ var
  se1: se;
 begin
  se1:= se1 + [a,c]+[b];
- if se1 = [a,b,c] then begin
+ if se1 = [a,b,c] then
   se1:= se1*[a,b];
-  if se1 = [a,b] then begin
+  if se1 = [a,b] then
    se1:= se1 - [a];
-   if se1 = [b] then begin
+   if se1 = [b] then
     exitcode:= 123;
    end;
   end;

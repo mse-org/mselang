@@ -8,7 +8,7 @@ var
 begin
  s1:= [a,b,c];
  s2:= [b];
- if s1 >< s2 = [a,c] then begin
+ if s1 >< s2 = [a,c] then
   exitcode:= 123;
  end;
 end.

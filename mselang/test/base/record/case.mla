@@ -3,14 +3,15 @@ type
  recty = record
   aa: int32;
   bb: int32;
-  case i: int32 of
-   1,2: (a: int32;b:int32;d:record a,b: int32 end);
-   1: (e: int32;c: flo64;);
-   5: (f: record
-           case z: int32 of
-            1: (ww: int32;);
-            2: (rr,uu: int32;)
-          end;)
+  i: int32;
+  (a: int32;b:int32;d:record a,b: int32 end);
+  (e: int32;c: flo64;);
+  (f: record
+     z: int32;
+    (ww: int32;);
+    (rr,uu: int32;)
+   end
+  );
  end;
 
 var
@@ -20,7 +21,7 @@ begin
  r1.a:= 22;
  r1.d.b:= 100;
  exitcode:= r1.i+r1.e+r1.d.b;
- if sizeof(r1) <> 28 then begin
+ if sizeof(r1) <> 28 then
   exitcode:= 1;
  end;
 end.

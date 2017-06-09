@@ -13,14 +13,14 @@ type
 var
  r1: recty;
 begin
- with r1 do begin
+ with r1 do
   a:= 1;
   b:= 2;
   e:= 3;
   f:= 4;
   exitcode:= a+b+x+c2+(123-1-2-3-4);
  end;
- if sizeof(recty) <> 28 then begin
+ if sizeof(recty) <> 28 then
   exitcode:= 1;
  end;
 end.

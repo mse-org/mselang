@@ -2,7 +2,7 @@ program exittest;
 
 procedure test();
 begin
- if false then begin
+ if false then
   exit;
  end;
  exitcode:= 123;

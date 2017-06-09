@@ -7,17 +7,15 @@ var
 begin
  e1:= b;
  e2:= c;
- if e1 = e2 then begin
+ if e1 = e2 then
   exitcode:= 22;
- end
- else begin
-  if (e1 = b) and (e2 = c) then begin
+ else
+  if (e1 = b) and (e2 = c) then
    e1:= c;
-   if (e1 = e2) then begin
+   if (e1 = e2) then
     exitcode:= 123;
    end;
-  end
-  else begin
+  else
    exitcode:= 33;
   end;
  end;

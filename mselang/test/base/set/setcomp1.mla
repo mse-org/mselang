@@ -5,10 +5,10 @@ type
 var
  va,vb: se;
 begin
- if ([a] <= [a,b]) and not ([a,b] <= [b]) then begin
+ if ([a] <= [a,b]) and not ([a,b] <= [b]) then
   va:= [a];
   vb:= [a,b];
-  if (va <= vb) and not (vb <= va) then begin
+  if (va <= vb) and not (vb <= va) then
    exitcode:= 123;
   end;
  end;

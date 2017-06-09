@@ -30,17 +30,17 @@ end;
 
 begin
  testpro(int32(32));
- if testvar = 1 then begin
+ if testvar = 1 then
   testpro(8);
-  if testvar = 2 then begin
+  if testvar = 2 then
    testpro(card16(8);
-   if testvar = 3 then begin
+   if testvar = 3 then
     testpro(card32(33));
-    if testvar = 3 then begin
+    if testvar = 3 then
      testpro(123.8);
-     if testvar = 4 then begin
+     if testvar = 4 then
       testpro('abc');
-      if testvar = 5 then begin
+      if testvar = 5 then
        exitcode:= 123;
       end;
      end;

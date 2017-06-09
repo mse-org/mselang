@@ -4,7 +4,7 @@ var
 begin
  repeat
   i2:= 0;
-  while i2 < 3 do begin
+  while i2 < 3 do
    inc(exitcode);
    inc(i2);
   end;

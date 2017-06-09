@@ -10,7 +10,7 @@ begin
  v7:= 7;
  v8:= 8;
  exitcode:= (vval and v7f or v80) or (((vval shr v7) and v7f) shl v8)-684+123; //684
- if exitcode = 123 then begin
+ if exitcode = 123 then
   exitcode:= (val and $7f or $80) or (((val shr 7) and $7f) shl 8)-684+123; //684
  end;
 end.

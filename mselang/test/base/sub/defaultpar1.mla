@@ -9,13 +9,13 @@ var
  i1: int32;
 begin
  i1:= testpro();
- if i1 = 42 then begin
+ if i1 = 42 then
   i1:= testpro(10,6,89);
-  if i1 = 10 + 6 - 89 then begin
+  if i1 = 10 + 6 - 89 then
    i1:= testpro(32,67);
-   if i1 = 32 + 67 -42 then begin
+   if i1 = 32 + 67 -42 then
     i1:= testpro(33);
-    if i1 = 33 then begin
+    if i1 = 33 then
      exitcode:= 123;
     end;
    end;

@@ -14,7 +14,7 @@ type
 var
  r1: recty;
 begin
- with r1.c do begin
+ with r1.c do
   e:= 1;
   f:= 122;
  end;

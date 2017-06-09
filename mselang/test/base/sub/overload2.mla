@@ -43,10 +43,10 @@ var
 begin
  i1:= 123;
  testpro(i1);
- if (testvar = 4) and (flo1 = 123) then begin
+ if (testvar = 4) and (flo1 = 123) then
   s1:= 'abc';
   testpro(s1);
-  if (testvar = 5) then begin
+  if (testvar = 5) then
    exitcode:= 123;
    writeln(str1);
   end;

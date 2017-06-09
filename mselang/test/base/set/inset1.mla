@@ -9,11 +9,11 @@ var
  i1: int32;
 
 begin
- if (a in [a,b]) and not (c in [a,b]) then begin
+ if (a in [a,b]) and not (c in [a,b]) then
   e1:= a;
   se2:= [a,b];
   e3:= c;
-  if (e1 in se2) and not (e3 in se2) then begin
+  if (e1 in se2) and not (e3 in se2) then
    exitcode:= 123;
   end;
  end;

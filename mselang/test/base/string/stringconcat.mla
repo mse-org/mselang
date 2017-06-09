@@ -9,11 +9,11 @@ begin
  s1a:= 'abc';
  s1b:= 'abc';
  bo1:= 'abcabc' = s1+s2+s1;
- if bo1 then begin
+ if bo1 then
   bo1:= 'abcabc' = s1a+s2a+s1a;
-  if bo1 then begin
+  if bo1 then
    bo1:= 'abcabc' = s1b+s2b+s1b;
-   if bo1 then begin
+   if bo1 then
     exitcode:= 123;
    end;
   end;

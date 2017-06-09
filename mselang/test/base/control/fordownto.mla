@@ -6,11 +6,11 @@ var
 begin
  i2:= 0;
  i3:= 0;
- for i1:= -2 downto -5 do begin
+ for i1:= -2 downto -5 do
   inc(i2);
   i3:= i3+i1;
  end;
- if i2 = 4 then begin
+ if i2 = 4 then
   exitcode:= 123 + i3 - -14;
  end;
 end.

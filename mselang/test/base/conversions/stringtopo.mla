@@ -7,7 +7,7 @@ begin
  s1:= 'abcöä';
  p1:= pointer(s1);
  p2:= @s1[1];
- if p1 = p2 then begin
+ if p1 = p2 then
   exitcode:= 123;
  end;
 end.

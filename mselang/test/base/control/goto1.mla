@@ -6,8 +6,8 @@ label
 begin
  a:
  inc(exitcode);
- if exitcode = 2 then goto b;
- if exitcode < 3 then begin
+ if exitcode = 2 then goto b; end;
+ if exitcode < 3 then
   goto a;
  end;
 b:

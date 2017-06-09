@@ -8,7 +8,7 @@ var
  e1: g;
 begin
  e1:= b;
- if e1 = b then begin
+ if e1 = b then
   exitcode:= 123;
  end;
 end.

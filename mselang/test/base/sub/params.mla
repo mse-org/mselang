@@ -75,19 +75,19 @@ var
  t1: ttestcla;
  i1: itest;
 begin
- if test1(10,23) = 33 then begin
+ if test1(10,23) = 33 then
   test(1,2);
-  if exitcode = 3 then begin
+  if exitcode = 3 then
    t1:= ttestcla.create();
    t1.test1(5,9);
-   if exitcode = 24 then begin
+   if exitcode = 24 then
     exitcode:= t1.test2(13,3);
-    if exitcode = 26 then begin
+    if exitcode = 26 then
      i1:= itest(t1);
      i1.test1(13,17);
-     if exitcode = 40 then begin
+     if exitcode = 40 then
       t1.test3(5,9);
-      if exitcode = 24 then begin
+      if exitcode = 24 then
        exitcode:= t1.test4(100,13);
       end;
      end;

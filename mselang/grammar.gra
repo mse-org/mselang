@@ -539,8 +539,17 @@ with2,,handlewith2entry,handledoexpected*
  ${whitespace}
  ',',with1-
  'do'.,with3-
+{$grapas}
 with3,,,handlewith3*
  '',statement*
+{$}
+{$gramse}
+with3,with3a,,
+ '',statementgroup^*
+with3a,,,handleendexpected*
+ 'end'.,with3b-
+with3b,,,handlewith3*
+{$}
 
 endcontext,,,
 blockend,,,^*

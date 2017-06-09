@@ -14,7 +14,7 @@ begin
 end;
 
 begin
- if sin(0) = 0 then begin
+ if sin(0) = 0 then
   exitcode:= 123;
  end;
 end.

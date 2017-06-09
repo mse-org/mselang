@@ -5,7 +5,7 @@ type
 
 procedure test(p: array of int32);
 begin
- if (p[1] = 2) and (high(p) = 2) and (length(p) = 3) then begin
+ if (p[1] = 2) and (high(p) = 2) and (length(p) = 3) then
   exitcode:= 123;
  end;
 end;

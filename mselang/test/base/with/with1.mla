@@ -8,7 +8,7 @@ type
 var
  r1: recty;
 begin
- with r1 do begin
+ with r1 do
   a:= 1;
   b:= 122;
  end;
