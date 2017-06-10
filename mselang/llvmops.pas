@@ -5035,14 +5035,16 @@ const
 procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 var
  endpo: pointer;
+ startpo: popinfoty;
  lab: shortstring;
- opnum: int32;
+// opnum: int32;
 begin
  bcstream:= atarget;
  codestarted:= false;
  stop:= false;
  ismain:= amain;
  pc:= getsegmentbase(seg_op);
+ startpo:= pc; //for debugging
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  if amain then begin
   inc(pc,startupoffset);

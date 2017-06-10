@@ -942,6 +942,7 @@ begin
    end;
   end;
   dec(s.stackindex,2);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -981,6 +982,7 @@ begin
    end;
   end;
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 

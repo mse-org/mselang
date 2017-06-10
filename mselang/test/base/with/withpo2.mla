@@ -14,7 +14,7 @@ var
 begin
  po1:= @r1;
  r1.d:= 13;
- with po1^.c do begin
+ with po1^.c do
   b:= nil;
   a:= 110;
  end;

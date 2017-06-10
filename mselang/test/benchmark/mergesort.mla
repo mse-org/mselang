@@ -30,34 +30,31 @@ begin
  result:= 0;
  pl:= pointer(l);
  pr:= pointer(r);
- if pl <> pr then begin
-  if pl = nil then begin
+ if pl <> pr then
+  if pl = nil then
    result:= -1;
-  end
-  else begin
-   if pr = nil then begin
+  else
+   if pr = nil then
     result:= 1;
-   end
-   else begin
+   else 
     i1:= length(string8(pointer(pl)));
     i2:= length(string8(pointer(pr)));
-    if i1 < i2 then begin
+    if i1 < i2 then
      pe:= pl+i1;
-     while pl < pe do begin
+     while pl < pe do
       c:= pl^-pr^;
-      if c <> 0 then begin
+      if c <> 0 then
        result:= c;
        exit;
       end;
       inc(pl);
       inc(pr);
      end;
-    end
-    else begin
+    else
      pe:= pr+i1;
-     while pr < pe do begin
+     while pr < pe do
       c:= pl^-pr^;
-      if c <> 0 then begin
+      if c <> 0 then
        result:= c;
        exit;
       end;
@@ -87,24 +84,24 @@ begin
  destpo:= pointer(ar1);
  step:= 1;
  acount:= length(dest);
- while step < acount do begin
+ while step < acount do
   d:= destpo;
   l:= sourcepo;
   r:= sourcepo + step;
   stopl:= r;
   stopr:= r+step;
   stops:= sourcepo + acount;
-  if stopr > stops then begin
+  if stopr > stops then
    stopr:= stops;
   end;
-  while true do begin //runs
-   while true do begin //steps
-    while compare(l^,r^) <= 0 do begin //merge from left
+  while true do //runs
+   while true do //steps
+    while compare(l^,r^) <= 0 do //merge from left
      d^:= l^;
      inc(l);
      inc(d);
-     if l = stopl then begin
-      while r <> stopr do begin
+     if l = stopl then
+      while r <> stopr do
        d^:= r^;   //copy rest
        inc(d);
        inc(r);
@@ -112,12 +109,12 @@ begin
       goto endstep;
      end;
     end;
-    while compare(l^,r^) > 0 do begin //merge from right;
+    while compare(l^,r^) > 0 do //merge from right;
      d^:= r^;
      inc(r);
      inc(d);
-     if r = stopr then begin
-      while l <> stopl do begin
+     if r = stopr then
+      while l <> stopl do
        d^:= l^;   //copy rest
        inc(d);
        inc(l);
@@ -127,21 +124,21 @@ begin
     end;
    end;
 endstep:
-   if stopr = stops then begin
+   if stopr = stops then
     break;  //run finished
    end;
    l:= stopr; //next step
    r:= l + step;
-   if r >= stops then begin
+   if r >= stops then
     r:= stops-1;
    end;
-   if r = l then begin
+   if r = l then
     d^:= l^;
     break;
    end;
    stopl:= r;
    stopr:= r + step;
-   if stopr > stops then begin
+   if stopr > stops then
     stopr:= stops;
    end;
   end;
@@ -150,7 +147,7 @@ endstep:
   destpo:= d;
   step:= step*2;
  end;
- if sourcepo <> pointer(dest) then begin
+ if sourcepo <> pointer(dest) then
   dest:= ar1;
  end;
 end;
@@ -158,7 +155,7 @@ end;
 
 function mwcnoise(var state: mwcinfoty): card32;
 begin
- with state do begin
+ with state do
   fz:= 36969 * (fz and $ffff) + (fz shr 16);
   fw:= 18000 * (fw and $ffff) + (fw shr 16);
   result:= fz shl 16 + fw;
@@ -175,16 +172,16 @@ begin
  mwc.fw:= defaultmwcseedw;
  mwc.fz:= defaultmwcseedz;
  setlength(ar1,stringcount);
- for i1:= 0 to high(ar1) do begin
+ for i1:= 0 to high(ar1) do
   mwcnoise(mwc);
   setlength(ar1[i1],card8(mwcnoise(mwc)));
-  for i2:= 1 to length(ar1[i1]) do begin
+  for i2:= 1 to length(ar1[i1]) do
    ch1:= char8(card8(((mwcnoise(mwc) and $ff) * 95) div 255 + 32)); //32..127
    ar1[i1][i2]:= ch1;
   end;
  end;
  sortarray(pointerarty(pointer(ar1)),@comparestring);
- for i1:= 1 to high(ar1) do begin
+ for i1:= 1 to high(ar1) do
 {
   if ar1[i1] = '' then begin
    writeln(i1,':');
@@ -193,7 +190,7 @@ begin
    writeln(i1,':',card8(ar1[i1][1]),': ', ar1[i1]);
   end;
 }
-  if ar1[i1-1] > ar1[i1] then begin
+  if ar1[i1-1] > ar1[i1] then
    exitcode:= 1;
    exit;
   end;

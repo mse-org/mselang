@@ -121,24 +121,24 @@ var
 
 begin
  test(95,23);
- if exitcode = 118 then begin
-  if test2(83,369) = 33+83+369 then begin
+ if exitcode = 118 then
+  if test2(83,369) = 33+83+369 then
    t0:= tc.create();
    t0.test0();
-   if exitcode = 31 then begin
-    if t0.test00() = 120 then begin
+   if exitcode = 31 then
+    if t0.test00() = 120 then
      t0.test1(14,18);
-     if exitcode = 22+14+18+20 then begin
-      if t0.test2(62,92) = 33+62+92+20 then begin
+     if exitcode = 22+14+18+20 then
+      if t0.test2(62,92) = 33+62+92+20 then
        intf1:= itest(t0);
        intf1.test0();
-       if intf1.test00() = 120 then begin
+       if intf1.test00() = 120 then
        end;
-       if exitcode = 31 then begin
-        if intf1.test00() = 120 then begin
+       if exitcode = 31 then
+        if intf1.test00() = 120 then
          intf1.test1(278,1628);
-         if exitcode = 22+278+1628+20 then begin
-          if intf1.test2(14626,8) = 33+14626+8+20 then begin
+         if exitcode = 22+278+1628+20 then
+          if intf1.test2(14626,8) = 33+14626+8+20 then
            exitcode:= 123;
           end;
          end;
@@ -151,22 +151,22 @@ begin
    t0.destroy;
   end;
 
-  if exitcode = 123 then begin
+  if exitcode = 123 then
    exitcode:= 0;
    t1:= ttestcla.create();
    t1.test0();
-   if exitcode = 31 then begin
-    if t1.test00() = 120 then begin
+   if exitcode = 31 then
+    if t1.test00() = 120 then
      t1.test1(14,18);
-     if exitcode = 14+18+30 then begin
-      if t1.test2(62,92) = 62+92+30 then begin
+     if exitcode = 14+18+30 then
+      if t1.test2(62,92) = 62+92+30 then
        intf1:= itest(t1);
        intf1.test0();
-       if exitcode = 31 then begin
-        if intf1.test00() = 120 then begin
+       if exitcode = 31 then
+        if intf1.test00() = 120 then
          intf1.test1(278,1628);
-         if exitcode = 278+1628+30 then begin
-          if intf1.test2(14626,8) = 14626+8+30 then begin
+         if exitcode = 278+1628+30 then
+          if intf1.test2(14626,8) = 14626+8+30 then
            exitcode:= 123;
           end;
          end;

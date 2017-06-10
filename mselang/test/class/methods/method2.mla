@@ -32,8 +32,8 @@ begin
  c1:= tcla.create();
  meth1:= @c1.test;
 
- with methodty(meth1) do begin
-  if (code = @tcla.test) and (data = c1) then begin
+ with methodty(meth1) do
+  if (code = @tcla.test) and (data = c1) then
    exitcode:= 123;
   end;
  end;

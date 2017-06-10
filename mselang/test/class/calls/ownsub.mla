@@ -46,7 +46,7 @@ var
  c1: tcla;
 begin
  c1:= tcla.create();
- if c1.test1(100,20) = 123 then begin
+ if c1.test1(100,20) = 123 then
   c1.test2(100,20);
  end;
  c1.destroy();

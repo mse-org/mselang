@@ -56,12 +56,12 @@ begin
  t1:= ttest.create();
  t1.field:= @i1;
  t1.field^:= 123;
- if i1 = 123 then begin
+ if i1 = 123 then
   i1:= 0;
   t1.ffield:= nil;
   t1.field1:= @i1;
   t1.field1^:= 123;
-  if i1 = 123 then begin
+  if i1 = 123 then
    i1:= 0;
    t1.ffield:= nil;
    t1.field2[1,2]:= @i1;

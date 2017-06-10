@@ -3632,6 +3632,7 @@ begin
   ele.popscopelevel();
   finiblockcontext(0);
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
   releasepointertempaddress();
  end;
 end;

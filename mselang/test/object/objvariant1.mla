@@ -23,10 +23,10 @@ begin
  r1.b2:= 2;
  r1.d3:= 3;
  r1.e4:= 4;
- with r1 do begin
+ with r1 do
   exitcode:= a+c2+d2+e2 + 123-1-2-3-4;
  end;
- if sizeof(objty) <> 16 then begin
+ if sizeof(objty) <> 16 then
   exitcode:= 1;
  end;
 end.

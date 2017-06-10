@@ -7127,7 +7127,7 @@ const
   concattermsitemssa = 0;
     
 {$include optable.inc}
-
+var testvar: int32;
 function run(const asegments: segmentbuffersty): integer;
 var
  seg1: segmentty;
@@ -7149,7 +7149,9 @@ begin
  end;
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
+testvar:= 0;
  while not cpu.stop do begin
+inc(testvar);
   optable[cpu.pc^.op.op].proc();
   inc(cpu.pc);
  end;

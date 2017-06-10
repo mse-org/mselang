@@ -2,8 +2,8 @@ program objvariant;
 type
  objty = object
   f1: int32;
-  (f2: int32; f3: int32;);
-  (f4: int32;);
+  (f2: int32; f3: int32);
+  (f4: int32);
  end;
 var
  obj1: objty;
@@ -12,7 +12,7 @@ begin
  obj1.f4:= 20;
  obj1.f3:= 3;
  exitcode:= obj1.f1+obj1.f2+obj1.f3;
- if sizeof(obj1) <> 12 then begin
+ if sizeof(obj1) <> 12 then
   exitcode:= 1;
  end;
 end.

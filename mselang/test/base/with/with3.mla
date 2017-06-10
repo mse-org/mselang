@@ -9,9 +9,9 @@ var
 
 procedure test();
 begin
- with r1 do begin
+ with r1 do
   a:= 1;
-  with r2 do begin
+  with r2 do
    a:= 10;
    b:= 20;
   end;

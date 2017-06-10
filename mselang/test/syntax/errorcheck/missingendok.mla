@@ -1,5 +1,5 @@
 program missingend;
 begin
- if exitcode = 1 then begin
+ if exitcode = 1 then
  end;
 end.

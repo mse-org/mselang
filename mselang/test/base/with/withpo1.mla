@@ -18,7 +18,7 @@ begin
  po1:= @r1;
  r1.a:= 1;
  r1.b:= 2;
- with po1^.c do begin
+ with po1^.c do
   e:= 10;
   f:= 110;
  end;

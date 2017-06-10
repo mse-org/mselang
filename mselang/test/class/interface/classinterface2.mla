@@ -61,7 +61,7 @@ begin
  c1:= tcla2.create();
  i1:= itest(c1);
  exitcode:= i1.test1(100,19);
- if exitcode = 122 then begin
+ if exitcode = 122 then
   i1.test2(100,20);
  end;
  c1.destroy();

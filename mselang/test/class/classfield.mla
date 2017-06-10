@@ -41,11 +41,11 @@ begin
  c1:= ttest.create();
  c2:= @c1;
  c2^.test();
- if exitcode = 128 then begin
+ if exitcode = 128 then
   c1.ff.a:= 22;
   c1.ff.b:= 100;
   exitcode:= c1.ff.a+c1.ff.b+2;
-  if (exitcode = 124) and (c2^.ff.a+c2^.ff.b+2 = 124) then begin
+  if (exitcode = 124) and (c2^.ff.a+c2^.ff.b+2 = 124) then
    c1.ff.b:= 101;
   end;
  end;

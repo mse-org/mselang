@@ -11,7 +11,7 @@ var
  po1: precty;
 begin
  po1:= @r1;
- with po1^ do begin
+ with po1^ do
   a:= 1;
   b:= 122;
  end;

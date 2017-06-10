@@ -10,7 +10,7 @@ var
  meth2: meth1ty;
 
 begin
- with methodty(meth1) do begin
+ with methodty(meth1) do
   code:= pointer(100);
   data:= pointer(23);
  end;
