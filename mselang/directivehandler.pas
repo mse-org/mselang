@@ -53,10 +53,17 @@ uses
 procedure handledumpelements();
 begin
 {$ifdef mse_debugparser}
+ outhandle('DUMPELEMENTS');
  dumpelements();
 {$endif}
  with info do begin
+ {
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
+  with contextstack[s.stackindex] do begin
+   include(transitionflags,bf_continue);
+  end;
+ }
  end;
 end;
 

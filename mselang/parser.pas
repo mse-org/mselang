@@ -389,8 +389,13 @@ begin
    contextstack[s.stackindex].context:= s.pc;
   end;
   if canceled then begin
-   s.pc:= contextstack[s.stackindex].context; //changed by handler
-   result:= false;
+   with contextstack[s.stackindex] do begin
+    s.pc:= context; 
+       //changed by handler todo: unify with normal context termination
+    if not (bf_continue in transitionflags) then begin
+     result:= false;
+    end;
+   end;
   end;
 
 {$ifdef mse_debugparser1}

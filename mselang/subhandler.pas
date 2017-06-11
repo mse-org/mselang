@@ -715,7 +715,7 @@ begin
     internalerror(ie_handler,'20170509A');
    end;
   {$endif}
-   if sf_method in d.subdef.flags then begin
+   if d.subdef.flags * [sf_method,sf_ofobject] = [sf_method] then begin
     if not (contextstack[parent].d.kind in 
                         [ck_typetype,ck_objsubheader]) then begin
      errormessage(err_objectorclasstypeexpected,[]);
