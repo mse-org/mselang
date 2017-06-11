@@ -645,6 +645,7 @@ var
  po1: popinfoty;
  poexp,polast,poitem: pcontextitemty;
  expssa: int32;
+ si1: databitsizety;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
@@ -670,9 +671,11 @@ begin
    with poitem^ do begin
     if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
                           (d.dat.constval.kind in ordinaldatakinds) then begin
+     si1:= ptypedataty(ele.eledataabs(
+                              poexp^.d.dat.datatyp.typedata))^.h.datasize;
             //todo: signed/unsigned, use table
      if tf_lower in d.dat.datatyp.flags then begin
-      po1:= addcontrolitem(oc_cmpjmploimm4);
+      po1:= addcontrolitem(oc_cmpjmploimm);
       if int1 <> last-1 then begin
        po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
       end;
@@ -680,35 +683,68 @@ begin
      else begin
       if tf_upper in d.dat.datatyp.flags then begin
        if int1 = last then begin
-        po1:= addcontrolitem(oc_cmpjmpgtimm4);
+        po1:= addcontrolitem(oc_cmpjmpgtimm);
        end
        else begin
-        po1:= addcontrolitem(oc_cmpjmploeqimm4);
+        po1:= addcontrolitem(oc_cmpjmploeqimm);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end
       else begin
        if int1 = last then begin
-        po1:= addcontrolitem(oc_cmpjmpneimm4);
+        po1:= addcontrolitem(oc_cmpjmpneimm);
        end
        else begin
-        po1:= addcontrolitem(oc_cmpjmpeqimm4);
+        po1:= addcontrolitem(oc_cmpjmpeqimm);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end;
      end;
      opmark.address:= opcount-1;
+     po1^.par.cmpjmpimm.imm.datasize:= si1;
      if co_llvm in info.o.compileoptions then begin
 //      po1^.par.ssas1:= 
              //todo: cardinal
       with po1^.par do begin
-       cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
+       case si1 of
+        das_8: begin
+         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi8(
                                                       d.dat.constval.vinteger);
+        end;
+        das_16: begin
+         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi16(
+                                                      d.dat.constval.vinteger);
+        end;
+        das_32: begin
+         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
+                                                      d.dat.constval.vinteger);
+        end;
+        das_64: begin
+         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi64(
+                                                      d.dat.constval.vinteger);
+        end;
+        else begin
+         internalerror(ie_handler,'20170611A');
+        end;
+       end;
        ssas1:= expssa;
       end;
      end
      else begin
-      po1^.par.cmpjmpimm.imm.vint32:= d.dat.constval.vinteger;
+      case si1 of
+       das_8: begin
+        po1^.par.cmpjmpimm.imm.vint8:= d.dat.constval.vinteger;
+       end;
+       das_16: begin
+        po1^.par.cmpjmpimm.imm.vint16:= d.dat.constval.vinteger;
+       end;
+       das_32: begin
+        po1^.par.cmpjmpimm.imm.vint32:= d.dat.constval.vinteger;
+       end;
+       das_64: begin
+        po1^.par.cmpjmpimm.imm.vint64:= d.dat.constval.vinteger;
+       end;
+      end;
      end;
     end
     else begin
@@ -814,8 +850,8 @@ begin
      isrange:= tf_upper in d.dat.datatyp.flags;
     end;
    {$ifdef mse_checkinternalerror}
-    if not checkop(po1^.op,oc_cmpjmpneimm4) and 
-                         not checkop(po1^.op,oc_cmpjmpgtimm4) then begin
+    if not checkop(po1^.op,oc_cmpjmpneimm) and 
+                         not checkop(po1^.op,oc_cmpjmpgtimm) then begin
      internalerror(ie_handler,'20140530A');
     end;
    {$endif}
@@ -823,7 +859,7 @@ begin
      po1^.par.cmpjmpimm.destad.opaddress:= opoffset(opmark.address,-1);
      if isrange then begin
      {$ifdef mse_checkinternalerror}
-      if not checkop((po1-1)^.op,oc_cmpjmploimm4) then begin
+      if not checkop((po1-1)^.op,oc_cmpjmploimm) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}

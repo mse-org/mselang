@@ -709,8 +709,8 @@ begin
   ad1.address:= -pointersize; //pointer to var
   ad1.offset:= 0;
 //  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
-  typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
+   typ1:= ele.eledataabs(atyp); //can be changed because of added items
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
    sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
    if sub1^.calllinks <> 0 then begin

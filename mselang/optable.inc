@@ -108,16 +108,16 @@
   (ssa: gotofalsessa; proc: @gotofalseop; flags: []), 
 //oc_gototrue
   (ssa: gototruessa; proc: @gototrueop; flags: []), 
-//oc_cmpjmpneimm4
-  (ssa: cmpjmpneimm4ssa; proc: @cmpjmpneimm4op; flags: []), 
-//oc_cmpjmpeqimm4
-  (ssa: cmpjmpeqimm4ssa; proc: @cmpjmpeqimm4op; flags: []), 
-//oc_cmpjmploimm4
-  (ssa: cmpjmploimm4ssa; proc: @cmpjmploimm4op; flags: []), 
-//oc_cmpjmpgtimm4
-  (ssa: cmpjmpgtimm4ssa; proc: @cmpjmpgtimm4op; flags: []), 
-//oc_cmpjmploeqimm4
-  (ssa: cmpjmploeqimm4ssa; proc: @cmpjmploeqimm4op; flags: []), 
+//oc_cmpjmpneimm
+  (ssa: cmpjmpneimmssa; proc: @cmpjmpneimmop; flags: []), 
+//oc_cmpjmpeqimm
+  (ssa: cmpjmpeqimmssa; proc: @cmpjmpeqimmop; flags: []), 
+//oc_cmpjmploimm
+  (ssa: cmpjmploimmssa; proc: @cmpjmploimmop; flags: []), 
+//oc_cmpjmpgtimm
+  (ssa: cmpjmpgtimmssa; proc: @cmpjmpgtimmop; flags: []), 
+//oc_cmpjmploeqimm
+  (ssa: cmpjmploeqimmssa; proc: @cmpjmploeqimmop; flags: []), 
 
 //oc_writeln
   (ssa: writelnssa; proc: @writelnop; flags: []), 

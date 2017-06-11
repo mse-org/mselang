@@ -780,27 +780,27 @@ begin
  end;
 end;
 
-procedure cmpjmpneimm4op();
+procedure cmpjmpneimmop();
 begin
  compjmpimm(icmp_ne);
 end;
 
-procedure cmpjmpeqimm4op();
+procedure cmpjmpeqimmop();
 begin
  compjmpimm(icmp_eq);
 end;
 
-procedure cmpjmploimm4op();
+procedure cmpjmploimmop();
 begin
  compjmpimm(icmp_slt);
 end;
 
-procedure cmpjmpgtimm4op();
+procedure cmpjmpgtimmop();
 begin
  compjmpimm(icmp_sgt);
 end;
 
-procedure cmpjmploeqimm4op();
+procedure cmpjmploeqimmop();
 begin
  compjmpimm(icmp_sle);
 end;
@@ -4466,11 +4466,11 @@ const
   gotossa = 0;
   gotofalsessa = 0;
   gototruessa = 0;
-  cmpjmpneimm4ssa = 1;
-  cmpjmpeqimm4ssa = 1;
-  cmpjmploimm4ssa = 1;
-  cmpjmpgtimm4ssa = 1;
-  cmpjmploeqimm4ssa = 1;
+  cmpjmpneimmssa = 1;
+  cmpjmpeqimmssa = 1;
+  cmpjmploimmssa = 1;
+  cmpjmpgtimmssa = 1;
+  cmpjmploeqimmssa = 1;
 
   writelnssa = 1;
   writebooleanssa = 1;

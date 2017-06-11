@@ -140,11 +140,11 @@ type
   oc_goto,
   oc_gotofalse,
   oc_gototrue,
-  oc_cmpjmpneimm4,
-  oc_cmpjmpeqimm4,
-  oc_cmpjmploimm4,
-  oc_cmpjmpgtimm4,
-  oc_cmpjmploeqimm4,
+  oc_cmpjmpneimm,
+  oc_cmpjmpeqimm,
+  oc_cmpjmploimm,
+  oc_cmpjmpgtimm,
+  oc_cmpjmploeqimm,
 
   
   oc_writeln,
@@ -797,7 +797,7 @@ type
  swapstackty = record
   offset,size: int32;
  end;
-
+{
  ordimmty = record
   case integer of
    0: (llvm: llvmvaluety);
@@ -805,7 +805,7 @@ type
    2: (vcard32: card32);
    3: (vint32: int32);
  end;
-
+}
  labty = record
   opaddress: opaddressty; //first! dummy for oc_label 
   case integer of
@@ -820,7 +820,7 @@ type
  
  cmpjmpimmty = record
   destad: labty; //first!
-  imm: ordimmty;
+  imm: immty;
 //  destad: opaddressty
  end;
 {
@@ -1136,11 +1136,11 @@ const
  controlops = [
   oc_label,
   oc_goto,oc_gotofalse,oc_gototrue,
-  oc_cmpjmpneimm4,
-  oc_cmpjmpeqimm4,
-  oc_cmpjmploimm4,
-  oc_cmpjmpgtimm4,
-  oc_cmpjmploeqimm4,
+  oc_cmpjmpneimm,
+  oc_cmpjmpeqimm,
+  oc_cmpjmploimm,
+  oc_cmpjmpgtimm,
+  oc_cmpjmploeqimm,
   oc_if,
   oc_while,
   oc_until,
@@ -1252,8 +1252,8 @@ type
     memimm: memimmopty;
    );
   
-   oc_cmpjmpneimm4,oc_cmpjmpeqimm4,oc_cmpjmploimm4,oc_cmpjmploeqimm4,
-   oc_cmpjmpgtimm4: (
+   oc_cmpjmpneimm,oc_cmpjmpeqimm,oc_cmpjmploimm,oc_cmpjmploeqimm,
+   oc_cmpjmpgtimm: (
     cmpjmpimm: cmpjmpimmty;
    );
    oc_movesegreg0: (

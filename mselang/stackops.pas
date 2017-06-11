@@ -509,47 +509,162 @@ begin
  end;
 end;
 
-procedure cmpjmpneimm4op();
+procedure cmpjmpneimmop();
 begin
  with cpu.pc^.par do begin
-  if pint32(cpu.stack-sizeof(int32))^ <> cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+  case cmpjmpimm.imm.datasize of
+   das_8: begin
+    if pint8(cpu.stack-alignsize(sizeof(int8)))^ <> 
+                                   cmpjmpimm.imm.vint8 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_16: begin
+    if pint16(cpu.stack-alignsize(sizeof(int16)))^ <> 
+                                    cmpjmpimm.imm.vint16 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_32: begin
+    if pint32(cpu.stack-alignsize(sizeof(int32)))^ <> 
+                                    cmpjmpimm.imm.vint32 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_64: begin
+    if pint64(cpu.stack-alignsize(sizeof(int64)))^ <> 
+                                   cmpjmpimm.imm.vint64 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
   end;
  end;
 end;
 
-procedure cmpjmpeqimm4op();
+procedure cmpjmpeqimmop();
 begin
  with cpu.pc^.par do begin
-  if pint32(cpu.stack-sizeof(int32))^ = cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+  case cmpjmpimm.imm.datasize of
+   das_8: begin
+    if pint32(cpu.stack-alignsize(sizeof(int8)))^ = 
+                                      cmpjmpimm.imm.vint8 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_16: begin
+    if pint16(cpu.stack-alignsize(sizeof(int16)))^ = 
+                                     cmpjmpimm.imm.vint16 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_32: begin
+    if pint32(cpu.stack-alignsize(sizeof(int32)))^ = 
+                                     cmpjmpimm.imm.vint32 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_64: begin
+    if pint64(cpu.stack-alignsize(sizeof(int64)))^ = 
+                                     cmpjmpimm.imm.vint64 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
   end;
  end;
 end;
 
-procedure cmpjmploimm4op();
+procedure cmpjmploimmop();
 begin
  with cpu.pc^.par do begin
-  if pint32(cpu.stack-sizeof(int32))^ < cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+  case cmpjmpimm.imm.datasize of
+   das_8: begin
+    if pint32(cpu.stack-alignsize(sizeof(int8)))^ < 
+                                       cmpjmpimm.imm.vint8 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_16: begin
+    if pint16(cpu.stack-alignsize(sizeof(int16)))^ < 
+                                      cmpjmpimm.imm.vint16 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_32: begin
+    if pint32(cpu.stack-alignsize(sizeof(int32)))^ < 
+                                      cmpjmpimm.imm.vint32 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_64: begin
+    if pint64(cpu.stack-alignsize(sizeof(int64)))^ < 
+                                     cmpjmpimm.imm.vint64 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
   end;
  end;
 end;
 
-procedure cmpjmploeqimm4op();
+procedure cmpjmploeqimmop();
 begin
  with cpu.pc^.par do begin
-  if pint32(cpu.stack-sizeof(int32))^ <= cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+  case cmpjmpimm.imm.datasize of
+   das_8: begin
+    if pint8(cpu.stack-alignsize(sizeof(int8)))^ <= 
+                                    cmpjmpimm.imm.vint8 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_16: begin
+    if pint16(cpu.stack-alignsize(sizeof(int16)))^ <= 
+                                    cmpjmpimm.imm.vint16 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_32: begin
+    if pint32(cpu.stack-alignsize(sizeof(int32)))^ <= 
+                                    cmpjmpimm.imm.vint32 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_64: begin
+    if pint64(cpu.stack-alignsize(sizeof(int64)))^ <= 
+                                    cmpjmpimm.imm.vint64 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
   end;
  end;
 end;
 
-procedure cmpjmpgtimm4op();
+procedure cmpjmpgtimmop();
 begin
  with cpu.pc^.par do begin
-  if pint32(cpu.stack-sizeof(int32))^ > cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+  case cmpjmpimm.imm.datasize of
+   das_8: begin
+    if pint8(cpu.stack-alignsize(sizeof(int8)))^ > 
+                                    cmpjmpimm.imm.vint8 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_16: begin
+    if pint16(cpu.stack-alignsize(sizeof(int16)))^ > 
+                                   cmpjmpimm.imm.vint16 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_32: begin
+    if pint32(cpu.stack-alignsize(sizeof(int32)))^ > 
+                                   cmpjmpimm.imm.vint32 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
+   das_64: begin
+    if pint64(cpu.stack-alignsize(sizeof(int64)))^ > 
+                                   cmpjmpimm.imm.vint64 then begin
+     cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
+    end;
+   end;
   end;
  end;
 end;
@@ -6561,11 +6676,11 @@ const
   gotossa = 0;
   gotofalsessa = 0;
   gototruessa = 0;
-  cmpjmpneimm4ssa = 0;
-  cmpjmpeqimm4ssa = 0;
-  cmpjmploimm4ssa = 0;
-  cmpjmpgtimm4ssa = 0;
-  cmpjmploeqimm4ssa = 0;
+  cmpjmpneimmssa = 0;
+  cmpjmpeqimmssa = 0;
+  cmpjmploimmssa = 0;
+  cmpjmpgtimmssa = 0;
+  cmpjmploeqimmssa = 0;
 
   writelnssa = 0;
   writebooleanssa = 0;

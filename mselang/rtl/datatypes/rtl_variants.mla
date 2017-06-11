@@ -7,6 +7,9 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
+//
+//under construction
+//
 unit rtl_variants;
 interface
 
@@ -50,27 +53,27 @@ const
 
 type  
   variantty = object [nozeroinit]
-   vtype: card16;
-   (res1,res2,res3: card16;
-    (vint8: int8);     //VT_I1
-    (vint16: int16);   //VT_I2
-    (vint32: int32);   //VT_I4
-    (vint64: int64);   //VT_I8
-    (vcard8: card8);   //VT_UI1
-    (vcard16: card16); //VT_UI2
-    (vcard32: card32); //VT_UI4
-    (vcard64: card64); //VT_UI8
-    (vflo32: flo32);   //VT_R4
-    (vflo64: flo64);   //VT_R8
-   );
-   (vbytes: array[0..13] of card8);
-   method ini() [ini];
-   method fini() [fini];
-   method tovariant(const avalue: int8) [operator=':='];
-   method tovalue(): int8 [operator=':='];
-//   method tovalue(): int16 [operator=':='];
-//   method tovalue(): int32 [operator=':='];
-//   method tovalue(): int64 [operator=':='];
+    vtype: card16;
+    (res1,res2,res3: card16;
+     (vint8: int8);     //VT_I1
+     (vint16: int16);   //VT_I2
+     (vint32: int32);   //VT_I4
+     (vint64: int64);   //VT_I8
+     (vcard8: card8);   //VT_UI1
+     (vcard16: card16); //VT_UI2
+     (vcard32: card32); //VT_UI4
+     (vcard64: card64); //VT_UI8
+     (vflo32: flo32);   //VT_R4
+     (vflo64: flo64);   //VT_R8
+    );
+    (vbytes: array[0..13] of card8);
+    method ini() [ini];
+    method fini() [fini];
+    method tovariant(const avalue: int8) [operator=':='];
+    method tovalue(): int8 [operator=':='];
+    method tovalue(): int16 [operator=':='];
+    method tovalue(): int32 [operator=':='];
+    method tovalue(): int64 [operator=':='];
   end;
 
 implementation
@@ -108,6 +111,70 @@ begin
    result:= vint32;
   VT_I8,VT_UI8: 
    result:= vint64;
+  VT_R4:
+   result:= truncint32(vflo32);
+  VT_R8:
+   result:= truncint32(vflo64);
+  else
+   tovalueerror(VT_I1);
+ end;
+end;
+
+method variantty.tovalue(): int16;
+begin
+ case vtype of
+  VT_I1,VT_UI1: 
+   result:= vint8;
+  VT_I2,VT_UI2: 
+   result:= vint16;
+  VT_I4,VT_UI4: 
+   result:= vint32;
+  VT_I8,VT_UI8: 
+   result:= vint64;
+  VT_R4:
+   result:= truncint32(vflo32);
+  VT_R8:
+   result:= truncint32(vflo64);
+  else
+   tovalueerror(VT_I2);
+ end;
+end;
+
+method variantty.tovalue(): int32;
+begin
+ case vtype of
+  VT_I1,VT_UI1: 
+   result:= vint8;
+  VT_I2,VT_UI2: 
+   result:= vint16;
+  VT_I4,VT_UI4: 
+   result:= vint32;
+  VT_I8,VT_UI8: 
+   result:= vint64;
+  VT_R4:
+   result:= truncint32(vflo32);
+  VT_R8:
+   result:= truncint32(vflo64);
+  else
+   tovalueerror(VT_I4);
+ end;
+end;
+
+method variantty.tovalue(): int64;
+begin
+ case vtype of
+  VT_I1,VT_UI1: 
+   result:= vint8;
+  VT_I2,VT_UI2: 
+   result:= vint16;
+  VT_I4,VT_UI4: 
+   result:= vint32;
+  VT_I8,VT_UI8: 
+   result:= vint64;
+  VT_R4:
+   result:= truncint64(vflo32);
+  VT_R8:
+   result:= truncint64(vflo64);
   else
    tovalueerror(VT_I8);
  end;
