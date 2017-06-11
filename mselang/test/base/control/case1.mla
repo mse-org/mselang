@@ -1,6 +1,6 @@
 program case1;
 
-function p(p1: int32): int32;
+procedure p(p1: int32): int32;
 begin
  case p1 of
   1: result:= 11;

@@ -81,40 +81,40 @@ const
  tk_procedure = $0F64AEDF;
  tk_function = $1EC95DBE;
  tk_method = $3D92BB7D;
- tk_sub = $7B2576FA;
- tk_initialization = $F64AEDF5;
- tk_finalization = $EC95DBEB;
- tk_constructor = $D92BB7D6;
- tk_destructor = $B2576FAC;
- tk_begin = $64AEDF59;
- tk_mode = $C95DBEB3;
- tk_dumpelements = $92BB7D66;
- tk_dumpopcode = $2576FACC;
- tk_abort = $4AEDF598;
- tk_stoponerror = $95DBEB31;
- tk_nop = $2BB7D662;
- tk_include = $576FACC5;
- tk_define = $AEDF598A;
- tk_undef = $5DBEB315;
- tk_ifdef = $BB7D662B;
- tk_ifndef = $76FACC56;
- tk_if = $EDF598AC;
- tk_else = $DBEB3159;
- tk_endif = $B7D662B3;
- tk_ifend = $6FACC566;
- tk_h = $DF598ACD;
- tk_inline = $BEB3159B;
- tk_on = $7D662B37;
- tk_off = $FACC566E;
- tk_default = $F598ACDD;
- tk_constref = $EB3159BB;
- tk_out = $D662B376;
- tk_override = $ACC566EC;
- tk_overload = $598ACDD8;
- tk_of = $B3159BB1;
- tk_object = $662B3762;
- tk_external = $CC566EC4;
- tk_forward = $98ACDD89;
+ tk_initialization = $7B2576FA;
+ tk_finalization = $F64AEDF5;
+ tk_constructor = $EC95DBEB;
+ tk_destructor = $D92BB7D6;
+ tk_begin = $B2576FAC;
+ tk_mode = $64AEDF59;
+ tk_dumpelements = $C95DBEB3;
+ tk_dumpopcode = $92BB7D66;
+ tk_abort = $2576FACC;
+ tk_stoponerror = $4AEDF598;
+ tk_nop = $95DBEB31;
+ tk_include = $2BB7D662;
+ tk_define = $576FACC5;
+ tk_undef = $AEDF598A;
+ tk_ifdef = $5DBEB315;
+ tk_ifndef = $BB7D662B;
+ tk_if = $76FACC56;
+ tk_else = $EDF598AC;
+ tk_endif = $DBEB3159;
+ tk_ifend = $B7D662B3;
+ tk_h = $6FACC566;
+ tk_inline = $DF598ACD;
+ tk_on = $BEB3159B;
+ tk_off = $7D662B37;
+ tk_default = $FACC566E;
+ tk_constref = $F598ACDD;
+ tk_out = $EB3159BB;
+ tk_override = $D662B376;
+ tk_overload = $ACC566EC;
+ tk_of = $598ACDD8;
+ tk_object = $B3159BB1;
+ tk_external = $662B3762;
+ tk_forward = $CC566EC4;
+ tk_sub = $98ACDD89;
  tk_finally = $3159BB13;
  tk_except = $62B37626;
  tk_do = $C566EC4C;
@@ -162,15 +162,15 @@ const
   'continue','self','b','booleval','internaldebug','nozeroinit','zeroinit',
   'virtual','end','afterconstruct','beforedestruct','ini','fini','operator',
   'operatorright','unit','program','interface','implementation','uses','type',
-  'const','var','label','class','procedure','function','method','sub',
+  'const','var','label','class','procedure','function','method',
   'initialization','finalization','constructor','destructor','begin','mode',
   'dumpelements','dumpopcode','abort','stoponerror','nop','include','define',
   'undef','ifdef','ifndef','if','else','endif','ifend','h','inline','on','off',
   'default','constref','out','override','overload','of','object','external',
-  'forward','finally','except','do','with','case','while','repeat','for','try',
-  'raise','goto','then','until','to','downto','set','record','array','private',
-  'protected','public','published','property','read','write','div','mod','and',
-  'shl','shr','or','xor','in','not','is','as','inherited');
+  'forward','sub','finally','except','do','with','case','while','repeat','for',
+  'try','raise','goto','then','until','to','downto','set','record','array',
+  'private','protected','public','published','property','read','write','div',
+  'mod','and','shl','shr','or','xor','in','not','is','as','inherited');
 
  tokenids: array[0..130] of identty = (
   $00000000,$4FC6E54B,$9F8DCA96,$3F1B952D,$7E372A5B,$FC6E54B6,$F8DCA96C,

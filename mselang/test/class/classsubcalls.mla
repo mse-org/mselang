@@ -29,10 +29,10 @@ type
   public
    constructor create();
    destructor destroy();
-   procedure test1(a,b: int32); override;
-   function test2(a,b: int32): int32; override;
-   procedure test3(a,b: int32);
-   function test4(a,b: int32): int32;
+   method test1(a,b: int32); override;
+   method test2(a,b: int32): int32; override;
+   method test3(a,b: int32);
+   method test4(a,b: int32): int32;
  end;
 
 constructor tc.create();
@@ -44,29 +44,27 @@ destructor tc.destroy();
 begin
 end;
 
-procedure tc.test0();
+method tc.test0();
 begin
  exitcode:= 11+f1;
 end;
 
-function tc.test00(): int32;
+method tc.test00(): int32;
 begin
  result:= 100+f1;
 end;
 
-procedure tc.test1(a,b: int32);
+method tc.test1(a,b: int32);
 begin
  exitcode:= 22+a+b+f1;
 end;
 
-
-function tc.test2(a,b: int32): int32;
+method tc.test2(a,b: int32): int32;
 begin
  result:= 33+f1+a+b;
 end;
 
-
-function test2(a,b: int32): int32;
+procedure test2(a,b: int32): int32;
 begin
  result:= 33+a+b;
 end;
@@ -82,28 +80,27 @@ destructor ttestcla.destroy();
 begin
 end;
 
-procedure ttestcla.test1(a,b: int32);
+method ttestcla.test1(a,b: int32);
 begin
  exitcode:= a + b + f1+f2;
 end;
 
-function ttestcla.test2(a,b: int32): int32;
+method ttestcla.test2(a,b: int32): int32;
 begin
  result:= a + b + f1+f2;
 end;
 
-procedure ttestcla.test3(a,b: int32);
+method ttestcla.test3(a,b: int32);
 begin
  exitcode:= a + b + f1+f2;
 end;
 
-function ttestcla.test4(a,b: int32): int32;
+method ttestcla.test4(a,b: int32): int32;
 begin
  result:= a + b + f1+f2;
 end;
 
-
-function test1(a,b: int32): int32;
+procedure test1(a,b: int32): int32;
 begin
  result:= a + b;
 end;
@@ -112,7 +109,6 @@ procedure test(a,b: int32);
 begin
  exitcode:= a + b;
 end;
-
 
 var
  t0: tc;

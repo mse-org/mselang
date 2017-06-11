@@ -4,12 +4,12 @@ type
  ttest = class
   private
    ffield: int32;
-   function getfield(): int32;
+   method getfield(): int32;
   public
    constructor create();
    destructor destroy();
    property field: int32 read getfield write ffield;
-   procedure test();
+   method test();
  end;
 
 { ttest }
@@ -23,12 +23,12 @@ destructor ttest.destroy();
 begin
 end;
 
-function ttest.getfield(): int32;
+method ttest.getfield(): int32;
 begin
  result:= ffield;
 end;
 
-procedure ttest.test();
+method ttest.test();
 begin
  exitcode:= field;
 end;

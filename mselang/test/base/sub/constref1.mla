@@ -1,6 +1,6 @@
 program constref1;
 
-function test1(constref p0,p1,p2: int32): int32;
+procedure test1(constref p0,p1,p2: int32): int32;
 begin
  result:= p0+p1+p2;
 end;

@@ -2,7 +2,7 @@ program constref;
 var
  i1,i2: int32;
 
-function test1(constref l,r: int32): int32;
+procedure test1(constref l,r: int32): int32;
 begin
  if @l = @i1 then
   result:= l+r;

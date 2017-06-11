@@ -21,7 +21,7 @@ type
  pointerarty = array of pointer;
  arraysortcomparety = function (const l,r): int32;
 
-function comparestring(const l,r): int32;
+procedure comparestring(const l,r): int32;
 var
  pl,pr,pe: pcard8;
  c: int8;
@@ -152,8 +152,7 @@ endstep:
  end;
 end;
 
-
-function mwcnoise(var state: mwcinfoty): card32;
+procedure mwcnoise(var state: mwcinfoty): card32;
 begin
  with state do
   fz:= 36969 * (fz and $ffff) + (fz shr 16);

@@ -1,6 +1,6 @@
 program booleval1;
 
-function andfu(): bool1;
+procedure andfu(): bool1;
 begin
  result:= true;
  exitcode:= 123;

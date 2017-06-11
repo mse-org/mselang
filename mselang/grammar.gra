@@ -126,10 +126,15 @@ start2,noimplementation,handleafterintfuses,
  'var'.,var-*
  'label'.,labeldef-*
  'class'.,start2class-
+{$grapas}
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
+{$}
+{$gramse}
  'method'.,submethodheader-*^>
  'sub'.,subsubheader-*^>
+ 'procedure'.,subsubheader-*^>
+{$}
 start2class,start2,,
  ${whitespace}
  'procedure'.,subclassprocedureheader-*^
@@ -174,10 +179,15 @@ main1,,,handlemain
  'var'.,var-*>
  'label'.,labeldef-*>
  'class'.,main1class-
+{$grapas}
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+{$}
+{$gramse}
  'method'.,method-^*>
+ 'procedure'.,subsub-^*>
  'sub'.,subsub-^*>
+{$}
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
  'begin'.,progbegin-

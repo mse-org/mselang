@@ -2,8 +2,8 @@ program classinterface2;
 
 type
  itest = interface
-  function test1(a,b: int32): int32;
-  procedure test2(a,b: int32);
+  method test1(a,b: int32): int32;
+  method test2(a,b: int32);
  end;
 
  tc = class
@@ -15,14 +15,14 @@ type
   public
    constructor create();
    destructor destroy();
-   function test1(a,b: int32): int32 virtual;
-   procedure test2(a,b: int32) virtual;
+   method test1(a,b: int32): int32 virtual;
+   method test2(a,b: int32) virtual;
  end;
 
  tcla2 = class(tcla)
   public
-   function test1(a,b: int32): int32 override;
-   procedure test2(a,b: int32) override;
+   method test1(a,b: int32): int32 override;
+   method test2(a,b: int32) override;
  end;
 
 constructor tcla.create();
@@ -34,22 +34,22 @@ destructor tcla.destroy();
 begin
 end;
 
-function tcla.test1(a,b: int32): int32;
+method tcla.test1(a,b: int32): int32;
 begin
  result:= 11;
 end;
 
-procedure tcla.test2(a,b: int32);
+method tcla.test2(a,b: int32);
 begin
  exitcode:= 11;
 end;
 
-function tcla2.test1(a,b: int32): int32;
+method tcla2.test1(a,b: int32): int32;
 begin
  result:= a+b+f;//inherited test(a,b);
 end;
 
-procedure tcla2.test2(a,b: int32);
+method tcla2.test2(a,b: int32);
 begin
  exitcode:= a+b+f;//inherited test(a,b);
 end;

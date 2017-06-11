@@ -1,6 +1,6 @@
 program untypedconst;
 
-function test1(const l,r): int32;
+procedure test1(const l,r): int32;
 begin
  result:= int32(l) + int32(r);
 end;

@@ -1,6 +1,6 @@
 program writeinsub;
 
-function test: int32;
+procedure test: int32;
 begin 
  result:= 123;
  write(result,' ',result);

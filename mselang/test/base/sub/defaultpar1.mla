@@ -1,6 +1,6 @@
 program defaultpar1;
 
-function testpro(a,b,c: int32 = 42): int32;
+procedure testpro(a,b,c: int32 = 42): int32;
 begin
  result:= a+b-c;
 end;

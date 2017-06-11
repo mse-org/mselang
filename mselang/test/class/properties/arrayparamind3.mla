@@ -4,12 +4,12 @@ type
  ttest = class
   private
    ffield: int32;
-   procedure setfield(avalue: int32;i2: int32;i3:int32);
-   function getfield(a: int32; b: int32): int32;
+   method setfield(avalue: int32;i2: int32;i3:int32);
+   method getfield(a: int32; b: int32): int32;
   public
    constructor create();
    destructor destroy();
-   procedure test();
+   method test();
    property field[i2: int32;i3:int32]: int32 read getfield write setfield;
    property field1[i2,i3:int32]: int32 read getfield write setfield;
  end;
@@ -24,17 +24,17 @@ destructor ttest.destroy();
 begin
 end;
 
-procedure ttest.setfield(avalue: int32; i2: int32;i3:int32);
+method ttest.setfield(avalue: int32; i2: int32;i3:int32);
 begin
  self.ffield:= avalue*i2+i3;
 end;
 
-function ttest.getfield(a: int32; b: int32): int32;
+method ttest.getfield(a: int32; b: int32): int32;
 begin
  result:= ffield*a+b;
 end;
 
-procedure ttest.test();
+method ttest.test();
 begin
  field[10,3]:= 12;
  exitcode:= (field[2,33]-123-33);

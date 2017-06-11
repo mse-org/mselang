@@ -4,7 +4,7 @@ type
  ttest = class
   private
    ffield: int32;
-   function getfield: int32;
+   method getfield: int32;
   public
    constructor create();
    destructor destroy();
@@ -24,7 +24,7 @@ begin
 end;
 
 
-function ttest.getfield(): int32;
+method ttest.getfield(): int32;
 begin
  result:= ffield+1;
 end;

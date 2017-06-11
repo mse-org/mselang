@@ -3,19 +3,19 @@ program defaultpar2;
 var
  i2: int32;
 
-function testpro(a: int32): int32;
+procedure testpro(a: int32): int32;
 begin
  i2:= 2;
  result:= a;
 end;
 
-function testpro(a: int32; b,c: int32 = 42): int32;
+procedure testpro(a: int32; b,c: int32 = 42): int32;
 begin
  i2:= 1;
  result:= a+b-c;
 end;
 
-function testpro(a: flo64; b,c: int32 = 42): flo64;
+procedure testpro(a: flo64; b,c: int32 = 42): flo64;
 begin
  i2:= 2;
  result:= a+b-c;

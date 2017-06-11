@@ -68,9 +68,17 @@ type
    method fini() [fini];
    method tovariant(const avalue: int8) [operator=':='];
    method tovalue(): int8 [operator=':='];
+//   method tovalue(): int16 [operator=':='];
+//   method tovalue(): int32 [operator=':='];
+//   method tovalue(): int64 [operator=':='];
   end;
 
 implementation
+
+procedure tovalueerror(const atype: card16);
+begin
+ //todo
+end;
 
 method variantty.ini();
 begin
@@ -79,6 +87,7 @@ end;
 
 method variantty.fini();
 begin
+ //todo
 end;
 
 method variantty.tovariant(const avalue: int8);
@@ -90,10 +99,17 @@ end;
 
 method variantty.tovalue(): int8;
 begin
- if (vtype = VT_I1) or (vtype = VT_UI1) then begin
-  result:= vint8;
- end
- else begin
+ case vtype of
+  VT_I1,VT_UI1: 
+   result:= vint8;
+  VT_I2,VT_UI2: 
+   result:= vint16;
+  VT_I4,VT_UI4: 
+   result:= vint32;
+  VT_I8,VT_UI8: 
+   result:= vint64;
+  else
+   tovalueerror(VT_I8);
  end;
 end;
 

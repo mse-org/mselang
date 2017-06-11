@@ -1,6 +1,6 @@
 program pofunc;
 
-function test(p: int32): ^card8;
+procedure test(p: int32): ^card8;
 begin
  result:= pointer(p);
 end;

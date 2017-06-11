@@ -1,6 +1,6 @@
 program openarray6;
 
-function test(p1: int32;p: array of int32;p2: int32; p3: array of int32): int32;
+procedure test(p1: int32;p: array of int32;p2: int32; p3: array of int32): int32;
 begin
  result:= p1 + high(p) + p[1] + high(p3) + p3[3] + p2;
 end;

@@ -4,7 +4,7 @@ type
  enuty = (en_0,en_1,en_2);
  setty = set of enuty;
 
-function test(p: setty): int32;
+procedure test(p: setty): int32;
 begin
  result:= int32(p);
 end;

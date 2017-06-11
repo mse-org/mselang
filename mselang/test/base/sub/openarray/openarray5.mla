@@ -1,6 +1,6 @@
 program openarray5;
 
-function test(p: array of int32): int32;
+procedure test(p: array of int32): int32;
 begin
  result:= high(p)+p[2];
 end;

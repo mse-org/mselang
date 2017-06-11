@@ -5,7 +5,7 @@ begin
  exitcode:= exitcode + a;
 end;
 
-function tefu(a: int32): int32;
+procedure tefu(a: int32): int32;
 begin
  result:= 10*a;
 end;

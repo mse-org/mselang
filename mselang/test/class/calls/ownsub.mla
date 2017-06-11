@@ -7,10 +7,10 @@ type
   public
    constructor create();
    destructor destroy();
-   function test1(a,b: int32): int32;
-   procedure test2(a,b: int32);
-   function test0(a,b: int32): int32;
-   procedure test00(a,b: int32);
+   method test1(a,b: int32): int32;
+   method test2(a,b: int32);
+   method test0(a,b: int32): int32;
+   method test00(a,b: int32);
  end;
 
 constructor tcla.create();
@@ -22,22 +22,22 @@ destructor tcla.destroy();
 begin
 end;
 
-function tcla.test1(a,b: int32): int32;
+method tcla.test1(a,b: int32): int32;
 begin
  result:= test0(a,b);
 end;
 
-procedure tcla.test2(a,b: int32);
+method tcla.test2(a,b: int32);
 begin
  test00(a,b);
 end;
 
-function tcla.test0(a,b: int32): int32;
+method tcla.test0(a,b: int32): int32;
 begin
  result:= a+b+f;
 end;
 
-procedure tcla.test00(a,b: int32);
+method tcla.test00(a,b: int32);
 begin
  exitcode:= a+b+f;
 end;

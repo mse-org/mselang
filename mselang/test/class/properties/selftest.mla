@@ -4,8 +4,8 @@ type
  ttest = class
   private
    ffield: int32;
-   function getfield(): int32;
-   procedure setfield(avalue: int32);
+   method getfield(): int32;
+   method setfield(avalue: int32);
   public
    constructor create();
    destructor destroy();
@@ -24,17 +24,17 @@ destructor ttest.destroy();
 begin
 end;
 
-function ttest.getfield(): int32;
+method ttest.getfield(): int32;
 begin
  result:= self.ffield;
 end;
 
-procedure ttest.setfield(avalue: int32);
+method ttest.setfield(avalue: int32);
 begin
  self.ffield:= avalue;
 end;
 
-procedure ttest.test();
+method ttest.test();
 begin
  self.field:= self.ffield + 1;
  exitcode:= self.field;

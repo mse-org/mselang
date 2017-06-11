@@ -84,7 +84,7 @@ const
 //    fm_append
       o_rdwr or o_creat {or o_trunc});
 *)
-sub getopenmodes(amode: fileopenmodety): card32; //todo: use array
+function getopenmodes(amode: fileopenmodety): card32; //todo: use array
 begin
  result:= 0;
  case amode of 

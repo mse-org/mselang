@@ -7,7 +7,7 @@ type
   public
    constructor create();
    destructor destroy();
-   function test1(a,b: int32): int32; virtual;
+   method test1(a,b: int32): int32; virtual;
  end;
 
  tcla2 = class(tcla)
@@ -24,12 +24,12 @@ destructor tcla.destroy();
 begin
 end;
 
-function tcla.test1(a,b: int32): int32;
+method tcla.test1(a,b: int32): int32;
 begin
  result:= f+a+b;
 end;
 
-function tcla2.test1(a,b: int32): int32;
+method tcla2.test1(a,b: int32): int32;
 begin
  result:= inherited test1(a,b)-3;
 end;

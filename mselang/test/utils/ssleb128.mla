@@ -4,7 +4,7 @@ type
  ptrint = int32;
  pcard8 = ^card8;
 
-function readssleb128(var adata: pointer): ptrint;
+procedure readssleb128(var adata: pointer): ptrint;
 var
  po1: pcard8;
  shift,i1: int32;

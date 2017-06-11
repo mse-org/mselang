@@ -1,8 +1,21 @@
 unit unit1;
 interface
 type
- intabc = int32;
-var
- abc: int32;
+ objty = object
+  method test1();
+ end;
+
 implementation
+{$internaldebug on}
+
+procedure test();
+begin
+end;
+
+{$dumpelements}
+method objty.test1();
+begin
+ test();
+end;
+
 end.

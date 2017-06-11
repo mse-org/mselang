@@ -11,7 +11,7 @@ type
  end;
  precty = ^recty;
 
-function test(p: prec1ty): int32;
+procedure test(p: prec1ty): int32;
 begin
  p^.b:= 110;
 end;
