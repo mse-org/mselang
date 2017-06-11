@@ -628,36 +628,45 @@ begin
     firstnotfound:= 0;
    end
    else begin
-    result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+    if vik_implementation in visibility then begin
+     if ele.findchild(s.unitinfo^.implementationelement,idents.d[0],akinds,
+                                          visibility,eleres) then begin
+      result:= true;
+      firstnotfound:= 1;
+     end;
+    end;
     if not result then begin
-     result:= s.unitinfo^.usescache.find(idents,eleres,firstnotfound);
+     result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
      if not result then begin
-      ele2:= ele.elementparent;
-      for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
-       ele.elementparent:=
-         info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
-       result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
-       if result then begin
-        break;
-       end;
-      end;
+      result:= s.unitinfo^.usescache.find(idents,eleres,firstnotfound);
       if not result then begin
-       for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
+       ele2:= ele.elementparent;
+       for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
         ele.elementparent:=
-          info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
+          info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
         result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
         if result then begin
          break;
         end;
        end;
-      end;
-      if not result then begin
-       ele.elementparent:= info.systemelement;
-       result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
-      end;
-      ele.elementparent:= ele2;
-      if result then begin
-       s.unitinfo^.usescache.add(idents,eleres,firstnotfound);
+       if not result then begin
+        for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
+         ele.elementparent:=
+           info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
+         result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+         if result then begin
+          break;
+         end;
+        end;
+       end;
+       if not result then begin
+        ele.elementparent:= info.systemelement;
+        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+       end;
+       ele.elementparent:= ele2;
+       if result then begin
+        s.unitinfo^.usescache.add(idents,eleres,firstnotfound);
+       end;
       end;
      end;
     end;

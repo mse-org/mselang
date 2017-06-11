@@ -238,6 +238,14 @@ type
                  const akinds: elementkindsty;
                  avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
+{
+   function findchild(aparent: elementoffsetty; 
+                 const achildtree: identvecty;
+                 const akinds: elementkindsty;
+                 avislevel: visikindsty; 
+                 out element: elementoffsetty;
+                 out firstnotfound: int32): boolean;
+}
    function findchilddata(const aparent: elementoffsetty; 
                  const achildtree: array of identty;
                  const akinds: elementkindsty;

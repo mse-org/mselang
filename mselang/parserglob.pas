@@ -76,7 +76,7 @@ type
  movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);
 
  visikindty = (vik_global,vik_sameunit,vik_descendent,
-               vik_published,vik_ancestor,vik_units,
+               vik_published,vik_ancestor,vik_units,vik_implementation,
                vik_stoponstarttype); //used by handlevalueidentifier,
  visikindsty = set of visikindty;
  

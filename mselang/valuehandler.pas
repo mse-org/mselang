@@ -3069,6 +3069,7 @@ var
  pocontext1: pcontextitemty;
  i1,i2: int32;
  bo1: boolean;
+ vis1: visikindsty;
  
 label
  endlab;
@@ -3164,8 +3165,11 @@ begin
     goto endlab;
    end;
   end;
-  bo1:= findkindelements(1,[],allvisi+[vik_stoponstarttype],po1,
-                                                     firstnotfound,idents);
+  vis1:= allvisi+[vik_stoponstarttype];
+  if stf_objimp in s.currentstatementflags then begin
+   include(vis1,vik_implementation);
+  end;
+  bo1:= findkindelements(1,[],vis1,po1,firstnotfound,idents);
   paramstart:= s.stackindex+2+idents.high;
   paramco:= 0;
   pocontext1:= @contextstack[paramstart];
