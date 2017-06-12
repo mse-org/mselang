@@ -822,6 +822,7 @@ type
   currentclassvislevel: visikindsty;
   currentoperator,currentoperatorright: elementoffsetty;
   currentfieldflags: addressflagsty;
+  currenttypedef: elementoffsetty;
 //  currentoperators: objectoperatorsty;
 //  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type

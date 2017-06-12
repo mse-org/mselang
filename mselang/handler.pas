@@ -62,6 +62,8 @@ procedure handlestatementblock1();
 //procedure handleconst();
 //procedure handleconst0();
 procedure handleconst3();
+procedure handletypedconst2entry();
+procedure handletypedconst();
 
 procedure handlenumberentry();
 procedure handleint();
@@ -2357,20 +2359,12 @@ begin
 // end;
 end;
 *)
-procedure handleconst3();
+
+procedure addsimpleconst();
 var
  po1: pconstdataty;
 begin
-{$ifdef mse_debugparser}
- outhandle('CONST3');
-{$endif}
  with info do begin
- {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex - getspacecount(s.stackindex+2) <> 2) or 
-            (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
-   internalerror(ie_handler,'20140326C');
-  end;
- {$endif}
   if contextstack[s.stacktop].d.kind <> ck_const then begin
    errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
   end
@@ -2389,7 +2383,47 @@ begin
     end;
    end;
   end;
-  s.stackindex:= s.stackindex;
+ end;
+end;
+
+procedure handleconst3();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CONST3');
+{$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if (s.stacktop-s.stackindex - getspacecount(s.stackindex+2) <> 2) or 
+            (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
+   internalerror(ie_handler,'20140326C');
+  end;
+ {$endif}
+  addsimpleconst();
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handletypedconst2entry();
+var
+ po1: pconstdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONST2ENTRY');
+{$endif}
+ with info do begin
+ end;
+end;
+
+procedure handletypedconst();
+var
+ po1: pconstdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONST');
+{$endif}
+ addsimpleconst();
+//  dec(s.stackindex);
+ with info do begin
   s.stacktop:= s.stackindex;
  end;
 end;

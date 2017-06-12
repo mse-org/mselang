@@ -935,9 +935,20 @@ const0,const1,,^
 const1,,,handleequalityexpected^
  ${whitespace}
  '=',const2-
+ ':',typedconst-
 const2,const3,,
  '',exp^*
 const3,,handleconst3,
+ '',checksemicolon1
+typedconst,typedconst1,,                     
+ '',gettype^*
+typedconst1,,,handleequalityexpected
+ ${whitespace}
+ '=',typedconst2-
+typedconst2,typedconst3,handletypedconst2entry,handletypedconst
+//entryhandler switches context
+ '',exp^*          //for simple types
+typedconst3,,,
  '',checksemicolon1
 
 var,,,*>

@@ -672,6 +672,7 @@ begin
  with info do begin
   with contextstack[s.stackindex-1] do begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
+   currenttypedef:= d.typ.typedata;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
    with typ1^ do begin
@@ -767,6 +768,7 @@ begin
  outhandle('CLASSDEFERROR');
 {$endif}
  info.currentfieldflags:= [];
+ info.currenttypedef:= 0;
  tokenexpectederror(tk_end);
 end;
 

@@ -92,6 +92,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INTERFACEDEFERROR');
 {$endif}
+ info.currenttypedef:= 0;
 end;
 
 procedure handleinterfacedefreturn();
@@ -100,6 +101,7 @@ begin
  outhandle('INTERFACEDEFRETURN');
 {$endif}
  with info do begin
+  currenttypedef:= ele.eledatarel(ele.parentdata());
   with ptypedataty(ele.parentdata())^ do begin
    infointerface.subchain:= currentsubchain;
    infointerface.subcount:= currentsubcount;

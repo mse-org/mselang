@@ -140,6 +140,7 @@ begin
    internalerror(ie_type,'20140325A');
   end;
  {$endif}
+  currenttypedef:= 0;
   ele.checkcapacity(ek_type);
   bo1:= (d.typ.indirectlevel > 0) and (s.stacktop-s.stackindex = 1);
                                         //simple type name only
@@ -159,6 +160,7 @@ begin
   end;
   if bo2 then begin
    d.typ.typedata:= ele.eleinforel(po2);
+   currenttypedef:= d.typ.typedata;
    po3:= ptypedataty(@po2^.data);
    d.typ.flags:= po3^.h.flags;
    inc(d.typ.indirectlevel,po3^.h.indirectlevel);
@@ -185,6 +187,7 @@ begin
      else begin
       resolveforwardtype(po4);
      end;
+     currenttypedef:= ele.eledatarel(po4);
     end
     else begin //duplicate
      identerror(-3,err_duplicateidentifier);
@@ -362,6 +365,7 @@ begin
 {$endif}
  with info do begin
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
+  currenttypedef:= 0;
  end;
 end;
 
@@ -868,6 +872,7 @@ begin
  with info do begin
   ele.elementparent:= contextstack[s.stackindex].b.eleparent; //restore
   with contextstack[s.stackindex-1] do begin
+   currenttypedef:= d.typ.typedata;
    ty1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatabyte(ty1^,dk_record,d.typ.indirectlevel,
               contextstack[s.stackindex].d.rec.fieldoffsetmax,d.typ.flags);
@@ -913,9 +918,11 @@ begin
      end;
     end;
     if not ele.addelementdata(gettypeident(),ek_type,allvisi,po1) then begin
+     currenttypedef:= 0;
      identerror(-2,err_duplicateidentifier);
      exit;
     end;
+    currenttypedef:= ele.eledatarel(po1);
     inittypedatasize(po1^,dk_set,
            contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
     with {contextstack[s.stackindex-1],}po1^ do begin
@@ -1058,9 +1065,11 @@ begin
        id1:= getident(); //multi dimension
       end;
       if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
+       currenttypedef:= 0;
        identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
        goto endlab;
       end;
+      currenttypedef:= ele.eledatarel(arty);
       exclude(flags1,tf_managed); //only item type can be managed
 //      if indilev > 0 then begin
 //       flags1:= flags1 - [tf_managed,tf_needsmanage];
@@ -1451,7 +1460,11 @@ begin
  {$endif}
   if not ele.pushelementduplicatedata(contextstack[s.stackindex-2].d.ident.ident,
                                                ek_type,allvisi,po1) then begin
+   currenttypedef:= 0;
    identerror(-2,err_duplicateidentifier);
+  end
+  else begin
+   currenttypedef:= ele.eledatarel(po1);
   end;
   ele1:= ele.eledatarel(po1);
   with contextstack[s.stackindex-1] do begin

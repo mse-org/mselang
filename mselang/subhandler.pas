@@ -594,6 +594,7 @@ begin
 {$endif}
  pushdummycontext(ck_ident); //add dummy ident
  with info,contextstack[s.stacktop].d do begin 
+  currenttypedef:= 0;
   ident.ident:= getident;
   ident.len:= 0;
   ident.flags:= [];
@@ -1526,6 +1527,7 @@ begin
   sub1^.nextoverload:= ele1;
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
+  info.currenttypedef:= ele.eledatarel(typ1);
   sub1^.typ:= ele.eledatarel(typ1);
   inittypedatasize(typ1^,dk_sub,0,das_pointer);
   with typ1^ do begin
