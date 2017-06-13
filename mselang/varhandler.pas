@@ -28,10 +28,17 @@ procedure handlevardefstart();
 procedure handlevar3();
 procedure handlepointervar();
 
+procedure handletypedconst2entry();
+procedure handletypedconst();
+procedure handletypedconstarraylevelentry();
+procedure handletypedconstarraylevel();
+procedure handletypedconstarrayitem();
+procedure handletypedconstarray();
+
 implementation
 uses
  handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,
- identutils,msestrings;
+ identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr;
  
 procedure handlevardefstart();
 begin
@@ -171,6 +178,183 @@ begin
    errormessage(err_typeidentexpected,[]);
   end;
   inc(indirectlevel);
+ end;
+end;
+
+procedure handletypedconst2entry();
+var
+ p1: ptypedataty;
+ cont1: pcontextty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONST2ENTRY');
+{$endif}
+ with info do begin
+  if currenttypedef <> 0 then begin
+   p1:= ele.eledataabs(currenttypedef);
+   if p1^.h.indirectlevel = 0 then begin
+    cont1:= nil;
+    case p1^.h.kind of
+     dk_array: begin
+      case s.dialect of
+       dia_mse: cont1:= @gramse.typedconstarrayco;
+       dia_pas: cont1:= @grapas.typedconstarrayco;
+       else internalerror1(ie_dialect,'20170612B');
+      end;
+      with contextstack[s.stackindex] do begin
+       d.kind:= ck_arrayconst;
+       d.arrayconst.itemtype:= currenttypedef;
+       d.arrayconst.datapopo:= @d.arrayconst.datapo;
+       d.arrayconst.itemcount:= 0; //dummy
+       d.arrayconst.curindex:= 0;
+      end;
+      s.stacktop:= s.stackindex;
+     end;
+    end;
+    switchcontext(cont1,false);
+   end
+   else begin
+    internalerror1(ie_notimplemented,'20170512A');
+    //todo: handle addresses
+   end;
+  end;
+ end;
+end;
+
+procedure handletypedconst();
+var
+ p1: ptypedataty;
+ p2: pvardataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONST');
+{$endif}
+ with info do begin
+  if (currenttypedef <> 0) then begin
+   p1:= ele.eledataabs(currenttypedef);
+  {$ifdef mse_checkinternalerror}
+   if (s.stacktop <= s.stackindex) or 
+          (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
+    internalerror(ie_handler,'20170613C');
+   end;
+  {$endif}
+      
+   if tryconvert(@contextstack[s.stacktop],p1,
+                               p1^.h.indirectlevel,[]) then begin
+    p2:= ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,ek_var,
+                                                                       allvisi);
+    if p2 = nil then begin
+     identerror(1,err_duplicateidentifier);
+    end
+    else begin
+    end;
+   end
+   else begin
+    typeconversionerror(contextstack[s.stacktop].d,p1,p1^.h.indirectlevel,
+                                                       err_incompatibletypes);
+   end;
+  end;
+//  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handletypedconstarraylevelentry();
+var
+ p1,p2: ptypedataty;
+ i1: int32;
+ context1: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONSTARRAYLEVELENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stackindex-1].d.kind <> ck_arrayconst then begin
+   internalerror(ie_handler,'20170613A');
+  end;
+ {$endif}
+  d.kind:= ck_arrayconst;
+  context1:= @contextstack[s.stackindex-1];
+  p1:= ele.eledataabs(context1^.d.arrayconst.itemtype);
+  d.arrayconst.datapopo:= context1^.d.arrayconst.datapopo;
+  d.arrayconst.curindex:= 0;
+  if p1^.h.kind <> dk_array then begin
+   tokenexpectederror(';',erl_fatal);
+  end
+  else begin
+   d.arrayconst.itemtype:= p1^.infoarray.i.itemtypedata;
+   d.arrayconst.itemcount:= p1^.infoarray.i.totitemcount;
+   p2:= ele.eledataabs(p1^.infoarray.i.itemtypedata);
+   if (p2^.h.kind = dk_array) then begin
+    if (p2^.infoarray.i.totitemcount <> 0) then begin
+     d.arrayconst.itemcount:= d.arrayconst.itemcount div
+                                     p2^.infoarray.i.totitemcount;
+    end;
+    d.arrayconst.itemsize:= 0;
+   end
+   else begin
+    d.arrayconst.itemsize:= p2^.h.bytesize; //todo: alignment
+   end;
+  end;
+ end;
+end;
+
+procedure handletypedconstarraylevel();
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONSTARRAYLEVEL');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  with d.arrayconst do begin
+   if curindex < itemcount then begin
+    errormessage(err_moreitemsexpected,[inttostrmse(itemcount-curindex)]);
+   end;
+  end;
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handletypedconstarrayitem();
+var
+ p1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONSTARRAYITEM');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_arrayconst then begin
+   internalerror(ie_handler,'20170613B');
+  end;
+ {$endif}
+  with d.arrayconst do begin
+   inc(curindex);
+   if curindex > itemcount then begin
+    errormessage(err_toomanyarrayitems,[]);
+   end
+   else begin
+    if itemsize <> 0 then begin
+     inc(datapopo^,itemsize);
+    end;
+   end;
+  end;
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handletypedconstarray();
+var
+ p1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONSTARRAY');
+{$endif}
+ with info do begin
+  dec(s.stackindex);
+//  with contextstack[s.stackindex] do begin
+//   include(transitionflags,bf_continue);
+//  end;
  end;
 end;
 
