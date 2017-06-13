@@ -82,7 +82,7 @@ type
  arrayiteminfoty = record
   itemtypedata: elementoffsetty;
   itemindirectlevel: integer;
-  totitemcount: int32; //includes itemcount of nseted arrays
+  totitemcount: int32; //includes itemcount of nested arrays
  end;
  infoarrayty = record
   i: arrayiteminfoty;

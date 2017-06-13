@@ -169,7 +169,8 @@ type
                   ck_recorddef,ck_recordcase,
                   ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
-                  ck_paramdef,ck_params,ck_index,ck_casebranch,ck_caseblock);
+                  ck_paramdef,ck_params,ck_index,ck_casebranch,ck_caseblock,
+                  ck_arrayconst);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
                     sdk_boolean,
@@ -406,6 +407,15 @@ type
   fielddata: elementoffsetty;
  end;
 
+ arrayconstinfoty = record
+  itemtype: elementoffsetty;
+  itemcount: int32;
+  curindex: int32;
+  itemsize: int32;
+  datapo: pointer;
+  datapopo: ppointer; //-> base datapo
+ end;
+ 
  statementinfoty = record
 //  flags: statementflagsty;
  end;
@@ -563,6 +573,9 @@ type
    );
    ck_field:(
     field: fieldinfoty;
+   );
+   ck_arrayconst:(
+    arrayconst: arrayconstinfoty;
    );
    ck_statement:(
     statement: statementinfoty;

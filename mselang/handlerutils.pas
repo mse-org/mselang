@@ -1849,7 +1849,7 @@ begin
  with info do begin
   i1:= s.stackindex + stackoffset;
   with contextstack[i1] do begin
- {$ifdef mse_debugparser}
+ {$ifdef mse_checkinternalerror}
    if not (d.kind in factcontexts) then begin
     internalerror(ie_handler,'20150913A');
    end;
@@ -3251,7 +3251,7 @@ end;
 procedure getclassvalue(const acontext: pcontextitemty);
 begin
  with info,acontext^ do begin
- {$ifdef mse_debugparser}
+ {$ifdef mse_checkinternalerror}
   if d.kind <> ck_prop then begin
    internalerror(ie_handler,'20160202A');
   end;
@@ -4245,6 +4245,11 @@ begin
                ' high:',inttostrmse(d.dat.constval.vopenarray.size));
         end;
        end;
+      end;
+      ck_arrayconst: begin
+       write(' count:',inttostrmse(d.arrayconst.itemcount),
+                  ' index:',inttostrmse(d.arrayconst.curindex),
+                      ' itemsize:',inttostrmse(d.arrayconst.itemsize));
       end;
       ck_subdef: begin
        write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),

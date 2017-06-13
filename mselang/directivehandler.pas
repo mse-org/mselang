@@ -156,7 +156,7 @@ begin
  {$endif}
   if d.kind <> ck_space then begin
    if not (d.kind in datacontexts) then begin
-    internalerror(ie_handler,'20160703B');
+    internalerror1(ie_handler,'20160703B');
    end;
    ele.adduniquechilddata(s.unitinfo^.interfaceelement,
                   [tks_defines,contextstack[s.stackindex+1].d.ident.ident],
@@ -188,6 +188,7 @@ end;
 procedure checkdef(const ifndef: boolean);
 var
  po1: pconditiondataty;
+ cont1: pcontextty;
 begin
  po1:= nil;
  with info,contextstack[s.stacktop] do begin
@@ -199,10 +200,11 @@ begin
   end;
   if ((po1 = nil) or po1^.deleted) xor ifndef then begin
    case s.dialect of
-    dia_mse: switchcontext(@gramse.skipifco);
-    dia_pas: switchcontext(@grapas.skipifco);
-    else internalerror(ie_handler,'20170608A');
+    dia_mse: cont1:= @gramse.skipifco;
+    dia_pas: cont1:= @grapas.skipifco;
+    else internalerror1(ie_dialect,'20170608A');
    end;
+   switchcontext(cont1,true);
   end;
  end;
 end;
@@ -261,6 +263,8 @@ begin
 end;
 
 procedure handleifcond();
+var
+ cont1: pcontextty;
 begin
 {$ifdef mse_debugparser}
  outhandle('IFCOND');
@@ -269,9 +273,10 @@ begin
   exclude(s.currentstatementflags,stf_condition);
   if stf_invalidcondition in s.currentstatementflags then begin
    case s.dialect of
-    dia_mse: switchcontext(@gramse.skipifco);
-    dia_pas: switchcontext(@grapas.skipifco);
-    else internalerror(ie_handler,'20170608A');
+    dia_mse: cont1:= @gramse.skipifco;
+    dia_pas: cont1:= @grapas.skipifco;
+    else internalerror1(ie_dialect,'20170608A');
+    switchcontext(cont1,true);
    end;
   end
   else begin
@@ -287,10 +292,11 @@ begin
      else begin
       if not d.dat.constval.vboolean then begin
        case s.dialect of
-        dia_mse: switchcontext(@gramse.skipifco);
-        dia_pas: switchcontext(@grapas.skipifco);
-        else internalerror(ie_handler,'20170608A');
+        dia_mse: cont1:= @gramse.skipifco;
+        dia_pas: cont1:= @grapas.skipifco;
+        else internalerror1(ie_dialect,'20170608A');
        end;
+       switchcontext(cont1,true);
       end;
      end;
     end;

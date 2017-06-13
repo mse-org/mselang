@@ -430,7 +430,7 @@ procedure reallocsegment(const address: segaddressty;
 begin
  sizealign(oldsize);
  sizealign(newsize);
-{$ifdef mse_debugparser}
+{$ifdef mse_checkinternalerror}
  if oldsize < newsize then begin
   internalerror(ie_segment,'20170326B');
  end;

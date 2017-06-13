@@ -82,7 +82,7 @@ type
             err_invalidoperatormethod,err_objectforwardnotallowed,
             err_toomanyoperparams,err_varargmustbelast,err_stringexpected,
             err_managednotallowed,err_dialectatbeginofunit,
-            err_unknowndialect);
+            err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -106,7 +106,8 @@ type
                         ie_llvm,     //error in llvm code generator
                         ie_llvmlist, //error in llvm lists
                         ie_llvmmeta, //error in llvm metadata
-                        ie_module    //error in modular compilation
+                        ie_module,   //error in modular compilation
+                        ie_dialect   //unknown dialect
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -116,8 +117,8 @@ const
      'T',    'M',
  //ie_sub,ie_value,ie_idents,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
      'SUB',   'V',   'I',       'E',        'I',    'SEG',     'BC',     'LLVM',
- //ie_llvmlist,ie_llvmmeta,ie_module
-     'LLVML',  'LLVMME',   'MO'
+ //ie_llvmlist,ie_llvmmeta,ie_module,ie_dialect
+     'LLVML',  'LLVMME',   'MO',     'DIA'
  );
  
  stoperrorlevel = erl_fatal;
@@ -301,7 +302,9 @@ const
   (level: erl_error; message:
                       'Managed data types can not be used in variant parts'),
   (level: erl_fatal; message: 'Dialect selection must be at start of unit'),
-  (level: erl_fatal; message: 'Unknown dialect')
+  (level: erl_fatal; message: 'Unknown dialect'),
+  (level: erl_fatal; message: 'Too many array items'),
+  (level: erl_error; message: '%s more items expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 
@@ -347,6 +350,9 @@ procedure tokenexpectederror(const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
 procedure tokenexpectederror(const atoken: string;
                              const aerrorlevel: errorlevelty = erl_none);
+procedure typeconversionerror(const source: contextdataty;
+                        const dest: ptypedataty; const indirectlevel: int32;
+                                                         const error: errorty);
 procedure assignmenterror(const source: contextdataty; 
                                       const dest: vardestinfoty);
 procedure illegalconversionerror(const source: contextdataty;
@@ -687,7 +693,8 @@ begin
 end;
 
 procedure typeconversionerror(const source: contextdataty;
-                        const dest: vardestinfoty; const error: errorty);
+                        const dest: ptypedataty; 
+                        const indirectlevel: int32; const error: errorty);
 var
  sourceinfo,destinfo: string;
  po1,po2: pelementinfoty;
@@ -700,13 +707,19 @@ begin
    for int1:= 0 to source.dat.datatyp.indirectlevel-1 do begin
     sourceinfo:= '^'+sourceinfo;
    end;
-   destinfo:= getenumname(typeinfo(dest.typ^.h.kind),ord(dest.typ^.h.kind));
-   for int1:= 0 to dest.address.indirectlevel-1 do begin
+   destinfo:= getenumname(typeinfo(dest^.h.kind),ord(dest^.h.kind));
+   for int1:= 0 to indirectlevel-1 do begin
     destinfo:= '^'+destinfo;
    end;
   end;
  end;  
  errormessage(error,[sourceinfo,destinfo]);
+end;
+
+procedure typeconversionerror(const source: contextdataty;
+                        const dest: vardestinfoty; const error: errorty);
+begin
+ typeconversionerror(source,dest.typ,dest.address.indirectlevel,error);
 end;
 
 procedure assignmenterror(const source: contextdataty; 

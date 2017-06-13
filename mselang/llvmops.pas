@@ -2441,7 +2441,7 @@ begin
     oc1:= cmpstr32ops[stackop.compkind];
    end;
    else begin
-    internalerror(ie_llvm,'20170403B');
+    internalerror1(ie_llvm,'20170403B');
    end;
   end;
   callcompilersub(oc1,true,[bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);

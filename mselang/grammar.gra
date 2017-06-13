@@ -950,7 +950,23 @@ typedconst2,typedconst3,handletypedconst2entry,handletypedconst
  '',exp^*          //for simple types
 typedconst3,,,
  '',checksemicolon1
-
+typedconstarray,,,handleopenroundbracketexpected
+ ${whitespace}
+ '(',typedconstarray0-
+typedconstarray0,typedconstarray0a,,
+ '',typedconstarray1*
+typedconstarray0a,,,handletypedconstarray*>
+ '',checksemicolon1
+typedconstarray1,typedconstarray1a,handletypedconstarraylevelentry,
+typedconstarray1a,typedconstarray2,,handletypedconstarrayitem*
+ '',exp^*
+ '(',typedconstarray1-*
+typedconstarray2,,,handletypedconstarraylevel*
+ ${whitespace}
+ ')',-*
+ ',',typedconstarray1a-
+ '',!handlecloseroundbracketexpected
+ 
 var,,,*>
  ${whitespace}
  ${blockswitch}

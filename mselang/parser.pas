@@ -47,7 +47,8 @@ function parseunit(const input: string; const adialect: dialectty;
 procedure pushincludefile(const afilename: filenamety);
 procedure pushdummycontext(const akind: contextkindty);
 function getstartcontext(const adialect: dialectty): pcontextty;
-procedure switchcontext(const acontext: pcontextty);
+procedure switchcontext(const acontext: pcontextty; const acontinue: boolean);
+                             //do nothing if nil
 procedure saveparsercontext(var acontext: pparsercontextty; 
                                                const astackcount: int32);
 procedure restoreparsercontext(const acontext: pparsercontextty);
@@ -153,13 +154,18 @@ begin
  end;
 end;
 
-procedure switchcontext(const acontext: pcontextty);
+procedure switchcontext(const acontext: pcontextty; const acontinue: boolean);
 begin
- with info do begin
-  s.pc:= acontext;
-  with contextstack[s.stackindex] do begin
-   context:= acontext;
-   include(transitionflags,bf_continue);
+ if acontext <> nil then begin
+  with info do begin
+   s.pc:= acontext;
+   pb:= acontext^.branch;
+   with contextstack[s.stackindex] do begin
+    context:= acontext;
+    if acontinue then begin
+     include(transitionflags,bf_continue);
+    end;
+   end;
   end;
  end;
 end;

@@ -724,7 +724,7 @@ begin
                                                       d.dat.constval.vinteger);
         end;
         else begin
-         internalerror(ie_handler,'20170611A');
+         internalerror1(ie_handler,'20170611A');
         end;
        end;
        ssas1:= expssa;
