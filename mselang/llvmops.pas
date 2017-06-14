@@ -527,12 +527,14 @@ begin
  end;
  fillchar(trampolinealloc,sizeof(trampolinealloc),0); //used in subbeginop
 
+{
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin                               //global consts
   bcstream.constseg:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_var,
              info.s.unitinfo^.llvmlists.constlist.
              addvalue(getsegmentpo(seg_globconst,0)^,int1).listid,constlinkage);
  end;
+}
  bcstream.classdefs:= getsegmentbase(seg_classdef);
  
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
@@ -5025,7 +5027,7 @@ const
 
   pushsegaddrnilssa = 0;
   pushsegaddrglobvarssa = 1;
-  pushsegaddrglobconstssa = 3;
+  pushsegaddrglobconstssa = 1;
   pushsegaddrclassdefssa = 1;
   listtoopenaritemssa = 3;
   concattermsitemssa = 3;

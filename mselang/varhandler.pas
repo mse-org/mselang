@@ -407,6 +407,7 @@ begin
          else begin
           linkage1:= info.s.globlinkage;
          end;
+         address.segaddress.segment:= seg_globconst;
          address.segaddress.address:=
             info.s.unitinfo^.llvmlists.globlist.addinitvalue(
                                                  gak_const,i1,linkage1);

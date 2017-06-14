@@ -70,7 +70,7 @@ type
    flandingpadtype: int32;
    fpointertype: int32;
    fpointersizeconst: int32;
-   fconstseg: int32;
+//   fconstseg: int32;
    fclassdefs: pointer;
    flastdebugloc: debuglocty;
    fconststart: int32;      //start of global constants
@@ -228,7 +228,7 @@ type
    procedure emitstoreop(const asource: int32; const adest: int32);
 
    procedure emitpushconst(const aconst: llvmvaluety);
-   procedure emitpushconstsegad(const aoffset: int32); //2ssa
+//   procedure emitpushconstsegad(const aoffset: int32); //2ssa
    
    procedure emitbinop(const aop: BinaryOpcodes; 
                          const valueida: int32; const valueidb: int32);
@@ -274,7 +274,7 @@ type
 //   property getexceptionpointer: int32 read fgetexceptionpointer 
 //                                                   write fgetexceptionpointer;
        //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
-   property constseg: int32 read fconstseg write fconstseg;
+//   property constseg: int32 read fconstseg write fconstseg;
    property classdefs: pointer read fclassdefs write fclassdefs;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
@@ -1688,15 +1688,17 @@ end;
 procedure tllvmbcwriter.emitsegdataaddress(const aaddress: memopty);
 begin
  case aaddress.segdataaddress.a.segment of
-  seg_globvar,seg_op: begin
+  seg_globvar,seg_op,seg_globconst: begin
    emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
   end;
+ {
   seg_globconst: begin
    emitgetelementptr(globval(fconstseg),
                                    constval(aaddress.segdataaddress.a.address));
    emitgetelementptr(relval(0),constval(aaddress.segdataaddress.offset));
   end;
+ }
   seg_classdef: begin
    emitgetelementptr(globval(
        pint32(fclassdefs+aaddress.segdataaddress.a.address)^),
@@ -1979,12 +1981,12 @@ begin
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
 end;
-
+{
 procedure tllvmbcwriter.emitpushconstsegad(const aoffset: int32); //2ssa
 begin
  emitgetelementptr(globval(constseg),aoffset);
 end;
-
+}
 procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);
 begin
  emitrec(ord(FUNC_CODE_DEBUG_LOC),
