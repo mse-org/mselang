@@ -39,7 +39,7 @@ implementation
 uses
  handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,segmentutils,
  identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr,
- msetypes;
+ msetypes,llvmbitcodes;
  
 procedure handlevardefstart();
 begin
@@ -223,6 +223,8 @@ var
  size1: int32;
  ident1: identty;
  n1: identnamety;
+ i1: int32;
+ linkage1: linkagety;
 begin
 {$ifdef mse_debugparser}
  outhandle('TYPEDCONST');
@@ -371,12 +373,29 @@ begin
          include(address.flags,af_aggregate);
         end;
         if co_llvm in info.o.compileoptions then begin
-        {
-         case datasize1 of
-          das_8: begin
-           case p1^.h.kind of
+         with contextstack[s.stacktop],d.dat.constval do begin
+          case datasize1 of
+           das_1: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addi1(vboolean).listid;
+           end;
+           das_8: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addi8(vinteger).listid;
+           end;
+           else begin
+            internalerror(ie_handler,'20170614A');
+           end;
           end;
-          }
+         end;
+         if sublevel > 0 then begin
+          linkage1:= li_internal;
+         end
+         else begin
+          linkage1:= info.s.globlinkage;
+         end;
+         address.segaddress.address:=
+            info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                                 gak_const,i1,linkage1);
+         
   {
          if datasize1 = das_none then begin
           address.segaddress.address:= info.s.unitinfo^.llvmlists.globlist.
