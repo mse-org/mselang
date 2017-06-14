@@ -381,6 +381,21 @@ begin
            das_8: begin
             i1:= info.s.unitinfo^.llvmlists.constlist.addi8(vinteger).listid;
            end;
+           das_16: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addi16(vinteger).listid;
+           end;
+           das_32: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addi32(vinteger).listid;
+           end;
+           das_64: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addi64(vinteger).listid;
+           end;
+           das_f32: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addf32(vfloat).listid;
+           end;
+           das_f64: begin
+            i1:= info.s.unitinfo^.llvmlists.constlist.addf32(vfloat).listid;
+           end;
            else begin
             internalerror(ie_handler,'20170614A');
            end;
