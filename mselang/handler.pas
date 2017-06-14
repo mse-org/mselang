@@ -3318,8 +3318,6 @@ begin
       end;
      end;
     end;
-   end;
-   with dest^ do begin
     if not getnextnospace(dest+1,source) then begin
      internalerror1(ie_handler,'20160607B');
     end;

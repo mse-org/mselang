@@ -37,8 +37,9 @@ procedure handletypedconstarray();
 
 implementation
 uses
- handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,
- identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr;
+ handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,segmentutils,
+ identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr,
+ msetypes;
  
 procedure handlevardefstart();
 begin
@@ -109,14 +110,6 @@ begin
       end;
       if address.indirectlevel = 0 then begin
        size1:= h.bytesize;
-      {
-       if (h.kind in [dk_object,dk_class]) then begin
-        if (icf_zeroed in infoclass.flags) then begin
-         include(s.currentstatementflags,stf_needsini);
-         include(vf.flags,tf_needsini);
-        end;
-       end;
-      }
        vf.flags:= vf.flags + 
                    h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
        if tf_needsmanage in h.flags then begin
@@ -225,6 +218,11 @@ procedure handletypedconst();
 var
  p1: ptypedataty;
  p2: pvardataty;
+ p3: pointer;
+ datasize1: databitsizety;
+ size1: int32;
+ ident1: identty;
+ n1: identnamety;
 begin
 {$ifdef mse_debugparser}
  outhandle('TYPEDCONST');
@@ -238,15 +236,207 @@ begin
     internalerror(ie_handler,'20170613C');
    end;
   {$endif}
-      
-   if tryconvert(@contextstack[s.stacktop],p1,
-                               p1^.h.indirectlevel,[]) then begin
-    p2:= ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,ek_var,
-                                                                       allvisi);
-    if p2 = nil then begin
-     identerror(1,err_duplicateidentifier);
-    end
-    else begin
+   if p1^.h.indirectlevel <> 0 then begin
+    notimplementederror('20170613D');
+   end;   
+   ident1:= contextstack[s.stackindex+1].d.ident.ident;
+   if tryconvert(@contextstack[s.stacktop],p1,p1^.h.indirectlevel,[]) then begin
+    with contextstack[s.stacktop],d.dat.constval do begin
+     if d.kind <> ck_const then begin
+      errormessage(err_constexpressionexpected,[]);
+     end
+     else begin
+      case p1^.h.kind of
+       dk_boolean: begin
+       end;
+       dk_integer: begin
+        case p1^.h.datasize of
+         das_8: begin
+          with p1^.infoint8 do begin
+           if (vinteger < min) or (vinteger > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_16: begin
+          with p1^.infoint16 do begin
+           if (vinteger < min) or (vinteger > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_32: begin
+          with p1^.infoint32 do begin
+           if (vinteger < min) or (vinteger > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_64: begin
+          with p1^.infoint64 do begin
+           if (vinteger < min) or (vinteger > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+        end;
+       end;
+       dk_cardinal: begin
+        case p1^.h.datasize of
+         das_8: begin
+          with p1^.infocard8 do begin
+           if (vcardinal < min) or (vcardinal > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_16: begin
+          with p1^.infocard16 do begin
+           if (vcardinal < min) or (vcardinal > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_32: begin
+          with p1^.infocard32 do begin
+           if (vcardinal < min) or (vcardinal > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_64: begin
+          with p1^.infocard64 do begin
+           if (vcardinal < min) or (vinteger > max) then begin
+            errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
+                                                        minint,0,erl_warning);
+           end;
+          end;
+         end;
+        end;
+       end;
+       dk_float: begin
+        case p1^.h.datasize of
+         das_f32: begin
+          with p1^.infofloat32 do begin
+           if (vfloat < min) or (vfloat > max) then begin
+            errormessage(err_valuerange,[realtostrmse(min),
+                                realtostrmse(max)],minint,0,erl_warning);
+           end;
+          end;
+         end;
+         das_f64: begin
+          with p1^.infofloat64 do begin
+           if (vfloat < min) or (vfloat > max) then begin
+            errormessage(err_valuerange,[realtostrmse(min),
+                                realtostrmse(max)],minint,0,erl_warning);
+           end;
+          end;
+         end;
+        end;
+       end;
+       else begin
+        notimplementederror('20170613E');
+       end;
+      end;
+      p2:= ele.addelementdata(ident1,ek_var,allvisi);
+      if p2 = nil then begin
+       identerror(1,err_duplicateidentifier);
+      end
+      else begin
+       with p2^ do begin
+        vf.typ:= currenttypedef;
+        vf.flags:= p1^.h.flags;
+        vf.defaultconst:= 0;
+        vf.next:= 0;
+        address.indirectlevel:= p1^.h.indirectlevel;
+        nameid:= -1;
+        datasize1:= p1^.h.datasize;
+        if address.indirectlevel > 0 then begin
+         datasize1:= das_pointer;
+         include(address.flags,af_segmentpo);
+         size1:= pointersize;
+        end
+        else begin
+         size1:= p1^.h.bytesize;
+        end;
+        address.flags:= [af_segment,af_const];
+        if datasize1 = das_none then begin
+         include(address.flags,af_aggregate);
+        end;
+        if co_llvm in info.o.compileoptions then begin
+        {
+         case datasize1 of
+          das_8: begin
+           case p1^.h.kind of
+          end;
+          }
+  {
+         if datasize1 = das_none then begin
+          address.segaddress.address:= info.s.unitinfo^.llvmlists.globlist.
+                                      addbytevalue(size1,info.s.globlinkage);
+         end
+         else begin
+          address.segaddress.address:= info.s.unitinfo^.llvmlists.globlist.
+                                   addbitvalue(datasize1,info.s.globlinkage);
+         end;
+  }
+  //       address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
+         if not (us_implementation in s.unitinfo^.state) then begin
+          nameid:= s.unitinfo^.nameid; //for llvm
+         end;
+         if (info.o.debugoptions*[do_proginfo,do_names] <> []) then begin
+          getidentname(ident1,n1);
+          if do_names in info.o.debugoptions then begin
+  
+           s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                                n1,address.segaddress.address);
+          end;
+          if do_proginfo in info.o.debugoptions then begin
+           s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+            s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                     nametolstring(n1),contextstack[s.stackindex+1].start.line,
+                                                                          0,p2^);
+          end;
+         end;
+        end
+        else begin
+         address.segaddress:= allocsegment(seg_globconst,p1^.h.bytesize,p3);
+         with contextstack[s.stacktop],d.dat.constval do begin
+          case p1^.h.datasize of
+           das_1: begin
+            pboolean(p3)^:= vboolean;
+           end;
+           das_8: begin
+            pint8(p3)^:= vinteger;
+           end;
+           das_16: begin
+            pint16(p3)^:= vinteger;
+           end;
+           das_32: begin
+            pint32(p3)^:= vinteger;
+           end;
+           das_64: begin
+            pint64(p3)^:= vinteger;
+           end;
+           das_f32: begin
+            pflo32(p3)^:= vfloat;
+           end;
+           das_f64: begin
+            pflo64(p3)^:= vfloat;
+           end;
+          end;
+         end;
+        end;
+       end;
+      end;
+     end;
     end;
    end
    else begin

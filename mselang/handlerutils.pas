@@ -3231,7 +3231,9 @@ function getassignaddress(const acontext: pcontextitemty;
 begin
  result:= false;
  with acontext^ do begin
-  if (d.kind in datacontexts) then begin
+  if (d.kind in datacontexts) and 
+      not ((d.kind = ck_ref) and 
+               (af_const in d.dat.ref.c.address.flags)) then begin
    result:= getaddress(acontext,endaddress);
   end
   else begin
