@@ -2088,6 +2088,7 @@ var
  varargcount: int32;
  varargs: array[0..maxparamcount] of int32;
  isvararg: boolean;
+ constbufferref: segmentstatety;
 label
  paramloopend;
 begin
@@ -2506,6 +2507,7 @@ begin
     end
     else begin
      if not (dsf_noparams in aflags) then begin
+      constbufferref:= savesegment(seg_globconst); //for openarray const
       while i1 > 0 do begin
        getnextnospace(poitem1+1,poitem1);
        if doparam(poitem1,subparams1,parallocpo) then begin 
@@ -2538,6 +2540,9 @@ begin
         selfpo^.ssaindex:= d.dat.fact.ssaindex; 
                //could be shifted by right side operator param
        end;
+      end;
+      if co_llvm in o.compileoptions then begin
+       restoresegment(constbufferref); //data stored in llvmconst
       end;
      end;
     end;

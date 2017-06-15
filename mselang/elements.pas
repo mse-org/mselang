@@ -462,10 +462,23 @@ type
 }
 var
  stringbuf: tstringbuffer;
-
+ 
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
+var
+ i1: int32;
 begin
+{$ifdef mse_checkinternalerror}
+ if adata.address.segment <> seg_globconst then begin
+  internalerror(ie_handler,'20170614A');
+ end;
+{$endif}
  result:= adata.address;
+ if co_llvm in info.o.compileoptions then begin
+  i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(
+                                 getsegmentpo(result)^,adata.size).listid;
+  result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                      gak_const,i1,info.s.globlinkage);
+ end;
 end;
 
 function newstringconst(): stringvaluety;
@@ -2684,11 +2697,20 @@ begin
      po1:= getsegmentpo(result);
      po1^.ref.count:= -1;
      po1^.len:= len1;
-     inc(po1); //data
+    end;
+    if co_llvm in info.o.compileoptions then begin
+ //    result.address:= info.s.unitinfo^.llvmlists.constlist.
+ //                                  adddataoffs(result.address).listid;
+     i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(po1^,
+                                         getbuffersize(bufferstart)).listid;
+     p1^:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                         gak_const,i1,info.s.globlinkage);
+     restoresegment(bufferstart);
     end;
    end;
    result.segment:= seg_globconst;
    result.address:= p1^{+sizeof(stringheaderty)};
+  {
    if co_llvm in info.o.compileoptions then begin
 //    result.address:= info.s.unitinfo^.llvmlists.constlist.
 //                                  adddataoffs(result.address).listid;
@@ -2698,6 +2720,7 @@ begin
                                         gak_const,i1,info.s.globlinkage);
     restoresegment(bufferstart);
    end;
+  }
   end;
  end;
 end;
