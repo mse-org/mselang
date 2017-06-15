@@ -315,7 +315,7 @@ begin
          end;
          das_64: begin
           with p1^.infocard64 do begin
-           if (vcardinal < min) or (vinteger > max) then begin
+           if (vcardinal < min) or (vcardinal > max) then begin
             errormessage(err_valuerange,[inttostrmse(min),inttostrmse(max)],
                                                         minint,0,erl_warning);
            end;
