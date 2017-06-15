@@ -117,7 +117,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=23
+  c=24
    (
    kind=1
    a=0,664,4,conditon
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,address
+   a=0,664,4,address
    c=2
     (
     kind=2
@@ -248,7 +248,71 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,665,4,const
+   c=2
+    (
+    kind=2
+    a=0,648,1,typedconst1
+    teststate=1
+    path=typedconst1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typedconst1 llvm
+    teststate=1
+    path=typedconst1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=const/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,664,4,arith
    c=36
     (
     kind=1
@@ -448,7 +512,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,665,4,cmp
     c=6
      (
      kind=2
@@ -1624,7 +1688,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=32
     (
     kind=2
@@ -2348,7 +2412,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=20
     (
     kind=2
@@ -3283,7 +3347,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72DC84C
+    ao=An unhandled exception occured at $B725084C
     ae=
     aec=123
     ie=0
@@ -10943,7 +11007,7 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -10956,102 +11020,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=420
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=325
  0 0
  0 0
  0 0

@@ -82,7 +82,7 @@ type
  indirectlevelty = int32;
  framelevelty = int32;
 
-   segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
+   segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
               seg_op,seg_classdef,seg_rtti,seg_intf,
               seg_localloc,
               seg_classintfcount,seg_intfitemcount,
@@ -94,8 +94,8 @@ const
  noident = 0;
  firstident = 256;
  idstart = $12345678;
- storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
-                   seg_classintfcount,seg_intfitemcount];
+ storedsegments = [seg_globconst,seg_reloc,seg_classdef,seg_op,seg_rtti,
+                   seg_intf,seg_classintfcount,seg_intfitemcount];
 type
  addressflagty = (af_nil,af_segment,af_local,af_stacktemp,
                   af_ssas2, 

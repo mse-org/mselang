@@ -144,8 +144,10 @@ uses
  
 const
  minsize: array[segmentty] of integer = (
-//seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_classinfo,seg_rtti,
-  0,      0,        0,          1024,         1024,  1024,         1024,
+//seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
+  0,      0,        0,          1024,         1024,     
+//seg_op,seg_classinfo,seg_rtti,
+  1024,  1024,         1024,
 //seg_intf,seg_paralloc,seg_classintfcount,seg_intfitemcount,
   1024,    1024,        1024,              1024,             
 //seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl
@@ -416,7 +418,7 @@ procedure topalign(const asegment: segmentty;
                           const asize: int32); {$ifdef mse_inline}inline;{$endif}
 begin
  with segments[asegment] do begin
-  toppo:= pointer((ptruint(toppo)+alignstep-1) and ptruint(alignmask));
+  toppo:= pointer(ptruint((ptruint(toppo)+alignstep-1) and ptruint(alignmask)));
  end;
 end;
 

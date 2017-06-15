@@ -70,7 +70,7 @@ type
 function alignsize(const size: ptruint): ptruint; 
                          {$ifdef mse_inline}inline;{$endif}
             //todo: align startaddress
-            
+procedure addreloc(const asource: segmentty; const adest: segaddressty);
 procedure finalize;
 function run(const stackdepht: integer): integer; //returns exitcode
 function run(const asegments: segmentbuffersty): integer; //returns exitcode
@@ -271,6 +271,22 @@ function alignsize(const size: ptruint): ptruint;
                              {$ifdef mse_inline}inline;{$endif}
 begin
  result:= (size+(alignstep-1)) and alignmask;
+end;
+
+type
+ relocinfoty = record
+  source: segmentty;
+  dest: segaddressty;
+ end;
+ prelocinfoty = ^relocinfoty;
+ 
+procedure addreloc(const asource: segmentty; const adest: segaddressty);
+var
+ p1: prelocinfoty;
+begin
+ p1:= allocsegmentpo(seg_reloc,sizeof(relocinfoty));
+ p1^.source:= asource;
+ p1^.dest:= adest;
 end;
 
 function intgetmem(const size: integer): pointer;
@@ -7276,6 +7292,7 @@ function run(const stackdepht: integer): integer;
 var
  segs: segmentbuffersty;
  seg1: segmentty;
+ p1,pe: prelocinfoty;
 begin
  for seg1:= low(seg1) to high(seg1) do begin //defaults
   segs[seg1].base:= getsegmentbase(seg1); 
@@ -7289,6 +7306,12 @@ begin
   reallocmem(globdata,globdatasize);
   segs[seg_globvar].base:= globdata;
   segs[seg_globvar].size:= globdatasize;
+ end;
+ p1:= getsegmentbase(seg_reloc);
+ pe:= getsegmenttop(seg_reloc);
+ while p1 < pe do begin
+  inc(ppointer(getsegmentpo(p1^.dest))^,ptruint(getsegmentbase(p1^.source)));
+  inc(p1);
  end;
  result:= run(segs);
 end;

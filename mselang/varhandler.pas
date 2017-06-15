@@ -39,7 +39,7 @@ implementation
 uses
  handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,segmentutils,
  identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr,
- msetypes,llvmbitcodes;
+ stackops,msetypes,llvmbitcodes,__mla__internaltypes;
  
 procedure handlevardefstart();
 begin
@@ -225,6 +225,7 @@ var
  n1: identnamety;
  i1: int32;
  linkage1: linkagety;
+ seg1: segaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('TYPEDCONST');
@@ -250,6 +251,8 @@ begin
      else begin
       case p1^.h.kind of
        dk_boolean: begin
+       end;
+       dk_string: begin
        end;
        dk_integer: begin
         case p1^.h.datasize of
@@ -464,6 +467,26 @@ begin
            end;
            das_f64: begin
             pflo64(p3)^:= vfloat;
+           end;
+           das_pointer: begin
+            case p1^.h.kind of
+             dk_string: begin
+              seg1:= allocstringconst(vstring);
+              if seg1.segment = seg_nil then begin
+               ppointer(p3)^:= nil;
+              end
+              else begin
+               pptruint(p3)^:= seg1.address+sizeof(stringheaderty);
+               addreloc(seg1.segment,address.segaddress);
+              end;
+             end;
+             else begin
+              internalerror(ie_handler,'20170615C');
+             end;
+            end;
+           end;
+           else begin
+            internalerror(ie_handler,'20170615B');
            end;
           end;
          end;
