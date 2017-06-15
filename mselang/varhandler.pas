@@ -399,6 +399,18 @@ begin
            das_f64: begin
             i1:= info.s.unitinfo^.llvmlists.constlist.addf64(vfloat).listid;
            end;
+           das_pointer: begin
+            case p1^.h.kind of
+             dk_string: begin
+              i1:= info.s.unitinfo^.llvmlists.constlist.addaddress(
+                           allocstringconst(vstring).address,
+                                               sizeof(stringheaderty)).listid;
+             end;
+             else begin
+              internalerror(ie_handler,'20170615F');
+             end;
+            end;
+           end;
            else begin
             internalerror(ie_handler,'20170614A');
            end;

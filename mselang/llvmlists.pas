@@ -314,6 +314,7 @@ type
                                               const ids: pint32): llvmvaluety;
                //ids[asize] used for type id not restored
    function addpointercast(const aid: int32): llvmvaluety;
+   function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
    function addaggregate(const avalue: paggregateconstty): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                 const aintfcount: int32
@@ -1692,6 +1693,11 @@ begin
  end;
  result.listid:= po1^.data.header.listindex;
  result.typeid:= pointertype;
+end;
+
+function tconsthashdatalist.addaddress(const aid: int32;
+               const aoffset: int32): llvmvaluety;
+begin
 end;
 
 function tconsthashdatalist.addpointerarray(const asize: int32;
