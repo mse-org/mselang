@@ -3233,7 +3233,8 @@ begin
  with acontext^ do begin
   if (d.kind in datacontexts) and 
       not ((d.kind = ck_ref) and 
-               (af_const in d.dat.ref.c.address.flags)) then begin
+           (af_segment in d.dat.ref.c.address.flags) and 
+           (d.dat.ref.c.address.segaddress.segment = seg_globconst)) then begin
    result:= getaddress(acontext,endaddress);
   end
   else begin
