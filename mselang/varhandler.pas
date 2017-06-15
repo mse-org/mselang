@@ -409,8 +409,7 @@ begin
          end;
          address.segaddress.segment:= seg_globconst;
          address.segaddress.address:=
-            info.s.unitinfo^.llvmlists.globlist.addinitvalue(
-                                                 gak_const,i1,linkage1);
+            s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,i1,linkage1);
          
   {
          if datasize1 = das_none then begin

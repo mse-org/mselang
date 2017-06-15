@@ -46,9 +46,10 @@ function gettempaddress(const abytesize: int32{;
 procedure releasetempaddress(const asize: databitsizety);
 procedure releasetempaddress(const asize: array of databitsizety);
 procedure releasetempaddress(const abytesize: int32);
-
+{
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
+}
 function getglobconstaddress(const asize: integer;
                                              out adata: pointer): segaddressty;
 function getclassinfoaddress(const asize: int32;
@@ -645,7 +646,7 @@ begin
  end;
  releasetempaddress(i2);
 end;
-
+{
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 begin
@@ -653,7 +654,7 @@ begin
  result.address:= result.address + shift;
  aflags:= aflags - addresskindflags + [af_segment];
 end;
-
+}
 function getglobconstaddress(const asize: integer;
                                              out adata: pointer): segaddressty;
 begin

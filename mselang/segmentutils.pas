@@ -92,6 +92,8 @@ procedure setsegmenttop(const asegment: segmentty; const adelta: int32);
 procedure resetsegment(const asegment: segmentty);
 function savesegment(const asegment: segmentty): segmentstatety;
 procedure restoresegment(const aseg: segmentstatety);
+function getbuffersize(const aseg: segmentstatety): int32;
+
 function getsubsegment(const asegment: segmentty): subsegmentty;
 function setsubsegment(const asubseg: subsegmentty): subsegmentstatety;
                                 //returns old state, do not change size
@@ -404,19 +406,28 @@ var
 begin
  grow(asegment,po1);
 end;
-
+(*
 procedure sizealign(var asize: integer); {$ifdef mse_inline}inline;{$endif}
 begin
  asize:= (asize+alignstep-1) and alignmask;
+end;
+*)
+procedure topalign(const asegment: segmentty;
+                          const asize: int32); {$ifdef mse_inline}inline;{$endif}
+begin
+ with segments[asegment] do begin
+  toppo:= pointer((ptruint(toppo)+alignstep-1) and ptruint(alignmask));
+ end;
 end;
 
 function allocsegment(const asegment: segmentty;
                                     asize: integer): segaddressty;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   result.segment:= asegment;
   result.address:= toppo-pointer(data);
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
@@ -428,8 +439,8 @@ procedure reallocsegment(const address: segaddressty;
                                 oldsize,newsize: int32); 
                                    //for reducing last alloc only
 begin
- sizealign(oldsize);
- sizealign(newsize);
+// sizealign(oldsize);
+// sizealign(newsize);
 {$ifdef mse_checkinternalerror}
  if oldsize < newsize then begin
   internalerror(ie_segment,'20170326B');
@@ -444,13 +455,14 @@ function allocsegment(const asegment: segmentty;
                              asize: integer; out adata: pointer): segaddressty;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   result.segment:= asegment;
   adata:= toppo;
   result.address:= toppo-pointer(data);
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
-   grow(asegment);
+   grow(asegment,adata);
    if adata = nil then begin
     adata:= data;
    end;
@@ -462,8 +474,9 @@ function allocsegmentoffset(const asegment: segmentty;
                                     asize: integer): dataoffsty;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   result:= toppo-pointer(data);
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
@@ -475,12 +488,13 @@ function allocsegmentoffset(const asegment: segmentty; asize: integer;
                                                out adata: pointer): dataoffsty;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   adata:= toppo;
   result:= toppo-pointer(data);
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
-   grow(asegment);
+   grow(asegment,adata);
    if adata = nil then begin
     adata:= data;
    end;
@@ -492,8 +506,9 @@ function allocsegmentpo(const asegment: segmentty;
                                     asize: integer): pointer;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   result:= toppo;
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,result);
@@ -519,8 +534,9 @@ var
  po1: pointer;
 begin
  with segments[asegment] do begin
+  topalign(asegment,asize);
   result:= toppo;
-  sizealign(asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    po1:= result;
@@ -532,28 +548,39 @@ end;
 
 procedure checksegmentcapacity(const asegment: segmentty;
                                asize: integer; var buffer: pointer);
+var
+ p1,p2: pointer;
 begin
  with segments[asegment] do begin
-  sizealign(asize);
+  p1:= toppo;
+  p2:= data;
+  topalign(asegment,asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,buffer);
   end;
-  dec(toppo,asize);
+  toppo:= p1 + (data-p2);
  end;
 end;
 
 function checksegmentcapacity(const asegment: segmentty; 
                                            asize: integer): pointer;
                                  //returns alloc top
+var
+ p1,p2: pointer;
 begin
  with segments[asegment] do begin
-  sizealign(asize);
+  p1:= toppo;
+  p2:= data;
+  topalign(asegment,asize);
+//  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
   end;
-  dec(toppo,asize);
+  toppo:= p1 + (data-p2);
+//  dec(toppo,asize);
   result:= toppo;
  end;
 end;
@@ -624,6 +651,13 @@ begin
   if toppo > endpo then begin
    internalerror1(ie_segment,'20150710B'); //invalid size
   end;
+ end;
+end;
+
+function getbuffersize(const aseg: segmentstatety): int32;
+begin
+ with segments[aseg.segment] do begin
+  result:= (toppo + (aseg.data-data)) - aseg.toppo;
  end;
 end;
 

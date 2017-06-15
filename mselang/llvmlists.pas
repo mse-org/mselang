@@ -305,6 +305,8 @@ type
    function addf64(const avalue: flo64): llvmvaluety;
    function adddataoffs(const avalue: dataoffsty): llvmvaluety;
    function addvalue(const avalue; const asize: int32): llvmvaluety;
+   function addvalue(const avalue: segaddressty;
+                              const asize: int32): llvmvaluety;
    function addpointerarray(const asize: int32;
                                      const ids: pint32): llvmvaluety;
                //ids[asize] used for type id, restored
@@ -1654,6 +1656,12 @@ begin
  end;
  result.listid:= po1^.data.header.listindex;
  result.typeid:= po1^.data.typeid;
+end;
+
+function tconsthashdatalist.addvalue(const avalue: segaddressty;
+                              const asize: int32): llvmvaluety;
+begin
+ result:= addvalue(getsegmentpo(avalue)^,asize);
 end;
 
 function tconsthashdatalist.addnullvalue(const atypeid: int32): llvmvaluety;

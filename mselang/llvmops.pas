@@ -527,6 +527,11 @@ begin
  end;
  fillchar(trampolinealloc,sizeof(trampolinealloc),0); //used in subbeginop
 
+{$ifdef mse_checkinternalerror}
+ if getsegmentsize(seg_globconst) > 0 then begin
+  internalerror(ie_llvm,'20170613F');
+ end;
+{$endif}
 {
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin                               //global consts

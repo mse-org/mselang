@@ -329,7 +329,7 @@ uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
  subhandler,
- identutils,llvmbitcodes,llvmlists,grammarglob;
+ identutils,llvmbitcodes,llvmlists,grammarglob,__mla__internaltypes;
    
 const
  minflo32 = -3.4e38;
@@ -1262,7 +1262,7 @@ begin
      with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                                pushsegaddrssaar[segad1.segment])^ do begin
       par.memop.segdataaddress.a:= segad1;
-      par.memop.segdataaddress.offset:= 0;
+      par.memop.segdataaddress.offset:= sizeof(stringheaderty);
       par.memop.t:= bitoptypes[das_pointer];
      end;
     end;

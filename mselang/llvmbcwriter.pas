@@ -1962,7 +1962,7 @@ end;
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;
 begin
  result:= aadress.address;
- if aadress.segment in [seg_globconst,seg_classdef] then begin
+ if aadress.segment in [{seg_globconst,}seg_classdef] then begin
   result:= result + fconststart;
  end;
  {

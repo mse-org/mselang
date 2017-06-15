@@ -2601,6 +2601,7 @@ var
  lstr1: lstringty;
  stringbuf: pstringbufhashdataty;
  hashbuf2: phashdataty;
+ bufferstart: segmentstatety;
 begin
  stringbuf:= pstringbufhashdataty(fdata+astring.offset);
  if stringbuf^.data.len = 0 then begin
@@ -2608,6 +2609,7 @@ begin
   result.segment:= seg_nil;
  end
  else begin
+  bufferstart:= savesegment(seg_globconst);
   if stringbuf^.header.prevhash < 0 then begin //temp string
    lstr1.len:= stringbuf^.data.len;
    lstr1.po:= fbuffer + stringbuf^.data.offset;
@@ -2686,10 +2688,15 @@ begin
     end;
    end;
    result.segment:= seg_globconst;
-   result.address:= p1^+sizeof(stringheaderty);
+   result.address:= p1^{+sizeof(stringheaderty)};
    if co_llvm in info.o.compileoptions then begin
-    result.address:= info.s.unitinfo^.llvmlists.constlist.
-                                  adddataoffs(result.address).listid;
+//    result.address:= info.s.unitinfo^.llvmlists.constlist.
+//                                  adddataoffs(result.address).listid;
+    i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(
+                              result,getbuffersize(bufferstart)).listid;
+    result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                        gak_const,i1,info.s.globlinkage);
+    restoresegment(bufferstart);
    end;
   end;
  end;
