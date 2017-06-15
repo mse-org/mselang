@@ -394,7 +394,7 @@ begin
             i1:= info.s.unitinfo^.llvmlists.constlist.addf32(vfloat).listid;
            end;
            das_f64: begin
-            i1:= info.s.unitinfo^.llvmlists.constlist.addf32(vfloat).listid;
+            i1:= info.s.unitinfo^.llvmlists.constlist.addf64(vfloat).listid;
            end;
            else begin
             internalerror(ie_handler,'20170614A');
