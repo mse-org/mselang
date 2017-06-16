@@ -122,6 +122,7 @@ type
    procedure emitfloatconst(const avalue: flo64);
    procedure emitdataconst(const avalue; const asize: int32);
    procedure emitpointercastconst(const avalue: int32; const atype: int32);
+   procedure emitgepconst(const avalue: int32; const aoffset: int32);
    procedure checkdebugloc();
   public
    constructor create(ahandle: integer); override;
@@ -466,6 +467,7 @@ var
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
  separator1: char;
  wrap: bcunitheaderty;
+ addressinfo1: paddressconstty;
 begin
  fdatalayout:= adatalayout;
  ftriple:= atriple;
@@ -707,6 +709,14 @@ begin
        emitpointercastconst(globval(pc2^.header.buffer),
                  ptypeval(info.s.unitinfo^.llvmlists.globlist.
                                                 gettype(pc2^.header.buffer)));
+      end;
+      ct_address: begin
+       checkconsttypeid(pointertype);
+       addressinfo1:= 
+              info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
+       with addressinfo1^ do begin
+        emitgepconst(constval(addressid),constval(offsetid));
+       end;
       end;
       ct_pointerarray,ct_aggregatearray: begin
        pa:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
@@ -1435,6 +1445,11 @@ procedure tllvmbcwriter.emitpointercastconst(const avalue: int32;
                                                        const atype: int32);
 begin
  emitrec(ord(CST_CODE_CE_CAST),[ord(CAST_BITCAST),atype,avalue]);
+end;
+
+procedure tllvmbcwriter.emitgepconst(const avalue: int32; const aoffset: int32);
+begin
+ emitrec(ord(CST_CODE_CE_GEP),[typeval(das_8),ptypeval(das_8),avalue,typeval(das_32),aoffset]);
 end;
 
 procedure tllvmbcwriter.emitsub(const atype: int32;

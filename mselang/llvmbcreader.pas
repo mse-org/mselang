@@ -1347,6 +1347,11 @@ var
    end;
   end;
  end; //outconst
+ 
+ procedure defoutconst();
+ begin
+  outconst(dynarraytovararray(copy(rec1,2,bigint)));
+ end; //defoutconst
 
 var
  blocklevelbefore: int32;
@@ -1407,8 +1412,24 @@ begin
           outconst([realtostrmse(flo64const)]);
          end;
         end;
+        CST_CODE_CE_CAST: begin
+         if high(rec1) = 4 then begin
+          if (rec1[2] >= 0) and 
+                           (rec1[2] <= ord(high(castopcodesnames))) then begin
+           s1:= castopcodesnames[castopcodes(rec1[2])];
+          end
+          else begin
+           s1:= inttostr(rec1[2]);
+          end;
+          s1:= s1 + ':'+ftypelist.typename(rec1[3])+','+inttostr(rec1[4]);
+          outconst([s1]);
+         end
+         else begin
+          defoutconst();
+         end;
+        end;
         else begin
-         outconst(dynarraytovararray(copy(rec1,2,bigint)));
+         defoutconst();
         end;
        end;
       end;

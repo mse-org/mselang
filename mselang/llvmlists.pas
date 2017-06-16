@@ -241,7 +241,7 @@ type
 //                                         //for initialization, finalizition
  end;
 
- consttypety = (ct_none,ct_null,ct_pointercast,
+ consttypety = (ct_none,ct_null,ct_pointercast,ct_address,
                 ct_pointerarray,ct_aggregatearray,ct_aggregate{,ct_intfitem});
                                             //stored as negative typeid
 
@@ -276,6 +276,12 @@ type
   end;
  end;
  paggregateconstty = ^aggregateconstty;
+ 
+ addressconstty = record
+  addressid: int32;
+  offsetid: int32;
+ end;
+ paddressconstty = ^addressconstty;
 { 
  intfitemconstty = record
   instanceshiftid: int32;
@@ -1697,7 +1703,24 @@ end;
 
 function tconsthashdatalist.addaddress(const aid: int32;
                const aoffset: int32): llvmvaluety;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+ ac1: addressconstty;
 begin
+ result:= addpointercast(aid);
+ if aoffset <> 0 then begin
+  ac1.addressid:= result.listid;
+  ac1.offsetid:= addi32(aoffset).listid;
+  alloc1.header.size:= sizeof(ac1);
+  alloc1.header.data:= @ac1;
+  alloc1.typeid:= -ord(ct_address);
+  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+   po1^.data.typeid:= alloc1.typeid;
+  end;
+  result.listid:= po1^.data.header.listindex;
+  result.typeid:= po1^.data.typeid;
+ end;
 end;
 
 function tconsthashdatalist.addpointerarray(const asize: int32;
@@ -2061,7 +2084,7 @@ begin
    ct_null: begin       
     dat1.typeindex:= int32(po1^.data.header.buffer);
    end;
-   ct_pointercast: begin
+   ct_pointercast,ct_address: begin
     dat1.typeindex:= pointertype;
    end;
    ct_pointerarray,ct_aggregatearray: begin
