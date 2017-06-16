@@ -412,6 +412,7 @@ type
   itemcount: int32;
   curindex: int32;
   itemsize: int32;
+  segad: segaddressty;
   datapo: pointer;
   datapopo: ppointer; //-> base datapo
  end;

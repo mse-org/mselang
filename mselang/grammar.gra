@@ -105,6 +105,10 @@ checksemicolon2,,,*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
+checksemicolon2a,,,*
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 semicolonexpected,,,handlesemicolonexpected
 colonexpected,,,handlecolonexpected
 identexpected,,,handleidentexpected
@@ -956,7 +960,7 @@ typedconstarray,,,handleopenroundbracketexpected
 typedconstarray0,typedconstarray0a,,
  '',typedconstarray1*
 typedconstarray0a,,,handletypedconstarray*>
- '',checksemicolon1
+ '',checksemicolon2a*
 typedconstarray1,typedconstarray1a,handletypedconstarraylevelentry,
 typedconstarray1a,typedconstarray2,,handletypedconstarrayitem*
  '',exp^*

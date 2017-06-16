@@ -4252,7 +4252,8 @@ begin
       ck_arrayconst: begin
        write(' count:',inttostrmse(d.arrayconst.itemcount),
                   ' index:',inttostrmse(d.arrayconst.curindex),
-                      ' itemsize:',inttostrmse(d.arrayconst.itemsize));
+                      ' itemsize:',inttostrmse(d.arrayconst.itemsize),
+                      ' itemtype:',inttostrmse(d.arrayconst.itemtype));
       end;
       ck_subdef: begin
        write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
