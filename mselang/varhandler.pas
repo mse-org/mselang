@@ -174,49 +174,6 @@ begin
  end;
 end;
 
-procedure handletypedconst2entry();
-var
- p1: ptypedataty;
- cont1: pcontextty;
-begin
-{$ifdef mse_debugparser}
- outhandle('TYPEDCONST2ENTRY');
-{$endif}
- with info do begin
-  if currenttypedef <> 0 then begin
-   p1:= ele.eledataabs(currenttypedef);
-   if p1^.h.indirectlevel = 0 then begin
-    cont1:= nil;
-    case p1^.h.kind of
-     dk_array: begin
-      case s.dialect of
-       dia_mse: cont1:= @gramse.typedconstarrayco;
-       dia_pas: cont1:= @grapas.typedconstarrayco;
-       else internalerror1(ie_dialect,'20170612B');
-      end;
-      with contextstack[s.stacktop] do begin
-       d.kind:= ck_arrayconst;
-       d.arrayconst.itemtype:= currenttypedef;
-       d.arrayconst.segad:=
-               allocsegment(seg_globconst,p1^.h.bytesize,d.arrayconst.datapo);
-                 //todo: alignment
-       d.arrayconst.datapopo:= @d.arrayconst.datapo;
-       d.arrayconst.itemcount:= 0; //dummy
-       d.arrayconst.curindex:= 0;
-      end;
-//      s.stacktop:= s.stackindex;
-     end;
-    end;
-    switchcontext(cont1,false);
-   end
-   else begin
-    internalerror1(ie_notimplemented,'20170512A');
-    //todo: handle addresses
-   end;
-  end;
- end;
-end;
-
 function checkconstrange(p1: ptypedataty): boolean;
 begin
  with info do begin
@@ -394,16 +351,52 @@ begin
 end;
 
 procedure handletypedconst();
+
+var
+ ident1: identty;
+
+ procedure updatellvmvar(const i1: int32; const avar: pvardataty);
+ var
+  linkage1: linkagety;
+  n1: identnamety;
+ begin
+  with info,avar^ do begin 
+   if sublevel > 0 then begin
+    linkage1:= li_internal;
+   end
+   else begin
+    linkage1:= info.s.globlinkage;
+   end;
+   address.segaddress.segment:= seg_globconst;
+   address.segaddress.address:=
+      s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,i1,linkage1);
+   if not (us_implementation in s.unitinfo^.state) then begin
+    nameid:= s.unitinfo^.nameid; //for llvm
+   end;
+   if (info.o.debugoptions*[do_proginfo,do_names] <> []) then begin
+    getidentname(ident1,n1);
+    if do_names in info.o.debugoptions then begin
+
+     s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                          n1,address.segaddress.address);
+    end;
+    if do_proginfo in info.o.debugoptions then begin
+     s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+      s.unitinfo^.llvmlists.metadatalist.adddivariable(
+               nametolstring(n1),contextstack[s.stackindex+1].start.line,
+                                                                    0,avar^);
+    end;
+   end;
+  end;
+ end; //updatellvmvar
+
 var
  p1: ptypedataty;
  p2: pvardataty;
  p3: pointer;
  datasize1: databitsizety;
  size1: int32;
- ident1: identty;
- n1: identnamety;
  i1: int32;
- linkage1: linkagety;
 begin
 {$ifdef mse_debugparser}
  outhandle('TYPEDCONST');
@@ -448,7 +441,12 @@ begin
      end;
     end;
     if p1^.h.kind = dk_array then begin
-     p2^.address.segaddress:=  contextstack[s.stacktop].d.arrayconst.segad;
+     p2^.address.segaddress:= contextstack[s.stacktop].d.arrayconst.segad;
+     if co_llvm in info.o.compileoptions then begin
+      updatellvmvar(s.unitinfo^.llvmlists.constlist.addvalue(
+                             p2^.address.segaddress,p1^.h.bytesize).listid,p2);
+      setsegmenttop(seg_globconst,-p1^.h.bytesize);
+     end;
     end
     else begin
      if checkconstrange(p1) then begin
@@ -495,32 +493,7 @@ begin
            end;
           end;
          end;
-         if sublevel > 0 then begin
-          linkage1:= li_internal;
-         end
-         else begin
-          linkage1:= info.s.globlinkage;
-         end;
-         address.segaddress.segment:= seg_globconst;
-         address.segaddress.address:=
-            s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,i1,linkage1);
-         if not (us_implementation in s.unitinfo^.state) then begin
-          nameid:= s.unitinfo^.nameid; //for llvm
-         end;
-         if (info.o.debugoptions*[do_proginfo,do_names] <> []) then begin
-          getidentname(ident1,n1);
-          if do_names in info.o.debugoptions then begin
-  
-           s.unitinfo^.llvmlists.globlist.namelist.addname(
-                                                n1,address.segaddress.address);
-          end;
-          if do_proginfo in info.o.debugoptions then begin
-           s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
-            s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                     nametolstring(n1),contextstack[s.stackindex+1].start.line,
-                                                                          0,p2^);
-          end;
-         end;
+         updatellvmvar(i1,p2);
         end
         else begin
          address.segaddress:= allocsegment(seg_globconst,p1^.h.bytesize,p3);
@@ -534,6 +507,49 @@ begin
   end;
 //  dec(s.stackindex);
   s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handletypedconst2entry();
+var
+ p1: ptypedataty;
+ cont1: pcontextty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDCONST2ENTRY');
+{$endif}
+ with info do begin
+  if currenttypedef <> 0 then begin
+   p1:= ele.eledataabs(currenttypedef);
+   if p1^.h.indirectlevel = 0 then begin
+    cont1:= nil;
+    case p1^.h.kind of
+     dk_array: begin
+      case s.dialect of
+       dia_mse: cont1:= @gramse.typedconstarrayco;
+       dia_pas: cont1:= @grapas.typedconstarrayco;
+       else internalerror1(ie_dialect,'20170612B');
+      end;
+      with contextstack[s.stacktop] do begin
+       d.kind:= ck_arrayconst;
+       d.arrayconst.itemtype:= currenttypedef;
+       d.arrayconst.segad:=
+               allocsegment(seg_globconst,p1^.h.bytesize,d.arrayconst.datapo);
+                 //todo: alignment
+       d.arrayconst.datapopo:= @d.arrayconst.datapo;
+       d.arrayconst.itemcount:= 0; //dummy
+       d.arrayconst.curindex:= 0;
+      end;
+//      s.stacktop:= s.stackindex;
+     end;
+    end;
+    switchcontext(cont1,false);
+   end
+   else begin
+    internalerror1(ie_notimplemented,'20170512A');
+    //todo: handle addresses
+   end;
+  end;
  end;
 end;
 

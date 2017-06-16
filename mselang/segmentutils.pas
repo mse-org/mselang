@@ -465,9 +465,9 @@ begin
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,adata);
-   if adata = nil then begin
-    adata:= data;
-   end;
+//   if adata = nil then begin
+//    adata:= data;
+//   end;
   end;
  end;
 end;
@@ -617,7 +617,7 @@ end;
 
 procedure setsegmenttop(const asegment: segmentty; const adelta: int32);
 begin
- with segments[seg_op] do begin
+ with segments[asegment] do begin
   toppo:= toppo + adelta;
   if toppo > endpo then begin
    grow(seg_op);
