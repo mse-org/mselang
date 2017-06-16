@@ -1,0 +1,24 @@
+program typedconst1;
+
+const
+ c1: int8 = 1;
+ c2: int16 = 2;
+ c3: int32 = 3;
+ c4: int64 = 4;
+ c5: card8 = 5;
+ c6: card16 = 6;
+ c7: card32 = 7;
+ c8: card64 = 8;
+ c9: boolean = true;
+ c10: flo32 = 10.5;
+ c11: flo64 = 11.5;
+ c12: string8 = 'abc';
+
+begin
+ if (c1 = 1) and (c2 = 2) and (c3 = 3) and (c4 = 4) and
+    (c5 = 5) and (c6 = 6) and (c7 = 7) and (c8 = 8) and c9 and
+    (c10 = 10.5) and (c11 = 11.5) and (c12 = 'abc')
+ then
+  exitcode:= 123;
+ end;
+end.
