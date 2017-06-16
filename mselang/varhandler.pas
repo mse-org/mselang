@@ -612,6 +612,10 @@ begin
     errormessage(err_toomanyarrayitems,[]);
    end
    else begin
+    p1:= ele.eledataabs(itemtype);
+    if checkconstrange(p1) then begin
+     setconstval(p1,datapopo^);
+    end;
     if itemsize <> 0 then begin
      inc(datapopo^,itemsize);
     end;
