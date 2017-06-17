@@ -53,9 +53,15 @@ const
  VT_BYREF = $4000;
  numvariantmax = VT_UI8;
  
-type  
+type
+ varianttypety = card16;
+ 
  variantty = object [nozeroinit]
-   vtype: card16;
+  protected
+   method commontype(const b: variantty): varianttypety;
+   method operandtypeerror(const b: variantty; const aoperand: string8);
+  public
+   vtype: varianttypety;
    (res1,res2,res3: card16;
     (vint8: int8);     //VT_I1
     (vint16: int16);   //VT_I2
@@ -72,6 +78,7 @@ type
    method ini() [ini];
    method fini() [fini];
    method tovariant(const avalue: int8) [operator=':='];
+   method tovariant(const avalue: flo64) [operator=':='];
    method tovalue(): int8 [operator=':='];
    method tovalue(): int16 [operator=':='];
    method tovalue(): int32 [operator=':='];
@@ -101,6 +108,13 @@ begin
  fini();
  vtype:= VT_I1;
  vint8:= avalue;
+end;
+
+method variantty.tovariant(const avalue: flo64);
+begin
+ fini();
+ vtype:= VT_R8;
+ vflo64:= avalue;
 end;
 
 method variantty.tovalue(): int8;
@@ -407,9 +421,30 @@ const
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_UI8)
  );
+
+method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
+begin
+ //todo
+end;
+
+method variantty.commontype(const b: variantty): varianttypety;
+begin
+ result:= VT_UNKNOWN;
+ if (vtype <= numvariantmax) and (b.vtype <= numvariantmax) then
+  result:= commontermtypes[vtype,b.vtype];
+ end;
+end;
  
 method variantty.add(const b: variantty);
+var
+ i8: int8;
 begin
+ case commontype(b) of
+  VT_I1:
+   i8:= tovariant(int8(self^)+int8(b));
+  else
+   operandtypeerror(b,'+');
+ end;   
 end;
 
 end.

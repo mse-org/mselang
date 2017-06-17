@@ -660,7 +660,7 @@ begin
 //  last:= s.stackindex-1;
 //  itemcount:= s.stackindex - contextstack[last].parent - 1;
  {$ifdef mse_checkinternalerror}
-  if poexp^.d.kind <> ck_fact then begin
+  if not (poexp^.d.kind in factcontexts) then begin
    internalerror(ie_parser,'20150909A');
   end;
  {$endif}
