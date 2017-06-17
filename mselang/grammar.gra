@@ -964,7 +964,7 @@ typedconstarray0a,,,handletypedconstarray*>
 typedconstarray1,typedconstarray1a,handletypedconstarraylevelentry,
 typedconstarray1a,typedconstarray2,,handletypedconstarrayitem*
  '',exp^*
- '(',typedconstarray1-*
+ '(',typedconstarray1-*>,typedconstarray2
 typedconstarray2,,,handletypedconstarraylevel*
  ${whitespace}
  ')',-*

@@ -7890,8 +7890,8 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  btypedconstarray1a: array[0..2] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @typedconstarray1co); stack: nil; keys: (
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @typedconstarray1co); stack: @typedconstarray2co; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),

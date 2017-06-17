@@ -570,6 +570,7 @@ begin
  {$endif}
   d.kind:= ck_arrayconst;
   context1:= @contextstack[s.stackindex-1];
+  inc(context1^.d.arrayconst.curindex);
   p1:= ele.eledataabs(context1^.d.arrayconst.itemtype);
   d.arrayconst.datapopo:= context1^.d.arrayconst.datapopo;
   d.arrayconst.curindex:= 0;
