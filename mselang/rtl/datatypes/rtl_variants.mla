@@ -185,7 +185,7 @@ end;
 
 const
 {$internaldebug on}
- commontermtypes: array[0..numvariantmax][0..numvariantmax] of card16 =
+ commontermtypes: array[0..numvariantmax][0..numvariantmax] of card16 = (
 //todo: fix wrong values
 
 //VT_EMPTY = $0000;

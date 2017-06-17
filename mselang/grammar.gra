@@ -965,8 +965,9 @@ typedconstarray0a,,,handletypedconstarray*>
  '',checksemicolon2a*
 typedconstarray1,typedconstarray1a,handletypedconstarraylevelentry,
 typedconstarray1a,typedconstarray2,,handletypedconstarrayitem*
- '',exp^*
+ ${whitespace}
  '(',typedconstarray1-*>,typedconstarray2
+ '',exp^*
 typedconstarray2,,,handletypedconstarraylevel*
  ${whitespace}
  ')',-*
