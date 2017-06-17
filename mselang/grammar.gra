@@ -873,9 +873,11 @@ arrayindex1,arrayindex2,,
  '',getfieldtype^*
 arrayindex2,,,
  ',',getfieldtype-^*>
- ']',-*
+ ']',arrayindex3-
   '',!handlearrayindexerror2*
-
+arrayindex3,,,
+ ${whitespace}
+ '[',arrayindex1-
 getnamedtype,,,handlenamedtype*^
  '',getidentpath^*
 
