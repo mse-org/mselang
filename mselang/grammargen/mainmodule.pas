@@ -249,9 +249,10 @@ var
 
 procedure nextid;
 begin
- repeat
-  lfsr321(id);
- until id >= firstident;
+// repeat
+ inc(id);
+//  lfsr321(id);
+// until id >= firstident;
 end;
 
 function idstring(const aid: string): string;

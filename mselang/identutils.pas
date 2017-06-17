@@ -145,9 +145,10 @@ type
  
 procedure nextident;
 begin
- repeat
-  lfsr321(stringident);
- until stringident >= firstident;
+// repeat
+//  lfsr321(stringident);
+ inc(stringident);
+// until stringident >= firstident;
 end;
 
 function getident(): identty;

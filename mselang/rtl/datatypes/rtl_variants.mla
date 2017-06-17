@@ -184,7 +184,6 @@ begin
 end;
 
 const
-{$internaldebug on}
  commontermtypes: array[0..numvariantmax][0..numvariantmax] of card16 = (
 //todo: fix wrong values
 
@@ -409,7 +408,7 @@ const
   VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_UI8)
  );
  
-method variantty.add(const b: variantty) [operator='+'];
+method variantty.add(const b: variantty);
 begin
 end;
 

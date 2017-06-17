@@ -22,136 +22,136 @@ uses
  
 const
  tks_none = 0;
- tks_void = $4FC6E54B;
- tks_classes = $9F8DCA96;
- tks_private = $3F1B952D;
- tks_protected = $7E372A5B;
- tks_public = $FC6E54B6;
- tks_published = $F8DCA96C;
- tks_classintfname = $F1B952D8;
- tks_classintftype = $E372A5B1;
- tks_classimp = $C6E54B62;
- tks_self = $8DCA96C4;
- tks_units = $1B952D88;
- tks_ancestors = $372A5B10;
- tks_nestedvarref = $6E54B621;
- tks_defines = $DCA96C42;
- tks_ini = $B952D885;
- tks_fini = $72A5B10B;
- tks_incref = $E54B6216;
- tks_decref = $CA96C42D;
- tks_decrefindi = $952D885A;
- tks_method = $2A5B10B4;
- tks_operators = $54B62168;
- tks_operatorsright = $A96C42D0;
- tks_system = $52D885A1;
- tk_mselang = $A5B10B43;
- tk_pascal = $4B621687;
- tk_nil = $96C42D0E;
- tk_result = $2D885A1C;
- tk_exitcode = $5B10B438;
- tk_sizeof = $B6216870;
- tk_defined = $6C42D0E1;
- tk_break = $D885A1C3;
- tk_continue = $B10B4387;
- tk_self = $6216870F;
- tk_b = $C42D0E1E;
- tk_booleval = $885A1C3D;
- tk_internaldebug = $10B4387B;
- tk_nozeroinit = $216870F6;
- tk_zeroinit = $42D0E1EC;
- tk_virtual = $85A1C3D9;
- tk_end = $0B4387B2;
- tk_afterconstruct = $16870F64;
- tk_beforedestruct = $2D0E1EC9;
- tk_ini = $5A1C3D92;
- tk_fini = $B4387B25;
- tk_operator = $6870F64A;
- tk_operatorright = $D0E1EC95;
- tk_unit = $A1C3D92B;
- tk_program = $4387B257;
- tk_interface = $870F64AE;
- tk_implementation = $0E1EC95D;
- tk_uses = $1C3D92BB;
- tk_type = $387B2576;
- tk_const = $70F64AED;
- tk_var = $E1EC95DB;
- tk_label = $C3D92BB7;
- tk_class = $87B2576F;
- tk_procedure = $0F64AEDF;
- tk_function = $1EC95DBE;
- tk_method = $3D92BB7D;
- tk_initialization = $7B2576FA;
- tk_finalization = $F64AEDF5;
- tk_constructor = $EC95DBEB;
- tk_destructor = $D92BB7D6;
- tk_begin = $B2576FAC;
- tk_mode = $64AEDF59;
- tk_dumpelements = $C95DBEB3;
- tk_dumpopcode = $92BB7D66;
- tk_abort = $2576FACC;
- tk_stoponerror = $4AEDF598;
- tk_nop = $95DBEB31;
- tk_include = $2BB7D662;
- tk_define = $576FACC5;
- tk_undef = $AEDF598A;
- tk_ifdef = $5DBEB315;
- tk_ifndef = $BB7D662B;
- tk_if = $76FACC56;
- tk_else = $EDF598AC;
- tk_endif = $DBEB3159;
- tk_ifend = $B7D662B3;
- tk_h = $6FACC566;
- tk_inline = $DF598ACD;
- tk_on = $BEB3159B;
- tk_off = $7D662B37;
- tk_default = $FACC566E;
- tk_constref = $F598ACDD;
- tk_out = $EB3159BB;
- tk_override = $D662B376;
- tk_overload = $ACC566EC;
- tk_of = $598ACDD8;
- tk_object = $B3159BB1;
- tk_external = $662B3762;
- tk_forward = $CC566EC4;
- tk_sub = $98ACDD89;
- tk_finally = $3159BB13;
- tk_except = $62B37626;
- tk_do = $C566EC4C;
- tk_with = $8ACDD898;
- tk_case = $159BB130;
- tk_while = $2B376261;
- tk_repeat = $566EC4C3;
- tk_for = $ACDD8987;
- tk_try = $59BB130E;
- tk_raise = $B376261D;
- tk_goto = $66EC4C3A;
- tk_then = $CDD89874;
- tk_until = $9BB130E8;
- tk_to = $376261D1;
- tk_downto = $6EC4C3A3;
- tk_set = $DD898746;
- tk_record = $BB130E8C;
- tk_array = $76261D18;
- tk_private = $EC4C3A30;
- tk_protected = $D8987460;
- tk_public = $B130E8C1;
- tk_published = $6261D183;
- tk_property = $C4C3A306;
- tk_read = $8987460D;
- tk_write = $130E8C1A;
- tk_div = $261D1834;
- tk_mod = $4C3A3068;
- tk_and = $987460D0;
- tk_shl = $30E8C1A1;
- tk_shr = $61D18343;
- tk_or = $C3A30686;
- tk_xor = $87460D0D;
- tk_in = $0E8C1A1B;
- tk_not = $1D183437;
- tk_is = $3A30686F;
- tk_as = $7460D0DE;
- tk_inherited = $E8C1A1BD;
+ tks_void = $00000201;
+ tks_classes = $00000202;
+ tks_private = $00000203;
+ tks_protected = $00000204;
+ tks_public = $00000205;
+ tks_published = $00000206;
+ tks_classintfname = $00000207;
+ tks_classintftype = $00000208;
+ tks_classimp = $00000209;
+ tks_self = $0000020A;
+ tks_units = $0000020B;
+ tks_ancestors = $0000020C;
+ tks_nestedvarref = $0000020D;
+ tks_defines = $0000020E;
+ tks_ini = $0000020F;
+ tks_fini = $00000210;
+ tks_incref = $00000211;
+ tks_decref = $00000212;
+ tks_decrefindi = $00000213;
+ tks_method = $00000214;
+ tks_operators = $00000215;
+ tks_operatorsright = $00000216;
+ tks_system = $00000217;
+ tk_mselang = $00000218;
+ tk_pascal = $00000219;
+ tk_nil = $0000021A;
+ tk_result = $0000021B;
+ tk_exitcode = $0000021C;
+ tk_sizeof = $0000021D;
+ tk_defined = $0000021E;
+ tk_break = $0000021F;
+ tk_continue = $00000220;
+ tk_self = $00000221;
+ tk_b = $00000222;
+ tk_booleval = $00000223;
+ tk_internaldebug = $00000224;
+ tk_nozeroinit = $00000225;
+ tk_zeroinit = $00000226;
+ tk_virtual = $00000227;
+ tk_end = $00000228;
+ tk_afterconstruct = $00000229;
+ tk_beforedestruct = $0000022A;
+ tk_ini = $0000022B;
+ tk_fini = $0000022C;
+ tk_operator = $0000022D;
+ tk_operatorright = $0000022E;
+ tk_unit = $0000022F;
+ tk_program = $00000230;
+ tk_interface = $00000231;
+ tk_implementation = $00000232;
+ tk_uses = $00000233;
+ tk_type = $00000234;
+ tk_const = $00000235;
+ tk_var = $00000236;
+ tk_label = $00000237;
+ tk_class = $00000238;
+ tk_procedure = $00000239;
+ tk_function = $0000023A;
+ tk_method = $0000023B;
+ tk_initialization = $0000023C;
+ tk_finalization = $0000023D;
+ tk_constructor = $0000023E;
+ tk_destructor = $0000023F;
+ tk_begin = $00000240;
+ tk_mode = $00000241;
+ tk_dumpelements = $00000242;
+ tk_dumpopcode = $00000243;
+ tk_abort = $00000244;
+ tk_stoponerror = $00000245;
+ tk_nop = $00000246;
+ tk_include = $00000247;
+ tk_define = $00000248;
+ tk_undef = $00000249;
+ tk_ifdef = $0000024A;
+ tk_ifndef = $0000024B;
+ tk_if = $0000024C;
+ tk_else = $0000024D;
+ tk_endif = $0000024E;
+ tk_ifend = $0000024F;
+ tk_h = $00000250;
+ tk_inline = $00000251;
+ tk_on = $00000252;
+ tk_off = $00000253;
+ tk_default = $00000254;
+ tk_constref = $00000255;
+ tk_out = $00000256;
+ tk_override = $00000257;
+ tk_overload = $00000258;
+ tk_of = $00000259;
+ tk_object = $0000025A;
+ tk_external = $0000025B;
+ tk_forward = $0000025C;
+ tk_sub = $0000025D;
+ tk_finally = $0000025E;
+ tk_except = $0000025F;
+ tk_do = $00000260;
+ tk_with = $00000261;
+ tk_case = $00000262;
+ tk_while = $00000263;
+ tk_repeat = $00000264;
+ tk_for = $00000265;
+ tk_try = $00000266;
+ tk_raise = $00000267;
+ tk_goto = $00000268;
+ tk_then = $00000269;
+ tk_until = $0000026A;
+ tk_to = $0000026B;
+ tk_downto = $0000026C;
+ tk_set = $0000026D;
+ tk_record = $0000026E;
+ tk_array = $0000026F;
+ tk_private = $00000270;
+ tk_protected = $00000271;
+ tk_public = $00000272;
+ tk_published = $00000273;
+ tk_property = $00000274;
+ tk_read = $00000275;
+ tk_write = $00000276;
+ tk_div = $00000277;
+ tk_mod = $00000278;
+ tk_and = $00000279;
+ tk_shl = $0000027A;
+ tk_shr = $0000027B;
+ tk_or = $0000027C;
+ tk_xor = $0000027D;
+ tk_in = $0000027E;
+ tk_not = $0000027F;
+ tk_is = $00000280;
+ tk_as = $00000281;
+ tk_inherited = $00000282;
 
  tokens: array[0..130] of string = ('',
   '.void','.classes','.private','.protected','.public','.published',
@@ -173,25 +173,25 @@ const
   'mod','and','shl','shr','or','xor','in','not','is','as','inherited');
 
  tokenids: array[0..130] of identty = (
-  $00000000,$4FC6E54B,$9F8DCA96,$3F1B952D,$7E372A5B,$FC6E54B6,$F8DCA96C,
-  $F1B952D8,$E372A5B1,$C6E54B62,$8DCA96C4,$1B952D88,$372A5B10,$6E54B621,
-  $DCA96C42,$B952D885,$72A5B10B,$E54B6216,$CA96C42D,$952D885A,$2A5B10B4,
-  $54B62168,$A96C42D0,$52D885A1,$A5B10B43,$4B621687,$96C42D0E,$2D885A1C,
-  $5B10B438,$B6216870,$6C42D0E1,$D885A1C3,$B10B4387,$6216870F,$C42D0E1E,
-  $885A1C3D,$10B4387B,$216870F6,$42D0E1EC,$85A1C3D9,$0B4387B2,$16870F64,
-  $2D0E1EC9,$5A1C3D92,$B4387B25,$6870F64A,$D0E1EC95,$A1C3D92B,$4387B257,
-  $870F64AE,$0E1EC95D,$1C3D92BB,$387B2576,$70F64AED,$E1EC95DB,$C3D92BB7,
-  $87B2576F,$0F64AEDF,$1EC95DBE,$3D92BB7D,$7B2576FA,$F64AEDF5,$EC95DBEB,
-  $D92BB7D6,$B2576FAC,$64AEDF59,$C95DBEB3,$92BB7D66,$2576FACC,$4AEDF598,
-  $95DBEB31,$2BB7D662,$576FACC5,$AEDF598A,$5DBEB315,$BB7D662B,$76FACC56,
-  $EDF598AC,$DBEB3159,$B7D662B3,$6FACC566,$DF598ACD,$BEB3159B,$7D662B37,
-  $FACC566E,$F598ACDD,$EB3159BB,$D662B376,$ACC566EC,$598ACDD8,$B3159BB1,
-  $662B3762,$CC566EC4,$98ACDD89,$3159BB13,$62B37626,$C566EC4C,$8ACDD898,
-  $159BB130,$2B376261,$566EC4C3,$ACDD8987,$59BB130E,$B376261D,$66EC4C3A,
-  $CDD89874,$9BB130E8,$376261D1,$6EC4C3A3,$DD898746,$BB130E8C,$76261D18,
-  $EC4C3A30,$D8987460,$B130E8C1,$6261D183,$C4C3A306,$8987460D,$130E8C1A,
-  $261D1834,$4C3A3068,$987460D0,$30E8C1A1,$61D18343,$C3A30686,$87460D0D,
-  $0E8C1A1B,$1D183437,$3A30686F,$7460D0DE,$E8C1A1BD);
+  $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
+  $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
+  $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
+  $00000215,$00000216,$00000217,$00000218,$00000219,$0000021A,$0000021B,
+  $0000021C,$0000021D,$0000021E,$0000021F,$00000220,$00000221,$00000222,
+  $00000223,$00000224,$00000225,$00000226,$00000227,$00000228,$00000229,
+  $0000022A,$0000022B,$0000022C,$0000022D,$0000022E,$0000022F,$00000230,
+  $00000231,$00000232,$00000233,$00000234,$00000235,$00000236,$00000237,
+  $00000238,$00000239,$0000023A,$0000023B,$0000023C,$0000023D,$0000023E,
+  $0000023F,$00000240,$00000241,$00000242,$00000243,$00000244,$00000245,
+  $00000246,$00000247,$00000248,$00000249,$0000024A,$0000024B,$0000024C,
+  $0000024D,$0000024E,$0000024F,$00000250,$00000251,$00000252,$00000253,
+  $00000254,$00000255,$00000256,$00000257,$00000258,$00000259,$0000025A,
+  $0000025B,$0000025C,$0000025D,$0000025E,$0000025F,$00000260,$00000261,
+  $00000262,$00000263,$00000264,$00000265,$00000266,$00000267,$00000268,
+  $00000269,$0000026A,$0000026B,$0000026C,$0000026D,$0000026E,$0000026F,
+  $00000270,$00000271,$00000272,$00000273,$00000274,$00000275,$00000276,
+  $00000277,$00000278,$00000279,$0000027A,$0000027B,$0000027C,$0000027D,
+  $0000027E,$0000027F,$00000280,$00000281,$00000282);
 
 implementation
 end.
