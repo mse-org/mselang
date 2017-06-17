@@ -249,7 +249,7 @@ c=3
    (
    kind=1
    a=0,665,4,const
-   c=2
+   c=4
     (
     kind=2
     a=0,648,1,typedconst1
@@ -277,6 +277,50 @@ c=3
     a=0,648,1,typedconst1 llvm
     teststate=1
     path=typedconst1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typedconst2
+    teststate=1
+    path=typedconst2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typedconst2 llvm
+    teststate=1
+    path=typedconst2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3347,7 +3391,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B724484C
+    ao=An unhandled exception occured at $B724984C
     ae=
     aec=123
     ie=0
@@ -11020,7 +11064,9 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=325
+rowstate=327
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

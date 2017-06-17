@@ -186,9 +186,7 @@ begin
     end
     else begin
      case p1^.h.kind of
-      dk_boolean: begin
-      end;
-      dk_string: begin
+      dk_boolean,dk_enum,dk_string: begin
       end;
       dk_integer: begin
        case p1^.h.datasize of
@@ -570,6 +568,7 @@ begin
  {$endif}
   d.kind:= ck_arrayconst;
   context1:= @contextstack[s.stackindex-1];
+  inc(context1^.d.arrayconst.curindex);
   p1:= ele.eledataabs(context1^.d.arrayconst.itemtype);
   d.arrayconst.datapopo:= context1^.d.arrayconst.datapopo;
   d.arrayconst.curindex:= 0;

@@ -1,0 +1,7 @@
+program typedconst2;
+
+const
+ c1: array[0..1,0..3] of int8 = ((1,2,3,4),(11,22,33,44));
+begin
+ exitcode:= c1[0,0]+c1[0,1]+c1[1,1]+c1[1][3]+123-1-2-22-44;
+end.
