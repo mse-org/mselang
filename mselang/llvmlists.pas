@@ -634,12 +634,12 @@ type
  pmetaiddataty = ^metaiddataty;
 } 
  typemetahashdataty = record
-  header: doubleintegerhashdataty;
+  header: tripleintegerhashdataty;
   data: metavaluety;
  end;
  ptypemetahashdataty = ^typemetahashdataty;
 
- ttypemetahashdatalist = class(tdoubleintegerhashdatalist)
+ ttypemetahashdatalist = class(ttripleintegerhashdatalist)
   protected
    function getrecordsize(): int32 override;
   public
@@ -803,6 +803,9 @@ type
           const afunction: int32; //global id
           const atype: metavaluety; const aflags: dwsubflagsty;
           const alocaltounit: boolean): metavaluety;
+   function adddivariable(const aname: lstringty;
+                       const alinenumber: int32; const argnumber: int32;
+          const avariable: vardataty; const atype: metavaluety): metavaluety;
    function adddivariable(const aname: lstringty;
            const alinenumber: int32; const argnumber: int32;
                                  const avariable: vardataty): metavaluety;
@@ -3017,15 +3020,23 @@ var
    result:= addnodereverse(@metabuffer,pb-pmetavaluety(@metabuffer));
   end;
  end; //addbufferreverse
+ 
 var
  p0: pointer;
  po1: pmetavaluety;
  st1: systypety;
+ unit1: punitinfoty;
+ unitkey1: identty;
 begin
  if atype = 0 then begin //untyped pointer
   atype:= getbasetypeele(das_8);
  end;
  po2:= ele.eledataabs(atype);
+ unitkey1:= 0; //system
+ unit1:= datatoele(po2)^.header.defunit;
+ if unit1 <> nil then begin
+  unitkey1:= unit1^.key;
+ end;
  if po2^.h.kind = dk_sub then begin
   inc(aindirection);
  end;
@@ -3033,7 +3044,7 @@ begin
  if subrange then begin
   i1:= i1 or $80000000;
  end;
- if ftypemetalist.addunique(atype,i1,p0) then begin
+ if ftypemetalist.addunique(atype,i1,unitkey1,p0) then begin
   po1:= @ptypemetahashdataty(p0)^.data;
   offs1:= ftypemetalist.getdataoffs(po1); //relative backup
   with datatoele(po2)^.header do begin
@@ -3190,7 +3201,8 @@ begin
                    ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel)));
        ele1:= po3^.vf.next;
       end;
-      m2:= addbufferreverse();
+//      m2:= addbufferreverse();
+      m2:= addbuffer();
       m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
                                    dummymeta,po2^.h.bitsize,0,0,0,m2);
                                         //todo: use correct alignment
@@ -3242,12 +3254,12 @@ end;
 
 function tmetadatalist.adddivariable(const aname: lstringty;
                        const alinenumber: int32; const argnumber: int32;
-          const avariable: vardataty): metavaluety;
+          const avariable: vardataty;const atype: metavaluety): metavaluety;
 var
- m1,m2,m3,m4: metavaluety;
+ m1,{m2,}m3,m4: metavaluety;
 begin
  m1:= addstring(aname);
- m2:= addtype(avariable);
+// m2:= addtype(avariable);
  if af_segment in avariable.address.flags then begin
   m3:= addglobvalue(avariable.address.segaddress.address);
   with pdiglobvariablety(adddata(mdk_diglobvariable,
@@ -3256,7 +3268,7 @@ begin
    name:= m1;
    _file:= info.s.currentfilemeta;
    line:= alinenumber;
-   _type:= m2;
+   _type:= atype;
    variable:= m3;
    islocaltounit:= us_implementation in info.s.unitinfo^.state;
   end;
@@ -3277,10 +3289,18 @@ begin
    name:= m1;
    _file:= info.s.currentfilemeta;
    linenumber:= alinenumber;
-   _type:= m2;
+   _type:= atype;
    flags:= 0;
   end;
  end;
+end;
+
+function tmetadatalist.adddivariable(const aname: lstringty;
+                       const alinenumber: int32; const argnumber: int32;
+          const avariable: vardataty): metavaluety;
+begin
+ result:= adddivariable(
+                    aname,alinenumber,argnumber,avariable,addtype(avariable));
 end;
 
 function tmetadatalist.adddiexpression(

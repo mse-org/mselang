@@ -4023,7 +4023,7 @@ begin
       po2:= metalist.getdata(po1^.debuginfo);
      {$ifdef mse_checkinternalerror}
       if pmetadataty(pointer(po2)-sizeof(metadataheaderty))^.header.kind <> 
-                                                      mdk_dilocvariable then begin
+                                                  mdk_dilocvariable then begin
        internalerror(ie_llvmmeta,'20151108B');
       end;
      {$endif}

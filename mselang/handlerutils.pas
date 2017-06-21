@@ -3566,7 +3566,7 @@ begin
                              (pob^.d.dat.datatyp.typedata <= 0) then begin
     goto endlab; //errorstate
    end;
-
+{
    bo2:= true;
    if d.kind <> ck_const then begin
     bo2:= getvalue(poa,das_none);
@@ -3579,7 +3579,7 @@ begin
    if not bo2 then begin
     goto endlab;
    end;
-
+}
    if opsinfo.objop <> oa_none then begin
     pta:= ele.eledataabs(d.dat.datatyp.typedata);
     ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
@@ -3640,6 +3640,19 @@ begin
       end;
      end;     
     end;
+   end;
+
+   bo2:= true;
+   if d.kind <> ck_const then begin
+    bo2:= getvalue(poa,das_none);
+   end;
+   if pob^.d.kind <> ck_const then begin
+    if not getvalue(pob,das_none) then begin
+     bo2:= false;
+    end;
+   end;
+   if not bo2 then begin
+    goto endlab;
    end;
 
    indilev1:= d.dat.datatyp.indirectlevel;

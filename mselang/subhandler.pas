@@ -1337,7 +1337,8 @@ var                       //todo: move after doparam
          end;
          address.flags:= address.flags + paramkinds[paramkind1];
          if paramkind1 = pk_const then begin
-          if si1 > pointersize then begin
+          if (si1 > pointersize) or (tf_sizeinvalid in typ1^.h.flags) then begin
+                                      //size not known yet
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
            si1:= pointersize;
@@ -1971,6 +1972,7 @@ var
  alloc1: dataoffsty;
  ad1: opaddressty;
  lnr1: int32;
+ id1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -2096,8 +2098,17 @@ begin
      flags:= po4^.address.flags;
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
      if do_proginfo in info.o.debugoptions then begin
-      debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                    getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4^);
+      id1:= datatoele(po4)^.header.name;
+      with s.unitinfo^.llvmlists.metadatalist do begin
+       if id1 = tks_self then begin
+        id1:= tk_self;
+        debuginfo:= adddivariable(getidentnamel(id1),lnr1,int1,po4^,
+                                                             addtype(po4^));
+       end
+       else begin
+        debuginfo:= adddivariable(getidentnamel(id1),lnr1,int1,po4^);
+       end;
+      end;
      end;
     end;
     ele1:= po4^.vf.next;

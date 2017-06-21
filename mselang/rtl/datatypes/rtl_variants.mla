@@ -78,11 +78,15 @@ type
    method ini() [ini];
    method fini() [fini];
    method tovariant(const avalue: int8) [operator=':='];
+   method tovariant(const avalue: int16) [operator=':='];
+   method tovariant(const avalue: int32) [operator=':='];
+   method tovariant(const avalue: int64) [operator=':='];
    method tovariant(const avalue: flo64) [operator=':='];
    method tovalue(): int8 [operator=':='];
    method tovalue(): int16 [operator=':='];
    method tovalue(): int32 [operator=':='];
    method tovalue(): int64 [operator=':='];
+   method tovalue(): flo64 [operator=':='];
    method add(const b: variantty) [operator='+'];
  end;
 
@@ -108,6 +112,27 @@ begin
  fini();
  vtype:= VT_I1;
  vint8:= avalue;
+end;
+
+method variantty.tovariant(const avalue: int16);
+begin
+ fini();
+ vtype:= VT_I2;
+ vint16:= avalue;
+end;
+
+method variantty.tovariant(const avalue: int32);
+begin
+ fini();
+ vtype:= VT_I4;
+ vint32:= avalue;
+end;
+
+method variantty.tovariant(const avalue: int64);
+begin
+ fini();
+ vtype:= VT_I8;
+ vint64:= avalue;
 end;
 
 method variantty.tovariant(const avalue: flo64);
@@ -194,6 +219,26 @@ begin
    result:= truncint64(vflo64);
   else
    tovalueerror(VT_I8);
+ end;
+end;
+
+method variantty.tovalue(): flo64;
+begin
+ case vtype of
+  VT_I1,VT_UI1: 
+   result:= vint8;
+  VT_I2,VT_UI2: 
+   result:= vint16;
+  VT_I4,VT_UI4: 
+   result:= vint32;
+  VT_I8,VT_UI8: 
+   result:= vint64;
+  VT_R4:
+   result:= vflo32;
+  VT_R8:
+   result:= vflo64;
+  else
+   tovalueerror(VT_R8);
  end;
 end;
 
@@ -424,6 +469,7 @@ const
 
 method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
 begin
+ writeln('operandtypeerror');
  //todo
 end;
 
@@ -441,7 +487,8 @@ var
 begin
  case commontype(b) of
   VT_I1:
-   i8:= tovariant(int8(self^)+int8(b));
+   i8:= int8(self^)+int8(b);
+   tovariant(i8);
   else
    operandtypeerror(b,'+');
  end;   

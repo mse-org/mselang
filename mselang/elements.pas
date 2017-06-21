@@ -1945,12 +1945,12 @@ begin
   path:= felementpath;
   name:= aname;
   visibility:= avislevel;
-  if info.s.unitinfo <> nil then begin
+//  if info.s.unitinfo <> nil then begin
    defunit:= info.s.unitinfo;
-  end
-  else begin
-   defunit:= nil;
-  end;
+//  end
+//  else begin
+//   defunit:= nil;
+//  end;
   kind:= akind;
  end;
  felementparent:= ele1;
