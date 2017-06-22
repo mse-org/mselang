@@ -19,6 +19,21 @@ unit subhandler;
 interface
 uses
  globtypes,stackops,parserglob,handlerglob,listutils,opglob;
+
+type
+ paramupdateinfoty = record
+  varele: elementoffsetty;
+//  size: int32;
+ end;
+ pparamupdateinfoty = ^paramupdateinfoty;
+ paramupdatechainty = record
+  next: dataoffsty; //in seg_temp
+  sub: elementoffsetty;
+  count: int32;
+  data: record //array[0..count-1] of paramupdateinfoty
+  end;
+ end;
+ pparamupdatechainty = ^paramupdatechainty;
  
 const
  stacklinksize = sizeof(frameinfoty);
@@ -96,6 +111,7 @@ procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
                                                         //nil -> void
+procedure updateparams(const info: paramupdatechainty);
 
 implementation
 uses
@@ -1217,6 +1233,38 @@ begin
  inc(dest);
 end;
 
+procedure updateparams(const info: paramupdatechainty);
+var
+ i1,i2: int32;
+ shift: int32;
+ p1,pe: pparamupdateinfoty;
+ p2: pvardataty;
+ p3: ptypedataty;
+begin
+ p1:= @info.data;          //todo: alignment
+ pe:= p1 + info.count;
+// shift:= 0;
+ while p1 < pe do begin
+  p2:= ele.eledataabs(p1^.varele);
+//  inc(p2^.address.locaddress.address,shift); not necessary,
+                     //address used in implementation only
+  if (p2^.address.indirectlevel = 0) then begin
+   p3:= ele.eledataabs(p2^.vf.typ);
+   i2:= p3^.h.bytesize;
+   if (p2^.address.flags * [af_paramconst,af_paramindirect] = 
+                                               [af_paramconst]) then begin
+    if i2 > pointersize then begin
+     inc(p2^.address.indirectlevel);
+     include(p2^.address.flags,af_paramindirect);
+     i2:= pointersize;
+    end;
+   end;
+//   shift:= shift+i2-p1^.size;
+  end;
+  inc(p1);
+ end;
+end;
+
 procedure handlesubheader();
 var                       //todo: move after doparam
  sub1: psubdataty;
@@ -1247,11 +1295,16 @@ var                       //todo: move after doparam
 
  function doparams(const resultvar: boolean): boolean;
  var
-  i1,i2: int32;
+  i1,i2,i3: int32;
   paramkind1: paramkindty;
   defaultconst1: elementoffsetty;
+  needssizeupdate: boolean;
+  paramsbuffer: array[0..maxparamcount-1] of paramupdateinfoty;
+  p1: pparamupdatechainty;
  begin
   result:= true;
+  needssizeupdate:= false;
+  i3:= 0;
   with info do begin
    while curparam < curparamend do begin
     i1:= curstackindex+2; //first ck_ident
@@ -1292,8 +1345,9 @@ var                       //todo: move after doparam
       if s.stopparser then begin
        exit; //recursive ancestor
       end;
+      paramsbuffer[i3].varele:= ele.eledatarel(var1);
       curparam^:= elementoffsetty(var1); 
-                    //absoluteaddress, will be qualified later
+                    //absoluteaddress, will be qualified later ??? 64bit?
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
         if sf_vararg in sub1^.flags then begin
@@ -1337,8 +1391,10 @@ var                       //todo: move after doparam
          end;
          address.flags:= address.flags + paramkinds[paramkind1];
          if paramkind1 = pk_const then begin
-          if (si1 > pointersize) or (tf_sizeinvalid in typ1^.h.flags) then begin
-                                      //size not known yet
+          if tf_sizeinvalid in typ1^.h.flags then begin //size not known yet
+           needssizeupdate:= true;
+          end;
+          if si1 > pointersize then begin
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
            si1:= pointersize;
@@ -1412,12 +1468,23 @@ var                       //todo: move after doparam
          paramsize:= alignsize(si1);
         end;
        end;
+//       paramsbuffer[i3].size:= si1; //todo: alignment
+       inc(i3);
        inc(paramsize1,alignsize(si1));
        inc(curparam);
       end;
      end;
     end;
     curstackindex:= i1+1; //next ck_paramsdef
+   end;
+   if needssizeupdate then begin
+    i2:= i3*sizeof(paramupdateinfoty);
+    i1:= allocsegment(seg_temp,sizeof(paramupdatechainty)+i2,p1).address;
+    p1^.next:= currentparamupdatechain;
+    p1^.sub:= ele.eledatarel(sub1);
+    p1^.count:= i3;
+    currentparamupdatechain:= i1;
+    move(paramsbuffer,p1^.data,i2);
    end;
   end; //lastparamindex
  end; //doparams
@@ -1504,6 +1571,10 @@ begin
 //  paramhigh:= paramco-1;
   if ismethod then begin
    inc(paramco); //self pointer
+  end;
+  if paramco > maxparamcount then begin
+   errormessage(err_toomanyparams,[],minint,0,erl_fatal);
+   exit;
   end;
   i1:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_alias] +
                  elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type];

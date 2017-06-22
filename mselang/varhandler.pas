@@ -443,7 +443,7 @@ begin
      if co_llvm in info.o.compileoptions then begin
       updatellvmvar(s.unitinfo^.llvmlists.constlist.addvalue(
                              p2^.address.segaddress,p1^.h.bytesize).listid,p2);
-      setsegmenttop(seg_globconst,-p1^.h.bytesize);
+      movesegmenttop(seg_globconst,-p1^.h.bytesize);
      end;
     end
     else begin

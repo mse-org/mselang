@@ -88,7 +88,8 @@ function checksegmentcapacity(const asegment: segmentty;
                                  //returns alloc top
 
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
-procedure setsegmenttop(const asegment: segmentty; const adelta: int32);
+procedure setsegmenttop(const asegment: segmentty; const atop: dataoffsty);
+procedure movesegmenttop(const asegment: segmentty; const adelta: int32);
 procedure resetsegment(const asegment: segmentty);
 function savesegment(const asegment: segmentty): segmentstatety;
 procedure restoresegment(const aseg: segmentstatety);
@@ -120,7 +121,6 @@ function getsegmenttop(const asegment: segmentty): pointer;
 function getsegmenttopoffs(const asegment: segmentty): dataoffsty;
 function getsegmentsize(const asegment: segmentty): integer;
 
-                               
 procedure init();
 procedure deinit();
 
@@ -150,8 +150,10 @@ const
   1024,  1024,         1024,
 //seg_intf,seg_paralloc,seg_classintfcount,seg_intfitemcount,
   1024,    1024,        1024,              1024,             
-//seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl
-  1024,        1024,          1024,         1024);          
+//seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
+  1024,        1024,          1024,         1024,
+//set_temp
+  1024);          
   
 var
  segments: array[segmentty] of segmentinfoty;
@@ -615,7 +617,19 @@ begin
  end; 
 end;
 
-procedure setsegmenttop(const asegment: segmentty; const adelta: int32);
+procedure setsegmenttop(const asegment: segmentty; const atop: dataoffsty);
+begin
+ with segments[asegment] do begin
+  toppo:= data+atop;
+ {$ifdef mse_checkinternalerror}
+  if (toppo < data) or (toppo > endpo) then begin
+   internalerror(ie_segment,'20170622A');
+  end;
+ {$endif}
+ end; 
+end;
+
+procedure movesegmenttop(const asegment: segmentty; const adelta: int32);
 begin
  with segments[asegment] do begin
   toppo:= toppo + adelta;

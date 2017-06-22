@@ -369,6 +369,7 @@ type
  
  classinfoty = record
   rec: recordinfoty; //first!
+//  temps: segmentstatety;
   flags: objflagsty;
   visibility: visikindsty;
   intfindex: integer;
@@ -837,6 +838,7 @@ type
   currentoperator,currentoperatorright: elementoffsetty;
   currentfieldflags: addressflagsty;
   currenttypedef: elementoffsetty;
+  currentparamupdatechain: dataoffsty;
 //  currentoperators: objectoperatorsty;
 //  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type

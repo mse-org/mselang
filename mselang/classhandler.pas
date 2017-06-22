@@ -174,6 +174,7 @@ begin
    errormessage(err_localclassdef,[]);
   end;
   selfobjparamchain:= 0;
+  currentparamupdatechain:= -1;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.rec.fieldoffset:= 0;
@@ -664,7 +665,7 @@ var
  po1: pdataoffsty;
 // interfacealloc: int32;
  typ1: ptypedataty;
- 
+ p1: pparamupdatechainty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -752,6 +753,18 @@ begin
     if h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> [] then begin
      createrecordmanagehandler(d.typ.typedata);
     end;
+   end;
+   if currentparamupdatechain >= 0 then begin
+    p1:= getsegmentpo(seg_temp,currentparamupdatechain);
+    while true do begin
+     updateparams(p1^);
+     if p1^.next < 0 then begin
+      break;
+     end;
+     p1:= getsegmentpo(seg_temp,p1^.next);
+    end;
+    setsegmenttop(seg_temp,p1);
+    currentparamupdatechain:= -1;
    end;
   end;
   realobjsize:= alignsize(typ1^.h.bytesize);
