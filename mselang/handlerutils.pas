@@ -951,8 +951,9 @@ begin
    end;
    tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
                 getopdatatype(datatyp.typedata, datatyp.indirectlevel));
-   if ref.c.address.flags * 
-          [af_paramindirect,af_paramvar,af_paramout] <> [] then begin
+   if (ref.c.address.flags * 
+          [af_paramindirect,af_paramvar,af_paramout] <> []) or 
+                                         (indirection = -1)  then begin
     with insertitem(oc_pushlocpo,stackoffset,aopoffset,i2)^ do begin
      par.memop.locdataaddress.a:= ref.c.address.locaddress;
      par.memop.locdataaddress.a.framelevel:= i1;

@@ -1,0 +1,27 @@
+program methodparams;
+type
+ testty = object
+  f1: card8;
+  method test(const a,b: testty;c:flo64);
+  method test1(const b: testty);
+  f2: flo64;
+  f3: int32;
+ end;
+
+method testty.test(const a,b: testty;c:flo64);
+begin
+ exitcode:= a.f3+f1;
+end;
+
+method testty.test1(const b: testty);
+begin
+ test(b,b,0);
+end;
+
+var
+ o1,o2: testty;
+begin
+ o1.f1:= 100;
+ o2.f3:= 23;
+ o1.test1(o2);
+end.
