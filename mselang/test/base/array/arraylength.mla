@@ -1,0 +1,6 @@
+program arraylength;
+var
+ ar1: array[0..3][0..99] of card16;
+begin
+ exitcode:= length(ar1)+length(ar1[0])+19;
+end.

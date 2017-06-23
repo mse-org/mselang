@@ -1174,7 +1174,7 @@ var
  
 var
  dest1,ptop: pcontextitemty;
- 
+ range: ordrangety;
 begin
  with info do begin
   if checkparamco(1,paramco) then begin
@@ -1228,6 +1228,19 @@ begin
           dk_dynarray: begin
            with additem(oc_lengthdynar)^ do begin
             par.ssas1:= info.s.ssa.index-1;
+           end;
+          end;
+          dk_array: begin //todo: do not load data
+           if co_mlaruntime in o.compileoptions then begin
+            if d.kind in factcontexts then begin
+             with additem(oc_pop)^ do begin
+              setimmint32(typ1^.h.bytesize,par.imm); //indirectlevel?
+             end;
+            end;
+           end;
+           with additem(oc_pushimm32)^ do begin
+            range:= getordrange(ele.eledataabs(typ1^.infoarray.indextypedata));
+            setimmint32(range.max-range.min+1,par.imm);
            end;
           end;
           else begin

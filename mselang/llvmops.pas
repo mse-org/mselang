@@ -2240,7 +2240,7 @@ end;
 
 procedure incparintop();
 begin
- notimplemented();
+ inclocintop();
 end;
 
 procedure incparpoop();
