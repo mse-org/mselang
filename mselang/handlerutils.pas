@@ -3025,8 +3025,11 @@ begin
   internalerror(ie_handler,'20160711A');
  end;
 {$endif}
- sourcetyp:= ele.eledataabs(item.olddatatyp.typedata);
  desttyp:= ele.eledataabs(item.typedata);
+ sourcetyp:= ele.eledataabs(item.olddatatyp.typedata);
+ if tf_untyped in sourcetyp^.h.flags then begin
+  sourcetyp:= desttyp;
+ end;
  with desttyp^,acontext^ do begin
   i1:= h.bytesize;
   i2:= sourcetyp^.h.bytesize;
@@ -3039,6 +3042,8 @@ begin
   if i1 = i2 then begin
    if d.kind = ck_ref then begin
     d.dat.datatyp:= item.olddatatyp;
+    d.dat.datatyp.typedata:= ele.eledatarel(sourcetyp); 
+                                       //in case of tf_untyped
     d.dat.indirection:= item.indirection;
     if not getaddress(acontext,true) then begin
      goto errorlab;

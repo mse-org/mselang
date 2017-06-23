@@ -1234,7 +1234,12 @@ begin
     end;
    end
    else begin
-    getaddress(po1,true);
+    if d.dat.datatyp.indirectlevel = 1 then begin
+     getvalue(po1,das_none); //pointer arithmetic
+    end
+    else begin
+     getaddress(po1,true);
+    end;
     handleindexitemstart();
    end;
   end;
@@ -1295,7 +1300,7 @@ procedure handleindexitem();
 var
  lastssa: int32;
  itemtype,indextype: ptypedataty;
- isdynarray: boolean;
+ isdynarray,ispointer: boolean;
  range: ordrangety;
  li1: int64;
  ptop: pcontextitemty;
@@ -1319,6 +1324,7 @@ begin
   {$endif}
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
    isdynarray:= true;
+   ispointer:= false;
    case itemtype^.h.kind of
     dk_dynarray,dk_openarray: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
@@ -1354,8 +1360,14 @@ begin
      isdynarray:= false;
     end;
     else begin
-     errormessage(err_illegalqualifier,[],1);
-     goto errorlab;
+     if d.dat.datatyp.indirectlevel > 0 then begin
+      ispointer:= true;
+      isdynarray:= false;
+     end
+     else begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errorlab;
+     end;
     end;
    end;
    if isdynarray then begin
@@ -1365,16 +1377,24 @@ begin
     end;
    end
    else begin
-    indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
-    getordrange(ele.eledataabs(itemtype^.infoarray.indextypedata),range);
-    itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata); 
+    if ispointer then begin
+     indextype:= ele.eledataabs(sysdatatypes[st_int32].typedata);
+                                            //todo: pointer size
+     range.min:= 0;
+     range.max:= indextype^.infoint32.max;
+    end
+    else begin
+     indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
+     getordrange(ele.eledataabs(itemtype^.infoarray.indextypedata),range);
+     itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata); 
+    end;
     if not tryconvert(ptop,indextype,0,[]) then begin
      errormessage(err_illegalqualifier,[],topoffset);
      goto errorlab;
     end;
    end;
    with ptop^ do begin
-    if d.kind = ck_const then begin
+    if (d.kind = ck_const) and not ispointer then begin
      li1:= getordconst(d.dat.constval);
      if (li1 < range.min) or 
                        not isdynarray and (li1 > range.max) then begin
@@ -1384,7 +1404,7 @@ begin
      
     end;
     getvalue(ptop,das_32);
-    if not tryconvert(ptop,st_int32) then begin
+    if not tryconvert(ptop,st_int32) then begin           //pointer size?
      errormessage(err_illegalqualifier,[],topoffset);
      goto errorlab;
     end;
@@ -1410,7 +1430,10 @@ begin
     d.dat.fact.ssaindex:= par.ssad; //new pointer
    end;
    d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
-   d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel+1; //pointer
+   d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel; //pointer
+   if not ispointer then begin
+    inc(d.dat.datatyp.indirectlevel);
+   end;
            //opdatatype is already pointer
 errorlab:
    s.stacktop:= s.stackindex;

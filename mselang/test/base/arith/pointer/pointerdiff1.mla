@@ -1,0 +1,12 @@
+program pointerdiff1;
+type
+ pcard16 =  ^card16;
+
+var
+ p1,p2: pcard16;
+begin
+ inc(p1);
+ if p1-p2 = 1 then
+  exitcode:= 123;
+ end;
+end.

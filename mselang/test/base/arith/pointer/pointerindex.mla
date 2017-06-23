@@ -1,0 +1,14 @@
+program pointerindex;
+type
+ pcard16 = ^card16;
+var
+ ar1: array[0..3] of card16;
+ p1: pcard16;
+ c1: card16;
+begin
+ p1:= @ar1;
+ p1[0]:= 100;
+ p1[1]:= 20;
+ p1[2]:= 3;
+ exitcode:= ar1[0]+ar1[1]+ar1[2]
+end.

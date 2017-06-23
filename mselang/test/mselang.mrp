@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,const
+   a=0,664,4,const
    c=4
     (
     kind=2
@@ -356,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=36
     (
     kind=1
@@ -816,8 +816,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
-    c=8
+    a=0,665,4,pointer
+    c=10
      (
      kind=2
      a=0,648,1,pointeradd
@@ -977,6 +977,50 @@ c=3
      a=0,648,1,pointerdiff1 llvm
      teststate=1
      path=pointerdiff1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerindex
+     teststate=1
+     path=pointerindex.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerindex llvm
+     teststate=1
+     path=pointerindex.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -3244,7 +3288,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,enum
+   a=0,664,4,enum
    c=2
     (
     kind=2
@@ -3391,7 +3435,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B728184C
+    ao=An unhandled exception occured at $B727984C
     ae=
     aec=123
     ie=0
@@ -3524,7 +3568,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=22
     (
     kind=2
@@ -4288,7 +4332,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,minimal
+   a=0,664,4,minimal
    c=2
     (
     kind=2
@@ -4352,7 +4396,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,4,record
    c=20
     (
     kind=2
@@ -4812,7 +4856,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,set
+   a=0,664,4,set
    c=12
     (
     kind=2
@@ -5096,7 +5140,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=8
     (
     kind=2
@@ -5292,7 +5336,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=39
     (
     kind=1
@@ -6650,7 +6694,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,types
+   a=0,664,4,types
    c=7
     (
     kind=2
@@ -6889,7 +6933,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=12
     (
     kind=2
@@ -7173,7 +7217,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
+   a=0,664,4,managed
    c=8
     (
     kind=2
@@ -7429,12 +7473,12 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=26
    (
    kind=1
    a=0,665,4,methods
-   c=8
+   c=10
     (
     kind=2
     a=0,648,1,method
@@ -7594,6 +7638,50 @@ c=3
     a=0,648,1,objfield1 llvm
     teststate=1
     path=objfield1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,methodparams
+    teststate=1
+    path=methodparams.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,methodparams llvm
+    teststate=1
+    path=methodparams.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11064,139 +11152,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=327
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=195
  0 0
  0 0
  0 0
