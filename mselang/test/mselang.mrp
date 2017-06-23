@@ -356,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -1820,8 +1820,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=32
+   a=0,665,4,control
+   c=34
     (
     kind=2
     a=0,648,1,breakrepeat
@@ -2201,6 +2201,50 @@ c=3
     a=0,648,1,forto llvm
     teststate=1
     path=forto.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,forto16
+    teststate=1
+    path=forto16.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,forto16 llvm
+    teststate=1
+    path=forto16.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -6738,7 +6782,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,types
+   a=0,664,4,types
    c=7
     (
     kind=2
@@ -6913,7 +6957,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,array
+   a=0,664,4,array
    c=2
     (
     kind=2
@@ -11260,20 +11304,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=183
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=170
  0 0
  0 0
  0 0

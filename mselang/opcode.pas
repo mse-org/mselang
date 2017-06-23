@@ -780,7 +780,20 @@ end;
 procedure setmemimm(const value: int32; var par: opparamty);
 begin
  if co_llvm in info.o.compileoptions then begin
-  par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
+  case par.memimm.mem.t.kind of
+   das_8: begin
+    par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
+   end;
+   das_16: begin
+    par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
+   end;
+   das_64: begin
+    par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
+   end;
+   else begin
+    par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
+   end;
+  end;
  end
  else begin
   par.memimm.vint32:= value;

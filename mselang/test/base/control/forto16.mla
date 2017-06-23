@@ -1,0 +1,11 @@
+program forto16;
+var
+ i1: int16;
+ i2: int32;
+begin
+ i1:= 2;
+ for i1:= 0 to i1+1 do
+  i2:= i2+i1;
+ end;
+ exitcode:= i2+123-6;
+end.
