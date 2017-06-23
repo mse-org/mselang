@@ -318,6 +318,11 @@ var
      po3^.par.ssas2:= i2;
     end
     else begin
+     if not tryconvert(@contextstack[s.stacktop],po1,0,[]) then begin
+      typeconversionerror(contextstack[s.stacktop].d,
+                                              po1,0,err_incompatibletypes);
+      exit;
+     end;
      i1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
      if adec then begin
       po3:= addmemop(d,decint32ops,true,das_32);

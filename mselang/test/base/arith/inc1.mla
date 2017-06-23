@@ -1,0 +1,11 @@
+program inc1;
+ 
+var
+  k: longint;
+  x: smallint;
+begin
+ k:= 120;
+ x:= 3;
+ inc(k,x);
+ exitcode:= k
+end.
