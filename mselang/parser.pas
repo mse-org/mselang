@@ -1220,6 +1220,9 @@ begin
    result:= false;
   end;
  end;
+{$ifdef mse_debugparser}
+ writeln('***************** Parse end ***********');
+{$endif}
 end;
 
 end.

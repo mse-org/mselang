@@ -168,6 +168,9 @@ begin
        end
        else begin
         llvmops.run(targetstream,true);
+       {$ifdef mse_debugparser}
+        writeln('***************** LLVM BC gen end ***********');
+       {$endif}
         targetstream.destroy();
         optname:= filenamebase(filename1);
         if opted.value <> '' then begin
@@ -175,6 +178,9 @@ begin
          int1:= getprocessoutput(llvmbindir+'opt '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+       {$ifdef mse_debugparser}
+         writeln('***************** LLVM OPT end ***********');
+       {$endif}
         end
         else begin
          int1:= 0;
@@ -184,10 +190,16 @@ begin
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+       {$ifdef mse_debugparser}
+         writeln('***************** LLC end ***********');
+       {$endif}
          if int1 = 0 then begin
           int1:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        {$ifdef mse_debugparser}
+          writeln('***************** gcc end ***********');
+        {$endif}
           if int1 = 0 then begin
            if not norun.value then begin
             int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
