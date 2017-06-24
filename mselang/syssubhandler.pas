@@ -120,6 +120,9 @@ begin
     with contextstack[s.stacktop] do begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
+       if d.kind in factcontexts then begin
+        cutopend(po1^.opmark.address);
+       end;
        if d.dat.datatyp.indirectlevel > 0 then begin
         int1:= pointersize;
        end

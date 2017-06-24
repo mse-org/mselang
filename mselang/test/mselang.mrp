@@ -120,7 +120,7 @@ c=3
   c=25
    (
    kind=1
-   a=0,664,4,conditon
+   a=0,665,4,conditon
    c=2
     (
     kind=2
@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B724D84C
+    ao=An unhandled exception occured at $B72F384C
     ae=
     aec=123
     ie=0
@@ -6958,7 +6958,7 @@ c=3
    (
    kind=1
    a=0,665,4,array
-   c=4
+   c=6
     (
     kind=2
     a=0,648,1,arraylength
@@ -7030,6 +7030,50 @@ c=3
     a=0,648,1,arrayhigh llvm
     teststate=1
     path=arrayhigh.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arraysizeof
+    teststate=1
+    path=arraysizeof.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arraysizeof llvm
+    teststate=1
+    path=arraysizeof.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11348,7 +11392,11 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=140
+rowstate=144
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
