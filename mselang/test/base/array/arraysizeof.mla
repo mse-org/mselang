@@ -1,0 +1,6 @@
+program arraysizeof;
+var
+ ar1: array[0..3][0..99] of card16;
+begin
+ exitcode:= sizeof(ar1)+sizeof(ar1[1])+123-4*100*2-100*2;
+end.

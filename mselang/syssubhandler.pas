@@ -120,6 +120,9 @@ begin
     with contextstack[s.stacktop] do begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
+       if d.kind in factcontexts then begin
+        cutopend(po1^.opmark.address);
+       end;
        if d.dat.datatyp.indirectlevel > 0 then begin
         int1:= pointersize;
        end
@@ -1247,9 +1250,10 @@ begin
            if d.kind in factcontexts then begin
             cutopend(dest1^.opmark.address);
            end;
-           with additem(oc_pushimm32)^ do begin
-            setimmint32(arraylength(),par.imm);
-           end;
+           initdatacontext(dest1^.d,ck_const);
+           dest1^.d.dat.constval.kind:= dk_integer;
+           dest1^.d.dat.constval.vinteger:= arraylength();
+           exit();
           end;
           else begin
            typeerror();
