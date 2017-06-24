@@ -1059,7 +1059,7 @@ var
    end;
    else begin
     checktype(po1^.infoarray.indextypedata);
-                //todo: remove not used indexing ops
+    cutopend(dest1^.opmark.address);
 //    typeerror();
     exit;
    end;

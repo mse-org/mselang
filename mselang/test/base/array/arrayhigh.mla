@@ -1,0 +1,6 @@
+program arrayhigh;
+var
+ ar1: array[0..3][0..99] of card16;
+begin
+ exitcode:= high(ar1)+high(ar1[0])+21;
+end.
