@@ -1088,13 +1088,20 @@ end;
 
 procedure cutopend(const aindex: int32);
 begin
-{$ifdef mse_checkinternalerror}
- if (info.opcount < aindex) or (aindex < 0) then begin
-  internalerror(ie_handler,'20170609A');
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if (opcount < aindex) or (aindex < 2) then begin
+   internalerror(ie_handler,'20170609A');
+  end;
+ {$endif}
+  if aindex < opcount then begin 
+   //there are at least 2 ops by oc_beginparse and oc_subbegin
+   s.ssa.nextindex:= getoppo(aindex-1)^.par.ssad+1;
+   s.ssa.index:= getoppo(aindex-2)^.par.ssad+1;
+   setsegmenttop(seg_op,getsegmentbase(seg_op)+aindex*sizeof(opinfoty));
+   opcount:= aindex;
+  end;
  end;
-{$endif}
- setsegmenttop(seg_op,getsegmentbase(seg_op)+aindex*sizeof(opinfoty));
- info.opcount:= aindex;
 end;
 
 function getoppo(const opindex: integer): popinfoty;

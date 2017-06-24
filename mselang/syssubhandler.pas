@@ -1179,7 +1179,6 @@ var
  
 var
  dest1,ptop: pcontextitemty;
- range: ordrangety;
 begin
  with info do begin
   if checkparamco(1,paramco) then begin
@@ -1236,6 +1235,7 @@ begin
            end;
           end;
           dk_array: begin //todo: do not load data
+          {
            if co_mlaruntime in o.compileoptions then begin
             if d.kind in factcontexts then begin
              with additem(oc_pop)^ do begin
@@ -1243,9 +1243,12 @@ begin
              end;
             end;
            end;
+          }
+           if d.kind in factcontexts then begin
+            cutopend(dest1^.opmark.address);
+           end;
            with additem(oc_pushimm32)^ do begin
-            range:= getordrange(ele.eledataabs(typ1^.infoarray.indextypedata));
-            setimmint32(range.max-range.min+1,par.imm);
+            setimmint32(arraylength(),par.imm);
            end;
           end;
           else begin
