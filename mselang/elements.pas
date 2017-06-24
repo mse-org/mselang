@@ -1639,7 +1639,7 @@ begin
   mstr1:= mstr1+'O:'+inttostrmse(int1) +
             ' P:'+inttostrmse(po1^.header.parent)+{' N:$'+
             hextostrmse(po1^.header.name,8)}
-            ' N:'+
+            ' N'+
             inttostrmse(po1^.header.name)+' '+
             ' '+msestring(getidentname(po1^.header.name)) + 
             ' '+msestring(

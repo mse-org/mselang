@@ -52,13 +52,13 @@ const
  VT_ARRAY = $2000;
  VT_BYREF = $4000;
  numvariantmax = VT_UI8;
- 
+
 type
  varianttypety = card16;
- 
+
  variantty = object [nozeroinit]
   protected
-   method commontype(const b: variantty): varianttypety;
+   method commontermtype(const b: variantty): varianttypety;
    method operandtypeerror(const b: variantty; const aoperand: string8);
   public
    vtype: varianttypety;
@@ -145,13 +145,13 @@ end;
 method variantty.tovalue(): int8;
 begin
  case vtype of
-  VT_I1,VT_UI1: 
+  VT_I1,VT_UI1:
    result:= vint8;
-  VT_I2,VT_UI2: 
+  VT_I2,VT_UI2:
    result:= vint16;
-  VT_I4,VT_UI4: 
+  VT_I4,VT_UI4:
    result:= vint32;
-  VT_I8,VT_UI8: 
+  VT_I8,VT_UI8:
    result:= vint64;
   VT_R4:
    result:= truncint32(vflo32);
@@ -165,13 +165,13 @@ end;
 method variantty.tovalue(): int16;
 begin
  case vtype of
-  VT_I1,VT_UI1: 
+  VT_I1,VT_UI1:
    result:= vint8;
-  VT_I2,VT_UI2: 
+  VT_I2,VT_UI2:
    result:= vint16;
-  VT_I4,VT_UI4: 
+  VT_I4,VT_UI4:
    result:= vint32;
-  VT_I8,VT_UI8: 
+  VT_I8,VT_UI8:
    result:= vint64;
   VT_R4:
    result:= truncint32(vflo32);
@@ -185,13 +185,13 @@ end;
 method variantty.tovalue(): int32;
 begin
  case vtype of
-  VT_I1,VT_UI1: 
+  VT_I1,VT_UI1:
    result:= vint8;
-  VT_I2,VT_UI2: 
+  VT_I2,VT_UI2:
    result:= vint16;
-  VT_I4,VT_UI4: 
+  VT_I4,VT_UI4:
    result:= vint32;
-  VT_I8,VT_UI8: 
+  VT_I8,VT_UI8:
    result:= vint64;
   VT_R4:
    result:= truncint32(vflo32);
@@ -205,13 +205,13 @@ end;
 method variantty.tovalue(): int64;
 begin
  case vtype of
-  VT_I1,VT_UI1: 
+  VT_I1,VT_UI1:
    result:= vint8;
-  VT_I2,VT_UI2: 
+  VT_I2,VT_UI2:
    result:= vint16;
-  VT_I4,VT_UI4: 
+  VT_I4,VT_UI4:
    result:= vint32;
-  VT_I8,VT_UI8: 
+  VT_I8,VT_UI8:
    result:= vint64;
   VT_R4:
    result:= truncint64(vflo32);
@@ -225,13 +225,13 @@ end;
 method variantty.tovalue(): flo64;
 begin
  case vtype of
-  VT_I1,VT_UI1: 
+  VT_I1,VT_UI1:
    result:= vint8;
-  VT_I2,VT_UI2: 
+  VT_I2,VT_UI2:
    result:= vint16;
-  VT_I4,VT_UI4: 
+  VT_I4,VT_UI4:
    result:= vint32;
-  VT_I8,VT_UI8: 
+  VT_I8,VT_UI8:
    result:= vint64;
   VT_R4:
    result:= vflo32;
@@ -251,7 +251,7 @@ const
  (VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_EMPTY,  VT_EMPTY,  VT_EMPTY,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY,  VT_EMPTY),
@@ -261,7 +261,7 @@ const
  (VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_NULL,   VT_NULL,   VT_NULL,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL,   VT_NULL),
@@ -271,7 +271,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I2,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I2,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I2,     VT_I2,     VT_I4,     VT_I8,     VT_I8,     VT_I8),
@@ -281,7 +281,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I4,     VT_I4,     VT_R8,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I4,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I4,     VT_I4,     VT_I4,     VT_I8,     VT_I8,     VT_I8),
@@ -291,7 +291,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_R4,     VT_R4,     VT_R4,     VT_R8,     VT_R8,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_R4,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_R4,     VT_R4,     VT_R4,     VT_R8,     VT_R8,     VT_R8),
@@ -301,17 +301,17 @@ const
  (VT_EMPTY,  VT_NULL,   VT_R8,     VT_R8,     VT_R8,     VT_R8,     VT_R8,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_R8,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_R8,     VT_R8,     VT_R8,     VT_R8,     VT_R8,     VT_R8),
-  
+
 // VT_CY = $0006;
 //VT_EMPTY   VT_NULL    VT_I2      VT_I4      VT_R4      VT_R8      VT_CY
  (VT_EMPTY,  VT_NULL,   VT_CY,     VT_CY,     VT_R8,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_CY,     VT_CY,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_CY,     VT_CY,     VT_CY,     VT_R8,     VT_R8,     VT_CY),
@@ -321,7 +321,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_DATE,   VT_DATE,     VT_R8,     VT_R8,     VT_R8,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_UNKNOWN,VT_UNKNOWN,VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_DATE,   VT_DATE,   VT_DATE,   VT_DATE,   VT_DATE,   VT_DATE),
@@ -331,7 +331,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_BSTR,   VT_BSTR,   VT_BSTR,   VT_BSTR,   VT_BSTR,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_BSTR,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_BSTR,   VT_BSTR,   VT_VARIANT,VT_UNKNOWN,VT_BSTR,   VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_BSTR,   VT_BSTR,   VT_BSTR,   VT_BSTR,   VT_BSTR,   VT_BSTR),
@@ -341,7 +341,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_UNKNOWN,VT_UNKNOWN,VT_DISPATCH,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_UNKNOWN,VT_UNKNOWN,VT_VARIANT,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN),
@@ -351,7 +351,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I4,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I4,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I4,     VT_I4,     VT_I4,     VT_I8,     VT_I8,     VT_I8),
@@ -361,7 +361,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I2,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_BOOL,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I1,     VT_UI1,    VT_UI2,    VT_UI4,    VT_I8,     VT_UI8),
@@ -371,7 +371,7 @@ const
  (VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_VARIANT,VT_VARIANT,VT_VARIANT,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT,VT_VARIANT),
@@ -381,7 +381,7 @@ const
  (VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN),
@@ -391,7 +391,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_DECIMAL,VT_DECIMAL,VT_R8,     VT_R8,     VT_DECIMAL,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_DECIMAL,VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_DECIMAL,VT_DECIMAL,VT_DECIMAL,VT_DECIMAL,VT_DECIMAL,VT_DECIMAL),
@@ -401,7 +401,7 @@ const
  (VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN,VT_UNKNOWN),
@@ -411,7 +411,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I2,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I1,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I1,     VT_I2,     VT_I4,     VT_I8,     VT_I8,     VT_I8),
@@ -421,7 +421,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I4,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_UI1,    VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I2,     VT_UI1,    VT_UI2,    VT_UI4,    VT_I8,     VT_UI8),
@@ -431,7 +431,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I4,     VT_I4,     VT_R4,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_UI2,    VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I4,     VT_UI2,    VT_UI2,    VT_UI4,    VT_I8,     VT_UI8),
@@ -441,7 +441,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I8,     VT_I8,     VT_R8,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_UI4,    VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I8,     VT_UI4,    VT_UI4,    VT_UI4,    VT_I8,     VT_UI8),
@@ -451,7 +451,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I8,     VT_I8,     VT_R8,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I8,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8),
@@ -461,7 +461,7 @@ const
  (VT_EMPTY,  VT_NULL,   VT_I8,     VT_I8,     VT_R8,     VT_R8,     VT_CY,
 //VT_DATE    VT_BSTR    VT_DISPATCH
   VT_DATE,   VT_BSTR,   VT_UNKNOWN,
-//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15 
+//VT_ERROR   VT_BOOL    VT_VARIANT VT_UNKNOWN VT_DECIMAL VT_15
   VT_ERROR,  VT_I8,     VT_VARIANT,VT_UNKNOWN,VT_DECIMAL,VT_UNKNOWN,
 //VT_I1      VT_UI1     VT_UI2     VT_UI4     VT_I8      VT_UI8
   VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_UI8)
@@ -473,25 +473,25 @@ begin
  //todo
 end;
 
-method variantty.commontype(const b: variantty): varianttypety;
+method variantty.commontermtype(const b: variantty): varianttypety;
 begin
  result:= VT_UNKNOWN;
  if (vtype <= numvariantmax) and (b.vtype <= numvariantmax) then
   result:= commontermtypes[vtype,b.vtype];
  end;
 end;
- 
+
 method variantty.add(const b: variantty);
 var
  i8: int8;
 begin
- case commontype(b) of
+ case commontermtype(b) of
   VT_I1:
    i8:= int8(self^)+int8(b);
    tovariant(i8);
   else
    operandtypeerror(b,'+');
- end;   
+ end;
 end;
 
 end.

@@ -1586,17 +1586,31 @@ begin
    identerror(1,err_overloadnotfunc);
    ele1:= -1;
   end;
-  sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
-                                     paramco*sizeof(pvardataty))^.data);
-  sub1^.next:= currentsubchain;
-  currentsubchain:= ele.eledatarel(sub1);
+// {
   if (ele1 >= 0) and (sf_method in subflags) then begin
    element1:= ele.eleinfoabs(ele1);
    if element1^.header.parent <> ele.elementparent then begin
     ele1:= -1;    //todo: use correct class overload handling
    end;
   end;
+// }
+  sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
+                                     paramco*sizeof(pvardataty))^.data);
+  sub1^.next:= currentsubchain;
+  currentsubchain:= ele.eledatarel(sub1);
+{
+  if (ele1 >= 0) and (sf_method in subflags) then begin
+   element1:= ele.eleinfoabs(ele1);
+   if element1^.header.parent <> ele.elementparent then begin
+    ele1:= -1;    //todo: use correct class overload handling
+   end;
+  end;
+}
   sub1^.nextoverload:= ele1;
+  if ele1 > 0 then begin
+   include(subflags,sf_overload);
+   include(psubdataty(ele.eledataabs(ele1))^.flags,sf_overload);
+  end;
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
   info.currenttypedef:= ele.eledatarel(typ1);

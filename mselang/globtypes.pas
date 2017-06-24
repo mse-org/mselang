@@ -235,6 +235,7 @@ type
               sf_methodtoken,sf_subtoken,sf_operator,sf_operatorright,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,sf_ofobject,
+              sf_overload,
               sf_ini,sf_fini,sf_afterconstruct,sf_beforedestruct,
                                                     //object sub attachments
               sf_named, //has llvm name

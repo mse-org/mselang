@@ -2108,7 +2108,7 @@ begin
     doinstanceonstack();
    end;
    paramschecked:= false;
-   if asub^.nextoverload >= 0 then begin //check overloads
+   if sf_overload in asub^.flags then begin //check overloads
     needsvarcheck:= true;
     subdata1:= asub;
     matchcount1:= 0;

@@ -4195,7 +4195,7 @@ begin
        write('lab:'+inttostrmse(d.dat.lab));
       end;
       ck_ident,ck_stringident: begin
-       write('$',hextostr(d.ident.ident,8),':',d.ident.len);
+       write('N',inttostr(d.ident.ident),':',d.ident.len);
        write(' ',getidentname(d.ident.ident));
        write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
                                             integer(d.ident.flags),true));
@@ -4343,7 +4343,7 @@ begin
                           inttostr(d.shortcutexp.shortcuts));
       end;
      end;
-     writeln(' '+inttostr(start.line+1)+':''',
+     writeln('L'+inttostr(start.line+1)+':''',
               psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
     end
     else begin
