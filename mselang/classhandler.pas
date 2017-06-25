@@ -151,7 +151,7 @@ end;
 
 procedure doclassdef(const isclass: boolean); //else object
 var
- po1: ptypedataty;
+ po1,po2: ptypedataty;
  id1: identty;
  ele1,ele2,ele3: elementoffsetty;
  bo1: boolean;
@@ -239,12 +239,6 @@ begin
      infoclass.intftypenode:= ele2;
      infoclass.implnode:= ele3;
      infoclass.defs.address:= 0;
-     if isclass then begin
-      infoclass.flags:= [icf_class];
-     end
-     else begin
-      infoclass.flags:= [];
-     end;
      infoclass.virttaboffset:= 0;
      infoclass.pendingdescends:= 0;
      infoclass.interfaceparent:= 0;
@@ -252,6 +246,19 @@ begin
      infoclass.interfacechain:= 0;
      infoclass.interfacesubcount:= 0;
      fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
+     if isclass then begin
+      po1^.infoclass.objpotype:= 0;
+      infoclass.flags:= [icf_class];
+     end
+     else begin
+      infoclass.flags:= [];
+      po1^.infoclass.objpotype:= 
+                  ele.addelementduplicate1(tks_objpotype,ek_type,globalvisi);
+      po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotype));
+      po2^:= po1^;
+      po2^.h.base:= d.typ.typedata;
+      po2^.h.indirectlevel:= 1;
+     end;
     end;
    end;
   end;

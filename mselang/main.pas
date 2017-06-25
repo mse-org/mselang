@@ -79,6 +79,7 @@ type
                    var accept: Boolean);
    procedure statupdateev(const sender: TObject; const filer: tstatfiler);
    procedure patheditev(const sender: TObject);
+   procedure createev(const sender: TObject);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -357,6 +358,11 @@ procedure tmainfo.initparams();
 begin
  compdebugmo.initparams(fcompparams);
 // info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
+end;
+
+procedure tmainfo.createev(const sender: TObject);
+begin
+ application.options:= application.options - [apo_terminateonexception];
 end;
 
 end.

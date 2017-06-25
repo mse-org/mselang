@@ -82,7 +82,8 @@ implementation
 uses
  msestrings,sysutils,handlerglob,mseformatstr,msetypes,internaltypes,
  mserttiutils,errorhandler,
- segmentutils,classhandler,interfacehandler,__mla__internaltypes;
+ segmentutils,classhandler,interfacehandler,__mla__internaltypes,
+ mseapplication;
 
 const
  temprefcount = 1;
@@ -776,6 +777,13 @@ begin
  write(ucs4tostring(card32((cpu.stack+cpu.pc^.par.voffset)^)));
 end;
 
+procedure checkstring(const astring: pstringheaderty);
+begin
+ if (astring^.len < 0) or (astring^.len > 1000) then begin
+  internalerror('Invalid string');
+ end;
+end;
+
 procedure writestring8op();
 var
  po1: pointer;
@@ -785,6 +793,7 @@ begin
  po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
  if po1 <> nil then begin
   po2:= po1-sizeof(stringheaderty);
+  checkstring(po2);
   setlength(str1,po2^.len);
   move(po1^,pointer(str1)^,po2^.len);
   write(str1);
@@ -800,6 +809,7 @@ begin
  po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
  if po1 <> nil then begin
   po2:= po1-sizeof(stringheaderty);
+  checkstring(po2);
   setlength(str1,po2^.len);
   move(po1^,pointer(str1)^,po2^.len*2);
   write(str1);
@@ -818,6 +828,7 @@ begin
  po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
  if po1 <> nil then begin
   po2:= po1-sizeof(stringheaderty);
+  checkstring(po2);
   setlength(str1,po2^.len*2); //max
   ps:= po1;
   pe:= ps+po2^.len;
@@ -7280,9 +7291,13 @@ begin
  end;
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
- while not cpu.stop do begin
-  optable[cpu.pc^.op.op].proc();
-  inc(cpu.pc);
+ try
+  while not cpu.stop do begin
+   optable[cpu.pc^.op.op].proc();
+   inc(cpu.pc);
+  end;
+ except
+  application.handleexception();
  end;
  result:= exitcodeaddress^;
 // result:= pinteger(segments[seg_globvar].basepo)^;

@@ -4052,7 +4052,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
  begin
   with atyp do begin
    if typedata = 0 then begin
-    write('NIL');
+    write('NIL ');
    end
    else begin
     po1:= ele.eledataabs(typedata);

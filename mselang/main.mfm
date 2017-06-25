@@ -15,6 +15,7 @@ object mainfo: tmainfo
   options = [fo_main, fo_terminateonclose, fo_autoreadstat, fo_delayedreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = statf
   caption = 'MSElang'
+  oncreate = createev
   moduleclassname = 'tmainform'
   object tbutton1: tbutton
     bounds_x = 560

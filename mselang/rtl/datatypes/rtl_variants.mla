@@ -160,6 +160,7 @@ begin
   else
    tovalueerror(VT_I1);
  end;
+writeln('tovalue int8 ',result);
 end;
 
 method variantty.tovalue(): int16;
@@ -485,10 +486,18 @@ method variantty.add(const b: variantty);
 var
  i8: int8;
 begin
+i8:= int8(self);
+writeln('+++',i8);
  case commontermtype(b) of
   VT_I1:
-   i8:= int8(self^)+int8(b);
+  {
+writeln('+++',vint8(self),' ',int8(b));
+
+   i8:= int8(self)+int8(b);
+writeln('***',i8);
    tovariant(i8);
+writeln('*',i8,' ',vint8);
+}
   else
    operandtypeerror(b,'+');
  end;

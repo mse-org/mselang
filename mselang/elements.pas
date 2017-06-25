@@ -1472,7 +1472,8 @@ function telementhashdatalist.dumpelements: msestringarty;
   else begin
    po2:= eleinfoabs(atyp);
    with ptypedataty(@po2^.data)^ do begin
-    result:= ' T:'+inttostrmse(atyp)+':'+hextostrmse(h.signature,8)+':'+
+    result:= ' T:'+inttostrmse(atyp)+':S'+inttostrmse(h.signature)+':N'+
+                         inttostrmse(po2^.header.name)+':'+
                          msestring(getidentname(po2^.header.name));
     result:= result+' B:'+inttostrmse(h.base);
     result:= result+' K:'+msestring(getenumname(typeinfo(h.kind),ord(h.kind)));
@@ -1668,7 +1669,8 @@ begin
       mstr1:= mstr1+' L:'+inttostrmse(address.locaddress.framelevel);
      end;               
 
-     mstr1:= mstr1 + ' def: '+inttostrmse(vf.defaultconst)+dumptyp(vf.typ);
+     mstr1:= mstr1 + ' def: '+inttostrmse(vf.defaultconst)+lineend+
+             dumptyp(vf.typ);
      {
      po2:= eleinfoabs(vf.typ);
      mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
@@ -1789,6 +1791,11 @@ begin
    ek_ref: begin
     with prefdataty(@po1^.data)^ do begin
      mstr1:= mstr1 + ' R:'+inttostrmse(ref);
+    end;
+   end;
+   ek_alias: begin
+    with paliasdataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' R:'+inttostrmse(base);
     end;
    end;
    ek_condition: begin

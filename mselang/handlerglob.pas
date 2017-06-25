@@ -105,6 +105,7 @@ type
   intfnamenode: elementoffsetty;
   intftypenode: elementoffsetty;
   implnode: elementoffsetty;
+  objpotype: elementoffsetty; //^object, 0 for ck_class
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;
