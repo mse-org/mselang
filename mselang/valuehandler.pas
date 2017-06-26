@@ -1989,7 +1989,7 @@ var
  subdata1: psubdataty;
  cost1,matchcount1: int32;
  needsvarcheck: boolean;
- destoffset: int32;
+ destoffset,topoffset: int32;
 
  procedure dodefaultparams();
  var
@@ -2049,7 +2049,7 @@ var
    dosub(adestindex,ele.eledataabs(asub),paramstart,0,
                             [dsf_instanceonstack,dsf_attach],instancessa);
    if co_mlaruntime in info.o.compileoptions then begin
-    with additem(oc_push)^ do begin
+    with insertitem(oc_push,topoffset,-1)^ do begin
      par.imm.vsize:= pointersize; //compensate stackpop
     end;
    end;
@@ -2551,7 +2551,12 @@ begin
      end;
     end;
 //    locdatapo:= tempsbefore;
-    
+    topoffset:= getstackindex(poitem1);
+    if topoffset < paramstart then begin
+     topoffset:= paramstart;
+    end;
+    topoffset:= topoffset - s.stackindex;
+
     if co_mlaruntime in o.compileoptions then begin
      poitem1:= @contextstack[paramstart];
      if poitem1^.d.kind <> ck_params then begin //no params
@@ -2592,13 +2597,12 @@ begin
       inc(opoffset1);
      end;
     end;
-
     if not hasresult and 
             (aflags*[dsf_attach,dsf_objini,dsf_objfini] = []) then begin
      d.kind:= ck_subcall;
      if (dsf_indexedsetter in aflags) and 
                              (co_mlaruntime in o.compileoptions) then begin
-      with additem(oc_swapstack)^.par.swapstack do begin
+      with insertitem(oc_swapstack,topoffset,-1)^.par.swapstack do begin
        offset:= -paramsize1;
        size:= lastparamsize1;
       end;
@@ -2608,20 +2612,20 @@ begin
          (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
      if sf_interface in asub^.flags then begin
       if sf_function in asub^.flags then begin
-       po1:= additem(oc_callintffunc);
+       po1:= insertitem(oc_callintffunc,topoffset,-1);
       end
       else begin
-       po1:= additem(oc_callintf);
+       po1:= insertitem(oc_callintf,topoffset,-1);
       end;
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
                                                         sizeof(intfdefheaderty);
      end
      else begin
       if sf_function in asub^.flags then begin
-       po1:= additem(oc_callvirtfunc);
+       po1:= insertitem(oc_callvirtfunc,topoffset,-1);
       end
       else begin
-       po1:= additem(oc_callvirt);
+       po1:= insertitem(oc_callvirt,topoffset,-1);
       end;
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                              virtualtableoffset;
@@ -2649,10 +2653,10 @@ begin
                       (asub^.nestinglevel = sublevel) then begin
       if dsf_indirect in aflags then begin
        if sf_function in asub^.flags then begin
-        po1:= additem(oc_callfuncindi);
+        po1:= insertitem(oc_callfuncindi,topoffset,-1);
        end
        else begin
-        po1:= additem(oc_callindi);
+        po1:= insertitem(oc_callindi,topoffset,-1);
        end;
        if co_llvm in o.compileoptions then begin
         po1^.par.ssas1:= callssa;
@@ -2670,10 +2674,10 @@ begin
       end
       else begin
        if sf_function in asub^.flags then begin
-        po1:= additem(oc_callfunc);
+        po1:= insertitem(oc_callfunc,topoffset,-1);
        end
        else begin
-        po1:= additem(oc_call);
+        po1:= insertitem(oc_call,topoffset,-1);
        end;
       end;
       po1^.par.callinfo.linkcount:= -1;
@@ -2681,10 +2685,12 @@ begin
      else begin
       i1:= sublevel-asub^.nestinglevel;
       if sf_function in asub^.flags then begin
-       po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,i1));
+       po1:= insertitem(oc_callfuncout,topoffset,-1,
+                                       getssa(ocssa_nestedcallout,i1));
       end
       else begin
-       po1:= additem(oc_callout,getssa(ocssa_nestedcallout,i1));
+       po1:= insertitem(oc_callout,topoffset,-1,
+                                       getssa(ocssa_nestedcallout,i1));
       end;
       po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
       po7:= ele.parentelement;
@@ -2748,7 +2754,7 @@ begin
       end;
       writemanagedtypeop(mo1,instancetype1,adref1);
      end;
-     with additem(oc_destroyclass)^ do begin //insertitem???
+     with insertitem(oc_destroyclass,topoffset,-1)^ do begin
       par.ssas1:= d.dat.fact.ssaindex;
       par.destroyclass.flags:= [];
      { 
@@ -2760,12 +2766,13 @@ begin
     end;
     if dsf_indirect in aflags then begin
      if hasresult then begin
-      with additem(oc_movestack)^ do begin //move result to calladdress
+      with insertitem(oc_movestack,topoffset,-1)^ do begin
+                                   //move result to calladdress
        par.swapstack.offset:= -pointersize;
        par.swapstack.size:= resultsize;
       end;
      end;
-     with additem(oc_pop)^ do begin          //insertitem???
+     with insertitem(oc_pop,topoffset,-1)^ do begin   
       setimmsize(pointersize,par.imm); //remove call address
      end;
     end;
@@ -2780,7 +2787,7 @@ begin
   end;
   if aflags*[dsf_objini,dsf_objfini] <> [] then begin
    if co_mlaruntime in o.compileoptions then begin
-    with additem(oc_push)^ do begin
+    with insertitem(oc_push,topoffset,-1)^ do begin
      par.imm.vsize:= pointersize;    //compensate stack pop
     end;
    end;
