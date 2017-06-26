@@ -1699,12 +1699,17 @@ begin
     address.flags:= [af_param,af_const];
     with ptypedataty(
              ele.eledataabs(currentcontainer))^ do begin
-     if h.kind = dk_object then begin
-      include(address.flags,af_paramindirect);
-      vf.typ:= infoclass.objpotype;
+     if isclass then begin
+      if h.kind = dk_object then begin
+ //      include(address.flags,af_paramindirect);
+       vf.typ:= infoclass.objpotype;
+      end
+      else begin
+       vf.typ:= currentcontainer;
+      end;
      end
      else begin
-      vf.typ:= currentcontainer;
+      vf.typ:= -1;
      end;
     end;
    end;

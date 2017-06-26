@@ -3298,9 +3298,17 @@ begin
 //        initfactcontext(0);
         initdatacontext(poind^.d,ck_ref);
         d.dat.datatyp.typedata:= vf.typ;
-        d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.datatyp.flags:= vf.flags;
-        d.dat.indirection:= -1;
+        {
+        if af_objectfield in flags then begin
+         d.dat.indirection:= 0; //self has af_paramindirect
+         d.dat.datatyp.indirectlevel:= indirectlevel+1;
+        end
+        else begin
+        }
+         d.dat.indirection:= -1;
+         d.dat.datatyp.indirectlevel:= indirectlevel;
+//        end;
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         d.dat.ref.offset:= offset;
         d.dat.ref.c.varele:= 0;

@@ -255,9 +255,8 @@ begin
       po1^.infoclass.objpotype:= 
                   ele.addelementduplicate1(tks_objpotype,ek_type,globalvisi);
       po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotype));
-      po2^:= po1^;
+      inittypedatasize(po2^,dk_objectpo,d.typ.indirectlevel,das_pointer);
       po2^.h.base:= d.typ.typedata;
-      po2^.h.indirectlevel:= 1;
      end;
     end;
    end;
