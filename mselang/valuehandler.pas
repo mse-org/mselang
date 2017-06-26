@@ -57,7 +57,7 @@ procedure handlevalueinherited();
 
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,
+                dsf_instanceonstack,dsf_nooverloadcheck,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
                 dsf_noinstancecopy,dsf_noparams,
                 dsf_nofreemem, //for object destructor
@@ -620,7 +620,7 @@ function tryconvert(const acontext: pcontextitemty;
 var                     //todo: optimize, use tables, complete
  source1,po1,po2: ptypedataty;
  stackoffset: int32;
-
+ 
  procedure convertsize(const atable: convertsizetablety);
  var
   op1: opcodety;
@@ -829,8 +829,9 @@ begin
      exit;
     end;
    end;
-   if (source1^.h.kind = dk_object) and 
-                     (d.dat.datatyp.indirectlevel = 0) then begin
+   if (source1^.h.kind = dk_object) and (d.dat.datatyp.indirectlevel = 0) or
+      (source1^.h.kind = dk_objectpo) and 
+                                   (d.dat.datatyp.indirectlevel = 1) then begin
                     // check ":=" operator, convert from object
     operatorsig.d[0]:= tks_operators;
     operatorsig.d[1]:= objectoperatoridents[oa_assign];
@@ -847,16 +848,18 @@ begin
       end;
      {$endif}
      end;
-     i1:= alignsize(source1^.h.bytesize);  //object size
-     i2:= acontext^.d.dat.fact.ssaindex;
-     with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
-      ssas1:= i2;
-      memop.t:= getopdatatype(source1,d.dat.datatyp.indirectlevel);
-      memop.tempdataaddress.a.address:= -i1;
-      memop.tempdataaddress.offset:= 0;
+     if d.dat.datatyp.indirectlevel = 0 then begin
+      i1:= alignsize(source1^.h.bytesize);  //object size
+      i2:= acontext^.d.dat.fact.ssaindex;
+      with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
+       ssas1:= i2;
+       memop.t:= getopdatatype(source1,d.dat.datatyp.indirectlevel);
+       memop.tempdataaddress.a.address:= -i1;
+       memop.tempdataaddress.offset:= 0;
+      end;
      end;
      i2:= getstackindex(acontext);
-     dosub(i2,sub1,i2,0,[dsf_instanceonstack]);
+     dosub(i2,sub1,i2,0,[dsf_instanceonstack,dsf_nooverloadcheck]);
      //todo: fini object
      if co_mlaruntime in info.o.compileoptions then begin
      {
@@ -2108,7 +2111,8 @@ begin
     doinstanceonstack();
    end;
    paramschecked:= false;
-   if sf_overload in asub^.flags then begin //check overloads
+   if (sf_overload in asub^.flags) and 
+              not (dsf_nooverloadcheck in aflags) then begin //check overloads
     needsvarcheck:= true;
     subdata1:= asub;
     matchcount1:= 0;

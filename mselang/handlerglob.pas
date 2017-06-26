@@ -653,7 +653,7 @@ procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 begin
  atype.h.bytesize:= abytesize;
  atype.h.bitsize:= abytesize*8;
- if abytesize >= pointersize then begin
+ if (abytesize >= pointersize) or (atype.h.kind = dk_object) then begin
   atype.h.datasize:= das_none;
  end
  else begin

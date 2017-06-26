@@ -204,6 +204,7 @@ begin
    end;
   end;
   contextstack[s.stackindex].b.eleparent:= ele.elementparent;
+  ele.checkcapacity(ek_type,10);
   with contextstack[s.stackindex-1] do begin
    bo1:= ele.addelementdata(id1,ek_type,globalvisi,po1);
    d.typ.typedata:= ele.eledatarel(po1);
@@ -225,7 +226,7 @@ begin
     ele2:= ele.addelementduplicate1(tks_classintftype,
                                     ek_classintftypenode,globalvisi);
     ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
-    po1:= ele.eledataabs(currentcontainer); //could be moved by list size change
+//    po1:= ele.eledataabs(currentcontainer); //could be moved by list size change
     if isclass then begin
      inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
     end

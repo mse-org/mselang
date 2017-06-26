@@ -3188,7 +3188,10 @@ begin
                                           dummymeta,2*pointerbitsize,0,0,0,m2);
                                         //todo: use correct alignment
      end;
-     dk_record,dk_object,dk_class: begin
+     dk_record,dk_object,dk_class,dk_objectpo: begin
+      if po2^.h.kind = dk_objectpo then begin
+       po2:= ele.eledataabs(po2^.h.base);
+      end;
       initmetabuffer();
       ele1:= po2^.fieldchain;
       while ele1 <> 0 do begin
