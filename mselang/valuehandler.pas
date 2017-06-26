@@ -196,7 +196,8 @@ begin
 end;
 
 function listtoopenarray(const acontext: pcontextitemty;
-                                         const aitemtype: ptypedataty): boolean;
+                          const aitemtype: ptypedataty; 
+                                  out lastitem: pcontextitemty): boolean;
 var
  poe: pointer;
  poitem1,poparams: pcontextitemty;
@@ -256,6 +257,7 @@ begin
   end;
   inc(poitem1);
  end;
+ lastitem:= poitem1-1;
  po1:= ele.addelementdata(getident(),ek_type,[]); //anonymus type
  inittypedatasize(po1^,dk_openarray,0,das_none);
  with po1^ do begin
@@ -1724,6 +1726,7 @@ procedure dosub(const adestindex: int32; asub: psubdataty;
 var
  paramsize1: int32;
  paramschecked: boolean;
+ lastitem: pcontextitemty;
 // tempsize: int32;
  
  function doparam(var context1: pcontextitemty;
@@ -1921,7 +1924,7 @@ var
         result:= false; //skip
         exit;
        end;
-       if not listtoopenarray(context1,desttype) then begin
+       if not listtoopenarray(context1,desttype,lastitem) then begin
         exit;
        end;
        conversioncost1:= 0;
@@ -2488,6 +2491,7 @@ begin
                                  realparamco);
                                  //including default params
     poitem1:= @contextstack[paramstart-1]; //before first param
+    lastitem:= nil;
 //    tempsize:= 0;
     i1:= paramco;
 //    tempsbefore:= locdatapo;
@@ -2551,7 +2555,12 @@ begin
      end;
     end;
 //    locdatapo:= tempsbefore;
-    topoffset:= getstackindex(poitem1);
+    if lastitem > poitem1 then begin
+     topoffset:= getstackindex(lastitem);
+    end
+    else begin
+     topoffset:= getstackindex(poitem1);
+    end;
     if topoffset < paramstart then begin
      topoffset:= paramstart;
     end;
