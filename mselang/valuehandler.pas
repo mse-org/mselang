@@ -2556,7 +2556,9 @@ begin
      topoffset:= paramstart;
     end;
     topoffset:= topoffset - s.stackindex;
-
+    if topoffset < destoffset then begin
+     topoffset:= destoffset; //from calloperatorright()
+    end;
     if co_mlaruntime in o.compileoptions then begin
      poitem1:= @contextstack[paramstart];
      if poitem1^.d.kind <> ck_params then begin //no params

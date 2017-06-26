@@ -3605,21 +3605,23 @@ begin
       setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
                           operatorsig,[ek_operator],allvisi,oper1) then begin
-      {$ifdef mse_checkinternalerror}
-       if not (poa^.d.kind in factcontexts) then begin
-        internalerror(ie_handler,'20170527A');
-       end;
-      {$endif}
-       i1:= poa^.d.dat.fact.ssaindex;
-       i2:= getstackindex(poa);
-       pushinsertstackaddress(i2-s.stackindex,-1);
-                              //alloca + store + pointer to alloc
-       sub1:= ele.eledataabs(oper1^.methodele);
-       dosub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
-       with additem(oc_loadalloca)^ do begin
-        par.ssas1:= i1+1; //ssa of alloca
-        poa^.d.kind:= ck_subres;
-        poa^.d.dat.fact.ssaindex:= par.ssad;
+       if getvalue(poa,das_none) then begin //???
+       {$ifdef mse_checkinternalerror}
+        if not (poa^.d.kind in factcontexts) then begin
+         internalerror(ie_handler,'20170527A');
+        end;
+       {$endif}
+        i1:= poa^.d.dat.fact.ssaindex;
+        i2:= getstackindex(poa);
+        pushinsertstackaddress(i2-s.stackindex,-1);
+                               //alloca + store + pointer to alloc
+        sub1:= ele.eledataabs(oper1^.methodele);
+        dosub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
+        with additem(oc_loadalloca)^ do begin
+         par.ssas1:= i1+1; //ssa of alloca
+         poa^.d.kind:= ck_subres;
+         poa^.d.dat.fact.ssaindex:= par.ssad;
+        end;
        end;
        goto endlab;
       end;
@@ -3629,6 +3631,7 @@ begin
       setoperparamid(@operatorsig.d[4],poa^.d.dat.datatyp.indirectlevel,pta);
       if ele.findchilddata(basetype(pob^.d.dat.datatyp.typedata),
                            operatorsig,[ek_operator],allvisi,oper1) then begin
+       if getvalue(poa,das_none) and getvalue(pob,das_none) then begin //???
        {$ifdef mse_checkinternalerror}
         if not (pob^.d.kind in factcontexts) then begin
          internalerror(ie_handler,'20170527B');
@@ -3645,7 +3648,8 @@ begin
         calloperatorright(pob,poa,ele.eledataabs(oper1^.methodele));
         poa^.d:= pob^.d; //todo: is big copy
 //        poa^.d.kind:= ck_fact;
-        goto endlab;
+       end;
+       goto endlab;
       end;
      end;     
     end;
