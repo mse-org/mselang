@@ -113,10 +113,10 @@ c=3
  (
  kind=1
  a=0,665,4,testdir
- c=8
+ c=9
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B729A84C
+    ao=An unhandled exception occured at $B728684C
     ae=
     aec=123
     ie=0
@@ -7713,7 +7713,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=26
    (
    kind=1
@@ -8833,7 +8833,7 @@ c=3
   c=30
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=30
     (
     kind=2
@@ -9513,7 +9513,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,calls
+   a=0,664,4,calls
    c=4
     (
     kind=2
@@ -11057,11 +11057,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
-   a=0,665,4,error check
+   a=0,664,4,error check
    c=2
     (
     kind=2
@@ -11143,7 +11143,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,utils
+  a=0,664,4,utils
   c=2
    (
    kind=2
@@ -11207,7 +11207,91 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,benchmark
+  a=0,665,4,rtl
+  c=1
+   (
+   kind=1
+   a=0,665,4,variants
+   c=2
+    (
+    kind=2
+    a=0,648,1,variants1
+    teststate=1
+    path=variant1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varinats1 llvm
+    teststate=1
+    path=variant1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=variants/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+  teststate=1
+  path=rtl/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ao=0
+  ee=
+  ae=0
+  eec=
+  cdef=
+  pdef=
+  )
+  (
+  kind=1
+  a=0,664,4,benchmark
   c=2
    (
    kind=2
@@ -11382,186 +11466,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=594
+propcolwidthref=609
 width0=50
 sortdescend0=0
-width1=202
+width1=207
 sortdescend1=0
-width2=157
+width2=161
 sortdescend2=0
-width3=154
+width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=185
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=16
  0 0
  0 0
  0 0
