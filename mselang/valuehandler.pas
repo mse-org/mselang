@@ -70,7 +70,8 @@ procedure dosub(const adestindex: int32; asub: psubdataty;
                  const paramstart,paramco: int32; aflags: dosubflagsty;
                                                     const aobjssa: int32 = 0);
 function getselfvar(out aele: elementoffsetty): boolean;
-function listtoset(const acontext: pcontextitemty): boolean;
+function listtoset(const acontext: pcontextitemty;
+                               out lastitem: pcontextitemty): boolean;
 
 implementation
 uses
@@ -79,7 +80,8 @@ uses
  controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob;
 
-function listtoset(const acontext: pcontextitemty): boolean;
+function listtoset(const acontext: pcontextitemty;
+                               out lastitem: pcontextitemty): boolean;
 var
  i1,i2: int32;
  po1,po2: ptypedataty;
@@ -93,7 +95,7 @@ begin
  end;
 {$endif}
  result:= false;
- poe:= acontext + acontext^.d.list.contextcount;
+ poe:= acontext + acontext^.d.list.contextcount; //??? ck_space?
  ele.checkcapacity(ek_type);
  if acontext^.d.list.itemcount = 0 then begin //empty set
   initdatacontext(acontext^.d,ck_const);
@@ -192,6 +194,7 @@ begin
   poitem^.d.kind:= ck_space;
   inc(poitem);
  end;
+ lastitem:= poitem-1;
  result:= true;
 end;
 
@@ -678,6 +681,7 @@ var
  sub1: psubdataty;
  ad1: addressrefty;
  var1: pvardataty;
+ lastitem: pcontextitemty;
 begin
  result:= false;
  with info do begin
@@ -689,7 +693,7 @@ begin
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
-     listtoset(acontext);
+     listtoset(acontext,lastitem);
     end;
     else begin
      exit;
@@ -1903,7 +1907,7 @@ var
     if context1^.d.kind = ck_list then begin
      case desttype^.h.kind of
       dk_set: begin
-       if not listtoset(context1) then begin
+       if not listtoset(context1,lastitem) then begin
         exit;
        end;
        conversioncost1:= 0;

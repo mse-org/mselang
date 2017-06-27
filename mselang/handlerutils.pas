@@ -2601,6 +2601,8 @@ end;
 
 function getfactstart(const astackindex: int32;
                                out acontext: pcontextitemty): boolean;
+var
+ lastitem: pcontextitemty;
 begin
  result:= true;
  with info do begin
@@ -2616,7 +2618,7 @@ begin
   end;
   acontext:= getpreviousnospace(acontext);
   if acontext^.d.kind = ck_list then begin
-   result:= listtoset(acontext);
+   result:= listtoset(acontext,lastitem);
   end;
  end;
 end;
@@ -2853,6 +2855,7 @@ var
  op1: popinfoty;
  i1,i2: integer;
  pocont1,pocont2: pcontextitemty;
+ lastitem: pcontextitemty;
 label
  errlab; 
 
@@ -2865,7 +2868,7 @@ begin                    //todo: optimize
    goto errlab;
   end;
   if d.kind = ck_list then begin
-   if not listtoset(acontext) then begin
+   if not listtoset(acontext,lastitem) then begin
     goto errlab;
    end;
   end;
