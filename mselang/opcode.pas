@@ -1058,12 +1058,12 @@ begin
      end;
     end;
    end;
+   if aopcode in callops then begin
+    if info.s.trystacklevel > 0 then begin
+     inc(info.s.ssa.bbindex);
+    end;
+   end;   
   end;
-  if aopcode in callops then begin
-   if info.s.trystacklevel > 0 then begin
-    inc(info.s.ssa.bbindex);
-   end;
-  end;   
  end;
 end;
 
