@@ -68,7 +68,8 @@ type
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
                  const paramstart,paramco: int32; aflags: dosubflagsty;
-                                                    const aobjssa: int32 = 0);
+                                                    const aobjssa: int32 = 0;
+                                                    const aobjsize: int32 = 0);
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty;
                                out lastitem: pcontextitemty): boolean;
@@ -845,7 +846,6 @@ begin
     operatorsig.high:= 3;
     if ele.findchilddata(basetype(source1),
                           operatorsig,[ek_operator],allvisi,oper1) then begin
-     result:= getvalue(acontext,das_none);
      if result then begin
       sub1:= ele.eledataabs(oper1^.methodele);
      {$ifdef mse_checkinternalerror}
@@ -854,20 +854,46 @@ begin
       end;
      {$endif}
      end;
+     i1:= 0;
      if d.dat.datatyp.indirectlevel = 0 then begin
-      i1:= alignsize(source1^.h.bytesize);  //object size
-      i2:= acontext^.d.dat.fact.ssaindex;
-      with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
-       ssas1:= i2;
-       memop.t:= getopdatatype(source1,d.dat.datatyp.indirectlevel);
-       memop.tempdataaddress.a.address:= -i1;
-       memop.tempdataaddress.offset:= 0;
+      if d.kind in factcontexts then begin
+       if d.dat.indirection < 0 then begin
+        result:= getaddress(acontext,true);
+       end
+       else begin
+        result:= getvalue(acontext,das_none); //pending idirection
+        i1:= alignsize(source1^.h.bytesize);  //object size
+        i2:= acontext^.d.dat.fact.ssaindex;
+        with insertitem(oc_pushstackaddr,acontext,-1)^.par do begin
+         ssas1:= i2;
+         memop.t:= getopdatatype(source1,d.dat.datatyp.indirectlevel);
+         memop.tempdataaddress.a.address:= -i1;
+         memop.tempdataaddress.offset:= 0;
+        end;
+       end;
+      end
+      else begin
+       result:= getaddress(acontext,true);
       end;
+     end
+     else begin
+      result:= getvalue(acontext,das_none);
      end;
+     sub1:= ele.eledataabs(oper1^.methodele);
+    {$ifdef mse_checkinternalerror}
+     if sub1^.paramcount <> 2 then begin
+      internalerror(ie_handler,'20170601A');
+     end;
+    {$endif}
      i2:= getstackindex(acontext);
-     dosub(i2,sub1,i2,0,[dsf_instanceonstack,dsf_nooverloadcheck]);
+     dosub(i2,sub1,i2,0,[dsf_instanceonstack,dsf_nooverloadcheck],0,i1);
      //todo: fini object
      if co_mlaruntime in info.o.compileoptions then begin
+      if i1 > 0 then begin
+       with insertitem(oc_pop,acontext,-1)^ do begin
+        par.imm.vsize:= i1;
+       end;
+      end;
      {
       with insertitem(oc_movestack,acontext,-1)^.par.swapstack do begin
        if destindirectlevel > 0 then begin
@@ -1726,7 +1752,8 @@ end;
 
 procedure dosub(const adestindex: int32; asub: psubdataty;
               const paramstart,paramco: int32; aflags: dosubflagsty;
-                                                    const aobjssa: int32 = 0);
+                                                    const aobjssa: int32 = 0;
+                                                    const aobjsize: int32 = 0);
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -2488,6 +2515,7 @@ begin
       stacksize:= stacksize + resultsize; //alloc space for return value
       locdatapo:= locdatapo + resultsize;
      end;
+     stacksize:= stacksize+aobjsize;
     end;
     paramsize1:= 0;
     realparamco:= asub^.paramcount-(totparamco-paramco);
