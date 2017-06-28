@@ -58,10 +58,6 @@ type
 
  variantty = object [nozeroinit]
   protected
-   method commontermtype(const b: variantty): varianttypety;
-   method operandtypeerror(const b: variantty; const aoperand: string8);
-   method tovalueerror(const atype: card16);
-  public
    vtype: varianttypety;
    (res1,res2,res3: card16;
     (vint8: int8);     //VT_I1
@@ -76,6 +72,10 @@ type
     (vflo64: flo64);   //VT_R8
    );
    (vbytes: array[0..13] of card8);
+   method commontermtype(const b: variantty): varianttypety;
+   method operandtypeerror(const aoperand: string8);
+   method operandtypeerror(const b: variantty; const aoperand: string8);
+   method tovalueerror(const atype: card16);
    method ini() [ini];
    method fini() [fini];
    method tovariant(const avalue: int8) [operator=':='];
@@ -98,7 +98,9 @@ type
    method tovalue(): card64 [operator=':='];
    method tovalue(): flo32 [operator=':='];
    method tovalue(): flo64 [operator=':='];
+   method neg() [operator='-'];
    method add(const b: variantty) [operator='+'];
+   method sub(const b: variantty) [operator='-'];
  end;
 
 implementation
@@ -106,6 +108,17 @@ implementation
 method variantty.tovalueerror(const atype: card16);
 begin
  writeln('variant tovalueerror type ',vtype,'to ',atype);
+end;
+
+method variantty.operandtypeerror(const aoperand: string8);
+begin
+ writeln('variant operandtypeerror a: ',vtype,' "'+aoperand+'"');
+ //todo
+end;
+
+method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
+begin
+ writeln('variant operandtypeerror a: ',vtype,' b: ',b.vtype,' "'+aoperand+'"');
  //todo
 end;
 
@@ -614,17 +627,31 @@ const
   VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_I8,     VT_UI8)
  );
 
-method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
-begin
- writeln('variant operandtypeerror "'+aoperand+'"');
- //todo
-end;
-
 method variantty.commontermtype(const b: variantty): varianttypety;
 begin
  result:= VT_UNKNOWN;
  if (vtype <= numvariantmax) and (b.vtype <= numvariantmax) then
   result:= commontermtypes[vtype,b.vtype];
+ end;
+end;
+
+method variantty.neg();
+begin
+ case vtype of
+  VT_I1:
+   tovariant(-int8(self));
+  VT_I2:
+   tovariant(-int16(self));
+  VT_I4:
+   tovariant(-int32(self));
+  VT_I8:
+   tovariant(-int64(self));
+  VT_R4:
+   tovariant(-flo32(self));
+  VT_R8:
+   tovariant(-flo64(self));
+  else
+   operandtypeerror('-');
  end;
 end;
 
@@ -639,8 +666,32 @@ begin
    tovariant(int32(self)+int32(b));
   VT_I8:
    tovariant(int64(self)+int64(b));
+  VT_R4:
+   tovariant(flo32(self)+flo32(b));
+  VT_R8:
+   tovariant(flo64(self)+flo64(b));
   else
    operandtypeerror(b,'+');
+ end;
+end;
+
+method variantty.sub(const b: variantty);
+begin
+ case commontermtype(b) of
+  VT_I1:
+   tovariant(int8(self)-int8(b));
+  VT_I2:
+   tovariant(int16(self)-int16(b));
+  VT_I4:
+   tovariant(int32(self)-int32(b));
+  VT_I8:
+   tovariant(int64(self)-int64(b));
+  VT_R4:
+   tovariant(flo32(self)-flo32(b));
+  VT_R8:
+   tovariant(flo64(self)-flo64(b));
+  else
+   operandtypeerror(b,'-');
  end;
 end;
 
