@@ -783,7 +783,8 @@ begin
         end;
        end;
        dosub(getstackindex(acontext),sub1,getstackindex(acontext),1,
-                       [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
+                   [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
+                                                       dsf_nooverloadcheck]);
        with additem(oc_push)^ do begin
         par.imm.vsize:= pointersize; //compensate missing instance copy
        end;
@@ -821,7 +822,8 @@ begin
        }
        acontext^.d.dat.fact.ssaindex:= i1; //source
        i1:= getstackindex(acontext);
-       dosub(i1,sub1,i1,1,[dsf_instanceonstack,dsf_usedestinstance]);
+       dosub(i1,sub1,i1,1,
+              [dsf_instanceonstack,dsf_usedestinstance,dsf_nooverloadcheck]);
 //       dec(s.stacktop);
        with insertitem(oc_loadalloca,acontext,-1)^ do begin //todo: managed temp
         par.ssas1:= i2;

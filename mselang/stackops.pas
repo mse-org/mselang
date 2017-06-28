@@ -5080,64 +5080,72 @@ procedure indirect8op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv8ty(po1)^:=  pv8ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv8ty(stackpush(sizeof(v8ty)))^:=  pv8ty(ppointer(po1)^)^;
 end;
 
 procedure indirect16op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv16ty(po1)^:=  pv16ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv16ty(stackpush(sizeof(v16ty)))^:=  pv16ty(ppointer(po1)^)^;
 end;
 
 procedure indirect32op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv32ty(po1)^:=  pv32ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv32ty(stackpush(sizeof(v32ty)))^:=  pv32ty(ppointer(po1)^)^;
 end;
 
 procedure indirect64op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv64ty(po1)^:=  pv64ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv64ty(stackpush(sizeof(v64ty)))^:=  pv64ty(ppointer(po1)^)^;
 end;
 
 procedure indirectpoop();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-sizeof(pointer);
- ppointer(po1)^:=  ppointer(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-sizeof(pointer);
+ ppointer(stackpush(sizeof(pointer)))^:=  ppointer(ppointer(po1)^)^;
 end;
 
 procedure indirectf16op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv16ty(po1)^:=  pv16ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv16ty(stackpush(sizeof(v16ty)))^:=  pv16ty(ppointer(po1)^)^;
 end;
 
 procedure indirectf32op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv32ty(po1)^:=  pv32ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv32ty(stackpush(sizeof(v32ty)))^:=  pv32ty(ppointer(po1)^)^;
 end;
 
 procedure indirectf64op();
 var
  po1: pointer;
 begin
- po1:= cpu.stack-alignstep;
- pv64ty(po1)^:=  pv64ty(ppointer(po1)^)^;
+ po1:= stackpop(sizeof(pointer));
+// po1:= cpu.stack-alignstep;
+ pv64ty(stackpush(sizeof(v64ty)))^:=  pv64ty(ppointer(po1)^)^;
 end;
 
 procedure indirectpooffsop();
