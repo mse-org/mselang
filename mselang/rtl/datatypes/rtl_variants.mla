@@ -60,6 +60,7 @@ type
   protected
    method commontermtype(const b: variantty): varianttypety;
    method operandtypeerror(const b: variantty; const aoperand: string8);
+   method tovalueerror(const atype: card16);
   public
    vtype: varianttypety;
    (res1,res2,res3: card16;
@@ -81,19 +82,30 @@ type
    method tovariant(const avalue: int16) [operator=':='];
    method tovariant(const avalue: int32) [operator=':='];
    method tovariant(const avalue: int64) [operator=':='];
+   method tovariant(const avalue: card8) [operator=':='];
+   method tovariant(const avalue: card16) [operator=':='];
+   method tovariant(const avalue: card32) [operator=':='];
+   method tovariant(const avalue: card64) [operator=':='];
+   method tovariant(const avalue: flo32) [operator=':='];
    method tovariant(const avalue: flo64) [operator=':='];
    method tovalue(): int8 [operator=':='];
    method tovalue(): int16 [operator=':='];
    method tovalue(): int32 [operator=':='];
    method tovalue(): int64 [operator=':='];
+   method tovalue(): card8 [operator=':='];
+   method tovalue(): card16 [operator=':='];
+   method tovalue(): card32 [operator=':='];
+   method tovalue(): card64 [operator=':='];
+   method tovalue(): flo32 [operator=':='];
    method tovalue(): flo64 [operator=':='];
    method add(const b: variantty) [operator='+'];
  end;
 
 implementation
 
-procedure tovalueerror(const atype: card16);
+method variantty.tovalueerror(const atype: card16);
 begin
+ writeln('variant tovalueerror type ',vtype,'to ',atype);
  //todo
 end;
 
@@ -133,6 +145,41 @@ begin
  fini();
  vtype:= VT_I8;
  vint64:= avalue;
+end;
+
+method variantty.tovariant(const avalue: card8);
+begin
+ fini();
+ vtype:= VT_UI1;
+ vcard8:= avalue;
+end;
+
+method variantty.tovariant(const avalue: card16);
+begin
+ fini();
+ vtype:= VT_UI2;
+ vcard16:= avalue;
+end;
+
+method variantty.tovariant(const avalue: card32);
+begin
+ fini();
+ vtype:= VT_UI4;
+ vcard32:= avalue;
+end;
+
+method variantty.tovariant(const avalue: card64);
+begin
+ fini();
+ vtype:= VT_UI8;
+ vcard64:= avalue;
+end;
+
+method variantty.tovariant(const avalue: flo32);
+begin
+ fini();
+ vtype:= VT_R4;
+ vflo32:= avalue;
 end;
 
 method variantty.tovariant(const avalue: flo64);
@@ -219,6 +266,106 @@ begin
    result:= truncint64(vflo64);
   else
    tovalueerror(VT_I8);
+ end;
+end;
+
+method variantty.tovalue(): card8;
+begin
+ case vtype of
+  VT_I1,VT_UI1:
+   result:= vint8;
+  VT_I2,VT_UI2:
+   result:= vint16;
+  VT_I4,VT_UI4:
+   result:= vint32;
+  VT_I8,VT_UI8:
+   result:= vint64;
+  VT_R4:
+   result:= trunccard32(vflo32);
+  VT_R8:
+   result:= trunccard32(vflo64);
+  else
+   tovalueerror(VT_UI1);
+ end;
+end;
+
+method variantty.tovalue(): card16;
+begin
+ case vtype of
+  VT_I1,VT_UI1:
+   result:= vint8;
+  VT_I2,VT_UI2:
+   result:= vint16;
+  VT_I4,VT_UI4:
+   result:= vint32;
+  VT_I8,VT_UI8:
+   result:= vint64;
+  VT_R4:
+   result:= trunccard32(vflo32);
+  VT_R8:
+   result:= trunccard32(vflo64);
+  else
+   tovalueerror(VT_UI2);
+ end;
+end;
+
+method variantty.tovalue(): card32;
+begin
+ case vtype of
+  VT_I1,VT_UI1:
+   result:= vint8;
+  VT_I2,VT_UI2:
+   result:= vint16;
+  VT_I4,VT_UI4:
+   result:= vint32;
+  VT_I8,VT_UI8:
+   result:= vint64;
+  VT_R4:
+   result:= trunccard32(vflo32);
+  VT_R8:
+   result:= trunccard32(vflo64);
+  else
+   tovalueerror(VT_UI4);
+ end;
+end;
+
+method variantty.tovalue(): card64;
+begin
+ case vtype of
+  VT_I1,VT_UI1:
+   result:= vint8;
+  VT_I2,VT_UI2:
+   result:= vint16;
+  VT_I4,VT_UI4:
+   result:= vint32;
+  VT_I8,VT_UI8:
+   result:= vint64;
+  VT_R4:
+   result:= trunccard64(vflo32);
+  VT_R8:
+   result:= trunccard64(vflo64);
+  else
+   tovalueerror(VT_UI8);
+ end;
+end;
+
+method variantty.tovalue(): flo32;
+begin
+ case vtype of
+  VT_I1,VT_UI1:
+   result:= vint8;
+  VT_I2,VT_UI2:
+   result:= vint16;
+  VT_I4,VT_UI4:
+   result:= vint32;
+  VT_I8,VT_UI8:
+   result:= vint64;
+  VT_R4:
+   result:= vflo32;
+  VT_R8:
+   result:= vflo64;
+  else
+   tovalueerror(VT_R4);
  end;
 end;
 
@@ -469,7 +616,7 @@ const
 
 method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
 begin
- writeln('operandtypeerror');
+ writeln('variant operandtypeerror "'+aoperand+'"');
  //todo
 end;
 
@@ -482,13 +629,16 @@ begin
 end;
 
 method variantty.add(const b: variantty);
-var
- i8: int8;
 begin
  case commontermtype(b) of
   VT_I1:
-   i8:= int8(self)+int8(b);
-   tovariant(i8);
+   tovariant(int8(self)+int8(b));
+  VT_I2:
+   tovariant(int16(self)+int16(b));
+  VT_I4:
+   tovariant(int32(self)+int32(b));
+  VT_I8:
+   tovariant(int64(self)+int64(b));
   else
    operandtypeerror(b,'+');
  end;

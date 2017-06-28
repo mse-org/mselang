@@ -3435,7 +3435,8 @@ begin
        needsdecref:= false;
       end;
      end;
-     if not getvalue(source,datasi1) then begin
+     if not getvalue(source,datasi1) then begin //todo: conversion operator
+                                                //without loading of the object
       goto endlab;
      end;
     end
