@@ -1576,8 +1576,19 @@ begin
    errormessage(err_toomanyparams,[],minint,0,erl_fatal);
    exit;
   end;
+  {
   i1:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_alias] +
-                 elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type];
+                 elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type]+
+                 2*elesizes[ek_operator]+elesizes[ek_none];
+  }
+  i1:= paramco* (sizeof(pvardataty)+elesize+sizeof(vardataty)) + 
+       elesize+sizeof(aliasdataty) +
+       elesize+sizeof(subdataty) + 
+       elesize +
+       elesize+sizeof(typedataty) +
+       2*(elesize+sizeof(operatordataty)) +
+       elesize;
+  
   ele.checkcapacity(i1); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;

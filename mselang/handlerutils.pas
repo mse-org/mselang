@@ -3685,18 +3685,35 @@ begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
    end
    else begin   
-    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if not tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
-     with pob^ do begin
-      po1:= ele.eledataabs(d.dat.datatyp.typedata);
-      indilev1:= d.dat.datatyp.indirectlevel;
-     end;
-     if tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
+    if pta^.h.kind = dk_object then begin //try to convert from object
+     po1:= ptb;
+     if not tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
+      with poa^ do begin
+       po1:= ele.eledataabs(d.dat.datatyp.typedata);
+       indilev1:= d.dat.datatyp.indirectlevel;
+      end;
+      if tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
+       bo1:= true;
+      end;
+     end
+     else begin
       bo1:= true;
      end;
     end
     else begin
-     bo1:= true;
+     po1:= pta;
+     if not tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
+      with pob^ do begin
+       po1:= ele.eledataabs(d.dat.datatyp.typedata);
+       indilev1:= d.dat.datatyp.indirectlevel;
+      end;
+      if tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
+       bo1:= true;
+      end;
+     end
+     else begin
+      bo1:= true;
+     end;
     end;
    end;
    if not bo1 then begin
