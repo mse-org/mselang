@@ -2251,7 +2251,7 @@ var
  po2: popinfoty;
  m1,m2: metavaluety;
  i1: int32;
- managedtempsize1,varsize1: int32;
+ managedtempsize1,tempsize1,varsize1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -2276,7 +2276,8 @@ begin
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*pointersize; 
-  varsize1:= managedtempsize1+d.subdef.varsize;
+  tempsize1:= locdatapo-stacktempoffset;
+  varsize1:= managedtempsize1+tempsize1+d.subdef.varsize;
   if varsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin
     par.stacksize:= varsize1;
@@ -2338,6 +2339,7 @@ begin
     par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
    end
    else begin
+    par.subbegin.sub.allocs.stackop.tempsize:= tempsize1;
     par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
     par.subbegin.sub.allocs.stackop.varsize:= varsize1;
    end;

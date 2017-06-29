@@ -5440,9 +5440,9 @@ begin
  with cpu.pc^.par.subbegin do begin
   stackpush(sub.allocs.stackop.varsize);
   pe:= cpu.stack;
-  cpu.stacktemp:= pe;
   p1:= pointer(pe)-sub.allocs.stackop.managedtempsize;
   cpu.managedtemp:= p1;
+  cpu.stacktemp:= p1-sub.allocs.stackop.tempsize;
   while p1 < pe do begin
    p1^:= nil;
    inc(p1);

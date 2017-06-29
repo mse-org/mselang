@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72B184C
+    ao=An unhandled exception occured at $B72CF84C
     ae=
     aec=123
     ie=0
@@ -11212,7 +11212,7 @@ c=3
    (
    kind=1
    a=0,665,4,variants
-   c=2
+   c=4
     (
     kind=2
     a=0,648,1,variants1
@@ -11240,6 +11240,50 @@ c=3
     a=0,648,1,varinats1 llvm
     teststate=1
     path=variant1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,variants2
+    teststate=1
+    path=variant2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varinats2 llvm
+    teststate=1
+    path=variant2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11476,7 +11520,9 @@ sortdescend2=0
 width3=158
 sortdescend3=0
 sortdescend4=0
-rowstate=16
+rowstate=18
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -1,0 +1,13 @@
+program variant2;
+uses
+ rtl_variants;
+
+var
+ v1,v2,v3: variantty;
+begin
+
+ v1:= 10.5;
+ v2:= 112.5;
+ v3:= v1+v2;
+ exitcode:= v3;
+end.

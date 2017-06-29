@@ -978,7 +978,8 @@ type
   blockcount: int32;
  end;
  suballocstackopty = record
-  varsize: int32; //includes managed temp
+  varsize: int32; //includes managed temp and temp
+  tempsize: int32;
   managedtempsize: int32;
  end;
  
