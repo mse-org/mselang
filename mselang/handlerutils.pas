@@ -3592,9 +3592,9 @@ begin
     goto endlab;
    end;
 }
+   pta:= ele.eledataabs(d.dat.datatyp.typedata);
+   ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
    if opsinfo.objop <> oa_none then begin
-    pta:= ele.eledataabs(d.dat.datatyp.typedata);
-    ptb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
     b1:= (pta^.h.kind = dk_object) and (d.dat.datatyp.indirectlevel = 0);
                                                     //todo: classes
     b2:= (ptb^.h.kind = dk_object) and (pob^.d.dat.datatyp.indirectlevel = 0);
