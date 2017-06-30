@@ -1336,7 +1336,7 @@ var                       //todo: move after doparam
        internalerror(ie_handler,'20160216B');
       end;
      {$endif}
-      if (isclass and
+      if (isclass and (s.dialect <> dia_mse) and
           ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
               addvar(d.ident.ident,allvisi,sub1^.varchain,var1) then begin
        identerror(curstackindex-s.stackindex,err_duplicateidentifier);

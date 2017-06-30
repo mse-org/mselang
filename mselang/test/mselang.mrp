@@ -35,8 +35,8 @@ memodialog.sta=8
 testedit.sta=9
  [testeditfo]
  stackedunder=
- x=1130
- y=206
+ x=1103
+ y=221
  cx=628
  cy=595
  wsize=0
@@ -116,7 +116,7 @@ c=3
  c=9
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72CF84C
+    ao=An unhandled exception occured at $B72ED84C
     ae=
     aec=123
     ie=0
@@ -6782,7 +6782,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,types
+   a=0,665,4,types
    c=7
     (
     kind=2
@@ -11061,7 +11061,7 @@ c=3
   c=1
    (
    kind=1
-   a=0,664,4,error check
+   a=0,665,4,error check
    c=2
     (
     kind=2
@@ -11507,20 +11507,149 @@ y=94
 cx=700
 cy=852
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
-propcolwidthref=609
+propcolwidthref=594
 width0=50
 sortdescend0=0
-width1=207
+width1=202
 sortdescend1=0
-width2=161
+width2=157
 sortdescend2=0
-width3=158
+width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=18
+rowstate=147
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
