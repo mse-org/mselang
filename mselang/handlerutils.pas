@@ -328,7 +328,7 @@ implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
- subhandler,
+ subhandler,classhandler,
  identutils,llvmbitcodes,llvmlists,grammarglob,__mla__internaltypes;
    
 const
@@ -4330,15 +4330,18 @@ begin
                    ' virt:',d.cla.virtualindex);
       end;
       ck_classprop: begin
-       write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
-                                            integer(d.classprop.flags),true));
-       if d.classprop.flags * canreadprop <> [] then begin
-        write(' read:',inttostrmse(d.classprop.readele),
-                    ':',inttostrmse(d.classprop.readoffset));
-       end;
-       if d.classprop.flags * canwriteprop <> [] then begin
-        write(' write:',inttostrmse(d.classprop.writeele),
-                    ':',inttostrmse(d.classprop.writeoffset));
+       with presolvepropertyinfoty(getsegmentpo(seg_temp,
+                                       d.classprop.propinfo))^ do begin
+        write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
+                                             integer(propflags),true));
+        if propflags * canreadprop <> [] then begin
+         write(' read:',inttostrmse(readfield.propele),
+                                           ':',inttostrmse(readfield.propoffs));
+        end;
+        if propflags * canwriteprop <> [] then begin
+         write(' write:',inttostrmse(writefield.propele),
+                                           ':',inttostrmse(writefield.propoffs));
+        end;
        end;
       end;
       ck_index: begin

@@ -89,7 +89,12 @@ type
               seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
               seg_temp);
  segmentsty = set of segmentty;
- 
+
+ sourceinfoty = record
+  po: pchar;
+  line: integer;
+ end;
+
 const
  branchkeymaxcount = 4;
  noident = 0;

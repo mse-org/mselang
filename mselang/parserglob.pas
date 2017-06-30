@@ -369,6 +369,7 @@ type
  
  classinfoty = record
   rec: recordinfoty; //first!
+  temps: dataoffsty; //in seg_temp, for properties and pending self params
 //  temps: segmentstatety;
   flags: objflagsty;
   visibility: visikindsty;
@@ -382,12 +383,15 @@ type
  pclassinfoty = ^classinfoty;
  
  classpropinfoty = record
+  propinfo: dataoffsty; //in seg_temp
+ {
   errorref: int32;
   flags: propflagsty;
   readele: elementoffsetty;
   readoffset: int32;
   writeele: elementoffsetty;
   writeoffset: int32;
+ }
  end;
  pclasspropinfoty = ^classpropinfoty;
 
@@ -601,11 +605,6 @@ type
   eleparent: elementoffsetty;
   flags: statementflagsty;
 //  managedblock: listadty;
- end;
-
- sourceinfoty = record
-  po: pchar;
-  line: integer;
  end;
 
  pcontextdataty = ^contextdataty;

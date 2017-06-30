@@ -21,6 +21,23 @@ uses
  globtypes,handlerglob,__mla__internaltypes,stackops,listutils;
 
 type
+ propfieldinfoty = record
+  propele: elementoffsetty;
+  propoffs: int32;
+  idents: identsourcevecty;
+  hasindex: boolean;
+ end;
+ ppropfieldinfoty = ^propfieldinfoty;
+ resolvepropertyinfoty = record
+  errorref: int32;
+  propflags: propflagsty;
+  typeele: elementoffsetty;
+  indilev: int32;
+  readfield: propfieldinfoty;
+  writefield: propfieldinfoty;
+ end;
+ presolvepropertyinfoty = ^resolvepropertyinfoty;
+ 
  classintfnamedataty = record
   intftype: elementoffsetty;
   next: elementoffsetty;  //chain, root = infoclassty.interfacechain
@@ -177,6 +194,7 @@ begin
   currentparamupdatechain:= -1;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
+   d.cla.temps:= getsegmenttopoffs(seg_temp);
    d.cla.rec.fieldoffset:= 0;
    d.cla.rec.fieldoffsetmax:= 0;
    include(d.handlerflags,hf_initvariant);
@@ -770,10 +788,11 @@ begin
      end;
      p1:= getsegmentpo(seg_temp,p1^.next);
     end;
-    setsegmenttop(seg_temp,p1);
+//    setsegmenttop(seg_temp,p1);
     currentparamupdatechain:= -1;
    end;
   end;
+  setsegmenttop(seg_temp,classinfo1^.temps);
   realobjsize:= alignsize(typ1^.h.bytesize);
   resolvelist(selfobjparams,@resolveselfobjparam,selfobjparamchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
@@ -1078,19 +1097,25 @@ begin
 end;
 
 procedure classpropertyentry();
+var
+ p1: presolvepropertyinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROPERTYENTRY');
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_classprop;
-  if obf_class in contextstack[s.stackindex-1].d.cla.flags then begin
-   d.classprop.flags:= [pof_class];
-  end
-  else begin
-   d.classprop.flags:= [];
+  d.classprop.propinfo:= 
+             allocsegmentoffset(seg_temp,sizeof(resolvepropertyinfoty),p1);
+  with p1^ do begin
+   if obf_class in contextstack[s.stackindex-1].d.cla.flags then begin
+    propflags:= [pof_class];
+   end
+   else begin
+    propflags:= [];
+   end;
+   errorref:= errors[erl_error];
   end;
-  d.classprop.errorref:= errors[erl_error];
  end;
 end;
 (*
@@ -1106,6 +1131,123 @@ begin
  end;
 end;
 *)
+function resolvepropaccessor(var info: resolvepropertyinfoty;
+                                              const awrite: boolean): boolean;
+var
+ field: ppropfieldinfoty;
+ 
+ procedure illegalsymbol();
+ begin
+  errormessage(field^.idents.d[0].source,err_illegalpropsymbol,[]);
+ end;
+ 
+var
+ po1: pointer;
+ ele1: elementoffsetty;
+ elekind1: elementkindty;
+ i1: int32;
+ offs1: int32;
+begin
+ result:= false;
+ if awrite then begin
+  field:= @info.writefield;
+ end
+ else begin
+  field:= @info.readfield;
+ end;
+ with info,field^ do begin
+  elekind1:= ele.findcurrent(idents.d[0].ident,[],[vik_ancestor],po1);
+  ele1:= ele.eledatarel(po1);
+  case elekind1 of
+   ek_none: begin
+    identerror(idents.d[0].source,idents.d[0].ident,err_identifiernotfound);
+   end;
+   ek_field: begin
+    if hasindex then begin
+     illegalsymbol();
+    end;
+    offs1:= pfielddataty(po1)^.offset;
+    for i1:= 1 to idents.high do begin
+     if ele.findchild(pfielddataty(po1)^.vf.typ,idents.d[i1].ident,
+                            [ek_field],allvisi,ele1,po1) <> ek_field then begin
+      identerror(idents.d[i1].source,idents.d[i1].ident,err_unknownrecordfield);
+      exit;
+     end;
+     offs1:= offs1 + pfielddataty(po1)^.offset;
+    end;
+    with pfielddataty(po1)^ do begin
+     if (vf.typ = typeele) and (indirectlevel = indilev) then begin
+      propele:= ele1;
+      propoffs:= offs1;
+      if awrite then begin
+       include(propflags,pof_writefield);
+      end
+      else begin
+       include(propflags,pof_readfield);
+      end;
+     {
+      if awrite then begin
+       d.classprop.writeele:= ele1;
+       d.classprop.writeoffset:= offs1;
+       include(d.classprop.flags,pof_writefield);
+      end
+      else begin
+       d.classprop.readele:= ele1;
+       d.classprop.readoffset:= offs1;
+       include(d.classprop.flags,pof_readfield);
+      end;
+      }
+      result:= true;
+     end
+     else begin
+      incompatibletypeserror(idents.d[idents.high].source,typeele,vf.typ);
+     end;
+    end;
+   end;
+   ek_sub: begin   //todo: index option
+    with psubdataty(po1)^ do begin
+     if (sf_method in flags) then begin
+      if awrite then begin
+       if not (sf_function in flags) and ((paramcount = 2) or 
+                                       (paramcount > 2) and hasindex) and
+         (pvardataty(ele.eledataabs(
+                 pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele) then begin
+        propele:= ele1;
+        propoffs:= 0;
+        include(propflags,pof_writesub);
+        result:= not hasindex {or checkindex(po1)};//!!!!!!!!!!!!!!!!!!!
+       end
+       else begin
+        illegalsymbol();
+       end;
+      end
+      else begin
+       if (sf_function in flags) and ((paramcount = 2) or 
+                                     (paramcount > 2) and hasindex) and 
+            (resulttype.typeele = typeele) and 
+                            (resulttype.indirectlevel = indilev) then begin
+                            //necessary?
+        propele:= ele1;
+        propoffs:= 0;
+        include(propflags,pof_readsub);
+        result:= (paramcount = 2) {or checkindex(po1)};//!!!!!!!!!!!!!!!!!!
+       end
+       else begin
+        illegalsymbol();
+       end;
+      end;
+     end
+     else begin
+      illegalsymbol();
+     end;
+    end;
+   end;
+   else begin
+    identerror(idents.d[0].source,idents.d[0].ident,err_unknownfieldormethod);
+   end;
+  end;
+ end;
+end;
 
 function checkpropaccessor(const awrite: boolean): boolean;
 
@@ -1198,16 +1340,15 @@ function checkpropaccessor(const awrite: boolean): boolean;
  end;  //checkindex
  
 var
- po1: pointer;
- elekind1: elementkindty;
- typeele1: elementoffsetty;
- indi1: int32;
- ele1: elementoffsetty;
+// typeele1: elementoffsetty;
+// indi1: int32;
  i1: int32;
- offs1: int32;
  idstart1: int32;
- hasindex: boolean;
+// hasindex: boolean;
 // indexcount1: int32;
+ p1,pe: pcontextitemty;
+ resinfo: presolvepropertyinfoty;
+ field: ppropfieldinfoty;
 label
  endlab;
 begin
@@ -1224,6 +1365,13 @@ begin
    internalerror(ie_handler,'20151214B');
   end;
  {$endif}
+  resinfo:= getsegmentpo(seg_temp,d.classprop.propinfo);
+  if awrite then begin
+   field:= @resinfo^.writefield;
+  end
+  else begin
+   field:= @resinfo^.readfield;
+  end;
   idstart1:= s.stacktop;
   while contextstack[idstart1].d.kind = ck_ident do begin
    dec(idstart1);
@@ -1233,104 +1381,32 @@ begin
    internalerror(ie_handler,'20151201B');
   end;
  {$endif}
-  typeele1:= contextstack[idstart1].d.typeref;
-  indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
+  resinfo^.typeele:= contextstack[idstart1].d.typeref;
+  resinfo^.indilev:= ptypedataty(ele.eledataabs(
+                                          resinfo^.typeele))^.h.indirectlevel;
   i1:= s.stackindex + 3;
-  hasindex:= (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramdef);
-{  
-  indexcount1:= 0;
-  if idstart1 - s.stackindex >= 5 then begin
-   for i1:= s.stackindex + 5 to idstart1-2 do begin
-    if contextstack[i1].d.kind = ck_ident then begin
-     inc(indexcount1);
-    end;
-//   indexcount1:= (i1 - 3) div 3;
-   end;
-  end;
-}
+  field^.hasindex:= 
+            (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramdef);
   inc(idstart1);
-  elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
-                                                           [vik_ancestor],po1);
-  ele1:= ele.eledatarel(po1);
-  case elekind1 of
-   ek_none: begin
-    identerror(s.stacktop-s.stackindex,err_identifiernotfound);
-   end;
-   ek_field: begin
-    if hasindex then begin
-     illegalsymbol();
-     goto endlab;
-    end;
-    offs1:= pfielddataty(po1)^.offset;
-    for i1:= idstart1+1 to s.stacktop do begin
-     if ele.findchild(pfielddataty(po1)^.vf.typ,contextstack[i1].d.ident.ident,
-                            [ek_field],allvisi,ele1,po1) <> ek_field then begin
-      identerror(i1-s.stackindex,err_unknownrecordfield);
-      goto endlab;
-     end;
-     offs1:= offs1 + pfielddataty(po1)^.offset;
-    end;
-    with pfielddataty(po1)^ do begin
-     if (vf.typ = typeele1) and (indirectlevel = indi1) then begin
-      if awrite then begin
-       d.classprop.writeele:= ele1;
-       d.classprop.writeoffset:= offs1;
-       include(d.classprop.flags,pof_writefield);
-      end
-      else begin
-       d.classprop.readele:= ele1;
-       d.classprop.readoffset:= offs1;
-       include(d.classprop.flags,pof_readfield);
-      end;
-      result:= true;
-     end
-     else begin
-      incompatibletypeserror(typeele1,vf.typ);
-     end;
-    end;
-   end;
-   ek_sub: begin   //todo: index option
-    with psubdataty(po1)^ do begin
-     if (sf_method in flags) then begin
-      if awrite then begin
-       if not (sf_function in flags) and ((paramcount = 2) or 
-                                       (paramcount > 2) and hasindex) and
-         (pvardataty(ele.eledataabs(
-                 pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele1) then begin
-        d.classprop.writeele:= ele1;
-        d.classprop.writeoffset:= 0;
-        include(d.classprop.flags,pof_writesub);
-        result:= not hasindex or checkindex(po1);
-       end
-       else begin
-        illegalsymbol();
-       end;
-      end
-      else begin
-       if (sf_function in flags) and ((paramcount = 2) or 
-                                     (paramcount > 2) and hasindex) and 
-            (resulttype.typeele = typeele1) and 
-                            (resulttype.indirectlevel = indi1) then begin
-                            //necessary?
-        d.classprop.readele:= ele1;
-        d.classprop.readoffset:= 0;
-        include(d.classprop.flags,pof_readsub);
-        result:= (paramcount = 2) or checkindex({indexcount1,}po1);
-       end
-       else begin
-        illegalsymbol();
-       end;
-      end;
-     end
-     else begin
-      illegalsymbol();
-     end;
-    end;
-   end;
-   else begin
-    identerror(s.stacktop-s.stackindex,err_unknownfieldormethod);
-   end;
+
+  field^.idents.high:= s.stacktop-idstart1;
+  if field^.idents.high > maxidentvector then begin
+   errormessage(err_toomanyidentifierlevels,[]);
+   goto endlab;
   end;
+  i1:= 0;
+  p1:= @contextstack[idstart1];
+  pe:= @contextstack[s.stacktop];
+  while p1 <= pe  do begin
+   with field^.idents.d[i1] do begin
+    ident:= p1^.d.ident.ident;
+    source:= p1^.start;
+   end;
+   inc(i1);
+   inc(p1);
+  end;
+  resolvepropaccessor(resinfo^,awrite);
+
 endlab:
   s.stacktop:= idstart1-1;
  end;
@@ -1394,7 +1470,9 @@ begin
      incompatibletypeserror(poa^.d.typeref,d.dat.datatyp.typedata);
     end
     else begin
-     include(contextstack[s.stackindex].d.classprop.flags,pof_default);
+     include(presolvepropertyinfoty(getsegmentpo(seg_temp,
+              contextstack[s.stackindex].d.classprop.propinfo))^.
+                                                    propflags,pof_default);
     end;
    end;
   end;
@@ -1406,6 +1484,7 @@ var
  po1: ppropertydataty;
  typeeleid1: int32;
  poa,potop: pcontextitemty;
+ resinfo: presolvepropertyinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROPERTY');
@@ -1413,7 +1492,8 @@ begin
  with info,contextstack[s.stackindex] do begin
   potop:= @contextstack[s.stacktop];
   poa:= getpreviousnospace(potop-1);
-  if d.classprop.errorref = errors[erl_error] then begin //no error
+  resinfo:= (getsegmentpo(seg_temp,d.classprop.propinfo));
+  if resinfo^.errorref = errors[erl_error] then begin //no error
   {$ifdef mse_checkinternalerror}
    if d.kind <> ck_classprop then begin
     internalerror(ie_handler,'20151202B');
@@ -1428,7 +1508,7 @@ begin
    end
    else begin
     with po1^ do begin
-     flags:= d.classprop.flags;
+     flags:= resinfo^.propflags;
      if pof_default in flags then begin
      {$ifdef mse_checkinternalerror}
       if potop^.d.kind <> ck_const then begin
@@ -1453,16 +1533,16 @@ begin
       typ:= potop^.d.typeref;
      end;
      if flags * canreadprop <> [] then begin
-      readele:= d.classprop.readele;
-      readoffset:= d.classprop.readoffset;
+      readele:= resinfo^.readfield.propele;
+      readoffset:= resinfo^.readfield.propoffs;
      end
      else begin
       readele:= 0;
       readoffset:= 0;
      end;
      if flags * canwriteprop <> [] then begin
-      writeele:= d.classprop.writeele;
-      writeoffset:= d.classprop.writeoffset;
+      readele:= resinfo^.writefield.propele;
+      readoffset:= resinfo^.writefield.propoffs;
      end
      else begin
       writeele:= 0;

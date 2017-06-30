@@ -345,6 +345,9 @@ procedure identerror(const astackoffset: integer; const aident: identty;
 procedure identerror(const acontext: pcontextitemty; const aident: identty; 
                                    const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
+procedure identerror(const asource: sourceinfoty; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
 
 procedure tokenexpectederror(const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
@@ -366,6 +369,8 @@ procedure incompatibletypeserror(const expected,got: ptypedataty;
                                           const astackoffset: int32 = minint);
 procedure incompatibletypeserror(const expected,got: elementoffsetty;
                                           const astackoffset: int32 = minint);
+procedure incompatibletypeserror(const sourcepos: sourceinfoty;
+                                        const expected,got: elementoffsetty);
 procedure incompatibletypeserror(const expected: string;
                                                 const got: contextdataty);
 procedure incompatibletypeserror(const param: integer; const expected: string;
@@ -660,6 +665,13 @@ begin
  errormessage(aerror,[getidentname(aident)],astackoffset,0,aerrorlevel);
 end;
 
+procedure identerror(const asource: sourceinfoty; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
+begin
+ errormessage(asource,aerror,[getidentname(aident)],0,aerrorlevel);
+end;
+
 procedure identerror(const acontext: pcontextitemty; const aident: identty; 
                                    const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
@@ -837,6 +849,23 @@ begin
  end;
 {$endif}
  incompatibletypeserror(po1,po2,astackoffset);
+end;
+
+procedure incompatibletypeserror(const sourcepos: sourceinfoty;
+                                        const expected,got: elementoffsetty);
+var
+ po1,po2: ptypedataty;
+begin
+ po1:= ele.eledataabs(expected);
+ po2:= ele.eledataabs(got);
+{$ifdef mse_checkinternalerror}
+ if (datatoele(po1)^.header.kind <> ek_type) or 
+             (datatoele(po2)^.header.kind <> ek_type) then begin
+  internalerror(ie_handler,'20151202A');
+ end;
+{$endif}
+ errormessage(sourcepos,err_incompatibletypes,[typeinfoname(po2),
+                                                          typeinfoname(po1)]);
 end;
 
 procedure incompatibletypeserror(const expected: string;

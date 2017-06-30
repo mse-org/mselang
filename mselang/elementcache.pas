@@ -18,10 +18,7 @@ unit elementcache;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msehash,msetypes;
-
-const
- maxidentvector = 200;
+ msehash,msetypes,handlerglob;
 
 type
 // elementoffsetty = ptrint;
@@ -30,10 +27,6 @@ type
  elementsizety = uint32;
 
  identarty = integerarty;
- identvecty = record
-  high: integer;
-  d: array[0..maxidentvector] of identty;
- end;
 
  cachedataty = record
   key: identty;

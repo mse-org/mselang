@@ -19,6 +19,8 @@ unit handlerglob;
 interface
 uses
  globtypes,{opcode,}opglob,listutils,llvmbitcodes;
+const
+ maxidentvector = 200;
 
 type
  ordrangety = record
@@ -77,6 +79,20 @@ type
  char32infoty = record
   min: card32;
   max: card32;
+ end;
+
+ identvecty = record
+  high: integer;
+  d: array[0..maxidentvector] of identty;
+ end;
+ 
+ identsourceinfoty = record
+  ident: identty;
+  source: sourceinfoty;
+ end;
+ identsourcevecty = record
+  high: integer;
+  d: array[0..maxidentvector] of identsourceinfoty;
  end;
 
  arrayiteminfoty = record
