@@ -25,14 +25,24 @@ type
   propele: elementoffsetty;
   propoffs: int32;
   idents: identsourcevecty;
-  hasindex: boolean;
  end;
  ppropfieldinfoty = ^propfieldinfoty;
+
+ indexparaminfoty = record
+  partype: elementoffsetty;
+  parflags: addressflagsty;
+ end;
+ indexparamvecty = record
+  high: int32;
+  d: array[0..maxidentvector] of indexparaminfoty;
+ end;
+
  resolvepropertyinfoty = record
   errorref: int32;
   propflags: propflagsty;
   typeele: elementoffsetty;
   indilev: int32;
+  indexparams: indexparamvecty;
   readfield: propfieldinfoty;
   writefield: propfieldinfoty;
  end;
@@ -792,12 +802,12 @@ begin
     currentparamupdatechain:= -1;
    end;
   end;
-  setsegmenttop(seg_temp,classinfo1^.temps);
   realobjsize:= alignsize(typ1^.h.bytesize);
   resolvelist(selfobjparams,@resolveselfobjparam,selfobjparamchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
   currentfieldflags:= [];
+  setsegmenttop(seg_temp,classinfo1^.temps);
  end;
 end;
 
@@ -1131,7 +1141,7 @@ begin
  end;
 end;
 *)
-function resolvepropaccessor(var info: resolvepropertyinfoty;
+function resolvepropaccessor(var resinfo: resolvepropertyinfoty;
                                               const awrite: boolean): boolean;
 var
  field: ppropfieldinfoty;
@@ -1141,21 +1151,54 @@ var
   errormessage(field^.idents.d[0].source,err_illegalpropsymbol,[]);
  end;
  
+ function checkindex(const sub: psubdataty): boolean;
+ var
+  popar,pe: pelementoffsetty;
+  i1: int32;
+ begin
+  result:= false;
+  popar:= pelementoffsetty(@sub^.paramsrel);
+  pe:= popar + sub^.paramcount;
+  inc(popar,2); //first index param
+  for i1:= 0 to resinfo.indexparams.high do begin
+   if (popar >= pe) then begin //not enough index parameters
+    illegalsymbol();
+    exit;
+   end;
+   with resinfo.indexparams.d[i1] do begin
+    with pvardataty(ele.eledataabs(popar^))^ do begin
+     if (partype <> vf.typ) or 
+                ((parflags >< address.flags) * paramflagsmask <> []) then begin
+      illegalsymbol();
+      exit;
+     end;
+    end;
+   end;
+   inc(popar);
+  end;
+  result:= popar = pe; //correct param count
+  if not result then begin
+   illegalsymbol();
+  end;
+ end;  //checkindex
+
 var
  po1: pointer;
  ele1: elementoffsetty;
  elekind1: elementkindty;
  i1: int32;
  offs1: int32;
+ hasindex: boolean;
 begin
  result:= false;
  if awrite then begin
-  field:= @info.writefield;
+  field:= @resinfo.writefield;
  end
  else begin
-  field:= @info.readfield;
+  field:= @resinfo.readfield;
  end;
- with info,field^ do begin
+ hasindex:= resinfo.indexparams.high >= 0;
+ with resinfo,field^ do begin
   elekind1:= ele.findcurrent(idents.d[0].ident,[],[vik_ancestor],po1);
   ele1:= ele.eledatarel(po1);
   case elekind1 of
@@ -1215,7 +1258,7 @@ begin
         propele:= ele1;
         propoffs:= 0;
         include(propflags,pof_writesub);
-        result:= not hasindex {or checkindex(po1)};//!!!!!!!!!!!!!!!!!!!
+        result:= not hasindex or checkindex(po1);
        end
        else begin
         illegalsymbol();
@@ -1230,7 +1273,7 @@ begin
         propele:= ele1;
         propoffs:= 0;
         include(propflags,pof_readsub);
-        result:= (paramcount = 2) {or checkindex(po1)};//!!!!!!!!!!!!!!!!!!
+        result:= (paramcount = 2) or checkindex(po1);
        end
        else begin
         illegalsymbol();
@@ -1314,29 +1357,6 @@ function checkpropaccessor(const awrite: boolean): boolean;
   if not result then begin
    illegalsymbol();
   end;
- (*
-  while popar < pe do begin
-  {$ifdef checkinternalerror}
-   if (pocontext^.d.kind <> ck_paramsdef) or 
-                       ((pocontext+2)^.d.kind <> ck_fieldtype) then begin
-    internalerror(ie_parser,'20160106A');
-   end;
-   if (
-  {$endif}
-   with pvardataty(ele.eledataabs(popar^))^ do begin
-    if ((pocontext+2)^.d.typ.typedata <> vf.typ) or 
-      ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 
-                                              paramflagsmask <> []) then begin
-     illegalsymbol();
-     result:= false;
-     exit;
-    end;
-   end;
-   inc(popar);
-   inc(pocontext,3);
-  end;
- *)
-// end;
  end;  //checkindex
  
 var
@@ -1346,7 +1366,7 @@ var
  idstart1: int32;
 // hasindex: boolean;
 // indexcount1: int32;
- p1,pe: pcontextitemty;
+ pocontext,p1,p2,pe: pcontextitemty;
  resinfo: presolvepropertyinfoty;
  field: ppropfieldinfoty;
 label
@@ -1385,8 +1405,54 @@ begin
   resinfo^.indilev:= ptypedataty(ele.eledataabs(
                                           resinfo^.typeele))^.h.indirectlevel;
   i1:= s.stackindex + 3;
-  field^.hasindex:= 
-            (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramdef);
+  if (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramdef) then begin
+   if not (pof_indexvalid in resinfo^.propflags) then begin
+    include(resinfo^.propflags,pof_indexvalid);
+    pocontext:= @info.contextstack[i1];
+    p1:= pocontext + 2; //first ident
+    i1:= 0;
+    while true do begin
+    {$ifdef checkinternalerror}
+     if pocontext^.d.kind <> ck_paramsdef then begin
+      internalerror(ie_parser,'20160222B');
+     end;
+     if p1^.d.kind <> ck_ident then begin
+      internalerror(ie_parser,'20160106A');
+     end;
+    {$endif}
+     p2:= p1;
+     while p1^.d.kind = ck_ident do begin
+      inc(p1);
+     end;
+    {$ifdef checkinternalerror}
+     if (p1^.d.kind <> ck_fieldtype) then begin
+      internalerror(ie_parser,'20160222A');
+     end;
+    {$endif}
+     while p2 < p1 do begin
+      if i1 > high(resinfo^.indexparams.d) then begin
+       errormessage(err_toomanyarraydimensions,[],p2);
+       exit;
+      end;
+      with resinfo^.indexparams.d[i1] do begin
+       partype:= p1^.d.typ.typedata;
+       parflags:= paramkinds[pocontext^.d.paramdef.kind];
+      end;
+      inc(i1);
+      inc(p2);
+     end;
+     pocontext:= p1+1;
+     if pocontext^.d.kind <> ck_paramdef then begin
+      break;
+     end;
+     p1:= pocontext + 2; //first ident
+    end;
+    resinfo^.indexparams.high:= i1-1;
+   end;
+  end
+  else begin
+   resinfo^.indexparams.high:= -1;
+  end;
   inc(idstart1);
 
   field^.idents.high:= s.stacktop-idstart1;
@@ -1541,8 +1607,8 @@ begin
       readoffset:= 0;
      end;
      if flags * canwriteprop <> [] then begin
-      readele:= resinfo^.writefield.propele;
-      readoffset:= resinfo^.writefield.propoffs;
+      writeele:= resinfo^.writefield.propele;
+      writeoffset:= resinfo^.writefield.propoffs;
      end
      else begin
       writeele:= 0;

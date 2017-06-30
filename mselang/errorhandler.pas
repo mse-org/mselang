@@ -82,7 +82,8 @@ type
             err_invalidoperatormethod,err_objectforwardnotallowed,
             err_toomanyoperparams,err_varargmustbelast,err_stringexpected,
             err_managednotallowed,err_dialectatbeginofunit,
-            err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected);
+            err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected,
+            err_toomanyarraydimensions);
             
  errorinfoty = record
   level: errorlevelty;
@@ -304,7 +305,8 @@ const
   (level: erl_fatal; message: 'Dialect selection must be at start of unit'),
   (level: erl_fatal; message: 'Unknown dialect'),
   (level: erl_fatal; message: 'Too many array items'),
-  (level: erl_error; message: '%s more items expected')
+  (level: erl_error; message: '%s more items expected'),
+  (level: erl_fatal; message: 'Too many array dimensions')
  );
 
 procedure message1(const atext: string; const values: array of const); 

@@ -364,7 +364,14 @@ begin
         ad1:= dat.ref.c.address.locaddress.address;
        end
        else begin
-        notimplementederror('');
+        if af_param in af1 then begin
+         lev1:= -1;
+         ab1:= ab_local;
+         ad1:= dat.ref.c.address.locaddress.address;
+        end
+        else begin
+         notimplementederror('');
+        end;
        end;
       end;
      end;
