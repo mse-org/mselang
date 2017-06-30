@@ -1461,8 +1461,9 @@ var                       //todo: move after doparam
        end;
        if (co_mlaruntime in o.compileoptions) and 
                             (tf_sizeinvalid in typ1^.h.flags)  then begin
-        with pselfobjparamitemty(
-             addlistitem(selfobjparams,selfobjparamchain))^ do begin
+        with pclasspendingitemty(
+                       addlistitem(pendingclassitems,
+                                   selfobjparamchain))^.selfobjparam do begin
          methodelement:= ele.eledatarel(sub1);
          paramindex:= curparam-pelementoffsetty(@sub1^.paramsrel);
          paramsize:= alignsize(si1);

@@ -65,7 +65,7 @@ const
  constructorstacksize = vpointersize;
 
 var
- selfobjparams: linklistty;
+ pendingclassitems: linklistty;
 
 procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
@@ -202,6 +202,7 @@ begin
   end;
   selfobjparamchain:= 0;
   currentparamupdatechain:= -1;
+  forwardpropchain:= 0;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.temps:= getsegmenttopoffs(seg_temp);
@@ -675,7 +676,7 @@ var
  p2: pvardataty;
  p3: pelementoffsetty;
 begin
- with selfobjparamitemty(item) do begin
+ with classpendingitemty(item).selfobjparam do begin
   i3:= realobjsize-paramsize;
   p1:= ele.eledataabs(methodelement);
   inc(p1^.paramsize,i3);
@@ -686,6 +687,8 @@ begin
   end;
  end;
 end;
+
+procedure resolveforwardprop(var item) forward;
 
 procedure handleclassdefreturn();
 var
@@ -803,7 +806,8 @@ begin
    end;
   end;
   realobjsize:= alignsize(typ1^.h.bytesize);
-  resolvelist(selfobjparams,@resolveselfobjparam,selfobjparamchain);
+  resolvelist(pendingclassitems,@resolveselfobjparam,selfobjparamchain);
+  resolvelist(pendingclassitems,@resolveforwardprop,forwardpropchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
   currentfieldflags:= [];
@@ -1159,7 +1163,6 @@ var
   result:= false;
   popar:= pelementoffsetty(@sub^.paramsrel);
   pe:= popar + sub^.paramcount;
-  inc(popar,2); //first index param
   for i1:= 0 to resinfo.indexparams.high do begin
    if (popar >= pe) then begin //not enough index parameters
     illegalsymbol();
@@ -1189,6 +1192,7 @@ var
  i1: int32;
  offs1: int32;
  hasindex: boolean;
+ fla1: propflagty;
 begin
  result:= false;
  if awrite then begin
@@ -1203,7 +1207,18 @@ begin
   ele1:= ele.eledatarel(po1);
   case elekind1 of
    ek_none: begin
-    identerror(idents.d[0].source,idents.d[0].ident,err_identifiernotfound);
+    if awrite then begin
+     fla1:= pof_writeforward;
+    end
+    else begin
+     fla1:= pof_readforward;
+    end;
+    if fla1 in propflags then begin
+     identerror(idents.d[0].source,idents.d[0].ident,err_identifiernotfound);
+    end
+    else begin
+     include(propflags,fla1);
+    end;
    end;
    ek_field: begin
     if hasindex then begin
@@ -1228,18 +1243,6 @@ begin
       else begin
        include(propflags,pof_readfield);
       end;
-     {
-      if awrite then begin
-       d.classprop.writeele:= ele1;
-       d.classprop.writeoffset:= offs1;
-       include(d.classprop.flags,pof_writefield);
-      end
-      else begin
-       d.classprop.readele:= ele1;
-       d.classprop.readoffset:= offs1;
-       include(d.classprop.flags,pof_readfield);
-      end;
-      }
       result:= true;
      end
      else begin
@@ -1545,6 +1548,46 @@ begin
  end; 
 end;
 
+procedure updateprop(const resinfo: resolvepropertyinfoty;
+                                         const typedata: ppropertydataty);
+begin
+ with typedata^ do begin
+  flags:= resinfo.propflags;
+  if flags * canreadprop <> [] then begin
+   readele:= resinfo.readfield.propele;
+   readoffset:= resinfo.readfield.propoffs;
+  end
+  else begin
+   readele:= 0;
+   readoffset:= 0;
+  end;
+  if flags * canwriteprop <> [] then begin
+   writeele:= resinfo.writefield.propele;
+   writeoffset:= resinfo.writefield.propoffs;
+  end
+  else begin
+   writeele:= 0;
+   writeoffset:= 0;
+  end;
+ end;
+end;
+
+procedure resolveforwardprop(var item);
+var
+ p1: presolvepropertyinfoty;
+begin
+ with classpendingitemty(item).forwardprop do begin
+  p1:= getsegmentpo(seg_temp,resinfo);
+  if pof_readforward in p1^.propflags then begin
+   resolvepropaccessor(p1^,false);
+  end;
+  if pof_writeforward in p1^.propflags then begin
+   resolvepropaccessor(p1^,true);
+  end;
+  updateprop(p1^,ele.eledataabs(propele));
+ end;
+end;
+
 procedure handleclassproperty();
 var
  po1: ppropertydataty;
@@ -1598,21 +1641,17 @@ begin
      {$endif}
       typ:= potop^.d.typeref;
      end;
-     if flags * canreadprop <> [] then begin
-      readele:= resinfo^.readfield.propele;
-      readoffset:= resinfo^.readfield.propoffs;
+     if resinfo^.propflags * [pof_readforward,pof_writeforward] <> [] then begin
+      with pclasspendingitemty(
+                       addlistitem(pendingclassitems,
+                                   forwardpropchain))^ do begin
+       forwardprop.resinfo:= getsegmentoffset(seg_temp,resinfo);
+       forwardprop.propele:= ele.eledatarel(po1);
+      end;
      end
      else begin
-      readele:= 0;
-      readoffset:= 0;
-     end;
-     if flags * canwriteprop <> [] then begin
-      writeele:= resinfo^.writefield.propele;
-      writeoffset:= resinfo^.writefield.propoffs;
-     end
-     else begin
-      writeele:= 0;
-      writeoffset:= 0;
+      updateprop(resinfo^,po1);
+      setsegmenttop(seg_temp,resinfo);
      end;
     end;     
    end;

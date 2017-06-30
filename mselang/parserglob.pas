@@ -824,6 +824,7 @@ type
   selfobjparamchain: listadty;
     //for object methods with self as  parameter
     //in case there are more fields after header definition
+  forwardpropchain: listadty;
   frameoffset: targetcardty;
   stacktempoffset: targetcardty;
   simplesubstart: opaddressty;

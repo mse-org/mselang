@@ -137,13 +137,23 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
- selfobjparamitemty = record
-  header: linkheaderty;
+ selfobjparamty = record
   methodelement: elementoffsetty;
   paramindex: int32;
   paramsize: int32;
  end;
- pselfobjparamitemty = ^selfobjparamitemty;
+ forwardpropty = record
+  resinfo: dataoffsty;
+  propele: elementoffsetty;
+ end;
+  
+ classpendingitemty = record
+  header: linkheaderty;
+  case int32 of
+   0: (selfobjparam: selfobjparamty);
+   1: (forwardprop: forwardpropty);
+ end;
+ pclasspendingitemty = ^classpendingitemty;
 
  ancestorchaindataty = record
   next: elementoffsetty;  //chain, root = typedataty.ancestor

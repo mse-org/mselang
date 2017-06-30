@@ -1905,7 +1905,7 @@ begin
  clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
  clearlist(trystacklist,sizeof(trystackitemty),256);
  clearlist(managedtemplist,sizeof(managedtempitemty),256);
- clearlist(selfobjparams,sizeof(selfobjparamitemty),32);
+ clearlist(pendingclassitems,sizeof(classpendingitemty),32);
  unitchain:= 0;
  intfparsedchain:= 0;
   
