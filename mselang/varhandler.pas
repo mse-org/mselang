@@ -52,7 +52,7 @@ begin
 //  d.vari.flags:= [];
  end;
 end;
-var testvar: ptypedataty;
+
 procedure handlevar3();
 var
  po1: pvardataty;
@@ -103,7 +103,6 @@ begin
      vf.typ:= contextstack[s.stacktop].d.typ.typedata;
      po2:= ele.eleinfoabs(vf.typ);
      address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
-testvar:= ptypedataty(@po2^.data);
      with ptypedataty(@po2^.data)^ do begin
       datasize1:= h.datasize;
       if h.kind in pointervarkinds then begin

@@ -1145,6 +1145,7 @@ begin
  end;
 end;
 *)
+
 function resolvepropaccessor(var resinfo: resolvepropertyinfoty;
                                               const awrite: boolean): boolean;
 var
@@ -1163,6 +1164,7 @@ var
   result:= false;
   popar:= pelementoffsetty(@sub^.paramsrel);
   pe:= popar + sub^.paramcount;
+  inc(popar,2); //first index param
   for i1:= 0 to resinfo.indexparams.high do begin
    if (popar >= pe) then begin //not enough index parameters
     illegalsymbol();

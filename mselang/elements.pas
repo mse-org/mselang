@@ -1599,7 +1599,7 @@ function telementhashdatalist.dumpelements: msestringarty;
    end;
   end;
  end;
-var testvar: int32;
+
  function dumpconst(const avalue: datainfoty): msestring;
  begin
   with avalue do begin
@@ -1637,9 +1637,6 @@ begin
     mstr1:= mstr1 + '*WRONG PATH $'+hextostrmse(po1^.header.path,8)+'* ';
    end;
   end;
-if getidentname(po1^.header.name) = '.self' then begin
-testvar:= 0;
-end;
   mstr1:= mstr1+'O:'+inttostrmse(int1) +
             ' P:'+inttostrmse(po1^.header.parent)+{' N:$'+
             hextostrmse(po1^.header.name,8)}
