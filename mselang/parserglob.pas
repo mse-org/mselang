@@ -695,6 +695,7 @@ type
   mainad: int32;
     
   state: unitstatesty;
+  dialect: dialectty;
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;

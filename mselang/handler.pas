@@ -2733,7 +2733,7 @@ procedure concatterms(const wanted,terms: pcontextitemty);
    inc(p1);
   end;
  {$ifdef mse_checkinternalerror}
-  if not (terms^.d.kind = ck_fact) then begin
+  if not (terms^.d.kind in factcontexts) then begin
    internalerror(ie_handler,'20170428A');
   end;
  {$endif}

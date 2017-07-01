@@ -12,7 +12,9 @@
 //
 unit rtl_variants;
 interface
-
+uses
+ rtl_exceptions;
+ 
 const
  VT_EMPTY = $0000;
  VT_NULL = $0001;
@@ -72,6 +74,7 @@ type
     (vflo64: flo64);   //VT_R8
    );
    (vbytes: array[0..13] of card8);
+
    method commontermtype(const b: variantty): varianttypety;
    method operandtypeerror(const aoperand: string8);
    method operandtypeerror(const b: variantty; const aoperand: string8);
@@ -103,11 +106,49 @@ type
    method sub(const b: variantty) [operator='-'];
  end;
 
+ evariant = class(cexception)
+  constructor create(const message: string8; const atype: card16);
+  property varianttype: card16 read ftype;
+
+  protected
+   ftype: card16;
+ end;
+
+ evarianttovalue = class(evariant)
+  constructor create(const source,dest: card16);
+  property source: card16 read ftype;
+  property dest: card16 read fdest;
+
+  protected
+   fdest: card16;
+ end;
+  
 implementation
+uses
+ rtl_base;
+ 
+{ evariant }
+
+constructor evariant.create(const message: string8; const atype: card16);
+begin
+ inherited create(message);
+ ftype:= atype;
+end;
+
+{ evarianttovalue }
+
+constructor evarianttovalue.create(const source,dest: card16);
+begin
+ fdest:= dest;
+ inherited create('Can not convert type '+inttostr(source)+
+                                               'to '+inttostr(dest),source);
+end;
+
+{ variantty }
 
 method variantty.tovalueerror(const atype: card16);
 begin
- writeln('variant tovalueerror type ',vtype,'to ',atype);
+ raise evarianttovalue.create(vtype,atype);
 end;
 
 method variantty.operandtypeerror(const aoperand: string8);

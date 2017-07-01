@@ -563,7 +563,10 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
-  s.dialect:= adialect;
+  if adialect <> dia_none then begin
+   aunit^.dialect:= adialect;
+  end;
+  s.dialect:= aunit^.dialect;
   aunit^.dwarflangid:= DW_LANG_Pascal83;
   if o.compileoptions * [co_readunits,co_build] = [co_readunits] then begin
    if not (us_invalidunitfile in aunit^.state) and 

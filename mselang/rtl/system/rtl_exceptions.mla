@@ -1,0 +1,30 @@
+{ MSEpas Copyright (c) 2017 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+unit rtl_exceptions;
+interface
+uses
+ rtl_base;
+type
+ cexception = class(cbase)
+  constructor create(const message: string8);
+  property message: string8 read fmessage write fmessage;
+
+  protected
+   fmessage: string8;
+ end;
+ 
+implementation
+
+constructor cexception.create(const message: string8);
+begin
+ fmessage:= message;
+end;
+
+end.

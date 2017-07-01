@@ -14,6 +14,10 @@ interface
 type
  filenamety = string16;
  
+ cbase = class() [virtual]
+  destructor destroy() [virtual];
+ end;
+  
 function inttostr(const value: integer): string;
 function random(const limit: int32): int32;
 function random(const limit: int64): int64;
@@ -84,6 +88,12 @@ begin
  else begin
   result:= 0;
  end;
+end;
+
+{ cbase }
+
+destructor cbase.destroy();
+begin
 end;
 
 initialization
