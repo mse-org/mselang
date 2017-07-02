@@ -2328,12 +2328,6 @@ begin
         i3:= subparamcount;
         vararg1:= subvararg;
        end;
-       if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
-                                                 not vararg1 then begin
-        outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
-        error('Invalid param count: '+
-                  inttostr(high(rec1)-i4+1)+' should be: '+inttostr(i3));
-       end;
        str1:= str1+'(';
        for i1:= i4+1 to high(rec1) do begin
         str1:= str1+opname(rec1[i1],ftypelist.fsubparams[i1-i4+i2])+',';
@@ -2350,6 +2344,11 @@ begin
        end
        else begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+       end;
+       if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
+                                                 not vararg1 then begin
+        error('Invalid param count: '+
+                  inttostr(high(rec1)-i4+1)+' should be: '+inttostr(i3));
        end;
        inc(i2); //first param
        for i1:= i4+1 to i3+3 do begin

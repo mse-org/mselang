@@ -2365,9 +2365,11 @@ begin
          doinstanceonstack();
         end
         else begin
-         inc(d.dat.indirection);              //instance pointer
-         inc(d.dat.datatyp.indirectlevel);
-         getvalue(@contextstack[adestindex],das_none);
+         if d.kind <> ck_none then begin //constructor otherwise
+          inc(d.dat.indirection);              //instance pointer
+          inc(d.dat.datatyp.indirectlevel);
+          getvalue(@contextstack[adestindex],das_none);
+         end;
         end;
        end;
        if dsf_usedestinstance in aflags then begin
