@@ -13,7 +13,7 @@ interface
 
 type
  filenamety = string16;
- 
+
  cbase = class() [virtual]
   destructor destroy() [virtual];
  end;

@@ -2155,8 +2155,8 @@ begin
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
-     popaddressty(@classdefinfoty(getsegmentpo(infoclass.defs)^).
-                      virtualmethods)[po2^.tableindex]:= ad1;
+     popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
+                                     virtualmethods))[po2^.tableindex]:= ad1;
               //resolve virtual table entry
     end;
    end;

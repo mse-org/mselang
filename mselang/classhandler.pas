@@ -757,7 +757,7 @@ begin
       if parentinfoclass1^.virtualcount > 0 then begin
        fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
        if icf_virtualtablevalid in parentinfoclass1^.flags then begin
-        copyvirtualtable(infoclass.defs,classdefs1,
+        copyvirtualtable(parentinfoclass1^.defs,infoclass.defs,
                                         parentinfoclass1^.virtualcount);
        end
        else begin
