@@ -5352,7 +5352,7 @@ end;
 
 procedure callvirtop();
 begin
- savecpu(false);
+ savecpu(sf_constructor in cpu.pc^.par.callinfo.flags);
 {
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -5362,9 +5362,10 @@ begin
 }
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
- with cpu.pc^.par.callinfo.virt do begin
+ with cpu.pc^.par.callinfo do begin
   cpu.pc:= startpo+pptruint(
-  ppointer(ppointer(cpu.stack+selfinstance)^+virttaboffset)^+virtoffset)^;
+  ppointer(ppointer(cpu.stack+virt.selfinstance)^+virt.virttaboffset)^+
+                                                             virt.virtoffset)^;
 //  cpu.pc:= startpo+pptruint(pppointer(cpu.stack+selfinstance)^^+virtoffset)^;
  end;
 end;

@@ -74,7 +74,7 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils,valuehandler;
+ stackops,unithandler,segmentutils,valuehandler,msetypes;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -257,11 +257,16 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 var
  sub1: pinternalsubdataty;
  op1: popinfoty;
+ i1: int32;
 begin
  with info do begin
   sub1:= ele.eledataabs(getaddreftype(aref)^.recordmanagehandlers[op]);
   pushaddr(aref{,atype,ssaindex});
-  op1:= callinternalsub(sub1^.address,true);
+  i1:= bigint;
+  if aref.kind = ark_stack then begin
+   i1:= aref.contextindex;
+  end;
+  op1:= callinternalsub(sub1^.address,true,i1);
   if (sub1^.address = 0) and 
                 (not modularllvm or 
                  (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 

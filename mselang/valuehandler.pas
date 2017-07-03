@@ -2376,7 +2376,8 @@ begin
         instancessa:= d.dat.fact.instancessa;
        end
        else begin
-        instancessa:= d.dat.fact.ssaindex; //for sf_method
+        instancessa:= d.dat.fact.ssaindex; 
+                            //for sf_method, invalid for constructor
        end;
       end;
      end; //ismethod

@@ -18,7 +18,7 @@ unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,stackops,parserglob,handlerglob,listutils,opglob;
+ globtypes,stackops,parserglob,handlerglob,listutils,opglob,msetypes;
 
 type
  paramupdateinfoty = record
@@ -101,8 +101,8 @@ function checkparamsbase(const po1,ref: psubdataty): boolean;
                //compare base types
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
-function callinternalsub(const asub: opaddressty;
-                              const pointerparam: boolean): popinfoty;
+function callinternalsub(const asub: opaddressty; const pointerparam: boolean;
+                                   const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
 procedure initsubstartinfo();
 function startsimplesub(const aname: identty;
@@ -115,7 +115,7 @@ procedure updateparams(const info: paramupdatechainty);
 
 implementation
 uses
- errorhandler,msetypes,handlerutils,elements,opcode,unithandler,
+ errorhandler,handlerutils,elements,opcode,unithandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser,
  valuehandler,elementcache,grammarglob;
@@ -147,10 +147,10 @@ begin
  end;
 end;
 
-function callinternalsub(const asub: opaddressty;
-                                  const pointerparam: boolean): popinfoty;
+function callinternalsub(const asub: opaddressty; const pointerparam: boolean;
+                                   const stackindex: int32 = bigint): popinfoty;
 begin
- result:= additem(oc_call);
+ result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
  with result^.par.callinfo do begin
   if asub <> 0 then begin
    ad.globid:= getoppo(asub)^.par.subbegin.globid;
