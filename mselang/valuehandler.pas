@@ -2442,6 +2442,7 @@ begin
       else begin
       }
       with resulttype1^.infoclass do begin
+      {
        if (icf_zeroinit in flags) or not (icf_nozeroinit in flags) then begin
         with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
          setimmint32(allocsize,par.imm);
@@ -2450,12 +2451,13 @@ begin
         b1:= false;
        end
        else begin
+       }
         with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
          setimmint32(allocsize,par.imm);
         end;
         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
         b1:= true;
-       end;
+//       end;
        if b1 and (tf_needsmanage in resulttype1^.h.flags) or
                           (tf_needsini in resulttype1^.h.flags) then begin
         adref1.offset:= 0;

@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=9
   (
   kind=1
@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72AB004
+    ao=An unhandled exception occured at $B72EC004
     ae=
     aec=123
     ie=0
@@ -8829,7 +8829,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=30
    (
    kind=1
@@ -10585,8 +10585,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classstringfield
-   teststate=2
+   a=0,648,1,classstringfield
+   teststate=1
    path=classstringfield.mla
    comment=
    cc=${mlc}
@@ -10601,7 +10601,7 @@ c=3
    eec=0
    cr=0
    ao=abc
-   ae=EXCEPTION: Access violation
+   ae=
    aec=0
    ie=0
    )
@@ -10673,8 +10673,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,objectclass
-   teststate=2
+   a=0,648,1,objectclass
+   teststate=1
    path=objectclass.mla
    comment=
    cc=${mlc}
@@ -10689,8 +10689,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=EXCEPTION: Access violation
-   aec=95
+   ae=
+   aec=123
    ie=0
    )
    (
@@ -10759,7 +10759,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -11397,7 +11397,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
