@@ -2790,7 +2790,7 @@ begin
      if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
       adref1.offset:= 0;
       adref1.ssaindex:= instancessa;
-      adref1.contextindex:= adestindex;
+      adref1.contextindex:= s.stacktop;
       adref1.kind:= ark_stack;
       adref1.address:= 0; //instance removed by destroy()
       adref1.typ:= instancetype1;
