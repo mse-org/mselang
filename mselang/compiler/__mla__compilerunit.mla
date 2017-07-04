@@ -1539,7 +1539,7 @@ begin  //todo: handle out of memory situation
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
  freemem(po1);
-finiclass(data);
+ finiclass(data);
  exitcode:= exco_unhandledexception; //no handler found
  halt();
 end;

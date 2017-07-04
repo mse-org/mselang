@@ -13,7 +13,7 @@
 unit rtl_variants;
 interface
 uses
- rtl_exceptions;
+ rtl_exceptions,rtl_base;
  
 const
  VT_EMPTY = $0000;
@@ -77,7 +77,7 @@ type
 
    method commontermtype(const b: variantty): varianttypety;
    method operandtypeerror(const aoperand: string8);
-   method operandtypeerror(const b: variantty; const aoperand: string8);
+   method operandtypeerror(const b: variantty; const operation: string8);
    method tovalueerror(const atype: card16);
    method ini() [ini];
    method fini() [fini];
@@ -122,10 +122,20 @@ type
   protected
    fdest: card16;
  end;
+
+ evariantbinop = class(evariant)
+  constructor create(const atype,btype: card16; const operation: string8);
+  property atype: card16 read ftype;
+  property btype: card16 read fbtype;
+
+  protected
+   fbtype: card16;
+   foperation: string8;
+ end;
   
 implementation
-uses
- rtl_base;
+//uses
+// rtl_base;
  
 { evariant }
 
@@ -144,6 +154,16 @@ begin
                                                'to '+inttostr(dest),source);
 end;
 
+{ evariantbinoperrior }
+
+constructor evariantbinop.create(const atype,btype: card16;
+                                           const operation: string8);
+begin
+ fbtype:= btype;
+ inherited create('variant operandtypeerror a: '+inttostr(atype)+' b: '+
+                        inttostr(btype)+' "'+operation+'"',atype);
+end;
+
 { variantty }
 
 method variantty.tovalueerror(const atype: card16);
@@ -157,10 +177,9 @@ begin
  //todo
 end;
 
-method variantty.operandtypeerror(const b: variantty; const aoperand: string8);
+method variantty.operandtypeerror(const b: variantty; const operation: string8);
 begin
- writeln('variant operandtypeerror a: ',vtype,' b: ',b.vtype,' "'+aoperand+'"');
- //todo
+ raise evariantbinop.create(vtype,b.vtype,operation);
 end;
 
 method variantty.ini();
