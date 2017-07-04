@@ -2959,16 +2959,6 @@ const
  metabuffersize = 1;
  
 var
- po2: ptypedataty;
- po3: pfielddataty;
- po4: ptypedataty;
- offs1: card32;
- lstr1: lstringty;
- file1: metavaluety;
- m1,m2,m3,context1: metavaluety;
- i1: int32;
- typekind1: diderivedtypekindty;
- ele1: elementoffsetty;
  metabuffer: array[0..metabuffersize-1] of metavaluety;
  metabufferpo,pb,pe: pmetavaluety;
 
@@ -2980,6 +2970,8 @@ var
  end; //initmetabuffer
 
  procedure addbufferitem(const aitem: metavaluety);
+ var
+  i1: int32;
  begin
   metabufferpo^:= aitem;
   inc(metabufferpo);
@@ -3022,6 +3014,16 @@ var
  end; //addbufferreverse
  
 var
+ po2: ptypedataty;
+ po3: pfielddataty;
+ po4: ptypedataty;
+ offs1: card32;
+ lstr1: lstringty;
+ file1: metavaluety;
+ m1,m2,m3,context1: metavaluety;
+ i1: int32;
+ typekind1: diderivedtypekindty;
+ ele1: elementoffsetty;
  p0: pointer;
  po1: pmetavaluety;
  st1: systypety;
@@ -3037,9 +3039,9 @@ begin
  if unit1 <> nil then begin
   unitkey1:= unit1^.key;
  end;
- if po2^.h.kind = dk_sub then begin
-  inc(aindirection);
- end;
+// if po2^.h.kind = dk_sub then begin
+//  inc(aindirection);
+// end;
  i1:= aindirection;
  if subrange then begin
   i1:= i1 or $80000000;
@@ -3192,28 +3194,44 @@ begin
       if po2^.h.kind = dk_objectpo then begin
        po2:= ele.eledataabs(po2^.h.base);
       end;
+      m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
+                                   dummymeta,po2^.h.bitsize,0,0,0,dummymeta);
+                                        //todo: use correct alignment
+                                         //preliminary for forward pointer
+      po1:= ftypemetalist.getdatapo(offs1); //possibly moved
+      po1^.id:= m1.id;
       initmetabuffer();
       ele1:= po2^.fieldchain;
       while ele1 <> 0 do begin
        po3:= ele.eledataabs(ele1);
+       po4:= ele.eledataabs(po3^.vf.typ);
+       i1:= po3^.indirectlevel-po4^.h.indirectlevel;
+       if po4^.h.kind = dk_sub then begin
+        inc(i1);
+       end;
        addbufferitem(adddiderivedtype(didk_member,file1,context1,
-           getidentnamel(pointer(po3)),0,
-           ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.bitsize,0,po3^.offset*8,
-           0,addtype(po3^.vf.typ,
-                  po3^.indirectlevel-
-                   ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel)));
+           getidentnamel(pointer(po3)),0,po4^.h.bitsize,0,po3^.offset*8,
+                                                   0,addtype(po3^.vf.typ,i1)));
        ele1:= po3^.vf.next;
       end;
 //      m2:= addbufferreverse();
       m2:= addbuffer();
+      with pdicompositetypety(getdata(m1))^ do begin
+       elements:= m2;
+      end;
+      {
       m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
                                    dummymeta,po2^.h.bitsize,0,0,0,m2);
                                         //todo: use correct alignment
+      }
      end;
      dk_interface: begin
       m2:= addtype(0,0);        //todo
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+     end;
+     dk_sub: begin
+      m1.id:= -1;
      end;
      dk_none: begin
      {$ifdef msechckinternalerror}
@@ -3244,12 +3262,16 @@ end;
 function tmetadatalist.addtype(const avariable: vardataty): metavaluety;
 var
  i1: int32;
+ p1: ptypedataty;
 begin
  i1:= 0;
+ p1:= ele.eledataabs(avariable.vf.typ);
  if (af_paramindirect in avariable.address.flags) and 
-          not (tf_untyped in 
-             ptypedataty(ele.eledataabs(avariable.vf.typ))^.h.flags) then begin
+          not (tf_untyped in p1^.h.flags) then begin
   i1:= -1;
+ end;
+ if p1^.h.kind = dk_sub then begin
+  inc(i1);
  end;
  result:= addtype(avariable.vf.typ,avariable.address.indirectlevel-
          ptypedataty(ele.eledataabs(avariable.vf.typ))^.h.indirectlevel + i1);
