@@ -1,8 +1,3 @@
+{$internaldebug on}
 unit unit2;
-interface
-type
- intabc = flo64;
-var
- abc: flo64;
-implementation
 end.

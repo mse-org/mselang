@@ -13,7 +13,7 @@
 unit rtl_variants;
 interface
 uses
- rtl_exceptions,rtl_base;
+ rtl_exceptions;//,rtl_base;
  
 const
  VT_EMPTY = $0000;
@@ -134,8 +134,9 @@ type
  end;
   
 implementation
-//uses
-// rtl_base;
+
+uses
+ rtl_base{,rtl_exceptions};
  
 { evariant }
 
@@ -754,5 +755,5 @@ begin
    operandtypeerror(b,'-');
  end;
 end;
-
+{$internaldebug on}
 end.

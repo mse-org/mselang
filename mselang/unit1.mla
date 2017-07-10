@@ -1,21 +1,7 @@
 unit unit1;
 interface
-type
- objty = object
-  method test1();
- end;
-
 implementation
 {$internaldebug on}
-
-procedure test();
-begin
-end;
-
-{$dumpelements}
-method objty.test1();
-begin
- test();
-end;
-
+uses
+ unit2;
 end.

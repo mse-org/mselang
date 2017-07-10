@@ -554,7 +554,6 @@ var
  eleparentbefore: elementoffsetty;
  i1: int32;
  m1,m2,m3: metavaluety;
- 
 label
  handlelab{,stophandlelab},parseend;
 begin
@@ -672,24 +671,8 @@ begin
    end;
   {$endif}
    restoreparsercontext(s.unitinfo^.implstart);
+   
    freeparsercontext(s.unitinfo^.implstart);
-  (*
-   if s.unitinfo^.impl.sourceoffset >= length(input) then begin
-    errormessage(err_filetrunc,[s.filename]);
-   {$ifdef mse_debugparser}
-    s.debugsource:= s.source.po;
-   {$endif}
-    goto parseend;
-   end;
-   inc(s.source.po,s.unitinfo^.impl.sourceoffset);
-   s.source.line:= s.unitinfo^.impl.sourceline;
-   with contextstack[s.stackindex],d do begin
-    start:= s.source;
-    debugstart:= start.po;
-    context:= s.unitinfo^.impl.context;
-   end;
-   ele.elementparent:= s.unitinfo^.impl.eleparent;
-  *)
   end;
 
   with s.unitinfo^ do begin
@@ -858,6 +841,11 @@ handlelab:
      i1:= s.stackindex;
      s.pc^.handleexit();
      while true do begin
+    {$ifdef mse_checkinternalerror}
+      if s.stackindex < 0 then begin
+       internalerror(ie_parser,'20170710B');
+      end;
+    {$endif}
       s.pc:= contextstack[s.stackindex].context; //stackindex could be changed
       if s.pc <> nil then begin
        break;
@@ -897,6 +885,11 @@ handlelab:
     if s.pc^.cutafter then begin
      s.stacktop:= s.stackindex;
     end;
+   {$ifdef checkinernalerror}
+    if (s.stackindex < statebefore.stacktop) then begin
+     internalerror(ie_parser,'20170710A');
+    end;
+   {$endif}
     if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
      goto parseend;
     end;
@@ -1032,6 +1025,8 @@ parseend:
      ref:= s.unitinfo;
     end;       
    end;
+   s.stacktop:= statebefore.stacktop;
+   
    parseimplementations();
    if (unitlevel = 1) then begin 
     if result then begin

@@ -477,9 +477,9 @@ begin
  outhandle('IMPLUSESENTRY');
 {$endif}
  with info do begin
-  s.unitinfo^.usescache.clear(); //overrid interface uses
+  s.unitinfo^.usescache.clear(); //override interface uses
   if s.interfaceonly then begin
-   saveparsercontext(s.unitinfo^.implstart,s.stacktop-s.unitinfo^.stackstart);
+   saveparsercontext(s.unitinfo^.implstart,s.stacktop-s.unitinfo^.stackstart+1);
    s.stopparser:= true;
   end;
  end;
@@ -953,7 +953,7 @@ var
  rtlunit1: rtlunitty;
 begin
  po1:= punithashdataty(internaladdhash(aname));
- getmem(result,sizeof(unitinfoty));
+ getmem(result,sizeof(unitinfoty)); //todo: memory fragmentation?
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
  result^.usescache:= telementcache.create();
