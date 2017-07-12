@@ -2117,7 +2117,7 @@ var
  stacksize,resultsize: int32;
  isfactcontext,isconstructor: boolean;
  ismethod: boolean;
- opoffset1,opoffset2: int32;
+ opoffset1: int32;
  methodtype1: ptypedataty;
  i4: int32;
  adref1: addressrefty;
@@ -2225,7 +2225,6 @@ begin
     paramschecked:= not needsvarcheck;
    end;
 
-   opoffset2:= 0;
    if stf_getaddress in s.currentstatementflags then begin
     if dsf_instanceonstack in aflags then begin
                                      //get method
@@ -2457,7 +2456,6 @@ begin
        }
         with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
          setimmint32(allocsize,par.imm);
-         inc(opoffset2);
         end;
         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
         b1:= true;
@@ -2470,20 +2468,8 @@ begin
         adref1.kind:= ark_stack;
         adref1.address:= 0;
         adref1.typ:= resulttype1;
-        i1:= info.opcount;
         writemanagedtypeop(mo_ini,resulttype1,adref1);
-        inc(opoffset2,info.opcount-i1);
-{
-        if co_mlaruntime in info.o.compileoptions then begin
-         with insertitem(oc_push,destoffset,-1)^ do begin
-          par.imm.vsize:= pointersize; 
-                   //compensate missing instance copy, instance still valid
-         end;
-         inc(opoffset2);
-        end;
-}
        end;
-//       end;
       end;
      end
      else begin
@@ -2529,8 +2515,7 @@ begin
                //result already reserved by getmem for constructor
       i2:= opoffset1; //insert result space at end of statement
       if sf_method in asub^.flags then begin
-//       i2:= opoffset2; //insert result space before instance
- i2:= 0;
+       i2:= 0; //insert result space before instance
        stacksize:= vpointersize;
       end;
       resultsize:= pushinsertvar(destoffset,
