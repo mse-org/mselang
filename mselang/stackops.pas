@@ -5504,7 +5504,7 @@ begin
   self1:= stackpush(pointersize);
   po1:= intgetmem(imm.vint32);
   self1^:= po1;            //class instance
-  ppointer(cpu.stack-2*pointersize)^:= po1; //result
+//  ppointer(cpu.stack-2*pointersize)^:= po1; //result
  end;
 end;
 
@@ -5517,7 +5517,7 @@ begin
   self1:= stackpush(pointersize);
   po1:= intgetzeromem(imm.vint32);
   self1^:= po1;            //class instance
-  ppointer(cpu.stack-2*pointersize)^:= po1; //result
+//  ppointer(cpu.stack-2*pointersize)^:= po1; //result
  end;
 end;
 

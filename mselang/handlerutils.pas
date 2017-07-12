@@ -1734,7 +1734,8 @@ begin
   ark_stack: begin
                  //for constructor, destructor, instance pointer on stack
    if (co_mlaruntime in info.o.compileoptions) then begin
-    with insertitem(oc_pushduppo,aref.contextindex,-1)^ do begin
+    with insertitem(oc_pushduppo,
+                  aref.contextindex-info.s.stackindex,-1)^ do begin
      par.voffset:= aref.address-pointersize;
     end;
    end;

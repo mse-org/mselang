@@ -2115,9 +2115,9 @@ var
  realparamco: int32; //including defaults
  {poparams,indpo,}poitem1{,pe}: pcontextitemty;
  stacksize,resultsize: int32;
- isfactcontext: boolean;
+ isfactcontext,isconstructor: boolean;
  ismethod: boolean;
- opoffset1: int32;
+ opoffset1,opoffset2: int32;
  methodtype1: ptypedataty;
  i4: int32;
  adref1: addressrefty;
@@ -2136,6 +2136,7 @@ begin
 {$endif}
  varargcount:= 0;
  isvararg:= sf_vararg in asub^.flags;
+ isconstructor:= false;
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
@@ -2224,6 +2225,7 @@ begin
     paramschecked:= not needsvarcheck;
    end;
 
+   opoffset2:= 0;
    if stf_getaddress in s.currentstatementflags then begin
     if dsf_instanceonstack in aflags then begin
                                      //get method
@@ -2422,6 +2424,7 @@ begin
     if hasresult then begin
      initfactcontext(adestindex-s.stackindex); //set ssaindex
      if sf_constructor in asub^.flags then begin //needs memory
+      isconstructor:= true;
       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
                                                    firstnotfound1,idents1,1);
                                           //get class type
@@ -2454,6 +2457,7 @@ begin
        }
         with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
          setimmint32(allocsize,par.imm);
+         inc(opoffset2);
         end;
         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
         b1:= true;
@@ -2466,7 +2470,18 @@ begin
         adref1.kind:= ark_stack;
         adref1.address:= 0;
         adref1.typ:= resulttype1;
+        i1:= info.opcount;
         writemanagedtypeop(mo_ini,resulttype1,adref1);
+        inc(opoffset2,info.opcount-i1);
+{
+        if co_mlaruntime in info.o.compileoptions then begin
+         with insertitem(oc_push,destoffset,-1)^ do begin
+          par.imm.vsize:= pointersize; 
+                   //compensate missing instance copy, instance still valid
+         end;
+         inc(opoffset2);
+        end;
+}
        end;
 //       end;
       end;
@@ -2510,13 +2525,15 @@ begin
     if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;
-     i2:= opoffset1; //insert result space at end of statement
-     if hasresult then begin
+     if hasresult and not isconstructor then begin 
+               //result already reserved by getmem for constructor
+      i2:= opoffset1; //insert result space at end of statement
       if sf_method in asub^.flags then begin
-       i2:= 0; //insert result space before instance
+//       i2:= opoffset2; //insert result space before instance
+ i2:= 0;
        stacksize:= vpointersize;
       end;
-      resultsize:= pushinsertvar(adestindex-s.stackindex,
+      resultsize:= pushinsertvar(destoffset,
                               i2,asub^.resulttype.indirectlevel,resulttype1);
       inc(opoffset1);
       stacksize:= stacksize + resultsize; //alloc space for return value
@@ -2835,7 +2852,7 @@ begin
     end;
    end;
   end;
-  if aflags*[dsf_objini,dsf_objfini] <> [] then begin
+  if (aflags*[dsf_objini,dsf_objfini] <> []) or isconstructor then begin
    if co_mlaruntime in o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
      par.imm.vsize:= pointersize;    //compensate stack pop

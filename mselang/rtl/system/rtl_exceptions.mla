@@ -15,17 +15,17 @@ type
 
  cexception = class(cbase)
   constructor create(const message: string8);
-//  property message: string8 read fmessage write fmessage;
+  property message: string8 read fmessage write fmessage;
 
   protected
-//   fmessage: string8;
+   fmessage: string8;
  end;
  
 implementation
 
 constructor cexception.create(const message: string8);
 begin
-// fmessage:= message;
+ fmessage:= message;
 end;
 
 end.

@@ -155,7 +155,7 @@ begin
                                                'to '+inttostr(dest),source);
 end;
 
-{ evariantbinoperrior }
+{ evariantbinop }
 
 constructor evariantbinop.create(const atype,btype: card16;
                                            const operation: string8);
