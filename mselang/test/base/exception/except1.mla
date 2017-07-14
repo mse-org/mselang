@@ -1,0 +1,11 @@
+program except1;
+begin
+ try
+  exitcode:= 12;
+ except
+  exitcode:= 11;
+ end;
+ if exitcode = 12 then
+  exitcode:= 123;
+ end;
+end.

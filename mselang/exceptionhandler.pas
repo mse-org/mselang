@@ -151,13 +151,19 @@ begin
  outhandle('EXCEPT');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
-                                      //skip exception handling code
-  addlabel();
   with additem(oc_finiexception)^ do begin
    par.finiexception.landingpadalloc:= 
                     contextstack[s.stackindex].d.block.landingpad;
   end;
+  getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
+                                      //skip exception handling code
+  addlabel();
+{
+  with additem(oc_finiexception)^ do begin
+   par.finiexception.landingpadalloc:= 
+                    contextstack[s.stackindex].d.block.landingpad;
+  end;
+}
 //  dec(s.stackindex,1);
  end; 
  tryexit();
