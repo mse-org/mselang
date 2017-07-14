@@ -25,7 +25,8 @@ function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 
 implementation
 uses
- filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
+ filehandler,segmentutils,msestream,
+ msetypes,msestrings,msesys,msesystypes,globtypes,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
  identutils,opglob,opcode,errorhandler,bcunitglob,elementcache;
 

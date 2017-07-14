@@ -18,7 +18,7 @@ unit compilerunit;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,msestrings;
+ globtypes,parserglob,msetypes;
 const
 // systemunitname = '__mla__system';
 // systemunitname = 'system';

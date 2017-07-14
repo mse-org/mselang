@@ -18,7 +18,7 @@ unit filehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,parserglob;
+ msetypes,msestrings,parserglob;
  
 //todo: use search tree and cache
 

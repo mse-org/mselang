@@ -4205,11 +4205,11 @@ begin
        write(' ');
       end;
      end;
-     write(fitstring(inttostrmse(opmark.address),3,sp_right));
+     write(fitstring(inttostrmse(opmark.address),5,sp_right));
      write('<',context^.caption,'> ');
     end
     else begin
-     write(fitstring(inttostrmse(opmark.address),3,sp_right));
+     write(fitstring(inttostrmse(opmark.address),5,sp_right));
      write('<NIL> ');
     end;
     write(getenumname(typeinfo(d.kind),ord(d.kind)));
