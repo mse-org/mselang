@@ -2474,9 +2474,20 @@ begin
  end;
 end;
 
+procedure getclassdefop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_getclassdef,true,[bcstream.ssaval(ssas1),
+                                             bcstream.constval(imm.llvm.listid)]);
+ end;
+end;
+
 procedure classisop();
 begin
- notimplemented;
+ with pc^.par do begin
+  callcompilersub(cs_classis,true,[bcstream.ssaval(ssas1),
+                                                bcstream.ssaval(ssas2)]);
+ end;
 end;
 
 procedure storesegnilop();
@@ -4739,6 +4750,7 @@ const
 
   setcontainsssa = 3;
   setinssa = 3;
+  getclassdefssa = 1;
   classisssa = 1;
 
   storesegnilssa = 0;

@@ -386,6 +386,7 @@ type
 }
   oc_setcontains,
   oc_setin,
+  oc_getclassdef,
   oc_classis,
   oc_storesegnil,
   oc_storelocnil,
@@ -1242,7 +1243,7 @@ type
    oc_pop,
    oc_arraytoopenar,
    oc_getobjectmem,oc_getobjectzeromem,
-   oc_zeromem,oc_classis: (
+   oc_zeromem,oc_getclassdef: (
     imm: immty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,

@@ -88,6 +88,10 @@ function __mla__highstring(ref: pointer): int32;
 
 procedure __mla__initobject(const address: pointer; const virttaboffset: int32;
                                  const classinfo: classdefinfoty);
+function __mla__getclassdef(const ainstance: pointer; 
+                                const avirttaboffset: int32): pointer;
+function __mla__classis(const a,b: pclassdefinfoty): bool1;
+
 //function __mla__initclass(const classinfo: classdefinfoty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
 procedure __mla__raise(const data: pointer);
@@ -1477,6 +1481,33 @@ begin
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
 end;
+
+function __mla__getclassdef(const ainstance: pointer;
+                          const avirttaboffset: int32): pointer;
+begin
+ result:= ainstance;
+ if ainstance <> nil then begin
+  result:= ppointer(result+avirttaboffset)^;
+ end;
+end;
+
+function __mla__classis(const a,b: pclassdefinfoty): bool1;
+var
+ p1: pclassdefinfoty;
+begin
+ result:= false;
+ if (a <> nil) and (b <> nil) then begin
+  p1:= a;
+  repeat
+   if p1 = b then begin
+    result:= true;
+    break;
+   end;
+   p1:= p1^.header.parentclass;
+  until p1 = nil;
+ end;
+end;
+
 (*
 //todo: use simplified version if there are no interfaces
 function __mla__initclass(const classinfo: classdefinfoty): pointer;

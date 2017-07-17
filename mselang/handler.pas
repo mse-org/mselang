@@ -3121,14 +3121,16 @@ procedure handleissimpexp();
  end; //gettyp()
  
  function getclassdef(const acontext: pcontextitemty): boolean;
+ var
+  typ1: ptypedataty;
+  i1: int32;
  begin
   result:= false;
   if acontext^.d.kind = ck_typearg then begin
+   typ1:=  ptypedataty(ele.eledataabs(acontext^.d.typ.typedata));
    with insertitem(oc_pushsegaddr,acontext,-1,
-                           pushsegaddrssaar[seg_classdef])^ do begin
-    par.memop.segdataaddress.a:= 
-                    ptypedataty(ele.eledataabs(
-                             acontext^.d.dat.datatyp.typedata))^.infoclass.defs;
+                                    pushsegaddrssaar[seg_classdef])^ do begin
+    par.memop.segdataaddress.a:= typ1^.infoclass.defs;
     par.memop.segdataaddress.offset:= 0;
     par.memop.t:= bitoptypes[das_pointer];
    end;
@@ -3141,6 +3143,8 @@ procedure handleissimpexp();
     internalerror(ie_handler,'20170717A');
    end;
   {$endif}
+   typ1:= ptypedataty(ele.eledataabs(
+                             acontext^.d.dat.datatyp.typedata));
    if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
     if getvalue(acontext,das_none) then begin
      result:= true;
@@ -3150,6 +3154,11 @@ procedure handleissimpexp();
     if getaddress(acontext,true) then begin
      result:= true;
     end;
+   end;
+   i1:= acontext^.d.dat.fact.ssaindex;
+   with insertitem(oc_getclassdef,acontext,-1)^.par do begin
+    ssas1:= i1;
+    setimmint32(typ1^.infoclass.virttaboffset,imm);
    end;
   end;
  end; //getclassdef();
@@ -3180,7 +3189,7 @@ begin
   end;
   ele1:= ele.eledatarel(typb);
   typ1:= typa;
-  if (poa^.d.kind = ck_typearg) and (poa^.d.kind = ck_typearg) then begin
+  if (poa^.d.kind = ck_typearg) and (pob^.d.kind = ck_typearg) then begin
    while true do begin
     if ele.eledatarel(typ1) = ele1 then begin
      setconstcontext(poa,valuetrue);
@@ -3223,7 +3232,6 @@ begin
     with insertitem(oc_classis,pob,-1)^.par do begin
      ssas1:= i1;
      ssas2:= i2;
-     setimmint32(typa^.infoclass.virttaboffset,imm);
      poa^.d.dat.fact.ssaindex:= ssad;
     end;
     poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
