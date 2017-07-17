@@ -2013,6 +2013,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'insimpexp1');
+ issimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'issimpexp');
+ issimpexp1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'issimpexp1');
  addressfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -9932,7 +9942,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexp1: array[0..24] of branchty = (
+ bexp1: array[0..25] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $00000278{'div'}),
@@ -9957,6 +9967,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @insimpexpco); stack: nil; 
      keyword: $0000027F{'in'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @issimpexpco); stack: nil; 
+     keyword: $00000280{'is'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -10081,7 +10094,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexp1pop: array[0..24] of branchty = (
+ bexp1pop: array[0..25] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $00000278{'div'}),
@@ -10106,6 +10119,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @insimpexpco); stack: nil; 
      keyword: $0000027F{'in'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @issimpexpco); stack: nil; 
+     keyword: $00000280{'is'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -11403,10 +11419,114 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bissimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @factco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bissimpexp1: array[0..17] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @divfactco); stack: nil; 
+     keyword: $00000278{'div'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @modfactco); stack: nil; 
+     keyword: $00000279{'mod'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @andfactco); stack: nil; 
+     keyword: $0000027A{'and'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @shlfactco); stack: nil; 
+     keyword: $0000027B{'shl'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @shrfactco); stack: nil; 
+     keyword: $0000027C{'shr'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @ortermco); stack: nil; 
+     keyword: $0000027D{'or'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @xortermco); stack: nil; 
+     keyword: $0000027E{'xor'}),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @xorsettermco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['>']),
+    (kind: bkk_char; chars: ['<']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @mulfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @addtermco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @subtermco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bfact0: array[0..27] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @notfactco); stack: nil; 
-     keyword: $00000280{'not'}),
+     keyword: $00000281{'not'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000027A{'and'}),
@@ -11427,7 +11547,7 @@ const
      keyword: $0000027F{'in'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000281{'is'}),
+     keyword: $00000280{'is'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000282{'as'}),
@@ -13857,6 +13977,10 @@ begin
  insimpexpco.next:= @insimpexp1co;
  insimpexp1co.branch:= @binsimpexp1;
  insimpexp1co.handleexit:= @handleinsimpexp;
+ issimpexpco.branch:= @bissimpexp;
+ issimpexpco.next:= @issimpexp1co;
+ issimpexp1co.branch:= @bissimpexp1;
+ issimpexp1co.handleexit:= @handleissimpexp;
  addressfactco.branch:= nil;
  addressfactco.next:= @fact0co;
  addressfactco.handleentry:= @handleaddressfactentry;

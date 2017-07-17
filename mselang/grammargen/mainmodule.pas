@@ -18,7 +18,7 @@ unit mainmodule;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv,
+ mseglob,mseapplication,mseclasses,msedatamodules,msetypes,msesysenv,
  globtypes;
 
 (*
@@ -110,8 +110,9 @@ var
 
 implementation
 uses
- mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils,msemacros,{parserglob,}typinfo,mselfsr;
+ mainmodule_mfm,msefileutils,msestream,msesys,msesysutils,sysutils,
+ mseformatstr,msearrayutils,msemacros,{parserglob,}typinfo,mselfsr,
+ msestrings;
 
 const
  numidcount = 256; 

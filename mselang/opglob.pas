@@ -23,7 +23,8 @@ uses
 type
  backendty = (bke_direct,bke_llvm);
 
- addressbasety = (ab_segment,ab_local{ab_frame},ab_localindi,ab_stack,ab_stackref);
+ addressbasety = (ab_segment,ab_local{ab_frame},ab_localindi,
+                  ab_stack,ab_stackref);
 {
  addressrefty = record
   address: dataoffsty;
@@ -385,7 +386,7 @@ type
 }
   oc_setcontains,
   oc_setin,
-
+  oc_classis,
   oc_storesegnil,
   oc_storelocnil,
   oc_storelocindinil,
@@ -1241,7 +1242,7 @@ type
    oc_pop,
    oc_arraytoopenar,
    oc_getobjectmem,oc_getobjectzeromem,
-   oc_zeromem: (
+   oc_zeromem,oc_classis: (
     imm: immty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,

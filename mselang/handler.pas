@@ -100,6 +100,7 @@ procedure handleltsimpexp();
 procedure handlegesimpexp();
 procedure handlelesimpexp();
 procedure handleinsimpexp();
+procedure handleissimpexp();
 
 procedure handlecommaseprange();
 
@@ -3082,6 +3083,153 @@ begin
    operationnotsupportederror(poa^.d,pob^.d,'in');
   end;
 errlab:
+  s.stacktop:= getpreviousnospace(s.stackindex-1);
+  s.stackindex:= getpreviousnospace(s.stacktop-1);
+ end;
+end;
+
+procedure handleissimpexp();
+
+ function gettyp(const acontext: pcontextitemty; out atyp: ptypedataty; 
+                                               out aindilev: int32): boolean;
+ begin
+  result:= false;
+  atyp:= nil;
+  if acontext^.d.kind in datacontexts then begin
+   atyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
+   aindilev:= acontext^.d.dat.datatyp.indirectlevel;
+   if atyp^.h.kind = dk_class then begin
+    dec(aindilev); //implicit dereference
+   end;
+  end
+  else begin
+   if acontext^.d.kind = ck_typearg then begin
+    atyp:= ele.eledataabs(acontext^.d.typ.typedata);
+    aindilev:= atyp^.h.indirectlevel;
+   end
+  end;
+  if atyp <> nil then begin
+   if (atyp^.h.kind = dk_class) and (aindilev = 0) or
+      (atyp^.h.kind = dk_object) and ((aindilev = 0) or 
+                                  (aindilev = 1)) then begin
+    result:= true;
+   end;
+  end;
+  if not result then begin
+   errormessage(err_objectorclasstypeexpected,[],acontext);
+  end;
+ end; //gettyp()
+ 
+ function getclassdef(const acontext: pcontextitemty): boolean;
+ begin
+  result:= false;
+  if acontext^.d.kind = ck_typearg then begin
+   with insertitem(oc_pushsegaddr,acontext,-1,
+                           pushsegaddrssaar[seg_classdef])^ do begin
+    par.memop.segdataaddress.a:= 
+                    ptypedataty(ele.eledataabs(
+                             acontext^.d.dat.datatyp.typedata))^.infoclass.defs;
+    par.memop.segdataaddress.offset:= 0;
+    par.memop.t:= bitoptypes[das_pointer];
+   end;
+   initfactcontext(acontext);
+   result:= true;
+  end
+  else begin
+  {$ifdef mse_checkinternalerror}
+   if not (acontext^.d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20170717A');
+   end;
+  {$endif}
+   if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
+    if getvalue(acontext,das_none) then begin
+     result:= true;
+    end;
+   end
+   else begin
+    if getaddress(acontext,true) then begin
+     result:= true;
+    end;
+   end;
+  end;
+ end; //getclassdef();
+ 
+var
+ poa,pob: pcontextitemty;
+ typa,typb,typ1: ptypedataty;
+ indileva,indilevb: int32;
+ ele1: elementoffsetty;
+ i1,i2: int32;
+label
+ endlab;
+begin
+{$ifdef mse_debugparser}
+ outhandle('ISSIMPEXP');
+{$endif}
+ with info do begin           //todo: class of, object of
+  if not getfactstart(s.stackindex-1,poa) or 
+                              not getfactstart(s.stacktop,pob) then begin
+   goto endlab;
+  end;
+  if not gettyp(poa,typa,indileva) or not gettyp(pob,typb,indilevb) then begin
+   goto endlab;
+  end;
+  if (typa^.h.kind <> typa^.h.kind) or (indileva <> indilevb) then begin
+   errormessage(err_isopnomatch,[],pob);
+   goto endlab;
+  end;
+  ele1:= ele.eledatarel(typb);
+  typ1:= typa;
+  if (poa^.d.kind = ck_typearg) and (poa^.d.kind = ck_typearg) then begin
+   while true do begin
+    if ele.eledatarel(typ1) = ele1 then begin
+     setconstcontext(poa,valuetrue);
+     goto endlab;
+    end;
+    ele1:= typ1^.h.ancestor;
+    if ele1 = 0 then begin
+     break;
+    end;
+    typ1:= ele.eledataabs(ele1);
+   end;
+   setconstcontext(poa,valuefalse);
+   goto endlab;
+  end;    
+  ele1:= ele.eledatarel(typa);
+  typ1:= typb;
+  while true do begin
+   if ele.eledatarel(typ1) = ele1 then begin
+    break; //common ancestor, "is" possible
+   end;
+   ele1:= typ1^.h.ancestor;
+   if ele1 = 0 then begin
+    setconstcontext(poa,valuefalse); //no common ancestor
+    goto endlab;
+   end;
+   typ1:= ele.eledataabs(ele1);
+  end;
+  if not (icf_virtual in typa^.infoclass.flags) then begin
+   errormessage(err_objectorclassvirtual,[],poa);
+   goto endlab;
+  end;
+  if not (icf_virtual in typb^.infoclass.flags) then begin
+   errormessage(err_objectorclassvirtual,[],pob);
+   goto endlab;
+  end;
+  if getclassdef(poa) then begin
+   i1:= poa^.d.dat.fact.ssaindex;
+   if getclassdef(pob) then begin
+    i2:= pob^.d.dat.fact.ssaindex;
+    with insertitem(oc_classis,pob,-1)^.par do begin
+     ssas1:= i1;
+     ssas2:= i2;
+     setimmint32(typa^.infoclass.virttaboffset,imm);
+     poa^.d.dat.fact.ssaindex:= ssad;
+    end;
+    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+   end;
+  end;
+endlab:
   s.stacktop:= getpreviousnospace(s.stackindex-1);
   s.stackindex:= getpreviousnospace(s.stacktop-1);
  end;

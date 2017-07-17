@@ -1241,6 +1241,7 @@ statementend,,,handlestatementend!
  '>=',gesimpexp-*> 
  '<=',lesimpexp-*>
  'in'.,insimpexp-*>
+ 'is'.,issimpexp-*>
 "
 {simpexpswitch}
 " ${whitespace}
@@ -1321,6 +1322,10 @@ ${termswitch}
 insimpexp,insimpexp1,,
  '',fact*
 insimpexp1,,,handleinsimpexp
+${termswitch}
+issimpexp,issimpexp1,,
+ '',fact*
+issimpexp1,,,handleissimpexp
 ${termswitch}
 
 addressfact,fact0,handleaddressfactentry,

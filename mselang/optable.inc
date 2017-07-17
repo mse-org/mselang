@@ -642,6 +642,8 @@
   (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 //oc_setin,
   (ssa: setinssa; proc: @setinop; flags: []), 
+//oc_classis,
+  (ssa: classisssa; proc: @classisop; flags: []), 
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 

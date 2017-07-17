@@ -2966,6 +2966,35 @@ begin
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ in tintegerset(po1^);
 end;
 
+procedure classisop();
+var
+ po1,po2: pointer;
+ b1: boolean;
+ i1: targetptrintty;
+begin
+ with cpu.pc^.par do begin
+  po1:= ppointer(stackpop(sizeof(vpointerty)))^; //instance
+  po2:= ppointer(stackpop(sizeof(vpointerty)))^; //instance
+  b1:= false;
+  if (po1 <> nil) and (po2 <> nil) then begin
+   po1:= ppointer(po1+imm.vint32)^;
+   po2:= ppointer(po2+imm.vint32)^;
+   while true do begin
+    if po1 = po2 then begin
+     b1:= true;
+     break;
+    end;
+    i1:= classdefinfopoty(po1)^.header.parentclass;
+    if i1 < 0 then begin
+     break;
+    end;
+    po1:= getsegmentpo(seg_classdef,i1);
+   end;
+  end;
+ end;
+ pboolean(stackpush(sizeof(vbooleanty)))^:= b1;
+end;
+
 procedure addfloop();
 var
  po1,po2,po3: pointer;
@@ -6968,6 +6997,7 @@ const
 
   setcontainsssa = 0;
   setinssa = 0;
+  classisssa = 0;
 
   storesegnilssa = 0;
   storelocindinilssa = 0;

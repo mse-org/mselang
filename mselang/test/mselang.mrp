@@ -120,7 +120,7 @@ c=3
   c=25
    (
    kind=1
-   a=0,665,4,conditon
+   a=0,664,4,conditon
    c=2
     (
     kind=2
@@ -356,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -3505,7 +3505,7 @@ c=3
    (
    kind=1
    a=0,665,4,exception
-   c=6
+   c=8
     (
     kind=2
     a=0,648,1,raise1
@@ -3523,7 +3523,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7291004
+    ao=An unhandled exception occured at $B7241004
     ae=
     aec=123
     ie=0
@@ -3621,6 +3621,50 @@ c=3
     a=0,648,1,raise3 llvm
     teststate=1
     path=raise3.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except1
+    teststate=1
+    path=except1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except1 llvm
+    teststate=1
+    path=except1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11520,45 +11564,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=269
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=231
  0 0
  0 0
  0 0

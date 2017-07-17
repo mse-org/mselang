@@ -2474,6 +2474,11 @@ begin
  end;
 end;
 
+procedure classisop();
+begin
+ notimplemented;
+end;
+
 procedure storesegnilop();
 var
  str1: shortstring;
@@ -4734,6 +4739,7 @@ const
 
   setcontainsssa = 3;
   setinssa = 3;
+  classisssa = 1;
 
   storesegnilssa = 0;
   storelocindinilssa = 1;

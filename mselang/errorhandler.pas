@@ -83,7 +83,8 @@ type
             err_toomanyoperparams,err_varargmustbelast,err_stringexpected,
             err_managednotallowed,err_dialectatbeginofunit,
             err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected,
-            err_toomanyarraydimensions);
+            err_toomanyarraydimensions,err_isopnomatch,
+            err_objectorclassvirtual);
             
  errorinfoty = record
   level: errorlevelty;
@@ -306,7 +307,9 @@ const
   (level: erl_fatal; message: 'Unknown dialect'),
   (level: erl_fatal; message: 'Too many array items'),
   (level: erl_error; message: '%s more items expected'),
-  (level: erl_fatal; message: 'Too many array dimensions')
+  (level: erl_fatal; message: 'Too many array dimensions'),
+  (level: erl_error; message: 'Operands for "is" do not match'),
+  (level: erl_error; message: 'Object or class must have "virtual" attribute')
  );
 
 procedure message1(const atext: string; const values: array of const); 

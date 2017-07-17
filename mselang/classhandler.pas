@@ -719,7 +719,7 @@ begin
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
                    not (icf_nozeroinit in infoclass.flags) and 
-                                    (classinfo1^.rec.fieldoffsetmax > 0) then begin
+                                (classinfo1^.rec.fieldoffsetmax > 0) then begin
      include(h.flags,tf_needsini);
     end;
 

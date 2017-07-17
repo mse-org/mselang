@@ -149,8 +149,8 @@ const
  tk_or = $0000027D;
  tk_xor = $0000027E;
  tk_in = $0000027F;
- tk_not = $00000280;
- tk_is = $00000281;
+ tk_is = $00000280;
+ tk_not = $00000281;
  tk_as = $00000282;
  tk_inherited = $00000283;
 
@@ -171,7 +171,7 @@ const
   'forward','sub','finally','except','do','with','case','while','repeat','for',
   'try','raise','goto','then','until','to','downto','set','record','array',
   'private','protected','public','published','property','read','write','div',
-  'mod','and','shl','shr','or','xor','in','not','is','as','inherited');
+  'mod','and','shl','shr','or','xor','in','is','not','as','inherited');
 
  tokenids: array[0..131] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
