@@ -1824,8 +1824,8 @@ c=3
    c=33
     (
     kind=1
-    a=0,664,4,goto
-    c=4
+    a=0,665,4,goto
+    c=6
      (
      kind=2
      a=0,648,1,goto1
@@ -1897,6 +1897,50 @@ c=3
      a=0,648,1,goto2 llvm
      teststate=1
      path=goto2.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,goto3
+     teststate=1
+     path=goto3.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,goto3 llvm
+     teststate=1
+     path=goto3.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -11672,7 +11716,13 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=212
+rowstate=218
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

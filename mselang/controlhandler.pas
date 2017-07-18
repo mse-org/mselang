@@ -795,7 +795,8 @@ begin
  outhandle('CHECKCASELABEL');
 {$endif}
  with info do begin
-  if contextstack[s.stackindex-2].d.kind = ck_caseblock then begin
+  if (contextstack[s.stackindex-2].d.kind = ck_caseblock) and 
+       not (contextstack[s.stacktop].d.kind = ck_label) then begin
    s.stackindex:= s.stackindex - 3; //casebranch2
    p1:= @contextstack[s.stackindex+2]; //statementstart
    cutopend(p1^.opmark.address);
