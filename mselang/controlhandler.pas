@@ -795,8 +795,8 @@ begin
  outhandle('CHECKCASELABEL');
 {$endif}
  with info do begin
-  if (contextstack[s.stackindex-2].d.kind = ck_caseblock) and 
-       not (contextstack[s.stacktop].d.kind = ck_label) then begin
+  if (contextstack[s.stacktop].d.kind <> ck_label) and
+           (contextstack[s.stackindex-2].d.kind = ck_caseblock) then begin
    s.stackindex:= s.stackindex - 3; //casebranch2
    p1:= @contextstack[s.stackindex+2]; //statementstart
    cutopend(p1^.opmark.address);
@@ -805,24 +805,6 @@ begin
     s.source:= start;
     debugstart:= p1^.debugstart;
    end;
-//   s.stacktop:= s.stackindex;
-  {
-   s.stackindex:= s.stackindex-3;
-   with contextstack[s.stackindex] do begin
-    if s.dialect <> dia_mse then begin
-     internalerror(ie_handler,'20170608B');
-    end;
-    context:= @gramse.casebranchrestartco;
-    s.pc:= context;
-    p1:= @contextstack[s.stackindex+2];
-    start:= p1^.start; //simplestatement
-    debugstart:= p1^.debugstart; //simplestatement
-    opmark:= p1^.opmark;
-    cutopend(opmark.address);
-    s.source:= start;
-   end;
-   s.stacktop:= s.stackindex;
-  }
   end;
  end;
 end;
@@ -960,7 +942,11 @@ begin
                                                  ck_caseblock then begin
     end
     else begin
-     handlesemicolonexpected();
+     if contextstack[s.stackindex-3].d.kind = ck_exceptblock then begin
+     end
+     else begin
+      handlesemicolonexpected();
+     end;
     end;
    end
    else begin

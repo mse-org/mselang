@@ -259,7 +259,8 @@ procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 procedure initfactcontext(const stackoffset: int32);
 procedure initfactcontext(const acontext: pcontextitemty);
-procedure initblockcontext(const stackoffset: int32);
+procedure initblockcontext(const stackoffset: int32;
+                                   const blockkind: contextkindty);
 procedure newblockcontext(const stackoffset: int32);
 procedure finiblockcontext(const stackoffset: int32);
 
@@ -2660,10 +2661,11 @@ begin
                                                        info.s.stackindex);
 end;
 
-procedure initblockcontext(const stackoffset: int32);
+procedure initblockcontext(const stackoffset: int32; 
+                                   const blockkind: contextkindty);
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
-  d.kind:= ck_block;
+  d.kind:= blockkind;//ck_block;
   d.block.blockidbefore:= currentblockid;
   inc(s.blockid);
   currentblockid:= s.blockid;
@@ -4217,7 +4219,7 @@ begin
      write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
                                                int32(d.handlerflags),true),' ');
      case d.kind of
-      ck_block: begin
+      ck_block,ck_exceptblock: begin
        write('idbefore:'+inttostrmse(d.block.blockidbefore));
       end;
       ck_label: begin

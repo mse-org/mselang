@@ -60,7 +60,7 @@ begin
  outhandle('TRYYENTRY');
 {$endif}
  with info do begin
-  initblockcontext(0);  
+  initblockcontext(0,ck_block);
   inc(s.trystacklevel);
   with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
    links:= 0;
@@ -139,9 +139,12 @@ begin
  with addcontrolitem(oc_goto)^ do begin
  end;
  tryhandle();
- with info,contextstack[s.stackindex-1] do begin
-  getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
-  opmark.address:= opcount-2; //gotoop
+ with info do begin
+  contextstack[s.stackindex].d.kind:= ck_exceptblock;
+  with contextstack[s.stackindex-1] do begin
+   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
+   opmark.address:= opcount-2; //gotoop
+  end;
  end;
 end;
 

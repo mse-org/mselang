@@ -3730,7 +3730,7 @@ begin
  outhandle('WITHENTRY');
 {$endif}
  with info do begin
-  initblockcontext(0);
+  initblockcontext(0,ck_block);
  end;
  ele.pushscopelevel();
 end;
