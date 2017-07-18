@@ -1820,8 +1820,116 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=34
+   a=0,665,4,control
+   c=33
+    (
+    kind=1
+    a=0,664,4,goto
+    c=4
+     (
+     kind=2
+     a=0,648,1,goto1
+     teststate=1
+     path=goto1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,goto1 llvm
+     teststate=1
+     path=goto1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,goto2
+     teststate=1
+     path=goto2.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,goto2 llvm
+     teststate=1
+     path=goto2.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=1
+    path=goto/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
     (
     kind=2
     a=0,648,1,breakrepeat
@@ -2465,50 +2573,6 @@ c=3
     a=0,648,1,halt2 llvm
     teststate=1
     path=halt2.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,goto1
-    teststate=1
-    path=goto1.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,goto1 llvm
-    teststate=1
-    path=goto1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3523,7 +3587,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7241004
+    ao=An unhandled exception occured at $B7241188
     ae=
     aec=123
     ie=0
@@ -8874,10 +8938,10 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=30
+  c=32
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=30
     (
     kind=2
@@ -9665,7 +9729,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=14
     (
     kind=2
@@ -9993,7 +10057,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,interface
+   a=0,664,4,interface
    c=10
     (
     kind=2
@@ -10803,6 +10867,50 @@ c=3
    aec=123
    ie=0
    )
+   (
+   kind=2
+   a=0,648,1,classis
+   teststate=1
+   path=classis.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classis llvm
+   teststate=1
+   path=classis.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
   teststate=1
   path=class/
   comment=
@@ -11564,26 +11672,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=231
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=212
  0 0
  0 0
  0 0

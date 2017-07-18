@@ -970,7 +970,7 @@ begin
     else begin
      po1^.address:= opcount;
      po1^.blockid:= currentblockid;
-     linkresolvegoto(po1^.adlinks,opcount-1,currentblockid);
+     linkresolvegoto(po1^.adlinks,opcount{-1},currentblockid);
                  //todo: check blockid
      forwardresolve(po1^.mark);
     end;

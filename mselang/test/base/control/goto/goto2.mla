@@ -1,0 +1,9 @@
+program goto2;
+label
+ lab1;
+begin
+ goto lab1;
+ exitcode:= 1;
+lab1:
+ exitcode:= exitcode + 123;
+end.
