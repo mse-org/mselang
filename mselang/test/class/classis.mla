@@ -1,0 +1,40 @@
+program classis;
+type
+
+ ctest = class() [virtual]
+  constructor create();
+  destructor destroy();
+ end;
+ ctest1 = class(ctest)
+ end;
+
+ ctest2 = class()
+ end;
+
+ pctest = ^ctest;
+ testobjty = ^object
+ end;
+
+constructor ctest.create();
+begin
+end;
+
+destructor ctest.destroy();
+begin
+end;
+
+var
+ c1: ctest;
+ c2: ctest;
+begin
+ c1:= ctest.create();
+ c2:= ctest1.create();
+ if (c2 is c1) and not (c1 is c2) and (c1 is ctest) and (c2 is ctest) and (c2 is ctest1) and
+       not (c1 is ctest1) then
+  exitcode:= 123;
+ else
+  exitcode:= 1;
+ end;
+ c1.destroy();
+ c2.destroy();
+end.

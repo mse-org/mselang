@@ -2196,10 +2196,12 @@ begin
        i2:= 3;
        while i2 <= high(rec1) do begin
         decodesigned1(rec1[i2]);
-        if typeid(rec1[i2]) <> i1 then begin
-         error('Incompatible phi types');
-        end;
         str1:= str1+inttostr(fssaindex-rec1[i2])+':'+inttostr(rec1[i2+1])+',';
+        if typeid(rec1[i2]) <> i1 then begin
+         outssarecord(i1,str1);
+         error('Incompatible phi types');
+         
+        end;
         inc(i2,2);
        end;
        str1[length(str1)]:= ']';

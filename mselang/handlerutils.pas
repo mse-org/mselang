@@ -3447,7 +3447,7 @@ begin
    with podest^ do begin
     with additem(oc_phi)^ do begin
      par.phi.t:= d.dat.fact.opdatatype;
-     par.phi.philist:=philist;
+     par.phi.philist:= philist;
     end;
     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    end;
@@ -3555,7 +3555,7 @@ label
  endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle('UDATEOP');
+ outhandle('UPDATEOP');
 {$endif}
  with info do begin
   bo1:= false;

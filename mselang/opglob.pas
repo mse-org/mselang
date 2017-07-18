@@ -1172,6 +1172,8 @@ const
   oc_writepointer,
   oc_writeclass,
   oc_writeenum,
+  
+  oc_cmpstring,
 //  oc_call,
 //  oc_callfunc,
 //  oc_callout,
@@ -1188,7 +1190,9 @@ const
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_initobject,
-  oc_destroyclass
+  oc_destroyclass,
+  oc_getclassdef,
+  oc_classis
  ];
  listops = [oc_listtoopenar,
                   oc_concatstring8,oc_concatstring16,oc_concatstring32];  

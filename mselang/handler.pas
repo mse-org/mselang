@@ -3235,6 +3235,7 @@ begin
      poa^.d.dat.fact.ssaindex:= ssad;
     end;
     poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+    poa^.d.dat.fact.opdatatype:= getopdatatype(poa^.d.dat.datatyp);
    end;
   end;
 endlab:
