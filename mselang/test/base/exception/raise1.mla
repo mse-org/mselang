@@ -1,7 +1,7 @@
 program raise1;
 
 type
- t1 = class
+ t1 = class[virtual,except]
   public
    constructor create();
  end;

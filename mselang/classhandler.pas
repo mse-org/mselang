@@ -400,7 +400,8 @@ begin
      po1^.h.flags:= po1^.h.flags + 
                      po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
-              po2^.infoclass.flags * [icf_zeroinit,icf_nozeroinit,icf_virtual];
+              po2^.infoclass.flags * [icf_zeroinit,icf_nozeroinit,icf_virtual,
+                                      icf_except];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
      po1^.infoclass.subattach:= po2^.infoclass.subattach;
      if po2^.infoclass.interfacecount > 0 then begin
@@ -425,7 +426,7 @@ end;
 
 procedure handleclassdef0();
 var
- typ1: ptypedataty;
+ typ1,typ2: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEF0');
@@ -449,6 +450,18 @@ begin
     d.cla.rec.fieldoffsetmax:= d.cla.rec.fieldoffset;
                       //pointer to virtual methodtable
     include(h.flags,tf_needsini);
+   end;
+   if obf_except in d.cla.flags then begin
+    typ2:= typ1;
+    while typ2^.h.ancestor > 0 do begin
+     typ2:= ele.eledataabs(typ2^.h.ancestor);
+    end;
+    if icf_virtual in typ2^.infoclass.flags then begin
+     include(infoclass.flags,icf_except);
+    end
+    else begin
+     errormessage(err_eceptmusthavevirtual,[]);
+    end;
    end;
    if (d.cla.intfindex > 0) and 
                not (icf_virtual in infoclass.flags) then begin
@@ -521,6 +534,9 @@ begin
     end;
     tk_virtual: begin
      include(d.cla.flags,obf_virtual);
+    end;
+    tk_except: begin
+     include(d.cla.flags,obf_except);
     end;
     else begin
      identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,

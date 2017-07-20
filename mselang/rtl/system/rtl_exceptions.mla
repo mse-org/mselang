@@ -13,7 +13,7 @@ uses
  rtl_base;
 type
 
- cexception = class(cbase)
+ cexception = class(cbase)[except]
   constructor create(const message: string8);
   property message: string8 read fmessage write fmessage;
 

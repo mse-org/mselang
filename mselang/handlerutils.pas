@@ -534,6 +534,7 @@ begin
  with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= aflags;
+  subdef.flags1:= [];
  end;
 end;
 
@@ -4309,6 +4310,8 @@ begin
       ck_subdef: begin
        write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
                                             integer(d.subdef.flags),true),
+                   settostring(ptypeinfo(typeinfo(subflags1ty)),
+                                            integer(d.subdef.flags1),true),
              ' ma:',d.subdef.match,
                              ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
       end;

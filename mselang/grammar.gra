@@ -69,8 +69,9 @@
  'mselang','pascal'
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
- 'nozeroinit','zeroinit','virtual','end'
+ 'nozeroinit','zeroinit','virtual','except','end'
  'afterconstruct','beforedestruct','ini','fini','operator','operatorright'
+ 'default'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
@@ -1088,7 +1089,7 @@ attachitems,attachitemsnoitemerror,handleattachitemsentry,
 // '''',attachstring-
 // '#',attachchar-
 attachident,attachitems2,,
- '',ident^*
+ '',ident0^*            //no reserved words
 attachitems2,,,^
  ${whitespace}
  ',',attachitems-

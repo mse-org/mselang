@@ -189,7 +189,7 @@ begin
                                            (d.dat.datatyp.indirectlevel = 1);
    if bo1 then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    bo1:= po1^.h.kind = dk_class;
+    bo1:= (po1^.h.kind = dk_class) and (icf_except in po1^.infoclass.flags);
    end;
    if bo1 then begin
  //   with addcontrolitem(oc_raise)^ do begin
@@ -198,7 +198,7 @@ begin
     end;
    end
    else begin
-    errormessage(err_classinstanceexpected,[]);
+    errormessage(err_exceptclassinstanceexpected,[]);
    end;
    dec(s.stackindex);
   end;

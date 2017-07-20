@@ -329,6 +329,7 @@ type
   match: elementoffsetty;
   error: boolean;
   flags: subflagsty;
+  flags1: subflags1ty;
 //  scopemetabefore: metavaluety;
  end;
  psubinfoty = ^subinfoty;
@@ -363,8 +364,7 @@ type
   case contextkindty of
    ck_recordcase: (fieldoffsetmax: dataoffsty);
  end;
- objflagty = (obf_class,obf_zeroinit,obf_nozeroinit,obf_virtual{,
-              obf_variant,obf_variantitem});
+ objflagty = (obf_class,obf_zeroinit,obf_nozeroinit,obf_virtual,obf_except);
  objflagsty = set of objflagty;
  
  classinfoty = record

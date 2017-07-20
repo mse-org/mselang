@@ -639,6 +639,7 @@ begin
   po1:= @contextstack[s.stackindex-1].d;
   kind:= ck_subdef;
   subdef.flags:= po1^.subdef.flags;
+  subdef.flags1:= po1^.subdef.flags1;
   po1^.kind:= ck_objsubheader;//ck_none;
  end;
 end;
@@ -886,16 +887,19 @@ begin
         end;
        end;
        tk_afterconstruct: begin
-        include(d.subdef.flags,sf_afterconstruct);
+        include(d.subdef.flags1,sf1_afterconstruct);
        end;
        tk_beforedestruct: begin
-        include(d.subdef.flags,sf_beforedestruct);
+        include(d.subdef.flags1,sf1_beforedestruct);
        end;
        tk_ini: begin
-        include(d.subdef.flags,sf_ini);
+        include(d.subdef.flags1,sf1_ini);
        end;
        tk_fini: begin
-        include(d.subdef.flags,sf_fini);
+        include(d.subdef.flags1,sf1_fini);
+       end;
+       tk_default: begin
+        include(d.subdef.flags1,sf1_default);
        end;
        else begin
         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
@@ -1284,6 +1288,7 @@ var                       //todo: move after doparam
  par1,parref: pelementoffsetaty;
  eledatabase: ptruint;
  subflags: subflagsty;
+ subflags1: subflags1ty;
 // parambase: ptruint;
  si1: integer;
  paramsize1: integer;
@@ -1531,6 +1536,7 @@ begin
   with (poind-1)^ do begin
    d.subdef.match:= 0;              //todo: nested forward subs
    subflags:= d.subdef.flags;
+   subflags1:= d.subdef.flags1;
    d.subdef.parambase:= locdatapo;
    d.subdef.locallocidbefore:= locallocid;
    locallocid:= 0;
@@ -1656,6 +1662,7 @@ begin
   sub1^.trampolineid:= -1;
   sub1^.nestinglevel:= sublevel;
   sub1^.flags:= subflags;
+  sub1^.flags1:= subflags1;
   sub1^.linkage:= s.globlinkage;
   inc(s.unitinfo^.nameid);
   sub1^.nameid:= s.unitinfo^.nameid;
@@ -1934,7 +1941,7 @@ begin
    s.stacktop:= s.stackindex;
   end
   else begin
-   if sf_afterconstruct in subflags then begin
+   if sf1_afterconstruct in subflags1 then begin
     if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or
                                                     (paramco <> 1) then begin
      errormessage(err_invalidmethodforattach,['afterconstruct']);
@@ -1945,7 +1952,7 @@ begin
      end;
     end;
    end;
-   if sf_beforedestruct in subflags then begin
+   if sf1_beforedestruct in subflags1 then begin
     if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
                                                     (paramco <> 1) then begin
      errormessage(err_invalidmethodforattach,['beforedestruct']);
@@ -1956,7 +1963,7 @@ begin
      end;
     end;
    end;
-   if sf_ini in subflags then begin
+   if sf1_ini in subflags1 then begin
     if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
                                                     (paramco <> 1) then begin
      errormessage(err_invalidmethodforattach,['ini']);
@@ -1968,7 +1975,7 @@ begin
      end;
     end;
    end;
-   if sf_fini in subflags then begin
+   if sf1_fini in subflags1 then begin
     if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
                                                     (paramco <> 1) then begin
      errormessage(err_invalidmethodforattach,['fini']);

@@ -791,6 +791,8 @@ end;
 procedure handlecheckcaselabel();
 var
  p1: pcontextitemty;
+ typ1: ptypedataty;
+ b1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKCASELABEL');
@@ -810,8 +812,21 @@ begin
    else begin
     if (s.dialect = dia_mse) and 
             (contextstack[s.stackindex-3].d.kind = ck_exceptblock) then begin
-     s.stacktop:= s.stackindex;
+     b1:= false;
+     with contextstack[s.stacktop] do begin
+      if d.kind = ck_typearg then begin
+       typ1:= ele.eledataabs(d.typ.typedata);
+       if (typ1^.h.kind = dk_class) and 
+                         (icf_except in typ1^.infoclass.flags) then begin
+        b1:= true;
+       end;
+      end;
+     end;
+     if not b1 then begin
+      errormessage(err_exceptclassexpected,[]);
+     end;
      switchcontext(@gramse.exceptlabelco,true);
+     s.stacktop:= s.stackindex;
     end;
    end;
   end;

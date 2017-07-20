@@ -115,7 +115,7 @@ type
 
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,
                     icf_forward,
-                    icf_zeroinit,icf_nozeroinit,icf_virtual);
+                    icf_zeroinit,icf_nozeroinit,icf_virtual,icf_except);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   intfnamenode: elementoffsetty;
@@ -429,6 +429,7 @@ type
   exitlinks: linkindexty;  //for exit statement, resolved by linkresolveopad
   mark: forwardindexty;
   flags: subflagsty;
+  flags1: subflags1ty;
   tableindex: integer; //-1 = none
   address: opaddressty;
   trampolinelinks: linkindexty;   //for virtual interface items

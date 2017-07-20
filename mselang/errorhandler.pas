@@ -84,7 +84,8 @@ type
             err_managednotallowed,err_dialectatbeginofunit,
             err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected,
             err_toomanyarraydimensions,err_isopnomatch,
-            err_objectorclassvirtual);
+            err_objectorclassvirtual,err_exceptclassexpected,
+            err_eceptmusthavevirtual,err_exceptclassinstanceexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -309,7 +310,11 @@ const
   (level: erl_error; message: '%s more items expected'),
   (level: erl_fatal; message: 'Too many array dimensions'),
   (level: erl_error; message: 'Operands for "is" do not match'),
-  (level: erl_error; message: 'Object or class must have "virtual" attribute')
+  (level: erl_error; message: 'Object or class must have "virtual" attribute'),
+  (level: erl_error; message: 'Exception class expected'),
+  (level: erl_error; message: 
+             'Exception class must have "virtual" attribute in root object'),
+  (level: erl_error; message: 'Exception class instance expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

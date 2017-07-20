@@ -1767,6 +1767,8 @@ begin
      mstr1:= mstr1+lineend+
      ' F:'+msestring(
             settostring(ptypeinfo(typeinfo(flags)),integer(flags),true))+
+            msestring(
+            settostring(ptypeinfo(typeinfo(flags1)),integer(flags1),true))+
      ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
      ' ovl:'+inttostrmse(nextoverload)+
      ' op:'+inttostrmse(address)+

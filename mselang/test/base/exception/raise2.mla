@@ -1,7 +1,7 @@
 program raise2;
 
 type
- tc = class
+ tc = class[virtual,except]
   public
    constructor create();
    destructor destroy();
