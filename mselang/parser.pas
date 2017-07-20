@@ -307,6 +307,7 @@ var
 {$ifdef mse_debugparser}
  ch1: char;
 {$endif}
+ pc1: pcontextty;
 begin
  result:= true;
  bo1:= false;
@@ -363,13 +364,14 @@ begin
     result:= false;  //open transition chain
     break;
    end;
+   pc1:= s.pc;
    if s.pc^.handleentry <> nil then begin
     s.pc^.handleentry(); //transition handler
     if s.stopparser then begin
      result:= false;
      exit;
     end;
-    if s.stackindex <> int1 then begin
+    if (s.stackindex <> int1) or (s.pc <> pc1) then begin
      canceled:= true;
      break;
     end;
@@ -380,7 +382,7 @@ begin
      result:= false;
      exit;
     end;
-    if s.stackindex <> int1 then begin
+    if (s.stackindex <> int1) or (s.pc <> pc1) then begin
      canceled:= true;
      break;
     end;
@@ -398,9 +400,15 @@ begin
    with contextstack[s.stackindex] do begin
     s.pc:= context; 
        //changed by handler todo: unify with normal context termination
-    if not (bf_continue in transitionflags) then begin
+    if bf_continue in transitionflags then begin
+     exclude(transitionflags,bf_continue);
+    end
+    else begin
      result:= false;
     end;
+//    if not (bf_continue in transitionflags) then begin
+//     result:= false;
+//    end;
    end;
   end;
 

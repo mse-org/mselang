@@ -923,6 +923,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'checkcaselabel1');
+ exceptlabelco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'exceptlabel');
  assignmentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5395,6 +5400,51 @@ const
     )),
    (flags: [bf_nt];
      dest: (context: @checkcaselabelco); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bexceptlabel: array[0..6] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @statement0co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -13512,6 +13562,9 @@ begin
  checkcaselabelco.handleexit:= @handlecheckcaselabel;
  checkcaselabel1co.branch:= nil;
  checkcaselabel1co.handleexit:= @handlestatementexit;
+ exceptlabelco.branch:= @bexceptlabel;
+ exceptlabelco.next:= @statement0co;
+ exceptlabelco.handleexit:= @handleexceptlabel;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;

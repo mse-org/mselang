@@ -4097,6 +4097,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
                   integer(po1^.h.flags),true),
            ' I:',indirectlevel);
     end;
+    write(' ');
    end;
   end;
  end;//writetyp
@@ -4363,7 +4364,7 @@ begin
        write(' T:'+inttostrmse(d.typeref)+' ');
        writetypedata(ele.eledataabs(d.typeref));
       end;
-      ck_typetype,ck_fieldtype: begin
+      ck_typetype,ck_fieldtype,ck_typearg: begin
        writetyp(d.typ);
       end;
       ck_control: begin

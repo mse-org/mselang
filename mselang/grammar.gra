@@ -583,8 +583,13 @@ statement1,,,handlestatementexit
  ',',checkcaselabel
  '..',checkcaselabel
 labelcase,label,,handlecheckcaselabel
+//labelcase,,handlecheckcaselabel,
+// ':',label-
 checkcaselabel,checkcaselabel1,,handlecheckcaselabel
 checkcaselabel1,,,handlestatementexit
+exceptlabel,statement0,,handleexceptlabel* //called by labelcase after ":"
+ ${whitespace}
+ ',',statement0-
 {$}
 assignment,,handleassignmententry,handleassignment
  '',exp^*

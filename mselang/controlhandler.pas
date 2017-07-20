@@ -48,6 +48,7 @@ procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
 procedure handlecheckcaselabel();
+procedure handleexceptlabel();
 procedure handlecasebranch1entry();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
@@ -65,7 +66,7 @@ implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
  opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
- gramse;
+ gramse,parser;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -795,17 +796,34 @@ begin
  outhandle('CHECKCASELABEL');
 {$endif}
  with info do begin
-  if (contextstack[s.stacktop].d.kind <> ck_label) and
-           (contextstack[s.stackindex-2].d.kind = ck_caseblock) then begin
-   s.stackindex:= s.stackindex - 3; //casebranch2
-   p1:= @contextstack[s.stackindex+2]; //statementstart
-   cutopend(p1^.opmark.address);
-   with contextstack[s.stackindex] do begin
-    start:= p1^.start; //restart case label
-    s.source:= start;
-    debugstart:= p1^.debugstart;
+  if (contextstack[s.stacktop].d.kind <> ck_label) then begin
+   if contextstack[s.stackindex-2].d.kind = ck_caseblock then begin
+    s.stackindex:= s.stackindex - 3; //casebranch2
+    p1:= @contextstack[s.stackindex+2]; //statementstart
+    cutopend(p1^.opmark.address);
+    with contextstack[s.stackindex] do begin
+     start:= p1^.start; //restart case label
+     s.source:= start;
+     debugstart:= p1^.debugstart;
+    end;
+   end
+   else begin
+    if (s.dialect = dia_mse) and 
+            (contextstack[s.stackindex-3].d.kind = ck_exceptblock) then begin
+     s.stacktop:= s.stackindex;
+     switchcontext(@gramse.exceptlabelco,true);
+    end;
    end;
   end;
+ end;
+end;
+
+procedure handleexceptlabel();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPTLABEL');
+{$endif}
+ with info do begin
  end;
 end;
 
