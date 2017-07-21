@@ -35,7 +35,9 @@ var
 const
  managedopids: array[managedopty] of identty = (
                //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi,
-                tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
+                tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi,
+               //mo_destroy
+                tks_destroy
                );
 
               //todo: check ssaindex

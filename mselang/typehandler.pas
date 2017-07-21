@@ -689,7 +689,7 @@ var
 
 var
  ele1,typele1: elementoffsetty;
- typ1: ptypedataty;
+ typ1,typ2: ptypedataty;
  sub1: pinternalsubdataty;
  locad1: memopty;
  i1: int32;
@@ -783,6 +783,41 @@ begin
    end;
    poptemp(pointersize);
    endsimplesub(true);
+  end;
+  typ1:= ele.eledataabs(atyp); //can be changed because of added items
+  if (typ1^.h.kind in [dk_object,dk_class]) and
+     (typ1^.infoclass.subattach.destroy <> 0) then begin
+   typ2:= nil;
+   if typ1^.h.ancestor <> 0 then begin
+    typ2:= ele.eledataabs(typ1^.h.ancestor);
+    if typ2^.infoclass.subattach.destroy <> 
+                       typ1^.infoclass.subattach.destroy then begin
+     typ2:= nil;
+    end;
+   end;
+   sub1:= ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]);
+   if typ2 = nil then begin
+    sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
+    if sub1^.calllinks <> 0 then begin
+     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
+                                 //fetch globid from subbegin op
+    end;
+    with additem(oc_pushlocpo)^.par do begin
+     memop:= locad1;
+     i1:= ssad;
+    end;
+    dosub(s.stackindex-1,ele.eledataabs(typ1^.infoclass.subattach.destroy),
+             s.stacktop,0,[dsf_instanceonstack,dsf_noparams,
+               dsf_useobjssa,dsf_usedestinstance,dsf_attach,dsf_destroy],i1);
+ //   startssa:= info.s.ssa.nextindex-1;
+ //   baseadssa:= startssa;
+    poptemp(pointersize);
+    endsimplesub(true);
+   end
+   else begin
+    sub1^.address:= pinternalsubdataty(ele.eledataabs(
+                          typ2^.recordmanagehandlers[mo_destroy]))^.address;
+   end;
   end;
  end;
 end;

@@ -452,6 +452,9 @@ begin
     include(h.flags,tf_needsini);
    end;
    if obf_except in d.cla.flags then begin
+    if infoclass.subattach.destroy = 0 then begin
+     errormessage(err_exceptmusthavedefaultdestruct,[]);
+    end;
     typ2:= typ1;
     while typ2^.h.ancestor > 0 do begin
      typ2:= ele.eledataabs(typ2^.h.ancestor);
@@ -460,7 +463,7 @@ begin
      include(infoclass.flags,icf_except);
     end
     else begin
-     errormessage(err_eceptmusthavevirtual,[]);
+     errormessage(err_exceptmusthavevirtual,[]);
     end;
    end;
    if (d.cla.intfindex > 0) and 
@@ -705,7 +708,7 @@ begin
 end;
 
 procedure resolveforwardprop(var item) forward;
-
+var testvar: classdefinfopoty;
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -760,6 +763,7 @@ begin
     classdefs1:= getclassinfoaddress(
             int1+infoclass.interfacecount*pointersize,infoclass.interfacecount);
     infoclass.defs:= classdefs1;
+testvar:= classdefinfopoty(getsegmentpo(classdefs1));
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
      header.allocs.size:= infoclass.allocsize;
      header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
@@ -777,7 +781,7 @@ begin
                                         parentinfoclass1^.virtualcount);
        end
        else begin
-        regclassdescendent(d.typ.typedata,h.ancestor);
+        regclassdescendant(d.typ.typedata,h.ancestor);
        end;
       end;
      end;
@@ -799,13 +803,22 @@ begin
        ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
       end;
      end;
-    end;
-//    if not (icf_class in infoclass.flags) then begin
-//     updatetypedatabyte(typ1^,infoclass.allocsize);
-//    end;
-    reversefieldchain(typ1);
-    if h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> [] then begin
-     createrecordmanagehandler(d.typ.typedata);
+     reversefieldchain(typ1);
+     if (h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
+                      (infoclass.subattach.destroy <> 0) then begin
+      createrecordmanagehandler(d.typ.typedata);
+     end;
+     typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
+                     //could be relocated by createrecordmanagehandler
+     with typ1^ do begin
+      if infoclass.subattach.destroy <> 0 then begin
+       header.defaultdestructor:= pinternalsubdataty(
+               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
+      end
+      else begin
+       header.defaultdestructor:= 0;
+      end;
+     end;
     end;
    end;
    if currentparamupdatechain >= 0 then begin

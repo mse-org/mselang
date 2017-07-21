@@ -85,7 +85,8 @@ type
             err_unknowndialect,err_toomanyarrayitems,err_moreitemsexpected,
             err_toomanyarraydimensions,err_isopnomatch,
             err_objectorclassvirtual,err_exceptclassexpected,
-            err_eceptmusthavevirtual,err_exceptclassinstanceexpected);
+            err_exceptmusthavevirtual,err_exceptclassinstanceexpected,
+            err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct);
             
  errorinfoty = record
   level: errorlevelty;
@@ -314,7 +315,11 @@ const
   (level: erl_error; message: 'Exception class expected'),
   (level: erl_error; message: 
              'Exception class must have "virtual" attribute in root object'),
-  (level: erl_error; message: 'Exception class instance expected')
+  (level: erl_error; message: 'Exception class instance expected'),
+  (level: erl_error; message: 
+     '"default" attribute can be used for paramless destructors only'),
+  (level: erl_error; message: 
+             'Exception class must have default destructor')
  );
 
 procedure message1(const atext: string; const values: array of const); 

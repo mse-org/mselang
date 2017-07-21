@@ -151,7 +151,7 @@ procedure resolveforwardtype(const atype: ptypedataty);
 procedure checkforwardtypeerrors();
 
 procedure regclass(const aclass: elementoffsetty);
-procedure regclassdescendent(const aclass: elementoffsetty;
+procedure regclassdescendant(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 
 procedure updateprogend(const aop: popinfoty);
@@ -1060,7 +1060,7 @@ var
  classdescendlist: linklistty;
  forwardtypes: linklistty;
  
-procedure regclassdescendent(const aclass: elementoffsetty;
+procedure regclassdescendant(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 var
  po1: pclassdescendinfoty;

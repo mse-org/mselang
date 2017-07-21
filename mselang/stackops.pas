@@ -5713,8 +5713,18 @@ end;
 procedure finiclass(const ref: ppointer); 
                          {$ifdef mse_inline}inline;{$endif}
 //todo: call destroy
+var
+ p1: pclassdefheaderty;
 begin
- intfreemem(ref^);
+ p1:= ppointer(ref^)^;
+ if p1^.defaultdestructor <> 0 then begin
+  ppointer(stackpush(sizeof(pointer)))^:= ref^;
+  docall(false);
+  cpu.pc:= startpo+p1^.defaultdestructor;
+ end
+ else begin
+  intfreemem(ref^);
+ end;
 end;
 
 procedure finirefsizear(ref: ppointer; const count: datasizety); 

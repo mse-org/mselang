@@ -105,12 +105,15 @@ type
 {$ifdef mse_compiler}
  pclassdefinfoty = targetptrintty;
  classdefinfopoty = ^classdefinfoty;
+ procpoty = targetptrintty;
 {$else}
  pclassdefinfoty = ^classdefinfoty;
+ procpoty = pointer;
 {$endif}
  classdefheaderty = record
   parentclass: pclassdefinfoty;
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
+  defaultdestructor: procpoty;
   allocs: allocsinfoty;
  end;
  pclassdefheaderty = ^classdefheaderty;

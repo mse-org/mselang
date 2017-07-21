@@ -110,7 +110,7 @@ type
  end;
 
  subattachty = record
-  ini,fini,afterconstruct,beforedestruct: elementoffsetty;
+  ini,fini,afterconstruct,beforedestruct,destroy: elementoffsetty;
  end;
 
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,
@@ -202,7 +202,8 @@ type
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
+ managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi,
+                mo_destroy);
  
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
                      ark_local,ark_managedtemp,ark_stack,ark_stackref);

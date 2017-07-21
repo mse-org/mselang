@@ -58,11 +58,13 @@ procedure handlevalueinherited();
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
                 dsf_instanceonstack,dsf_nooverloadcheck,
+                dsf_useobjssa,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
                 dsf_noinstancecopy,dsf_noparams,
                 dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
+                dsf_destroy,
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
@@ -2098,12 +2100,18 @@ var
  procedure doinstanceonstack();
  begin
   with info.contextstack[adestindex] do begin
-   instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
-   if dsf_usedestinstance in aflags then begin
-    instancessa:= d.dat.fact.instancessa; //for sf_method
+   if dsf_destroy in aflags then begin
+    instancessa:= aobjssa;
+    instancetype1:= ele.eledataabs(d.typ.typedata);
    end
    else begin
-    instancessa:= d.dat.fact.ssaindex; //for sf_method
+    instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if dsf_usedestinstance in aflags then begin
+     instancessa:= d.dat.fact.instancessa; //for sf_method
+    end
+    else begin
+     instancessa:= d.dat.fact.ssaindex; //for sf_method
+    end;
    end;
    if (sf_destructor in asub^.flags) then begin
     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
@@ -2373,11 +2381,16 @@ begin
          end;
         end;
        end;
-       if dsf_usedestinstance in aflags then begin
-        instancessa:= d.dat.fact.instancessa;
+       if dsf_destroy in aflags then begin
+        instancessa:= aobjssa;
        end
        else begin
-        instancessa:= d.dat.fact.ssaindex; 
+        if dsf_usedestinstance in aflags then begin
+         instancessa:= d.dat.fact.instancessa;
+        end
+        else begin
+         instancessa:= d.dat.fact.ssaindex;
+        end;
                             //for sf_method, invalid for constructor
        end;
       end;
@@ -2791,6 +2804,11 @@ begin
     end;
     if (sf_destructor in asub^.flags) and 
                      (aflags * [dsf_isinherited,dsf_nofreemem] = []) then begin
+     if dsf_destroy in aflags then begin
+      with insertitem(oc_push,topoffset,-1)^ do begin
+       par.imm.vsize:= pointersize; //compensate missing instance copy
+      end;
+     end;
      if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
       adref1.offset:= 0;
       adref1.ssaindex:= instancessa;

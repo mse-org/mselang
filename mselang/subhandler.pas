@@ -324,8 +324,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMSDEF');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  s.currentstatementflags:= b.flags;
+ with info do begin
+  with contextstack[s.stackindex] do begin
+   s.currentstatementflags:= b.flags;
+  end;
  end;
 end;
 
@@ -415,11 +417,26 @@ end;
 procedure handleuntypedparam();
 begin
 {$ifdef mse_debugparser}
- outhandle('PARAMDEF3');
+ outhandle('UTYPEDPARAM');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  d.kind:= ck_fieldtype;
-  d.typ:= sysdatatypes[st_none];
+ with info do begin
+  with contextstack[s.stacktop] do begin
+   d.kind:= ck_fieldtype;
+   d.typ:= sysdatatypes[st_none];
+  end;
+ (*
+  if contextstack[s.stacktop-1].d.kind = ck_ident then begin
+   with contextstack[contextstack[contextstack[
+                                s.stackindex].parent].parent-1] do begin
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_subdef then begin
+     internalerror(ie_handler,'20170720A');
+    end;
+   {$endif}
+    include(d.subdef.flags1,sf1_params);
+   end;
+  end;
+ *)
  end;
 end;
 
@@ -432,6 +449,21 @@ begin
   if contextstack[s.stacktop].d.kind <> ck_fieldtype then begin
 //  if s.stacktop-s.stackindex <> 2 then begin
    errormessage(err_typeidentexpected,[]);
+(*
+  end
+  else begin
+   if contextstack[s.stacktop-1].d.kind = ck_ident then begin
+    with contextstack[contextstack[contextstack[
+                                 s.stackindex].parent].parent-1] do begin
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_subdef then begin
+      internalerror(ie_handler,'20170720B');
+     end;
+    {$endif}
+     include(d.subdef.flags1,sf1_params);
+    end;
+   end;
+*)
   end;
  end;
 end;
@@ -900,6 +932,20 @@ begin
        end;
        tk_default: begin
         include(d.subdef.flags1,sf1_default);
+{
+        if not (sf_method in d.subdef.flags) then begin
+         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
+        end
+        else begin
+         if not (sf_destructor in d.subdef.flags) or 
+                       (sf1_params in d.subdef.flags1) then begin
+          errormessage(err_wrongdefaultdestructor,[]);
+         end
+         else begin
+          include(d.subdef.flags1,sf1_default);
+         end;
+        end;
+}
        end;
        else begin
         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
@@ -1984,6 +2030,16 @@ begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
       infoclass.subattach.fini:= ele.eledatarel(sub1);
       include(h.flags,tf_needsfini);
+     end;
+    end;
+   end;
+   if sf1_default in subflags1 then begin
+    if not (sf_destructor in subflags) or (sub1^.paramcount > 1) then begin
+     errormessage(err_wrongdefaultdestructor,[]);
+    end
+    else begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.destroy:= ele.eledatarel(sub1);
      end;
     end;
    end;

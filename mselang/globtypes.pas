@@ -252,7 +252,7 @@ type
 
                                                     //object sub attachments
  subflag1ty = (sf1_ini,sf1_fini,sf1_afterconstruct,sf1_beforedestruct,
-              sf1_default); //for destructor
+              {sf1_params,}sf1_default); //for destructor
  subflags1ty = set of subflag1ty;
  
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
