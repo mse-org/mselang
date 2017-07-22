@@ -2825,7 +2825,7 @@ begin
       writemanagedtypeop(mo1,instancetype1,adref1);
      end;
      with insertitem(oc_destroyclass,topoffset,-1)^ do begin
-      par.ssas1:= d.dat.fact.ssaindex;
+      par.ssas1:= instancessa;
       par.destroyclass.flags:= [];
      { 
       if dsf_nofreemem in aflags then begin

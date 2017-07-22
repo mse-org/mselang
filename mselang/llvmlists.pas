@@ -1789,10 +1789,10 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
 
 type
  classdefty = record
-  header: aggregateconstty;          //optional       optional
-  //parentclass,interfaceparent,allocs,virtualmethods,interfaces
-  //0           1               2      3              4
-  items: array[0..4] of int32; //constlist ids
+  header: aggregateconstty;                       //optional       optional
+  //parentclass,interfaceparent,defaultdestructor,allocs,virtualmethods,interfaces
+  //0           1               2                 3              4
+  items: array[0..5] of int32; //constlist ids
  end;
 var
  pd: pint32;
@@ -1803,6 +1803,7 @@ var
  i1: int32;
  ps1,ps,pe: popaddressty;
  po1: pointer;
+ pop1: popinfoty;
 begin
  if aclassdef^.header.parentclass < 0 then begin
   classdef1.items[0]:= nullpointer;
@@ -1819,13 +1820,26 @@ begin
                     getclassid(aclassdef^.header.interfaceparent)).listid;
   end;
  end;
+ if aclassdef^.header.defaultdestructor = 0 then begin
+  classdef1.items[2]:= nullpointer;
+ end
+ else begin
+  pop1:= getoppo(aclassdef^.header.defaultdestructor);
+ {$ifdef mse_checkinternalerror}
+  if pop1^.op.op <> oc_subbegin then begin
+   internalerror(ie_llvmlist,'20170721A');
+  end;
+ {$endif}
+  classdef1.items[2]:= addpointercast(pop1^.par.subbegin.globid).listid;
+ end;
  types1[0]:= pointertype;
  types1[1]:= pointertype;
+ types1[2]:= pointertype;
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
- classdef1.items[2]:= co1.listid;
- types1[2]:= co1.typeid;             
+ classdef1.items[3]:= co1.listid;
+ types1[3]:= co1.typeid;             
 
- classdef1.header.header.itemcount:= 3;
+ classdef1.header.header.itemcount:= 4;
  
  ps:= @aclassdef^.virtualmethods;
  pd:= pointer(ps);
@@ -1838,9 +1852,9 @@ begin
    inc(ps);
   end;
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
-  classdef1.items[3]:= co1.listid;
-  types1[3]:= co1.typeid;
-  classdef1.header.header.itemcount:= 4;
+  classdef1.items[4]:= co1.listid;
+  types1[4]:= co1.typeid;
+  classdef1.header.header.itemcount:= 5;
  end;
  if aintfcount > 0 then begin
   po1:= getsegmentbase(seg_intf);
@@ -1859,30 +1873,6 @@ begin
  classdef1.header.header.typeid:= ftypelist.addstructvalue(
                                   classdef1.header.header.itemcount,@types1);
  result:= addaggregate(@classdef1); 
-{
- poa:= virtualsubs;
- pob:= virtualsubconsts;
- if virtualcount > 0 then begin
-  pe:= poa+virtualcount;
-  while poa < pe do begin
-   pob^:= addpointercast(poa^).listid;
-   inc(poa);
-   inc(pob);
-  end;
-  co1:= addpointerarray(virtualcount,virtualsubconsts);
-  classdef1.header.header.typeid:= 
-               ftypelist.addstructvalue([ftypelist.fclassdef,co1.typeid]);
-  classdef1.virtualtable:= co1.listid;
-  classdef1.header.header.itemcount:= 2;
- end
- else begin
-  classdef1.header.header.typeid:= 
-               ftypelist.addstructvalue([ftypelist.fclassdef]);
-  classdef1.header.header.itemcount:= 1;
- end;
- classdef1.info:= addvalue(aclassdef^.header,sizeof(aclassdef^.header)).listid;
- result:= addaggregate(@classdef1); 
-}
 end;
 {
 function tconsthashdatalist.addintfitem(const aitem: intfitemconstty): int32;
