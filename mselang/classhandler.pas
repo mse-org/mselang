@@ -451,6 +451,7 @@ begin
                       //pointer to virtual methodtable
     include(h.flags,tf_needsini);
    end;
+   {
    if obf_except in d.cla.flags then begin
     if infoclass.subattach.destroy = 0 then begin
      errormessage(err_exceptmusthavedefaultdestruct,[]);
@@ -466,6 +467,7 @@ begin
      errormessage(err_exceptmusthavevirtual,[]);
     end;
    end;
+   }
    if (d.cla.intfindex > 0) and 
                not (icf_virtual in infoclass.flags) then begin
     errormessage(err_missingobjectattachment,['virtual']);
@@ -721,7 +723,7 @@ var
  int1: integer;
  po1: pdataoffsty;
 // interfacealloc: int32;
- typ1: ptypedataty;
+ typ1,typ2: ptypedataty;
  p1: pparamupdatechainty;
 begin
 {$ifdef mse_debugparser}
@@ -732,6 +734,21 @@ begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
    currenttypedef:= d.typ.typedata;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   if obf_except in contextstack[s.stackindex].d.cla.flags then begin
+    if typ1^.infoclass.subattach.destroy = 0 then begin
+     errormessage(err_exceptmusthavedefaultdestruct,[]);
+    end;
+    typ2:= typ1;
+    while typ2^.h.ancestor > 0 do begin
+     typ2:= ele.eledataabs(typ2^.h.ancestor);
+    end;
+    if icf_virtual in typ2^.infoclass.flags then begin
+     include(typ1^.infoclass.flags,icf_except);
+    end
+    else begin
+     errormessage(err_exceptmusthavevirtual,[]);
+    end;
+   end;
    s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
    with typ1^ do begin
     exclude(h.flags,tf_sizeinvalid);
