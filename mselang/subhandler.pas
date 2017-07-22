@@ -354,6 +354,7 @@ begin
 //   d.params.tempsize:= 0;
    b.flags:= s.currentstatementflags;
    include(s.currentstatementflags,stf_params);
+   exclude(s.currentstatementflags,stf_cutvalueident);
   end;
  end;
 end;

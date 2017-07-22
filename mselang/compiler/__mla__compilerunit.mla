@@ -1547,9 +1547,18 @@ begin
  until po1 = nil;
 end;
 *)
-procedure finiclass(const instance: pointer);
+
+procedure finivirtclass(const instance: pointer);
+var
+ p1: pclassdefinfoty;
 begin
- freemem(instance); //todo: class.destroy
+ p1:= ppointer(instance)^;
+ if p1^.header.defaultdestructor <> nil then begin
+  p1^.header.defaultdestructor(instance);
+ end
+ else begin
+  freemem(instance); //todo: class.destroy
+ end;
 end;
 
 procedure exceptioncleanup(reason: _Unwind_Reason_Code;
@@ -1570,7 +1579,7 @@ begin  //todo: handle out of memory situation
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
  freemem(po1);
- finiclass(data);
+ finivirtclass(data);
  exitcode:= exco_unhandledexception; //no handler found
  halt();
 end;
@@ -1578,7 +1587,7 @@ end;
 procedure __mla__finiexception(const data: pointer);
 begin
  with pexceptinfoty(data)^ do begin
-  finiclass(data);
+ finivirtclass(data);
  end;
  freemem(data);
 end;

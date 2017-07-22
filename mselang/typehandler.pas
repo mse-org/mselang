@@ -808,10 +808,11 @@ begin
     end;
     dosub(s.stackindex-1,ele.eledataabs(typ1^.infoclass.subattach.destroy),
              s.stacktop,0,[dsf_instanceonstack,dsf_noparams,
-               dsf_useobjssa,dsf_usedestinstance,dsf_attach,dsf_destroy],i1);
+               dsf_useobjssa,dsf_usedestinstance,dsf_attach,dsf_destroy,
+                                                     dsf_noinstancecopy],i1);
  //   startssa:= info.s.ssa.nextindex-1;
  //   baseadssa:= startssa;
-    poptemp(pointersize);
+//    poptemp(pointersize);
     endsimplesub(true);
    end
    else begin

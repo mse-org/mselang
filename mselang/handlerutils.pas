@@ -1502,7 +1502,7 @@ end;
 procedure poptemp(const asize: int32);
 begin
  with additem(oc_pop)^ do begin
-  par.imm.vsize:= asize;
+  par.imm.vsize:= alignsize(asize);
  end;
 end;
 

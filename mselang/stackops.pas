@@ -5720,7 +5720,7 @@ begin
  if p1^.defaultdestructor <> 0 then begin
   ppointer(stackpush(sizeof(pointer)))^:= ref^;
   docall(false);
-  cpu.pc:= startpo+p1^.defaultdestructor;
+  cpu.pc:= startpo+p1^.defaultdestructor-1;
  end
  else begin
   intfreemem(ref^);

@@ -2085,10 +2085,16 @@ var
  begin
   if asub <> 0 then begin
    dosub(adestindex,ele.eledataabs(asub),paramstart,0,
-            [dsf_instanceonstack,dsf_attach],instancessa);
+            [dsf_instanceonstack,dsf_attach] + 
+            aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],instancessa);
    if co_mlaruntime in info.o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
-     par.imm.vsize:= pointersize; //compensate stackpop
+     if dsf_destroy in aflags then begin
+      par.imm.vsize:= 2*pointersize; //compensate stackpop
+     end
+     else begin
+      par.imm.vsize:= pointersize; //compensate stackpop
+     end;
     end;
    end;
   end;
@@ -2112,9 +2118,9 @@ var
     else begin
      instancessa:= d.dat.fact.ssaindex; //for sf_method
     end;
-    if (sf_destructor in asub^.flags) then begin
-     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
-    end;
+   end;
+   if (sf_destructor in asub^.flags) then begin
+    callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
    end;
   end;
  end;
@@ -2150,6 +2156,7 @@ begin
 //  pe:= @contextstack[s.stacktop];
   ele.checkcapacity(ek_type,1,asub); //for anonymus method def
   destoffset:= adestindex-s.stackindex;
+  topoffset:= s.stacktop-s.stackindex;
   with contextstack[adestindex] do begin //classinstance, result,
                                          //classdefreturn for ini/fini
    if dsf_instanceonstack in aflags then begin
@@ -3463,6 +3470,7 @@ begin
        goto endlab; //todo: stop error earlier
       end;
       donotfound(pocontext1,pvardataty(po2)^.vf.typ); 
+{
                                   //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and
                            (d.kind in datacontexts) then begin
@@ -3479,6 +3487,23 @@ begin
         end;
        end;     
       end;
+}
+     end;
+     if (stf_params in s.currentstatementflags) and
+                          (pocontext1^.d.kind in datacontexts) then begin
+      if getvalue(pocontext1,das_none) then begin
+       po3:= ele.eledataabs(pocontext1^.d.dat.datatyp.typedata);
+       if (pocontext1^.d.dat.datatyp.indirectlevel = 0) and 
+                             (po3^.h.kind in [dk_sub,dk_method]) then begin
+        include(subflags,dsf_indirect);
+        if po3^.h.kind = dk_method then begin
+         include(subflags,dsf_instanceonstack);
+        end;
+        s.stackindex:= getstackindex(pocontext1);
+        dosub(s.stackindex,ele.eledataabs(po3^.infosub.sub),
+                                        paramstart,paramco,subflags);
+       end;
+      end;     
      end;
     end;
     ek_const: begin
@@ -3492,13 +3517,10 @@ begin
      if not checknoclassmethod(po1) then begin
       goto endlab;
      end;
-     if isgetfact then begin
-      i1:= s.stackindex;
-     end
-     else begin
-      i1:= s.stackindex-1;
+     if not isgetfact then begin
+      dec(s.stackindex);
      end;
-     dosub(i1,psubdataty(po2),paramstart,paramco,subflags);
+     dosub(s.stackindex,psubdataty(po2),paramstart,paramco,subflags);
     end;
     ek_sysfunc: begin //todo: handle ff_address
      with contextstack[s.stackindex] do begin
