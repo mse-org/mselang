@@ -4,11 +4,17 @@ type
  t1 = class[virtual,except]
   public
    constructor create();
+   destructor destroy()[default];
  end;
 
 constructor t1.create();
 begin
 end;
+
+destructor t1.destroy();
+begin
+end;
+
 begin
  exitcode:= 123;
  raise t1.create();

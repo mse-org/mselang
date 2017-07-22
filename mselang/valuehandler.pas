@@ -2085,7 +2085,7 @@ var
  begin
   if asub <> 0 then begin
    dosub(adestindex,ele.eledataabs(asub),paramstart,0,
-                            [dsf_instanceonstack,dsf_attach],instancessa);
+            [dsf_instanceonstack,dsf_attach],instancessa);
    if co_mlaruntime in info.o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
      par.imm.vsize:= pointersize; //compensate stackpop
@@ -2112,9 +2112,9 @@ var
     else begin
      instancessa:= d.dat.fact.ssaindex; //for sf_method
     end;
-   end;
-   if (sf_destructor in asub^.flags) then begin
-    callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+    if (sf_destructor in asub^.flags) then begin
+     callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+    end;
    end;
   end;
  end;

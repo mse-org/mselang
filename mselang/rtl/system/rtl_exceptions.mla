@@ -12,9 +12,10 @@ interface
 uses
  rtl_base;
 type
-
+{$internaldebug on}
  cexception = class(cbase)[except]
   constructor create(const message: string8);
+  destructor destroy()[virtual,default];
   property message: string8 read fmessage write fmessage;
 
   protected
@@ -26,6 +27,11 @@ implementation
 constructor cexception.create(const message: string8);
 begin
  fmessage:= message;
+end;
+
+destructor cexception.destroy();
+begin
+ //dummy
 end;
 
 end.

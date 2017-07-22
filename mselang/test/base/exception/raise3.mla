@@ -4,7 +4,7 @@ type
  tc = class[virtual,except]
   public
    constructor create();
-   destructor destroy();
+   destructor destroy()[default];
  end;
 
 constructor tc.create();
