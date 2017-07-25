@@ -298,6 +298,10 @@ type
  blockinfoty = record
   blockidbefore: int32;
   landingpad: int32; //ssa
+  case contextkindty of
+   ck_exceptblock: (
+    casechain: listadty;
+   );
  end;
  
  identinfoty = record
@@ -424,6 +428,7 @@ type
  
  statementinfoty = record
 //  flags: statementflagsty;
+  excepttype: elementoffsetty;
  end;
 
  controlkindty = (cok_none,cok_loop,cok_for);

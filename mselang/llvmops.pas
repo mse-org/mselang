@@ -820,6 +820,15 @@ begin
  end;
 end;
 
+procedure ifnotop();
+begin
+ with pc^.par do begin
+  bcstream.emitbrop(bcstream.ssaval(ssas1),
+                      getoppo(opaddress.opaddress)^.par.opaddress.bbindex,
+                                                            opaddress.bbindex);
+ end;
+end;
+
 procedure whileop();
 begin
  with pc^.par do begin
@@ -4293,13 +4302,26 @@ begin
  end;
 end;
 
-procedure finiexceptionop();
+procedure pushexceptionop();
 begin
  with pc^.par do begin
   bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
                                                     bcstream.constval(0));//2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
   bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+ end;
+end;
+
+procedure finiexceptionop();
+begin
+ with pc^.par do begin
+ {
+  bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
+                                                    bcstream.constval(0));//2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
+  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+  }
+  pushexceptionop();
   callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
 
 {
@@ -4471,6 +4493,7 @@ const
   nopssa = 1;
   labelssa = 0;
   ifssa = 0;
+  ifnotssa = 0;
   whilessa = 0;
   untilssa = 0;
   decloop32ssa = 1;
@@ -5021,6 +5044,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 1;
+  pushexceptionssa = 4;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;

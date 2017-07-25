@@ -41,7 +41,7 @@ procedure handleraise();
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
- segmentutils,opglob,unithandler;
+ segmentutils,opglob,unithandler,classhandler;
  
 procedure handlefinallyexpected();
 begin
@@ -140,7 +140,10 @@ begin
  end;
  tryhandle();
  with info do begin
-  contextstack[s.stackindex].d.kind:= ck_exceptblock;
+  with contextstack[s.stackindex] do begin
+   d.kind:= ck_exceptblock;
+   d.block.casechain:= 0;
+  end;
   with contextstack[s.stackindex-1] do begin
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
    opmark.address:= opcount-2; //gotoop
@@ -149,26 +152,70 @@ begin
 end;
 
 procedure handleexcept();
+var
+ i1: int32;
+ p1: pclasspendingitemty;
+ op1: popinfoty;
+ nextcaseop: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPT');
 {$endif}
- with info,contextstack[s.stackindex-1] do begin
-  with additem(oc_finiexception)^ do begin
-   par.finiexception.landingpadalloc:= 
-                    contextstack[s.stackindex].d.block.landingpad;
+ with info do begin
+  with contextstack[s.stackindex] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_exceptblock then begin
+    internalerror(ie_handler,'20170725A');
+   end;
+  {$endif}
+   if d.block.casechain <> 0 then begin
+    addlabel();
+    nextcaseop:= opcount;
+    i1:= d.block.casechain;
+    while true do begin
+     p1:= getlistitem(pendingclassitems,i1);
+     op1:= getoppo(p1^.exceptcase.startop,4);
+    {$ifdef mse_checkinternalerror}
+     if op1^.op.op <> oc_gotofalse then begin
+      internalerror(ie_handler,'20170725C');
+     end;
+    {$endif}
+     op1^.par.opaddress.opaddress:= nextcaseop - 1;
+     nextcaseop:= p1^.exceptcase.startop;
+     i1:= p1^.header.next;
+     if i1 <> 0 then begin //not first
+      op1:= getoppo(p1^.exceptcase.startop,-2);
+     {$ifdef mse_checkinternalerror}
+      if op1^.op.op <> oc_goto then begin
+       internalerror(ie_handler,'20170725C');
+      end;
+     {$endif}
+      op1^.par.opaddress.opaddress:= opcount-1;
+     end
+     else begin
+      break;
+     end;
+    end;
+    deletelistchain(pendingclassitems,d.block.casechain);
+   end;
   end;
-  getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
-                                      //skip exception handling code
-  addlabel();
-{
-  with additem(oc_finiexception)^ do begin
-   par.finiexception.landingpadalloc:= 
-                    contextstack[s.stackindex].d.block.landingpad;
+  with contextstack[s.stackindex-1] do begin
+   with additem(oc_finiexception)^ do begin
+    par.finiexception.landingpadalloc:= 
+                     contextstack[s.stackindex].d.block.landingpad;
+   end;
+   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
+                                       //skip exception handling code
+   addlabel();
+ {
+   with additem(oc_finiexception)^ do begin
+    par.finiexception.landingpadalloc:= 
+                     contextstack[s.stackindex].d.block.landingpad;
+   end;
+ }
+ //  dec(s.stackindex,1);
   end;
-}
-//  dec(s.stackindex,1);
- end; 
+ end;
  tryexit();
 end;
 

@@ -25,6 +25,8 @@
   (ssa: labelssa; proc: @labelop; flags: []),           
 //oc_if
   (ssa: ifssa; proc: @ifop; flags: []), 
+//oc_ifnot
+  (ssa: ifnotssa; proc: @ifnotop; flags: []), 
 //oc_while
   (ssa: whilessa; proc: @whileop; flags: []), 
 //oc_until
@@ -74,6 +76,10 @@
 //  (ssa: initclassssa; proc: @initclassop; flags: []), 
 //oc_destroyclass
   (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
+//oc_getclassdef,
+  (ssa: getclassdefssa; proc: @getclassdefop; flags: []), 
+//oc_classis,
+  (ssa: classisssa; proc: @classisop; flags: []), 
 
 //oc_beginparse
   (ssa: beginparsessa; proc: @beginparseop; flags: []), 
@@ -642,10 +648,6 @@
   (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 //oc_setin,
   (ssa: setinssa; proc: @setinop; flags: []), 
-//oc_getclassdef,
-  (ssa: getclassdefssa; proc: @getclassdefop; flags: []), 
-//oc_classis,
-  (ssa: classisssa; proc: @classisop; flags: []), 
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 
@@ -1096,6 +1098,8 @@
   (ssa: pushcpucontextssa; proc: @pushcpucontextop; flags: []), 
 //oc_popcpucontext
   (ssa: popcpucontextssa; proc: @popcpucontextop; flags: []), 
+//oc_pushexception
+  (ssa: pushexceptionssa; proc: @pushexceptionop; flags: []), 
 //oc_finiexception
   (ssa: finiexceptionssa; proc: @finiexceptionop; flags: []), 
 //oc_continueexception

@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=9
   (
   kind=1
@@ -3631,7 +3631,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72861DC
+    ao=An unhandled exception occured at $B7240144
     ae=
     aec=123
     ie=0
@@ -7865,7 +7865,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,object
+  a=0,665,4,object
   c=26
    (
    kind=1
@@ -8569,8 +8569,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,object4
-   teststate=2
+   a=0,648,1,object4
+   teststate=1
    path=object4.mla
    comment=
    cc=${mlc}
@@ -8583,16 +8583,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=2
-   ao=0
-   ae=0
+   cr=0
+   ao=abcabc
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,2,object4 llvm
-   teststate=2
+   a=0,648,1,object4 llvm
+   teststate=1
    path=object4.mla
    comment=
    cc=${mlc_llvm}
@@ -8605,9 +8605,9 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=2
-   ao=0
-   ae=0
+   cr=0
+   ao=abcabc
+   ae=
    aec=123
    ie=0
    )
@@ -8963,7 +8963,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=object/
   comment=
   cc=
@@ -8981,7 +8981,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=32
    (
    kind=1
@@ -10605,8 +10605,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classfield
-   teststate=2
+   a=0,648,1,classfield
+   teststate=1
    path=classfield.mla
    comment=
    cc=${mlc}
@@ -10619,16 +10619,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=2
-   ao=0
-   ae=0
+   cr=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,2,classfield llvm
-   teststate=2
+   a=0,648,1,classfield llvm
+   teststate=1
    path=classfield.mla
    comment=
    cc=${mlc_llvm}
@@ -10641,9 +10641,9 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=2
-   ao=0
-   ae=0
+   cr=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -10955,7 +10955,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -11593,7 +11593,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

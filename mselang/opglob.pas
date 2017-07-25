@@ -96,6 +96,7 @@ type
 
   oc_label,          //controlops
   oc_if,
+  oc_ifnot,
   oc_while,  //todo: unify with if
   oc_until,  //todo: unify with if
   oc_decloop32,
@@ -122,6 +123,8 @@ type
   oc_initobject,
 //  oc_initclass,
   oc_destroyclass,
+  oc_getclassdef,
+  oc_classis,
 
   oc_beginparse,
   oc_endparse,
@@ -386,8 +389,6 @@ type
 }
   oc_setcontains,
   oc_setin,
-  oc_getclassdef,
-  oc_classis,
   oc_storesegnil,
   oc_storelocnil,
   oc_storelocindinil,
@@ -631,6 +632,7 @@ type
 
   oc_pushcpucontext,
   oc_popcpucontext,
+  oc_pushexception,
   oc_finiexception,
   oc_continueexception,
   
@@ -1144,7 +1146,7 @@ const
   oc_cmpjmploimm,
   oc_cmpjmpgtimm,
   oc_cmpjmploeqimm,
-  oc_if,
+  oc_if,oc_ifnot,
   oc_while,
   oc_until,
   oc_decloop32,
@@ -1174,18 +1176,8 @@ const
   oc_writeenum,
   
   oc_cmpstring,
-//  oc_call,
-//  oc_callfunc,
-//  oc_callout,
-//  oc_callfuncout,
-//  oc_callvirt,
-//  oc_callintf,
   oc_virttrampoline,
 
-//  oc_callindi,
-//  oc_callfuncindi,
-
-//  oc_initclass,
   oc_zeromem,
   oc_getobjectmem,
   oc_getobjectzeromem,
@@ -1205,7 +1197,7 @@ type
   ssas1: int32;//updated by op insertions
   ssas2: int32;//updated by op insertions
   case opcodety of 
-   oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_while,oc_until,
+   oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_ifnot,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
    oc_pushcpucontext,oc_popcpucontext: (
     opaddress: labty; //first!
@@ -1425,7 +1417,7 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
-   oc_finiexception:(
+   oc_finiexception,oc_pushexception:(
     finiexception: finiexceptionty;
    );
    oc_getvirtsubad,oc_getintfmethod:(

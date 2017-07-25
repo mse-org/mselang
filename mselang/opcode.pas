@@ -1132,6 +1132,7 @@ begin
    if offset = 0 then begin
     break;
    end;
+   inc(p1);
    dec(offset);
   end;
  end
@@ -1146,6 +1147,7 @@ begin
     if offset = 0 then begin
      break;
     end;
+    dec(p1);
     inc(offset);
    end;
   end

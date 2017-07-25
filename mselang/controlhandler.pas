@@ -66,7 +66,7 @@ implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
  opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
- gramse,parser;
+ gramse,parser,listutils,classhandler;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -821,6 +821,7 @@ begin
         b1:= true;
        end;
       end;
+      contextstack[s.stackindex].d.statement.excepttype:= d.typ.typedata;
      end;
      if not b1 then begin
       errormessage(err_exceptclassexpected,[]);
@@ -834,11 +835,53 @@ begin
 end;
 
 procedure handleexceptlabel();
+var
+ i1,i2: int32;
+ typ1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPTLABEL');
 {$endif}
  with info do begin
+  with contextstack[contextstack[contextstack[s.stackindex].parent].
+                                                          parent] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_exceptblock then begin
+    internalerror(ie_handler,'20170725B');
+   end;
+  {$endif}
+   if d.block.casechain <> 0 then begin
+    addcontrolitem(oc_goto); 
+     //jump to except end, address set later     //op -2
+   end;
+   addlabel();                                   //op -1
+   with pclasspendingitemty(addlistitem(pendingclassitems,
+                                           d.block.casechain))^ do begin
+    exceptcase.startop:= opcount;
+   end;
+   with additem(oc_pushexception)^.par do begin  //op 0
+    finiexception.landingpadalloc:= d.block.landingpad;
+    i1:= ssad;
+   end;
+   with additem(oc_getclassdef)^.par do begin    //op 1
+    ssas1:= i1;
+    setimmint32(0,imm);
+    i1:= ssad;
+   end;                                          //op 2
+   with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
+    memop.segdataaddress.a:= ptypedataty(ele.eledataabs(
+          contextstack[s.stackindex].d.statement.excepttype))^.infoclass.defs;
+    memop.segdataaddress.offset:= 0;
+    memop.t:= bitoptypes[das_pointer];
+    i2:= ssad;
+   end;
+   with additem(oc_classis)^.par do begin        //op 3
+    ssas1:= i1;
+    ssas2:= i2;
+   end;
+   addcontrolitem(oc_gotofalse)                  //op 4
+                      //jump to next case label, address set later
+  end;
  end;
 end;
 

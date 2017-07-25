@@ -1557,7 +1557,7 @@ begin
   p1^.header.defaultdestructor(instance);
  end
  else begin
-  freemem(instance); //todo: class.destroy
+  freemem(instance);
  end;
 end;
 

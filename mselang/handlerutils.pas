@@ -4381,7 +4381,7 @@ begin
                           inttostr(d.shortcutexp.shortcuts));
       end;
      end;
-     writeln('L'+inttostr(start.line+1)+':''',
+     writeln(' L'+inttostr(start.line+1)+':''',
               psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
     end
     else begin

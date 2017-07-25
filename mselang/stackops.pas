@@ -693,6 +693,13 @@ begin
  end;
 end;
 
+procedure ifnotop();
+begin
+ if vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure whileop();
 begin
  if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
@@ -6530,11 +6537,26 @@ begin
 }
 end;
 
+procedure pushexceptionop();
+var
+ p1: pointer;
+begin
+ with exceptioninfo do begin
+  if exceptobj <> nil then begin
+   p1:= exceptobj;
+  end
+  else begin
+   p1:= nil;
+  end;
+  ppointer(stackpush(sizeof(pointer)))^:= p1;
+ end;
+end;
+
 procedure finiexceptionop();
 begin
  with exceptioninfo do begin
   if exceptobj <> nil then begin
-   finiclass(@exceptioninfo.exceptobj);
+   finiclass(@exceptobj);
    exceptobj:= nil;  
   end;
  end;
@@ -6738,6 +6760,7 @@ const
   nopssa = 0;
   labelssa = 0;
   ifssa = 0;
+  ifnotssa = 0;
   whilessa = 0;
   untilssa = 0;
   decloop32ssa = 0;
@@ -7290,6 +7313,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 0;
+  pushexceptionssa = 0;
   finiexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 0;

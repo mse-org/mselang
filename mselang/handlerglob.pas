@@ -146,12 +146,16 @@ type
   resinfo: dataoffsty;
   propele: elementoffsetty;
  end;
+ exceptcasety = record
+  startop: dataoffsty;
+ end;
   
  classpendingitemty = record
   header: linkheaderty;
   case int32 of
    0: (selfobjparam: selfobjparamty);
    1: (forwardprop: forwardpropty);
+   2: (exceptcase: exceptcasety);
  end;
  pclasspendingitemty = ^classpendingitemty;
 
