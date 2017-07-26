@@ -86,7 +86,8 @@ type
             err_toomanyarraydimensions,err_isopnomatch,
             err_objectorclassvirtual,err_exceptclassexpected,
             err_exceptmusthavevirtual,err_exceptclassinstanceexpected,
-            err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct);
+            err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
+            err_exceptvarexpected,err_noexceptavailable);
             
  errorinfoty = record
   level: errorlevelty;
@@ -319,7 +320,11 @@ const
   (level: erl_error; message: 
      '"default" attribute can be used for paramless destructors only'),
   (level: erl_error; message: 
-             'Exception class must have default destructor')
+             'Exception class must have default destructor'),
+  (level: erl_error; message: 
+             'Exception class instance variable expected'),
+  (level: erl_error; message: 
+             'No exception object available')
  );
 
 procedure message1(const atext: string; const values: array of const); 

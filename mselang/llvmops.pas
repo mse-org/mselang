@@ -2499,6 +2499,14 @@ begin
  end;
 end;
 
+procedure checkclasstypeop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_checkclasstype,true,[bcstream.ssaval(ssas1),
+                                                bcstream.ssaval(ssas2)]);
+ end;
+end;
+
 procedure storesegnilop();
 var
  str1: shortstring;
@@ -4784,6 +4792,7 @@ const
   setinssa = 3;
   getclassdefssa = 1;
   classisssa = 1;
+  checkclasstypessa = 1;
 
   storesegnilssa = 0;
   storelocindinilssa = 1;

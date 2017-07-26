@@ -2986,20 +2986,19 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= po1;
 end;
 
-procedure classisop();
+function classis(): boolean;
 var
  po1,po2: pointer;
- b1: boolean;
  i1: targetptrintty;
 begin
  with cpu.pc^.par do begin
   po2:= ppointer(stackpop(sizeof(vpointerty)))^;
   po1:= ppointer(stackpop(sizeof(vpointerty)))^;
-  b1:= false;
+  result:= false;
   if (po1 <> nil) and (po2 <> nil) then begin
    while true do begin
     if po1 = po2 then begin
-     b1:= true;
+     result:= true;
      break;
     end;
     i1:= classdefinfopoty(po1)^.header.parentclass;
@@ -3010,7 +3009,35 @@ begin
    end;
   end;
  end;
+end;
+
+procedure classisop();
+var
+ b1: boolean;
+begin
+ b1:= classis();
  pboolean(stackpush(sizeof(vbooleanty)))^:= b1;
+end;
+
+procedure checkclasstypeop();
+var
+ p1: pointer;
+ b1: boolean;
+begin
+ p1:= ppointer(cpu.stack-2*sizeof(pointer))^; //instance
+ if p1 = nil then begin
+  stackpop(sizeof(pointer));
+ end
+ else begin
+  ppointer(cpu.stack-2*sizeof(pointer))^:= ppointer(p1)^; //classinfo
+  b1:= classis();
+  if b1 then begin
+   ppointer(stackpush(sizeof(pointer)))^:= p1;
+  end
+  else begin
+   ppointer(stackpush(sizeof(pointer)))^:= nil;
+  end;
+ end;
 end;
 
 procedure addfloop();
@@ -7043,6 +7070,7 @@ const
   setinssa = 0;
   getclassdefssa = 0;
   classisssa = 0;
+  checkclasstypessa = 0;
 
   storesegnilssa = 0;
   storelocindinilssa = 0;

@@ -125,6 +125,7 @@ type
   oc_destroyclass,
   oc_getclassdef,
   oc_classis,
+  oc_checkclasstype,
 
   oc_beginparse,
   oc_endparse,

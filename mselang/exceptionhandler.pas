@@ -37,11 +37,12 @@ procedure handlefinally();
 procedure handleexceptentry();
 procedure handleexcept();
 procedure handleraise();
+procedure handlegetexceptobj(const paramco: int32);
 
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
- segmentutils,opglob,unithandler,classhandler;
+ segmentutils,opglob,unithandler,classhandler,syssubhandler;
  
 procedure handlefinallyexpected();
 begin
@@ -235,6 +236,69 @@ begin
   end;
  end;
  tryexit();
+end;
+
+procedure handlegetexceptobj(const paramco: int32);
+var
+ i1,i2: int32;
+ typ1: ptypedataty;
+ b1: boolean;
+ ptop: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('GETEXCEPTOBJ');
+{$endif}
+ with info do begin
+  if checkparamco(1,paramco) then begin
+   b1:= false;
+   ptop:= @contextstack[s.stacktop];
+   with ptop^ do begin
+    if (d.kind in datacontexts) and (d.dat.datatyp.indirectlevel = 1) then begin
+     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (typ1^.h.kind = dk_class) and 
+                   (icf_except in typ1^.infoclass.flags) then begin
+      b1:= true;
+      i1:= s.stackindex-1;
+      while i1 >= 0 do begin
+       if contextstack[i1].d.kind = ck_exceptblock then begin
+        break;
+       end;
+       dec(i1);
+      end;
+      if i1 < 0 then begin
+       errormessage(err_noexceptavailable,[]);
+      end
+      else begin
+       if getaddress(ptop,true) then begin
+        with additem(oc_pushexception)^.par do begin
+         finiexception.landingpadalloc:= contextstack[i1].d.block.landingpad;
+         i1:= ssad;
+        end;
+        with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
+         memop.segdataaddress.a:= typ1^.infoclass.defs;
+         memop.segdataaddress.offset:= 0;
+         memop.t:= bitoptypes[das_pointer];
+         i2:= ssad;
+        end;
+        with additem(oc_checkclasstype)^.par do begin //returns nil if no match
+         ssas1:= i1;
+         ssas2:= i2;
+         i1:= ssad;
+        end;
+        with additem(oc_popindirectpo)^.par do begin
+         ssas2:= ptop^.d.dat.fact.ssaindex;
+         ssas1:= i1;
+        end;
+       end;
+      end;
+     end;
+    end;
+   end;
+   if not b1 then begin
+    errormessage(err_exceptvarexpected,[]);
+   end;
+  end;
+ end;
 end;
 
 procedure handleraise();

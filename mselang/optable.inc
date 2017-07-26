@@ -80,6 +80,8 @@
   (ssa: getclassdefssa; proc: @getclassdefop; flags: []), 
 //oc_classis,
   (ssa: classisssa; proc: @classisop; flags: []), 
+//oc_checkclasstype,
+  (ssa: checkclasstypessa; proc: @checkclasstypeop; flags: []), 
 
 //oc_beginparse
   (ssa: beginparsessa; proc: @beginparseop; flags: []), 

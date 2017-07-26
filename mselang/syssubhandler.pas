@@ -18,7 +18,7 @@ unit syssubhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,handlerglob,opglob,managedtypes,msetypes;
+ globtypes,handlerglob,opglob,managedtypes,msetypes,exceptionhandler;
 type
  syssubty = procedure (const paramco: int32);
  
@@ -76,8 +76,10 @@ const
   @handlesqrt,@handlefloor,@handleround,@handlenearbyint,
   //syf_truncint32,syf_truncint64
   @handletruncint32,@handletruncint64,
-  //syf_trunccard32,syf_trunccard64
-  @handletrunccard32,@handletrunccard64
+  //syf_trunccard32,syf_trunccard64,
+  @handletrunccard32,@handletrunccard64,
+  //syf_getexceptobj
+  @handlegetexceptobj
  );
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1455,7 +1457,8 @@ const
    (name: 'truncint32'; data: (func: syf_truncint32)),
    (name: 'truncint64'; data: (func: syf_truncint64)),
    (name: 'trunccard32'; data: (func: syf_trunccard32)),
-   (name: 'trunccard64'; data: (func: syf_trunccard64))   
+   (name: 'trunccard64'; data: (func: syf_trunccard64)),
+   (name: 'getexceptobj'; data: (func: syf_getexceptobj))
   );
 
 procedure init();
