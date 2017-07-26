@@ -928,6 +928,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'exceptlabel');
+ exceptlabel1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'exceptlabel1');
  assignmentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5444,7 +5449,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @statement0co); stack: nil; keys: (
+     dest: (context: @exceptlabel1co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -13568,6 +13573,9 @@ begin
  exceptlabelco.branch:= @bexceptlabel;
  exceptlabelco.next:= @statement0co;
  exceptlabelco.handleexit:= @handleexceptlabel;
+ exceptlabel1co.branch:= nil;
+ exceptlabel1co.next:= @statement0co;
+ exceptlabel1co.handleexit:= @handleexceptlabel1;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;

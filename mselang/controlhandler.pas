@@ -49,6 +49,7 @@ procedure handlecaseexpression();
 procedure handleofexpected();
 procedure handlecheckcaselabel();
 procedure handleexceptlabel();
+procedure handleexceptlabel1();
 procedure handlecasebranch1entry();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
@@ -834,14 +835,11 @@ begin
  end;
 end;
 
-procedure handleexceptlabel();
+procedure exceptlabel(const last: boolean);
 var
  i1,i2: int32;
  typ1: ptypedataty;
 begin
-{$ifdef mse_debugparser}
- outhandle('EXCEPTLABEL');
-{$endif}
  with info do begin
   dec(s.trystacklevel); //no LLVM invoke
   with contextstack[contextstack[contextstack[s.stackindex].parent].
@@ -851,13 +849,15 @@ begin
     internalerror(ie_handler,'20170725B');
    end;
   {$endif}
-   if d.block.casechain <> 0 then begin
+   if d.block.casefirst and (d.block.casechain <> 0) then begin
     addcontrolitem(oc_goto);                       //op -1
      //jump to except end, address set later     
    end;
    with pclasspendingitemty(addlistitem(pendingclassitems,
                                            d.block.casechain))^ do begin
     exceptcase.startop:= opcount;
+    exceptcase.first:= d.block.casefirst;
+    exceptcase.last:= last;
    end;
    addlabel();                                     //op 0
    with additem(oc_pushexception)^.par do begin    //op 1
@@ -883,11 +883,35 @@ begin
    end;
    with addcontrolitem(oc_gotofalse)^.par do begin //op 5
     ssas1:= i1;
-                      //jump to next case label, address set later
+                      //jump to next case label, address set in handleexcept
    end;
+   if last then begin
+    addlabel();                                    //op 6
+   end
+   else begin
+    addcontrolitem(oc_goto);                      //op 6
+                      //jump to except code, address set in handleexcept
+   end;
+   d.block.casefirst:= last;
   end;
   inc(s.trystacklevel); //restore
  end;
+end;
+
+procedure handleexceptlabel();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPTLABEL');
+{$endif}
+ exceptlabel(true);
+end;
+
+procedure handleexceptlabel1();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPTLABEL1');
+{$endif}
+ exceptlabel(false);
 end;
 
 procedure handlecase(); //todo: use jumptable and the like

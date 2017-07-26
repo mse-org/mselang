@@ -143,6 +143,7 @@ begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_exceptblock;
    d.block.casechain:= 0;
+   d.block.casefirst:= true;
   end;
   with contextstack[s.stackindex-1] do begin
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
@@ -157,6 +158,7 @@ var
  p1: pclasspendingitemty;
  op1: popinfoty;
  nextcaseop: int32;
+ caseopstart: int32;
  endop: int32;
 begin
 {$ifdef mse_debugparser}
@@ -185,14 +187,28 @@ begin
      op1^.par.opaddress.opaddress:= nextcaseop - 1;
      nextcaseop:= p1^.exceptcase.startop;
      i1:= p1^.header.next;
-     if i1 <> 0 then begin //not first
-      op1:= getoppo(p1^.exceptcase.startop,-1);
+     op1:= getoppo(nextcaseop,6);
+     if p1^.exceptcase.last then begin
+      caseopstart:= getopindex(op1);
+     end
+     else begin
      {$ifdef mse_checkinternalerror}
       if op1^.op.op <> oc_goto then begin
        internalerror(ie_handler,'20170725C');
       end;
      {$endif}
-      op1^.par.opaddress.opaddress:= endop-1;
+      op1^.par.opaddress.opaddress:= caseopstart-1;
+     end;
+     if (i1 <> 0) then begin                  //not first
+      if p1^.exceptcase.first then begin 
+       op1:= getoppo(p1^.exceptcase.startop,-1);
+      {$ifdef mse_checkinternalerror}
+       if op1^.op.op <> oc_goto then begin
+        internalerror(ie_handler,'20170725C');
+       end;
+      {$endif}
+       op1^.par.opaddress.opaddress:= endop-1;
+      end;
      end
      else begin
       break;

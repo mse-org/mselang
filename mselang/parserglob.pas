@@ -301,6 +301,7 @@ type
   case contextkindty of
    ck_exceptblock: (
     casechain: listadty;
+    casefirst: boolean;
    );
  end;
  

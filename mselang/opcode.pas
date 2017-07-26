@@ -97,6 +97,7 @@ function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
                           const ssaextension: integer = 0): popinfoty;
 }
+function getopindex(const op: popinfoty): int32;
 function getoppo(const opindex: integer): popinfoty;
 function getoppo(const ref: int32; offset: int32): popinfoty;
                            //skips op_lineinfo
@@ -1109,6 +1110,11 @@ begin
    opcount:= aindex;
   end;
  end;
+end;
+
+function getopindex(const op: popinfoty): int32;
+begin
+ result:= getsegmentoffset(seg_op,op) div sizeof(opinfoty);
 end;
 
 function getoppo(const opindex: integer): popinfoty;

@@ -148,6 +148,8 @@ type
  end;
  exceptcasety = record
   startop: dataoffsty;
+  first: boolean;
+  last: boolean;
  end;
   
  classpendingitemty = record
