@@ -894,6 +894,7 @@ gettype,,,*^
  '^',!handlepointertype-
  '(',enumdef-^*
  'set'.,setdef-^*
+ 'packed'.,-       //todo
  'record'.,recorddef-^*
  'array'.,arraydef-^*
  'object'.,objectdef-^*

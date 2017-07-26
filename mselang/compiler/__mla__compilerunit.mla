@@ -1587,7 +1587,7 @@ end;
 procedure __mla__finiexception(const data: pointer);
 begin
  with pexceptinfoty(data)^ do begin
- finivirtclass(data);
+  finivirtclass(data);
  end;
  freemem(data);
 end;

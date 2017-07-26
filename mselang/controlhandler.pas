@@ -843,6 +843,7 @@ begin
  outhandle('EXCEPTLABEL');
 {$endif}
  with info do begin
+  dec(s.trystacklevel); //no LLVM invoke
   with contextstack[contextstack[contextstack[s.stackindex].parent].
                                                           parent] do begin
   {$ifdef mse_checkinternalerror}
@@ -851,23 +852,23 @@ begin
    end;
   {$endif}
    if d.block.casechain <> 0 then begin
-    addcontrolitem(oc_goto); 
-     //jump to except end, address set later     //op -2
+    addcontrolitem(oc_goto);                       //op -1
+     //jump to except end, address set later     
    end;
-   addlabel();                                   //op -1
    with pclasspendingitemty(addlistitem(pendingclassitems,
                                            d.block.casechain))^ do begin
     exceptcase.startop:= opcount;
    end;
-   with additem(oc_pushexception)^.par do begin  //op 0
+   addlabel();                                     //op 0
+   with additem(oc_pushexception)^.par do begin    //op 1
     finiexception.landingpadalloc:= d.block.landingpad;
     i1:= ssad;
    end;
-   with additem(oc_getclassdef)^.par do begin    //op 1
+   with additem(oc_getclassdef)^.par do begin      //op 2
     ssas1:= i1;
     setimmint32(0,imm);
     i1:= ssad;
-   end;                                          //op 2
+   end;                                            //op 3
    with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
     memop.segdataaddress.a:= ptypedataty(ele.eledataabs(
           contextstack[s.stackindex].d.statement.excepttype))^.infoclass.defs;
@@ -875,13 +876,17 @@ begin
     memop.t:= bitoptypes[das_pointer];
     i2:= ssad;
    end;
-   with additem(oc_classis)^.par do begin        //op 3
+   with additem(oc_classis)^.par do begin          //op 4
     ssas1:= i1;
     ssas2:= i2;
+    i1:= ssad;
    end;
-   addcontrolitem(oc_gotofalse)                  //op 4
+   with addcontrolitem(oc_gotofalse)^.par do begin //op 5
+    ssas1:= i1;
                       //jump to next case label, address set later
+   end;
   end;
+  inc(s.trystacklevel); //restore
  end;
 end;
 

@@ -133,29 +133,30 @@ const
  tk_to = $0000026D;
  tk_downto = $0000026E;
  tk_set = $0000026F;
- tk_record = $00000270;
- tk_array = $00000271;
- tk_private = $00000272;
- tk_protected = $00000273;
- tk_public = $00000274;
- tk_published = $00000275;
- tk_property = $00000276;
- tk_read = $00000277;
- tk_write = $00000278;
- tk_div = $00000279;
- tk_mod = $0000027A;
- tk_and = $0000027B;
- tk_shl = $0000027C;
- tk_shr = $0000027D;
- tk_or = $0000027E;
- tk_xor = $0000027F;
- tk_in = $00000280;
- tk_is = $00000281;
- tk_not = $00000282;
- tk_as = $00000283;
- tk_inherited = $00000284;
+ tk_packed = $00000270;
+ tk_record = $00000271;
+ tk_array = $00000272;
+ tk_private = $00000273;
+ tk_protected = $00000274;
+ tk_public = $00000275;
+ tk_published = $00000276;
+ tk_property = $00000277;
+ tk_read = $00000278;
+ tk_write = $00000279;
+ tk_div = $0000027A;
+ tk_mod = $0000027B;
+ tk_and = $0000027C;
+ tk_shl = $0000027D;
+ tk_shr = $0000027E;
+ tk_or = $0000027F;
+ tk_xor = $00000280;
+ tk_in = $00000281;
+ tk_is = $00000282;
+ tk_not = $00000283;
+ tk_as = $00000284;
+ tk_inherited = $00000285;
 
- tokens: array[0..132] of string = ('',
+ tokens: array[0..133] of string = ('',
   '.void','.classes','.private','.protected','.public','.published',
   '.classintfname','.classintftype','.classimp','.objpotype','.self','.units',
   '.ancestors','.nestedvarref','.defines','.ini','.fini','.incref','.decref',
@@ -170,11 +171,12 @@ const
   'nop','include','define','undef','ifdef','ifndef','if','else','endif','ifend',
   'h','inline','on','off','constref','out','override','overload','of','object',
   'external','forward','sub','finally','do','with','case','while','repeat',
-  'for','try','raise','goto','then','until','to','downto','set','record',
-  'array','private','protected','public','published','property','read','write',
-  'div','mod','and','shl','shr','or','xor','in','is','not','as','inherited');
+  'for','try','raise','goto','then','until','to','downto','set','packed',
+  'record','array','private','protected','public','published','property','read',
+  'write','div','mod','and','shl','shr','or','xor','in','is','not','as',
+  'inherited');
 
- tokenids: array[0..132] of identty = (
+ tokenids: array[0..133] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
   $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
   $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
@@ -193,7 +195,8 @@ const
   $00000269,$0000026A,$0000026B,$0000026C,$0000026D,$0000026E,$0000026F,
   $00000270,$00000271,$00000272,$00000273,$00000274,$00000275,$00000276,
   $00000277,$00000278,$00000279,$0000027A,$0000027B,$0000027C,$0000027D,
-  $0000027E,$0000027F,$00000280,$00000281,$00000282,$00000283,$00000284);
+  $0000027E,$0000027F,$00000280,$00000281,$00000282,$00000283,$00000284,
+  $00000285);
 
 implementation
 end.

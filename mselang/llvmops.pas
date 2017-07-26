@@ -4302,13 +4302,22 @@ begin
  end;
 end;
 
-procedure pushexceptionop();
+procedure getexceptdata();
 begin
  with pc^.par do begin
   bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
                                                     bcstream.constval(0));//2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
   bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+ end;
+end;
+
+procedure pushexceptionop();
+begin
+ getexceptdata(); //4ssa
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                    bcstream.constval(sizeof(exceptinfoty.header)));        //2ssa
  end;
 end;
 
@@ -4321,7 +4330,7 @@ begin
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
   bcstream.emitloadop(bcstream.relval(0));                                //1ssa
   }
-  pushexceptionop();
+  getexceptdata();
   callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
 
 {
@@ -5044,7 +5053,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 1;
-  pushexceptionssa = 4;
+  pushexceptionssa = 6;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;

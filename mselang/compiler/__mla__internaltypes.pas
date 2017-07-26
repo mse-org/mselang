@@ -161,13 +161,13 @@ type
  _Unwind_Word = card32;
  _Unwind_Sword = int32;
  
- _Unwind_Exception = record
+ _Unwind_Exception = packed record
   exception_class: _Unwind_Exception_Class;
   exception_cleanup: _Unwind_Exception_Cleanup_Fn;
   private_1: _Unwind_Word;
   private_2: _Unwind_Word;
  end;
- exceptinfoty = record
+ exceptinfoty = packed record
   header: _Unwind_Exception;
   data: pointer;
  end;

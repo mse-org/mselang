@@ -157,6 +157,7 @@ var
  p1: pclasspendingitemty;
  op1: popinfoty;
  nextcaseop: int32;
+ endop: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPT');
@@ -169,12 +170,13 @@ begin
    end;
   {$endif}
    if d.block.casechain <> 0 then begin
+    endop:= opcount;
     addlabel();
-    nextcaseop:= opcount;
+    nextcaseop:= endop;
     i1:= d.block.casechain;
     while true do begin
      p1:= getlistitem(pendingclassitems,i1);
-     op1:= getoppo(p1^.exceptcase.startop,4);
+     op1:= getoppo(p1^.exceptcase.startop,5);
     {$ifdef mse_checkinternalerror}
      if op1^.op.op <> oc_gotofalse then begin
       internalerror(ie_handler,'20170725C');
@@ -184,13 +186,13 @@ begin
      nextcaseop:= p1^.exceptcase.startop;
      i1:= p1^.header.next;
      if i1 <> 0 then begin //not first
-      op1:= getoppo(p1^.exceptcase.startop,-2);
+      op1:= getoppo(p1^.exceptcase.startop,-1);
      {$ifdef mse_checkinternalerror}
       if op1^.op.op <> oc_goto then begin
        internalerror(ie_handler,'20170725C');
       end;
      {$endif}
-      op1^.par.opaddress.opaddress:= opcount-1;
+      op1^.par.opaddress.opaddress:= endop-1;
      end
      else begin
       break;
