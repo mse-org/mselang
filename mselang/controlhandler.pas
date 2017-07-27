@@ -904,6 +904,10 @@ begin
  outhandle('EXCEPTLABEL');
 {$endif}
  exceptlabel(true);
+ with info do begin
+  dec(s.stackindex,2);
+  s.stacktop:= s.stackindex;
+ end;
 end;
 
 procedure handleexceptlabel1();

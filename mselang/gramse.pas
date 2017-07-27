@@ -925,7 +925,7 @@ var
                caption: 'checkcaselabel1');
  exceptlabelco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'exceptlabel');
  exceptlabel1co: contextty = (branch: nil; 
@@ -5166,7 +5166,7 @@ const
    );
  bexcept: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementblockco); stack: nil; keys: (
+     dest: (context: @statementgroupco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -13571,7 +13571,6 @@ begin
  checkcaselabel1co.branch:= nil;
  checkcaselabel1co.handleexit:= @handlestatementexit;
  exceptlabelco.branch:= @bexceptlabel;
- exceptlabelco.next:= @statement0co;
  exceptlabelco.handleexit:= @handleexceptlabel;
  exceptlabel1co.branch:= nil;
  exceptlabel1co.next:= @statement0co;

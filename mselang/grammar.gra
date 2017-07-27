@@ -532,7 +532,7 @@ finally,finally1,handlefinallyentry,
 finally1,,handlefinally,*
  '',checkend*
 except,except1,handleexceptentry,
- '',statementblock^*
+ '',statementgroup^*
 except1,,handleexcept,*
  '',checkend*
 
@@ -588,7 +588,7 @@ labelcase,label,,handlecheckcaselabel
 // ':',label-
 checkcaselabel,checkcaselabel1,,handlecheckcaselabel
 checkcaselabel1,,,handlestatementexit
-exceptlabel,statement0,,handleexceptlabel* //switched to in handlecheckcaselabel
+exceptlabel,,,handleexceptlabel*> //switched to in handlecheckcaselabel
  ${whitespace}
  ',',exceptlabel1-
 exceptlabel1,statement0,,handleexceptlabel1*
