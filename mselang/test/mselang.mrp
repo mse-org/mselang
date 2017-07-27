@@ -3613,7 +3613,7 @@ c=3
    (
    kind=1
    a=0,665,4,exception
-   c=12
+   c=16
     (
     kind=2
     a=0,648,1,raise1
@@ -3631,7 +3631,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72DE144
+    ao=An unhandled exception occured at $B722AA2C
     ae=
     aec=123
     ie=0
@@ -3861,6 +3861,94 @@ c=3
     a=0,648,1,except3 llvm
     teststate=1
     path=except3.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except4
+    teststate=1
+    path=except4.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except4 llvm
+    teststate=1
+    path=except4.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except5
+    teststate=1
+    path=except5.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except5 llvm
+    teststate=1
+    path=except5.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11804,7 +11892,11 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=233
+rowstate=237
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
