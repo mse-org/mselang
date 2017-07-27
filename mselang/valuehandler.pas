@@ -1623,6 +1623,9 @@ begin
 //  else begin
   source:= ele.basetype(d.dat.datatyp.typedata);
   sourceindilev:= d.dat.datatyp.indirectlevel;
+  if source^.h.kind = dk_class then begin
+   dec(sourceindilev);
+  end;
 //  end;
   result:= destindirectlevel = sourceindilev;
   if result then begin
