@@ -91,6 +91,9 @@ procedure __mla__initobject(const address: pointer; const virttaboffset: int32;
 function __mla__getclassdef(const ainstance: pointer; 
                                 const avirttaboffset: int32): pointer;
 function __mla__classis(const a,b: pclassdefinfoty): bool1;
+function __mla__checkclasstype(var instance: pointer; //nil if no match
+                              const classtype: pclassdefinfoty): bool1;
+                                                      //false if no match
 
 //function __mla__initclass(const classinfo: classdefinfoty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
@@ -1505,6 +1508,19 @@ begin
    end;
    p1:= p1^.header.parentclass;
   until p1 = nil;
+ end;
+end;
+
+function __mla__checkclasstype(var instance: pointer; 
+                              const classtype: pclassdefinfoty): bool1;
+begin
+ if (instance <> nil) and 
+         __mla__classis(ppointer(instance)^,classtype) then begin
+  result:= true;
+ end
+ else begin
+  result:= false;
+  instance:= nil;  
  end;
 end;
 

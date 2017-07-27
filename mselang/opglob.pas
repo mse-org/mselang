@@ -1185,7 +1185,8 @@ const
   oc_initobject,
   oc_destroyclass,
   oc_getclassdef,
-  oc_classis
+  oc_classis,
+  oc_checkclasstype
  ];
  listops = [oc_listtoopenar,
                   oc_concatstring8,oc_concatstring16,oc_concatstring32];  

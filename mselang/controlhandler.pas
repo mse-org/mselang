@@ -841,7 +841,7 @@ var
  typ1: ptypedataty;
 begin
  with info do begin
-  dec(s.trystacklevel); //no LLVM invoke
+//  dec(s.trystacklevel); //no LLVM invoke
   with contextstack[contextstack[contextstack[s.stackindex].parent].
                                                           parent] do begin
   {$ifdef mse_checkinternalerror}
@@ -894,7 +894,7 @@ begin
    end;
    d.block.casefirst:= last;
   end;
-  inc(s.trystacklevel); //restore
+//  inc(s.trystacklevel); //restore
  end;
 end;
 

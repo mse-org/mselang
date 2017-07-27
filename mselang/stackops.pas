@@ -3022,22 +3022,21 @@ end;
 procedure checkclasstypeop();
 var
  p1: pointer;
+ p2: ppointer; //instance address
  b1: boolean;
 begin
- p1:= ppointer(cpu.stack-2*sizeof(pointer))^; //instance
- if p1 = nil then begin
-  stackpop(sizeof(pointer));
- end
- else begin
+ p2:= ppointer(cpu.stack-2*sizeof(pointer))^;
+ p1:= p2^; //instance
+ b1:= false;
+ if p1 <> nil then begin
   ppointer(cpu.stack-2*sizeof(pointer))^:= ppointer(p1)^; //classinfo
   b1:= classis();
-  if b1 then begin
-   ppointer(stackpush(sizeof(pointer)))^:= p1;
-  end
-  else begin
-   ppointer(stackpush(sizeof(pointer)))^:= nil;
+  if not b1 then begin
+   p2^:= nil;
   end;
  end;
+ stackpop(2*sizeof(pointer));
+ pboolean(stackpush(sizeof(boolean)))^:= b1;
 end;
 
 procedure addfloop();

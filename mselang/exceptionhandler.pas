@@ -141,6 +141,7 @@ begin
  end;
  tryhandle();
  with info do begin
+  dec(s.trystacklevel); //no LLVM invoke
   with contextstack[s.stackindex] do begin
    d.kind:= ck_exceptblock;
    d.block.casechain:= 0;
@@ -234,6 +235,7 @@ begin
  }
  //  dec(s.stackindex,1);
   end;
+  inc(s.trystacklevel); //restore
  end;
  tryexit();
 end;
@@ -274,20 +276,38 @@ begin
          finiexception.landingpadalloc:= contextstack[i1].d.block.landingpad;
          i1:= ssad;
         end;
+        with additem(oc_popindirectpo)^.par do begin //store exceptobj
+         ssas2:= ptop^.d.dat.fact.ssaindex;
+         ssas1:= i1;
+         memop.t:= bitoptypes[das_pointer];
+        end;
+        with additem(oc_push)^ do begin
+         par.imm.vsize:= pointersize; //address still valid
+        end;
         with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
          memop.segdataaddress.a:= typ1^.infoclass.defs;
          memop.segdataaddress.offset:= 0;
          memop.t:= bitoptypes[das_pointer];
          i2:= ssad;
         end;
-        with additem(oc_checkclasstype)^.par do begin //returns nil if no match
-         ssas1:= i1;
+        with additem(oc_checkclasstype)^.par do begin 
+                    //returns nil in par 0 if no match
+         ssas1:= ptop^.d.dat.fact.ssaindex;
          ssas2:= i2;
          i1:= ssad;
         end;
+        {
         with additem(oc_popindirectpo)^.par do begin
          ssas2:= ptop^.d.dat.fact.ssaindex;
          ssas1:= i1;
+        end;
+        }
+        initfactcontext(0);
+        with contextstack[s.stackindex] do begin
+         d.kind:= ck_subres;
+         d.dat.fact.ssaindex:= i1;
+         d.dat.datatyp:= sysdatatypes[st_bool1];
+         d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp.typedata,0);
         end;
        end;
       end;
