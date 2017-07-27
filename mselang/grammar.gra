@@ -522,6 +522,23 @@ compoundstatement,checkend,,*
 //
 // exception
 //
+{$grapas}
+try,try1,handletryentry,
+ '',statementblock^*
+try1,,,handlefinallyexpected*
+ 'finally'.,finally-
+ 'except'.,except-
+finally,finally1,handlefinallyentry,
+ '',statementblock^*
+finally1,,handlefinally,*
+ '',checkend*
+except,except1,handleexceptentry,
+ '',statementblock^*
+except1,,handleexcept,*
+ '',checkend*
+{$}
+
+{$gramse}
 try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
@@ -533,8 +550,14 @@ finally1,,handlefinally,*
  '',checkend*
 except,except1,handleexceptentry,
  '',statementgroup^*
-except1,,handleexcept,*
+except1,except2,,
+ ${whitespace}
+ 'else'.,except3-
+except2,,handleexcept,*
  '',checkend*
+except3,except2,handleexceptelse,
+ '',statementgroup^*
+{$}
 
 raise,,,handleraise*
  '',exp^*

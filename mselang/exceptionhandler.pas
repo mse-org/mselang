@@ -35,6 +35,7 @@ procedure handletryentry();
 procedure handlefinallyentry();
 procedure handlefinally();
 procedure handleexceptentry();
+procedure handleexceptelse();
 procedure handleexcept();
 procedure handleraise();
 procedure handlegetexceptobj(const paramco: int32);
@@ -154,6 +155,33 @@ begin
  end;
 end;
 
+procedure handleexceptelse();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPTELSE');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_exceptblock then begin
+   internalerror(ie_handler,'20170727A');
+  end;
+ {$endif}
+  if d.block.casechain <> 0 then begin //else no labels
+   addcontrolitem(oc_goto);                       //op -1
+     //jump to except end, address set later     
+   with pclasspendingitemty(addlistitem(pendingclassitems,
+                                           d.block.casechain))^ do begin
+    exceptcase.startop:= opcount;
+    exceptcase.first:= true;
+    exceptcase.last:= true;
+    exceptcase.elsefla:= true;
+   end;
+   addlabel();
+  end;
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
 procedure handleexcept();
 var
  i1: int32;
@@ -180,40 +208,58 @@ begin
     i1:= d.block.casechain;
     while true do begin
      p1:= getlistitem(pendingclassitems,i1);
-     op1:= getoppo(p1^.exceptcase.startop,5);
-    {$ifdef mse_checkinternalerror}
-     if op1^.op.op <> oc_gotofalse then begin
-      internalerror(ie_handler,'20170725C');
-     end;
-    {$endif}
-     op1^.par.opaddress.opaddress:= nextcaseop - 1;
-     nextcaseop:= p1^.exceptcase.startop;
-     i1:= p1^.header.next;
-     op1:= getoppo(nextcaseop,6);
-     if p1^.exceptcase.last then begin
-      caseopstart:= getopindex(op1);
-     end
-     else begin
+     if p1^.exceptcase.elsefla then begin
+      i1:= p1^.header.next;
+     {$ifdef mse_checkinternalerror}
+      if i1 = 0 then begin
+       internalerror(ie_handler,'20170727B');
+      end;
+      op1:= getoppo(p1^.exceptcase.startop,-1);
      {$ifdef mse_checkinternalerror}
       if op1^.op.op <> oc_goto then begin
        internalerror(ie_handler,'20170725C');
       end;
      {$endif}
-      op1^.par.opaddress.opaddress:= caseopstart-1;
-     end;
-     if (i1 <> 0) then begin                  //not first
-      if p1^.exceptcase.first then begin 
-       op1:= getoppo(p1^.exceptcase.startop,-1);
+      op1^.par.opaddress.opaddress:= endop-1;
+      nextcaseop:= p1^.exceptcase.startop;
+     {$endif}
+     end
+     else begin
+      op1:= getoppo(p1^.exceptcase.startop,5);
+     {$ifdef mse_checkinternalerror}
+      if op1^.op.op <> oc_gotofalse then begin
+       internalerror(ie_handler,'20170725C');
+      end;
+     {$endif}
+      op1^.par.opaddress.opaddress:= nextcaseop - 1;
+      nextcaseop:= p1^.exceptcase.startop;
+      i1:= p1^.header.next;
+      op1:= getoppo(nextcaseop,6);
+      if p1^.exceptcase.last then begin
+       caseopstart:= getopindex(op1);
+      end
+      else begin
       {$ifdef mse_checkinternalerror}
        if op1^.op.op <> oc_goto then begin
         internalerror(ie_handler,'20170725C');
        end;
       {$endif}
-       op1^.par.opaddress.opaddress:= endop-1;
+       op1^.par.opaddress.opaddress:= caseopstart-1;
       end;
-     end
-     else begin
-      break;
+      if (i1 <> 0) then begin                  //not first
+       if p1^.exceptcase.first then begin 
+        op1:= getoppo(p1^.exceptcase.startop,-1);
+       {$ifdef mse_checkinternalerror}
+        if op1^.op.op <> oc_goto then begin
+         internalerror(ie_handler,'20170725C');
+        end;
+       {$endif}
+        op1^.par.opaddress.opaddress:= endop-1;
+       end;
+      end
+      else begin
+       break;
+      end;
      end;
     end;
     deletelistchain(pendingclassitems,d.block.casechain);

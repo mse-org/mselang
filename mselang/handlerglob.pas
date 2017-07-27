@@ -150,6 +150,7 @@ type
   startop: dataoffsty;
   first: boolean;
   last: boolean;
+  elsefla: boolean;
  end;
   
  classpendingitemty = record

@@ -5090,7 +5090,7 @@ const
    );
  bexcept: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementgroupco); stack: nil; keys: (
+     dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),

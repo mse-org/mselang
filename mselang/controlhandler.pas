@@ -858,6 +858,7 @@ begin
     exceptcase.startop:= opcount;
     exceptcase.first:= d.block.casefirst;
     exceptcase.last:= last;
+    exceptcase.elsefla:= false;
    end;
    addlabel();                                     //op 0
    with additem(oc_pushexception)^.par do begin    //op 1
