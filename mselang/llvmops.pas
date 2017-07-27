@@ -4323,10 +4323,10 @@ end;
 procedure pushexceptionop();
 begin
  getexceptdata(); //4ssa
- with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.relval(0),
-                    bcstream.constval(sizeof(exceptinfoty.header)));        //2ssa
- end;
+ bcstream.emitgetelementptr(bcstream.relval(0),
+                    bcstream.constval(sizeof(exceptinfoty.header)));     //2ssa
+ bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
+ bcstream.emitloadop(bcstream.relval(0));                                //1ssa
 end;
 
 procedure finiexceptionop();
@@ -5062,7 +5062,7 @@ const
   raisessa = 0;
   pushcpucontextssa = 0;
   popcpucontextssa = 1;
-  pushexceptionssa = 6;
+  pushexceptionssa = 8;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;

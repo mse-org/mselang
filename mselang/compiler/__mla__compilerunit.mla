@@ -86,10 +86,10 @@ function __mla__highdynarray(ref: pointer): int32;
 function __mla__highopenarray(ref: popenarrayty): int32;
 function __mla__highstring(ref: pointer): int32;
 
-procedure __mla__initobject(const address: pointer; const virttaboffset: int32;
+procedure __mla__initobject(const instance: pointer; const virttaboffset: int32;
                                  const classinfo: classdefinfoty);
-function __mla__getclassdef(const ainstance: pointer; 
-                                const avirttaboffset: int32): pointer;
+function __mla__getclassdef(const instance: pointer; 
+                                const virttaboffset: int32): pointer;
 function __mla__classis(const a,b: pclassdefinfoty): bool1;
 function __mla__checkclasstype(var instance: pointer; //nil if no match
                               const classtype: pclassdefinfoty): bool1;
@@ -1448,21 +1448,21 @@ begin
  end;
 end;
 
-procedure __mla__initobject(const address: pointer; const virttaboffset: int32;
+procedure __mla__initobject(const instance: pointer; const virttaboffset: int32;
                                  const classinfo: classdefinfoty);
 var
  ps,pd,pe: ppointer;
  po1: pclassdefinfoty;
 begin
  po1:= @classinfo;
- ppointer(address+virttaboffset)^:= @classinfo;
+ ppointer(instance+virttaboffset)^:= @classinfo;
 {$ifdef mse_debugclass}
  writeln('***initobject ',result);
 {$endif}
  repeat
-  pd:= address + po1^.header.allocs.instanceinterfacestart;
+  pd:= instance + po1^.header.allocs.instanceinterfacestart;
                                             //copy interface table
-  pe:= address + po1^.header.allocs.size;
+  pe:= instance + po1^.header.allocs.size;
   ps:= pointer(po1) + po1^.header.allocs.classdefinterfacestart;
  {$ifdef mse_debugclass}
   writeln(' *classdef:',po1);
@@ -1475,7 +1475,7 @@ begin
   while pd < pe do begin
    pd^:= ps^;
   {$ifdef mse_debugclass}
-   writeln('  intf:',int32(pointer(pd)-address),' ',pd,'^:',pd^,
+   writeln('  intf:',int32(pointer(pd)-instance),' ',pd,'^:',pd^,
                  ' instanceoffset:',pintfdefinfoty(pd^)^.header.instanceoffset);
   {$endif}
    inc(pd);
@@ -1485,12 +1485,12 @@ begin
  until po1 = nil;
 end;
 
-function __mla__getclassdef(const ainstance: pointer;
-                          const avirttaboffset: int32): pointer;
+function __mla__getclassdef(const instance: pointer;
+                          const virttaboffset: int32): pointer;
 begin
- result:= ainstance;
- if ainstance <> nil then begin
-  result:= ppointer(result+avirttaboffset)^;
+ result:= instance;
+ if instance <> nil then begin
+  result:= ppointer(instance+virttaboffset)^;
  end;
 end;
 
