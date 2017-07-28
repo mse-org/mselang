@@ -766,6 +766,11 @@ begin
  end;
 end;
 
+procedure gotofalseoffsop();
+begin
+ gotofalseop();
+end;
+
 procedure gototrueop();
 begin
  with pc^.par do begin
@@ -4329,6 +4334,15 @@ begin
  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
 end;
 
+procedure nilexceptionop();
+begin
+ getexceptdata(); //4ssa
+ bcstream.emitgetelementptr(bcstream.relval(0),
+                    bcstream.constval(sizeof(exceptinfoty.header)));     //2ssa
+ bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
+ bcstream.emitstoreop(bcstream.constval(ord(nco_pointer)),bcstream.relval(0));
+end;
+
 procedure finiexceptionop();
 begin
  with pc^.par do begin
@@ -4533,6 +4547,7 @@ const
 
   gotossa = 0;
   gotofalsessa = 0;
+  gotofalseoffsssa = 0;
   gototruessa = 0;
   cmpjmpneimmssa = 1;
   cmpjmpeqimmssa = 1;
@@ -5063,6 +5078,7 @@ const
   pushcpucontextssa = 0;
   popcpucontextssa = 1;
   pushexceptionssa = 8;
+  nilexceptionssa = 7;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
   getmemssa = 2;

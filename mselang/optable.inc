@@ -82,6 +82,8 @@
   (ssa: classisssa; proc: @classisop; flags: []), 
 //oc_checkclasstype,
   (ssa: checkclasstypessa; proc: @checkclasstypeop; flags: []), 
+//oc_cmpstring
+  (ssa: cmpstringssa; proc: @cmpstringop; flags: []), 
 
 //oc_beginparse
   (ssa: beginparsessa; proc: @beginparseop; flags: []), 
@@ -114,6 +116,8 @@
   (ssa: gotossa; proc: @gotoop; flags: []), 
 //oc_gotofalse
   (ssa: gotofalsessa; proc: @gotofalseop; flags: []), 
+//oc_gotofalseoffs
+  (ssa: gotofalseoffsssa; proc: @gotofalseoffsop; flags: []), 
 //oc_gototrue
   (ssa: gototruessa; proc: @gototrueop; flags: []), 
 //oc_cmpjmpneimm
@@ -580,8 +584,6 @@
   (ssa: cmpintssa; proc: @cmpintop; flags: []), 
 //oc_cmpflo
   (ssa: cmpflossa; proc: @cmpfloop; flags: []), 
-//oc_cmpstring
-  (ssa: cmpstringssa; proc: @cmpstringop; flags: []), 
 
 {
 //oc_cmpeqpo
@@ -1102,6 +1104,8 @@
   (ssa: popcpucontextssa; proc: @popcpucontextop; flags: []), 
 //oc_pushexception
   (ssa: pushexceptionssa; proc: @pushexceptionop; flags: []), 
+//oc_nilexception
+  (ssa: nilexceptionssa; proc: @nilexceptionop; flags: []), 
 //oc_finiexception
   (ssa: finiexceptionssa; proc: @finiexceptionop; flags: []), 
 //oc_continueexception

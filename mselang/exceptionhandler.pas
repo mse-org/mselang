@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit exceptionhandler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  globtypes,listutils,parserglob;
@@ -287,84 +287,148 @@ begin
 end;
 
 procedure handlegetexceptobj(const paramco: int32);
+           //getexceptobj(out obj; const acquire = false)
 var
- i1,i2: int32;
+ i1,i2,i3: int32;
  typ1: ptypedataty;
  b1: boolean;
  ptop: pcontextitemty;
+ acquiressa: int32;
+label
+ errlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('GETEXCEPTOBJ');
 {$endif}
  with info do begin
-  if checkparamco(1,paramco) then begin
-   b1:= false;
-   ptop:= @contextstack[s.stacktop];
-   with ptop^ do begin
-    if (d.kind in datacontexts) and (d.dat.datatyp.indirectlevel = 1) then begin
-     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-     if (typ1^.h.kind = dk_class) and 
-                   (icf_except in typ1^.infoclass.flags) then begin
-      b1:= true;
-      i1:= s.stackindex-1;
-      while i1 >= 0 do begin
-       if contextstack[i1].d.kind = ck_exceptblock then begin
-        break;
-       end;
-       dec(i1);
+  if paramco < 1 then begin
+   checkparamco(1,paramco);
+   goto errlab;
+  end
+  else begin
+   if paramco > 2 then begin
+    checkparamco(2,paramco);
+    goto errlab;
+   end
+   else begin
+    ptop:= @contextstack[s.stacktop];
+    if paramco = 2 then begin
+     if not getvalue(ptop,das_1) then begin
+      goto errlab;
+     end;
+     if (ptypedataty(ele.eledataabs(ptop^.d.dat.datatyp.typedata))^.h.kind <> 
+                         dk_boolean) or
+                            (ptop^.d.dat.datatyp.indirectlevel <> 0) then begin
+      errormessage(err_booleanexpressionexpected,[]);
+      goto errlab;
+     end;
+     ptop:= getpreviousnospace(ptop-1);
+    end;
+   end;
+  end;
+  b1:= false;
+  with ptop^ do begin
+   if (d.kind in datacontexts) and (d.dat.datatyp.indirectlevel = 1) then begin
+    typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if (typ1^.h.kind = dk_class) and 
+                  (icf_except in typ1^.infoclass.flags) then begin
+     b1:= true;
+     i1:= s.stackindex-1;
+     while i1 >= 0 do begin
+      if contextstack[i1].d.kind = ck_exceptblock then begin
+       break;
       end;
-      if i1 < 0 then begin
-       errormessage(err_noexceptavailable,[]);
-      end
-      else begin
-       if getaddress(ptop,true) then begin
-        with additem(oc_pushexception)^.par do begin
-         finiexception.landingpadalloc:= contextstack[i1].d.block.landingpad;
-         i1:= ssad;
+      dec(i1);
+     end;
+     if i1 < 0 then begin
+      errormessage(err_noexceptavailable,[]);
+     end
+     else begin
+      if getaddress(ptop,true) then begin
+       if paramco = 1 then begin
+        with additem(oc_pushimm1)^.par do begin //acquire default false
+         setimmboolean(false,imm);
+         acquiressa:= ssad;
         end;
-        with additem(oc_popindirectpo)^.par do begin //store exceptobj
-         ssas2:= ptop^.d.dat.fact.ssaindex;
-         ssas1:= i1;
-         memop.t:= bitoptypes[das_pointer];
+       end
+       else begin
+       {$ifdef mse_checkinternalerror}
+        if not (contextstack[s.stacktop].d.kind in factcontexts) then begin
+         internalerror(ie_handler,'20170728A');
         end;
-        with additem(oc_push)^ do begin
-         par.imm.vsize:= pointersize; //address still valid
-        end;
-        with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
-         memop.segdataaddress.a:= typ1^.infoclass.defs;
-         memop.segdataaddress.offset:= 0;
-         memop.t:= bitoptypes[das_pointer];
-         i2:= ssad;
-        end;
-        with additem(oc_checkclasstype)^.par do begin 
-                    //returns nil in par 0 if no match
-         ssas1:= ptop^.d.dat.fact.ssaindex;
-         ssas2:= i2;
-         i1:= ssad;
-        end;
-        {
-        with additem(oc_popindirectpo)^.par do begin
-         ssas2:= ptop^.d.dat.fact.ssaindex;
-         ssas1:= i1;
-        end;
-        }
-        initfactcontext(0);
-        with contextstack[s.stackindex] do begin
-         d.kind:= ck_subres;
-         d.dat.fact.ssaindex:= i1;
-         d.dat.datatyp:= sysdatatypes[st_bool1];
-         d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp.typedata,0);
-        end;
+       {$endif}
+        acquiressa:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+       end;
+       with additem(oc_pushduppo)^.par do begin
+        voffset:= -(2*pointersize);
+        ssas1:= ptop^.d.dat.fact.ssaindex;
+        i2:= ssad;
+       end;
+       i3:= contextstack[i1].d.block.landingpad;
+       with additem(oc_pushexception)^.par do begin
+        finiexception.landingpadalloc:= i3;
+        i1:= ssad;
+       end;
+       with additem(oc_popindirectpo)^.par do begin //store exceptobj
+        ssas2:= i2; //address
+        ssas1:= i1; //data
+        memop.t:= bitoptypes[das_pointer];
+       end;
+       with additem(oc_push)^ do begin
+        par.imm.vsize:= pointersize; //address still valid
+       end;
+       with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
+        memop.segdataaddress.a:= typ1^.infoclass.defs;
+        memop.segdataaddress.offset:= 0;
+        memop.t:= bitoptypes[das_pointer];
+        i2:= ssad;
+       end;
+       with additem(oc_checkclasstype)^.par do begin 
+                   //returns nil in par 0 if no match
+        ssas1:= ptop^.d.dat.fact.ssaindex;
+        ssas2:= i2;
+        i1:= ssad;
+       end;
+       with addcontrolitem(oc_gotofalseoffs)^.par do begin //op -3
+                          //checkclasstype result
+        ssas1:= i1;
+        gotostackoffs:= -(alignsize(sizeof(vbooleanty)));
+       end;
+       with addcontrolitem(oc_gotofalseoffs)^.par do begin //op -2
+        ssas1:= acquiressa;
+        gotostackoffs:= -2*(alignsize(sizeof(vbooleanty)));
+       end;
+       with additem(oc_nilexception)^.par do begin        //op -1
+        finiexception.landingpadalloc:= i3;
+       end;
+       getoppo(opcount,-2)^.par.opaddress.opaddress:= opcount - 1;
+       getoppo(opcount,-3)^.par.opaddress.opaddress:= opcount - 1;
+       addlabel();                                        //op 0
+       i2:= alignsize(sizeof(vbooleanty)) + pointersize;
+       with additem(oc_movestack)^.par do begin //checkclasstype result
+        swapstack.size:= alignsize(sizeof(vbooleanty));
+        swapstack.offset:= -i2;
+       end;
+       with additem(oc_pop)^ do begin
+        par.imm.vsize:= i2; //remove address and acquire
+       end;
+       initfactcontext(0);
+       with contextstack[s.stackindex] do begin
+        d.kind:= ck_subres;
+        d.dat.fact.ssaindex:= i1;
+        d.dat.datatyp:= sysdatatypes[st_bool1];
+        d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp.typedata,0);
        end;
       end;
      end;
     end;
    end;
-   if not b1 then begin
-    errormessage(err_exceptvarexpected,[]);
-   end;
+  end;
+  if not b1 then begin
+   errormessage(err_exceptvarexpected,[]);
   end;
  end;
+errlab:
 end;
 
 procedure handleraise();

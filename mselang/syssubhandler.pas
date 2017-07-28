@@ -99,6 +99,7 @@ begin
   with info do begin
    if actual > wanted then begin
     errormessage(err_tokenexpected,[')'],s.stacktop-s.stackindex-actual+wanted);
+                      //what about ck_space?
    end
    else begin
     identerror(1,err_wrongnumberofparameters);

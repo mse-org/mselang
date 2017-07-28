@@ -126,6 +126,7 @@ type
   oc_getclassdef,
   oc_classis,
   oc_checkclasstype,
+  oc_cmpstring,
 
   oc_beginparse,
   oc_endparse,
@@ -144,6 +145,7 @@ type
   
   oc_goto,
   oc_gotofalse,
+  oc_gotofalseoffs,
   oc_gototrue,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
@@ -352,7 +354,6 @@ type
   oc_cmpcard,
   oc_cmpint,
   oc_cmpflo,
-  oc_cmpstring,
 {
   oc_cmpeqpo,
   oc_cmpeqbool,
@@ -634,6 +635,7 @@ type
   oc_pushcpucontext,
   oc_popcpucontext,
   oc_pushexception,
+  oc_nilexception,
   oc_finiexception,
   oc_continueexception,
   
@@ -1141,7 +1143,7 @@ type
 const
  controlops = [
   oc_label,
-  oc_goto,oc_gotofalse,oc_gototrue,
+  oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
   oc_cmpjmploimm,
@@ -1199,7 +1201,8 @@ type
   ssas1: int32;//updated by op insertions
   ssas2: int32;//updated by op insertions
   case opcodety of 
-   oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_ifnot,oc_while,oc_until,
+   oc_label,oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
+   oc_if,oc_ifnot,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
    oc_pushcpucontext,oc_popcpucontext: (
     opaddress: labty; //first!
@@ -1207,6 +1210,9 @@ type
      oc_popcpucontext: (
       popcpucontext: popcpucontextty;
      );
+     oc_gotofalseoffs: (
+      gotostackoffs: int32;
+     )
    );
    oc_phi: (
     phi: phity;

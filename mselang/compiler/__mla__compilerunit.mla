@@ -1603,7 +1603,9 @@ end;
 procedure __mla__finiexception(const data: pointer);
 begin
  with pexceptinfoty(data)^ do begin
-  finivirtclass(data);
+  if data <> nil then begin
+   finivirtclass(data);
+  end;
  end;
  freemem(data);
 end;

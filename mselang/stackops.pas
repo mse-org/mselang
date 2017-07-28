@@ -452,6 +452,15 @@ begin
  end;
 end;
 
+procedure gotofalseoffsop();
+begin
+ with cpu.pc^.par do begin
+  if not pvbooleanty(cpu.stack+gotostackoffs)^ then begin
+   cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+  end;
+ end;
+end;
+
 procedure gototrueop();
 var
  po1: pointer;
@@ -3034,8 +3043,10 @@ begin
   if not b1 then begin
    p2^:= nil;
   end;
+ end
+ else begin
+  stackpop(2*sizeof(pointer));
  end;
- stackpop(2*sizeof(pointer));
  pboolean(stackpush(sizeof(boolean)))^:= b1;
 end;
 
@@ -6564,17 +6575,16 @@ begin
 end;
 
 procedure pushexceptionop();
-var
- p1: pointer;
 begin
  with exceptioninfo do begin
-  if exceptobj <> nil then begin
-   p1:= exceptobj;
-  end
-  else begin
-   p1:= nil;
-  end;
-  ppointer(stackpush(sizeof(pointer)))^:= p1;
+  ppointer(stackpush(sizeof(pointer)))^:= exceptobj;
+ end;
+end;
+
+procedure nilexceptionop();
+begin
+ with exceptioninfo do begin
+  exceptobj:= nil;
  end;
 end;
 
@@ -6810,6 +6820,7 @@ const
   
   gotossa = 0;
   gotofalsessa = 0;
+  gotofalseoffsssa = 0;
   gototruessa = 0;
   cmpjmpneimmssa = 0;
   cmpjmpeqimmssa = 0;
@@ -7341,6 +7352,7 @@ const
   pushcpucontextssa = 0;
   popcpucontextssa = 0;
   pushexceptionssa = 0;
+  nilexceptionssa = 0;
   finiexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 0;
