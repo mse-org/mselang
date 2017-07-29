@@ -1,0 +1,44 @@
+program except3;
+type
+ e = class()[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+ end;
+ e1 = class(e)
+ end;
+ e2 = class(e1)
+ end;
+
+ f = class()[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+ end;
+
+constructor e.create();
+begin
+end;
+
+destructor e.destroy();
+begin
+ exitcode:= exitcode + 3;
+end;
+
+constructor f.create();
+begin
+end;
+
+destructor f.destroy();
+begin
+ exitcode:= exitcode + 4;
+end;
+
+begin
+ try
+  raise e1.create();
+ except
+  f,e1:
+   exitcode:= 120;
+  e,f:
+   exitcode:= 100;
+ end;
+end.

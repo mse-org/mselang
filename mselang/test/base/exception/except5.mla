@@ -1,0 +1,55 @@
+program except5;
+type
+ e = class()[virtual,except]
+  f1: int32;
+  constructor create();
+  destructor destroy() [default];
+ end;
+ e1 = class(e)
+ end;
+ e2 = class(e1)
+ end;
+
+ f = class()[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+ end;
+
+constructor e.create();
+begin
+ f1:= 12;
+end;
+
+destructor e.destroy();
+begin
+ exitcode:= exitcode + 3;
+end;
+
+constructor f.create();
+begin
+end;
+
+destructor f.destroy();
+begin
+ exitcode:= exitcode + 4;
+end;
+
+procedure getexceptobj1(var instance: e): bool1;
+begin
+ result:= false;
+end;
+
+begin
+ try
+  raise e.create;
+ except
+   exitcode:= 50;
+   exitcode:= exitcode+50;
+  e1:
+   exitcode:= 10;
+  f:
+   exitcode:= 20;
+  else
+   exitcode:= exitcode+20;
+ end;
+end.

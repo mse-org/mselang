@@ -1,0 +1,60 @@
+program except6;
+
+type
+ ea = class()[virtual,except]
+  constructor create(const message: string8);
+  destructor destroy() [default];
+  property message: string8 read fmessage;
+
+  protected
+   fmessage: string8;
+ end;
+
+ ea1 = class(ea)
+ end;
+
+ ea2 = class(ea1)
+ end;
+
+ eb = class()[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+ end;
+
+constructor ea.create(const message: string8);
+begin
+ fmessage:= message;
+end;
+
+destructor ea.destroy();
+begin
+end;
+
+constructor eb.create();
+begin
+end;
+
+destructor eb.destroy();
+begin
+end;
+
+var
+ e: ea;
+ e1: ea2;
+begin
+ try
+  e1:= ea2.create('abc');
+  raise e1;
+ except
+  if getexceptobj(e,true) and (e1 = e) then
+   e.destroy();
+   exitcode:= 100;
+  end;
+  ea2:
+   exitcode:= 10;
+  ea1:
+   exitcode:= 20;
+  else
+   exitcode:= exitcode+23;
+ end;
+end.
