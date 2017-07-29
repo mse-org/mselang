@@ -293,7 +293,10 @@ type
  
  identflagty = (idf_continued,idf_inherited);
  identflagsty = set of identflagty;
- 
+
+ caseflagty = (caf_first,caf_else);
+ caseflagsty = set of caseflagty;
+  
 // identkindty = (ik_param); 
  blockinfoty = record
   blockidbefore: int32;
@@ -301,7 +304,7 @@ type
   case contextkindty of
    ck_exceptblock: (
     casechain: listadty;
-    casefirst: boolean;
+    caseflags: caseflagsty;
    );
  end;
  

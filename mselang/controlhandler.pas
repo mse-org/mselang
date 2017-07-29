@@ -813,22 +813,29 @@ begin
    else begin
     if (s.dialect = dia_mse) and 
             (contextstack[s.stackindex-3].d.kind = ck_exceptblock) then begin
-     b1:= false;
-     with contextstack[s.stacktop] do begin
-      if d.kind = ck_typearg then begin
-       typ1:= ele.eledataabs(d.typ.typedata);
-       if (typ1^.h.kind = dk_class) and 
-                         (icf_except in typ1^.infoclass.flags) then begin
-        b1:= true;
+     if not (caf_else in contextstack[s.stackindex-3].
+                                              d.block.caseflags) then begin
+      
+      b1:= false;
+      with contextstack[s.stacktop] do begin
+       if d.kind = ck_typearg then begin
+        typ1:= ele.eledataabs(d.typ.typedata);
+        if (typ1^.h.kind = dk_class) and 
+                          (icf_except in typ1^.infoclass.flags) then begin
+         b1:= true;
+        end;
        end;
+       contextstack[s.stackindex].d.statement.excepttype:= d.typ.typedata;
       end;
-      contextstack[s.stackindex].d.statement.excepttype:= d.typ.typedata;
+      if not b1 then begin
+       errormessage(err_exceptclassexpected,[]);
+      end;
+      switchcontext(@gramse.exceptlabelco,true);
+      s.stacktop:= s.stackindex;
+     end
+     else begin
+      errormessage(err_exceptlabelafterelse,[]);
      end;
-     if not b1 then begin
-      errormessage(err_exceptclassexpected,[]);
-     end;
-     switchcontext(@gramse.exceptlabelco,true);
-     s.stacktop:= s.stackindex;
     end;
    end;
   end;
@@ -849,14 +856,14 @@ begin
     internalerror(ie_handler,'20170725B');
    end;
   {$endif}
-   if d.block.casefirst and (d.block.casechain <> 0) then begin
+   if (caf_first in d.block.caseflags) and (d.block.casechain <> 0) then begin
     addcontrolitem(oc_goto);                       //op -1
      //jump to except end, address set later     
    end;
    with pclasspendingitemty(addlistitem(pendingclassitems,
                                            d.block.casechain))^ do begin
     exceptcase.startop:= opcount;
-    exceptcase.first:= d.block.casefirst;
+    exceptcase.first:= caf_first in d.block.caseflags;
     exceptcase.last:= last;
     exceptcase.elsefla:= false;
    end;
@@ -893,7 +900,12 @@ begin
     addcontrolitem(oc_goto);                      //op 6
                       //jump to except code, address set in handleexcept
    end;
-   d.block.casefirst:= last;
+   if last then begin
+    include(d.block.caseflags,caf_first);
+   end
+   else begin
+    exclude(d.block.caseflags,caf_first);
+   end;
   end;
 //  inc(s.trystacklevel); //restore
  end;

@@ -146,7 +146,7 @@ begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_exceptblock;
    d.block.casechain:= 0;
-   d.block.casefirst:= true;
+   d.block.caseflags:= [caf_first];
   end;
   with contextstack[s.stackindex-1] do begin
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
@@ -178,6 +178,7 @@ begin
    end;
    addlabel();
   end;
+  include(d.block.caseflags,caf_else);
   s.stacktop:= s.stackindex;
  end;
 end;

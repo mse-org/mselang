@@ -87,7 +87,8 @@ type
             err_objectorclassvirtual,err_exceptclassexpected,
             err_exceptmusthavevirtual,err_exceptclassinstanceexpected,
             err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
-            err_exceptvarexpected,err_noexceptavailable);
+            err_exceptvarexpected,err_noexceptavailable,
+            err_exceptlabelafterelse);
             
  errorinfoty = record
   level: errorlevelty;
@@ -324,7 +325,9 @@ const
   (level: erl_error; message: 
              'Exception class instance variable expected'),
   (level: erl_error; message: 
-             'No exception object available')
+             'No exception object available'),
+  (level: erl_error; message: 
+             'Exception case labels not allowed after else')
  );
 
 procedure message1(const atext: string; const values: array of const); 
