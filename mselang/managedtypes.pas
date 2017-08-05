@@ -259,16 +259,17 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 var
  sub1: pinternalsubdataty;
  op1: popinfoty;
- i1: int32;
+// i1: int32;
 begin
  with info do begin
   sub1:= ele.eledataabs(getaddreftype(aref)^.recordmanagehandlers[op]);
-  pushaddr(aref{,atype,ssaindex});
-  i1:= bigint;
-  if aref.kind = ark_stack then begin
-   i1:= aref.contextindex;
-  end;
-  op1:= callinternalsub(sub1^.address,true,i1);
+  pushmanageaddr(aref{,atype,ssaindex});
+//  i1:= bigint;
+//  if aref.kind = ark_stack then begin
+//   i1:= aref.contextindex;
+//  end;
+//  op1:= callinternalsub(sub1^.address,true,i1);
+  op1:= callinternalsub(sub1^.address,true,aref.contextindex);
   if (sub1^.address = 0) and 
                 (not modularllvm or 
                  (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 

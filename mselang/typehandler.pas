@@ -694,6 +694,7 @@ var
  locad1: memopty;
  i1: int32;
  startssa: int32;
+ b1: boolean;
 begin
  with info do begin
   with locad1 do begin
@@ -732,45 +733,46 @@ begin
     handlefields(atyp,i1);
    end
    else begin //dk_object, dk_class
-    if (op1 = mo_ini) then begin
-     if (icf_zeroinit in typ1^.infoclass.flags) or 
-                    not (icf_nozeroinit in typ1^.infoclass.flags) then begin
-      with additem(oc_zeromem)^ do begin
-       par.ssas1:= info.s.ssa.nextindex-1;
-       setimmint32(typ1^.infoclass.allocsize,par.imm);
-      end;
-      if(icf_virtual in typ1^.infoclass.flags) then begin
-       with additem(oc_initobject)^.par do begin
-        ssas1:= baseadssa;
-        setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
-        initclass.classdef:= typ1^.infoclass.defs.address;
+    b1:= true;
+    case op1 of
+     mo_ini: begin
+      if (icf_zeroinit in typ1^.infoclass.flags) or 
+                     not (icf_nozeroinit in typ1^.infoclass.flags) then begin
+       with additem(oc_zeromem)^ do begin
+        par.ssas1:= info.s.ssa.nextindex-1;
+        setimmint32(typ1^.infoclass.allocsize,par.imm);
        end;
-      end;
-     end
-     else begin
-      if(icf_virtual in typ1^.infoclass.flags) then begin
-       with additem(oc_initobject)^.par do begin
-        ssas1:= baseadssa;
-        setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
-        initclass.classdef:= typ1^.infoclass.defs.address;
-       end;
-      end;
-      handlefields(atyp,i1); //does not touch vitual table address
-     end;
-     with typ1^.infoclass.subattach do begin
-      if ini <> 0 then begin
-       if (i1 > 0) and (co_mlaruntime in o.compileoptions) then begin
-        with additem(oc_offsetpoimm)^ do begin
-         setimmint32(-i1,par.imm);
+       if(icf_virtual in typ1^.infoclass.flags) then begin
+        with additem(oc_initobject)^.par do begin
+         ssas1:= baseadssa;
+         setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+         initclass.classdef:= typ1^.infoclass.defs.address;
         end;
        end;
-       dosub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
-                                                    [dsf_objini],startssa);
+      end
+      else begin
+       if(icf_virtual in typ1^.infoclass.flags) then begin
+        with additem(oc_initobject)^.par do begin
+         ssas1:= baseadssa;
+         setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+         initclass.classdef:= typ1^.infoclass.defs.address;
+        end;
+       end;
+       handlefields(atyp,i1); //does not touch vitual table address
+      end;
+      with typ1^.infoclass.subattach do begin
+       if ini <> 0 then begin
+        if (i1 > 0) and (co_mlaruntime in o.compileoptions) then begin
+         with additem(oc_offsetpoimm)^ do begin
+          setimmint32(-i1,par.imm);
+         end;
+        end;
+        dosub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
+                                                     [dsf_objini],startssa);
+       end;
       end;
      end;
-    end
-    else begin
-     if op1 = mo_fini then begin
+     mo_fini: begin
       with typ1^.infoclass.subattach do begin
        if fini <> 0 then begin
         dosub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
@@ -778,6 +780,26 @@ begin
        end;
       end;
      end;
+     mo_incref: begin
+      with typ1^.infoclass.subattach do begin
+       if incref <> 0 then begin
+        dosub(s.stacktop,ele.eledataabs(incref),s.stacktop,0,
+                                                    [dsf_objini],baseadssa);
+       end;
+      end;
+     end;
+     mo_decref: begin
+      with typ1^.infoclass.subattach do begin
+       if decref <> 0 then begin
+        handlefields(atyp,i1);
+        b1:= false;
+        dosub(s.stacktop,ele.eledataabs(decref),s.stacktop,0,
+                                                    [dsf_objfini],baseadssa);
+       end;
+      end;
+     end;
+    end;
+    if b1 then begin //not handled aready
      handlefields(atyp,i1);
     end;
    end;

@@ -3396,6 +3396,7 @@ var
 
  procedure decref(const aop: managedopty);
  begin
+//  ad1.contextindex:= getstackindex(dest);
   if indi then begin
    ad1.kind:= ark_stackref;
    ad1.address:= ad1.address-pointersize;
@@ -3530,7 +3531,12 @@ begin
       assignmenterror(source^.d,destvar);
       goto endlab;
      end;
-     needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
+     if destvar.typ^.h.kind = dk_class then begin
+      needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags)
+     end
+     else begin
+      needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags)
+     end;
      if needsmanage and isconst and 
        ((destvar.typ^.h.kind = dk_dynarray) and
               (source^.d.dat.constval.kind = dk_pointer) and 

@@ -175,7 +175,7 @@ procedure pushdata(const address: addressvaluety;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
 function getaddreftype(const aref: addressrefty): ptypedataty;
-function pushaddr(const aref: addressrefty{; const atype: ptypedataty;}
+function pushmanageaddr(const aref: addressrefty{; const atype: ptypedataty;}
                             {const assaindex: int32}): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
@@ -1666,18 +1666,19 @@ begin
  end;
 end;
 
-function pushaddr(const aref: addressrefty{ const atype: ptypedataty;
+function pushmanageaddr(const aref: addressrefty{ const atype: ptypedataty;
                                              const assaindex: int32}): int32;
 var
  op1: popinfoty;
-
+ stackoffs: int32;
+ 
  procedure pushad(const ad: addressvaluety);
  var
   i1,i2: int32;
  begin
   if af_segment in ad.flags then begin
-   op1:= additem(oc_pushsegaddr,
-                 pushsegaddrssaar[ad.segaddress.segment]);
+   op1:= insertitem(oc_pushsegaddr,stackoffs,-1,
+                                pushsegaddrssaar[ad.segaddress.segment]);
    with op1^.par.memop.segdataaddress do begin
     a.address:= ad.segaddress.address;
     a.segment:= ad.segaddress.segment;
@@ -1691,7 +1692,7 @@ var
    if i1 >= 0 then begin
     i2:= getssa(ocssa_nestedvarad);
    end;
-   op1:= additem(oc_pushlocaddr,i2);
+   op1:= insertitem(oc_pushlocaddr,stackoffs,-1,i2);
    with op1^.par.memop do begin
     locdataaddress.a:= ad.locaddress;
     locdataaddress.a.framelevel:= i1;
@@ -1701,32 +1702,29 @@ var
   end;
  end;
 
+var
+ i1: int32;
 begin
+ stackoffs:= aref.contextindex-info.s.stackindex;
  case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aref.vardata)^ do begin
     pushad(address);
-{
-    if af_segment in address.flags then begin
-     op1:= additem(oc_pushsegaddr,
-                   pushsegaddrssaar[address.segaddress.segment]);
-     with op1^.par.memop.segdataaddress do begin
-      a.address:= address.segaddress.address;
-      a.segment:= address.segaddress.segment;
-      offset:= aref.offset;
-      a.element:= 0;
-     end;
-    end
-    else begin
-     notimplementederror('');
-    end;
-}
    end;
   end;
   ark_contextdata: begin
    with pcontextdataty(aref.contextdata)^ do begin
     if kind = ck_ref then begin
      pushad(dat.ref.c.address);
+     if (dat.datatyp.indirectlevel = 1) and
+        (ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.h.kind in
+                                             [dk_class,dk_object]) then begin
+      i1:= op1^.par.ssad;
+      op1:= insertitem(oc_indirectpo,stackoffs,-1);
+      with op1^ do begin
+       par.ssas1:= i1;
+      end;
+     end;
     end
     else begin
      notimplementederror('');
@@ -1736,8 +1734,7 @@ begin
   ark_stack: begin
                  //for constructor, destructor, instance pointer on stack
    if (co_mlaruntime in info.o.compileoptions) then begin
-    with insertitem(oc_pushduppo,
-                  aref.contextindex-info.s.stackindex,-1)^ do begin
+    with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
      par.voffset:= aref.address-pointersize;
     end;
    end;
@@ -1746,7 +1743,8 @@ begin
   end;
   ark_stackref: begin //for destructor, instance pointer on stack
    if co_mlaruntime in info.o.compileoptions then begin
-    with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
+    with insertitem(oc_pushstackaddr,stackoffs,-1)^.
+                                       par.memop.tempdataaddress do begin
      offset:= aref.offset;
      a.address:= aref.address;
     end;

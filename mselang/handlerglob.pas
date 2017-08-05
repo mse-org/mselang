@@ -110,7 +110,7 @@ type
  end;
 
  subattachty = record
-  ini,fini,afterconstruct,beforedestruct,destroy: elementoffsetty;
+  ini,fini,afterconstruct,beforedestruct,incref,decref,destroy: elementoffsetty;
  end;
 
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,

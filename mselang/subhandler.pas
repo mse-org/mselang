@@ -163,7 +163,7 @@ begin
    params:= getsegmenttopoffs(seg_localloc);
    with pparallocinfoty(allocsegmentpo(seg_localloc,
                                         sizeof(parallocinfoty)))^ do begin
-    ssaindex:= info.s.ssa.nextindex-1;
+    ssaindex:= info.s.ssa.nextindex-1; //???
     size:= bitoptypes[das_pointer] //not used? 
    end;
   end
@@ -931,6 +931,12 @@ begin
        tk_fini: begin
         include(d.subdef.flags1,sf1_fini);
        end;
+       tk_incref: begin
+        include(d.subdef.flags1,sf1_incref);
+       end;
+       tk_decref: begin
+        include(d.subdef.flags1,sf1_decref);
+       end;
        tk_default: begin
         include(d.subdef.flags1,sf1_default);
 {
@@ -1540,7 +1546,17 @@ var                       //todo: move after doparam
     move(paramsbuffer,p1^.data,i2);
    end;
   end; //lastparamindex
- end; //doparams
+ end;//doparams()
+
+ function checksysclassmethod(const aname: string): boolean;
+ begin
+  result:= true;
+  if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or
+                                                  (paramco <> 1) then begin
+   errormessage(err_invalidmethodforattach,[aname]);
+   result:= false;
+  end;
+ end;//checksysclassmethod()
 
 var
  lstr1: lstringty;  
@@ -1988,50 +2004,44 @@ begin
    s.stacktop:= s.stackindex;
   end
   else begin
-   if sf1_afterconstruct in subflags1 then begin
-    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or
-                                                    (paramco <> 1) then begin
-     errormessage(err_invalidmethodforattach,['afterconstruct']);
-    end
-    else begin
-     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
-     end;
+   if (sf1_afterconstruct in subflags1) and 
+                 checksysclassmethod('afterconstruct') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
     end;
    end;
-   if sf1_beforedestruct in subflags1 then begin
-    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
-                                                    (paramco <> 1) then begin
-     errormessage(err_invalidmethodforattach,['beforedestruct']);
-    end
-    else begin
-     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
-     end;
+   if (sf1_beforedestruct in subflags1) and 
+                 checksysclassmethod('beforedestructstruct') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
     end;
    end;
-   if sf1_ini in subflags1 then begin
-    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
-                                                    (paramco <> 1) then begin
-     errormessage(err_invalidmethodforattach,['ini']);
-    end
-    else begin
-     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.ini:= ele.eledatarel(sub1);
-      include(h.flags,tf_needsini);
-     end;
+   if (sf1_ini in subflags1) and 
+                 checksysclassmethod('ini') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.ini:= ele.eledatarel(sub1);
+     include(h.flags,tf_needsini);
     end;
    end;
-   if sf1_fini in subflags1 then begin
-    if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or 
-                                                    (paramco <> 1) then begin
-     errormessage(err_invalidmethodforattach,['fini']);
-    end
-    else begin
-     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.fini:= ele.eledatarel(sub1);
-      include(h.flags,tf_needsfini);
-     end;
+   if (sf1_fini in subflags1) and 
+                 checksysclassmethod('fini') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.fini:= ele.eledatarel(sub1);
+     include(h.flags,tf_needsfini);
+    end;
+   end;
+   if (sf1_incref in subflags1) and 
+                 checksysclassmethod('incref') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.incref:= ele.eledatarel(sub1);
+     h.flags:= h.flags+[tf_managed,tf_needsmanage];
+    end;
+   end;
+   if (sf1_decref in subflags1) and 
+                 checksysclassmethod('decref') then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.decref:= ele.eledatarel(sub1);
+     h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
    if sf1_default in subflags1 then begin

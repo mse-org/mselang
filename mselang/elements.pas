@@ -1730,15 +1730,17 @@ begin
             ' flags:'+
               msestring(settostring(ptypeinfo(typeinfo(infoclass.flags)),
                                          integer(infoclass.flags),true))+
-                      ' alloc:'+inttostrmse(infoclass.allocsize)+
-                      ' virt:'+inttostrmse(infoclass.virtualcount)+
-                      ' intf:'+inttostrmse(infoclass.interfacecount)+
-                      ' isub:'+inttostrmse(infoclass.interfacesubcount)+
-                      ' defs:'+inttostrmse(infoclass.defs.address)+lineend+
-                      ' ini:'+inttostrmse(infoclass.subattach.ini)+
-                      ' fini:'+inttostrmse(infoclass.subattach.fini)+
-                      ' aftconst:'+inttostrmse(infoclass.subattach.afterconstruct)+
-                      ' befdest:'+inttostrmse(infoclass.subattach.beforedestruct);
+               ' alloc:'+inttostrmse(infoclass.allocsize)+
+               ' virt:'+inttostrmse(infoclass.virtualcount)+
+               ' intf:'+inttostrmse(infoclass.interfacecount)+
+               ' isub:'+inttostrmse(infoclass.interfacesubcount)+
+               ' defs:'+inttostrmse(infoclass.defs.address)+lineend+
+               ' ini:'+inttostrmse(infoclass.subattach.ini)+
+               ' fini:'+inttostrmse(infoclass.subattach.fini)+
+               ' aftconst:'+inttostrmse(infoclass.subattach.afterconstruct)+
+               ' befdest:'+inttostrmse(infoclass.subattach.beforedestruct)+
+               ' incref:'+inttostrmse(infoclass.subattach.incref)+
+               ' decref:'+inttostrmse(infoclass.subattach.decref);
          po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
          for int6:= 0 to infoclass.virtualcount-1 do begin
           if int6 mod 5 = 0 then begin

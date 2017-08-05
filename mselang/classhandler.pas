@@ -821,8 +821,9 @@ testvar:= classdefinfopoty(getsegmentpo(classdefs1));
       end;
      end;
      reversefieldchain(typ1);
-     if (h.flags * [tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
-                      (infoclass.subattach.destroy <> 0) then begin
+     if (h.flags * 
+             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
+                                  (infoclass.subattach.destroy <> 0) then begin
       createrecordmanagehandler(d.typ.typedata);
      end;
      typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
