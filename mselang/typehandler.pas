@@ -694,7 +694,7 @@ var
  locad1: memopty;
  i1: int32;
  startssa: int32;
- b1: boolean;
+// b1: boolean;
 begin
  with info do begin
   with locad1 do begin
@@ -733,7 +733,7 @@ begin
     handlefields(atyp,i1);
    end
    else begin //dk_object, dk_class
-    b1:= true;
+//    b1:= true;
     case op1 of
      mo_ini: begin
       if (icf_zeroinit in typ1^.infoclass.flags) or 
@@ -780,6 +780,7 @@ begin
        end;
       end;
      end;
+     {
      mo_incref: begin
       with typ1^.infoclass.subattach do begin
        if incref <> 0 then begin
@@ -798,10 +799,11 @@ begin
        end;
       end;
      end;
+     }
     end;
-    if b1 then begin //not handled aready
+//    if b1 then begin //not handled aready
      handlefields(atyp,i1);
-    end;
+//    end;
    end;
    poptemp(pointersize);
    endsimplesub(true);
