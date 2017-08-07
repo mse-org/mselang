@@ -1554,6 +1554,7 @@ begin
   end;
   ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
   ref1.contextindex:= index1;
+  ref1.isclass:= false;
   i1:= d.dat.fact.ssaindex;
   writemanagedtypeop(mo_fini,ref1.typ,ref1);
   with insertitem(oc_storemanagedtemp,index1-s.stackindex,-1)^.par do begin

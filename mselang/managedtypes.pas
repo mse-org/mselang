@@ -254,27 +254,47 @@ begin
  end;
 end;
 
-procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty{; const ssaindex: integer});
+procedure managerecord(const op: managedopty; const aref: addressrefty);
 var
  sub1: pinternalsubdataty;
  op1: popinfoty;
+ typ1: ptypedataty;
+ ele1: elementoffsetty;
+ sf1: dosubflagsty;
+ i1: int32;
 // i1: int32;
 begin
  with info do begin
-  sub1:= ele.eledataabs(getaddreftype(aref)^.recordmanagehandlers[op]);
-  pushmanageaddr(aref{,atype,ssaindex});
-//  i1:= bigint;
-//  if aref.kind = ark_stack then begin
-//   i1:= aref.contextindex;
-//  end;
-//  op1:= callinternalsub(sub1^.address,true,i1);
-  op1:= callinternalsub(sub1^.address,true,aref.contextindex);
-  if (sub1^.address = 0) and 
-                (not modularllvm or 
-                 (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
-                                          //unresolved
-   linkmark(sub1^.calllinks,getsegaddress(seg_op,@op1^.par.callinfo.ad));
+  typ1:= getaddreftype(aref);
+  if aref.isclass then begin
+   case op of
+    mo_incref: begin
+     ele1:= typ1^.infoclass.subattach.incref;
+     sf1:= [dsf_objini];
+    end;
+    mo_decref: begin
+     ele1:= typ1^.infoclass.subattach.decref;
+     sf1:= [dsf_objfini];
+    end;
+    else begin
+     ele1:= 0;
+    end;
+   end;
+   if ele1 <> 0 then begin
+    i1:= pushmanageaddr(aref);
+    dosub(aref.contextindex,ele.eledataabs(ele1),aref.contextindex,0,sf1,i1);
+   end;
+  end
+  else begin   
+   sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op]);
+   pushmanageaddr(aref);
+   op1:= callinternalsub(sub1^.address,true,aref.contextindex);
+   if (sub1^.address = 0) and 
+                 (not modularllvm or 
+                  (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
+                                           //unresolved
+    linkmark(sub1^.calllinks,getsegaddress(seg_op,@op1^.par.callinfo.ad));
+   end;
   end;
  end;
 end;
@@ -417,123 +437,8 @@ end;
 
 procedure writemanagedtypeop(const op: managedopty;
                 const atype: ptypedataty; const aref: addressrefty);
-var
- po2,po4: ptypedataty;
- po3: pfielddataty;
- parentbefore: elementoffsetty;
- loopinfo: loopinfoty;
- bo1: boolean;
- ad1: addressrefty;
- ele1: elementoffsetty;
- i1: int32;
 begin
- atype^.h.manageproc(op,{atype,}aref{,ssaindex});
-(*
- case atype^.h.kind of
-  dk_array: begin
-   i1:= 1;
-   po2:= atype;
-   while po2^.h.kind = dk_array do begin
-    i1:= i1 * getordcount(ele.eledataabs(po2^.infoarray.indextypedata));
-    po2:= ele.eledataabs(po2^.infoarray.i.itemtypedata);
-   end;
-   if tf_managed in po2^.h.flags then begin
-    case po2^.h.kind of
-     dk_dynarray: begin
-      po4:= ele.eledataabs(po2^.infodynarray.i.itemtypedata);
-      if not (tf_needsmanage in po4^.h.flags) then begin
-       po2^.manageproc(op,aaddress,i1,ssaindex);
-      end
-      else begin
-       notimplementederror('20160309A');
-      end;
-     end;
-     dk_string8: begin
-      po2^.manageproc(op,aaddress,i1,ssaindex);
-     end;
-     else begin
-      notimplementederror('20160309B');
-     end;
-    end;
-   end
-   else begin
-    notimplementederror('20160309C');
-   end;
-  end;
-  dk_dynarray: begin
-   po4:= ele.eledataabs(atype^.infodynarray.i.itemtypedata);
-  end;
-  else begin
-   internalerror1(ie_managed,'20160308A');
-  end;
- end;
-*)
-(*
- if tf_managed in atype^.h.flags then begin
-  case atype^.h.kind of
-   dk_array: begin
-    ptypedataty(ele.eledataabs(atype^.infoarray.i.itemtypedata))^.
-      manageproc(op,aaddress,
-           getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),
-                                                                     ssaindex);
-   end;
-   dk_dynarray: begin
-    ptypedataty(ele.eledataabs(atype^.infodynarray.i.itemtypedata))^.
-                             manageproc(op,aaddress,datasizety(0),ssaindex);
-   end;
-   else begin
-    atype^.manageproc(op,aaddress,1,ssaindex);
-   end;
-  end;
- end
- else begin
-  if atype^.h.kind = dk_array then begin
-   ad1.base:= ab_reg0;
-   if aaddress.base = ab_segment then begin
-    with additem(oc_movesegreg0)^ do begin
-     par.vsegment:= aaddress.segment;
-    end;
-   end
-   else begin
-    with additem(oc_moveframereg0)^ do begin
-    end;
-   end;
-   beginforloop(loopinfo,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
-   po2:= ele.eledataabs(atype^.infoarray.i.itemtypedata);
-  end
-  else begin
-   ad1.base:= aaddress.base;
-   po2:= atype;
-  end;
-
-  ele1:= po2^.fieldchain;
- {$ifdef mse_checkinternalerror}                             
-  if ele1 = 0 then begin
-   internalerror(ie_managed,'20140512A');
-  end;
- {$endif}
-  repeat
-   po3:= ele.eledataabs(ele1);
-   po4:= ele.eledataabs(po3^.vf.typ);
-//   if po4^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
-   if tf_needsmanage in po4^.h.flags then begin
-    ad1.offset:= aaddress.offset + po3^.offset;
-    writemanagedtypeop(op,po4,ad1,ssaindex);
-   end;
-   ele1:= po3^.vf.next;
-  until ele1 = 0;
-
-  if atype^.h.kind = dk_array then begin
-   with additem(oc_increg0)^ do begin
-    setimmoffset(po2^.h.bytesize,par);
-   end;
-   endforloop(loopinfo);
-   with additem(oc_popreg0)^ do begin
-   end;
-  end;
- end;
-*)
+ atype^.h.manageproc(op,aref);
 end;
 
 procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
@@ -542,6 +447,7 @@ var
  ad1: addressrefty;
 begin
  ad1.contextindex:= acontextindex;
+ ad1.isclass:= false;
  ad1.kind:= ark_vardatanoaggregate;
  ad1.offset:= 0;
  ad1.vardata:= avar;
@@ -557,6 +463,7 @@ var
 begin
  if chain <> 0 then begin
   ad1.contextindex:= acontextindex;
+  ad1.isclass:= false;
   ad1.kind:= ark_vardatanoaggregate;
   ad1.offset:= 0;
   ele1:= chain;
@@ -584,6 +491,7 @@ var
 begin
  if achain <> 0 then begin
   ref1.contextindex:= acontextindex;
+  ref1.isclass:= false;
   ref1.offset:= 0;
   ref1.kind:= ark_managedtemp;
   if co_llvm in info.o.compileoptions then begin

@@ -3428,6 +3428,7 @@ begin
 //  potop:= @contextstack[s.stacktop];
   if not errorfla then begin
    ad1.contextindex:= s.stacktop;
+   ad1.isclass:= false;
    if not getnextnospace(s.stackindex+1,dest) or 
           not getpreviousnospace(s.stacktop,source) then begin
 //                               not getnextnospace(dest+1,source) then begin
@@ -3532,7 +3533,8 @@ begin
       goto endlab;
      end;
      if destvar.typ^.h.kind = dk_class then begin
-      needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags)
+      needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags);
+      ad1.isclass:= true;
      end
      else begin
       needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags)

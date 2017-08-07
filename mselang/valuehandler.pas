@@ -749,6 +749,7 @@ begin
        end;
        if tf_needsini in dest^.h.flags then begin
         ad1.contextindex:= getstackindex(acontext);
+        ad1.isclass:= false;
         ad1.offset:= 0;
         ad1.kind:= ark_stackref;
         ad1.address:= -i1;
@@ -812,6 +813,7 @@ begin
        end;
        if tf_needsini in dest^.h.flags then begin
         ad1.contextindex:= getstackindex(acontext);
+        ad1.isclass:= false;
         ad1.kind:= ark_stack;
         ad1.ssaindex:= i3;
         ad1.typ:= dest;
@@ -2488,6 +2490,7 @@ begin
         adref1.offset:= 0;
         adref1.ssaindex:= instancessa;
         adref1.contextindex:= adestindex;
+        adref1.isclass:= false;
         adref1.kind:= ark_stack;
         adref1.address:= 0;
         adref1.typ:= resulttype1;
@@ -2823,6 +2826,7 @@ begin
       adref1.offset:= 0;
       adref1.ssaindex:= instancessa;
       adref1.contextindex:= s.stacktop;
+      adref1.isclass:= false;
       adref1.kind:= ark_stack;
       adref1.address:= 0; //instance removed by destroy()
       adref1.typ:= instancetype1;

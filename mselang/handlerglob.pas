@@ -218,6 +218,7 @@ type
   offset: dataoffsty;
   ssaindex: int32;
   contextindex: int32; //for managedtypes
+  isclass: boolean;
   case kind: addressrefkindty of
    ark_vardata,ark_vardatanoaggregate: (
     vardata: pointer;     //pvardataty
