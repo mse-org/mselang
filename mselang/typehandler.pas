@@ -720,6 +720,7 @@ begin
   ad1.kind:= ark_stackref;
   ad1.address:= -pointersize; //pointer to var
   ad1.offset:= 0;
+  ad1.isclass:= false;
 //  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
    typ1:= ele.eledataabs(atyp); //can be changed because of added items
