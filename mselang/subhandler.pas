@@ -1096,6 +1096,7 @@ function startsimplesub(const aname: identty;
 var
  m1: metavaluety;
  var1: vardataty;
+ i1: int32;
 begin
  with info do begin
   if do_proginfo in s.debugoptions then begin

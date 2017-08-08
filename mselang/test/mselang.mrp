@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=9
   (
   kind=1
@@ -3631,7 +3631,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72A0C40
+    ao=An unhandled exception occured at $B72F2C40
     ae=
     aec=123
     ie=0
@@ -8085,7 +8085,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,665,5,object
   c=26
    (
    kind=1
@@ -8987,8 +8987,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,object8 llvm
-   teststate=1
+   a=0,648,2,object8 llvm
+   teststate=2
    path=object8.mla
    comment=
    cc=${mlc_llvm}
@@ -9003,8 +9003,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:   749 Segmentation fault      $2
+   aec=139
    ie=0
    )
    (
@@ -9031,8 +9031,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,object9 llvm
-   teststate=1
+   a=0,648,2,object9 llvm
+   teststate=2
    path=object9.mla
    comment=
    cc=${mlc_llvm}
@@ -9047,8 +9047,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:   961 Segmentation fault      $2
+   aec=139
    ie=0
    )
    (
@@ -9183,7 +9183,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=object/
   comment=
   cc=
@@ -11813,7 +11813,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=

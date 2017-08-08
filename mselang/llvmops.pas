@@ -5054,7 +5054,7 @@ const
   returnssa = 0;
   returnfuncssa = 1;
 
-  zeromemssa = 0;
+  zeromemssa = 1;
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initobjectssa = 2;

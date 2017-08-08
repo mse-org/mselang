@@ -1455,7 +1455,7 @@ var
  po1: pclassdefinfoty;
 begin
  po1:= @classinfo;
- ppointer(instance+virttaboffset)^:= @classinfo;
+ ppointer(instance+virttaboffset)^:= po1;//@classinfo;
 {$ifdef mse_debugclass}
  writeln('***initobject ',result);
 {$endif}

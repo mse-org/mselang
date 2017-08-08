@@ -739,7 +739,7 @@ begin
       if (icf_zeroinit in typ1^.infoclass.flags) or 
                      not (icf_nozeroinit in typ1^.infoclass.flags) then begin
        with additem(oc_zeromem)^ do begin
-        par.ssas1:= info.s.ssa.nextindex-1;
+        par.ssas1:= baseadssa;//info.s.ssa.nextindex-1;
         setimmint32(typ1^.infoclass.allocsize,par.imm);
        end;
        if(icf_virtual in typ1^.infoclass.flags) then begin
