@@ -653,37 +653,40 @@ procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
 
 var
  ad1: addressrefty;
- op1: managedopty;
  baseadssa: int32;
 
- procedure handlefields(const atyp: elementoffsetty; var fieldoffset: int32);
+ procedure handlefields(const op: managedopty;
+                       const atyp: elementoffsetty; var fieldoffset: int32);
  var
   ele1: elementoffsetty;
   field1: pfielddataty;
   typ2: ptypedataty;
  begin
   with ptypedataty(ele.eledataabs(atyp))^ do begin
-   if (h.kind = dk_object) and (h.ancestor <> 0) then begin
-    handlefields(h.ancestor,fieldoffset);
+   if (h.kind in [dk_object,dk_class]) and (h.ancestor <> 0) then begin
+    handlefields(op,h.ancestor,fieldoffset);
    end;
    ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
    while ele1 <> 0 do begin
     field1:= ele.eledataabs(ele1);
     typ2:= ele.eledataabs(field1^.vf.typ);
     if typ2^.h.manageproc <> nil then begin
-     fieldoffset:= field1^.offset - fieldoffset;
-     if fieldoffset > 0 then begin
-      with additem(oc_offsetpoimm)^ do begin
-       setimmint32(fieldoffset,par.imm);
-       par.ssas1:= baseadssa;
-       baseadssa:= par.ssad;
+     if (op <> mo_inizeroed) or 
+            (typ2^.h.flags * [tf_complexini,tf_hascomplexini] <> []) then begin
+      fieldoffset:= field1^.offset - fieldoffset;
+      if fieldoffset > 0 then begin
+       with additem(oc_offsetpoimm)^ do begin
+        setimmint32(fieldoffset,par.imm);
+        par.ssas1:= baseadssa;
+        baseadssa:= par.ssad;
+       end;
       end;
+      ad1.typ:= typ2;
+      ad1.ssaindex:= info.s.ssa.nextindex-1;
+      ad1.contextindex:= info.s.stacktop;
+      typ2^.h.manageproc(op,{typ2,}ad1);
+      fieldoffset:= field1^.offset; 
      end;
-     ad1.typ:= typ2;
-     ad1.ssaindex:= info.s.ssa.nextindex-1;
-     ad1.contextindex:= info.s.stacktop;
-     typ2^.h.manageproc(op1,{typ2,}ad1);
-     fieldoffset:= field1^.offset; 
     end;
     ele1:= field1^.vf.next;
    end;
@@ -691,6 +694,7 @@ var
  end;//handlefields
 
 var
+ op1: managedopty;
  ele1,typele1: elementoffsetty;
  typ1,typ2: ptypedataty;
  sub1: pinternalsubdataty;
@@ -733,20 +737,21 @@ begin
    startssa:= info.s.ssa.nextindex-1;
    baseadssa:= startssa;
    if typ1^.h.kind = dk_record then begin
-    handlefields(atyp,i1);
+    handlefields(op1,atyp,i1);
    end
    else begin //dk_object, dk_class
     b1:= true;
     case op1 of
-     mo_ini: begin
-      if (icf_zeroinit in typ1^.infoclass.flags) or 
-                     not (icf_nozeroinit in typ1^.infoclass.flags) then begin
+     mo_ini,mo_inizeroed: begin
+      if (op1 <> mo_inizeroed) and ((icf_zeroinit in typ1^.infoclass.flags) or 
+                     not (icf_nozeroinit in typ1^.infoclass.flags)) then begin
        with additem(oc_zeromem)^ do begin
         par.ssas1:= baseadssa;//info.s.ssa.nextindex-1;
         setimmint32(typ1^.infoclass.allocsize,par.imm);
        end;
-       if not (tf_hascomplexini in typ1^.h.flags) then begin
-        b1:= false; //fields zeroed
+       b1:= false; //fields zeroed
+       if tf_hascomplexini in typ1^.h.flags then begin
+        handlefields(mo_inizeroed,atyp,i1);
        end;
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_initobject)^.par do begin
@@ -764,7 +769,7 @@ begin
          initclass.classdef:= typ1^.infoclass.defs.address;
         end;
        end;
-       handlefields(atyp,i1); //does not touch vitual table address
+       handlefields(op1,atyp,i1); //does not touch vitual table address
        b1:= false;
       end;
       with typ1^.infoclass.subattach do begin
@@ -809,7 +814,7 @@ begin
      }
     end;
     if b1 then begin //not handled aready
-     handlefields(atyp,i1);
+     handlefields(op1,atyp,i1);
     end;
    end;
    poptemp(pointersize);

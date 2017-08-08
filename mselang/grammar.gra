@@ -63,7 +63,7 @@
  '.void','.classes','.private','.protected','.public','.published'
  '.classintfname','.classintftype','.classimp','.objpotype','.self'
  '.units','.ancestors','.nestedvarref','.defines'
- '.ini','.fini','.incref','.decref','.decrefindi','.destroy'
+ '.ini','.inizeroed','.fini','.incref','.decref','.decrefindi','.destroy'
  '.method','.operators','.operatorsright','.system'
 @.tokens
  'mselang','pascal'

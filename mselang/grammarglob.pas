@@ -38,131 +38,133 @@ const
  tks_nestedvarref = $0000020E;
  tks_defines = $0000020F;
  tks_ini = $00000210;
- tks_fini = $00000211;
- tks_incref = $00000212;
- tks_decref = $00000213;
- tks_decrefindi = $00000214;
- tks_destroy = $00000215;
- tks_method = $00000216;
- tks_operators = $00000217;
- tks_operatorsright = $00000218;
- tks_system = $00000219;
- tk_mselang = $0000021A;
- tk_pascal = $0000021B;
- tk_nil = $0000021C;
- tk_result = $0000021D;
- tk_exitcode = $0000021E;
- tk_sizeof = $0000021F;
- tk_defined = $00000220;
- tk_break = $00000221;
- tk_continue = $00000222;
- tk_self = $00000223;
- tk_b = $00000224;
- tk_booleval = $00000225;
- tk_internaldebug = $00000226;
- tk_nozeroinit = $00000227;
- tk_zeroinit = $00000228;
- tk_virtual = $00000229;
- tk_except = $0000022A;
- tk_end = $0000022B;
- tk_afterconstruct = $0000022C;
- tk_beforedestruct = $0000022D;
- tk_ini = $0000022E;
- tk_fini = $0000022F;
- tk_incref = $00000230;
- tk_decref = $00000231;
- tk_operator = $00000232;
- tk_operatorright = $00000233;
- tk_default = $00000234;
- tk_unit = $00000235;
- tk_program = $00000236;
- tk_interface = $00000237;
- tk_implementation = $00000238;
- tk_uses = $00000239;
- tk_type = $0000023A;
- tk_const = $0000023B;
- tk_var = $0000023C;
- tk_label = $0000023D;
- tk_class = $0000023E;
- tk_procedure = $0000023F;
- tk_function = $00000240;
- tk_method = $00000241;
- tk_initialization = $00000242;
- tk_finalization = $00000243;
- tk_constructor = $00000244;
- tk_destructor = $00000245;
- tk_begin = $00000246;
- tk_mode = $00000247;
- tk_dumpelements = $00000248;
- tk_dumpopcode = $00000249;
- tk_abort = $0000024A;
- tk_stoponerror = $0000024B;
- tk_nop = $0000024C;
- tk_include = $0000024D;
- tk_define = $0000024E;
- tk_undef = $0000024F;
- tk_ifdef = $00000250;
- tk_ifndef = $00000251;
- tk_if = $00000252;
- tk_else = $00000253;
- tk_endif = $00000254;
- tk_ifend = $00000255;
- tk_h = $00000256;
- tk_inline = $00000257;
- tk_on = $00000258;
- tk_off = $00000259;
- tk_constref = $0000025A;
- tk_out = $0000025B;
- tk_override = $0000025C;
- tk_overload = $0000025D;
- tk_of = $0000025E;
- tk_object = $0000025F;
- tk_external = $00000260;
- tk_forward = $00000261;
- tk_sub = $00000262;
- tk_finally = $00000263;
- tk_do = $00000264;
- tk_with = $00000265;
- tk_case = $00000266;
- tk_while = $00000267;
- tk_repeat = $00000268;
- tk_for = $00000269;
- tk_try = $0000026A;
- tk_raise = $0000026B;
- tk_goto = $0000026C;
- tk_then = $0000026D;
- tk_until = $0000026E;
- tk_to = $0000026F;
- tk_downto = $00000270;
- tk_set = $00000271;
- tk_packed = $00000272;
- tk_record = $00000273;
- tk_array = $00000274;
- tk_private = $00000275;
- tk_protected = $00000276;
- tk_public = $00000277;
- tk_published = $00000278;
- tk_property = $00000279;
- tk_read = $0000027A;
- tk_write = $0000027B;
- tk_div = $0000027C;
- tk_mod = $0000027D;
- tk_and = $0000027E;
- tk_shl = $0000027F;
- tk_shr = $00000280;
- tk_or = $00000281;
- tk_xor = $00000282;
- tk_in = $00000283;
- tk_is = $00000284;
- tk_not = $00000285;
- tk_as = $00000286;
- tk_inherited = $00000287;
+ tks_inizeroed = $00000211;
+ tks_fini = $00000212;
+ tks_incref = $00000213;
+ tks_decref = $00000214;
+ tks_decrefindi = $00000215;
+ tks_destroy = $00000216;
+ tks_method = $00000217;
+ tks_operators = $00000218;
+ tks_operatorsright = $00000219;
+ tks_system = $0000021A;
+ tk_mselang = $0000021B;
+ tk_pascal = $0000021C;
+ tk_nil = $0000021D;
+ tk_result = $0000021E;
+ tk_exitcode = $0000021F;
+ tk_sizeof = $00000220;
+ tk_defined = $00000221;
+ tk_break = $00000222;
+ tk_continue = $00000223;
+ tk_self = $00000224;
+ tk_b = $00000225;
+ tk_booleval = $00000226;
+ tk_internaldebug = $00000227;
+ tk_nozeroinit = $00000228;
+ tk_zeroinit = $00000229;
+ tk_virtual = $0000022A;
+ tk_except = $0000022B;
+ tk_end = $0000022C;
+ tk_afterconstruct = $0000022D;
+ tk_beforedestruct = $0000022E;
+ tk_ini = $0000022F;
+ tk_fini = $00000230;
+ tk_incref = $00000231;
+ tk_decref = $00000232;
+ tk_operator = $00000233;
+ tk_operatorright = $00000234;
+ tk_default = $00000235;
+ tk_unit = $00000236;
+ tk_program = $00000237;
+ tk_interface = $00000238;
+ tk_implementation = $00000239;
+ tk_uses = $0000023A;
+ tk_type = $0000023B;
+ tk_const = $0000023C;
+ tk_var = $0000023D;
+ tk_label = $0000023E;
+ tk_class = $0000023F;
+ tk_procedure = $00000240;
+ tk_function = $00000241;
+ tk_method = $00000242;
+ tk_initialization = $00000243;
+ tk_finalization = $00000244;
+ tk_constructor = $00000245;
+ tk_destructor = $00000246;
+ tk_begin = $00000247;
+ tk_mode = $00000248;
+ tk_dumpelements = $00000249;
+ tk_dumpopcode = $0000024A;
+ tk_abort = $0000024B;
+ tk_stoponerror = $0000024C;
+ tk_nop = $0000024D;
+ tk_include = $0000024E;
+ tk_define = $0000024F;
+ tk_undef = $00000250;
+ tk_ifdef = $00000251;
+ tk_ifndef = $00000252;
+ tk_if = $00000253;
+ tk_else = $00000254;
+ tk_endif = $00000255;
+ tk_ifend = $00000256;
+ tk_h = $00000257;
+ tk_inline = $00000258;
+ tk_on = $00000259;
+ tk_off = $0000025A;
+ tk_constref = $0000025B;
+ tk_out = $0000025C;
+ tk_override = $0000025D;
+ tk_overload = $0000025E;
+ tk_of = $0000025F;
+ tk_object = $00000260;
+ tk_external = $00000261;
+ tk_forward = $00000262;
+ tk_sub = $00000263;
+ tk_finally = $00000264;
+ tk_do = $00000265;
+ tk_with = $00000266;
+ tk_case = $00000267;
+ tk_while = $00000268;
+ tk_repeat = $00000269;
+ tk_for = $0000026A;
+ tk_try = $0000026B;
+ tk_raise = $0000026C;
+ tk_goto = $0000026D;
+ tk_then = $0000026E;
+ tk_until = $0000026F;
+ tk_to = $00000270;
+ tk_downto = $00000271;
+ tk_set = $00000272;
+ tk_packed = $00000273;
+ tk_record = $00000274;
+ tk_array = $00000275;
+ tk_private = $00000276;
+ tk_protected = $00000277;
+ tk_public = $00000278;
+ tk_published = $00000279;
+ tk_property = $0000027A;
+ tk_read = $0000027B;
+ tk_write = $0000027C;
+ tk_div = $0000027D;
+ tk_mod = $0000027E;
+ tk_and = $0000027F;
+ tk_shl = $00000280;
+ tk_shr = $00000281;
+ tk_or = $00000282;
+ tk_xor = $00000283;
+ tk_in = $00000284;
+ tk_is = $00000285;
+ tk_not = $00000286;
+ tk_as = $00000287;
+ tk_inherited = $00000288;
 
- tokens: array[0..135] of string = ('',
+ tokens: array[0..136] of string = ('',
   '.void','.classes','.private','.protected','.public','.published',
   '.classintfname','.classintftype','.classimp','.objpotype','.self','.units',
-  '.ancestors','.nestedvarref','.defines','.ini','.fini','.incref','.decref',
-  '.decrefindi','.destroy','.method','.operators','.operatorsright','.system',
+  '.ancestors','.nestedvarref','.defines','.ini','.inizeroed','.fini','.incref',
+  '.decref','.decrefindi','.destroy','.method','.operators','.operatorsright',
+  '.system',
   'mselang','pascal','nil','result','exitcode','sizeof','defined','break',
   'continue','self','b','booleval','internaldebug','nozeroinit','zeroinit',
   'virtual','except','end','afterconstruct','beforedestruct','ini','fini',
@@ -178,7 +180,7 @@ const
   'write','div','mod','and','shl','shr','or','xor','in','is','not','as',
   'inherited');
 
- tokenids: array[0..135] of identty = (
+ tokenids: array[0..136] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
   $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
   $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
@@ -198,7 +200,7 @@ const
   $00000270,$00000271,$00000272,$00000273,$00000274,$00000275,$00000276,
   $00000277,$00000278,$00000279,$0000027A,$0000027B,$0000027C,$0000027D,
   $0000027E,$0000027F,$00000280,$00000281,$00000282,$00000283,$00000284,
-  $00000285,$00000286,$00000287);
+  $00000285,$00000286,$00000287,$00000288);
 
 implementation
 end.

@@ -34,8 +34,10 @@ var
  
 const
  managedopids: array[managedopty] of identty = (
-               //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi,
-                tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi,
+               //mo_ini, mo_inizeroed, mo_fini, mo_incref, 
+                tks_ini,tks_inizeroed,tks_fini,tks_incref,
+               //mo_decref, mo_decrefindi,
+                tks_decref,tks_decrefindi,
                //mo_destroy
                 tks_destroy
                );
@@ -109,6 +111,9 @@ begin
   mo_ini: begin
    inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
+  mo_inizeroed: begin
+   //nothing to do
+  end;
   mo_fini: begin
    finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
@@ -132,6 +137,9 @@ begin
  case op of 
   mo_ini: begin
    inipointer(aro_none,{atype,}aref{,ssaindex});
+  end;
+  mo_inizeroed: begin
+   //nothing to do
   end;
   mo_fini: begin
    finirefsize(aro_none,{atype,}aref{,ssaindex});
@@ -157,6 +165,9 @@ begin
   mo_ini: begin
    inipointer(aro_dynamic,{atype,}aref{,ssaindex});
    inipointer(aro_none,{atype,}aref{,ssaindex});
+  end;
+  mo_inizeroed: begin
+   //nothing to do
   end;
   mo_fini: begin
    finirefsize(aro_dynamic,{atype,}aref{,ssaindex});
@@ -213,6 +224,9 @@ begin
   mo_ini: begin
    inipointer(aro_static,{atype,}aref{,ssaindex});
   end;
+  mo_inizeroed: begin
+   //nothing to do
+  end;
   mo_fini: begin
    finirefsize(aro_static,{atype,}aref{,ssaindex});
   end;
@@ -236,6 +250,9 @@ begin
  case op of 
   mo_ini: begin
    inipointer(aro_static,{atype,}aref{,ssaindex});
+  end;
+  mo_inizeroed: begin
+   //nothing to do
   end;
   mo_fini: begin
    finirefsize(aro_static,{atype,}aref{,ssaindex});

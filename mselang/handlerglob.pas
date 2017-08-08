@@ -209,7 +209,7 @@ type
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi,
+ managedopty = (mo_ini,mo_inizeroed,mo_fini,mo_incref,mo_decref,mo_decrefindi,
                 mo_destroy);
  
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
