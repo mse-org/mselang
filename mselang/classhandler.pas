@@ -398,7 +398,8 @@ begin
      end;
      po1^.h.ancestor:= ele.eledatarel(po2);
      po1^.h.flags:= po1^.h.flags + 
-                     po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
+           po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini,
+           tf_hascomplexini,tf_complexini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
               po2^.infoclass.flags * [icf_zeroinit,icf_nozeroinit,icf_virtual,
                                       icf_except];
@@ -449,7 +450,7 @@ begin
     d.cla.rec.fieldoffset:= d.cla.rec.fieldoffset + pointersize;
     d.cla.rec.fieldoffsetmax:= d.cla.rec.fieldoffset;
                       //pointer to virtual methodtable
-    include(h.flags,tf_needsini);
+    h.flags:= h.flags + [tf_needsini,tf_complexini];
    end;
    {
    if obf_except in d.cla.flags then begin
@@ -757,6 +758,9 @@ begin
                    not (icf_nozeroinit in infoclass.flags) and 
                                 (classinfo1^.rec.fieldoffsetmax > 0) then begin
      include(h.flags,tf_needsini);
+    end;
+    if infoclass.subattach.ini <> 0 then begin
+     include(h.flags,tf_complexini);
     end;
 
    {

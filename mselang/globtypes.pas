@@ -285,7 +285,7 @@ type
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
                tf_needsmanage, //has nested tf_managed or tf_managed set
-               tf_needsini,tf_needsfini,
+               tf_needsini,tf_hascomplexini,tf_complexini,tf_needsfini,
                tf_lower,       //in range expression
                tf_upper,       //in range expression
                tf_subad,       //sub address
@@ -294,7 +294,9 @@ type
                ); 
  typeflagsty = set of typeflagty;   
 const
- managedtypeflags = [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini];
+ managedtypeflags = [tf_managed,tf_needsmanage,tf_needsini,
+                     tf_hascomplexini,tf_complexini,
+                     tf_needsfini];
 type
  typeinfoty = record
   flags: typeflagsty;

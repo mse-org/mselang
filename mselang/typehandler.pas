@@ -423,6 +423,10 @@ begin
       include(atypeflags,tf_needsmanage);
       include(po1^.vf.flags,tf_needsmanage);
      end;
+     if [tf_hascomplexini,tf_complexini] * po2^.h.flags <> [] then begin
+      include(atypeflags,tf_hascomplexini);
+      include(po1^.vf.flags,tf_hascomplexini);
+     end;
      size1:= po2^.h.bytesize;
     end
     else begin
@@ -659,32 +663,31 @@ var
   typ2: ptypedataty;
  begin
   with ptypedataty(ele.eledataabs(atyp))^ do begin
-    if (h.kind = dk_object) and (h.ancestor <> 0) then begin
-     handlefields(h.ancestor,fieldoffset);
-    end;
-    ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
-    while ele1 <> 0 do begin
-     field1:= ele.eledataabs(ele1);
-     typ2:= ele.eledataabs(field1^.vf.typ);
-     if typ2^.h.manageproc <> nil then begin
-      fieldoffset:= field1^.offset - fieldoffset;
-      if fieldoffset > 0 then begin
-       with additem(oc_offsetpoimm)^ do begin
-        setimmint32(fieldoffset,par.imm);
-        par.ssas1:= baseadssa;
-        baseadssa:= par.ssad;
-       end;
-      end;
-      ad1.typ:= typ2;
-      ad1.ssaindex:= info.s.ssa.nextindex-1;
-      ad1.contextindex:= info.s.stacktop;
-      typ2^.h.manageproc(op1,{typ2,}ad1);
-      fieldoffset:= field1^.offset; 
-     end;
-     ele1:= field1^.vf.next;
-    end;
+   if (h.kind = dk_object) and (h.ancestor <> 0) then begin
+    handlefields(h.ancestor,fieldoffset);
    end;
-//  end;
+   ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
+   while ele1 <> 0 do begin
+    field1:= ele.eledataabs(ele1);
+    typ2:= ele.eledataabs(field1^.vf.typ);
+    if typ2^.h.manageproc <> nil then begin
+     fieldoffset:= field1^.offset - fieldoffset;
+     if fieldoffset > 0 then begin
+      with additem(oc_offsetpoimm)^ do begin
+       setimmint32(fieldoffset,par.imm);
+       par.ssas1:= baseadssa;
+       baseadssa:= par.ssad;
+      end;
+     end;
+     ad1.typ:= typ2;
+     ad1.ssaindex:= info.s.ssa.nextindex-1;
+     ad1.contextindex:= info.s.stacktop;
+     typ2^.h.manageproc(op1,{typ2,}ad1);
+     fieldoffset:= field1^.offset; 
+    end;
+    ele1:= field1^.vf.next;
+   end;
+  end;
  end;//handlefields
 
 var
@@ -694,7 +697,7 @@ var
  locad1: memopty;
  i1: int32;
  startssa: int32;
-// b1: boolean;
+ b1: boolean;
 begin
  with info do begin
   with locad1 do begin
@@ -733,7 +736,7 @@ begin
     handlefields(atyp,i1);
    end
    else begin //dk_object, dk_class
-//    b1:= true;
+    b1:= true;
     case op1 of
      mo_ini: begin
       if (icf_zeroinit in typ1^.infoclass.flags) or 
@@ -741,6 +744,9 @@ begin
        with additem(oc_zeromem)^ do begin
         par.ssas1:= baseadssa;//info.s.ssa.nextindex-1;
         setimmint32(typ1^.infoclass.allocsize,par.imm);
+       end;
+       if not (tf_hascomplexini in typ1^.h.flags) then begin
+        b1:= false; //fields zeroed
        end;
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_initobject)^.par do begin
@@ -759,6 +765,7 @@ begin
         end;
        end;
        handlefields(atyp,i1); //does not touch vitual table address
+       b1:= false;
       end;
       with typ1^.infoclass.subattach do begin
        if ini <> 0 then begin
@@ -801,9 +808,9 @@ begin
      end;
      }
     end;
-//    if b1 then begin //not handled aready
+    if b1 then begin //not handled aready
      handlefields(atyp,i1);
-//    end;
+    end;
    end;
    poptemp(pointersize);
    endsimplesub(true);
