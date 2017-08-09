@@ -1751,6 +1751,11 @@ begin
     end;
    end
    else begin
+   {
+    with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
+     par.ssas1:= aref.ssaindex;
+    end;
+    }
     notimplementederror('20170530A');
    end; 
    exit;

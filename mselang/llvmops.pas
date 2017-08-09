@@ -2634,7 +2634,9 @@ begin
 end;
 procedure finirefsizestackop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_finifrefsize,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure finirefsizestackrefop();

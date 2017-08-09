@@ -717,7 +717,8 @@ begin
     offset:= 0;
    end;
   end;
-  ad1.kind:= ark_stackref;
+//  ad1.kind:= ark_stackref;
+  ad1.kind:= ark_stack;
   ad1.address:= -pointersize; //pointer to var
   ad1.offset:= 0;
   ad1.isclass:= false;
@@ -751,15 +752,18 @@ begin
         setimmint32(typ1^.infoclass.allocsize,par.imm);
        end;
        b1:= false; //fields zeroed
-       if tf_hascomplexini in typ1^.h.flags then begin
-        handlefields(mo_inizeroed,atyp,i1);
-       end;
+//       if tf_hascomplexini in typ1^.h.flags then begin
+//        handlefields(mo_inizeroed,atyp,i1);
+//       end;
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_initobject)^.par do begin
          ssas1:= baseadssa;
          setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
          initclass.classdef:= typ1^.infoclass.defs.address;
         end;
+       end;
+       if tf_hascomplexini in typ1^.h.flags then begin
+        handlefields(mo_inizeroed,atyp,i1);
        end;
       end
       else begin
