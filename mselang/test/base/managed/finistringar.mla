@@ -1,0 +1,17 @@
+program finistringar;
+
+procedure test1();
+var
+ ar1: array of string8;
+ i1,i2: int32;
+begin
+ setlength(ar1,2);
+ for i1:= 0 to high(ar1) do
+  setlength(ar1[i1],10);
+ end;
+end;
+
+begin
+ test1();
+ exitcode:= 123;
+end.

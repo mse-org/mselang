@@ -3612,7 +3612,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=18
     (
     kind=2
@@ -3631,7 +3631,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72DDFD0
+    ao=An unhandled exception occured at $B72C2FD0
     ae=
     aec=123
     ie=0
@@ -7829,8 +7829,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,managed
-   c=8
+   a=0,665,4,managed
+   c=10
     (
     kind=2
     a=0,648,1,globrecassign
@@ -7990,6 +7990,50 @@ c=3
     a=0,648,1,finistringar llvm
     teststate=1
     path=finistringar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,object1
+    teststate=1
+    path=object1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,object1 llvm
+    teststate=1
+    path=object1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -11923,7 +11967,7 @@ y=147
 cx=700
 cy=512
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=594
@@ -11936,15 +11980,7 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=239
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=231
  0 0
  0 0
  0 0
