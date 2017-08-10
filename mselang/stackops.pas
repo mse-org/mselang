@@ -5579,6 +5579,14 @@ begin
  end;
 end;
 
+
+procedure zeromemindiop();
+begin
+ with cpu.pc^.par do begin
+  fillchar(ppppointer(cpu.stack-pointersize)^^^,imm.vint32,0);
+ end;
+end;
+
 procedure getobjectmemop();
 var
  self1: ppointer;
@@ -5981,7 +5989,7 @@ end;
 
 procedure finirefsizestackrefop();
 begin
- finirefsize(pppointer(cpu.stack+getmanagedaddressoffset())^);
+ finirefsize(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
 end;
 
 procedure finirefsizesegarop();
@@ -7329,6 +7337,7 @@ const
   returnfuncssa = 0;
 
   zeromemssa = 0;
+  zeromemindissa = 0;
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
   initobjectssa = 0;

@@ -118,6 +118,7 @@ type
   oc_callfuncindi,
 
   oc_zeromem,
+  oc_zeromemindi,
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_initobject,

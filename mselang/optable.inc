@@ -66,6 +66,8 @@
 
 //oc_zeromem
   (ssa: zeromemssa; proc: @zeromemop; flags: []), 
+//oc_zeromemindi
+  (ssa: zeromemindissa; proc: @zeromemindiop; flags: []), 
 //oc_getobjectmem
   (ssa: getobjectmemssa; proc: @getobjectmemop; flags: []), 
 //oc_getobjectzeromem

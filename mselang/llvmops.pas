@@ -4110,6 +4110,11 @@ begin
  end;
 end;
 
+procedure zeromemindiop();
+begin
+ zeromemop(); //indirection not used
+end;
+
 procedure getobjectmemop();
 begin
  with pc^.par do begin
@@ -5057,6 +5062,7 @@ const
   returnfuncssa = 1;
 
   zeromemssa = 1;
+  zeromemindissa = 1;
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initobjectssa = 2;

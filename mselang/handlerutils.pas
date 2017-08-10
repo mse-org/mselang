@@ -1742,6 +1742,13 @@ begin
    result:= aref.ssaindex;
    exit;
   end;
+  {
+  ark_stackref: begin
+   with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
+    par.ssas1:= aref.ssaindex;
+   end;
+  end;
+  }
   ark_stackref: begin //for destructor, instance pointer on stack
    if co_mlaruntime in info.o.compileoptions then begin
     with insertitem(oc_pushstackaddr,stackoffs,-1)^.
@@ -1751,12 +1758,10 @@ begin
     end;
    end
    else begin
-   {
     with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
      par.ssas1:= aref.ssaindex;
     end;
-    }
-    notimplementederror('20170530A');
+//    notimplementederror('20170530A');
    end; 
    exit;
   end;
