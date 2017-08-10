@@ -2763,20 +2763,18 @@ begin
  end;
 end;
 
-procedure increfsizestackindiop();
-begin
- with pc^.par do begin
-  callcompilersub(cs_increfsize,false,[bcstream.ssaval(ssas1)]);
- end;
-end;
-
 procedure increfsizestackrefop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-  bcstream.emitloadop(bcstream.relval(0));
-  callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
+//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+//  bcstream.emitloadop(bcstream.relval(0));
+  callcompilersub(cs_increfsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
+end;
+
+procedure increfsizestackindiop();
+begin
+ increfsizestackrefop();
 end;
 
 procedure increfsizesegarop();
@@ -2855,26 +2853,23 @@ end;
 procedure decrefsizestackop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
-  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
- end;
-end;
-
-procedure decrefsizestackindiop();
-begin
- with pc^.par do begin
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
-  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
+//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
+  callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure decrefsizestackrefop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-  bcstream.emitloadop(bcstream.relval(0));
-  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
+//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+//  bcstream.emitloadop(bcstream.relval(0));
+  callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
+end;
+
+procedure decrefsizestackindiop();
+begin
+ decrefsizestackrefop();
 end;
 
 procedure decrefsizesegarop();
@@ -4926,7 +4921,7 @@ const
   increfsizelocindissa = 1;
   increfsizestackssa = 0;
   increfsizestackindissa = 0;
-  increfsizestackrefssa = 2;
+  increfsizestackrefssa = 0;
 
   increfsizesegarssa = 1;
   increfsizelocarssa = 1;
@@ -4945,9 +4940,9 @@ const
   decrefsizesegssa = 1;
   decrefsizelocssa = 1;
   decrefsizelocindissa = 1;
-  decrefsizestackssa = 1;
-  decrefsizestackindissa = 1;
-  decrefsizestackrefssa = 2;
+  decrefsizestackssa = 0;
+  decrefsizestackindissa = 0;
+  decrefsizestackrefssa = 0;
 
   decrefsizesegarssa = 1;
   decrefsizelocarssa = 1;

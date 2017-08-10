@@ -20,6 +20,7 @@ procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: pointer);
 procedure __mla__decrefsizeref(const ref: ppointer);
 procedure __mla__increfsize(ref: pointer);
+procedure __mla__increfsizeref(ref: ppointer);
 procedure __mla__finirefsize(const ref: ppointer);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__finirefsizedynar(const ref: ppointer);
