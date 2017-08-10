@@ -4904,7 +4904,7 @@ const
   finirefsizelocssa = 2;
   finirefsizelocindissa = 1;
   finirefsizestackssa = 1;
-  finirefsizestackindissa = 1;
+  finirefsizestackindissa = 0;
   finirefsizestackrefssa = 0;
 
   finirefsizesegarssa = 1;
