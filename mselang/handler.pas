@@ -3398,7 +3398,7 @@ var
  begin
 //  ad1.contextindex:= getstackindex(dest);
   if indi then begin
-   ad1.kind:= ark_stackref;
+   ad1.kind:= ark_stackindi;
    ad1.address:= ad1.address-pointersize;
    ad1.offset:= 0;
   end
