@@ -663,6 +663,8 @@
   (ssa: storelocindinilssa; proc: @storelocindinilop; flags: []), 
 //oc_storestacknil
   (ssa: storestacknilssa; proc: @storestacknilop; flags: []), 
+//oc_storestackindinil
+  (ssa: storestackindinilssa; proc: @storestackindinilop; flags: []), 
 //oc_storestackrefnil
   (ssa: storestackrefnilssa; proc: @storestackrefnilop; flags: []), 
 
@@ -674,6 +676,8 @@
   (ssa: storelocindinilarssa; proc: @storelocindinilarop; flags: []), 
 //oc_storestacknilar
   (ssa: storestacknilarssa; proc: @storestacknilarop; flags: []), 
+//oc_storestackindinilar
+  (ssa: storestackindinilarssa; proc: @storestackindinilarop; flags: []), 
 //oc_storestackrefnilar
   (ssa: storestackrefnilarssa; proc: @storestackrefnilarop; flags: []), 
 
@@ -685,6 +689,8 @@
   (ssa: storelocindinildynarssa; proc: @storelocindinildynarop; flags: []), 
 //oc_storestacknilar
   (ssa: storestacknildynarssa; proc: @storestacknildynarop; flags: []), 
+//oc_storestackindinilar
+  (ssa: storestackindinildynarssa; proc: @storestackindinildynarop; flags: []), 
 //oc_storestackrefnilar
   (ssa: storestackrefnildynarssa; proc: @storestackrefnildynarop; flags: []), 
 
@@ -697,6 +703,8 @@
   (ssa: finirefsizelocindissa; proc: @finirefsizelocindiop; flags: []), 
 //oc_finirefsizestack
   (ssa: finirefsizestackssa; proc: @finirefsizestackop; flags: []), 
+//oc_finirefsizestackindi
+  (ssa: finirefsizestackindissa; proc: @finirefsizestackindiop; flags: []), 
 //oc_finirefsizestackref
   (ssa: finirefsizestackrefssa; proc: @finirefsizestackrefop; flags: []), 
 
@@ -708,6 +716,8 @@
   (ssa: finirefsizelocindiarssa; proc: @finirefsizelocindiarop; flags: []), 
 //oc_finirefsizestackar
   (ssa: finirefsizestackarssa; proc: @finirefsizestackarop; flags: []), 
+//oc_finirefsizestackindiar
+  (ssa: finirefsizestackindiarssa; proc: @finirefsizestackindiarop; flags: []), 
 //oc_finirefsizestackrefar
   (ssa: finirefsizestackrefarssa; proc: @finirefsizestackrefarop; flags: []), 
 
@@ -715,11 +725,13 @@
   (ssa: finirefsizesegdynarssa; proc: @finirefsizesegdynarop; flags: [of_relocseg]), 
 //oc_finirefsizelocdynar
   (ssa: finirefsizelocdynarssa; proc: @finirefsizelocdynarop; flags: []), 
-//oc_finirefsizelocindiar
+//oc_finirefsizelocindidynar
   (ssa: finirefsizelocindidynarssa; proc: @finirefsizelocindidynarop; flags: []), 
-//oc_finirefsizestackar
+//oc_finirefsizestackdynar
   (ssa: finirefsizestackdynarssa; proc: @finirefsizestackdynarop; flags: []), 
-//oc_finirefsizestackrefar
+//oc_finirefsizestackindidynar
+  (ssa: finirefsizestackindidynarssa; proc: @finirefsizestackindidynarop; flags: []), 
+//oc_finirefsizestackrefdynar
   (ssa: finirefsizestackrefdynarssa; proc: @finirefsizestackrefdynarop; flags: []), 
 
 //oc_increfsizeseg
@@ -730,6 +742,8 @@
   (ssa: increfsizelocindissa; proc: @increfsizelocindiop; flags: []), 
 //oc_increfsizestack
   (ssa: increfsizestackssa; proc: @increfsizestackop; flags: []), 
+//oc_increfsizestackindi
+  (ssa: increfsizestackindissa; proc: @increfsizestackindiop; flags: []), 
 //oc_increfsizestackref
   (ssa: increfsizestackrefssa; proc: @increfsizestackrefop; flags: []), 
 
@@ -741,6 +755,8 @@
   (ssa: increfsizelocindiarssa; proc: @increfsizelocindiarop; flags: []), 
 //oc_increfsizestackar
   (ssa: increfsizestackarssa; proc: @increfsizestackarop; flags: []), 
+//oc_increfsizestackindiar
+  (ssa: increfsizestackindiarssa; proc: @increfsizestackindiarop; flags: []), 
 //oc_increfsizestackrefar
   (ssa: increfsizestackrefarssa; proc: @increfsizestackrefarop; flags: []), 
 
@@ -752,6 +768,8 @@
   (ssa: increfsizelocindidynarssa; proc: @increfsizelocindidynarop; flags: []), 
 //oc_increfsizestackar
   (ssa: increfsizestackdynarssa; proc: @increfsizestackdynarop; flags: []), 
+//oc_increfsizestackindiar
+  (ssa: increfsizestackindidynarssa; proc: @increfsizestackindidynarop; flags: []), 
 //oc_increfsizestackrefar
   (ssa: increfsizestackrefdynarssa; proc: @increfsizestackrefdynarop; flags: []), 
 
@@ -763,6 +781,8 @@
   (ssa: decrefsizelocindissa; proc: @decrefsizelocindiop; flags: []), 
 //oc_decrefsizestack
   (ssa: decrefsizestackssa; proc: @decrefsizestackop; flags: []), 
+//oc_decrefsizestackindi
+  (ssa: decrefsizestackindissa; proc: @decrefsizestackindiop; flags: []), 
 //oc_decrefsizestackref
   (ssa: decrefsizestackrefssa; proc: @decrefsizestackrefop; flags: []), 
 
@@ -774,6 +794,8 @@
   (ssa: decrefsizelocindiarssa; proc: @decrefsizelocindiarop; flags: []), 
 //oc_decrefsizestackar
   (ssa: decrefsizestackarssa; proc: @decrefsizestackarop; flags: []), 
+//oc_decrefsizestackindiar
+  (ssa: decrefsizestackindiarssa; proc: @decrefsizestackindiarop; flags: []), 
 //oc_decrefsizestackrefar
   (ssa: decrefsizestackrefarssa; proc: @decrefsizestackrefarop; flags: []), 
 
@@ -783,8 +805,10 @@
   (ssa: decrefsizelocdynarssa; proc: @decrefsizelocdynarop; flags: []), 
 //oc_decrefsizelocindidynar
   (ssa: decrefsizelocindidynarssa; proc: @decrefsizelocindidynarop; flags: []), 
-//oc_decrefsizestackar
+//oc_decrefsizestackdynar
   (ssa: decrefsizestackdynarssa; proc: @decrefsizestackdynarop; flags: []), 
+//oc_decrefsizestackindidynar
+  (ssa: decrefsizestackindidynarssa; proc: @decrefsizestackindidynarop; flags: []), 
 //oc_decrefsizestackrefar
   (ssa: decrefsizestackrefdynarssa; proc: @decrefsizestackrefdynarop; flags: []), 
 

@@ -194,74 +194,76 @@ end;
 const
  storenilops: aropadsty = (
   (    //aro_none
-  //ab_segment,   ab_local,      ab_locindi,
+ //ab_segment,    ab_local,      ab_locindi,
    oc_storesegnil,oc_storelocnil,oc_storelocindinil,
-  //ab_stack,      ab_stackref
-   oc_storestacknil,oc_storestackrefnil),
+ //ab_stack,        ab_stackindi,        ab_stackref
+   oc_storestacknil,oc_storestackindinil,oc_storestackrefnil),
   (    //aro_static
-  //ab_segment,     ab_local,        ab_locindi,
+ //ab_segment,      ab_local,        ab_locindi,
    oc_storesegnilar,oc_storelocnilar,oc_storelocindinilar,
-  //ab_stack,       ab_stackref
-   oc_storestacknilar,oc_storestackrefnilar),
+ //ab_stack,          ab_stackindi,          ab_stackref
+   oc_storestacknilar,oc_storestackindinilar,oc_storestackrefnilar),
   (    //aro_dynamic
-  //ab_segment,     ab_local,        ab_locindi,
+  //ab_segment,        ab_local,           ab_locindi,
    oc_storesegnildynar,oc_storelocnildynar,oc_storelocindinildynar,
-  //ab_stack,       ab_stackref
-   oc_storestacknildynar,oc_storestackrefnildynar)
+  //ab_stack,            ab_stackindi,             ab_stackref
+   oc_storestacknildynar,oc_storestackindinildynar,oc_storestackrefnildynar)
  );
 
  finirefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_locindi,
+ //ab_segment,       ab_local,         ab_locindi,
    oc_finirefsizeseg,oc_finirefsizeloc,oc_finirefsizelocindi,
-  //ab_stack,           ab_stackref
-   oc_finirefsizestack,oc_finirefsizestackref),
+ //ab_stack,           ab_stackindi,           ab_stackref
+   oc_finirefsizestack,oc_finirefsizestackindi,oc_finirefsizestackref),
   (     //aro_static
-  //ab_segment,           ab_local,              ab_locindi,
+ //ab_segment,         ab_local,           ab_locindi,
    oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizelocindiar,
-  //ab_stack,             ab_stackref
-   oc_finirefsizestackar,oc_finirefsizestackrefar),
+ //ab_stack,             ab_stackindi,             ab_stackref
+   oc_finirefsizestackar,oc_finirefsizestackindiar,oc_finirefsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_local,              ab_locindi,
+ //ab_segment,            ab_local,              ab_locindi,
    oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizelocindidynar,
-  //ab_stack,             ab_stackref
-   oc_finirefsizestackdynar,oc_finirefsizestackrefdynar)
+ //ab_stack,                ab_stackindi,                
+   oc_finirefsizestackdynar,oc_finirefsizestackindidynar,
+ //ab_stackref
+   oc_finirefsizestackrefdynar)
  );
 
  increfsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_locindi,
+ //ab_segment,      ab_local,        ab_locindi,
    oc_increfsizeseg,oc_increfsizeloc,oc_increfsizelocindi,
-  //ab_stack,           ab_stackref
-   oc_increfsizestack,oc_increfsizestackref),
+ //ab_stack,          ab_stackindi,          ab_stackref
+   oc_increfsizestack,oc_increfsizestackindi,oc_increfsizestackref),
   (     //aro_static
-  //ab_segment,           ab_local,              ab_locindi,
+ //ab_segment,        ab_local,          ab_locindi,
    oc_increfsizesegar,oc_increfsizelocar,oc_increfsizelocindiar,
-  //ab_stack,             ab_stackref
-   oc_increfsizestackar,oc_increfsizestackrefar),
+ //ab_stack,            ab_stackindi,            ab_stackref
+   oc_increfsizestackar,oc_increfsizestackindiar,oc_increfsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_local,              ab_locindi,
+ //ab_segment,           ab_local,             ab_locindi,
    oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizelocindidynar,
-  //ab_stack,             ab_stackref
-   oc_increfsizestackdynar,oc_increfsizestackrefdynar)
+ //ab_stack,               ab_stackindi,               ab_stackref
+   oc_increfsizestackdynar,oc_increfsizestackindidynar,oc_increfsizestackrefdynar)
  );
 
  decrefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_local,            ab_locindi,
+ //ab_segment,      ab_local,        ab_locindi,
    oc_decrefsizeseg,oc_decrefsizeloc,oc_decrefsizelocindi,
-  //ab_stack,           ab_stackref
-   oc_decrefsizestack,oc_decrefsizestackref),
+ //ab_stack,          ab_stackindi,          ab_stackref
+   oc_decrefsizestack,oc_decrefsizestackindi,oc_decrefsizestackref),
   (     //aro_static
-  //ab_global,           ab_local,              ab_locindi,
+ //ab_global,         ab_local,          ab_locindi,
    oc_decrefsizesegar,oc_decrefsizelocar,oc_decrefsizelocindiar,
-  //ab_stack,             ab_stackref
-   oc_decrefsizestackar,oc_decrefsizestackrefar),
+ //ab_stack,            ab_stackindi,            ab_stackref
+   oc_decrefsizestackar,oc_decrefsizestackindiar,oc_decrefsizestackrefar),
   (     //aro_dynamic
-  //ab_global,           ab_local,              ab_locindi,
+ //ab_global,            ab_local,             ab_locindi,
    oc_decrefsizesegdynar,oc_decrefsizelocdynar,oc_decrefsizelocindidynar,
-  //ab_stack,             ab_stackref
-   oc_decrefsizestackdynar,oc_decrefsizestackrefdynar)
+ //ab_stack,               ab_stackindi,               ab_stackref
+   oc_decrefsizestackdynar,oc_decrefsizestackindidynar,oc_decrefsizestackrefdynar)
  );
 
 procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
@@ -333,6 +335,13 @@ begin
   ark_stack: begin
    af1:= [];
    ab1:= ab_stack;
+   ad1:= aref.address;
+   offs1:= aref.offset;
+   typ1:= aref.typ;
+  end;
+  ark_stackindi: begin
+   af1:= [];
+   ab1:= ab_stackindi;
    ad1:= aref.address;
    offs1:= aref.offset;
    typ1:= aref.typ;

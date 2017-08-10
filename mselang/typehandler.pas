@@ -717,8 +717,8 @@ begin
     offset:= 0;
    end;
   end;
-  ad1.kind:= ark_stackref;
-//  ad1.kind:= ark_stack;
+//  ad1.kind:= ark_stackref;
+  ad1.kind:= ark_stackindi;
   ad1.address:= -pointersize; //pointer to var
   ad1.offset:= 0;
   ad1.isclass:= false;
@@ -747,7 +747,7 @@ begin
      mo_ini,mo_inizeroed: begin
       if (op1 <> mo_inizeroed) and ((icf_zeroinit in typ1^.infoclass.flags) or 
                      not (icf_nozeroinit in typ1^.infoclass.flags)) then begin
-       with additem(oc_zeromemindi)^ do begin
+       with additem(oc_zeromem)^ do begin
         par.ssas1:= baseadssa;//info.s.ssa.nextindex-1;
         setimmint32(typ1^.infoclass.allocsize,par.imm);
        end;

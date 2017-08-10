@@ -24,7 +24,7 @@ type
  backendty = (bke_direct,bke_llvm);
 
  addressbasety = (ab_segment,ab_local{ab_frame},ab_localindi,
-                  ab_stack,ab_stackref);
+                  ab_stack,ab_stackindi,ab_stackref);
 {
  addressrefty = record
   address: dataoffsty;
@@ -396,72 +396,84 @@ type
   oc_storelocnil,
   oc_storelocindinil,
   oc_storestacknil,
+  oc_storestackindinil,
   oc_storestackrefnil,
 
   oc_storesegnilar,
   oc_storelocnilar,
   oc_storelocindinilar,
   oc_storestacknilar,
+  oc_storestackindinilar,
   oc_storestackrefnilar,
 
   oc_storesegnildynar,
   oc_storelocnildynar,
   oc_storelocindinildynar,
   oc_storestacknildynar,
+  oc_storestackindinildynar,
   oc_storestackrefnildynar,
 
   oc_finirefsizeseg,
   oc_finirefsizeloc,
   oc_finirefsizelocindi,
   oc_finirefsizestack,
+  oc_finirefsizestackindi,
   oc_finirefsizestackref,
 
   oc_finirefsizesegar,
   oc_finirefsizelocar,
   oc_finirefsizelocindiar,
   oc_finirefsizestackar,
+  oc_finirefsizestackindiar,
   oc_finirefsizestackrefar,
 
   oc_finirefsizesegdynar,
   oc_finirefsizelocdynar,
   oc_finirefsizelocindidynar,
   oc_finirefsizestackdynar,
+  oc_finirefsizestackindidynar,
   oc_finirefsizestackrefdynar,
 
   oc_increfsizeseg,
   oc_increfsizeloc,
   oc_increfsizelocindi,
   oc_increfsizestack,
+  oc_increfsizestackindi,
   oc_increfsizestackref,
 
   oc_increfsizesegar,
   oc_increfsizelocar,
   oc_increfsizelocindiar,
   oc_increfsizestackar,
+  oc_increfsizestackindiar,
   oc_increfsizestackrefar,
 
   oc_increfsizesegdynar,
   oc_increfsizelocdynar,
   oc_increfsizelocindidynar,
   oc_increfsizestackdynar,
+  oc_increfsizestackindidynar,
   oc_increfsizestackrefdynar,
 
   oc_decrefsizeseg,
   oc_decrefsizeloc,
   oc_decrefsizelocindi,
   oc_decrefsizestack,
+  oc_decrefsizestackindi,
   oc_decrefsizestackref,
 
   oc_decrefsizesegar,
   oc_decrefsizelocar,
   oc_decrefsizelocindiar,
   oc_decrefsizestackar,
+  oc_decrefsizestackindiar,
   oc_decrefsizestackrefar,
 
   oc_decrefsizesegdynar,
   oc_decrefsizelocdynar,
   oc_decrefsizelocindidynar,
   oc_decrefsizestackdynar,
+  oc_decrefsizestackindidynar,
   oc_decrefsizestackrefdynar,
 
   oc_highstring,

@@ -213,7 +213,8 @@ type
                 mo_destroy);
  
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
-                     ark_local,ark_managedtemp,ark_stack,ark_stackref);
+                     ark_local,ark_managedtemp,
+                     ark_stack,ark_stackindi,ark_stackref);
  addressrefty = record //todo: resolve circular dependency, use real types
   offset: dataoffsty;
   ssaindex: int32;

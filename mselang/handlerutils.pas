@@ -1658,7 +1658,7 @@ begin
     result:= ele.eledataabs(dat.datatyp.typedata);
    end;
   end;
-  ark_stack,ark_stackref: begin
+  ark_stack,ark_stackindi,ark_stackref: begin
    result:= aref.typ;
   end;
   else begin
@@ -1742,6 +1742,16 @@ begin
    result:= aref.ssaindex;
    exit;
   end;
+  ark_stackindi: begin
+                 //for recordmanagehandler
+   if (co_mlaruntime in info.o.compileoptions) then begin
+    with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
+     par.voffset:= aref.address;
+    end;
+   end;
+   result:= aref.ssaindex;
+   exit;
+  end;
   {
   ark_stackref: begin
    with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
@@ -1758,10 +1768,12 @@ begin
     end;
    end
    else begin
+   {
     with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
      par.ssas1:= aref.ssaindex;
     end;
-//    notimplementederror('20170530A');
+   }
+    notimplementederror('20170530A');
    end; 
    exit;
   end;
