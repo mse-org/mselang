@@ -3561,7 +3561,7 @@ begin
      end;
      
      if needsmanage then begin
-      needsincref:= not isconst;
+      needsincref:= not isconst and not(source^.d.kind in [ck_subres]);
       needsdecref:= true;
       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
                      ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin

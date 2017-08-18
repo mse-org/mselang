@@ -1324,7 +1324,7 @@ begin
 end;
 
 procedure handlesubheader();
-var                       //todo: move after doparam
+var                       //todo: move after doparams()
  sub1: psubdataty;
  var1: pvardataty;
  typ1: ptypedataty;
@@ -1621,6 +1621,24 @@ begin
    with contextstack[s.stacktop].d.typ do begin
     resulttype1.typeele:= typedata;
     resulttype1.indirectlevel:= indirectlevel;
+   end;
+   if co_hasfunction in o.compileoptions then begin
+    with contextstack[s.stacktop-2] do begin
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_paramdef then begin
+      internalerror(ie_handler,'20170818A');
+     end;
+    {$endif}
+     with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
+      if h.bytesize > pointersize then begin
+       d.paramdef.kind:= pk_var; //pk_out?
+       include(subflags,sf_varfunction);
+      end;
+     end;
+    end;
+   end
+   else begin
+    include(subflags,sf_varfunction);
    end;
   end;
   if isinterface then begin

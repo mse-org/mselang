@@ -236,7 +236,8 @@ type
  end; 
  ptypeallocinfoty = ^typeallocinfoty;
 
- subflagty = (sf_function,sf_method,sf_classmethod,sf_class,
+ subflagty = (sf_function,sf_varfunction,//result by pointer
+              sf_method,sf_classmethod,sf_class,
               sf_constructor,sf_destructor,
               sf_methodtoken,sf_subtoken,sf_operator,sf_operatorright,
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
