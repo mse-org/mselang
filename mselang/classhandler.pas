@@ -1045,10 +1045,11 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if obf_class in d.cla.flags then begin
-   sf1:= [sf_class,sf_function,sf_header,sf_method,sf_classmethod];
+   sf1:= [sf_class,sf_functionx,sf_functioncall,sf_header,
+                                       sf_method,sf_classmethod];
   end
   else begin
-   sf1:= [sf_function,sf_header,sf_method,sf_classmethod];
+   sf1:= [sf_functionx,sf_functioncall,sf_header,sf_method,sf_classmethod];
   end;
  end;
  initsubdef(sf1);
@@ -1100,10 +1101,10 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if obf_class in d.cla.flags then begin
-   sf1:= [sf_class,sf_function,sf_header,sf_method];
+   sf1:= [sf_class,sf_functionx,sf_functioncall,sf_header,sf_method];
   end
   else begin
-   sf1:= [sf_function,sf_header,sf_method];
+   sf1:= [sf_functionx,sf_functioncall,sf_header,sf_method];
   end;
  end;
  initsubdef(sf1);
@@ -1307,7 +1308,7 @@ begin
     with psubdataty(po1)^ do begin
      if (sf_method in flags) then begin
       if awrite then begin
-       if not (sf_function in flags) and ((paramcount = 2) or 
+       if not (sf_functionx in flags) and ((paramcount = 2) or 
                                        (paramcount > 2) and hasindex) and
          (pvardataty(ele.eledataabs(
                  pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele) then begin
@@ -1321,7 +1322,7 @@ begin
        end;
       end
       else begin
-       if (sf_function in flags) and ((paramcount = 2) or 
+       if (sf_functionx in flags) and ((paramcount = 2) or 
                                      (paramcount > 2) and hasindex) and 
             (resulttype.typeele = typeele) and 
                             (resulttype.indirectlevel = indilev) then begin

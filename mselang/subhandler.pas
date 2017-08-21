@@ -184,7 +184,7 @@ var
 // start,stop: integer;
 begin
  result:= (((po1^.flags >< ref^.flags) *  //todo: sf_ofobject?
-  [sf_function,sf_method,sf_constructor,sf_destructor]) = []) and 
+  [sf_functionx,sf_method,sf_constructor,sf_destructor]) = []) and 
                                         (po1^.paramcount = ref^.paramcount);
  if result then begin
   offs1:= ele.eledataoffset;
@@ -196,7 +196,7 @@ begin
   end
   else begin
    if sf_method in ref^.flags then begin
-    if sf_function in ref^.flags then begin
+    if sf_functionx in ref^.flags then begin
      if basetype(pvardataty(par1^[0]+offs1)^.vf.typ) <> 
                    basetype(pvardataty(parref^[0]+offs1)^.vf.typ) then begin
       result:= false;
@@ -244,7 +244,7 @@ begin
  end
  else begin
   if sf_method in ref^.flags then begin
-   if sf_function in ref^.flags then begin
+   if sf_functionx in ref^.flags then begin
     if pvardataty(par1^[0]+offs1)^.vf.typ <> 
                   pvardataty(parref^[0]+offs1)^.vf.typ then begin
      result:= false;
@@ -561,7 +561,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSFUNCTIONENTRY');
 {$endif}
- initsubdef([sf_classmethod,sf_function]);
+ initsubdef([sf_classmethod,sf_functionx,sf_functioncall]);
 end;
 
 procedure handleclassmethodentry();
@@ -585,7 +585,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FUNCTIONENTRY');
 {$endif}
- initsubdef([sf_function]);
+ initsubdef([sf_functionx,sf_functioncall]);
 end;
 
 procedure handlemethodentry();
@@ -617,7 +617,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FUNCTIONTYPEDEFENTRY');
 {$endif}
- initsubdef([sf_typedef,sf_header,sf_function]);
+ initsubdef([sf_typedef,sf_header,sf_functionx,sf_functioncall]);
 end;
 
 procedure handlesubtypedefentry();
@@ -685,7 +685,8 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   d.kind:= ck_paramdef;
   if co_hasfunction in o.compileoptions then begin
-   d.paramdef.kind:= pk_value;
+   d.paramdef.kind:= pk_value; 
+           //can be changed by var-result setting in handlesubheader
   end
   else begin
    d.paramdef.kind:= pk_var;
@@ -697,7 +698,7 @@ begin
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin
-  {$ifdef mselang}
+  {$ifdef mselang} //??? use language mode!
    if sf_functiontype in d.subdef.flags then begin
     errormessage(err_syntax,[';']);
     dec(s.stackindex,2); //remove result type
@@ -705,11 +706,12 @@ begin
    end;
    include(d.subdef.flags,sf_functiontype);
   {$else} //msepas
-   if (d.subdef.flags * [sf_function,sf_methodtoken,sf_subtoken] = []) or 
+   if (d.subdef.flags * [sf_functionx,sf_methodtoken,sf_subtoken] = []) or 
                            (sf_functiontype in d.subdef.flags) then begin
     errormessage(err_syntax,[';']);
    end;
-   d.subdef.flags:= d.subdef.flags+[sf_functiontype,sf_function];
+   d.subdef.flags:= d.subdef.flags+
+                  [sf_functiontype,sf_functionx,sf_functioncall];
   {$endif}
   end;
  end;
@@ -1552,7 +1554,7 @@ var                       //todo: move after doparams()
  function checksysclassmethod(const aname: string): boolean;
  begin
   result:= true;
-  if not isclass or (subflags*[sf_function,sf_classmethod] <> []) or
+  if not isclass or (subflags*[sf_functionx,sf_classmethod] <> []) or
                                                   (paramco <> 1) then begin
    errormessage(err_invalidmethodforattach,[aname]);
    result:= false;
@@ -1605,7 +1607,7 @@ begin
    d.subdef.locallocidbefore:= locallocid;
    locallocid:= 0;
   end;
-  if (sf_function in subflags) and 
+  if (sf_functionx in subflags) and 
                       not (sf_functiontype in subflags) then begin
    tokenexpectederror(':');
    exit; //fatal
@@ -1617,7 +1619,7 @@ begin
   isclass:= s.currentstatementflags * [stf_objdef,stf_objimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isclass or isinterface or (sf_ofobject in subflags);
-  if sf_function in subflags then begin
+  if sf_functionx in subflags then begin
    with contextstack[s.stacktop].d.typ do begin
     resulttype1.typeele:= typedata;
     resulttype1.indirectlevel:= indirectlevel;
@@ -1631,14 +1633,11 @@ begin
     {$endif}
      with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
       if h.bytesize > pointersize then begin
-       d.paramdef.kind:= pk_var; //pk_out?
-       include(subflags,sf_varfunction);
+///////////       d.paramdef.kind:= pk_var; //pk_out?
+///////////       exclude(subflags,sf_functioncall);
       end;
      end;
     end;
-   end
-   else begin
-    include(subflags,sf_varfunction);
    end;
   end;
   if isinterface then begin
@@ -1653,7 +1652,7 @@ begin
     inc(paramco);
    end;
   end;
-  if (paramco = 0) and (sf_function in subflags) then begin
+  if (paramco = 0) and (sf_functionx in subflags) then begin
    paramco:= 1;  //no getidents context
   end;
 //  paramco:= (s.stacktop-s.stackindex-2) div 3;
@@ -1768,7 +1767,7 @@ begin
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
   curparam:= @sub1^.paramsrel;
-  if sf_function in subflags then begin  //allocate result var first
+  if sf_functionx in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
    curparamend:= curparam + 1;
    if not doparams(true) or s.stopparser then begin //increments curparam
@@ -2079,7 +2078,7 @@ begin
     end
     else begin
      p1:= @operparamids.d[1];
-     if sf_function in subflags then begin
+     if sf_functionx in subflags then begin
       setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[0]));
       i1:= 2;
      end
@@ -2205,7 +2204,7 @@ begin
     po2^.trampolineaddress:= opcount;
     linkresolveopad(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin
-     if sf_function in po2^.flags then begin
+     if sf_functionx in po2^.flags then begin
       par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize + vpointersize;
      end
      else begin
@@ -2398,7 +2397,7 @@ begin
 //    i1:= i1 + vpointersize; //class pointer
 //   end;
   end;
-  if sf_function in po1^.flags then begin
+  if sf_functioncall in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
     par.stacksize:= i1;
 //    par.returnfuncinfo.flags:= po1^.flags;

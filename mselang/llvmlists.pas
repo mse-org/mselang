@@ -1273,7 +1273,7 @@ var
 begin
  if avalue = nil then begin //main()
   with parbuf do begin
-   header.flags:= [sf_function];
+   header.flags:= [sf_functionx,sf_functioncall];
    header.paramcount:= 1;
    with params[0] do begin
     flags:= [];
@@ -1303,7 +1303,7 @@ begin
    end;
    po2:= @avalue^.paramsrel;
    i1:= 0; 
-   if sf_function in header.flags then begin
+   if sf_functioncall in header.flags then begin
     with params[0] do begin
      flags:= [];
      typelistindex:= addvarvalue(ele.eledataabs(po2^));
@@ -2219,7 +2219,7 @@ begin
   parar1[i1].typelistindex:= aparamtypes[i1];
  end;
  if afunction then begin
-  f1:= [sf_proto,sf_function];
+  f1:= [sf_proto,sf_functionx,sf_functioncall];
  end
  else begin
   f1:= [sf_proto];
@@ -2788,7 +2788,7 @@ begin
    parcount1:= asub^.paramcount;
    po1:= @asub^.paramsrel;
    po2:= @params1;
-   if not (sf_function in asub^.flags) then begin //todo: handle result deref
+   if not (sf_functioncall in asub^.flags) then begin //todo: handle result deref
     if parcount1 = 0 then begin
      m1:= fnoparams;
     end

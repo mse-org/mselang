@@ -236,7 +236,7 @@ type
  end; 
  ptypeallocinfoty = ^typeallocinfoty;
 
- subflagty = (sf_function,sf_varfunction,//result by pointer
+ subflagty = (sf_functionx,sf_functioncall,//result not by pointer
               sf_method,sf_classmethod,sf_class,
               sf_constructor,sf_destructor,
               sf_methodtoken,sf_subtoken,sf_operator,sf_operatorright,
@@ -267,7 +267,7 @@ type
  pdatakindty = ^datakindty;
 
 const
- compatiblesubflags = [sf_function,
+ compatiblesubflags = [sf_functionx,
                        sf_method,sf_class,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
  numericdatakinds = [dk_cardinal,dk_integer,dk_float];

@@ -596,7 +596,7 @@ begin
          else begin
           emit1(0);      //no vararg
          end;
-         if sf_function in header.flags then begin
+         if sf_functioncall in header.flags then begin
           dec(i2);
           emitvbr6(typeindex(pp3[0].typelistindex)); //retval
           inc(pp3);
@@ -1893,7 +1893,7 @@ begin
  flastdebugloc.col:= 0;
  with allocs do begin
   fsubparamstart:= fsubstart;
-  if sf_function in aflags then begin
+  if sf_functioncall in aflags then begin
    dec(fsubparamstart); //skip result param
   end;
   if sf_hasnestedaccess in aflags then begin

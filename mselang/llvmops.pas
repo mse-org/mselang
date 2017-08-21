@@ -143,24 +143,28 @@ const
 //  (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
 //  (name: 'free'; flags: [sf_proto]; params: @freeparams),
 //  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
-  (name: 'realloc'; flags: [sf_proto,sf_function]; params: @reallocparams),
-  (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
+  (name: 'realloc'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                 params: @reallocparams),
+  (name: 'memset'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                 params: @memsetparams),
   (name: 'llvm.memcpy.p0i8.p0i8.i32'; flags: [sf_proto];
                                                   params: @memcpyparams),
   (name: 'llvm.memmove.p0i8.p0i8.i32'; flags: [sf_proto];
                                                   params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
-  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
-  (name: 'llvm.cos.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params),
-  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_function];
+  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                       params: @ffunc64params),
+  (name: 'llvm.cos.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                       params: @ffunc64params),
+  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @ffunc64params),
-  (name: 'llvm.sqrt.f64'; flags: [sf_proto,sf_function];
+  (name: 'llvm.sqrt.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @ffunc64params),
-  (name: 'llvm.floor.f64'; flags: [sf_proto,sf_function];
+  (name: 'llvm.floor.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @ffunc64params),
-  (name: 'llvm.round.f64'; flags: [sf_proto,sf_function];
+  (name: 'llvm.round.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @ffunc64params),
-  (name: 'llvm.nearbyint.f64'; flags: [sf_proto,sf_function];
+  (name: 'llvm.nearbyint.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @ffunc64params)
  );
 
@@ -3741,7 +3745,7 @@ begin
  {$endif}
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;  
-  if sf_function in callinfo.flags then begin
+  if sf_functioncall in callinfo.flags then begin
    inc(parpo);            //skip result param
    dec(ids.count);
   end;
@@ -3771,7 +3775,7 @@ begin
 //   i1:= bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid);
   end;
   docallparam(outlinkcount,idar);
-  bcstream.emitcallop(sf_function in callinfo.flags,i1,idar);
+  bcstream.emitcallop(sf_functioncall in callinfo.flags,i1,idar);
  end;
 end;
 
@@ -3842,7 +3846,8 @@ begin
                //sub address
   bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
                          bcstream.ptypeval(callinfo.virt.typeid));
-  bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
+  bcstream.emitcallop(sf_functioncall in 
+                                callinfo.flags,bcstream.relval(0),idar);
  end;
 end;
 
@@ -3879,7 +3884,8 @@ begin
                //sub address
   bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
                          bcstream.ptypeval(callinfo.virt.typeid));
-  bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
+  bcstream.emitcallop(sf_functioncall in callinfo.flags,
+                                             bcstream.relval(0),idar);
  end;
 end;
 
@@ -3925,7 +3931,7 @@ var
 begin
 ///////////// bcstream.nodebugloc:= true; 
             //debugloc necessary because of param debuginfo
- isfunction:= sf_function in pc^.par.subbegin.sub.flags;
+ isfunction:= sf_functioncall in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
  if trampop <> nil then begin //todo: force tailcall
   with trampop^.par.subbegin do begin

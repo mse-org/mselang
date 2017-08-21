@@ -2183,7 +2183,7 @@ begin
      subparams1:= @subdata1^.paramsrel;
      subparamse:= subparams1 + subdata1^.paramcount;
      totparamco:= paramco;
-     if [sf_function] * subdata1^.flags <> [] then begin
+     if [sf_functionx] * subdata1^.flags <> [] then begin
       inc(totparamco); //result parameter
       inc(subparams1);
      end;
@@ -2429,7 +2429,7 @@ begin
 
     subparams1:= @asub^.paramsrel;
     totparamco:= paramco;
-    if [sf_function] * asub^.flags <> [] then begin
+    if [sf_functionx] * asub^.flags <> [] then begin
      inc(totparamco); //result parameter
     end;
     if sf_method in asub^.flags then begin
@@ -2442,7 +2442,7 @@ begin
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
     end;
-    hasresult:= (sf_function in asub^.flags) or 
+    hasresult:= (sf_functionx in asub^.flags) or 
           not isfactcontext and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     if hasresult then begin
@@ -2518,7 +2518,7 @@ begin
     end;
     parallocstart:= getsegmenttopoffs(seg_localloc);    
 
-    if sf_function in asub^.flags then begin
+    if sf_functionx in asub^.flags then begin
      with pparallocinfoty(
               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
       ssaindex:= 0; //not used
@@ -2689,7 +2689,7 @@ begin
     if not (dsf_isinherited in aflags) and 
          (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
      if sf_interface in asub^.flags then begin
-      if sf_function in asub^.flags then begin
+      if sf_functioncall in asub^.flags then begin
        po1:= insertitem(oc_callintffunc,topoffset,-1);
       end
       else begin
@@ -2699,7 +2699,7 @@ begin
                                                         sizeof(intfdefheaderty);
      end
      else begin
-      if sf_function in asub^.flags then begin
+      if sf_functioncall in asub^.flags then begin
        po1:= insertitem(oc_callvirtfunc,topoffset,-1);
       end
       else begin
@@ -2715,7 +2715,7 @@ begin
       po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
                                                             addsubvalue(asub);
      end;
-     if sf_function in asub^.flags then begin
+     if sf_functioncall in asub^.flags then begin
       po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
      end
      else begin
@@ -2730,7 +2730,7 @@ begin
      if (asub^.nestinglevel = 0) or 
                       (asub^.nestinglevel = sublevel) then begin
       if dsf_indirect in aflags then begin
-       if sf_function in asub^.flags then begin
+       if sf_functioncall in asub^.flags then begin
         po1:= insertitem(oc_callfuncindi,topoffset,-1);
        end
        else begin
@@ -2751,7 +2751,7 @@ begin
        end;
       end
       else begin
-       if sf_function in asub^.flags then begin
+       if sf_functioncall in asub^.flags then begin
         po1:= insertitem(oc_callfunc,topoffset,-1);
        end
        else begin
@@ -2762,7 +2762,7 @@ begin
      end
      else begin
       i1:= sublevel-asub^.nestinglevel;
-      if sf_function in asub^.flags then begin
+      if sf_functioncall in asub^.flags then begin
        po1:= insertitem(oc_callfuncout,topoffset,-1,
                                        getssa(ocssa_nestedcallout,i1));
       end
@@ -2812,7 +2812,7 @@ begin
      par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
      par.callinfo.ad.globid:= trackaccess(asub);
     end;
-    if sf_function in asub^.flags then begin
+    if sf_functioncall in asub^.flags then begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
     if (sf_destructor in asub^.flags) and 
