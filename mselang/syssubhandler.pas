@@ -620,8 +620,19 @@ begin
  with info do begin         //todo: try/finally
   if checkparamco(0,paramco) then begin
    with addcontrolitem(oc_goto)^ do begin
-    linkmark(psubdataty(ele.parentdata)^.exitlinks,
+    if ele.parentelement^.header.kind = ek_implementation then begin
+     linkmark(pimplementationdataty(ele.parentdata)^.exitlinks,
                                 getsegaddress(seg_op,@par.opaddress));
+    end
+    else begin
+    {$ifdef mse_checkinternalerror}
+     if ele.parentelement^.header.kind <> ek_sub then begin
+      internalerror(ie_handler,'20170821A');
+     end;
+    {$endif}
+     linkmark(psubdataty(ele.parentdata)^.exitlinks,
+                                getsegaddress(seg_op,@par.opaddress));
+    end;
    end;
   end;
  end;

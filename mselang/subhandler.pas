@@ -1632,9 +1632,9 @@ begin
      end;
     {$endif}
      with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
-      if h.bytesize > pointersize then begin
-///////////       d.paramdef.kind:= pk_var; //pk_out?
-///////////       exclude(subflags,sf_functioncall);
+      if (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
+///////       d.paramdef.kind:= pk_var; //pk_out?
+///////       exclude(subflags,sf_functioncall);
       end;
      end;
     end;

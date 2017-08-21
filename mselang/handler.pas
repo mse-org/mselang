@@ -325,6 +325,14 @@ begin
  outhandle('PROGBLOCK');
 {$endif}
 // writeop(nil); //endmark
+{$ifdef mse_checkinternalerror}
+ if ele.parentelement^.header.kind <> ek_implementation then begin
+  internalerror(ie_handler,'20170821B');
+ end;
+{$endif}
+ addlabel();
+ linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
+                                                      info.opcount-1);
  writemanagedtempop(mo_decref,info.managedtempchain,info.s.stacktop);
  handleunitend();
  invertlist(unitlinklist,unitchain);

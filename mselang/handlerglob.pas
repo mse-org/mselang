@@ -506,6 +506,7 @@ type
  end;
  punitdataty = ^unitdataty;
  implementationdataty = record
+  exitlinks: linkindexty;  //for exit statement, resolved by linkresolveopad
  end;
  pimplementationdataty = ^implementationdataty;
 

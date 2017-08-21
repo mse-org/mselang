@@ -463,6 +463,7 @@ begin
    end;
 }
   end;
+  po1^.exitlinks:= 0;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_implementation;
 //   ele.markelement(d.impl.elemark);
@@ -1643,6 +1644,16 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATION');
 {$endif}
+{$ifdef mse_checkinternalerror}
+ if ele.parentelement^.header.kind <> ek_implementation then begin
+  internalerror(ie_handler,'20170821B');
+ end;
+{$endif}
+ addlabel();
+ with pimplementationdataty(ele.parentdata)^ do begin
+  linkresolveopad(exitlinks,info.opcount-1);
+  exitlinks:= 0;
+ end;
  endsimplesub(false);
 {
  with info,unitinfo^ do begin
@@ -1678,6 +1689,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATION');
 {$endif}
+{$ifdef mse_checkinternalerror}
+ if ele.parentelement^.header.kind <> ek_implementation then begin
+  internalerror(ie_handler,'20170821B');
+ end;
+{$endif}
+ addlabel();
+ linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
+                                                      info.opcount-1);
  writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,info.s.stacktop);
  endsimplesub(false);
 {

@@ -2,6 +2,18 @@ unit unit1;
 interface
 implementation
 {$internaldebug on}
-uses
- unit2;
+//uses
+// unit2;
+initialization
+{$dumpelements}
+ writeln('111');
+exit;
+ writeln('abc');
+//exit;
+finalization
+{$dumpelements}
+ writeln('222');
+exit;
+ writeln('def');
+//exit;
 end.

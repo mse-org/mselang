@@ -356,11 +356,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
-    a=0,664,4,bool
+    a=0,665,4,bool
     c=8
      (
      kind=2
@@ -1820,11 +1820,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=33
+   a=0,665,4,control
+   c=35
     (
     kind=1
-    a=0,665,4,goto
+    a=0,664,4,goto
     c=6
      (
      kind=2
@@ -2678,6 +2678,50 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,exitmain
+    teststate=1
+    path=exitmain.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,exitmain llvm
+    teststate=1
+    path=exitmain.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
    teststate=1
    path=control/
    comment=
@@ -3156,7 +3200,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=14
     (
     kind=2
@@ -3631,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72A2FD0
+    ao=An unhandled exception occured at $B72FE068
     ae=
     aec=123
     ie=0
@@ -5996,7 +6040,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,openarray
+    a=0,664,4,openarray
     c=14
      (
      kind=2
@@ -6198,7 +6242,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,openarray5 llvm
+     a=0,648,2,openarray5 llvm
      teststate=1
      path=openarray5.mla
      comment=
@@ -6242,7 +6286,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,openarray6 llvm
+     a=0,648,2,openarray6 llvm
      teststate=1
      path=openarray6.mla
      comment=
@@ -6286,7 +6330,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,openarray7 llvm
+     a=0,648,2,openarray7 llvm
      teststate=1
      path=openarray7.mla
      comment=
@@ -11980,7 +12024,74 @@ sortdescend2=0
 width3=154
 sortdescend3=0
 sortdescend4=0
-rowstate=151
+rowstate=218
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
