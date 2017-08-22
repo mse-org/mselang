@@ -79,7 +79,7 @@ type
    fsuballocstart: int32;   //reference for allocs
    fsubtempstart: int32;    //reference for temp allocs
    fsubopstart: int32;      //start of op ssa id's
-   fsubopindex: int32;      //current op ssa is
+   fsubopindex: int32;      //current op ssa id
    fcurrentbb: int32;
    flandingpadblock: int32;
 //   fgetexceptionpointer: int32;

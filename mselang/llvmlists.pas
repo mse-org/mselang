@@ -222,6 +222,7 @@ type
                                             const atype: int32): integer;
    function addstructvalue(const atypes: array of int32): integer;
    function addstructvalue(const asize: int32; const atypes: pint32): integer;
+   function addtypevalue(const atype: ptypedataty): integer; //returns listid
    function addvarvalue(const avalue: pvardataty): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
                          //nil -> main sub
@@ -1366,6 +1367,21 @@ begin
  result:= addvalue(alloc1)^.data.header.listindex;
 end;
 
+function ttypehashdatalist.addtypevalue(const atype: ptypedataty): integer;
+begin
+ if (atype^.h.indirectlevel > 0) then begin
+  result:= pointertype;
+ end
+ else begin
+  if atype^.h.datasize = das_none then begin
+   result:= addbytevalue(atype^.h.bytesize);
+  end
+  else begin
+   result:= addbitvalue(atype^.h.datasize);
+  end;
+ end;
+end;
+
 function ttypehashdatalist.addvarvalue(const avalue: pvardataty): integer;
 var
  po1: ptypedataty;
@@ -1376,12 +1392,15 @@ begin
   result:= pointertype;
  end
  else begin
+  result:= addtypevalue(po1);
+ {
   if po1^.h.datasize = das_none then begin
    result:= addbytevalue(po1^.h.bytesize);
   end
   else begin
    result:= addbitvalue(po1^.h.datasize);
   end;
+ }
  end;
 end;
 
