@@ -2147,7 +2147,7 @@ var
  varargs: array[0..maxparamcount] of int32;
  isvararg: boolean;
  constbufferref: segmentstatety;
- varresultssa: int32;
+ varresulttemp: int32;
 label
  paramloopend;
 begin
@@ -2443,16 +2443,16 @@ begin
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
     end;
-    varresultssa:= 0;
+    varresulttemp:= 0;
     hasresult:= (sf_functionx in asub^.flags) or 
           not isfactcontext and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     hasvarresult:= hasresult and 
                       (asub^.flags*[sf_functioncall,sf_constructor] = []);
     if hasvarresult and (co_llvm in o.compileoptions) then begin
-     varresultssa:= allocllvmtemp(
+     varresulttemp:= allocllvmtemp(
                          s.unitinfo^.llvmlists.typelist.addtypevalue(
-                                   ele.eledataabs(asub^.resulttype.typeele)));
+                            ele.eledataabs(asub^.resulttype.typeele)));
     end;
     
     if hasresult then begin
@@ -2531,7 +2531,7 @@ begin
     if sf_functionx in asub^.flags then begin
      with pparallocinfoty(
               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-      ssaindex:= varresultssa;
+      ssaindex:= varresulttemp;
       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
      end;
     end;

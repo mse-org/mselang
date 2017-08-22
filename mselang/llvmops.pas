@@ -3748,6 +3748,15 @@ begin
   if sf_functioncall in callinfo.flags then begin
    inc(parpo);            //skip result param
    dec(ids.count);
+ {
+  end
+  else begin
+   if sf_functionx in callinfo.flags then begin
+    po1^:= bcstream.tempval(parpo^.ssaindex);  //result by var
+    inc(po1);
+    inc(parpo);
+   end;
+  }
   end;
   while parpo < endpo do begin
    po1^:= bcstream.ssaval(parpo^.ssaindex);
