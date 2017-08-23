@@ -5121,6 +5121,11 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= pointer(cpu.pc^.par.imm.vpointer);
 end;
 
+procedure pushtempaddrop();
+begin
+ notimplemented();
+end;
+
 procedure pushlocaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= getlocaddress(cpu.pc^.par.memop);
@@ -5548,6 +5553,11 @@ end;
 procedure tempallocop();
 begin
  //dummy
+end;
+
+procedure loadtempop();
+begin
+ notimplemented();
 end;
 
 procedure subbeginop();
@@ -7370,6 +7380,7 @@ const
 
   pushaddrssa = 0;
   pushlocaddrssa = 0;
+  pushtempaddrssa = 0;
 //  pushlocaddrindissa = 0;
   pushsegaddrssa = 0;
 //  pushsegaddrindissa = 0;
@@ -7421,6 +7432,7 @@ const
   locvarpushssa = 0;
   locvarpopssa = 0;
   tempallocssa = 0;
+  loadtempssa = 0;
 
   subbeginssa = 0;
   subendssa = 0;

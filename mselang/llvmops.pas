@@ -3489,6 +3489,13 @@ begin
   end;
  end;
 end;
+
+procedure pushtempaddrop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.tempval(ssas1),bcstream.typeval(das_pointer));
+ end;
+end;
 {
 procedure pushlocaddrindiop();          //todo: nested frames
 begin
@@ -3922,6 +3929,13 @@ procedure tempallocop();
 begin
  with pc^.par do begin
   bcstream.emitalloca(bcstream.ptypeval(tempalloc.typid));
+ end;
+end;
+
+procedure loadtempop();
+begin
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.tempval(ssas1));
  end;
 end;
 
@@ -5089,6 +5103,7 @@ const
 
   pushaddrssa = 1;
   pushlocaddrssa = 2;
+  pushtempaddrssa = 1;
 //  pushlocaddrindissa = 3;
   pushsegaddrssa = 1;
 //  pushsegaddrindissa = 3;
@@ -5139,6 +5154,7 @@ const
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
   tempallocssa = 1;
+  loadtempssa = 1;
 
   subbeginssa = 2; //1;
   subendssa = 0;

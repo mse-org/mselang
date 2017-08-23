@@ -592,6 +592,7 @@ type
   oc_pushaddr,
   oc_pushlocaddr,
 //  oc_pushlocaddrindi,
+  oc_pushtempaddr,
   oc_pushsegaddr,
 //  oc_pushsegaddrindi,
   oc_pushstackaddr,
@@ -627,7 +628,8 @@ type
 
   oc_locvarpush,
   oc_locvarpop,
-  oc_tempalloc,
+  oc_tempalloc,  //alloca for llvm
+  oc_loadtemp,   //for llvm
 
   oc_subbegin,
   oc_subend,

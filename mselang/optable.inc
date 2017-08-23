@@ -1030,6 +1030,8 @@
   (ssa: pushaddrssa; proc: @pushaddrop; flags: []), 
 //oc_pushlocaddr
   (ssa: pushlocaddrssa; proc: @pushlocaddrop; flags: []), 
+//oc_pushtempaddr
+  (ssa: pushtempaddrssa; proc: @pushtempaddrop; flags: []), 
 //oc_pushsegaddr
   (ssa: pushsegaddrssa; proc: @pushsegaddrop; flags: [of_relocseg]),
 //oc_pushstackaddr
@@ -1094,6 +1096,8 @@
   (ssa: locvarpopssa; proc: @locvarpopop; flags: []), 
 //oc_tempalloc
   (ssa: tempallocssa; proc: @tempallocop; flags: []), 
+//oc_loadtemp
+  (ssa: loadtempssa; proc: @loadtempop; flags: []), 
 
 //oc_subbegin
   (ssa: subbeginssa; proc: @subbeginop; flags: []), 

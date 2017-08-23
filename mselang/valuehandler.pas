@@ -2147,7 +2147,7 @@ var
  varargs: array[0..maxparamcount] of int32;
  isvararg: boolean;
  constbufferref: segmentstatety;
- varresulttemp: int32;
+ varresulttemp,varresulttempaddr: int32;
 label
  paramloopend;
 begin
@@ -2443,7 +2443,7 @@ begin
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
     end;
-    varresulttemp:= 0;
+    varresulttempaddr:= -1;
     hasresult:= (sf_functionx in asub^.flags) or 
           not isfactcontext and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
@@ -2453,6 +2453,10 @@ begin
      varresulttemp:= allocllvmtemp(
                          s.unitinfo^.llvmlists.typelist.addtypevalue(
                             ele.eledataabs(asub^.resulttype.typeele)));
+     with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
+      par.ssas1:= varresulttemp;
+      varresulttempaddr:= par.ssad;
+     end;
     end;
     
     if hasresult then begin
@@ -2531,7 +2535,7 @@ begin
     if sf_functionx in asub^.flags then begin
      with pparallocinfoty(
               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-      ssaindex:= varresulttemp;
+      ssaindex:= varresulttempaddr;
       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
      end;
     end;
@@ -2876,6 +2880,12 @@ begin
     end;
     if (sf_constructor in asub^.flags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);
+    end;
+    if varresulttempaddr >= 0 then begin
+     with insertitem(oc_loadtemp,topoffset,-1)^ do begin
+      par.ssas1:= varresulttemp;
+      d.dat.fact.ssaindex:= par.ssad;
+     end;
     end;
    end;
   end;
