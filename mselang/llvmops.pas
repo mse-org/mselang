@@ -1944,15 +1944,24 @@ end;
 procedure arraytoopenarop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_arraytoopenar,true,[bcstream.constval(imm.llvm.listid),
-                                                    bcstream.ssaval(ssas1)]);
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                           bcstream.typeval(bcstream.pointertype)); //1ssa
+  callcompilersub(cs_arraytoopenar,false,[bcstream.constval(imm.llvm.listid),
+                                   bcstream.ssaval(ssas1),bcstream.relval(0)]);
+  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
 procedure dynarraytoopenarop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_dynarraytoopenar,true,[bcstream.ssaval(ssas1)]);
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                           bcstream.typeval(bcstream.pointertype)); //1ssa
+  callcompilersub(cs_dynarraytoopenar,false,[bcstream.ssaval(ssas1),
+                                                  bcstream.relval(0)]);
+  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
@@ -4803,8 +4812,8 @@ const
   concatstring32ssa = 3;
   
   chartostring8ssa = 1;
-  arraytoopenarssa = 1;
-  dynarraytoopenarssa = 1;
+  arraytoopenarssa = 3;
+  dynarraytoopenarssa = 3;
   listtoopenarssa = 3;
   
   combinemethodssa = 6;

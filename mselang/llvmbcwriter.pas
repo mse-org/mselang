@@ -68,6 +68,7 @@ type
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
    flandingpadtype: int32;
+   fopenarraytype: int32;
    fpointertype: int32;
    fpointersizeconst: int32;
 //   fconstseg: int32;
@@ -270,6 +271,7 @@ type
    function valindex(const aadress: segaddressty): integer;
    property pointertype: int32 read fpointertype;
    property landingpadtype: int32 read flandingpadtype;
+   property openarraytype: int32 read fopenarraytype;
    property pointersizeconst: int32 read fpointersizeconst;
    property landingpadblock: int32 read flandingpadblock write flandingpadblock;
 //   property getexceptionpointer: int32 read fgetexceptionpointer 
@@ -488,6 +490,7 @@ begin
  flastdebugloc.col:= 0;
  fmetadatatype:= consts.typelist.metadata;
  flandingpadtype:= consts.typelist.landingpad;
+ fopenarraytype:= consts.typelist.openarray;
 // fgetexceptionpointer:= globals.getexceptionpointer;
  fpointersizeconst:= consts.pointersize;
  fpointertype:= ptypeval(das_8);

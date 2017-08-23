@@ -201,6 +201,7 @@ type
   private
   protected
    fclassdef: int32;
+   fopenarray: int32;
 //   fmethod: int32;
    fintfitem: int32;
    flandingpad: int32;
@@ -232,6 +233,7 @@ type
    function first: ptypelistdataty;
    function next: ptypelistdataty;
    property classdef: int32 read fclassdef;
+   property openarray: int32 read fopenarray;
 //   property method: int32 read fmethod;
    property intfitem: int32 read fintfitem;
    property landingpad: int32 read flandingpad;
@@ -1145,6 +1147,7 @@ begin
   addbytevalue(2*pointersize); //method, bittypemax+1
   fmetadata:= addbitvalue(das_meta);
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
+  fopenarray:= addbytevalue(sizeof(openarrayty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
   fvoid:= 0;

@@ -78,8 +78,9 @@ function __mla__compstring32le(a,b: pointer): bool1;
 function __mla__chartostring8(achar: card8): pointer;
 function __mla__chartostring16(achar: card16): pointer;
 function __mla__chartostring32(achar: card32): pointer;
-function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
-function __mla__dynarraytoopenar(ref: pointer): openarrayty;
+procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
+                                      out result: openarrayty);
+procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
 function __mla__lengthdynarray(ref: pointer): int32;
 function __mla__lengthopenarray(ref: popenarrayty): int32;
 function __mla__lengthstring(ref: pointer): int32;
@@ -1381,13 +1382,14 @@ begin
  (pcard32(result)+1)^:= 0; //terminator
 end;
 
-function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
+procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
+                                      out result: openarrayty);
 begin
  result.high:= ahigh;
  result.data:= adata;
 end;
 
-function __mla__dynarraytoopenar(ref: pointer): openarrayty;
+procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
 begin
  if ref = nil then begin
   result.high:= -1;
