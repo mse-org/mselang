@@ -2461,6 +2461,10 @@ begin
     
     if hasresult then begin
      initfactcontext(adestindex-s.stackindex); //set ssaindex
+     if dsf_instanceonstack in aflags then begin
+      d.dat.fact.ssaindex:= instancessa; 
+                 //restore modification by varresulttemp
+     end;
      if sf_constructor in asub^.flags then begin //needs memory
       isconstructor:= true;
       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,

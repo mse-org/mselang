@@ -1973,22 +1973,27 @@ var
 begin
  with pc^.par do begin
   ssabase:= bcstream.ssaindex;
-  bcstream.emitalloca(bcstream.ptypeval(listtoopenar.arraytype)); //1 ssa
+  bcstream.emitalloca(bcstream.ptypeval(listtoopenar.arraytype));   //1ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
-                                                                  //1 ssa
+                                                                    //1ssa
 //  i1:= bcstream.relval(0);
   po1:= getsegmentpo(seg_localloc,listinfo.allocs);
   poe:= po1 + listinfo.alloccount;
   while po1 < poe do begin
    bcstream.emitbitcast(bcstream.relval(0),
-                   bcstream.ptypeval(listtoopenar.itemtype));     //1 ssa
+                   bcstream.ptypeval(listtoopenar.itemtype));       //1ssa
    bcstream.emitstoreop(ssabase+po1^.ssaoffs-1,bcstream.relval(0));
    bcstream.emitgetelementptr(bcstream.relval(0),
-                         bcstream.constval(listinfo.itemsize));   //2 ssa
+                         bcstream.constval(listinfo.itemsize));     //2ssa
    inc(po1);
   end;
-  callcompilersub(cs_arraytoopenar,true,
-         [bcstream.constval(listtoopenar.allochigh),ssabase+2-1]); //1 ssa
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                           bcstream.typeval(bcstream.pointertype)); //1ssa
+  callcompilersub(cs_arraytoopenar,false,
+         [bcstream.constval(listtoopenar.allochigh),ssabase+2-1,
+                                              bcstream.relval(0)]); 
+  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
@@ -4814,7 +4819,7 @@ const
   chartostring8ssa = 1;
   arraytoopenarssa = 3;
   dynarraytoopenarssa = 3;
-  listtoopenarssa = 3;
+  listtoopenarssa = 5;
   
   combinemethodssa = 6;
   getmethodcodessa = 3;

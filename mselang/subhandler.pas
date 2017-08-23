@@ -1631,10 +1631,12 @@ begin
       internalerror(ie_handler,'20170818A');
      end;
     {$endif}
-     with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
-      if (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
-       d.paramdef.kind:= pk_var; //pk_out?
-       exclude(subflags,sf_functioncall);
+     if resulttype1.indirectlevel = 0 then begin
+      with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
+       if (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
+        d.paramdef.kind:= pk_var; //pk_out?
+        exclude(subflags,sf_functioncall);
+       end;
       end;
      end;
     end;
