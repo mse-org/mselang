@@ -1,0 +1,34 @@
+program recparsubres;
+type
+ recty = record
+  a,b: int32;
+ end;
+
+var
+ rec1,rec2: recty;
+ p1: ^recty;
+
+procedure test(): ^^recty;
+begin
+ result:= @p1;
+end;
+
+procedure testa(): recty;
+begin
+ result:= rec2;
+end;
+
+procedure test1(const a: recty);
+begin
+ exitcode:= exitcode + a.a + a.b;
+end;
+
+begin
+ rec1.a:= 40;
+ rec1.b:= 60;
+ rec2.a:= 20;
+ rec2.b:= 3;
+ p1:= @rec1;
+ test1(test()^^);
+ test1(testa());
+end.
