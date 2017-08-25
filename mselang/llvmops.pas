@@ -4106,6 +4106,8 @@ begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
+  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.firsttemp);
+
   if do_proginfo in info.o.debugoptions then begin
    idar.count:= 3;
    idar.ids:= @ids;
