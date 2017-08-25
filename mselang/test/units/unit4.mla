@@ -1,4 +1,4 @@
-unit unit1;
+unit unit4;
 interface
 type
  recty = record
@@ -6,7 +6,6 @@ type
  end;
  
 implementation
-{$internaldebug on}
 procedure test(): recty;
 begin
  result.a:= 100;

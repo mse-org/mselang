@@ -1211,6 +1211,8 @@ begin
     else begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
+    par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;
+    par.subbegin.sub.allocs.llvm.firsttemp:= firstllvmtemp;
     par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
    end
    else begin
