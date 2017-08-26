@@ -3445,7 +3445,7 @@ begin
 //   if (source^.d.kind = ck_list) and not listtoset(source) then begin
 //    goto endlab;
 //   end;
-   if source^.d.kind <> ck_list then begin
+   if (source^.d.kind <> ck_list) and (source^.d.kind in datacontexts) then begin
     concatterms(dest,source);
    end;
    with dest^ do begin
