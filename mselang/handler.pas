@@ -3412,32 +3412,34 @@ begin
   internalerror(ie_handler,'20170828B');;
  end;
 {$endif}
- if getaddress(dest,true) then begin
-  p1:= getoppo(source^.d.dat.fact.varsubres.startopoffset +
-                                              source^.opmark.address);
- {$ifdef mse_checkinternalerror}
-  if p1^.op.op <> oc_pushtempaddr then begin
-   internalerror(ie_handler,'20170828D');
-  end;
- {$endif}
-  setnopop(p1^);
-  p1:= getoppo(source^.d.dat.fact.varsubres.endopoffset + 
-                                             source^.opmark.address-1);
- {$ifdef mse_checkinternalerror}
-  if p1^.op.op <> oc_loadtemp then begin
-   internalerror(ie_handler,'20170828E');
-  end;
- {$endif}
-  setnopop(p1^);
- {$ifdef mse_checkinternalerror}
-  if not (dest^.d.kind in factcontexts) then begin
-   internalerror(ie_handler,'20170828F');;
-  end;
+ p1:= getoppo(source^.d.dat.fact.varsubres.startopoffset +
+                                             source^.opmark.address);
+{$ifdef mse_checkinternalerror}
+ if p1^.op.op <> oc_pushtempaddr then begin
+  internalerror(ie_handler,'20170828D');
+ end;
 {$endif}
-  with pparallocinfoty(
-    getsegmentpo(seg_localloc,source^.d.dat.fact.varsubres.varparam))^ do begin
-   ssaindex:= dest^.d.dat.fact.ssaindex;
+ setnopop(p1^);
+ p1:= getoppo(source^.d.dat.fact.varsubres.endopoffset + 
+                                            source^.opmark.address-1);
+{$ifdef mse_checkinternalerror}
+ if p1^.op.op <> oc_loadtemp then begin
+  internalerror(ie_handler,'20170828E');
+ end;
+{$endif}
+ setnopop(p1^);
+ if not (dest^.d.kind in factcontexts) then begin
+  if not getaddress(dest,true) then begin
+   exit;
   end;
+ end;
+ with ptempallocinfoty(getsegmentpo(seg_localloc,
+                     source^.d.dat.fact.varsubres.tempalloc))^ do begin
+  typeid:= -1; //not used
+ end;
+ with pparallocinfoty(
+   getsegmentpo(seg_localloc,source^.d.dat.fact.varsubres.varparam))^ do begin
+  ssaindex:= dest^.d.dat.fact.ssaindex;
  end;
 end;
 

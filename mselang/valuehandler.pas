@@ -2457,8 +2457,8 @@ begin
       d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
       varresulttemp:= allocllvmtemp(
                           s.unitinfo^.llvmlists.typelist.addtypevalue(
-                             ele.eledataabs(asub^.resulttype.typeele)));
-      d.dat.fact.varsubres.tempalloc:= varresulttemp;
+                             ele.eledataabs(asub^.resulttype.typeele)),
+                                             d.dat.fact.varsubres.tempalloc);
       with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
        par.ssas1:= varresulttemp;
        varresulttempaddr:= par.ssad;

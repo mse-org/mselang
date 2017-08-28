@@ -74,6 +74,8 @@ begin
 end;
 
 procedure tryhandle();
+var
+ offs1: dataoffsty;
 begin
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
@@ -81,7 +83,7 @@ begin
   with additem(oc_popcpucontext)^ do begin
    if co_llvm in info.o.compileoptions then begin
     par.popcpucontext.landingpadalloc:= 
-                 allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
+          allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad,offs1);
    end;
    if info.s.trystacklevel > 1 then begin //restore parent landingpad
     with ptrystackitemty(

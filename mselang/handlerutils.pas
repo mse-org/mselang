@@ -160,7 +160,7 @@ function pushtempindi(const address: addressvaluety;
 function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
 procedure poptemp(const asize: int32);
-function allocllvmtemp(const atypeid: int32): int32;
+function allocllvmtemp(const atypeid: int32; out dataoffs: dataoffsty): int32;
 procedure addmanagedtemp(const acontext: pcontextitemty);
 
 procedure push(const avalue: boolean); overload;
@@ -1514,13 +1514,15 @@ begin
  end;
 end;
 
-function allocllvmtemp(const atypeid: int32): int32;
+function allocllvmtemp(const atypeid: int32; 
+                                   out dataoffs: dataoffsty): int32;
 var
  offs1: dataoffsty;
  po1: ptempallocinfoty;
 begin
  with info do begin
   offs1:= allocsegmentoffset(seg_localloc,sizeof(tempallocinfoty),po1);
+  dataoffs:= offs1;
   if firstllvmtemp < 0 then begin
    firstllvmtemp:= offs1;
   end

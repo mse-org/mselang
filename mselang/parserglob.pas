@@ -269,7 +269,7 @@ type
  varsubresinfoty = record
   startopoffset: int32;
   endopoffset: int32;
-  tempalloc: int32;
+  tempalloc: dataoffsty;
   varparam: dataoffsty;
  end;
   

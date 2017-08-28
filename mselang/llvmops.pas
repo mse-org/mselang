@@ -664,7 +664,12 @@ begin
  if acount > 0 then begin
   po1:= getsegmentpo(seg_localloc,afirst);
   while true do begin
-   bcstream.emitalloca(bcstream.ptypeval(po1^.typeid));
+   if po1^.typeid >= 0 then begin
+    bcstream.emitalloca(bcstream.ptypeval(po1^.typeid));
+   end
+   else begin
+    bcstream.emitnopssa();
+   end;
    if po1^.next <= 0 then begin
     break;
    end;
