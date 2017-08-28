@@ -92,7 +92,6 @@ type
 }
  opcodety = (        //order like optable.inc
   oc_none,
-  oc_nop,
 
   oc_label,          //controlops
   oc_if,
@@ -177,6 +176,8 @@ type
   oc_writeclass,
   oc_writeenum,
 
+  oc_nop,
+  oc_nopssa,
   oc_push,
   oc_pop,
   oc_swapstack,
@@ -1244,6 +1245,9 @@ type
    oc_none,oc_nop: (
     dummy: record
     end;
+   );
+   oc_nopssa: (
+    ssacount: int32;
    );
    oc_main: (
     main: mainty;

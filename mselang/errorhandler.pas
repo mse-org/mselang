@@ -736,7 +736,7 @@ var
  int1: integer;
 begin
  case source.kind of
-  ck_const,ck_fact,ck_ref: begin
+  ck_const,ck_fact,ck_ref,ck_subres: begin
    po1:= ele.eleinfoabs(source.dat.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
    for int1:= 0 to source.dat.datatyp.indirectlevel-1 do begin

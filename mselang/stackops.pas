@@ -961,6 +961,11 @@ begin
 end;
 *)
 
+procedure nopssaop();
+begin
+ //dummy
+end;
+
 procedure pushop();
 begin
  stackpush(cpu.pc^.par.imm.vsize);
@@ -6948,6 +6953,8 @@ const
   writeclassssa = 0;
   writeenumssa = 0;
 
+  nopssassa = 0;
+  
   pushssa = 0;
   popssa = 0;
   swapstackssa = 0;

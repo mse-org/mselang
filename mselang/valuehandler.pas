@@ -2449,18 +2449,21 @@ begin
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     hasvarresult:= hasresult and 
                       (asub^.flags*[sf_functioncall,sf_constructor] = []);
-    if hasvarresult and (co_llvm in o.compileoptions) then begin
-     varresulttemp:= allocllvmtemp(
-                         s.unitinfo^.llvmlists.typelist.addtypevalue(
-                            ele.eledataabs(asub^.resulttype.typeele)));
-     with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-      par.ssas1:= varresulttemp;
-      varresulttempaddr:= par.ssad;
-     end;
-    end;
     
     if hasresult then begin
-     initfactcontext(adestindex-s.stackindex); //set ssaindex
+     initfactcontext(destoffset); //set ssaindex
+     if hasvarresult and (co_llvm in o.compileoptions) then begin
+      include(d.dat.fact.flags,faf_varsubres);
+      d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
+      varresulttemp:= allocllvmtemp(
+                          s.unitinfo^.llvmlists.typelist.addtypevalue(
+                             ele.eledataabs(asub^.resulttype.typeele)));
+      d.dat.fact.varsubres.tempalloc:= varresulttemp;
+      with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
+       par.ssas1:= varresulttemp;
+       varresulttempaddr:= par.ssad;
+      end;
+     end;
      if dsf_instanceonstack in aflags then begin
       d.dat.fact.ssaindex:= instancessa; 
                  //revert modification by varresulttemp
@@ -2523,7 +2526,8 @@ begin
      d.kind:= ck_subres;
      d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
      d.dat.datatyp.typedata:= ele.eledatarel(resulttype1);        
-     d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
+     d.dat.fact.opdatatype:= getopdatatype(resulttype1,
+                                                d.dat.datatyp.indirectlevel);
     end;
 
     if isvararg then begin
@@ -2537,8 +2541,10 @@ begin
     parallocstart:= getsegmenttopoffs(seg_localloc);    
 
     if sf_functionx in asub^.flags then begin
-     with pparallocinfoty(
-              allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+     parallocpo:= pparallocinfoty(
+                        allocsegmentpo(seg_localloc,sizeof(parallocinfoty)));
+     d.dat.fact.varsubres.varparam:= getsegmentoffset(seg_localloc,parallocpo);
+     with parallocpo^ do begin
       ssaindex:= varresulttempaddr;
       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
      end;
@@ -2890,6 +2896,9 @@ begin
       par.ssas1:= varresulttemp;
       d.dat.fact.ssaindex:= par.ssad;
      end;
+     d.dat.fact.varsubres.endopoffset:= 
+                  contextstack[topoffset+s.stackindex].opmark.address +
+                                 getcontextopcount(topoffset) - opmark.address;
     end;
    end;
   end;

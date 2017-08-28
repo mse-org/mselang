@@ -3385,6 +3385,62 @@ begin
  end;
 end;
 
+function canvarresult(const source,dest: pcontextitemty;
+                                     const indirectlevel: int32): boolean;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (source^.d.kind in datacontexts) or not 
+                             (dest^.d.kind in datacontexts) then begin
+  internalerror(ie_handler,'20170828A');;
+ end;
+{$endif}
+ result:= (source^.d.dat.datatyp.indirectlevel = indirectlevel) and
+           issamebasetype(source^.d.dat.datatyp.typedata,
+                                            dest^.d.dat.datatyp.typedata);
+end;
+
+procedure directvarresult(const source,dest: pcontextitemty);
+var
+ p1: popinfoty;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (co_llvm in info.o.compileoptions) then begin
+  notimplementederror('20170828C');
+ end;
+ if (source^.d.kind <> ck_subres) or 
+               not(faf_varsubres in source^.d.dat.fact.flags) then begin
+  internalerror(ie_handler,'20170828B');;
+ end;
+{$endif}
+ if getaddress(dest,true) then begin
+  p1:= getoppo(source^.d.dat.fact.varsubres.startopoffset +
+                                              source^.opmark.address);
+ {$ifdef mse_checkinternalerror}
+  if p1^.op.op <> oc_pushtempaddr then begin
+   internalerror(ie_handler,'20170828D');
+  end;
+ {$endif}
+  setnopop(p1^);
+  p1:= getoppo(source^.d.dat.fact.varsubres.endopoffset + 
+                                             source^.opmark.address-1);
+ {$ifdef mse_checkinternalerror}
+  if p1^.op.op <> oc_loadtemp then begin
+   internalerror(ie_handler,'20170828E');
+  end;
+ {$endif}
+  setnopop(p1^);
+ {$ifdef mse_checkinternalerror}
+  if not (dest^.d.kind in factcontexts) then begin
+   internalerror(ie_handler,'20170828F');;
+  end;
+{$endif}
+  with pparallocinfoty(
+    getsegmentpo(seg_localloc,source^.d.dat.fact.varsubres.varparam))^ do begin
+   ssaindex:= dest^.d.dat.fact.ssaindex;
+  end;
+ end;
+end;
+
 procedure handleassignment();
 var
  destvar: vardestinfoty;
@@ -3534,6 +3590,12 @@ begin
      indilev1:= destvar.address.indirectlevel;
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
+     end;
+     if (source^.d.kind = ck_subres) and
+              (faf_varsubres in source^.d.dat.fact.flags) and
+                       canvarresult(source,dest,indilev1) then begin
+      directvarresult(source,dest); //remove temp variable
+      goto endlab;
      end;
      if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
             not tryconvert(source,destvar.typ,indilev1,[]) then begin

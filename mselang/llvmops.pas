@@ -1024,6 +1024,17 @@ begin
  notimplemented();
 end;
 
+procedure nopssaop();
+var
+ i1: int32;
+begin
+ with pc^.par do begin
+  for i1:= ssacount-1 downto 0 do begin
+   bcstream.emitnopssa();
+  end;
+ end;
+end;
+
 procedure pushop();
 begin
  //dummy
@@ -4687,6 +4698,8 @@ const
   writeclassssa = 1;
   writeenumssa = 1;
 
+  nopssassa = 0; //dummy
+  
   pushssa = 0; //dummy
   popssa = 0;  //dummy
   swapstackssa = 0;  //dummy

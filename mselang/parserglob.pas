@@ -263,15 +263,28 @@ type
  getindexinfoty = record
 //  arraytype: elementoffsetty;
  end;
- 
+ factflagty = (faf_varsubres); //ck_subres function with result pointer
+ factflagsty = set of factflagty;
+
+ varsubresinfoty = record
+  startopoffset: int32;
+  endopoffset: int32;
+  tempalloc: int32;
+  varparam: dataoffsty;
+ end;
+  
  factinfoty = record
   ssaindex: int32;
   instancessa: int32; //for inplace object type conversion
 //  bbindex: int32;
+  flags: factflagsty;
   opdatatype: typeallocinfoty;
   case integer of
    0: (
     opoffset: int32; //for hf_needsunique
+   );
+   1: (
+    varsubres: varsubresinfoty; //valid if faf_varsubres set
    );
  end;
 

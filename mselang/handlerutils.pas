@@ -294,9 +294,11 @@ function getbasetypedata(const abitsize: databitsizety): ptypedataty;
 function getbasetypeele(const abitsize: databitsizety): elementoffsetty;
 function issametype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
+function issametype(const a,b: elementoffsetty): boolean; 
 function issamebasetype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
-function issametype(const a,b: elementoffsetty): boolean; 
+function issamebasetype(const a,b: elementoffsetty): boolean; 
+                                        //follow typex = typey chain
 
 function getsystypeele(const atype: systypety): elementoffsetty;
 procedure setsysfacttype(var acontextdata: contextdataty; 
@@ -1151,6 +1153,12 @@ begin
    (b^.h.base <> 0) and 
        ((b^.h.base = a^.h.base) or (ele.eledatarel(a) = b^.h.base))
   );
+end;
+
+function issamebasetype(const a,b: elementoffsetty): boolean; 
+                                        //follow typex = typey chain
+begin
+ result:= issamebasetype(ele.eledataabs(a),ele.eledataabs(b));
 end;
 
 function issametype(const a,b: elementoffsetty): boolean; 
@@ -2673,6 +2681,7 @@ begin
   initdatacontext(po1^.d,ck_fact);
   with po1^ do begin
    d.dat.fact.ssaindex:= getcontextssa(stackoffset);
+   d.dat.fact.flags:= [];
   end;
  end;
 end;
@@ -4262,6 +4271,8 @@ begin
       ck_fact,ck_subres: begin
        writedat(d.dat);
        write('ssa:',d.dat.fact.ssaindex,' ');
+       write(' flags:',settostring(ptypeinfo(typeinfo(factflagsty)),
+                                         integer(d.dat.fact.flags),true),' ');
        writetype(d);
       end;
       ck_ref: begin

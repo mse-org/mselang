@@ -18,8 +18,6 @@
  optable: optablety = (
 //oc_none
   (ssa: nonessa; proc: nil; flags: []), 
-//oc_nop
-  (ssa: nopssa; proc: @nopop; flags: []),
 
 //oc_label                                           //controlops
   (ssa: labelssa; proc: @labelop; flags: []),           
@@ -175,6 +173,11 @@
   (ssa: writeclassssa; proc: @writeclassop; flags: []), 
 //oc_writeenum
   (ssa: writeenumssa; proc: @writeenumop; flags: []), 
+
+//oc_nop
+  (ssa: nopssa; proc: @nopop; flags: []),
+//oc_nopssa
+  (ssa: nopssassa; proc: @nopssaop; flags: []), 
 
 //oc_push
   (ssa: pushssa; proc: @pushop; flags: []), 

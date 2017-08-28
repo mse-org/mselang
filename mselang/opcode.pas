@@ -92,6 +92,7 @@ function insertitem1(const aopcode: opcodety; const stackoffset: integer;
                           const ssaextension: integer = 0): popinfoty;
                               //increments aopoffset if not at end
 procedure cutopend(const aindex: int32);
+procedure setnopop(var aop: opinfoty); //insers dummy ssa's
 {
 function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
@@ -1119,6 +1120,14 @@ begin
    opcount:= aindex;
   end;
  end;
+end;
+
+procedure setnopop(var aop: opinfoty); //insers dummy ssa's
+var
+ i1: int32;
+begin
+ aop.par.ssacount:= optable^[aop.op.op].ssa;
+ aop.op.op:= oc_nopssa;
 end;
 
 function getopindex(const op: popinfoty): int32;
