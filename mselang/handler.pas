@@ -3593,12 +3593,14 @@ begin
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
+//{
      if (source^.d.kind = ck_subres) and
               (faf_varsubres in source^.d.dat.fact.flags) and
                        canvarresult(source,dest,indilev1) then begin
       directvarresult(source,dest); //remove temp variable
       goto endlab;
      end;
+//}
      if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
             not tryconvert(source,destvar.typ,indilev1,[]) then begin
       assignmenterror(source^.d,destvar);

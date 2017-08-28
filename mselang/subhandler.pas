@@ -1472,8 +1472,9 @@ var                       //todo: move after doparams()
            if paramkind1 = pk_constref then begin
             include(address.flags,af_const);
            end;
-           if resultvar and impl1 and (d.typ.indirectlevel = 0) and 
-                     (typ1^.h.flags*[tf_needsini,tf_needsmanage] <> []) then begin
+           if impl1 and resultvar and (sf_functioncall in subflags) and 
+               (d.typ.indirectlevel = 0) and 
+                  (typ1^.h.flags*[tf_needsini,tf_needsmanage] <> []) then begin
             include(vf.flags,tf_needsini);
             include(s.currentstatementflags,stf_needsini);
            end;
@@ -1635,7 +1636,8 @@ begin
     {$endif}
      if resulttype1.indirectlevel = 0 then begin
       with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
-       if (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
+       if (h.flags*[tf_managed,tf_needsmanage] <> []) or
+                (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
         d.paramdef.kind:= pk_var; //pk_out?
         exclude(subflags,sf_functioncall);
        end;
