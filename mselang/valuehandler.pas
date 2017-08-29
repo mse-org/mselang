@@ -1322,9 +1322,10 @@ begin
     end;
    end
    else begin //different indirectlevel
-    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
-             (d.dat.datatyp.indirectlevel > 0) and 
-                                          (coo_type in aoptions) then begin
+    if (coo_type in aoptions) and
+      (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
+             ((d.dat.datatyp.indirectlevel > 0) or 
+                               (source1^.h.kind in pointerdatakinds)) then begin
      if getvalue(acontext,das_pointer) then begin //pointer to int
       i1:= d.dat.fact.ssaindex;        //todo: operand size
       with insertitem(oc_potoint32,stackoffset,-1)^ do begin
