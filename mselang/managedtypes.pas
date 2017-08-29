@@ -299,7 +299,7 @@ begin
    end;
    if ele1 <> 0 then begin
     i1:= pushmanageaddr(aref);
-    dosub(aref.contextindex,ele.eledataabs(ele1),aref.contextindex,0,sf1,i1);
+    callsub(aref.contextindex,ele.eledataabs(ele1),aref.contextindex,0,sf1,i1);
    end;
   end
   else begin   

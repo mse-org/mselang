@@ -116,7 +116,7 @@ c=3
  c=9
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -360,7 +360,7 @@ c=3
    c=38
     (
     kind=1
-    a=0,665,4,bool
+    a=0,664,4,bool
     c=8
      (
      kind=2
@@ -386,7 +386,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
+     a=0,648,2,and1 llvm
      teststate=1
      path=and1.mla
      comment=
@@ -430,7 +430,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
+     a=0,648,2,or1 llvm
      teststate=1
      path=or1.mla
      comment=
@@ -474,7 +474,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,not1 llvm
+     a=0,648,2,not1 llvm
      teststate=1
      path=not1.mla
      comment=
@@ -518,7 +518,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,booleaval1 llvm
+     a=0,648,2,booleaval1 llvm
      teststate=1
      path=booleval1.mla
      comment=
@@ -708,7 +708,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,float
+    a=0,665,4,float
     c=4
      (
      kind=2
@@ -2740,7 +2740,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,4,conversions
    c=20
     (
     kind=2
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72BA068
+    ao=An unhandled exception occured at $B725D068
     ae=
     aec=123
     ie=0
@@ -8423,7 +8423,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,methodvarresult llvm
+    a=0,648,1,methodvarresult llvm
     teststate=1
     path=methodvarresult.mla
     comment=
@@ -12112,7 +12112,196 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=28
+rowstate=217
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

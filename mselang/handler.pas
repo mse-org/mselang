@@ -1803,7 +1803,7 @@ begin
    pushinsertstackaddress(i2-info.s.stackindex,-1);   
                                         //alloca + pointer to alloc
    sub1:= ele.eledataabs(oper1^.methodele);
-   dosub(i2,sub1,i2,0,[dsf_instanceonstack]);
+   callsub(i2,sub1,i2,0,[dsf_instanceonstack]);
    with additem(oc_loadalloca)^ do begin
     par.ssas1:= i1+1; //ssa of alloca
     acontext^.d.kind:= ck_subres;
@@ -3534,7 +3534,7 @@ begin
         getvalue(source,das_none);
         i1:= s.stackindex;
         s.stackindex:= getstackindex(dest);
-        dosub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
+        callsub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
                    s.stackindex+1,i2,[dsf_indexedsetter,dsf_writesub]{flags1});
         s.stackindex:= i1;
         ele.popelementparent();

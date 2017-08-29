@@ -784,7 +784,7 @@ begin
           setimmint32(-i1,par.imm);
          end;
         end;
-        dosub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
                                                      [dsf_objini],startssa);
        end;
       end;
@@ -792,7 +792,7 @@ begin
      mo_fini: begin
       with typ1^.infoclass.subattach do begin
        if fini <> 0 then begin
-        dosub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
                                                     [dsf_objfini],baseadssa);
        end;
       end;
@@ -847,7 +847,7 @@ begin
      memop:= locad1;
      i1:= ssad;
     end;
-    dosub(s.stackindex-1,ele.eledataabs(typ1^.infoclass.subattach.destroy),
+    callsub(s.stackindex-1,ele.eledataabs(typ1^.infoclass.subattach.destroy),
              s.stacktop,0,[dsf_instanceonstack,dsf_noparams,
                dsf_useobjssa,dsf_usedestinstance,dsf_attach,dsf_destroy,
                                                      dsf_noinstancecopy],i1);

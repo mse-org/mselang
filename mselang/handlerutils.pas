@@ -1703,7 +1703,12 @@ var
    if i1 >= 0 then begin
     i2:= getssa(ocssa_nestedvarad);
    end;
-   op1:= insertitem(oc_pushlocaddr,stackoffs,-1,i2);
+   if af_paramindirect in ad.flags then begin
+    op1:= insertitem(oc_pushlocpo,stackoffs,-1,i2);
+   end
+   else begin
+    op1:= insertitem(oc_pushlocaddr,stackoffs,-1,i2);
+   end;
    with op1^.par.memop do begin
     locdataaddress.a:= ad.locaddress;
     locdataaddress.a.framelevel:= i1;
@@ -2973,7 +2978,7 @@ begin                    //todo: optimize
         i1:= pocont1^.d.index.count;
         pocont1^.d.kind:= ck_space;
        end;
-       dosub(s.stackindex,psubdataty(ele.eledataabs(readele)),
+       callsub(s.stackindex,psubdataty(ele.eledataabs(readele)),
                                      s.stackindex+1,i1,[dsf_readsub]);
        while i1 > 0 do begin //clear index params
        {$ifdef mse_checkinternalerror}
@@ -3534,7 +3539,7 @@ begin
      tempdataaddress.offset:= 0;
     end;
    end;
-   dosub(i2,asub,getstackindex(aparam),1,
+   callsub(i2,asub,getstackindex(aparam),1,
                    [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
    with additem(oc_push)^ do begin
     par.imm.vsize:= pointersize; //compensate missing instance copy
@@ -3548,7 +3553,7 @@ begin
    end;
   end
   else begin
-   dosub(i2,asub,getstackindex(aparam),1,[dsf_instanceonstack]);
+   callsub(i2,asub,getstackindex(aparam),1,[dsf_instanceonstack]);
    with additem(oc_loadalloca)^ do begin
     par.ssas1:= adest^.d.dat.fact.ssaindex-2; //ssa of alloca
 //    adest^.d.kind:= ck_subres;
@@ -3656,7 +3661,7 @@ begin
         pushinsertstackaddress(i2-s.stackindex,-1);
                                //alloca + store + pointer to alloc
         sub1:= ele.eledataabs(oper1^.methodele);
-        dosub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
+        callsub(i2,sub1,getstackindex(pob),1,[dsf_instanceonstack]);
         with additem(oc_loadalloca)^ do begin
          par.ssas1:= i1+1; //ssa of alloca
          poa^.d.kind:= ck_subres;
