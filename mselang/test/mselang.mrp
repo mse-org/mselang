@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B722D068
+    ao=An unhandled exception occured at $B72BA068
     ae=
     aec=123
     ie=0
@@ -8423,7 +8423,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,methodvarresult llvm
+    a=0,648,2,methodvarresult llvm
     teststate=1
     path=methodvarresult.mla
     comment=

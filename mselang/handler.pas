@@ -3461,6 +3461,8 @@ var
  needsmanage,needsincref,needsdecref: boolean;
 
  procedure decref(const aop: managedopty);
+ var
+  i1: int32;
  begin
 //  ad1.contextindex:= getstackindex(dest);
   if indi then begin
@@ -3484,6 +3486,7 @@ var
 // potop: pcontextitemty;
  i2: int32;
  flags1: dosubflagsty;
+ sourcessa1: int32;
 label
  endlab;
 begin
@@ -3593,14 +3596,14 @@ begin
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
-//{
+{
      if (source^.d.kind = ck_subres) and
               (faf_varsubres in source^.d.dat.fact.flags) and
                        canvarresult(source,dest,indilev1) then begin
       directvarresult(source,dest); //remove temp variable
       goto endlab;
      end;
-//}
+}
      if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
             not tryconvert(source,destvar.typ,indilev1,[]) then begin
       assignmenterror(source^.d,destvar);
@@ -3635,6 +3638,7 @@ begin
      end;
      
      if needsmanage then begin
+      sourcessa1:= source^.d.dat.fact.ssaindex;
       needsincref:= not isconst and not(source^.d.kind in [ck_subres]);
       needsdecref:= true;
       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
@@ -3672,6 +3676,10 @@ begin
        ad1.offset:= 0;
        decref(mo_decref); //before loading source for source = dest case
        needsdecref:= false;
+      end;
+      if source^.d.kind in factcontexts then begin
+       source^.d.dat.fact.ssaindex:= sourcessa1; 
+                     //restore, could be changed by manage ops
       end;
      end;
      if not getvalue(source,datasi1) then begin //todo: conversion operator

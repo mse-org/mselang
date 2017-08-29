@@ -1636,7 +1636,7 @@ begin
     {$endif}
      if resulttype1.indirectlevel = 0 then begin
       with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
-       if (h.flags*[tf_managed,tf_needsmanage] <> []) or
+       if {(h.flags*[tf_managed,tf_needsmanage] <> []) or}
                 (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
         d.paramdef.kind:= pk_var; //pk_out?
         exclude(subflags,sf_functioncall);
