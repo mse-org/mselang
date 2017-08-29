@@ -1214,10 +1214,34 @@ begin
  inttoflo64();
 end;
 
+procedure potoint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_8),
+                                                               CAST_PTRTOINT);
+ end;
+end;
+
+procedure potoint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_16),
+                                                               CAST_PTRTOINT);
+ end;
+end;
+
 procedure potoint32op();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_32),
+                                                               CAST_PTRTOINT);
+ end;
+end;
+
+procedure potoint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_64),
                                                                CAST_PTRTOINT);
  end;
 end;
@@ -4739,7 +4763,11 @@ const
   int32toflo64ssa = 1;
   int64toflo64ssa = 1;
 
+  potoint8ssa = 1;
+  potoint16ssa = 1;
   potoint32ssa = 1;
+  potoint64ssa = 1;
+  
   inttopossa = 1;
   potopossa = 1;
 

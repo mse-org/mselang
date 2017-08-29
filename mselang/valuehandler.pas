@@ -565,6 +565,15 @@ const
   )
  );
 
+ potointops: array[databitsizety] of opcodety = (
+  //das_none,das_1,  das_2_7,das_8,      das_9_15,das_16,      das_17_31,
+    oc_none, oc_none,oc_none,oc_potoint8,oc_none, oc_potoint16,oc_none,
+  //das_32,      das_33_63,das_64,             
+    oc_potoint32,oc_none,  oc_potoint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
+ );
+  
 function checkcompatiblesub(const a,b: ptypedataty): boolean;
 var
  sa,sb: psubdataty;
@@ -1320,15 +1329,15 @@ begin
       end;
      end;
     end;
-   end
-   else begin //different indirectlevel
+   end;
+   if not result then begin
     if (coo_type in aoptions) and
       (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
              ((d.dat.datatyp.indirectlevel > 0) or 
                                (source1^.h.kind in pointerdatakinds)) then begin
      if getvalue(acontext,das_pointer) then begin //pointer to int
       i1:= d.dat.fact.ssaindex;        //todo: operand size
-      with insertitem(oc_potoint32,stackoffset,-1)^ do begin
+      with insertitem(potointops[dest^.h.datasize],stackoffset,-1)^ do begin
        par.ssas1:= i1;
       end;
       d.dat.datatyp.typedata:= ele.eledatarel(dest);
@@ -1337,63 +1346,27 @@ begin
      end;
     end
     else begin
-{    
-     if (d.kind in [ck_fact,ck_ref]) and 
-        (destindirectlevel = 0) and (dest^.h.kind = dk_interface) and
-        ((d.dat.datatyp.indirectlevel = 1) and (source1^.h.kind = dk_class) or
-         (d.dat.datatyp.indirectlevel = 0) and 
-                                      (source1^.h.kind = dk_object)) then begin
-      i1:= ele.elementparent;
-      po1:= source1;
-      repeat
-       if getclassinterfaceoffset(po1,dest,i3) then begin
-        if getvalue(acontext,das_pointer) then begin
-         i2:= d.dat.fact.ssaindex;
-         with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
-          setimmint32(i3,par.imm);
-          par.ssas1:= i2;
-         end;
-         result:= true;
-         destindirectlevel:= 1;
+     if (coo_type in aoptions) and 
+           (destindirectlevel <> d.dat.datatyp.indirectlevel) and
+             ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
+              (source1^.h.bitsize = pointerbitsize) or 
+                     (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
+      if source1^.h.kind in [dk_string,dk_dynarray] then begin
+       result:= getvalue(acontext,das_pointer);
+       result:= true; //todo: pchar handling
+      end
+      else begin
+       if getvalue(acontext,pointerintsize) then begin //any to pointer
+        i1:= d.dat.fact.ssaindex; //todo: no int source
+        with insertitem(oc_inttopo,stackoffset,-1)^ do begin
+         par.ssas1:= i1;
         end;
-        break;
-       end;
-       if po1^.infoclass.interfaceparent <> 0 then begin
-        ele.elementparent:= po1^.infoclass.interfaceparent;
-        po1:= ele.eledataabs(po1^.infoclass.interfaceparent);
-       end
-       else begin
-        po1:= nil;
-       end;
-      until po1 = nil;
-      ele.elementparent:= i1;
-      if po1 = nil then begin
-       exit;      //interface not found
-      end;
-     end
-     else begin
-}     
-      if (coo_type in aoptions) and 
-              ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
-               (source1^.h.bitsize = pointerbitsize) or 
-                      (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
-       if source1^.h.kind in [dk_string,dk_dynarray] then begin
-        result:= getvalue(acontext,das_pointer);
-        result:= true; //todo: pchar handling
-       end
-       else begin
-        if getvalue(acontext,pointerintsize) then begin //any to pointer
-         i1:= d.dat.fact.ssaindex; //todo: no int source
-         with insertitem(oc_inttopo,stackoffset,-1)^ do begin
-          par.ssas1:= i1;
-         end;
-         d.dat.datatyp.typedata:= ele.eledatarel(dest);
-         d.dat.datatyp.indirectlevel:= destindirectlevel;
-         result:= true;
-        end;
+        d.dat.datatyp.typedata:= ele.eledatarel(dest);
+        d.dat.datatyp.indirectlevel:= destindirectlevel;
+        result:= true;
        end;
       end;
-//     end;
+     end;
     end;
    end;
    if not result then begin

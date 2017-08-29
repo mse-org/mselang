@@ -1172,12 +1172,36 @@ begin
  flo64(stackpush(sizeof(flo64))^):= int64(po1^);
 end;
 
+procedure potoint8op();
+var
+ po1: ppointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ card8(stackpush(sizeof(card8))^):= ptruint(po1^);
+end;
+
+procedure potoint16op();
+var
+ po1: ppointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ card16(stackpush(sizeof(card16))^):= ptruint(po1^);
+end;
+
 procedure potoint32op();
 var
  po1: ppointer;
 begin
  po1:= stackpop(sizeof(vpointerty));
- vintegerty(stackpush(sizeof(vintegerty))^):= vintegerty(po1^);
+ card32(stackpush(sizeof(card32))^):= ptruint(po1^);
+end;
+
+procedure potoint64op();
+var
+ po1: ppointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ card64(stackpush(sizeof(card64))^):= ptruint(po1^);
 end;
 
 procedure inttopoop();
@@ -6989,7 +7013,11 @@ const
   int32toflo64ssa = 0;
   int64toflo64ssa = 0;
 
+  potoint8ssa = 0;
+  potoint16ssa = 0;
   potoint32ssa = 0;
+  potoint64ssa = 0;
+
   inttopossa = 0;
   potopossa = 0;
   

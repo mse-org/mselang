@@ -212,7 +212,10 @@ type
   oc_int32toflo64,
   oc_int64toflo64,
 
+  oc_potoint8,
+  oc_potoint16,
   oc_potoint32,
+  oc_potoint64,
   oc_inttopo,
   oc_potopo, //llvm typed->untyped pointer
 

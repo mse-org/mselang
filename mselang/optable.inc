@@ -241,8 +241,15 @@
 //oc_int64toflo64,
   (ssa: int64toflo64ssa; proc: @int64toflo64op; flags: []), 
 
+//oc_potoint8
+  (ssa: potoint8ssa; proc: @potoint8op; flags: []), 
+//oc_potoint16
+  (ssa: potoint16ssa; proc: @potoint16op; flags: []), 
 //oc_potoint32
   (ssa: potoint32ssa; proc: @potoint32op; flags: []), 
+//oc_potoint64
+  (ssa: potoint64ssa; proc: @potoint64op; flags: []), 
+
 //oc_inttopo
   (ssa: inttopossa; proc: @inttopoop; flags: []), 
 //oc_potopo
