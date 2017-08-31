@@ -1531,7 +1531,7 @@ begin
     next:= offs1;
    end;
   end;
-  lastllvmtemp:= offs1;
+//  lastllvmtemp:= offs1;
   po1^.next:= -1;
   po1^.typeid:= atypeid;
   result:= llvmtempcount;

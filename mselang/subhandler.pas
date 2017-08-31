@@ -1102,7 +1102,7 @@ begin
 //  stacktempoffset:= 0;
   llvmtempcount:= 0;
   firstllvmtemp:= -1;
-  lastllvmtemp:= -1;
+//  lastllvmtemp:= -1;
   managedtempcount:= 0;
   managedtempchain:= 0;
   managedtempref:= 0;

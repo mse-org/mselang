@@ -839,7 +839,7 @@ type
   locdatapo: targetadty;
   llvmtempcount: int32;
   firstllvmtemp: dataoffsty; //in seg_localloc -1 ->none
-  lastllvmtemp: dataoffsty;  //in seg_localloc -1 ->none
+//  lastllvmtemp: dataoffsty;  //in seg_localloc -1 ->none
   managedtempchain: listadty;
   managedtempcount: int32;
   managedtempref: targetcardty;
