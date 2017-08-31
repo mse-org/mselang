@@ -1240,7 +1240,18 @@ begin
      internalerror(ie_handler,'20170831A');
     end;
    {$endif}
-    p1^:= p2^.typeid;
+    if (af_tempvar in p2^.address.flags) and (p2^.typeid > 0) then begin
+     if p2^.address.indirectlevel > 0 then begin
+      p1^:= ord(das_pointer);
+     end
+     else begin
+      p1^:= s.unitinfo^.llvmlists.typelist.addtypevalue(
+                                              ele.eledataabs(p2^.typeele));
+     end;
+    end
+    else begin
+     p1^:= p2^.typeid;
+    end;
     inc(p1);
     p2:= getnextlistitem(tempvarlist,item1);
    end;
@@ -1700,8 +1711,8 @@ begin
       with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
        if (h.flags*[tf_managed,tf_needsmanage] <> []) or
                 (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
-//        d.paramdef.kind:= pk_var; //pk_out?
-//        exclude(subflags,sf_functioncall);
+        d.paramdef.kind:= pk_var; //pk_out?
+        exclude(subflags,sf_functioncall);
        end;
       end;
      end;
