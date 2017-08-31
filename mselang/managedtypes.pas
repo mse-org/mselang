@@ -526,7 +526,7 @@ begin
     ref1.address:= {info.managedtempref+}po1^.index*pointersize;
    end;
    ref1.typ:= ele.eledataabs(po1^.typ);
-   writemanagedtypeop(mo_decref,ref1.typ,ref1);
+   writemanagedtypeop(op,ref1.typ,ref1);
    ad1:= po1^.header.next;
   end;
  end;
