@@ -1923,6 +1923,7 @@ begin
  clearlist(intfparsedlinklist,sizeof(unitlinkinfoty),256);
  clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
  clearlist(trystacklist,sizeof(trystackitemty),256);
+ clearlist(tempvarlist,sizeof(tempvaritemty),256);
  clearlist(managedtemplist,sizeof(managedtempitemty),256);
  clearlist(pendingclassitems,sizeof(classpendingitemty),32);
  unitchain:= 0;

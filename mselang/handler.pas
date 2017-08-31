@@ -365,20 +365,22 @@ begin
  end;
  managedtempsize1:= info.managedtempcount*sizeof(pointer);
   //todo: target pointersize
- with info.contextstack[info.s.stackindex] do begin
+ with info,contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
+   invertlist(tempvarlist,tempvarchain);
    if co_llvm in info.o.compileoptions then begin
-    par.main.llvm.tempcount:= info.llvmtempcount;
-    par.main.llvm.firsttemp:= info.firstllvmtemp;
-    par.main.llvm.blockcount:= info.s.ssa.bbindex+1;
+    settempvars(par.main.llvm.allocs);
+//    par.main.llvm.tempcount:= info.llvmtempcount;
+//    par.main.llvm.firsttemp:= info.firstllvmtemp;
+    par.main.llvm.allocs.blockcount:= info.s.ssa.bbindex+1;
     if managedtempsize1 > 0 then begin
-     par.main.llvm.managedtemptypeid:=
+     par.main.llvm.allocs.managedtemptypeid:=
         info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
                                                   managedtempsize1,ord(das_8));
-     setimmint32(info.managedtempcount,par.main.llvm.managedtempcount);
+     setimmint32(info.managedtempcount,par.main.llvm.allocs.managedtempcount);
     end
     else begin
-     par.main.llvm.managedtemptypeid:= 0;
+     par.main.llvm.allocs.managedtemptypeid:= 0;
     end;
    end
    else begin
@@ -2778,13 +2780,6 @@ procedure concatterms(const wanted,terms: pcontextitemty);
    addmanagedtemp(terms);
    terms^.d.dat.termgroupstart:= 0;
   end;
-  {
-  with info do begin
-   pt^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
-   info.s.stacktop:= terms^.d.dat.termgroupstart;
-   addmanagedtemp(info.s.stacktop);
-  end;
-  }
  end;//doconcat
  
 begin
@@ -3434,7 +3429,7 @@ begin
   end;
  end;
  with ptempallocinfoty(getsegmentpo(seg_localloc,
-                     source^.d.dat.fact.varsubres.tempalloc))^ do begin
+                     source^.d.dat.fact.varsubres.tempvar))^ do begin
   typeid:= -1; //not used
  end;
  with pparallocinfoty(

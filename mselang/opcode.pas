@@ -40,12 +40,14 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
 
 function getpointertempaddress(): addressvaluety;
 procedure releasepointertempaddress();
+
 function gettempaddress(const asize: databitsizety): addressvaluety;
 function gettempaddress(const abytesize: int32{;
                                        var atotsize: int32}): addressvaluety;
 procedure releasetempaddress(const asize: databitsizety);
 procedure releasetempaddress(const asize: array of databitsizety);
 procedure releasetempaddress(const abytesize: int32);
+
 {
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;

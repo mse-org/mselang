@@ -58,6 +58,21 @@ type
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
+ tempvaritemty = record
+  header: linkheaderty;
+  address: addressvaluety;
+  case integer of
+   0: (
+    typeele: elementoffsetty; //typedataty if address.flags af_tempvar set
+   );
+   1: (
+    typeid: int32; //llvm typeid if address.flags af_tempvar not set
+   );
+ end;
+ ptempvaritemty = ^tempvaritemty;
+var
+ tempvarlist: linklistty;
+
 procedure callsub(const adestindex: int32; asub: psubdataty;
                  const paramstart,paramco: int32; aflags: dosubflagsty;
                                                     const aobjssa: int32 = 0;
@@ -122,6 +137,7 @@ function callinternalsub(const asub: opaddressty; const pointerparam: boolean;
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
 procedure initsubstartinfo();
+procedure settempvars(var allocs: suballocllvmty);
 function startsimplesub(const aname: identty;
                         const pointerparam: boolean): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
@@ -1103,6 +1119,8 @@ begin
   llvmtempcount:= 0;
   firstllvmtemp:= -1;
 //  lastllvmtemp:= -1;
+  tempvarcount:= 0;
+  tempvarchain:= 0;
   managedtempcount:= 0;
   managedtempchain:= 0;
   managedtempref:= 0;
@@ -1131,12 +1149,6 @@ begin
   end;
   initsubstartinfo();
   managedtemparrayid:= locallocid;  
- {
-  managedtempref:= 0;
-  managedtemparrayid:= locallocid;  
-  managedtempchain:= 0;
-  managedtempcount:= 0;
- }
   managedtemparrayid:= locallocid;  
   resetssa();
   result:= opcount;
@@ -1209,15 +1221,50 @@ begin
  *)
 end;
 
+procedure settempvars(var allocs: suballocllvmty);
+var
+ p1,pe: pint32;
+ p2: ptempvaritemty;
+ item1: listadty;
+begin
+ with info do begin
+  if tempvarcount > 0 then begin
+   allocs.tempvars:=
+           allocsegmentoffset(seg_localloc,tempvarcount*sizeof(p1^),p1);
+   pe:= p1 + tempvarcount;
+   item1:= tempvarchain;
+   p2:= getlistitem(tempvarlist,item1);
+   while p1 < pe do begin
+   {$ifdef mse_checkinternalerror}
+    if p2 = nil then begin
+     internalerror(ie_handler,'20170831A');
+    end;
+   {$endif}
+    p1^:= p2^.typeid;
+    inc(p1);
+    p2:= getnextlistitem(tempvarlist,item1);
+   end;
+  {$ifdef mse_checkinternalerror}
+   if p2 <> nil then begin
+    internalerror(ie_handler,'20170831B');
+   end;
+  {$endif}
+  end;
+  allocs.tempcount:= tempvarcount;
+ end;
+end;
+
 procedure endsimplesub(const pointerparam: boolean);
 var
  managedtempsize1: int32;
+ p1: pint32;
 begin
  with info do begin
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*pointersize; 
   with getoppo(simplesubstart)^ do begin
+   invertlist(tempvarlist,tempvarchain);
    if co_llvm in o.compileoptions then begin
     if managedtempsize1 > 0 then begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
@@ -1228,8 +1275,7 @@ begin
     else begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
-    par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;
-    par.subbegin.sub.allocs.llvm.firsttemp:= firstllvmtemp;
+    settempvars(par.subbegin.sub.allocs.llvm);
     par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
    end
    else begin
@@ -1242,26 +1288,25 @@ begin
     par.stacksize:= managedtempsize1;
    end;
   end;
- end;
- with additem(oc_return)^ do begin
-  if pointerparam then begin
-   par.stacksize:= pointersize + sizeof(frameinfoty);
-  end
-  else begin
-   par.stacksize:= 0 + sizeof(frameinfoty);
+  with additem(oc_return)^ do begin
+   if pointerparam then begin
+    par.stacksize:= pointersize + sizeof(frameinfoty);
+   end
+   else begin
+    par.stacksize:= 0 + sizeof(frameinfoty);
+   end;
   end;
- end;
- with additem(oc_subend)^ do begin
-  par.subend.submeta:= info.s.currentscopemeta;
-  par.subend.allocs.alloccount:= 0;
-  par.subend.allocs.nestedalloccount:= 0;
- end;
- with info do begin
+  with additem(oc_subend)^ do begin
+   par.subend.submeta:= info.s.currentscopemeta;
+   par.subend.allocs.alloccount:= 0;
+   par.subend.allocs.nestedalloccount:= 0;
+  end;
   deletelistchain(trystacklist,s.trystack); //normally already empty
+  deletelistchain(tempvarlist,tempvarchain);
   s.trystacklevel:= 0;
- end;
- if do_proginfo in info.s.debugoptions then begin
-  popcurrentscope();
+  if do_proginfo in s.debugoptions then begin
+   popcurrentscope();
+  end;
  end;
 (*
  with info do begin
@@ -1655,8 +1700,8 @@ begin
       with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
        if (h.flags*[tf_managed,tf_needsmanage] <> []) or
                 (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
-        d.paramdef.kind:= pk_var; //pk_out?
-        exclude(subflags,sf_functioncall);
+//        d.paramdef.kind:= pk_var; //pk_out?
+//        exclude(subflags,sf_functioncall);
        end;
       end;
      end;
@@ -2449,10 +2494,12 @@ begin
    inc(po2);
   end;
  }
+  invertlist(tempvarlist,tempvarchain);
   with po2^ do begin
    if co_llvm in o.compileoptions then begin
-    par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;
-    par.subbegin.sub.allocs.llvm.firsttemp:= firstllvmtemp;
+    settempvars(par.subbegin.sub.allocs.llvm);
+//    par.subbegin.sub.allocs.llvm.tempcount:= llvmtempcount;
+//    par.subbegin.sub.allocs.llvm.firsttemp:= firstllvmtemp;
     if managedtempsize1 > 0 then begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
          info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
@@ -2472,6 +2519,8 @@ begin
    end;
    par.subbegin.sub.flags:= po1^.flags;
   end;
+  deletelistchain(tempvarlist,tempvarchain);
+
   s.ssa:= d.subdef.ssabefore;
   if do_proginfo in s.debugoptions then begin
 //   m1.flags:= [mvf_globval,mvf_pointer];
@@ -2885,7 +2934,8 @@ var
  varargs: array[0..maxparamcount] of int32;
  isvararg: boolean;
  constbufferref: segmentstatety;
- varresulttemp,varresulttempaddr: int32;
+ varresulttemp: tempaddressty;
+ varresulttempaddr: int32;
 label
  paramloopend;
 begin
@@ -3193,12 +3243,16 @@ begin
      if hasvarresult and (co_llvm in o.compileoptions) then begin
       include(d.dat.fact.flags,faf_varsubres);
       d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
+{
       varresulttemp:= allocllvmtemp(
                           s.unitinfo^.llvmlists.typelist.addtypevalue(
                              ele.eledataabs(asub^.resulttype.typeele)),
                                              d.dat.fact.varsubres.tempalloc);
+}
+      varresulttemp:= alloctempvar(asub^.resulttype.typeele,
+                                     d.dat.fact.varsubres.tempvar).tempaddress;
       with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-       par.ssas1:= varresulttemp;
+       par.ssas1:= varresulttemp.ssaindex;
        varresulttempaddr:= par.ssad;
       end;
      end;
@@ -3631,7 +3685,7 @@ begin
     end;
     if varresulttempaddr >= 0 then begin
      with insertitem(oc_loadtemp,topoffset,-1)^ do begin
-      par.ssas1:= varresulttemp;
+      par.ssas1:= varresulttemp.ssaindex;
       d.dat.fact.ssaindex:= par.ssad;
      end;
      d.dat.fact.varsubres.endopoffset:= 

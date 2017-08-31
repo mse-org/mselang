@@ -269,7 +269,7 @@ type
  varsubresinfoty = record
   startopoffset: int32;
   endopoffset: int32;
-  tempalloc: dataoffsty;
+  tempvar: listadty;
   varparam: dataoffsty;
  end;
   
@@ -840,6 +840,8 @@ type
   llvmtempcount: int32;
   firstllvmtemp: dataoffsty; //in seg_localloc -1 ->none
 //  lastllvmtemp: dataoffsty;  //in seg_localloc -1 ->none
+  tempvarcount: int32;
+  tempvarchain: listadty;
   managedtempchain: listadty;
   managedtempcount: int32;
   managedtempref: targetcardty;

@@ -998,7 +998,7 @@ type
  
  suballocllvmty = record
   tempcount: int32;
-  firsttemp: dataoffsty;
+  tempvars: dataoffsty; //in seg_localloc
   managedtemptypeid: int32;
   managedtempcount: int32; //constid
   blockcount: int32;
@@ -1138,11 +1138,14 @@ type
  end;
 
  mainllvmty = record
+ {
   tempcount: int32;
   firsttemp: dataoffsty;
   managedtemptypeid: int32;
   managedtempcount: int32; //constid
   blockcount: int32;
+ }
+  allocs: suballocllvmty;
  end;
  mainstackopty = record
   managedtempsize: int32;

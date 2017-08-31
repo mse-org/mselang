@@ -1286,7 +1286,7 @@ begin
          dk_string: begin
           case source1^.h.kind of
            dk_character: begin
-            convert(oc_chartostring8); //todo: !!!!!!!!!!!!!!!!!!!
+            convert(oc_chartostring8); //todo: sizes !!!!!!!!!!!!!!!!!!!
             result:= true;
            end;
            dk_string: begin

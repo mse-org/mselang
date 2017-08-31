@@ -659,21 +659,19 @@ end;
 
 procedure alloctemps(const acount: int32; const afirst: dataoffsty);
 var
- po1: ptempallocinfoty;
+ p1,pe: pint32;
 begin
  if acount > 0 then begin
-  po1:= getsegmentpo(seg_localloc,afirst);
-  while true do begin
-   if po1^.typeid >= 0 then begin
-    bcstream.emitalloca(bcstream.ptypeval(po1^.typeid));
+  p1:= getsegmentpo(seg_localloc,afirst);
+  pe:= p1 + acount;
+  while p1 < pe do begin
+   if p1^ >= 0 then begin
+    bcstream.emitalloca(bcstream.ptypeval(p1^));
    end
    else begin
     bcstream.emitnopssa();
    end;
-   if po1^.next <= 0 then begin
-    break;
-   end;
-   po1:= getsegmentpo(seg_localloc,po1^.next);
+   inc(p1);
   end;
  end;
 end;
@@ -684,20 +682,21 @@ var
 begin
  with pc^.par do begin
   allocs1:= nullallocs;
-  allocs1.llvm.tempcount:= main.llvm.tempcount;
-  bcstream.beginsub([]{false},allocs1,main.llvm.blockcount);
-  if main.llvm.managedtemptypeid <> 0 then begin
-   bcstream.emitalloca(bcstream.ptypeval(main.llvm.managedtemptypeid)); //1ssa
+  allocs1.llvm.tempcount:= main.llvm.allocs.tempcount;
+  bcstream.beginsub([]{false},allocs1,main.llvm.allocs.blockcount);
+  if main.llvm.allocs.managedtemptypeid <> 0 then begin
+   bcstream.emitalloca(bcstream.ptypeval(
+                                main.llvm.allocs.managedtemptypeid)); //1ssa
    bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
                                                                        //1ssa
    callcompilersub(cs_zeropointerar,false,[bcstream.relval(0),
-                      bcstream.constval(main.llvm.managedtempcount)]);
+                      bcstream.constval(main.llvm.allocs.managedtempcount)]);
   end
   else begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
-  alloctemps(main.llvm.tempcount,main.llvm.firsttemp);
+  alloctemps(main.llvm.allocs.tempcount,main.llvm.allocs.tempvars);
  end;
 end;
 
@@ -4146,7 +4145,7 @@ begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
-  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.firsttemp);
+  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
 
   if do_proginfo in info.o.debugoptions then begin
    idar.count:= 3;

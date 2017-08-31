@@ -104,7 +104,7 @@ const
  storedsegments = [seg_globconst,seg_reloc,seg_classdef,seg_op,seg_rtti,
                    seg_intf,seg_classintfcount,seg_intfitemcount];
 type
- addressflagty = (af_nil,af_segment,af_local,af_stacktemp,
+ addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_tempvar,
                   af_ssas2, 
                           //use par.ssas2 instead of tempdataaddress.a.ssaindex
                   af_managedtemp,

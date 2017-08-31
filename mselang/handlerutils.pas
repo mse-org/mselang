@@ -160,7 +160,10 @@ function pushtempindi(const address: addressvaluety;
 function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
 procedure poptemp(const asize: int32);
-function allocllvmtemp(const atypeid: int32; out dataoffs: dataoffsty): int32;
+
+function alloctempvar(const atype: elementoffsetty;
+                                       out item: listadty): addressvaluety;
+function allocllvmtemp(const atypeid: int32): int32;
 procedure addmanagedtemp(const acontext: pcontextitemty);
 
 procedure push(const avalue: boolean); overload;
@@ -1514,6 +1517,51 @@ begin
  end;
 end;
 
+function alloctempvar(const atype: elementoffsetty;
+                                     out item: listadty): addressvaluety;
+var
+ p1: ptypedataty;
+ p2: ptempvaritemty;
+begin
+ with info do begin
+  p1:= ele.eledataabs(atype);
+  p2:= addlistitem(tempvarlist,tempvarchain);
+  item:= tempvarchain;
+  result.flags:= [af_tempvar];
+  p2^.typeele:= atype;
+  result.indirectlevel:= p1^.h.indirectlevel;
+  if not (co_llvm in o.compileoptions) then begin
+   result.tempaddress.address:= locdatapo - info.stacktempoffset;
+   if result.indirectlevel > 0 then begin
+    locdatapo:= locdatapo + pointersize;
+   end
+   else begin
+    locdatapo:= locdatapo + alignsize(p1^.h.bytesize);
+   end;
+  end
+  else begin
+   result.tempaddress.ssaindex:= tempvarcount;
+   inc(tempvarcount);
+  end;
+  p2^.address:= result;
+ end;
+end;
+
+function allocllvmtemp(const atypeid: int32): int32;
+var
+ p2: ptempvaritemty;
+begin
+ with info do begin
+  p2:= addlistitem(tempvarlist,tempvarchain);
+  p2^.address.flags:= []; //no tempvar
+  p2^.typeid:= atypeid;
+  p2^.address.tempaddress.ssaindex:= tempvarcount;
+  result:= tempvarcount;
+  inc(tempvarcount);
+ end;
+end;
+
+{
 function allocllvmtemp(const atypeid: int32; 
                                    out dataoffs: dataoffsty): int32;
 var
@@ -1538,7 +1586,7 @@ begin
   inc(llvmtempcount);
  end;
 end;
-
+}
 procedure addmanagedtemp(const acontext: pcontextitemty);
 var
  ref1: addressrefty;
