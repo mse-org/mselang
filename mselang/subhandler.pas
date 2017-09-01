@@ -1242,6 +1242,7 @@ var
  item1: listadty;
 begin
  with info do begin
+  allocs.tempvars:= 0; //init
   if tempvarcount > 0 then begin
    allocs.tempvars:=
            allocsegmentoffset(seg_localloc,tempvarcount*sizeof(p1^),p1);
@@ -1267,7 +1268,7 @@ begin
      p1^:= p2^.typeid;
     end;
     inc(p1);
-    p2:= getnextlistitem(tempvarlist,item1);
+    p2:= steplistitem(tempvarlist,item1);
    end;
   {$ifdef mse_checkinternalerror}
    if p2 <> nil then begin

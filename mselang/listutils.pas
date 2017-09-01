@@ -52,6 +52,10 @@ function addlistitem(var alist: linklistty; var achain: listadty): pointer;
 function getlistitem(const alist: linklistty; const aitem: listadty): pointer;
 function getnextlistitem(const alist: linklistty;
                                               const aitem: listadty): pointer;
+                                               //nil if there is none
+function steplistitem(const alist: linklistty;
+                                              var aitem: listadty): pointer;
+                                               //nil if there is none
 procedure deletelistitem(var alist: linklistty; var achain: listadty);
 procedure deletelistchain(var alist: linklistty; var achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
@@ -134,6 +138,19 @@ begin
  end
  else begin
   result:= alist.list+i1;
+ end;
+end;
+
+function steplistitem(const alist: linklistty;
+                                              var aitem: listadty): pointer;
+begin
+ result:= alist.list+aitem;
+ aitem:= plinkdataty(result)^.header.next;
+ if aitem = 0 then begin
+  result:= nil;
+ end
+ else begin
+  result:= alist.list+aitem;
  end;
 end;
 

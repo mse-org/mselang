@@ -20,8 +20,6 @@ type
   protected
    fmessage: string8;
  end;
-{$dumpelements}
-{$internaldebug on} 
 implementation
 
 constructor cexception.create(const message: string8);
