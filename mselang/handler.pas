@@ -302,7 +302,7 @@ begin
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
       if internalsubs[isub_ini] <> 0 then begin
-       callinternalsub(internalsubs[isub_ini],false);
+       callinternalsub(internalsubs[isub_ini]);
       end;
      end;
      ad1:= header.next;
@@ -387,6 +387,7 @@ begin
     par.main.stackop.managedtempsize:= managedtempsize1;
     par.main.stackop.tempsize:= info.locdatapo;
    end;
+   deletelistchain(tempvarlist,tempvarchain);
   end;  
  end;
  
@@ -405,7 +406,7 @@ begin
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
       if internalsubs[isub_fini] <> 0 then begin
-       callinternalsub(internalsubs[isub_fini],false);
+       callinternalsub(internalsubs[isub_fini]);
       end;
      end;
      ad1:= header.next;

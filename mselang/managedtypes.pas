@@ -304,8 +304,8 @@ begin
   end
   else begin   
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op]);
-   pushmanageaddr(aref);
-   op1:= callinternalsub(sub1^.address,true,aref.contextindex);
+   i1:= pushmanageaddr(aref);
+   op1:= callinternalsubpo(sub1^.address,i1,aref.contextindex);
    if (sub1^.address = 0) and 
                  (not modularllvm or 
                   (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 

@@ -48,7 +48,7 @@ type
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
                 dsf_instanceonstack,dsf_nooverloadcheck,
-                dsf_useobjssa,
+                dsf_useobjssa,dsf_useinstancetype,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
                 dsf_noinstancecopy,dsf_noparams,
                 dsf_nofreemem, //for object destructor
@@ -75,8 +75,8 @@ var
 
 procedure callsub(const adestindex: int32; asub: psubdataty;
                  const paramstart,paramco: int32; aflags: dosubflagsty;
-                                                    const aobjssa: int32 = 0;
-                                                    const aobjsize: int32 = 0);
+                          const aobjssa: int32 = 0; const aobjsize: int32 = 0;
+                                        const ainstancetype: ptypedataty = nil);
 procedure handleparamsdefentry();
 procedure handleparamsdef();
 procedure handleparamdef0entry();
@@ -133,7 +133,11 @@ function checkparamsbase(const po1,ref: psubdataty): boolean;
                //compare base types
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
-function callinternalsub(const asub: opaddressty; const pointerparam: boolean;
+function callinternalsub(const asub: opaddressty;
+                                   const stackindex: int32 = bigint): popinfoty;
+                                                        //ignores op address 0
+function callinternalsubpo(const asub: opaddressty;
+                            const pointerparamssa: int32; 
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
 procedure initsubstartinfo();
@@ -180,7 +184,7 @@ begin
  end;
 end;
 
-function callinternalsub(const asub: opaddressty; const pointerparam: boolean;
+function callinternalsub(const asub: opaddressty;
                                    const stackindex: int32 = bigint): popinfoty;
 begin
  result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
@@ -191,17 +195,27 @@ begin
   end;
   flags:= [];
   linkcount:= 0;
-  if pointerparam then begin
-   paramcount:= 1;
-   params:= getsegmenttopoffs(seg_localloc);
-   with pparallocinfoty(allocsegmentpo(seg_localloc,
-                                        sizeof(parallocinfoty)))^ do begin
-    ssaindex:= info.s.ssa.nextindex-1; //???
-    size:= bitoptypes[das_pointer] //not used? 
-   end;
-  end
-  else begin
-   paramcount:= 0;
+  paramcount:= 0;
+ end;
+end;
+
+function callinternalsubpo(const asub: opaddressty; const pointerparamssa: int32;
+                                   const stackindex: int32 = bigint): popinfoty;
+begin
+ result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
+ with result^.par.callinfo do begin
+  if asub <> 0 then begin
+   ad.globid:= getoppo(asub)^.par.subbegin.globid;
+   ad.ad:= asub-1; //compensate inc(pc)
+  end;
+  flags:= [];
+  linkcount:= 0;
+  paramcount:= 1;
+  params:= getsegmenttopoffs(seg_localloc);
+  with pparallocinfoty(allocsegmentpo(seg_localloc,
+                                       sizeof(parallocinfoty)))^ do begin
+   ssaindex:= pointerparamssa;
+   size:= bitoptypes[das_pointer] //not used? 
   end;
  end;
 end;
@@ -2559,8 +2573,8 @@ end;
 
 procedure callsub(const adestindex: int32; asub: psubdataty;
               const paramstart,paramco: int32; aflags: dosubflagsty;
-                                                    const aobjssa: int32 = 0;
-                                                    const aobjsize: int32 = 0);
+                       const aobjssa: int32 = 0; const aobjsize: int32 = 0;
+                                       const ainstancetype: ptypedataty = nil);
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -2911,10 +2925,20 @@ var
   with info.contextstack[adestindex] do begin
    if dsf_destroy in aflags then begin
     instancessa:= aobjssa;
-    instancetype1:= ele.eledataabs(d.typ.typedata);
+    if dsf_useinstancetype in aflags then begin
+     instancetype1:= ainstancetype;
+    end
+    else begin
+     instancetype1:= ele.eledataabs(d.typ.typedata);
+    end;
    end
    else begin
-    instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if dsf_useinstancetype in aflags then begin //not used up to now
+     instancetype1:= ainstancetype;
+    end
+    else begin
+     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+    end;
     if dsf_usedestinstance in aflags then begin
      instancessa:= d.dat.fact.instancessa; //for sf_method
     end

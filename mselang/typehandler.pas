@@ -846,11 +846,11 @@ begin
     with additem(oc_pushlocpo)^.par do begin
      memop:= locad1;
      i1:= ssad;
-    end;
-    callsub(s.stackindex-1,ele.eledataabs(typ1^.infoclass.subattach.destroy),
+    end;                    //??? invalid stackindex
+    callsub(s.stacktop,ele.eledataabs(typ1^.infoclass.subattach.destroy),
              s.stacktop,0,[dsf_instanceonstack,dsf_noparams,
-               dsf_useobjssa,dsf_usedestinstance,dsf_attach,dsf_destroy,
-                                                     dsf_noinstancecopy],i1);
+               dsf_useobjssa,dsf_usedestinstance,dsf_useinstancetype,
+               dsf_attach,dsf_destroy,dsf_noinstancecopy],i1,0,typ1);
  //   startssa:= info.s.ssa.nextindex-1;
  //   baseadssa:= startssa;
 //    poptemp(pointersize);
