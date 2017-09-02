@@ -684,6 +684,7 @@ begin
   allocs1:= nullallocs;
   allocs1.llvm.tempcount:= main.llvm.allocs.tempcount;
   bcstream.beginsub([]{false},allocs1,main.llvm.allocs.blockcount);
+  alloctemps(main.llvm.allocs.tempcount,main.llvm.allocs.tempvars);
   if main.llvm.allocs.managedtemptypeid <> 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(
                                 main.llvm.allocs.managedtemptypeid)); //1ssa
@@ -696,7 +697,6 @@ begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
-  alloctemps(main.llvm.allocs.tempcount,main.llvm.allocs.tempvars);
  end;
 end;
 
