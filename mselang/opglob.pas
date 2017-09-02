@@ -116,6 +116,9 @@ type
   oc_callindi,
   oc_callfuncindi,
 
+  oc_return,
+  oc_returnfunc,
+
   oc_zeromem,
   oc_zeromemindi,
   oc_getobjectmem,
@@ -638,8 +641,6 @@ type
   oc_subbegin,
   oc_subend,
   oc_externalsub,
-  oc_return,
-  oc_returnfunc,
 
   oc_setlengthstr8,
   oc_setlengthstr16,
@@ -1165,6 +1166,8 @@ type
 const
  controlops = [
   oc_label,
+  oc_return,
+  oc_returnfunc,
   oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
@@ -1274,6 +1277,9 @@ type
    oc_getobjectmem,oc_getobjectzeromem,
    oc_zeromem,oc_getclassdef: (
     imm: immty;
+   );
+   oc_pushtempaddr:(
+    tempaddr: tempaddressty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,
    oc_incdeclocimmint,oc_incdeclocimmpo,

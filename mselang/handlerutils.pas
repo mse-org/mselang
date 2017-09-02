@@ -1716,7 +1716,7 @@ begin
     result:= ele.eledataabs(dat.datatyp.typedata);
    end;
   end;
-  ark_stack,ark_stackindi,ark_stackref: begin
+  ark_stack,ark_stackindi,ark_stackref,ark_tempvar: begin
    result:= aref.typ;
   end;
   else begin
@@ -1839,6 +1839,12 @@ begin
     notimplementederror('20170530A');
    end; 
    exit;
+  end;
+  ark_tempvar: begin
+   op1:= insertitem(oc_pushtempaddr,stackoffs,-1);
+   with op1^ do begin
+    par.tempaddr:= aref.tempaddress;
+   end;
   end;
   else begin
    notimplementederror('');

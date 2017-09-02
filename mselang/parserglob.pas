@@ -842,6 +842,7 @@ type
 //  lastllvmtemp: dataoffsty;  //in seg_localloc -1 ->none
   tempvarcount: int32;
   tempvarchain: listadty;
+  tempinitlabel: int32; //op address
   managedtempchain: listadty;
   managedtempcount: int32;
   managedtempref: targetcardty;

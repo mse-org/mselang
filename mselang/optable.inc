@@ -62,6 +62,11 @@
 //oc_callfuncindi
   (ssa: callfuncindissa; proc: @callfuncindiop; flags: []), 
 
+//oc_return
+  (ssa: returnssa; proc: @returnop; flags: []), 
+//oc_returnfunc
+  (ssa: returnfuncssa; proc: @returnfuncop; flags: []), 
+
 //oc_zeromem
   (ssa: zeromemssa; proc: @zeromemop; flags: []), 
 //oc_zeromemindi
@@ -1115,10 +1120,6 @@
   (ssa: subendssa; proc: @subendop; flags: []), 
 //oc_externalsub
   (ssa: externalsubssa; proc: @externalsubop; flags: []), 
-//oc_return
-  (ssa: returnssa; proc: @returnop; flags: []), 
-//oc_returnfunc
-  (ssa: returnfuncssa; proc: @returnfuncop; flags: []), 
 
 //oc_setlengthstr8
   (ssa: setlengthstr8ssa; proc: @setlengthstr8op; flags: []), 

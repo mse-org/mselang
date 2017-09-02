@@ -2111,7 +2111,8 @@ begin
  i1:= fsubheaders[fsubimplementationcount];
  subtyp1:= pglobinfoty(fgloblist.fdata)[i1].valuetype;
  output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]+'.'+
-            inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
+                   inttostr(i1)+'.'+inttostr(fopnum)+
+                       ':'+inttostr(fsubimplementationcount)+':'+
                                             ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
  fconststart:= fgloblist.count;
@@ -2151,7 +2152,7 @@ begin
     unknownrec(rec1);
    end
    else begin
-    if high(rec1) > 1 then begin
+    if high(rec1) > 0 then begin
      fuco:= functioncodes(rec1[1]);
      case fuco of
       FUNC_CODE_DECLAREBLOCKS: begin

@@ -1302,7 +1302,8 @@ begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
     settempvars(par.subbegin.sub.allocs.llvm);
-    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
+    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex+1; 
+                                             //return op following
    end
    else begin
     par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
@@ -1314,7 +1315,7 @@ begin
     par.stacksize:= managedtempsize1;
    end;
   end;
-  with additem(oc_return)^ do begin
+  with addcontrolitem(oc_return)^ do begin
    if pointerparam then begin
     par.stacksize:= pointersize + sizeof(frameinfoty);
    end
@@ -2439,7 +2440,13 @@ begin
   end;           //todo: implicit try-finally
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_incref,po1^.paramfinichain,s.stacktop);
-  end;          
+  end;
+  with addcontrolitem(oc_goto)^ do begin //for possible tempvar init
+   par.opaddress.opaddress:= opcount-1;
+  end;
+  tempinitlabel:= opcount;
+  addlabel();
+
  end;
 end;
 
@@ -2492,16 +2499,31 @@ begin
 //   end;
   end;
   if sf_functioncall in po1^.flags then begin
-   with additem(oc_returnfunc)^ do begin
+   with addcontrolitem(oc_returnfunc)^ do begin
     par.stacksize:= i1;
 //    par.returnfuncinfo.flags:= po1^.flags;
 //    par.returnfuncinfo.allocs:= po1^.allocs;
    end;
   end
   else begin
-   with additem(oc_return)^ do begin
+   with addcontrolitem(oc_return)^ do begin
     par.stacksize:= i1;
    end;
+  end;
+  invertlist(tempvarlist,tempvarchain);
+  i1:= opcount-1;
+  addlabel();
+  if writemanagedtempvarop(mo_ini,tempvarchain,s.stacktop) then begin
+   po2:= getoppo(tempinitlabel,-1);
+  {$ifdef mse_checkinternalerror}
+   if po2^.op.op <> oc_goto then begin
+    internalerror(ie_handler,'20170901A');
+   end;
+  {$endif}
+   po2^.par.opaddress.opaddress:= i1;
+  end;
+  with addcontrolitem(oc_goto)^ do begin       //terminator
+   par.opaddress.opaddress:= tempinitlabel-1;
   end;
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
@@ -2515,12 +2537,6 @@ begin
   addsubend(po1);
   locallocid:= d.subdef.locallocidbefore;
   po2:= getoppo(po1^.address);
- {
-  if po2^.op.op = oc_initclass then begin
-   inc(po2);
-  end;
- }
-  invertlist(tempvarlist,tempvarchain);
   with po2^ do begin
    if co_llvm in o.compileoptions then begin
     settempvars(par.subbegin.sub.allocs.llvm);
@@ -2536,7 +2552,7 @@ begin
     else begin
      par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
     end;
-    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex + 1;
+    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex;
    end
    else begin
     par.subbegin.sub.allocs.stackop.tempsize:= tempsize1;
@@ -3288,7 +3304,7 @@ begin
       varresulttemp:= alloctempvar(asub^.resulttype.typeele,
                                      d.dat.fact.varsubres.tempvar).tempaddress;
       with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-       par.ssas1:= varresulttemp.ssaindex;
+       par.tempaddr.ssaindex:= varresulttemp.ssaindex;
        varresulttempaddr:= par.ssad;
       end;
      end;

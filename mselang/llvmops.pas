@@ -3546,7 +3546,8 @@ end;
 procedure pushtempaddrop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.tempval(ssas1),bcstream.typeval(das_pointer));
+  bcstream.emitbitcast(bcstream.tempval(tempaddr.ssaindex),
+                                       bcstream.typeval(das_pointer));
  end;
 end;
 {
@@ -4133,6 +4134,7 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
+  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
   if hasmanagedtemp then begin
    bcstream.emitalloca(bcstream.ptypeval(
                                   sub.allocs.llvm.managedtemptypeid)); //1ssa
@@ -4145,7 +4147,6 @@ begin
    bcstream.emitnopssa();
    bcstream.emitnopssa();
   end;
-  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
 
   if do_proginfo in info.o.debugoptions then begin
    idar.count:= 3;
@@ -5290,10 +5291,12 @@ const
   
 {$include optable.inc}
 
+var
+ startpo: popinfoty;//for debugging
+
 procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 var
  endpo: pointer;
- startpo: popinfoty;
  lab: shortstring;
 // opnum: int32;
 begin

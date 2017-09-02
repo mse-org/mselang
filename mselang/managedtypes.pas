@@ -55,6 +55,9 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                     const aaddress: addressvaluety; const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                                                      const aref: addressrefty);
+function writemanagedtempvarop(const op: managedopty;
+                 const aitem: listadty; const acontextindex: int32): boolean;
+                              //uses tempvarlist, false if none
 
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
@@ -494,6 +497,39 @@ begin
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
+ end;
+end;
+
+function writemanagedtempvarop(const op: managedopty;
+                 const aitem: listadty; const acontextindex: int32): boolean;
+                              //uses tempvarlist, false if none
+var
+ ad1: addressrefty;
+ item1: listadty;
+ p1: ptempvaritemty;
+ p2: ptypedataty;
+begin
+ result:= false;
+ if aitem <> 0 then begin
+  ad1.contextindex:= acontextindex;
+  ad1.kind:= ark_tempvar;
+  item1:= aitem;
+  p1:= getlistitem(tempvarlist,item1);
+  repeat
+   if (af_tempvar in p1^.address.flags) and (p1^.typeele > 0) and 
+                                (p1^.address.indirectlevel = 0)then begin
+    p2:= ele.eledataabs(p1^.typeele);
+    if (tf_needsmanage in p2^.h.flags) or 
+                  (op = mo_ini) and (tf_needsini in p2^.h.flags) or 
+                  (op = mo_fini) and (tf_needsfini in p2^.h.flags) then begin
+     ad1.typ:= p2;
+     ad1.tempaddress:= p1^.address.tempaddress;
+     writemanagedtypeop(op,p2,ad1);
+     result:= true;
+    end;
+    p1:= steplistitem(tempvarlist,item1);
+   end;
+  until p1 = nil;
  end;
 end;
 

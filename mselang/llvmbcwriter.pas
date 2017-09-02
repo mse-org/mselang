@@ -87,6 +87,11 @@ type
   {$ifdef mse_debugparser}
    finsub: boolean;
    fopnum: int32;
+   fglobcount: int32;
+   ffuncblockcount: int32;
+   ffuncids: integerarty;
+   ffunccount: int32;
+   ffuncblockid: int32;
   {$endif} 
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
@@ -289,7 +294,7 @@ function signedvbr(const avalue: int64): int64; inline;
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits,mseformatstr,identutils;
+ errorhandler,msesys,sysutils,msebits,mseformatstr,identutils,msearrayutils;
 
  //abreviations, made by createabbrev tool todo: use more abbrevs
  
@@ -482,7 +487,15 @@ begin
  wrap.header:= unitheader;
  writebuffer(wrap,sizeof(wrap));
  fpos:= fstartpos+sizeof(wrap);
-
+{$ifdef mse_debugparser}
+ finsub:= false;
+ fopnum:= 0;
+ fglobcount:= 0;
+ ffuncblockcount:= 0;
+ ffuncids:= nil;
+ ffunccount:= 0;
+ ffuncblockid:= -1;
+{$endif}
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
@@ -1333,6 +1346,17 @@ begin
                                  (nestedidsize shl (fblockstackpo^.idsize + 8));
  fbufpos:= fbufpos + sizeof(beginblockrecord);
 }
+{$ifdef mse_debugparser}
+ if id = FUNCTION_BLOCK_ID then begin
+  if ffuncblockcount < ffunccount then begin
+   ffuncblockid:= ffuncids[ffuncblockcount];
+  end
+  else begin
+   ffuncblockid:= -1;
+  end;
+  inc(ffuncblockcount); //for debugging
+ end;
+{$endif}
  emitcode(ord(ENTER_SUBBLOCK));
  emitvbr8(ord(id));
  emitvbr4(nestedidsize);
@@ -1473,6 +1497,9 @@ begin
  end
  else begin
   emit1(0);
+ {$ifdef mse_debugparser}
+  additem(ffuncids,fglobcount,ffunccount);
+ {$endif}
  end;
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr);
@@ -1482,6 +1509,9 @@ begin
  else begin
   emitvbr6(apersonality); //personality
  end;
+{$ifdef mse_debugparser}
+ inc(fglobcount);
+{$endif}
 // result:= fsubopstart;
 // inc(fsubopstart);
 end;
@@ -1505,6 +1535,9 @@ begin           //no init -> external
  emitrec(ord(MODULE_CODE_GLOBALVAR),[
  {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
                                     explicitvartype,0,ord(alinkage),0,0]);
+{$ifdef mse_debugparser}
+ inc(fglobcount);
+{$endif}
 end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32;
@@ -1513,6 +1546,9 @@ begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[
  {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
              explicitvartype,ainitconst+1+fconststart,ord(alinkage),0,0]);
+{$ifdef mse_debugparser}
+ inc(fglobcount);
+{$endif}
 end;
 
 procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);
@@ -1520,6 +1556,9 @@ begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[
  {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
           1 or explicitvartype,ainitconst+1+fconststart,ord(li_internal),0,0]);
+{$ifdef mse_debugparser}
+ inc(fglobcount);
+{$endif}
 end;
 
 procedure tllvmbcwriter.emitalloca(const atype: int32);
@@ -1637,7 +1676,7 @@ begin
  emitcode(ord(mabfunc_inst0));
  emit6(ord(FUNC_CODE_INST_RET));
  checkdebugloc();
- inc(fsubopindex);
+// inc(fsubopindex);
  inc(fcurrentbb);
 end;
 
@@ -1645,7 +1684,7 @@ procedure tllvmbcwriter.emitretop(const avalue: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
  checkdebugloc();
- inc(fsubopindex);
+// inc(fsubopindex);
  inc(fcurrentbb);
 end;
 
@@ -1903,8 +1942,8 @@ begin
    inc(fsubparamstart); //skip nested var array pointer
   end;
   fsuballocstart:= fsubparamstart+paramcount;
-  fsubtempstart:= fsuballocstart+alloccount+2; //managedtemp
-  fsubopstart:= fsubtempstart+llvm.tempcount-2;//managedtemp
+  fsubtempstart:= fsuballocstart+alloccount{+2}; //managedtemp
+  fsubopstart:= fsubtempstart+llvm.tempcount{-2};//managedtemp
  {
   if nestedalloccount > 0 then begin
    inc(fsubopstart,2); //nested var array alloc + byte pointer
@@ -1927,10 +1966,10 @@ end;
 
 procedure tllvmbcwriter.endsub();
 begin
- endblock();
 {$ifdef mse_debugparser}
  finsub:= false;
 {$endif}
+ endblock();
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean;
