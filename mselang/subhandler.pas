@@ -2475,6 +2475,9 @@ begin
   if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
    writemanagedvarop(mo_fini,po1^.varchain,s.stacktop);
   end;
+  invertlist(tempvarlist,tempvarchain);
+  writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
+
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_fini,po1^.paramfinichain,s.stacktop);
   end;
@@ -2510,7 +2513,6 @@ begin
     par.stacksize:= i1;
    end;
   end;
-  invertlist(tempvarlist,tempvarchain);
   i1:= opcount-1;
   addlabel();
   if writemanagedtempvarop(mo_ini,tempvarchain,s.stacktop) then begin
