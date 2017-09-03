@@ -1,0 +1,15 @@
+program openar;
+
+procedure test1(p: array of int32): int32;
+begin
+ result:= p[0]+p[1]+length(p);
+end;
+
+procedure test2(const p: int32): int32;
+begin
+ result:= 2*p;
+end;
+
+begin
+ exitcode:= test2(test1([1,2]))+123-10;
+end.

@@ -116,7 +116,7 @@ c=3
  c=9
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=25
    (
    kind=1
@@ -356,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -1820,7 +1820,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=35
     (
     kind=1
@@ -2740,7 +2740,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=20
     (
     kind=2
@@ -3656,7 +3656,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=18
     (
     kind=2
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72FD4C8
+    ao=An unhandled exception occured at $B72C64C8
     ae=
     aec=123
     ie=0
@@ -5840,8 +5840,72 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
-   c=39
+   a=0,665,5,sub
+   c=40
+    (
+    kind=1
+    a=0,665,5,managed
+    c=2
+     (
+     kind=2
+     a=0,648,2,subres1
+     teststate=2
+     path=subres1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=(1,1) Fatal: Internal error N Stackops OP not implemented
+     aec=1
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,subres1 llvm
+     teststate=1
+     path=subres1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=2
+    path=managed/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
     (
     kind=1
     a=0,664,4,subvar
@@ -7180,7 +7244,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -8155,7 +8219,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -12112,119 +12176,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=217
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=105
  0 0
  0 0
  0 0
