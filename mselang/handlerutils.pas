@@ -1544,6 +1544,7 @@ begin
    inc(tempvarcount);
   end;
   p2^.address:= result;
+  lasttempvar:= result.tempaddress;
  end;
 end;
 

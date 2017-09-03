@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=9
   (
   kind=1
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D9068
+    ao=An unhandled exception occured at $B72FD4C8
     ae=
     aec=123
     ie=0
@@ -11799,11 +11799,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=1
    (
    kind=1
-   a=0,665,4,variants
+   a=0,665,5,variants
    c=4
     (
     kind=2
@@ -11829,8 +11829,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variants1 llvm
-    teststate=1
+    a=0,648,2,variants1 llvm
+    teststate=2
     path=variant1.mla
     comment=
     cc=${mlc_llvm}
@@ -11843,9 +11843,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11873,8 +11873,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variants2 llvm
-    teststate=1
+    a=0,648,2,variants2 llvm
+    teststate=2
     path=variant2.mla
     comment=
     cc=${mlc_llvm}
@@ -11887,13 +11887,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=variants/
    comment=
    cc=
@@ -11909,7 +11909,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -11989,7 +11989,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=

@@ -854,7 +854,8 @@ type
   frameoffset: targetcardty;
   stacktempoffset: targetcardty;
   simplesubstart: opaddressty;
-  
+
+  lasttempvar: tempaddressty; //set by alloctempvar()  
   currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;
   currentsubcount: integer;

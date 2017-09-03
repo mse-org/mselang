@@ -3429,13 +3429,13 @@ begin
    exit;
   end;
  end;
- with ptempallocinfoty(getsegmentpo(seg_localloc,
+ with ptempvaritemty(getlistitem(tempvarlist,
                      source^.d.dat.fact.varsubres.tempvar))^ do begin
   typeid:= -1; //not used
  end;
  with pparallocinfoty(
    getsegmentpo(seg_localloc,source^.d.dat.fact.varsubres.varparam))^ do begin
-  ssaindex:= dest^.d.dat.fact.ssaindex;
+  ssaindex:= dest^.d.dat.fact.ssaindex; //use dest address directly
  end;
 end;
 
@@ -3454,7 +3454,7 @@ var
 // si1: databitsizety;
  dest,source: pcontextitemty;
  destkind: contextkindty;
- needsmanage,needsincref,needsdecref: boolean;
+ needsmanage,needsincref,needsdecref,needstempini: boolean;
 
  procedure decref(const aop: managedopty);
  var
@@ -3483,6 +3483,7 @@ var
  i2: int32;
  flags1: dosubflagsty;
  sourcessa1: int32;
+ sourcetyp: ptypedataty;
 label
  endlab;
 begin
@@ -3592,14 +3593,14 @@ begin
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
-{
+
      if (source^.d.kind = ck_subres) and
               (faf_varsubres in source^.d.dat.fact.flags) and
                        canvarresult(source,dest,indilev1) then begin
       directvarresult(source,dest); //remove temp variable
       goto endlab;
      end;
-}
+
      if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
             not tryconvert(source,destvar.typ,indilev1,[]) then begin
       assignmenterror(source^.d,destvar);
@@ -3632,13 +3633,14 @@ begin
       assignmenterror(source^.d,destvar);
       goto endlab;
      end;
-     
+     sourcetyp:= ele.eledataabs(source^.d.dat.datatyp.typedata);
      if needsmanage then begin
       sourcessa1:= source^.d.dat.fact.ssaindex;
-      needsincref:= not isconst and not(source^.d.kind in [ck_subres]);
+      needstempini:= source^.d.kind in [ck_subres]; //has tempvar
+      needsincref:= not isconst and not needstempini;
       needsdecref:= true;
       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
-                     ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin
+                                                         sourcetyp) then begin
        ad1.kind:= ark_contextdata;
        ad1.contextdata:= @source^.d;
        ad1.offset:= 0;
@@ -3752,46 +3754,14 @@ begin
      if indi then begin
       po1^.par.ssas2:= dest^.d.dat.fact.ssaindex; //dest
      end;
+     if needsmanage and needstempini then begin
+      ad1.kind:= ark_tempvar;
+      ad1.typ:= sourcetyp;
+      ad1.tempaddress:= lasttempvar;
+      writemanagedtypeop(mo_ini,sourcetyp,ad1);
+     end;
     end;
    end;
- (*
-   end
-   else begin //source <> potop
-    if hf_propindex in potop^.d.handlerflags then begin
-    {$ifdef mse_checkinternalerror}
-     if source^.d.kind <> ck_prop then begin
-      internalerror(ie_handler,'20160211A');
-     end;
-     if pcontextitemty(@contextstack[potop^.parent])^.d.kind <>
-                                                     ck_index then begin
-      internalerror(ie_handler,'20160211B');
-     end;
-    {$endif}
-     getclassvalue(source);
-     with ppropertydataty(ele.eledataabs(source^.d.dat.prop.propele))^ do begin
-      if not (pof_readsub in flags) then begin
-       errormessage(err_nomemberaccessproperty,[],5);
-      end
-      else begin
-       ele.pushelementparent(readele);
-       i1:= s.stackindex;
-       s.stackindex:= getstackindex(source);
-       i2:= 1;
-       while getnextnospace(source+1,source) do begin
-        inc(i2);
-       end;
-       dosub(psubdataty(ele.eledataabs(writeele)),i1,[dsf_indexedsetter]); 
-                                                      //swap first/last param
-       s.stackindex:= i2;
-       ele.popelementparent();
-      end;
-     end;
-    end
-    else begin
-     errormessage(err_illegalexpression,[]);
-    end;
-   end;
-*)
   end; //errorfla
 endlab:
   dec(s.stackindex);

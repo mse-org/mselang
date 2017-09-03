@@ -49,13 +49,13 @@ type
   debuginfo: metavaluety;
  end;
  plocallocinfoty = ^locallocinfoty;
- 
+{ 
  tempallocinfoty = record
   next: dataoffsty;
   typeid: int32; //llvm
  end;
  ptempallocinfoty = ^tempallocinfoty;
- 
+} 
  parallocinfoty = record
   ssaindex: integer;
   size: typeallocinfoty;

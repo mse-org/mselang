@@ -527,9 +527,9 @@ begin
      writemanagedtypeop(op,p2,ad1);
      result:= true;
     end;
-    p1:= steplistitem(tempvarlist,item1);
    end;
-  until p1 = nil;
+   p1:= steplistitem(tempvarlist,item1);
+ until p1 = nil;
  end;
 end;
 
