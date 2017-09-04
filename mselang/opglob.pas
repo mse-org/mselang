@@ -984,7 +984,14 @@ type
  
  managedtempopty = record
  end;
- 
+
+ tempaddrty = record
+  a: tempaddressty;
+  case opcodety of
+   oc_loadtemp: (
+    bytesize: int32;
+   );
+ end;
  popcpucontextty = record
   landingpadalloc: int32; //tempval ssa
  end;
@@ -1278,8 +1285,8 @@ type
    oc_zeromem,oc_getclassdef: (
     imm: immty;
    );
-   oc_pushtempaddr:(
-    tempaddr: tempaddressty;
+   oc_pushtempaddr,oc_loadtemp:(
+    tempaddr: tempaddrty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,
    oc_incdeclocimmint,oc_incdeclocimmpo,

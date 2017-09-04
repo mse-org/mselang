@@ -3594,7 +3594,7 @@ begin
       dec(indilev1);
      end;
 
-     if (source^.d.kind = ck_subres) and
+     if (co_llvm in o.compileoptions) and (source^.d.kind = ck_subres) and
               (faf_varsubres in source^.d.dat.fact.flags) and
                        canvarresult(source,dest,indilev1) then begin
       directvarresult(source,dest); //remove temp variable

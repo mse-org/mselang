@@ -5152,7 +5152,7 @@ end;
 
 procedure pushtempaddrop();
 begin
- notimplemented();
+ ppointer(stackpush(sizeof(pointer)))^:= gettempaddress(cpu.pc^.par.tempaddr.a);
 end;
 
 procedure pushlocaddrop();
@@ -5585,8 +5585,14 @@ begin
 end;
 
 procedure loadtempop();
+var
+ ps,pd: pointer;
 begin
- notimplemented();
+ with cpu.pc^.par.tempaddr do begin
+  ps:= gettempaddress(a);
+  pd:= stackpush(bytesize);
+  move(ps^,pd^,bytesize);
+ end;
 end;
 
 procedure subbeginop();

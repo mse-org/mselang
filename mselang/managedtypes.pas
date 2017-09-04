@@ -513,6 +513,7 @@ begin
  if aitem <> 0 then begin
   ad1.contextindex:= acontextindex;
   ad1.kind:= ark_tempvar;
+  ad1.isclass:= false;
   item1:= aitem;
   p1:= getlistitem(tempvarlist,item1);
   repeat
@@ -529,7 +530,7 @@ begin
     end;
    end;
    p1:= steplistitem(tempvarlist,item1);
- until p1 = nil;
+  until p1 = nil;
  end;
 end;
 

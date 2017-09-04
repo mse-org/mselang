@@ -1844,7 +1844,7 @@ begin
   ark_tempvar: begin
    op1:= insertitem(oc_pushtempaddr,stackoffs,-1);
    with op1^ do begin
-    par.tempaddr:= aref.tempaddress;
+    par.tempaddr.a:= aref.tempaddress;
    end;
   end;
   else begin

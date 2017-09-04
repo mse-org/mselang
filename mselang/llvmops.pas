@@ -3546,7 +3546,7 @@ end;
 procedure pushtempaddrop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.tempval(tempaddr.ssaindex),
+  bcstream.emitbitcast(bcstream.tempval(tempaddr.a.ssaindex),
                                        bcstream.typeval(das_pointer));
  end;
 end;
@@ -3989,7 +3989,7 @@ end;
 procedure loadtempop();
 begin
  with pc^.par do begin
-  bcstream.emitloadop(bcstream.tempval(ssas1));
+  bcstream.emitloadop(bcstream.tempval(tempaddr.a.ssaindex));
  end;
 end;
 

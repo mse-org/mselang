@@ -1716,7 +1716,7 @@ begin
     resulttype1.typeele:= typedata;
     resulttype1.indirectlevel:= indirectlevel;
    end;
-   if co_hasfunction in o.compileoptions then begin
+//   if co_hasfunction in o.compileoptions then begin
     with contextstack[s.stacktop-2] do begin
     {$ifdef mse_checkinternalerror}
      if d.kind <> ck_paramdef then begin
@@ -1732,7 +1732,7 @@ begin
        end;
       end;
      end;
-    end;
+//    end;
    end;
   end;
   if isinterface then begin
@@ -3294,20 +3294,16 @@ begin
     
     if hasresult then begin
      initfactcontext(destoffset); //set ssaindex
-     if hasvarresult and (co_llvm in o.compileoptions) then begin
+     if hasvarresult then begin
       include(d.dat.fact.flags,faf_varsubres);
       d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
-{
-      varresulttemp:= allocllvmtemp(
-                          s.unitinfo^.llvmlists.typelist.addtypevalue(
-                             ele.eledataabs(asub^.resulttype.typeele)),
-                                             d.dat.fact.varsubres.tempalloc);
-}
       varresulttemp:= alloctempvar(asub^.resulttype.typeele,
                                      d.dat.fact.varsubres.tempvar).tempaddress;
-      with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-       par.tempaddr.ssaindex:= varresulttemp.ssaindex;
-       varresulttempaddr:= par.ssad;
+      if co_llvm in o.compileoptions then begin
+       with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
+        par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
+        varresulttempaddr:= par.ssad;
+       end;
       end;
      end;
      if dsf_instanceonstack in aflags then begin
@@ -3407,7 +3403,7 @@ begin
     if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;
-     if hasresult and not isconstructor then begin 
+     if hasresult and not hasvarresult and not isconstructor then begin 
                //result already reserved by getmem for constructor
       i2:= opoffset1; //insert result space at end of statement
       if sf_method in asub^.flags then begin
@@ -3522,11 +3518,20 @@ begin
      end;
      }
      if hasresult then begin
-      with insertitem(oc_pushstackaddr,destoffset,opoffset1)^.
-                                     par.memop.tempdataaddress do begin
-                                              //result var param
-       a.address:= -stacksize{-tempsize};
-       offset:= 0;
+      if hasvarresult then begin
+       with insertitem(oc_pushtempaddr,destoffset,
+                                 opoffset1)^.par.tempaddr do begin
+                                               //result var param
+        a.address:= varresulttemp.address;
+       end;
+      end
+      else begin
+       with insertitem(oc_pushstackaddr,destoffset,opoffset1)^.
+                                      par.memop.tempdataaddress do begin
+                                               //result var param
+        a.address:= -stacksize{-tempsize};
+        offset:= 0;
+       end;
       end;
       inc(opoffset1);
       stacksize:= stacksize + vpointersize;
@@ -3732,19 +3737,34 @@ begin
     end;
     if co_mlaruntime in o.compileoptions then begin
 //     releasetempaddress(tempsize);
-     locdatapo:= locdatapo - resultsize;
+     if hasvarresult then begin
+      with insertitem(oc_loadtemp,topoffset,-1)^ do begin
+       par.tempaddr.a.address:= varresulttemp.address;
+       if asub^.resulttype.indirectlevel > 0 then begin
+        par.tempaddr.bytesize:= pointersize;
+       end
+       else begin
+        par.tempaddr.bytesize:= resulttype1^.h.bytesize;
+       end;
+      end;
+     end
+     else begin
+      locdatapo:= locdatapo - resultsize;
+     end;
+    end
+    else begin
+     if varresulttempaddr >= 0 then begin
+      with insertitem(oc_loadtemp,topoffset,-1)^ do begin
+       par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
+       d.dat.fact.ssaindex:= par.ssad;
+      end;
+      d.dat.fact.varsubres.endopoffset:= 
+                   contextstack[topoffset+s.stackindex].opmark.address +
+                                  getcontextopcount(topoffset) - opmark.address;
+     end;
     end;
     if (sf_constructor in asub^.flags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);
-    end;
-    if varresulttempaddr >= 0 then begin
-     with insertitem(oc_loadtemp,topoffset,-1)^ do begin
-      par.ssas1:= varresulttemp.ssaindex;
-      d.dat.fact.ssaindex:= par.ssad;
-     end;
-     d.dat.fact.varsubres.endopoffset:= 
-                  contextstack[topoffset+s.stackindex].opmark.address +
-                                 getcontextopcount(topoffset) - opmark.address;
     end;
    end;
   end;
