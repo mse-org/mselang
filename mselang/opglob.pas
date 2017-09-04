@@ -636,7 +636,7 @@ type
   oc_locvarpush,
   oc_locvarpop,
   oc_tempalloc,  //alloca for llvm
-  oc_loadtemp,   //for llvm
+  oc_pushtemp,   //for llvm
 
   oc_subbegin,
   oc_subend,
@@ -988,7 +988,7 @@ type
  tempaddrty = record
   a: tempaddressty;
   case opcodety of
-   oc_loadtemp: (
+   oc_pushtemp: (
     bytesize: int32;
    );
  end;
@@ -1285,7 +1285,7 @@ type
    oc_zeromem,oc_getclassdef: (
     imm: immty;
    );
-   oc_pushtempaddr,oc_loadtemp:(
+   oc_pushtempaddr,oc_pushtemp:(
     tempaddr: tempaddrty;
    );
    oc_incdecsegimmint,oc_incdecsegimmpo,

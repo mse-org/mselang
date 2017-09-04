@@ -3738,7 +3738,7 @@ begin
     if co_mlaruntime in o.compileoptions then begin
 //     releasetempaddress(tempsize);
      if hasvarresult then begin
-      with insertitem(oc_loadtemp,topoffset,-1)^ do begin
+      with insertitem(oc_pushtemp,topoffset,-1)^ do begin
        par.tempaddr.a.address:= varresulttemp.address;
        if asub^.resulttype.indirectlevel > 0 then begin
         par.tempaddr.bytesize:= pointersize;
@@ -3754,7 +3754,7 @@ begin
     end
     else begin
      if varresulttempaddr >= 0 then begin
-      with insertitem(oc_loadtemp,topoffset,-1)^ do begin
+      with insertitem(oc_pushtemp,topoffset,-1)^ do begin
        par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
        d.dat.fact.ssaindex:= par.ssad;
       end;

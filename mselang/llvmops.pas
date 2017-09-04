@@ -3986,7 +3986,7 @@ begin
  end;
 end;
 
-procedure loadtempop();
+procedure pushtempop();
 begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.tempval(tempaddr.a.ssaindex));
@@ -5216,7 +5216,7 @@ const
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
   tempallocssa = 1;
-  loadtempssa = 1;
+  pushtempssa = 1;
 
   subbeginssa = 2; //1;
   subendssa = 0;

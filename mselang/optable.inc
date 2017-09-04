@@ -1111,8 +1111,8 @@
   (ssa: locvarpopssa; proc: @locvarpopop; flags: []), 
 //oc_tempalloc
   (ssa: tempallocssa; proc: @tempallocop; flags: []), 
-//oc_loadtemp
-  (ssa: loadtempssa; proc: @loadtempop; flags: []), 
+//oc_pushtemp
+  (ssa: pushtempssa; proc: @pushtempop; flags: []), 
 
 //oc_subbegin
   (ssa: subbeginssa; proc: @subbeginop; flags: []), 

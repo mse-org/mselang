@@ -3419,7 +3419,7 @@ begin
  p1:= getoppo(source^.d.dat.fact.varsubres.endopoffset + 
                                             source^.opmark.address-1);
 {$ifdef mse_checkinternalerror}
- if p1^.op.op <> oc_loadtemp then begin
+ if p1^.op.op <> oc_pushtemp then begin
   internalerror(ie_handler,'20170828E');
  end;
 {$endif}

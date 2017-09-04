@@ -5584,7 +5584,7 @@ begin
  //dummy
 end;
 
-procedure loadtempop();
+procedure pushtempop();
 var
  ps,pd: pointer;
 begin
@@ -7473,7 +7473,7 @@ const
   locvarpushssa = 0;
   locvarpopssa = 0;
   tempallocssa = 0;
-  loadtempssa = 0;
+  pushtempssa = 0;
 
   subbeginssa = 0;
   subendssa = 0;
