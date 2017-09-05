@@ -141,6 +141,8 @@ function callinternalsubpo(const asub: opaddressty;
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
 procedure initsubstartinfo();
+procedure begintempvars();
+procedure endtempvars();
 procedure settempvars(var allocs: suballocllvmty);
 function startsimplesub(const aname: identty;
                         const pointerparam: boolean): opaddressty;
@@ -1223,6 +1225,7 @@ begin
    end;
   end;
  end;
+ begintempvars();
  (*
   with info do begin
   {$ifdef mse_checkinternalerror}
@@ -1289,27 +1292,19 @@ begin
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*pointersize; 
-  with getoppo(simplesubstart)^ do begin
-   invertlist(tempvarlist,tempvarchain);
-   if co_llvm in o.compileoptions then begin
-    if managedtempsize1 > 0 then begin
-     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
-         info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
-                                            managedtempsize1,ord(das_8));
-     setimmint32(managedtempcount,par.subbegin.sub.allocs.llvm.managedtempcount);
-    end
-    else begin
-     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
-    end;
-    settempvars(par.subbegin.sub.allocs.llvm);
-    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex+1; 
-                                             //return op following
+{
+  with addcontrolitem(oc_return)^ do begin
+   if pointerparam then begin
+    par.stacksize:= pointersize + sizeof(frameinfoty);
    end
    else begin
-    par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
-    par.subbegin.sub.allocs.stackop.varsize:= managedtempsize1;
+    par.stacksize:= 0 + sizeof(frameinfoty);
    end;
   end;
+}
+  invertlist(tempvarlist,tempvarchain);
+  writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
+
   if managedtempsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin
     par.stacksize:= managedtempsize1;
@@ -1321,6 +1316,26 @@ begin
    end
    else begin
     par.stacksize:= 0 + sizeof(frameinfoty);
+   end;
+  end;
+  endtempvars();
+  with getoppo(simplesubstart)^ do begin
+   if co_llvm in o.compileoptions then begin
+    if managedtempsize1 > 0 then begin
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 
+         info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
+                                            managedtempsize1,ord(das_8));
+     setimmint32(managedtempcount,par.subbegin.sub.allocs.llvm.managedtempcount);
+    end
+    else begin
+     par.subbegin.sub.allocs.llvm.managedtemptypeid:= 0;
+    end;
+    settempvars(par.subbegin.sub.allocs.llvm);
+    par.subbegin.sub.allocs.llvm.blockcount:= s.ssa.bbindex; 
+   end
+   else begin
+    par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
+    par.subbegin.sub.allocs.stackop.varsize:= managedtempsize1;
    end;
   end;
   with additem(oc_subend)^ do begin
@@ -2258,6 +2273,40 @@ begin
 *)
 //end;
 
+procedure begintempvars();
+begin
+ with info do begin
+  with addcontrolitem(oc_goto)^ do begin //for possible tempvar init
+   par.opaddress.opaddress:= opcount-1;
+  end;
+  tempinitlabel:= opcount;
+  addlabel();
+ end;
+end;
+
+procedure endtempvars();
+var
+ i1: int32;
+ po2: popinfoty;
+begin
+ with info do begin
+  i1:= opcount-1;
+  addlabel();
+  if writemanagedtempvarop(mo_ini,tempvarchain,s.stacktop) then begin
+   po2:= getoppo(tempinitlabel,-1);
+  {$ifdef mse_checkinternalerror}
+   if po2^.op.op <> oc_goto then begin
+    internalerror(ie_handler,'20170901A');
+   end;
+  {$endif}
+   po2^.par.opaddress.opaddress:= i1;
+  end;
+  with addcontrolitem(oc_goto)^ do begin       //terminator
+   par.opaddress.opaddress:= tempinitlabel-1;
+  end;
+ end;
+end;
+
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -2441,12 +2490,7 @@ begin
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_incref,po1^.paramfinichain,s.stacktop);
   end;
-  with addcontrolitem(oc_goto)^ do begin //for possible tempvar init
-   par.opaddress.opaddress:= opcount-1;
-  end;
-  tempinitlabel:= opcount;
-  addlabel();
-
+  begintempvars();
  end;
 end;
 
@@ -2475,6 +2519,7 @@ begin
   if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
    writemanagedvarop(mo_fini,po1^.varchain,s.stacktop);
   end;
+
   invertlist(tempvarlist,tempvarchain);
   writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
 
@@ -2513,20 +2558,7 @@ begin
     par.stacksize:= i1;
    end;
   end;
-  i1:= opcount-1;
-  addlabel();
-  if writemanagedtempvarop(mo_ini,tempvarchain,s.stacktop) then begin
-   po2:= getoppo(tempinitlabel,-1);
-  {$ifdef mse_checkinternalerror}
-   if po2^.op.op <> oc_goto then begin
-    internalerror(ie_handler,'20170901A');
-   end;
-  {$endif}
-   po2^.par.opaddress.opaddress:= i1;
-  end;
-  with addcontrolitem(oc_goto)^ do begin       //terminator
-   par.opaddress.opaddress:= tempinitlabel-1;
-  end;
+  endtempvars();
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);

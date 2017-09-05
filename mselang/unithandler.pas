@@ -1598,7 +1598,7 @@ end;
 procedure updateprogend(const aop: popinfoty);
 begin
  aop^.par.progend.exitcodeaddress:= getexitcodeaddress();
- aop^.par.progend.submeta:= info.s.currentscopemeta;
+// aop^.par.progend.submeta:= info.s.currentscopemeta;
 end;
 
 procedure handleunitend();

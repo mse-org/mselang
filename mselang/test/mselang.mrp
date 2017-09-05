@@ -116,7 +116,7 @@ c=3
  c=9
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C64C8
+    ao=An unhandled exception occured at $B72B447C
     ae=
     aec=123
     ie=0
@@ -5840,16 +5840,16 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,sub
+   a=0,665,4,sub
    c=40
     (
     kind=1
-    a=0,665,5,managed
+    a=0,665,4,managed
     c=2
      (
      kind=2
-     a=0,648,2,subres1
-     teststate=2
+     a=0,640,0,subres1
+     teststate=0
      path=subres1.mla
      comment=
      cc=${mlc}
@@ -5864,8 +5864,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=(1,1) Fatal: Internal error N Stackops OP not implemented
-     aec=1
+     ae=
+     aec=-1
      ie=0
      )
      (
@@ -5890,7 +5890,7 @@ c=3
      aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=managed/
     comment=
     cc=
@@ -7244,7 +7244,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=sub/
    comment=
    cc=
@@ -8219,7 +8219,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -11653,8 +11653,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,tempvar
-   teststate=1
+   a=0,640,0,tempvar
+   teststate=2
    path=tempvar.mla
    comment=
    cc=${mlc}
@@ -11669,8 +11669,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=EXCEPTION: Access violation
+   aec=122
    ie=0
    )
    (
@@ -11871,8 +11871,8 @@ c=3
    c=4
     (
     kind=2
-    a=0,648,1,variants1
-    teststate=1
+    a=0,640,0,variants1
+    teststate=2
     path=variant1.mla
     comment=
     cc=${mlc}
@@ -11885,9 +11885,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11915,8 +11915,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variants2
-    teststate=1
+    a=0,640,0,variants2
+    teststate=2
     path=variant2.mla
     comment=
     cc=${mlc}
@@ -11929,9 +11929,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )

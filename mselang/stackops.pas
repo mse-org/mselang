@@ -535,6 +535,11 @@ begin
  end;
 end;
 
+procedure progend1op();
+begin
+ //dummy
+end;
+
 procedure cmpjmpneimmop();
 begin
  with cpu.pc^.par do begin
@@ -6942,6 +6947,7 @@ const
   endunitssa = 0;
   mainssa = 0;
   progendssa = 0;  
+  progend1ssa = 0;  
   haltssa = 0;
 
   movesegreg0ssa = 0;

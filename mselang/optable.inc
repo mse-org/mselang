@@ -102,6 +102,8 @@
   (ssa: mainssa; proc: @mainop; flags: []), 
 //oc_progend
   (ssa: progendssa; proc: @progendop; flags: []), 
+//oc_progend1
+  (ssa: progend1ssa; proc: @progend1op; flags: []), 
 //oc_halt
   (ssa: haltssa; proc: @haltop; flags: []), 
 

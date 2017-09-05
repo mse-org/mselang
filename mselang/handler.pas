@@ -279,6 +279,7 @@ begin
    //blockcount set in handleprogblock() 
    par.main.exitcodeaddress:= getexitcodeaddress();
   end;
+  begintempvars();
 (*
   if co_llvm in o.compileoptions then begin
    n1:= getidentname2(getident('main'));
@@ -330,92 +331,99 @@ begin
   internalerror(ie_handler,'20170821B');
  end;
 {$endif}
- addlabel();
- linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
-                                                      info.opcount-1);
- writemanagedtempop(mo_decref,info.managedtempchain,info.s.stacktop);
- handleunitend();
- invertlist(unitlinklist,unitchain);
- hasfini:= false;
- with unitlinklist do begin
-  ad1:= unitchain;
-  while ad1 <> 0 do begin         //insert fini calls
-   with punitlinkinfoty(list+ad1)^,ref^ do begin
-    if internalsubs[isub_fini] <> 0 then begin
-     hasfini:= true;
-     break;
-    end;
-    ad1:= header.next;
-   end;
-  end;
- end;
- if hasfini then begin
-  finicall:= info.opcount;
-            //todo: what about precompiled units with halt()?
-  with additem(oc_call)^.par.callinfo do begin
-   flags:= [];
-   linkcount:= -1;
-   params:= 0;
-   paramcount:= 0;
-  end;
- end;
- updateprogend(additem(oc_progend));
- if do_proginfo in info.s.debugoptions then begin
-  popcurrentscope();
- end;
- managedtempsize1:= info.managedtempcount*sizeof(pointer);
-  //todo: target pointersize
- with info,contextstack[info.s.stackindex] do begin
-  with getoppo(d.prog.blockcountad)^ do begin
-   invertlist(tempvarlist,tempvarchain);
-   if co_llvm in info.o.compileoptions then begin
-    settempvars(par.main.llvm.allocs);
-//    par.main.llvm.tempcount:= info.llvmtempcount;
-//    par.main.llvm.firsttemp:= info.firstllvmtemp;
-    par.main.llvm.allocs.blockcount:= info.s.ssa.bbindex+1;
-    if managedtempsize1 > 0 then begin
-     par.main.llvm.allocs.managedtemptypeid:=
-        info.s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
-                                                  managedtempsize1,ord(das_8));
-     setimmint32(info.managedtempcount,par.main.llvm.allocs.managedtempcount);
-    end
-    else begin
-     par.main.llvm.allocs.managedtemptypeid:= 0;
-    end;
-   end
-   else begin
-    par.main.stackop.managedtempsize:= managedtempsize1;
-    par.main.stackop.tempsize:= info.locdatapo;
-   end;
-   deletelistchain(tempvarlist,tempvarchain);
-  end;  
- end;
- 
- if hasfini then begin
-  with getoppo(startupoffset)^ do begin
-   par.beginparse.finisub:= info.opcount;
-  end;
-  i1:= startsimplesub(tks_fini,false);
-  with getoppo(finicall)^.par.callinfo do begin
-   ad.globid:= getoppo(i1)^.par.subbegin.globid;
-   ad.ad:= i1-1;
-  end;
+ with info do begin
+  addlabel();
+  linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
+                                                       opcount-1);
+  invertlist(tempvarlist,tempvarchain);
+  writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
+  writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
+  handleunitend();
+  invertlist(unitlinklist,unitchain);
+  hasfini:= false;
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert fini calls
-    with punitlinkinfoty(list+ad1)^ do begin
-     with ref^ do begin
-      if internalsubs[isub_fini] <> 0 then begin
-       callinternalsub(internalsubs[isub_fini]);
-      end;
+    with punitlinkinfoty(list+ad1)^,ref^ do begin
+     if internalsubs[isub_fini] <> 0 then begin
+      hasfini:= true;
+      break;
      end;
      ad1:= header.next;
     end;
    end;
   end;
-  endsimplesub(false);
- end;
- with info do begin
+  if hasfini then begin
+   finicall:= opcount;
+             //todo: what about precompiled units with halt()?
+   with additem(oc_call)^.par.callinfo do begin
+    flags:= [];
+    linkcount:= -1;
+    params:= 0;
+    paramcount:= 0;
+   end;
+  end;
+  updateprogend(addcontrolitem(oc_progend));
+  endtempvars();
+  with additem(oc_progend1)^ do begin
+   par.progend1.submeta:= s.currentscopemeta;
+  end;
+  
+  if do_proginfo in info.s.debugoptions then begin
+   popcurrentscope();
+  end;
+  managedtempsize1:= managedtempcount*sizeof(pointer);
+   //todo: target pointersize
+  with contextstack[s.stackindex] do begin
+   with getoppo(d.prog.blockcountad)^ do begin
+ //   invertlist(tempvarlist,tempvarchain);
+    if co_llvm in o.compileoptions then begin
+     settempvars(par.main.llvm.allocs);
+ //    par.main.llvm.tempcount:= info.llvmtempcount;
+ //    par.main.llvm.firsttemp:= info.firstllvmtemp;
+     par.main.llvm.allocs.blockcount:= s.ssa.bbindex;
+     if managedtempsize1 > 0 then begin
+      par.main.llvm.allocs.managedtemptypeid:=
+         s.unitinfo^.llvmlists.typelist.addaggregatearrayvalue(
+                                                   managedtempsize1,ord(das_8));
+      setimmint32(managedtempcount,par.main.llvm.allocs.managedtempcount);
+     end
+     else begin
+      par.main.llvm.allocs.managedtemptypeid:= 0;
+     end;
+    end
+    else begin
+     par.main.stackop.managedtempsize:= managedtempsize1;
+     par.main.stackop.tempsize:= locdatapo;
+    end;
+    deletelistchain(tempvarlist,tempvarchain);
+   end;  
+  end;
+  
+  if hasfini then begin
+   with getoppo(startupoffset)^ do begin
+    par.beginparse.finisub:= opcount;
+   end;
+   i1:= startsimplesub(tks_fini,false);
+   with getoppo(finicall)^.par.callinfo do begin
+    ad.globid:= getoppo(i1)^.par.subbegin.globid;
+    ad.ad:= i1-1;
+   end;
+   with unitlinklist do begin
+    ad1:= unitchain;
+    while ad1 <> 0 do begin         //insert fini calls
+     with punitlinkinfoty(list+ad1)^ do begin
+      with ref^ do begin
+       if internalsubs[isub_fini] <> 0 then begin
+        callinternalsub(internalsubs[isub_fini]);
+       end;
+      end;
+      ad1:= header.next;
+     end;
+    end;
+   end;
+   endsimplesub(false);
+  end;
   dec(s.stackindex);
  end;
 end;

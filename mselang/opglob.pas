@@ -137,6 +137,7 @@ type
   oc_endunit,
   oc_main,
   oc_progend,
+  oc_progend1,
   oc_halt,
   
   oc_movesegreg0,
@@ -890,6 +891,8 @@ type
  
  progendty = record
   exitcodeaddress: segaddressty;
+ end;
+ progend1ty = record
   submeta: metavaluety;
  end;
  compopkindty = (cok_eq,cok_ne,cok_gt,cok_lt,cok_ge,cok_le);
@@ -1174,7 +1177,7 @@ const
  controlops = [
   oc_label,
   oc_return,
-  oc_returnfunc,
+  oc_returnfunc,oc_progend,
   oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
@@ -1265,11 +1268,11 @@ type
    oc_nopssa: (
     ssacount: int32;
    );
-   oc_main: (
-    main: mainty;
-   );
    oc_progend,oc_halt: (
     progend: progendty;
+   );
+   oc_progend1: (
+    progend1: progend1ty;
    );
    oc_swapstack,oc_movestack: (
     swapstack: swapstackty;
@@ -1426,6 +1429,9 @@ type
    );
    oc_setlengthstr8,oc_setlengthdynarray:(
     setlength: setlengthty;
+   );
+   oc_main: (
+    main: mainty;
    );
    oc_subbegin,oc_virttrampoline,oc_externalsub:(
     subbegin: subbeginty;

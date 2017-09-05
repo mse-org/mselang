@@ -707,13 +707,20 @@ begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
   bcstream.emitretop(bcstream.ssaindex-1);
+ end;
+// bcstream.endsub();
+end;
+
+procedure progend1op();
+begin
+ with pc^.par do begin
   if do_proginfo in info.o.debugoptions then begin
    bcstream.beginblock(METADATA_ATTACHMENT_ID,3);
-   bcstream.emitsubdbg(progend.submeta.id);
+   bcstream.emitsubdbg(progend1.submeta.id);
    bcstream.endblock();
   end;
+  bcstream.endsub();
  end;
- bcstream.endsub();
 end;
 
 procedure haltop();
@@ -4685,7 +4692,8 @@ const
   beginunitcodessa = 0;
   endunitssa = 0;
   mainssa = 2;//1;
-  progendssa = 0;  
+  progendssa = 1;  
+  progend1ssa = 0;  
   haltssa = 1;
 
   movesegreg0ssa = 1;
