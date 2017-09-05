@@ -1224,6 +1224,7 @@ begin
     subbegin.sub.allocs:= nullallocs;
    end;
   end;
+  stacktempoffset:= locdatapo;
  end;
  begintempvars();
  (*
@@ -1285,7 +1286,7 @@ end;
 
 procedure endsimplesub(const pointerparam: boolean);
 var
- managedtempsize1: int32;
+ tempsize1,varsize1,managedtempsize1: int32;
  p1: pint32;
 begin
  with info do begin
@@ -1305,9 +1306,11 @@ begin
   invertlist(tempvarlist,tempvarchain);
   writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
 
-  if managedtempsize1 <> 0 then begin
+  tempsize1:= locdatapo-stacktempoffset;
+  varsize1:= managedtempsize1+tempsize1;
+  if varsize1 <> 0 then begin
    with additem(oc_locvarpop)^ do begin
-    par.stacksize:= managedtempsize1;
+    par.stacksize:= varsize1;
    end;
   end;
   with addcontrolitem(oc_return)^ do begin
@@ -1335,7 +1338,8 @@ begin
    end
    else begin
     par.subbegin.sub.allocs.stackop.managedtempsize:= managedtempsize1;
-    par.subbegin.sub.allocs.stackop.varsize:= managedtempsize1;
+    par.subbegin.sub.allocs.stackop.tempsize:= tempsize1;
+    par.subbegin.sub.allocs.stackop.varsize:= varsize1;
    end;
   end;
   with additem(oc_subend)^ do begin
@@ -3333,8 +3337,10 @@ begin
                                      d.dat.fact.varsubres.tempvar).tempaddress;
       if co_llvm in o.compileoptions then begin
        with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-        par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
-        varresulttempaddr:= par.ssad;
+        par.tempaddr.a:= varresulttemp;
+//        if co_llvm in o.compileoptions then begin
+         varresulttempaddr:= par.ssad;
+//        end;
        end;
       end;
      end;
@@ -3554,7 +3560,7 @@ begin
        with insertitem(oc_pushtempaddr,destoffset,
                                  opoffset1)^.par.tempaddr do begin
                                                //result var param
-        a.address:= varresulttemp.address;
+        a:= varresulttemp;
        end;
       end
       else begin

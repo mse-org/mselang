@@ -1541,8 +1541,8 @@ begin
   end
   else begin
    result.tempaddress.ssaindex:= tempvarcount;
-   inc(tempvarcount);
   end;
+  inc(tempvarcount);
   p2^.address:= result;
   lasttempvar:= result.tempaddress;
  end;
