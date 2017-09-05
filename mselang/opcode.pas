@@ -491,9 +491,7 @@ begin
     par.tempaddr.bytesize:= i1;
    end
    else begin
-    if (co_llvm in info.o.compileoptions) then begin
-     par.memop.t.size:= i1;
-    end;
+    par.memop.t.size:= i1;
     par.memop.t.kind:= das_none;
     par.memop.t.flags:= [af_arrayop]; //size = count
    end;
