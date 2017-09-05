@@ -199,38 +199,48 @@ const
   (    //aro_none
  //ab_segment,    ab_local,      ab_locindi,
    oc_storesegnil,oc_storelocnil,oc_storelocindinil,
- //ab_stack,        ab_stackindi,        ab_stackref
-   oc_storestacknil,oc_storestackindinil,oc_storestackrefnil),
+ //ab_stack,        ab_stackindi,        ab_stackref,      
+   oc_storestacknil,oc_storestackindinil,oc_storestackrefnil,
+ //ab_tempvar
+   oc_storetempvarnil),
   (    //aro_static
  //ab_segment,      ab_local,        ab_locindi,
    oc_storesegnilar,oc_storelocnilar,oc_storelocindinilar,
- //ab_stack,          ab_stackindi,          ab_stackref
-   oc_storestacknilar,oc_storestackindinilar,oc_storestackrefnilar),
+ //ab_stack,          ab_stackindi,          ab_stackref,          
+   oc_storestacknilar,oc_storestackindinilar,oc_storestackrefnilar,
+ //ab_tempvar
+   oc_storetempvarnilar),
   (    //aro_dynamic
   //ab_segment,        ab_local,           ab_locindi,
    oc_storesegnildynar,oc_storelocnildynar,oc_storelocindinildynar,
-  //ab_stack,            ab_stackindi,             ab_stackref
-   oc_storestacknildynar,oc_storestackindinildynar,oc_storestackrefnildynar)
+  //ab_stack,            ab_stackindi,             ab_stackref,      
+   oc_storestacknildynar,oc_storestackindinildynar,oc_storestackrefnildynar,
+  //ab_tempvar
+   oc_storetempvarnildynar)
  );
 
  finirefsizeops: aropadsty = (
   (     //aro_none
  //ab_segment,       ab_local,         ab_locindi,
    oc_finirefsizeseg,oc_finirefsizeloc,oc_finirefsizelocindi,
- //ab_stack,           ab_stackindi,           ab_stackref
-   oc_finirefsizestack,oc_finirefsizestackindi,oc_finirefsizestackref),
+ //ab_stack,           ab_stackindi,           ab_stackref,      
+   oc_finirefsizestack,oc_finirefsizestackindi,oc_finirefsizestackref,
+ //ab_tempvar
+   oc_finirefsizetempvar),
   (     //aro_static
  //ab_segment,         ab_local,           ab_locindi,
    oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizelocindiar,
- //ab_stack,             ab_stackindi,             ab_stackref
-   oc_finirefsizestackar,oc_finirefsizestackindiar,oc_finirefsizestackrefar),
+ //ab_stack,             ab_stackindi,             ab_stackref,  
+   oc_finirefsizestackar,oc_finirefsizestackindiar,oc_finirefsizestackrefar,
+ //ab_tempvar
+   oc_finirefsizetempvar),
   (     //aro_dynamic
  //ab_segment,            ab_local,              ab_locindi,
    oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizelocindidynar,
  //ab_stack,                ab_stackindi,                
    oc_finirefsizestackdynar,oc_finirefsizestackindidynar,
- //ab_stackref
-   oc_finirefsizestackrefdynar)
+ //ab_stackref,                ab_tempvar
+   oc_finirefsizestackrefdynar,oc_finirefsizetempvardynar)
  );
 
  increfsizeops: aropadsty = (
@@ -238,17 +248,23 @@ const
  //ab_segment,      ab_local,        ab_locindi,
    oc_increfsizeseg,oc_increfsizeloc,oc_increfsizelocindi,
  //ab_stack,          ab_stackindi,          ab_stackref
-   oc_increfsizestack,oc_increfsizestackindi,oc_increfsizestackref),
+   oc_increfsizestack,oc_increfsizestackindi,oc_increfsizestackref,
+ //ab_tempvar
+   oc_increfsizetempvar),
   (     //aro_static
  //ab_segment,        ab_local,          ab_locindi,
    oc_increfsizesegar,oc_increfsizelocar,oc_increfsizelocindiar,
  //ab_stack,            ab_stackindi,            ab_stackref
-   oc_increfsizestackar,oc_increfsizestackindiar,oc_increfsizestackrefar),
+   oc_increfsizestackar,oc_increfsizestackindiar,oc_increfsizestackrefar,
+ //ab_tempvar
+   oc_increfsizetempvarar),
   (     //aro_dynamic
  //ab_segment,           ab_local,             ab_locindi,
    oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizelocindidynar,
  //ab_stack,               ab_stackindi,               ab_stackref
-   oc_increfsizestackdynar,oc_increfsizestackindidynar,oc_increfsizestackrefdynar)
+   oc_increfsizestackdynar,oc_increfsizestackindidynar,oc_increfsizestackrefdynar,
+ //ab_tempvar
+   oc_increfsizetempvardynar)
  );
 
  decrefsizeops: aropadsty = (
@@ -256,17 +272,23 @@ const
  //ab_segment,      ab_local,        ab_locindi,
    oc_decrefsizeseg,oc_decrefsizeloc,oc_decrefsizelocindi,
  //ab_stack,          ab_stackindi,          ab_stackref
-   oc_decrefsizestack,oc_decrefsizestackindi,oc_decrefsizestackref),
+   oc_decrefsizestack,oc_decrefsizestackindi,oc_decrefsizestackref,
+ //ab_tempvar
+   oc_decrefsizetempvar),
   (     //aro_static
  //ab_global,         ab_local,          ab_locindi,
    oc_decrefsizesegar,oc_decrefsizelocar,oc_decrefsizelocindiar,
  //ab_stack,            ab_stackindi,            ab_stackref
-   oc_decrefsizestackar,oc_decrefsizestackindiar,oc_decrefsizestackrefar),
+   oc_decrefsizestackar,oc_decrefsizestackindiar,oc_decrefsizestackrefar,
+ //ab_tempvar
+   oc_decrefsizetempvarar),
   (     //aro_dynamic
  //ab_global,            ab_local,             ab_locindi,
    oc_decrefsizesegdynar,oc_decrefsizelocdynar,oc_decrefsizelocindidynar,
  //ab_stack,               ab_stackindi,               ab_stackref
-   oc_decrefsizestackdynar,oc_decrefsizestackindidynar,oc_decrefsizestackrefdynar)
+   oc_decrefsizestackdynar,oc_decrefsizestackindidynar,oc_decrefsizestackrefdynar,
+ //ab_tempvar
+   oc_decrefsizestackrefdynar)
  );
 
 procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
@@ -325,6 +347,14 @@ begin
    ab1:= ab_local;
    ad1:= aref.address;
    offs1:= aref.offset;
+   typ1:= aref.typ;
+  end;
+  ark_tempvar: begin
+   af1:= [];
+   lev1:= -1;
+   ab1:= ab_tempvar;
+   ad1:= aref.address;
+   offs1:= 0;
    typ1:= aref.typ;
   end;
   ark_managedtemp: begin
@@ -440,6 +470,11 @@ begin
      offset:= offs1;
     end;
    end;
+   ab_tempvar: begin
+    with par.tempaddr do begin
+     a:= aref.tempaddress;
+    end;
+   end
    else begin
     with par.memop.podataaddress do begin
      address:= ad1;
@@ -450,14 +485,18 @@ begin
   if arop = aro_static then begin
    i1:= typ1^.infoarray.i.totitemcount;
    if (co_llvm in info.o.compileoptions) then begin
-    par.memop.t.size:= 
-              info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
+    i1:= info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
+   end;
+   if ab1 = ab_tempvar then begin
+    par.tempaddr.bytesize:= i1;
    end
    else begin
-    par.memop.t.size:= i1;
+    if (co_llvm in info.o.compileoptions) then begin
+     par.memop.t.size:= i1;
+    end;
+    par.memop.t.kind:= das_none;
+    par.memop.t.flags:= [af_arrayop]; //size = count
    end;
-   par.memop.t.kind:= das_none;
-   par.memop.t.flags:= [af_arrayop]; //size = count
   end;
  end;
  if context1^.d.kind = ck_fact then begin

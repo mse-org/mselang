@@ -233,6 +233,15 @@ begin
  result:= cpu.stacktemp + aaddress.address; //offset?
 end;
 
+function gettempaddress(): pointer; 
+                                          {$ifdef mse_inline}inline;{$endif}
+var
+ i1: integer;
+ po1: pointer;
+begin
+ result:= cpu.stacktemp + cpu.pc^.par.tempaddr.a.address; //offset?
+end;
+
 function getlocaddressindi(const aaddress: memopty): pointer; 
                                           {$ifdef mse_inline}inline;{$endif}
 var
@@ -4534,6 +4543,11 @@ begin
  ppppointer(cpu.stack+getmanagedaddressoffset())^^^:= nil;
 end;
 
+procedure storetempvarnilop();
+begin
+ ppointer(gettempaddress())^:= nil;
+end;
+
 procedure storesegnilarop();
 begin
  with cpu.pc^.par.memop do begin
@@ -4597,6 +4611,15 @@ begin
 {$else}
  filldword(ppppointer(cpu.stack+getmanagedaddressoffset())^^^,
                                                     cpu.pc^.par.memop.t.size,0);
+{$endif}
+end;
+
+procedure storetempvarnilarop();
+begin
+{$ifdef cpu64}
+ fillqword(ppointer(gettempaddress())^,cpu.pc^.par.tempaddr.bytesize,0);
+{$else}
+ filldword(ppointer(gettempaddress())^,cpu.pc^.par.tempaddr.bytesize,0);
 {$endif}
 end;
 
@@ -4688,6 +4711,22 @@ var
  i1: int32;
 begin
  po1:= ppppointer(cpu.stack+getmanagedaddressoffset())^^^;
+ if po1 <> nil then begin
+  i1:= (pdynarraysizety(po1)-1)^;
+{$ifdef cpu64}
+  fillqword(po1,i1,0);
+{$else}
+  filldword(po1,i1,0);
+{$endif}
+ end;
+end;
+
+procedure storetempvarnildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ po1:= ppointer(gettempaddress())^;
  if po1 <> nil then begin
   i1:= (pdynarraysizety(po1)-1)^;
 {$ifdef cpu64}
@@ -6079,6 +6118,11 @@ begin
  finirefsize(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
 end;
 
+procedure finirefsizetempvarop();
+begin
+ finirefsize(ppointer(gettempaddress()));
+end;
+
 procedure finirefsizesegarop();
 begin
  finirefsizear(getsegaddress(cpu.pc^.par.memop.segdataaddress),
@@ -6117,6 +6161,11 @@ begin
                                                  cpu.pc^.par.memop.t.size);
 end;
 
+procedure finirefsizetempvararop();
+begin
+ finirefsizear(ppointer(gettempaddress()),cpu.pc^.par.memop.t.size);
+end;
+
 procedure finirefsizesegdynarop();
 begin
  finirefsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -6147,6 +6196,11 @@ begin
  finirefsizedynar(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
 end;
 
+procedure finirefsizetempvardynarop();
+begin
+ finirefsizedynar(ppointer(gettempaddress()));
+end;
+
 procedure increfsizesegop();
 begin
  increfsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -6175,6 +6229,11 @@ end;
 procedure increfsizestackrefop();
 begin
  increfsize(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
+end;
+
+procedure increfsizetempvarop();
+begin
+ increfsize(ppointer(gettempaddress()));
 end;
 
 procedure increfsizesegarop();
@@ -6215,6 +6274,11 @@ begin
                                              cpu.pc^.par.memop.t.size);
 end;
 
+procedure increfsizetempvararop();
+begin
+ increfsizear(ppointer(gettempaddress()),cpu.pc^.par.memop.t.size);
+end;
+
 procedure increfsizesegdynarop();
 begin
  increfsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -6245,6 +6309,11 @@ begin
  increfsizedynar(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
 end;
 
+procedure increfsizetempvardynarop();
+begin
+ increfsizedynar(ppointer(gettempaddress()));
+end;
+
 procedure decrefsizesegop();
 begin
  decrefsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -6273,6 +6342,11 @@ end;
 procedure decrefsizestackrefop();
 begin
  decrefsizeindi(ppppointer(cpu.stack+getmanagedaddressoffset())^);
+end;
+
+procedure decrefsizetempvarop();
+begin
+ decrefsize(ppointer(gettempaddress()));
 end;
 
 procedure decrefsizesegarop();
@@ -6313,6 +6387,11 @@ begin
                                                 cpu.pc^.par.memop.t.size);
 end;
 
+procedure decrefsizetempvararop();
+begin
+ decrefsizear(ppointer(gettempaddress()),cpu.pc^.par.memop.t.size);
+end;
+
 procedure decrefsizesegdynarop();
 begin
  decrefsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -6341,6 +6420,11 @@ end;
 procedure decrefsizestackrefdynarop();
 begin
  decrefsizedynar(ppppointer(cpu.stack+getmanagedaddressoffset())^^);
+end;
+
+procedure decrefsizetempvardynarop();
+begin
+ decrefsizedynar(ppointer(gettempaddress()));
 end;
 
 procedure highstringop();
@@ -7233,6 +7317,7 @@ const
   storestacknilssa = 0;
   storestackindinilssa = 0;
   storestackrefnilssa = 0;
+  storetempvarnilssa = 0;
 
   storesegnilarssa = 0;
   storelocnilarssa = 0;
@@ -7240,6 +7325,7 @@ const
   storestacknilarssa = 0;
   storestackindinilarssa = 0;
   storestackrefnilarssa = 0;
+  storetempvarnilarssa = 0;
 
   storesegnildynarssa = 0;
   storelocnildynarssa = 0;
@@ -7247,6 +7333,7 @@ const
   storestacknildynarssa = 0;
   storestackindinildynarssa = 0;
   storestackrefnildynarssa = 0;
+  storetempvarnildynarssa = 0;
 
   finirefsizesegssa = 0;
   finirefsizelocssa = 0;
@@ -7254,6 +7341,7 @@ const
   finirefsizestackssa = 0;
   finirefsizestackindissa = 0;
   finirefsizestackrefssa = 0;
+  finirefsizetempvarssa = 0;
 
   finirefsizesegarssa = 0;
   finirefsizelocarssa = 0;
@@ -7261,6 +7349,7 @@ const
   finirefsizestackarssa = 0;
   finirefsizestackindiarssa = 0;
   finirefsizestackrefarssa = 0;
+  finirefsizetempvararssa = 0;
 
   finirefsizesegdynarssa = 0;
   finirefsizelocdynarssa = 0;
@@ -7268,6 +7357,7 @@ const
   finirefsizestackdynarssa = 0;
   finirefsizestackindidynarssa = 0;
   finirefsizestackrefdynarssa = 0;
+  finirefsizetempvardynarssa = 0;
 
   increfsizesegssa = 0;
   increfsizelocssa = 0;
@@ -7275,6 +7365,7 @@ const
   increfsizestackssa = 0;
   increfsizestackindissa = 0;
   increfsizestackrefssa = 0;
+  increfsizetempvarssa = 0;
 
   increfsizesegarssa = 0;
   increfsizelocarssa = 0;
@@ -7282,6 +7373,7 @@ const
   increfsizestackarssa = 0;
   increfsizestackindiarssa = 0;
   increfsizestackrefarssa = 0;
+  increfsizetempvararssa = 0;
 
   increfsizesegdynarssa = 0;
   increfsizelocdynarssa = 0;
@@ -7289,6 +7381,7 @@ const
   increfsizestackdynarssa = 0;
   increfsizestackindidynarssa = 0;
   increfsizestackrefdynarssa = 0;
+  increfsizetempvardynarssa = 0;
 
   decrefsizesegssa = 0;
   decrefsizelocssa = 0;
@@ -7296,6 +7389,7 @@ const
   decrefsizestackssa = 0;
   decrefsizestackindissa = 0;
   decrefsizestackrefssa = 0;
+  decrefsizetempvarssa = 0;
 
   decrefsizesegarssa = 0;
   decrefsizelocarssa = 0;
@@ -7303,6 +7397,7 @@ const
   decrefsizestackarssa = 0;
   decrefsizestackindiarssa = 0;
   decrefsizestackrefarssa = 0;
+  decrefsizetempvararssa = 0;
 
   decrefsizesegdynarssa = 0;
   decrefsizelocdynarssa = 0;
@@ -7310,6 +7405,7 @@ const
   decrefsizestackdynarssa = 0;
   decrefsizestackindidynarssa = 0;
   decrefsizestackrefdynarssa = 0;
+  decrefsizetempvardynarssa = 0;
   
   highstringssa = 0;
   highdynarssa = 0;

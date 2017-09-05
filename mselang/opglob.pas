@@ -24,7 +24,7 @@ type
  backendty = (bke_direct,bke_llvm);
 
  addressbasety = (ab_segment,ab_local{ab_frame},ab_localindi,
-                  ab_stack,ab_stackindi,ab_stackref);
+                  ab_stack,ab_stackindi,ab_stackref,ab_tempvar);
 {
  addressrefty = record
   address: dataoffsty;
@@ -406,6 +406,7 @@ type
   oc_storestacknil,
   oc_storestackindinil,
   oc_storestackrefnil,
+  oc_storetempvarnil,
 
   oc_storesegnilar,
   oc_storelocnilar,
@@ -413,6 +414,7 @@ type
   oc_storestacknilar,
   oc_storestackindinilar,
   oc_storestackrefnilar,
+  oc_storetempvarnilar,
 
   oc_storesegnildynar,
   oc_storelocnildynar,
@@ -420,6 +422,7 @@ type
   oc_storestacknildynar,
   oc_storestackindinildynar,
   oc_storestackrefnildynar,
+  oc_storetempvarnildynar,
 
   oc_finirefsizeseg,
   oc_finirefsizeloc,
@@ -427,6 +430,7 @@ type
   oc_finirefsizestack,
   oc_finirefsizestackindi,
   oc_finirefsizestackref,
+  oc_finirefsizetempvar,
 
   oc_finirefsizesegar,
   oc_finirefsizelocar,
@@ -434,6 +438,7 @@ type
   oc_finirefsizestackar,
   oc_finirefsizestackindiar,
   oc_finirefsizestackrefar,
+  oc_finirefsizetempvarar,
 
   oc_finirefsizesegdynar,
   oc_finirefsizelocdynar,
@@ -441,6 +446,7 @@ type
   oc_finirefsizestackdynar,
   oc_finirefsizestackindidynar,
   oc_finirefsizestackrefdynar,
+  oc_finirefsizetempvardynar,
 
   oc_increfsizeseg,
   oc_increfsizeloc,
@@ -448,6 +454,7 @@ type
   oc_increfsizestack,
   oc_increfsizestackindi,
   oc_increfsizestackref,
+  oc_increfsizetempvar,
 
   oc_increfsizesegar,
   oc_increfsizelocar,
@@ -455,6 +462,7 @@ type
   oc_increfsizestackar,
   oc_increfsizestackindiar,
   oc_increfsizestackrefar,
+  oc_increfsizetempvarar,
 
   oc_increfsizesegdynar,
   oc_increfsizelocdynar,
@@ -462,6 +470,7 @@ type
   oc_increfsizestackdynar,
   oc_increfsizestackindidynar,
   oc_increfsizestackrefdynar,
+  oc_increfsizetempvardynar,
 
   oc_decrefsizeseg,
   oc_decrefsizeloc,
@@ -469,6 +478,7 @@ type
   oc_decrefsizestack,
   oc_decrefsizestackindi,
   oc_decrefsizestackref,
+  oc_decrefsizetempvar,
 
   oc_decrefsizesegar,
   oc_decrefsizelocar,
@@ -476,6 +486,7 @@ type
   oc_decrefsizestackar,
   oc_decrefsizestackindiar,
   oc_decrefsizestackrefar,
+  oc_decrefsizetempvarar,
 
   oc_decrefsizesegdynar,
   oc_decrefsizelocdynar,
@@ -483,6 +494,7 @@ type
   oc_decrefsizestackdynar,
   oc_decrefsizestackindidynar,
   oc_decrefsizestackrefdynar,
+  oc_decrefsizetempvardynar,
 
   oc_highstring,
   oc_highdynar,
@@ -991,7 +1003,7 @@ type
  tempaddrty = record
   a: tempaddressty;
   case opcodety of
-   oc_pushtemp: (
+   oc_pushtemp: ( //also for array of managed ops
     bytesize: int32;
    );
  end;
