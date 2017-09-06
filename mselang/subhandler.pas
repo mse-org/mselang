@@ -2325,7 +2325,7 @@ var
  id1: identty;
 begin
 {$ifdef mse_debugparser}
- outhandle('SUB5A');
+ outhandle('SUBBODY5A');
 {$endif}
  checkforwardtypeerrors();
  with info,contextstack[s.stackindex-1] do begin
@@ -2507,7 +2507,7 @@ var
  managedtempsize1,tempsize1,varsize1: int32;
 begin
 {$ifdef mse_debugparser}
- outhandle('SUB6');
+ outhandle('SUBBODY6');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
    //todo: check local forward

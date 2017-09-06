@@ -5648,7 +5648,7 @@ begin
   pe:= cpu.stack;
   p1:= pointer(pe)-sub.allocs.stackop.managedtempsize;
   cpu.managedtemp:= p1;
-  cpu.stacktemp:= p1-sub.allocs.stackop.tempsize;
+  cpu.stacktemp:= pointer(p1)-sub.allocs.stackop.tempsize;
   while p1 < pe do begin
    p1^:= nil;
    inc(p1);
