@@ -1,0 +1,42 @@
+program subvarres1;
+type
+ recty = record
+  s: string8;
+  a,b,c: int32;
+ end;
+
+procedure test(): recty;
+begin
+
+ result.a:= 100;
+ result.b:= 20;
+ result.c:= 3;
+
+ setlength(result.s,3);
+
+ result.s[1]:= 'a';
+ result.s[2]:= 'b';
+ result.s[3]:= 'c';
+
+end;
+
+var
+ r1: recty;
+
+procedure test1(f: flo64);
+var
+ i1: int32;
+ r2: recty;
+begin
+ r2:= test();
+ r1:= r2;
+end;
+
+
+begin
+ test1(1.2);
+ exitcode:= r1.a+r1.b+r1.c;
+ if r1.s <> 'abc' then
+  exitcode:= 1;
+ end;
+end.

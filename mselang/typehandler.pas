@@ -797,11 +797,11 @@ begin
        end;
       end;
      end;
-     {
+     {          //for classes only
      mo_incref: begin
       with typ1^.infoclass.subattach do begin
        if incref <> 0 then begin
-        dosub(s.stacktop,ele.eledataabs(incref),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(incref),s.stacktop,0,
                                                     [dsf_objini],baseadssa);
        end;
       end;
@@ -809,9 +809,9 @@ begin
      mo_decref: begin
       with typ1^.infoclass.subattach do begin
        if decref <> 0 then begin
-        handlefields(atyp,i1);
+        handlefields(op1,atyp,i1);
         b1:= false;
-        dosub(s.stacktop,ele.eledataabs(decref),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(decref),s.stacktop,0,
                                                     [dsf_objfini],baseadssa);
        end;
       end;

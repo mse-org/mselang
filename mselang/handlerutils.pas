@@ -1594,7 +1594,7 @@ var
  i1: int32;
  index1: int32;
 begin
- with info,acontext^ do begin
+ with info,acontext^ do begin //todo: maybe use tempvars instead
  {$ifdef mse_checkinternalerror}
   if not (d.kind in factcontexts) then begin
    internalerror(ie_handler,'2070406H');
