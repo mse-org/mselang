@@ -539,8 +539,8 @@ begin
    if (af_tempvar in p1^.address.flags) and (p1^.typeele > 0) then begin
     p2:= ele.eledataabs(p1^.typeele);
     ad1.isclass:= p2^.h.kind in [dk_class];  //todo: dk_interface
-    if ad1.isclass and (p1^.address.indirectlevel = 0) or 
-       not ad1.isclass and (p1^.address.indirectlevel = 1) and
+    if not ad1.isclass and (p1^.address.indirectlevel = 0) or 
+       ad1.isclass and (p1^.address.indirectlevel = 1) and
            ((tf_needsmanage in p2^.h.flags) or 
                   (op = mo_ini) and (tf_needsini in p2^.h.flags) or 
                   (op = mo_fini) and (tf_needsfini in p2^.h.flags)) then begin

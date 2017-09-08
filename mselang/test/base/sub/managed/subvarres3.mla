@@ -1,0 +1,27 @@
+program subvarres3;
+type
+ recty = record
+  s: string8;
+  a,b,c: int32;
+ end;
+
+procedure test(): recty;
+begin
+ if result.s = '' then
+  exitcode:= 123;
+ end;
+ setlength(result.s,3);
+end;
+
+var
+ r1: recty;
+
+procedure test1(f: flo64);
+begin
+ test();
+end;
+
+
+begin
+ test1(1.2);
+end.

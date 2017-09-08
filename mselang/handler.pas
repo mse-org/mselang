@@ -3492,6 +3492,7 @@ var
  flags1: dosubflagsty;
  sourcessa1: int32;
  sourcetyp: ptypedataty;
+ b1: boolean;
 label
  endlab;
 begin
@@ -3644,10 +3645,11 @@ begin
      sourcetyp:= ele.eledataabs(source^.d.dat.datatyp.typedata);
      if needsmanage then begin
       sourcessa1:= source^.d.dat.fact.ssaindex;
-      needstempini:= (source^.d.kind in [ck_subres]) and 
+      b1:= (source^.d.kind in [ck_subres]);
+      needstempini:= b1 and 
                       (faf_varsubres in source^.d.dat.fact.flags); //has tempvar
       needsincref:= not isconst and not needstempini and 
-                             not (faf_create in source^.d.dat.fact.flags);
+                   not (b1 and (faf_create in source^.d.dat.fact.flags));
       needsdecref:= true;
       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
                                                          sourcetyp) then begin
