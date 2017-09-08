@@ -281,28 +281,45 @@ var
  typ1: ptypedataty;
  ele1: elementoffsetty;
  sf1: dosubflagsty;
- i1: int32;
+ i1,i2,i3: int32;
 // i1: int32;
 begin
  with info do begin
   typ1:= getaddreftype(aref);
   if aref.isclass then begin
+   ele1:= 0;
+   i2:= aref.contextindex-s.stackindex;
    case op of
+    mo_ini: begin
+     i1:= pushmanageaddr(aref);
+     with insertitem(oc_storestackindipopnil,i2,-1)^ do begin
+      par.ssas1:= i1;
+     end;
+    end;
     mo_incref: begin
      ele1:= typ1^.infoclass.subattach.incref;
      sf1:= [dsf_objini];
     end;
-    mo_decref: begin
+    mo_decref,mo_fini: begin
      ele1:= typ1^.infoclass.subattach.decref;
      sf1:= [dsf_objfini];
-    end;
-    else begin
-     ele1:= 0;
     end;
    end;
    if ele1 <> 0 then begin
     i1:= pushmanageaddr(aref);
+    i3:= opcount;
+    with addcontrolitem(oc_gotonilindirect)^ do begin //insert?
+     par.ssas1:= i1;
+    end; //skip call in case of nil instance
+    with insertitem(oc_indirectpo,i2,-1)^ do begin
+     par.ssas1:= i1;
+     i1:= par.ssad;
+    end;
     callsub(aref.contextindex,ele.eledataabs(ele1),aref.contextindex,0,sf1,i1);
+    with getoppo(i3)^ do begin
+     par.opaddress.opaddress:= opcount-1;
+    end;
+    addlabel(); //insert?
    end;
   end
   else begin   
@@ -483,7 +500,6 @@ var
 begin
  if chain <> 0 then begin
   ad1.contextindex:= acontextindex;
-  ad1.isclass:= false;
   ad1.kind:= ark_vardatanoaggregate;
   ad1.offset:= 0;
   ele1:= chain;
@@ -493,6 +509,9 @@ begin
                  (op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
                  (op = mo_fini) and (tf_needsfini in po1^.vf.flags) then begin
     ad1.vardata:= po1;
+    ad1.isclass:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.
+                                                 h.kind in [dk_class]; 
+                                                        //todo: dk_interface
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
    end;
    ele1:= po1^.vf.next;
@@ -517,12 +536,14 @@ begin
   item1:= aitem;
   p1:= getlistitem(tempvarlist,item1);
   repeat
-   if (af_tempvar in p1^.address.flags) and (p1^.typeele > 0) and 
-                                (p1^.address.indirectlevel = 0)then begin
+   if (af_tempvar in p1^.address.flags) and (p1^.typeele > 0) then begin
     p2:= ele.eledataabs(p1^.typeele);
-    if (tf_needsmanage in p2^.h.flags) or 
+    ad1.isclass:= p2^.h.kind in [dk_class];  //todo: dk_interface
+    if ad1.isclass and (p1^.address.indirectlevel = 0) or 
+       not ad1.isclass and (p1^.address.indirectlevel = 1) and
+           ((tf_needsmanage in p2^.h.flags) or 
                   (op = mo_ini) and (tf_needsini in p2^.h.flags) or 
-                  (op = mo_fini) and (tf_needsfini in p2^.h.flags) then begin
+                  (op = mo_fini) and (tf_needsfini in p2^.h.flags)) then begin
      ad1.typ:= p2;
      ad1.tempaddress:= p1^.address.tempaddress;
      writemanagedtypeop(op,p2,ad1);

@@ -795,6 +795,25 @@ begin
  end;
 end;
 
+procedure gotonilindirectop();
+begin
+ with pc^.par do begin
+{
+  bcstream.emitnopssa();
+  bcstream.emitnopssa();
+  bcstream.emitnopssa();
+}
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                                bcstream.ptypeval(pointerintsize));   //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                            //1ssa
+  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),
+                             bcstream.constval(ord(pointerintnull)));//1ssa
+  bcstream.emitbrop(bcstream.relval(0),
+             getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex,
+                                                           opaddress.bbindex);
+ end;
+end;
+
 procedure compjmpimm(const apredicate: predicate);
 begin
  with pc^.par do begin
@@ -2622,6 +2641,11 @@ begin
                                                        //1ssa
   bcstream.emitstoreop(bcstream.constval(nullpointer),bcstream.relval(0));
  end;
+end;
+
+procedure storestackindipopnilop();
+begin
+ storestackindinilop();
 end;
 
 procedure storestackrefnilop();
@@ -4773,6 +4797,7 @@ const
   gotofalsessa = 0;
   gotofalseoffsssa = 0;
   gototruessa = 0;
+  gotonilindirectssa = 3;
   cmpjmpneimmssa = 1;
   cmpjmpeqimmssa = 1;
   cmpjmploimmssa = 1;
@@ -5044,6 +5069,7 @@ const
   storelocnilssa = 0;
   storestacknilssa = 1;
   storestackindinilssa = 1;
+  storestackindipopnilssa = 1;
   storestackrefnilssa = 1;
   storetempvarnilssa = 1;
 

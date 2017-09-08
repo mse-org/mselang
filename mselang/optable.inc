@@ -127,6 +127,8 @@
   (ssa: gotofalseoffsssa; proc: @gotofalseoffsop; flags: []), 
 //oc_gototrue
   (ssa: gototruessa; proc: @gototrueop; flags: []), 
+//oc_gotonilindirect
+  (ssa: gotonilindirectssa; proc: @gotonilindirectop; flags: []), 
 //oc_cmpjmpneimm
   (ssa: cmpjmpneimmssa; proc: @cmpjmpneimmop; flags: []), 
 //oc_cmpjmpeqimm
@@ -682,6 +684,8 @@
   (ssa: storestacknilssa; proc: @storestacknilop; flags: []), 
 //oc_storestackindinil
   (ssa: storestackindinilssa; proc: @storestackindinilop; flags: []), 
+//oc_storestackindpopinil
+  (ssa: storestackindipopnilssa; proc: @storestackindipopnilop; flags: []), 
 //oc_storestackrefnil
   (ssa: storestackrefnilssa; proc: @storestackrefnilop; flags: []), 
 //oc_storetempvarnil

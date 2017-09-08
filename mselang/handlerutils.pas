@@ -1781,7 +1781,7 @@ begin
    with pcontextdataty(aref.contextdata)^ do begin
     if kind = ck_ref then begin
      pushad(dat.ref.c.address);
-     if (dat.datatyp.indirectlevel = 1) and
+     if not aref.isclass and (dat.datatyp.indirectlevel = 1) and
         (ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.h.kind in
                                              [dk_class,dk_object]) then begin
       i1:= op1^.par.ssad;

@@ -23,18 +23,8 @@ end;
 var
  r1: recty;
 
-procedure test1(f: flo64);
-var
- i1: int32;
- r2: recty;
 begin
- r2:= test();
- r1:= r2;
-end;
-
-
-begin
- test1(1.2);
+ r1:= test();
  exitcode:= r1.a+r1.b+r1.c;
  if r1.s <> 'abc' then
   exitcode:= 1;

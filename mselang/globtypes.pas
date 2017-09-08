@@ -484,8 +484,10 @@ const
  inttype = ord(das_32);
 {$if pointersize = 64}
  sizetype = ord(das_64);
+ pointerintnull = nco_i64;
 {$else}
  sizetype = ord(das_32);
+ pointerintnull = nco_i32;
 {$endif}
  floattype = ord(das_f64);
 

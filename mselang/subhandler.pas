@@ -3094,7 +3094,6 @@ begin
         i3:= i2;             //maximal cost
        end;
        inc(subparams1);
-//       inc(i1);
       end;
       if poitem1 = nil then begin
        inc(i3);      //needs default params
@@ -3132,8 +3131,6 @@ begin
       internalerror(ie_handler,'20160916A');
      end;
     {$endif}
-//     i1:= d.dat.fact.ssaindex;
-//     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
     end;
     initdatacontext(d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
@@ -3214,7 +3211,6 @@ begin
      {$else}
       ele.findcurrent(tk_self,[],allvisi,vardata1);
      {$endif}
- //     with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
       with insertitem(oc_pushlocpo,destoffset,-1)^ do begin
        par.memop.t:= bitoptypes[das_pointer];
        par.memop.locdataaddress.a.framelevel:= -1;
@@ -3226,15 +3222,7 @@ begin
      end
      else begin
       if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
-      {
-       if co_mlaruntime in o.compileoptions then begin
-        with additem(oc_pushduppo)^ do begin
-         par.voffset:= -vpointersize;
-        end;
-       end;
-      }
        instancessa:= aobjssa;
- //      instancetype1:= aobjtypeele.eledataabs(vardata1^.vf.typ);
       end
       else begin
        if aflags*[dsf_instanceonstack,dsf_indirect,
@@ -3257,7 +3245,6 @@ begin
          with insertitem(oc_pushstackaddr,destoffset,-1)^.par do begin
           memop.tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
           memop.tempdataaddress.offset:= 0;
-//          tempdataaddress.a.ssaindex:= i1;
           ssas1:= i1;
           memop.t:= getopdatatype(typ1,0);
          end;
@@ -3349,6 +3336,8 @@ begin
                  //revert modification by varresulttemp
      end;
      if sf_constructor in asub^.flags then begin //needs memory
+               //todo: catch exception and call destroy
+      include(d.dat.fact.flags,faf_create);
       isconstructor:= true;
       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
                                                    firstnotfound1,idents1,1);
@@ -3359,33 +3348,12 @@ begin
       end;
      {$endif}
       instancetype1:= resulttype1;
-     {
-      if icf_class in resulttype1^.infoclass.flags then begin
-       with insertitem(oc_initclass,destoffset,-1)^,par.initclass do begin
-        classdef:= resulttype1^.infoclass.defs.address;
-        setimmint32(resulttype1^.infoclass.virttaboffset,virttaboffset);
+      with resulttype1^.infoclass do begin
+       with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
+        setimmint32(allocsize,par.imm);
        end;
        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-      end
-      else begin
-      }
-      with resulttype1^.infoclass do begin
-      {
-       if (icf_zeroinit in flags) or not (icf_nozeroinit in flags) then begin
-        with insertitem(oc_getobjectzeromem,destoffset,-1)^ do begin
-         setimmint32(allocsize,par.imm);
-        end;
-        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-        b1:= false;
-       end
-       else begin
-       }
-        with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
-         setimmint32(allocsize,par.imm);
-        end;
-        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-        b1:= true;
-//       end;
+       b1:= true;
        if b1 and (tf_needsmanage in resulttype1^.h.flags) or
                           (tf_needsini in resulttype1^.h.flags) then begin
         adref1.offset:= 0;
@@ -3544,17 +3512,6 @@ begin
      if poitem1^.d.kind <> ck_params then begin //no params
       dec(poitem1);
      end;
-     {
-     if poitem1^.d.kind = ck_params then begin
-      tempsize:= poitem1^.d.params.tempsize;
-     end;
-     if tempsize > 0 then begin
-      with insertitem(oc_push,0,opoffset1)^ do begin
-       par.imm.vsize:= tempsize;
-      end;
-      inc(opoffset1);
-     end;
-     }
      if hasresult then begin
       if hasvarresult then begin
        with insertitem(oc_pushtempaddr,destoffset,

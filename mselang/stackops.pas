@@ -479,6 +479,16 @@ begin
  end;
 end;
 
+procedure gotonilindirectop();
+var
+ po1: pointer;
+begin
+ if pppointer(cpu.stack-alignsize(sizeof(pointer)))^^ = nil then begin
+  stackpop(sizeof(pointer));
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure beginparseop();
 begin
  with cpu.pc^ do begin
@@ -4538,6 +4548,14 @@ begin
  pppointer(cpu.stack+getmanagedaddressoffset())^^:= nil;
 end;
 
+procedure storestackindipopnilop();
+var
+ p1: pppointer;
+begin
+ p1:= stackpop(sizeof(pointer));
+ p1^^:= nil;
+end;
+
 procedure storestackrefnilop();
 begin
  ppppointer(cpu.stack+getmanagedaddressoffset())^^^:= nil;
@@ -7045,6 +7063,7 @@ const
   gotofalsessa = 0;
   gotofalseoffsssa = 0;
   gototruessa = 0;
+  gotonilindirectssa = 0;
   cmpjmpneimmssa = 0;
   cmpjmpeqimmssa = 0;
   cmpjmploimmssa = 0;
@@ -7316,6 +7335,7 @@ const
   storelocnilssa = 0;
   storestacknilssa = 0;
   storestackindinilssa = 0;
+  storestackindipopnilssa = 0;
   storestackrefnilssa = 0;
   storetempvarnilssa = 0;
 

@@ -65,6 +65,7 @@ var
  bo1: boolean;
  i1: int32;
  n1: identnamety;
+ ispointervar: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -105,10 +106,13 @@ begin
      address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
       datasize1:= h.datasize;
+      ispointervar:= false;
       if h.kind in pointervarkinds then begin
+       ispointervar:= true;
        inc(address.indirectlevel);
       end;
-      if address.indirectlevel = 0 then begin
+      if not ispointervar and (address.indirectlevel = 0) or 
+             ispointervar and (address.indirectlevel = 1) then begin
        size1:= h.bytesize;
        vf.flags:= vf.flags + 
                    h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
