@@ -1973,7 +1973,7 @@ var
      
   if not result then begin
    p2:= ele.eleinfoabs(aitem^.header.parent);
-   p1:= ele.eleinfoabs(info.currentclass);
+   p1:= ele.eleinfoabs(info.currentobject);
    while true do begin
     if p1 = p2 then begin
      errormessage(err_classmethod,[]);

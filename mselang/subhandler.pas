@@ -1459,7 +1459,7 @@ var                       //todo: move after doparams()
  si1: integer;
  paramsize1: integer;
  defaultparamcount1: int32;
- bo1,isclass,isinterface,ismethod: boolean;
+ bo1,isobject,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
  resulttype1: resulttypety;
@@ -1507,7 +1507,7 @@ var                       //todo: move after doparams()
        internalerror(ie_handler,'20160216B');
       end;
      {$endif}
-      if (isclass and (s.dialect <> dia_mse) and
+      if (isobject and (s.dialect <> dia_mse) and
           ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
               addvar(d.ident.ident,allvisi,sub1^.varchain,var1) then begin
        identerror(curstackindex-s.stackindex,err_duplicateidentifier);
@@ -1662,10 +1662,10 @@ var                       //todo: move after doparams()
   end; //lastparamindex
  end;//doparams()
 
- function checksysclassmethod(const aname: string): boolean;
+ function checksysobjectmethod(const aname: string): boolean;
  begin
   result:= true;
-  if not isclass or (subflags*[sf_functionx,sf_classmethod] <> []) or
+  if not isobject or (subflags*[sf_functionx,sf_classmethod] <> []) or
                                                   (paramco <> 1) then begin
    errormessage(err_invalidmethodforattach,[aname]);
    result:= false;
@@ -1727,9 +1727,9 @@ begin
   resulttype1.typeele:= 0;
   resulttype1.indirectlevel:= 0;
   defaultparamcount1:= 0;
-  isclass:= s.currentstatementflags * [stf_objdef,stf_objimp] <> [];
+  isobject:= s.currentstatementflags * [stf_objdef,stf_objimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
-  ismethod:= isclass or isinterface or (sf_ofobject in subflags);
+  ismethod:= isobject or isinterface or (sf_ofobject in subflags);
   if sf_functionx in subflags then begin
    with contextstack[s.stacktop].d.typ do begin
     resulttype1.typeele:= typedata;
@@ -1844,7 +1844,7 @@ begin
    sub1^.tableindex:= -1; //none
   end;
   inc(currentsubcount);
-  if isclass and (sf_constructor in subflags) then begin
+  if isobject and (sf_constructor in subflags) then begin
    resulttype1.typeele:= currentcontainer;
    resulttype1.indirectlevel:= 1;
   end;
@@ -1913,7 +1913,7 @@ begin
     address.flags:= [af_param,af_const];
     with ptypedataty(
              ele.eledataabs(currentcontainer))^ do begin
-     if isclass then begin
+     if isobject then begin
       if h.kind = dk_object then begin
  //      include(address.flags,af_paramindirect);
        vf.typ:= infoclass.objpotype;
@@ -2043,8 +2043,8 @@ begin
    if err1 = false then begin
     if sublevel = 1 then begin
      paramdata.match:= nil;
-     if isclass then begin
-      currentclass:= currentcontainer;
+     if isobject then begin
+      currentobject:= currentcontainer;
       ele.pushelementparent(currentcontainer);
       bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
                                   allvisi,@checkequalparam,paramdata);
@@ -2137,40 +2137,40 @@ begin
   end
   else begin
    if (sf1_afterconstruct in subflags1) and 
-                 checksysclassmethod('afterconstruct') then begin
+                 checksysobjectmethod('afterconstruct') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
     end;
    end;
    if (sf1_beforedestruct in subflags1) and 
-                 checksysclassmethod('beforedestructstruct') then begin
+                 checksysobjectmethod('beforedestructstruct') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
     end;
    end;
    if (sf1_ini in subflags1) and 
-                 checksysclassmethod('ini') then begin
+                 checksysobjectmethod('ini') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.ini:= ele.eledatarel(sub1);
      include(h.flags,tf_needsini);
     end;
    end;
    if (sf1_fini in subflags1) and 
-                 checksysclassmethod('fini') then begin
+                 checksysobjectmethod('fini') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.fini:= ele.eledatarel(sub1);
      include(h.flags,tf_needsfini);
     end;
    end;
    if (sf1_incref in subflags1) and 
-                 checksysclassmethod('incref') then begin
+                 checksysobjectmethod('incref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.incref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
    if (sf1_decref in subflags1) and 
-                 checksysclassmethod('decref') then begin
+                 checksysobjectmethod('decref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.decref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];

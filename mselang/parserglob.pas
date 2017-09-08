@@ -861,7 +861,7 @@ type
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
   currentcontainer: elementoffsetty;
-  currentclass: elementoffsetty; //for method implementation
+  currentobject: elementoffsetty; //for method implementation
   currentclassvislevel: visikindsty;
   currentoperator,currentoperatorright: elementoffsetty;
   currentfieldflags: addressflagsty;
