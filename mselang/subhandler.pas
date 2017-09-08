@@ -990,20 +990,6 @@ begin
        end;
        tk_default: begin
         include(d.subdef.flags1,sf1_default);
-{
-        if not (sf_method in d.subdef.flags) then begin
-         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
-        end
-        else begin
-         if not (sf_destructor in d.subdef.flags) or 
-                       (sf1_params in d.subdef.flags1) then begin
-          errormessage(err_wrongdefaultdestructor,[]);
-         end
-         else begin
-          include(d.subdef.flags1,sf1_default);
-         end;
-        end;
-}
        end;
        else begin
         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
@@ -1459,7 +1445,7 @@ var                       //todo: move after doparams()
  si1: integer;
  paramsize1: integer;
  defaultparamcount1: int32;
- bo1,isobject,isinterface,ismethod: boolean;
+ bo1,isobject,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
  resulttype1: resulttypety;
@@ -1670,6 +1656,17 @@ var                       //todo: move after doparams()
    errormessage(err_invalidmethodforattach,[aname]);
    result:= false;
   end;
+ end;//checksysobjectmethod()
+
+ function checksysclassmethod(const aname: string): boolean;
+ begin
+  if isclass then begin
+   result:= checksysobjectmethod(aname);
+  end
+  else begin
+   result:= false;
+   errormessage(err_invalidattachment,[aname]);
+  end;
  end;//checksysclassmethod()
 
 var
@@ -1728,6 +1725,7 @@ begin
   resulttype1.indirectlevel:= 0;
   defaultparamcount1:= 0;
   isobject:= s.currentstatementflags * [stf_objdef,stf_objimp] <> [];
+  isclass:= isobject and (stf_class in s.currentstatementflags);
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isobject or isinterface or (sf_ofobject in subflags);
   if sf_functionx in subflags then begin
@@ -2163,14 +2161,14 @@ begin
     end;
    end;
    if (sf1_incref in subflags1) and 
-                 checksysobjectmethod('incref') then begin
+                 checksysclassmethod('incref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.incref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
    if (sf1_decref in subflags1) and 
-                 checksysobjectmethod('decref') then begin
+                 checksysclassmethod('decref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.decref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
