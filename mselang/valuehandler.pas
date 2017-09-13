@@ -721,9 +721,9 @@ begin
     exit;
    end;
    if (dest^.h.kind = dk_object) and (destindirectlevel = 0) then begin
-                     //check ":=" operator, convert to object
+                     //check "()" operator, convert to object
     operatorsig.d[0]:= tks_operators;
-    operatorsig.d[1]:= objectoperatoridents[oa_assign];
+    operatorsig.d[1]:= objectoperatoridents[oa_convert];
     setoperparamid(@operatorsig.d[2],0,nil); //no return value
     setoperparamid(@operatorsig.d[4],d.dat.datatyp.indirectlevel,source1);
     operatorsig.high:= 5;
@@ -840,9 +840,9 @@ begin
    if (source1^.h.kind = dk_object) and (d.dat.datatyp.indirectlevel = 0) or
       (source1^.h.kind = dk_objectpo) and 
                                    (d.dat.datatyp.indirectlevel = 1) then begin
-                    // check ":=" operator, convert from object
+                    // check "()" operator, convert from object
     operatorsig.d[0]:= tks_operators;
-    operatorsig.d[1]:= objectoperatoridents[oa_assign];
+    operatorsig.d[1]:= objectoperatoridents[oa_convert];
     setoperparamid(@operatorsig.d[2],destindirectlevel,dest); //return value
     operatorsig.high:= 3;
     if ele.findchilddata(basetype(source1),

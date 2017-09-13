@@ -107,7 +107,7 @@ type
                      oa_not,oa_or,oa_xor,
                      oa_shl,oa_shr,
                      oa_eq,oa_ne,oa_gt,oa_lt,oa_ge,oa_le,
-                     oa_assign);
+                     oa_assign,oa_convert);
 // objectoperatorsty = set of objectoperatorty;
  objectoperatordefty = record
   token: string;
@@ -149,7 +149,9 @@ const
  //oa_le
   (token: '<='),
  //oa_assign
-  (token: ':=')
+  (token: ':='),
+ //oa_convert
+  (token: '()')
  );
 var
  objectoperatoridents: array[objectoperatorty] of identty;

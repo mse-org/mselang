@@ -3,7 +3,7 @@ program operator6;
 type
  objty = object[nozeroinit]
   fa,fb: int32;
-  method assigni32(): int32 [operator=':='];
+  method assigni32(): int32 [operator='()'];
   method ini() [ini];
  end;
 

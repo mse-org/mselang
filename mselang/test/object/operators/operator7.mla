@@ -1,0 +1,58 @@
+program operator7;
+
+type
+ objty = object[nozeroinit]
+  fa,fb: int32;
+  method add(const b: objty) [operator='+'];
+  method add(b: int32) [operator='+'];
+  method addright(b: int32) [operatorright='+'];
+  method assign(): int32 [operator='()'];
+  method assign(a: int32) [operator='()'];
+  method neg() [operator='-'];
+ end;
+
+method objty.add(const b: objty);
+begin
+ fa:= fa + b.fa;
+ fb:= fb + b.fb;
+end;
+
+method objty.add(b: int32);
+begin
+ fa:= fa + b;
+ fb:= fb + b;
+end;
+
+method objty.addright(b: int32);
+begin
+ fa:= fa - b;
+ fb:= fb - b;
+end;
+
+method objty.assign(): int32;
+begin
+ result:= fb + fa;
+end;
+
+method objty.assign(a: int32);
+begin
+ fa:= a;
+end;
+
+method objty.neg();
+begin
+ fa:= -fa;
+ fb:= -fb;
+end;
+
+var
+ a,b,c: objty;
+ i1: int32;
+begin
+ i1:= 23;
+ a:= i1;
+ a:= a + int32(55);
+ b:= a + (a+b);
+ b:= int32(10) + (a+c+a);
+ exitcode:= -int32(-b) div 2;
+end.
