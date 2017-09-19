@@ -2643,7 +2643,8 @@ begin
 //   setcurrentscope(d.subdef.scopemetabefore);
   end;
   if sublevel = 0 then begin
-   currentcontainer := 0;
+   currentcontainer:= 0;
+   currentobject:= 0;
   end;
  end;
 end;

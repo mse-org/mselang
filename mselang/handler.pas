@@ -3620,20 +3620,29 @@ begin
       if (i1 = basetype(source^.d.dat.datatyp.typedata)) and
          (source^.d.dat.datatyp.indirectlevel = 0) and
               (sourcetyp^.infoclass.subattach.assign <> 0) and
-          (currentobject <> 0) and (basetype(currentobject) <> i1) then begin
+          ((currentobject = 0) or (basetype(currentobject) <> i1)) then begin
        if not getaddress(dest,true) then begin
         goto endlab;
        end;
-       if not getvalue(source,das_none) then begin
-        goto endlab;
+       if (source^.d.kind = ck_ref) or 
+                            (source^.d.dat.indirection < 0) then begin
+        if not getaddress(source,true) then begin
+         goto endlab;
+        end;
+        i1:= -pointersize;
+       end
+       else begin
+        if not getvalue(source,das_none) then begin
+         goto endlab;
+        end;
+        i1:= -alignsize(sourcetyp^.h.bytesize);
+        with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
+                                                   //instance
+         offset:= 0;
+         a.address:= i1;
+        end;
+        i1:= i1-pointersize;
        end;
-       i1:= -alignsize(sourcetyp^.h.bytesize);
-       with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
-                                                  //instance
-        offset:= 0;
-        a.address:= i1;
-       end;
-       i1:= i1-pointersize;
        with additem(oc_pushduppo)^ do begin       //dest
         par.voffset:= i1-pointersize;
        end;
