@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=843
- y=296
+ x=880
+ y=634
  cx=879
  cy=396
 macros.sta=9
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7257484
+    ao=An unhandled exception occured at $B7303484
     ae=
     aec=123
     ie=0
@@ -5714,7 +5714,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,chartostring llvm
+    a=0,648,1,chartostring llvm
     teststate=1
     path=chartostring.mla
     comment=

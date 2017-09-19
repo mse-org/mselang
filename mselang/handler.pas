@@ -1811,8 +1811,10 @@ begin
   {$endif}
    i1:= acontext^.d.dat.fact.ssaindex;
    i2:= getstackindex(acontext);
-   pushinsertstackaddress(i2-info.s.stackindex,-1);   
-                                        //alloca + pointer to alloc
+   with additem(oc_pushstackaddr)^.par do begin
+   end;
+   with additem(oc_pushstackaddr)^.par do begin
+   end;
    sub1:= ele.eledataabs(oper1^.methodele);
    callsub(i2,sub1,i2,0,[dsf_instanceonstack]);
    with additem(oc_loadalloca)^ do begin
@@ -3599,6 +3601,8 @@ begin
 
      destvar.address.indirectlevel:= d.dat.datatyp.indirectlevel;
      indilev1:= destvar.address.indirectlevel;
+     sourcetyp:= ele.eledataabs(source^.d.dat.datatyp.typedata);
+
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
@@ -3610,10 +3614,41 @@ begin
       goto endlab;
      end;
 
-     if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) and
-            not tryconvert(source,destvar.typ,indilev1,[]) then begin
-      assignmenterror(source^.d,destvar);
-      goto endlab;
+     if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) then begin
+                        //todo: allow compatible descendants
+      i1:= basetype(destvar.typ);
+      if (i1 = basetype(source^.d.dat.datatyp.typedata)) and
+         (source^.d.dat.datatyp.indirectlevel = 0) and
+              (sourcetyp^.infoclass.subattach.assign <> 0) and
+          (currentobject <> 0) and (basetype(currentobject) <> i1) then begin
+       if not getaddress(dest,true) then begin
+        goto endlab;
+       end;
+       if not getvalue(source,das_none) then begin
+        goto endlab;
+       end;
+       i1:= -alignsize(sourcetyp^.h.bytesize);
+       with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
+                                                  //instance
+        offset:= 0;
+        a.address:= i1;
+       end;
+       i1:= i1-pointersize;
+       with additem(oc_pushduppo)^ do begin       //dest
+        par.voffset:= i1-pointersize;
+       end;
+       callsub(s.stacktop,ele.eledataabs(sourcetyp^.infoclass.subattach.assign),
+              s.stacktop,1,[dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
+                                                         dsf_nooverloadcheck]);
+       with additem(oc_pop)^ do begin
+        par.imm.vsize:= -i1-pointersize; //compensate instance pop
+       end;
+       goto endlab;
+      end;
+      if not tryconvert(source,destvar.typ,indilev1,[]) then begin
+       assignmenterror(source^.d,destvar);
+       goto endlab;
+      end;
      end;
      if destvar.typ^.h.kind = dk_class then begin
       needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags);
@@ -3642,7 +3677,6 @@ begin
       assignmenterror(source^.d,destvar);
       goto endlab;
      end;
-     sourcetyp:= ele.eledataabs(source^.d.dat.datatyp.typedata);
      if needsmanage then begin
       sourcessa1:= source^.d.dat.fact.ssaindex;
       b1:= (source^.d.kind in [ck_subres]);

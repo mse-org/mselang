@@ -88,7 +88,7 @@ type
             err_exceptmusthavevirtual,err_exceptclassinstanceexpected,
             err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
             err_exceptvarexpected,err_noexceptavailable,
-            err_exceptlabelafterelse);
+            err_exceptlabelafterelse,err_invalidassignop);
             
  errorinfoty = record
   level: errorlevelty;
@@ -327,7 +327,9 @@ const
   (level: erl_error; message: 
              'No exception object available'),
   (level: erl_error; message: 
-             'Exception case labels not allowed after else')
+             'Exception case labels not allowed after else'),
+  (level: erl_error; message: 
+             'Invalid assign operator method')
  );
 
 procedure message1(const atext: string; const values: array of const); 

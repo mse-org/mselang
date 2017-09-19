@@ -55,6 +55,7 @@ type
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
                 dsf_destroy,
+//                dsf_objassign,
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
@@ -1422,42 +1423,30 @@ begin
 end;
 
 procedure handlesubheader();
-var                       //todo: move after doparams()
+var
  sub1: psubdataty;
- var1: pvardataty;
- typ1: ptypedataty;
-// po4: pelementoffsetaty;
- curparam,curparamend,paramend: pelementoffsetty;
-// {int1,}int2{,int3}: integer;
-// lastparamindex: int32;
+ curparam,curparamend: pelementoffsetty;
  curstackindex: int32;
-// curparamindex: int32;
- paramco{,paramhigh}: integer;
+ isobject,isclass: boolean;
  err1: boolean;
  impl1: boolean;
- parent1: elementoffsetty;
- paramdata: equalparaminfoty;
- par1,parref: pelementoffsetaty;
- eledatabase: ptruint;
- subflags: subflagsty;
- subflags1: subflags1ty;
-// parambase: ptruint;
- si1: integer;
- paramsize1: integer;
  defaultparamcount1: int32;
- bo1,isobject,isclass,isinterface,ismethod: boolean;
- ele1: elementoffsetty;
- ident1: identty;
- resulttype1: resulttypety;
-
+ subflags: subflagsty;
+ paramsize1: integer;
+ paramco{,paramhigh}: int32;
+ 
  function doparams(const resultvar: boolean): boolean;
  var
   i1,i2,i3: int32;
+  si1: int32;
   paramkind1: paramkindty;
   defaultconst1: elementoffsetty;
   needssizeupdate: boolean;
   paramsbuffer: array[0..maxparamcount-1] of paramupdateinfoty;
   p1: pparamupdatechainty;
+  var1: pvardataty;
+  typ1: ptypedataty;
+  ele1: elementoffsetty;
  begin
   result:= true;
   needssizeupdate:= false;
@@ -1618,7 +1607,8 @@ var                       //todo: move after doparams()
         internalerror1(ie_parser,'20150212A');
        end;
        if (co_mlaruntime in o.compileoptions) and 
-                            (tf_sizeinvalid in typ1^.h.flags)  then begin
+                            (tf_sizeinvalid in typ1^.h.flags) and 
+                                 (var1^.address.indirectlevel = 0) then begin
         with pclasspendingitemty(
                        addlistitem(pendingclassitems,
                                    selfobjparamchain))^.selfobjparam do begin
@@ -1668,6 +1658,26 @@ var                       //todo: move after doparams()
    errormessage(err_invalidattachment,[aname]);
   end;
  end;//checksysclassmethod()
+
+var                       //todo: move after doparams()
+ var1: pvardataty;
+ typ1: ptypedataty;
+// po4: pelementoffsetaty;
+ paramend: pelementoffsetty;
+// {int1,}int2{,int3}: integer;
+// lastparamindex: int32;
+// curparamindex: int32;
+ parent1: elementoffsetty;
+ paramdata: equalparaminfoty;
+ par1,parref: pelementoffsetaty;
+ eledatabase: ptruint;
+ subflags1: subflags1ty;
+// parambase: ptruint;
+ si1: integer;
+ bo1,isinterface,ismethod: boolean;
+ ele1: elementoffsetty;
+ ident1: identty;
+ resulttype1: resulttypety;
 
 var
  lstr1: lstringty;  
@@ -2206,6 +2216,20 @@ begin
      end;
      operparamids.high:= (p1-pidentty(@operparamids.d[0]))-1;
      if sf_operator in subflags then begin
+      if currentoperator = objectoperatoridents[oa_assign] then begin
+       var1:= ele.eledataabs(sub1^.varchain); //last param
+       if not isobject or (sub1^.paramcount <> 2) or 
+                               (sf_functionx in subflags) or
+               not (af_paramvar in var1^.address.flags) or
+               (var1^.address.indirectlevel <> 1) or
+               (var1^.vf.typ <> ele.elementparent) then begin
+        errormessage(err_invalidassignop,[]);
+       end
+       else begin
+        ptypedataty(ele.parentdata)^.infoclass.subattach.assign:= 
+                                                         ele.eledatarel(sub1);
+       end;
+      end;
       operparamids.d[0]:= currentoperator;
       if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
        ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
