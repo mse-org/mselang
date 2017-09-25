@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=9
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -2740,7 +2740,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=20
     (
     kind=2
@@ -3200,7 +3200,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=14
     (
     kind=2
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7264484
+    ao=An unhandled exception occured at $B723E484
     ae=
     aec=123
     ie=0
@@ -8369,11 +8369,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,object
+  a=0,665,4,object
   c=26
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=12
     (
     kind=2
@@ -8657,8 +8657,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,operators
-   c=14
+   a=0,665,4,operators
+   c=16
     (
     kind=2
     a=0,648,1,operator1
@@ -8705,8 +8705,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,operator2
-    teststate=2
+    a=0,648,1,operator2
+    teststate=1
     path=operator2.mla
     comment=
     cc=${mlc}
@@ -8721,14 +8721,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=EXCEPTION: Access violation
-    aec=0
+    ae=
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,operator2 llvm
-    teststate=2
+    a=0,648,1,operator2 llvm
+    teststate=1
     path=operator2.mla
     comment=
     cc=${mlc_llvm}
@@ -8743,8 +8743,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Old-style alloca with a non-pointer type
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -8925,8 +8925,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,operator7
-    teststate=2
+    a=0,648,1,operator7
+    teststate=1
     path=operator7.mla
     comment=
     cc=${mlc}
@@ -8942,13 +8942,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=44
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,operator7 llvm
-    teststate=2
+    a=0,648,1,operator7 llvm
+    teststate=1
     path=operator7.mla
     comment=
     cc=${mlc_llvm}
@@ -8963,11 +8963,55 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Old-style alloca with a non-pointer type
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+    (
+    kind=2
+    a=0,648,1,assignop1
+    teststate=1
+    path=assignop1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,assignop1 llvm
+    teststate=1
+    path=assignop1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
    path=operators/
    comment=
    cc=
@@ -9511,7 +9555,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=object/
   comment=
   cc=
@@ -12185,7 +12229,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -12308,134 +12352,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=188
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=61
  0 0
  0 0
  0 0

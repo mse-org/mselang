@@ -1,0 +1,24 @@
+program assignop1;
+
+type
+ objty = object[nozeroinit]
+  fa,fb: int32;
+  method store(var dest: objty) [operator=':='];
+ end;
+
+method objty.store(var dest: objty);
+begin
+ dest.fa:= fa;
+ dest.fb:= fb;
+end;
+
+var
+ a,b: objty;
+begin
+ a.fa:= 11;
+ b.fa:= 22;
+ a.fb:= 1;
+ b.fb:= 2;
+ a:= b;
+ exitcode:= 123 + a.fa + a.fb + b.fa + b.fb - 2*(22+2);
+end.

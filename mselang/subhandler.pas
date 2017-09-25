@@ -50,12 +50,12 @@ type
                 dsf_instanceonstack,dsf_nooverloadcheck,
                 dsf_useobjssa,dsf_useinstancetype,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
-                dsf_noinstancecopy,dsf_noparams,dsf_noparamscheck,
+                dsf_noinstancecopy,dsf_noparams,{dsf_noparamscheck,}
                 dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
                 dsf_destroy,
-//                dsf_objassign,
+                dsf_objassign,
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
@@ -2807,7 +2807,9 @@ var
      ck_fact,ck_subres: begin
       with context1^ do begin
        if d.dat.indirection = 0 then begin
-        storetempgetaddress();
+        if not (dsf_objassign in aflags) then begin
+         storetempgetaddress();
+        end;
        end
        else begin
         if d.dat.indirection < -1 then begin
@@ -3477,7 +3479,7 @@ begin
     end
     else begin
      if not (dsf_noparams in aflags) then begin
-      paramschecked:= paramschecked or (dsf_noparamscheck in aflags);
+      paramschecked:= paramschecked or (dsf_objassign in aflags);
       constbufferref:= savesegment(seg_globconst); //for openarray const
       while i1 > 0 do begin
        getnextnospace(poitem1+1,poitem1);

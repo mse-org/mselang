@@ -2272,7 +2272,7 @@ begin
        str1:= str1+ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
        if not ftypelist.sametype(i1,i2) then begin
-        error('Invalid type');
+        error('Not same type');
        end;
       end;
       FUNC_CODE_INST_LOAD: begin

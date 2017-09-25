@@ -3639,15 +3639,18 @@ begin
          goto endlab;
         end;
         i1:= -alignsize(sourcetyp^.h.bytesize);
-        with additem(oc_pushstackaddr)^.par.memop.tempdataaddress do begin
-                                                   //instance
-         offset:= 0;
-         a.address:= i1;
+        i2:= source^.d.dat.fact.ssaindex;
+        with insertitem(oc_pushstackaddr,source,-1)^.par do begin //instance
+         memop.tempdataaddress.offset:= 0;
+         memop.tempdataaddress.a.address:= i1;
+         ssas1:= i2;
+         memop.t:= getopdatatype(sourcetyp,0);
         end;
+        i2:= source^.d.dat.fact.ssaindex;
         i1:= i1-pointersize;
        end;
        flags1:= [dsf_instanceonstack,dsf_noinstancecopy,
-                           dsf_nooverloadcheck,dsf_noparamscheck,dsf_useobjssa];
+                           dsf_nooverloadcheck,dsf_objassign,dsf_useobjssa];
        if co_mlaruntime in o.compileoptions then begin
         with additem(oc_pushduppo)^ do begin       //dest
          par.voffset:= i1-pointersize;
