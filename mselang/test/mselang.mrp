@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B723E484
+    ao=An unhandled exception occured at $B7247484
     ae=
     aec=123
     ie=0
@@ -8658,7 +8658,7 @@ c=3
    (
    kind=1
    a=0,665,4,operators
-   c=16
+   c=18
     (
     kind=2
     a=0,648,1,operator1
@@ -8994,6 +8994,50 @@ c=3
     a=0,648,1,assignop1 llvm
     teststate=1
     path=assignop1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,assignop2
+    teststate=1
+    path=assignop2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,assignop2 llvm
+    teststate=1
+    path=assignop2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -12352,7 +12396,9 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=61
+rowstate=63
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

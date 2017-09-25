@@ -3623,7 +3623,8 @@ begin
          (source^.d.dat.datatyp.indirectlevel = 0) and
               (sourcetyp^.infoclass.subattach.assign <> 0) and
           ((currentobject = 0) or (basetype(currentobject) <> i1)) then begin
-       if not getaddress(dest,true) then begin
+       if not (dest^.d.kind in factcontexts) and 
+                            not getaddress(dest,true) then begin
         goto endlab;
        end;
        if (source^.d.kind = ck_ref) or 
