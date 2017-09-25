@@ -50,7 +50,7 @@ type
                 dsf_instanceonstack,dsf_nooverloadcheck,
                 dsf_useobjssa,dsf_useinstancetype,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
-                dsf_noinstancecopy,dsf_noparams,
+                dsf_noinstancecopy,dsf_noparams,dsf_noparamscheck,
                 dsf_nofreemem, //for object destructor
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
@@ -2748,7 +2748,7 @@ var
    si1:= desttype^.h.datasize;
    stackoffset:= getstackoffset(context1);
    conversioncost1:= 1;
-   if not paramschecked and 
+   if not paramschecked and
           not checkcompatibledatatype(context1,vardata1^.vf.typ,
                                vardata1^.address,[cco_novarconversion],
                                        conversioncost1,destindilev1) then begin
@@ -3477,6 +3477,7 @@ begin
     end
     else begin
      if not (dsf_noparams in aflags) then begin
+      paramschecked:= paramschecked or (dsf_noparamscheck in aflags);
       constbufferref:= savesegment(seg_globconst); //for openarray const
       while i1 > 0 do begin
        getnextnospace(poitem1+1,poitem1);

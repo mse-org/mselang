@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=9
   (
   kind=1
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7303484
+    ao=An unhandled exception occured at $B7264484
     ae=
     aec=123
     ie=0
@@ -8369,7 +8369,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,665,5,object
   c=26
    (
    kind=1
@@ -8657,7 +8657,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,operators
+   a=0,665,5,operators
    c=14
     (
     kind=2
@@ -8705,8 +8705,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,operator2
-    teststate=1
+    a=0,648,2,operator2
+    teststate=2
     path=operator2.mla
     comment=
     cc=${mlc}
@@ -8721,14 +8721,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=EXCEPTION: Access violation
+    aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,operator2 llvm
-    teststate=1
+    a=0,648,2,operator2 llvm
+    teststate=2
     path=operator2.mla
     comment=
     cc=${mlc_llvm}
@@ -8743,8 +8743,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Old-style alloca with a non-pointer type
+    aec=1
     ie=0
     )
     (
@@ -8925,8 +8925,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,operator7
-    teststate=1
+    a=0,648,2,operator7
+    teststate=2
     path=operator7.mla
     comment=
     cc=${mlc}
@@ -8942,13 +8942,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=44
     ie=0
     )
     (
     kind=2
-    a=0,648,1,operator7 llvm
-    teststate=1
+    a=0,648,2,operator7 llvm
+    teststate=2
     path=operator7.mla
     comment=
     cc=${mlc_llvm}
@@ -8963,11 +8963,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Old-style alloca with a non-pointer type
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=operators/
    comment=
    cc=
@@ -9511,7 +9511,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=object/
   comment=
   cc=
@@ -12185,7 +12185,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=

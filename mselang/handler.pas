@@ -1788,7 +1788,7 @@ function checkunioperator(const aop: objectoperatorty;
 var
  operatorsig: identvecty;
  oper1: poperatordataty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  sub1: psubdataty;
 begin
 {$ifdef mse_debugparser}
@@ -1811,9 +1811,11 @@ begin
   {$endif}
    i1:= acontext^.d.dat.fact.ssaindex;
    i2:= getstackindex(acontext);
-   with additem(oc_pushstackaddr)^.par do begin
-   end;
-   with additem(oc_pushstackaddr)^.par do begin
+   with insertitem(oc_pushstackaddr,i2-info.s.stackindex,-1)^.par do begin
+    memop.tempdataaddress.offset:= 0;
+    memop.tempdataaddress.a.address:= -alignsize(atype^.h.bytesize);
+    ssas1:= i1;
+    memop.t:= getopdatatype(atype,0);
    end;
    sub1:= ele.eledataabs(oper1^.methodele);
    callsub(i2,sub1,i2,0,[dsf_instanceonstack]);
@@ -3630,6 +3632,7 @@ begin
          goto endlab;
         end;
         i1:= -pointersize;
+        i2:= source^.d.dat.fact.ssaindex;
        end
        else begin
         if not getvalue(source,das_none) then begin
@@ -3643,14 +3646,20 @@ begin
         end;
         i1:= i1-pointersize;
        end;
-       with additem(oc_pushduppo)^ do begin       //dest
-        par.voffset:= i1-pointersize;
+       flags1:= [dsf_instanceonstack,dsf_noinstancecopy,
+                           dsf_nooverloadcheck,dsf_noparamscheck,dsf_useobjssa];
+       if co_mlaruntime in o.compileoptions then begin
+        with additem(oc_pushduppo)^ do begin       //dest
+         par.voffset:= i1-pointersize;
+        end;
+        flags1:= flags1 + [dsf_noparams];
        end;
        callsub(s.stacktop,ele.eledataabs(sourcetyp^.infoclass.subattach.assign),
-              s.stacktop,1,[dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
-                                                         dsf_nooverloadcheck]);
-       with additem(oc_pop)^ do begin
-        par.imm.vsize:= -i1-pointersize; //compensate instance pop
+                                              getstackindex(dest),1,flags1,i2);
+       if co_mlaruntime in o.compileoptions then begin
+        with additem(oc_pop)^ do begin
+         par.imm.vsize:= -i1-pointersize; //compensate instance pop
+        end;
        end;
        goto endlab;
       end;

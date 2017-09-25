@@ -1,36 +1,56 @@
-program except1;
-uses
- __mla__compilerunit;
+program operator5;
+
 type
- ppointer = ^pointer;
- cla1 = class()[virtual]
-  constructor create();
-  destructor destroy();
+ objty = object[nozeroinit]
+  fa,fb: int32;
+{$internaldebug on}
+  method store(var dest: objty) [operator=':='];
+//  method ini() [ini];
  end;
 
-constructor cla1.create();
+method objty.store(var dest: objty);
 begin
-end;
+// dest:= self^;
 
-destructor cla1.destroy();
-begin
+ dest.fa:= fa;
+ dest.fb:= fb;
+
+{
+ writeln('store ',pointer(self),' ',@dest);
+ writeln(' self:',fa);
+ writeln(' dest:',dest.fa);
+}
+// fb:= a+fa;
 end;
 {
-procedure __mla__getclassdef(const instance: pointer;
-                          const virttaboffset: int32): pointer;
+method objty.ini();
 begin
-writeln(instance);
- result:= instance;
- if instance <> nil then
-  result:= ppointer(instance+virttaboffset)^;
- end;
+ fa:= 100;
 end;
 }
 var
- c1: cla1;
- p1: pointer;
+ a,b: objty;
+(*
+type
+ recty = record
+  a,b: int32;
+ end;
+var
+ r1: recty;
+
+{$internaldebug on}
+procedure test(var a: recty;b:int32);
 begin
- c1:= cla1.create();
- p1:= __mla__getclassdef(pointer(c1),0);
- writeln(c1,' ',p1);
+ a.a:= 11;
+ a.b:= 22;
+end;
+*)
+begin
+// test(r1,123);
+// writeln(r1.a,' ',r1.b);
+// writeln('a ',@a,' ',@b);
+// a.fa:= 11;
+// b.fa:= 22;
+ a:= b;
+// writeln(a.fa,' ',b.fa);
 end.
