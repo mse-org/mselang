@@ -3618,6 +3618,12 @@ begin
 
      if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) then begin
                         //todo: allow compatible descendants
+
+      if not tryconvert(source,destvar.typ,indilev1,[]) then begin
+       assignmenterror(source^.d,destvar);
+       goto endlab;
+      end;
+
       i1:= basetype(destvar.typ);
       if (i1 = basetype(source^.d.dat.datatyp.typedata)) and
          (source^.d.dat.datatyp.indirectlevel = 0) and
@@ -3667,10 +3673,12 @@ begin
        end;
        goto endlab;
       end;
+      {
       if not tryconvert(source,destvar.typ,indilev1,[]) then begin
        assignmenterror(source^.d,destvar);
        goto endlab;
       end;
+      }
      end;
      if destvar.typ^.h.kind = dk_class then begin
       needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags);

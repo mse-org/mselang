@@ -720,6 +720,15 @@ begin
     result:= true; //untyped param
     exit;
    end;
+
+   if (source1^.h.kind = dk_objectpo) and 
+          (source1^.h.indirectlevel = 0) and (destindirectlevel = 0) then begin
+    dec(d.dat.indirection);
+    d.dat.datatyp.indirectlevel:= 0;
+    d.dat.datatyp.typedata:= source1^.h.base;
+    source1:= ele.eledataabs(d.dat.datatyp.typedata);
+   end;
+
    if (dest^.h.kind = dk_object) and (destindirectlevel = 0) then begin
                      //check "()" operator, convert to object
     operatorsig.d[0]:= tks_operators;
