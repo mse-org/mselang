@@ -202,8 +202,8 @@ begin
  end;
 end;
 
-function callinternalsubpo(const asub: opaddressty; const pointerparamssa: int32;
-                                   const stackindex: int32 = bigint): popinfoty;
+function callinternalsubpo(const asub: opaddressty;
+    const pointerparamssa: int32; const stackindex: int32 = bigint): popinfoty;
 begin
  result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
  with result^.par.callinfo do begin

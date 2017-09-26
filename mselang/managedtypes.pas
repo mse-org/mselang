@@ -62,6 +62,10 @@ function writemanagedtempvarop(const op: managedopty;
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 procedure handleunique(const paramco: integer);
+procedure handleinitialize(const paramco: integer);
+procedure handlefinalize(const paramco: integer);
+procedure handleincref(const paramco: integer);
+procedure handledecref(const paramco: integer);
 
 procedure managestring(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
@@ -416,54 +420,72 @@ begin
  end;
 end;
 
-procedure handleunique(const paramco: integer);
+function checkaddressparamsysfunc(const paramco: int32;
+                                        out atype: ptypedataty): boolean;
 var
  ptop: pcontextitemty;
- op1: opcodety;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
-  if checkparamco(1,paramco) and 
-                       getaddress(ptop,true) then begin
+  result:= checkparamco(1,paramco) and getaddress(ptop,true);
+  if result then begin
    with ptop^ do begin
-    with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
-     op1:= oc_none;
-     case h.kind of
-      dk_string: begin
-       case itemsize of
-        1: begin
-         op1:= oc_uniquestr8;
-        end;
-        2: begin
-         op1:= oc_uniquestr16;
-        end;
-        4: begin
-         op1:= oc_uniquestr32;
-        end;
-       {$ifdef mse_checkinternalerror}                             
-        else begin
-         internalerror(ie_managed,'20170325C');
-        end;
-       {$endif}
+    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
+   end;
+  end;
+ end;
+end;
+
+procedure handleunique(const paramco: integer);
+var
+// ptop: pcontextitemty;
+ op1: opcodety;
+ typ1: ptypedataty;
+begin
+ with info do begin
+//  ptop:= @contextstack[s.stacktop];
+//  if checkparamco(1,paramco) and 
+//                       getaddress(ptop,true) then begin
+//   with ptop^ do begin
+  if checkaddressparamsysfunc(paramco,typ1) then begin
+ //    with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+   with typ1^ do begin
+    op1:= oc_none;
+    case h.kind of
+     dk_string: begin
+      case itemsize of
+       1: begin
+        op1:= oc_uniquestr8;
        end;
-      end;
-      dk_dynarray: begin
-       op1:= oc_uniquedynarray;
+       2: begin
+        op1:= oc_uniquestr16;
+       end;
+       4: begin
+        op1:= oc_uniquestr32;
+       end;
+      {$ifdef mse_checkinternalerror}                             
+       else begin
+        internalerror(ie_managed,'20170325C');
+       end;
+      {$endif}
       end;
      end;
-     if op1 = oc_none then begin
-      errormessage(err_typemismatch,[]);
-     end
-     else begin
-      with additem(op1)^ do begin
-       if co_llvm in o.compileoptions then begin
-        par.ssas1:= d.dat.fact.ssaindex; //result
-        par.setlength.itemsize:= 
-               info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
-       end
-       else begin
-        par.setlength.itemsize:= itemsize;
-       end;
+     dk_dynarray: begin
+      op1:= oc_uniquedynarray;
+     end;
+    end;
+    if op1 = oc_none then begin
+     errormessage(err_typemismatch,[]);
+    end
+    else begin
+     with additem(op1)^ do begin
+      if co_llvm in o.compileoptions then begin
+       par.ssas1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //result
+       par.setlength.itemsize:= 
+              info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+      end
+      else begin
+       par.setlength.itemsize:= itemsize;
       end;
      end;
     end;
@@ -471,6 +493,69 @@ begin
   end;
  end;
 end;  
+
+procedure callmanagesyssub(const asub: elementoffsetty);
+var
+ sub1: psubdataty;
+ op1: popinfoty;
+begin
+ if asub > 0 then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20170926B');
+   end;
+  {$endif}
+   sub1:= ele.eledataabs(asub);
+   op1:= callinternalsubpo(sub1^.address,d.dat.fact.ssaindex,s.stacktop);
+   if (sub1^.address = 0) and 
+                 (not modularllvm or 
+                  (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
+                                           //unresolved
+    linkmark(sub1^.calllinks,getsegaddress(seg_op,@op1^.par.callinfo.ad));
+   end;
+  end;
+ end;
+end;
+
+procedure handleinitialize(const paramco: integer);
+var
+ typ1: ptypedataty;
+begin
+ if checkaddressparamsysfunc(paramco,typ1) then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20170926A');
+   end;
+  {$endif}
+   if d.dat.datatyp.indirectlevel = 1 then begin
+    case typ1^.h.kind of
+     dk_string,dk_dynarray,dk_class: begin
+      with additem(oc_storestackindipopnil)^ do begin
+       par.ssas1:= d.dat.fact.ssaindex;
+      end;
+     end;
+     dk_record,dk_object: begin
+      callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handlefinalize(const paramco: integer);
+begin
+end;
+
+procedure handleincref(const paramco: integer);
+begin
+end;
+
+procedure handledecref(const paramco: integer);
+begin
+end;
 
 procedure writemanagedtypeop(const op: managedopty;
                 const atype: ptypedataty; const aref: addressrefty);

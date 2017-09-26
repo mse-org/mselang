@@ -60,6 +60,8 @@ const
   @handlewrite,@handlewriteln,
   //syf_setlength,  syf_unique
   @handlesetlength,@handleunique,
+  //syf_initialize, syf_finalize,   syf_incref,   syf_decref,
+  @handleinitialize,@handlefinalize,@handleincref,@handledecref,
   //syf_sizeof,  syf_ord
   @handlesizeof, @handleord,
   //syf_inc,  syf_dec    syf_abs,   
@@ -1444,6 +1446,10 @@ const
    (name: 'writeln'; data: (func: syf_writeln)),
    (name: 'setlength'; data: (func: syf_setlength)),
    (name: 'unique'; data: (func: syf_unique)),
+   (name: 'initialize'; data: (func: syf_initialize)),
+   (name: 'finalize'; data: (func: syf_finalize)),
+   (name: 'incref'; data: (func: syf_incref)),
+   (name: 'decref'; data: (func: syf_decref)),
    (name: 'sizeof'; data: (func: syf_sizeof)),
    (name: 'ord'; data: (func: syf_ord)),
    (name: 'inc'; data: (func: syf_inc)),
