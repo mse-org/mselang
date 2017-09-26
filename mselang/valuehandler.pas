@@ -1762,7 +1762,7 @@ var
   
 // procedure donotfound(const typeele: elementoffsetty);
  procedure donotfound(const adatacontext: pcontextitemty;
-                                               const atype: elementoffsetty);
+                           const atype: elementoffsetty);
 
   procedure pushclassdef(const atyp: ptypedataty);
   begin
@@ -1811,7 +1811,7 @@ var
         typ1:= ele.eledataabs(ele2);
         case d.kind of
          ck_ref: begin
-          if typ1^.h.kind = dk_class then begin
+          if (typ1^.h.kind = dk_class) then begin
 //          if af_classfield in flags then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -2302,8 +2302,10 @@ begin
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
        d.dat.datatyp.flags:= [];
-       if d.dat.ref.c.address.flags *
-                          [af_paramindirect,af_withindirect] <> [] then begin
+       if (d.dat.ref.c.address.flags *
+                          [af_paramindirect,af_withindirect] <> []) or 
+              (af_selfobj in d.dat.ref.c.address.flags) and
+                                  (firstnotfound <= idents.high) then begin
         d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
                                        [af_paramindirect,af_withindirect];
         dec(d.dat.indirection);
@@ -2325,7 +2327,7 @@ begin
       if pvardataty(po2)^.vf.typ <= 0 then begin
        goto endlab; //todo: stop error earlier
       end;
-      donotfound(pocontext1,pvardataty(po2)^.vf.typ); 
+      donotfound(pocontext1,pvardataty(po2)^.vf.typ);
 {
                                   //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and

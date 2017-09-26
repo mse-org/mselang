@@ -1925,6 +1925,7 @@ begin
       if h.kind = dk_object then begin
  //      include(address.flags,af_paramindirect);
        vf.typ:= infoclass.objpotype;
+       include(address.flags,af_selfobj);
       end
       else begin
        vf.typ:= currentcontainer;
