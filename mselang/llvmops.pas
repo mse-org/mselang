@@ -2991,8 +2991,8 @@ end;
 procedure decrefsizestackop();
 begin
  with pc^.par do begin
-//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
-  callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_decrefsize,false,[bcstream.ssaval(ssas1)]);
+//  callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 

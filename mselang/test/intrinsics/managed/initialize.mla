@@ -1,0 +1,21 @@
+program initialize;
+
+type
+ recty = record
+  a,b: int32;
+  s: string8;
+ end;
+
+var
+ a: recty;
+
+begin
+ exitcode:= 1;
+ pointer(a.s):= pointer(123);
+ if pointer(a.s) = pointer(123) then
+  initialize(a);
+  if a.s = '' then
+   exitcode:= 123;
+  end;
+ end;
+end.

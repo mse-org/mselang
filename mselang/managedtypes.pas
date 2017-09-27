@@ -436,6 +436,22 @@ begin
  end;
 end;
 
+function checkvalueparamsysfunc(const paramco: int32;
+                                        out atype: ptypedataty): boolean;
+var
+ ptop: pcontextitemty;
+begin
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  result:= checkparamco(1,paramco) and getvalue(ptop,das_none);
+  if result then begin
+   with ptop^ do begin
+    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
+   end;
+  end;
+ end;
+end;
+
 procedure handleunique(const paramco: integer);
 var
 // ptop: pcontextitemty;
@@ -546,15 +562,117 @@ begin
 end;
 
 procedure handlefinalize(const paramco: integer);
+var
+ typ1: ptypedataty;
 begin
+ if checkaddressparamsysfunc(paramco,typ1) then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20170926A');
+   end;
+  {$endif}
+   if d.dat.datatyp.indirectlevel = 1 then begin
+    case typ1^.h.kind of
+     dk_string,dk_dynarray: begin
+      with additem(oc_finirefsizestackindi)^ do begin
+       par.memop.podataaddress.offset:= 0;
+       par.memop.podataaddress.address:= -pointersize;
+       par.ssas1:= d.dat.fact.ssaindex;
+      end;
+      with additem(oc_pop)^ do begin
+       par.imm.vsize:= pointersize;
+      end;
+     end;
+     dk_record,dk_object,dk_class: begin
+      callmanagesyssub(typ1^.recordmanagehandlers[mo_fini]);
+     end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure handleincref(const paramco: integer);
+var
+ typ1: ptypedataty;
 begin
+ with info,contextstack[s.stacktop] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in datacontexts) then begin
+   internalerror(ie_handler,'2017092/A');
+  end;
+ {$endif}
+  typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+  case typ1^.h.kind of
+   dk_string,dk_dynarray: begin
+    if checkvalueparamsysfunc(paramco,typ1) and
+                  (d.dat.datatyp.indirectlevel = 0) then begin
+     with additem(oc_increfsizestack)^ do begin
+      par.memop.podataaddress.offset:= 0;
+      par.memop.podataaddress.address:= -pointersize;
+      par.ssas1:= d.dat.fact.ssaindex;
+     end;
+     with additem(oc_pop)^ do begin
+      par.imm.vsize:= pointersize;
+     end;
+    end;
+   end;
+   dk_record,dk_object: begin
+    if checkaddressparamsysfunc(paramco,typ1) and
+              (d.dat.datatyp.indirectlevel = 1) then begin
+     callmanagesyssub(typ1^.recordmanagehandlers[mo_incref]);
+    end;
+   end;
+   dk_class: begin
+    if checkvalueparamsysfunc(paramco,typ1) and
+                       (d.dat.datatyp.indirectlevel = 0) then begin
+     callmanagesyssub(typ1^.recordmanagehandlers[mo_incref]);
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure handledecref(const paramco: integer);
+var
+ typ1: ptypedataty;
 begin
+ with info,contextstack[s.stacktop] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in datacontexts) then begin
+   internalerror(ie_handler,'2017092/A');
+  end;
+ {$endif}
+  typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+  case typ1^.h.kind of
+   dk_string,dk_dynarray: begin
+    if checkvalueparamsysfunc(paramco,typ1) and
+                  (d.dat.datatyp.indirectlevel = 0) then begin
+     with additem(oc_decrefsizestack)^ do begin
+      par.memop.podataaddress.offset:= 0;
+      par.memop.podataaddress.address:= -pointersize;
+      par.ssas1:= d.dat.fact.ssaindex;
+     end;
+     with additem(oc_pop)^ do begin
+      par.imm.vsize:= pointersize;
+     end;
+    end;
+   end;
+   dk_record,dk_object: begin
+    if checkaddressparamsysfunc(paramco,typ1) and
+              (d.dat.datatyp.indirectlevel = 1) then begin
+     callmanagesyssub(typ1^.recordmanagehandlers[mo_decref]);
+    end;
+   end;
+   dk_class: begin
+    if checkvalueparamsysfunc(paramco,typ1) and
+                       (d.dat.datatyp.indirectlevel = 0) then begin
+     callmanagesyssub(typ1^.recordmanagehandlers[mo_decref]);
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure writemanagedtypeop(const op: managedopty;

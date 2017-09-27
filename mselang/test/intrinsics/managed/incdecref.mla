@@ -1,0 +1,28 @@
+program incdecref;
+type
+ recty = record
+  a,b: int32;
+  s: string8;
+ end;
+
+var
+ a: recty;
+begin
+ setlength(a.s,4);
+
+ incref(a);
+ incref(a.s);
+ decref(a);
+ decref(a.s);
+
+ finalize(a.s);
+
+ if a.s = '' then
+  setlength(a.s,4);
+  finalize(a);
+  if a.s = '' then
+   exitcode:= 123;
+  end;
+ end;
+
+end.
