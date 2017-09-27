@@ -479,6 +479,16 @@ begin
  end;
 end;
 
+procedure gotonilop();
+var
+ po1: pointer;
+begin
+ if ppointer(cpu.stack-alignsize(sizeof(pointer)))^ = nil then begin
+  stackpop(sizeof(pointer));
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure gotonilindirectop();
 var
  po1: pointer;
@@ -7063,6 +7073,7 @@ const
   gotofalsessa = 0;
   gotofalseoffsssa = 0;
   gototruessa = 0;
+  gotonilssa = 0;
   gotonilindirectssa = 0;
   cmpjmpneimmssa = 0;
   cmpjmpeqimmssa = 0;

@@ -151,6 +151,7 @@ type
   oc_gotofalse,
   oc_gotofalseoffs,
   oc_gototrue,
+  oc_gotonil, //pops address if goto taken
   oc_gotonilindirect, //pops address if goto taken
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
@@ -1192,7 +1193,8 @@ const
   oc_label,
   oc_return,
   oc_returnfunc,oc_progend,
-  oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,oc_gotonilindirect,
+  oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
+  oc_gotonil,oc_gotonilindirect,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
   oc_cmpjmploimm,

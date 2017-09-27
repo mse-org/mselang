@@ -127,6 +127,8 @@
   (ssa: gotofalseoffsssa; proc: @gotofalseoffsop; flags: []), 
 //oc_gototrue
   (ssa: gototruessa; proc: @gototrueop; flags: []), 
+//oc_gotonil
+  (ssa: gotonilssa; proc: @gotonilop; flags: []), 
 //oc_gotonilindirect
   (ssa: gotonilindirectssa; proc: @gotonilindirectop; flags: []), 
 //oc_cmpjmpneimm

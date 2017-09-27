@@ -534,6 +534,40 @@ begin
  end;
 end;
 
+procedure callmanagesyssubifnotnil(const asub: elementoffsetty);
+var
+ sub1: psubdataty;
+ op1: popinfoty;
+ i3: int32;
+begin
+ if asub > 0 then begin
+  with info,contextstack[s.stacktop] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20170926B');
+   end;
+  {$endif}
+   sub1:= ele.eledataabs(asub);
+   i3:= opcount;
+   with addcontrolitem(oc_gotonil)^ do begin
+    par.ssas1:= d.dat.fact.ssaindex;
+   end; //skip call in case of nil instance
+   op1:= callinternalsubpo(sub1^.address,d.dat.fact.ssaindex,s.stacktop);
+   if (sub1^.address = 0) and 
+                 (not modularllvm or 
+                  (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
+                                           //unresolved
+    linkmark(sub1^.calllinks,getsegaddress(seg_op,@op1^.par.callinfo.ad));
+   end;
+   with getoppo(i3)^ do begin
+    par.opaddress.opaddress:= opcount-1;
+   end;
+   addlabel();
+  end;
+ end;
+end;
+
+
 procedure handleinitialize(const paramco: integer);
 var
  typ1: ptypedataty;
@@ -626,8 +660,8 @@ begin
    end;
    dk_class: begin
     if checkvalueparamsysfunc(paramco,typ1) and
-                       (d.dat.datatyp.indirectlevel = 0) then begin
-     callmanagesyssub(typ1^.recordmanagehandlers[mo_incref]);
+                       (d.dat.datatyp.indirectlevel = 1) then begin
+     callmanagesyssubifnotnil(typ1^.infoclass.subattach.incref);
     end;
    end;
   end;
@@ -667,8 +701,8 @@ begin
    end;
    dk_class: begin
     if checkvalueparamsysfunc(paramco,typ1) and
-                       (d.dat.datatyp.indirectlevel = 0) then begin
-     callmanagesyssub(typ1^.recordmanagehandlers[mo_decref]);
+                       (d.dat.datatyp.indirectlevel = 1) then begin
+     callmanagesyssubifnotnil(typ1^.infoclass.subattach.decref);
     end;
    end;
   end;

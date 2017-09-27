@@ -795,6 +795,19 @@ begin
  end;
 end;
 
+procedure gotonilop();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                    bcstream.typeval(pointerintsize),CAST_PTRTOINT);   //1ssa
+  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),
+                             bcstream.constval(ord(pointerintnull)));//1ssa
+  bcstream.emitbrop(bcstream.relval(0),
+             getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex,
+                                                           opaddress.bbindex);
+ end;
+end;
+
 procedure gotonilindirectop();
 begin
  with pc^.par do begin
@@ -4797,6 +4810,7 @@ const
   gotofalsessa = 0;
   gotofalseoffsssa = 0;
   gototruessa = 0;
+  gotonilssa = 2;
   gotonilindirectssa = 3;
   cmpjmpneimmssa = 1;
   cmpjmpeqimmssa = 1;
