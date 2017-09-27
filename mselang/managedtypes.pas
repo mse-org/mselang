@@ -496,7 +496,7 @@ end;
 
 procedure callmanagesyssub(const asub: elementoffsetty);
 var
- sub1: psubdataty;
+ sub1: pinternalsubdataty;
  op1: popinfoty;
 begin
  if asub > 0 then begin
