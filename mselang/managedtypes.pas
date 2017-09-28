@@ -54,7 +54,7 @@ procedure writemanagedtempop(const op: managedopty;
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                     const aaddress: addressvaluety; const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                                     const aref: addressrefty);
+                                                     var aref: addressrefty);
 function writemanagedtempvarop(const op: managedopty;
                  const aitem: listadty; const acontextindex: int32): boolean;
                               //uses tempvarlist, false if none
@@ -710,8 +710,11 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty;
-                const atype: ptypedataty; const aref: addressrefty);
+                const atype: ptypedataty; var aref: addressrefty);
 begin
+ if aref.kind in [ark_stack,ark_stackref,ark_local,ark_tempvar] then begin
+  aref.typ:= atype;
+ end;
  atype^.h.manageproc(op,aref);
 end;
 

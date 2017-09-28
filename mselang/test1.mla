@@ -1,56 +1,42 @@
-program operator5;
-
+program incdecref;
 type
- objty = object[nozeroinit]
-  fa,fb: int32;
-{$internaldebug on}
-  method store(var dest: objty) [operator=':='];
-//  method ini() [ini];
- end;
-
-method objty.store(var dest: objty);
-begin
-// dest:= self^;
-
- dest.fa:= fa;
- dest.fb:= fb;
-
-{
- writeln('store ',pointer(self),' ',@dest);
- writeln(' self:',fa);
- writeln(' dest:',dest.fa);
-}
-// fb:= a+fa;
-end;
-{
-method objty.ini();
-begin
- fa:= 100;
-end;
-}
-var
- a,b: objty;
-(*
-type
- recty = record
+ ttest = class
   a,b: int32;
+  s: string8;
+  constructor create();
+  destructor destroy();
+  method incref() [incref];
+  method decref() [decref];
  end;
-var
- r1: recty;
 
-{$internaldebug on}
-procedure test(var a: recty;b:int32);
+constructor ttest.create();
 begin
- a.a:= 11;
- a.b:= 22;
 end;
-*)
+
+destructor ttest.destroy();
 begin
-// test(r1,123);
-// writeln(r1.a,' ',r1.b);
-// writeln('a ',@a,' ',@b);
-// a.fa:= 11;
-// b.fa:= 22;
- a:= b;
-// writeln(a.fa,' ',b.fa);
+end;
+
+method ttest.incref();
+begin
+ writeln('incref');
+end;
+
+method ttest.decref();
+begin
+ writeln('decref');
+end;
+
+var
+ a: ttest;
+begin
+{$internaldebug on}
+ a:= ttest.create();
+ incref(a);
+ decref(a);
+{
+ a:= ttest.create();
+ a:= a;
+ a.destroy();
+}
 end.

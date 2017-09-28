@@ -223,10 +223,10 @@ type
   isclass: boolean;
   case kind: addressrefkindty of
    ark_vardata,ark_vardatanoaggregate: (
-    vardata: pointer;     //pvardataty
+    vardata: pointer;     //pvardataty //todo: use real type
    );         
    ark_contextdata: (
-    contextdata: pointer; //pcontextdataty
+    contextdata: pointer; //pcontextdataty //todo: use real type
    ); 
    ark_stack,ark_stackref,ark_local,ark_tempvar: (
     typ: ptypedataty;
@@ -238,14 +238,6 @@ type
      tempaddress: tempaddressty;
     );
    );
-{
-  address: dataoffsty;
-  flags: addressflagsty;
-  offset: dataoffsty;
-  indirectlevel: int32;
-  case base: addressbasety of
-   ab_segment: (segment: segmentty);
-}
  end;
 
  managedtypeprocty = procedure(const op: managedopty;{ const atype: ptypedataty;}

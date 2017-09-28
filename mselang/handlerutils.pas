@@ -1779,20 +1779,40 @@ begin
   end;
   ark_contextdata: begin
    with pcontextdataty(aref.contextdata)^ do begin
-    if kind = ck_ref then begin
-     pushad(dat.ref.c.address);
-     if not aref.isclass and (dat.datatyp.indirectlevel = 1) and
-        (ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.h.kind in
-                                             [dk_class,dk_object]) then begin
-      i1:= op1^.par.ssad;
-      op1:= insertitem(oc_indirectpo,stackoffs,-1);
-      with op1^ do begin
-       par.ssas1:= i1;
+    case kind of
+     ck_ref: begin
+      pushad(dat.ref.c.address);
+      if not aref.isclass and (dat.datatyp.indirectlevel = 1) and
+         (ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.h.kind in
+                                              [dk_class,dk_object]) then begin
+       i1:= op1^.par.ssad;
+       op1:= insertitem(oc_indirectpo,stackoffs,-1);
+       with op1^ do begin
+        par.ssas1:= i1;
+       end;
       end;
      end;
-    end
-    else begin
-     notimplementederror('');
+     ck_fact,ck_subres: begin
+      if (co_mlaruntime in info.o.compileoptions) then begin
+       with insertitem(oc_pushstackaddr,stackoffs,-1)^ do begin
+        par.memop.tempdataaddress.offset:= 0;
+        if dat.datatyp.indirectlevel > 0 then begin
+         par.memop.tempdataaddress.a.address:= -pointersize;
+        end
+        else begin
+         par.memop.tempdataaddress.a.address:= 
+                  -alignsize(ptypedataty(
+                         ele.eledataabs(dat.datatyp.typedata))^.h.bytesize);
+        end;
+       end;
+      end
+      else begin
+       notimplementederror('');
+      end;
+     end;
+     else begin
+      notimplementederror('');
+     end;
     end;
    end;
   end;

@@ -3473,10 +3473,10 @@ var
   i1: int32;
  begin
 //  ad1.contextindex:= getstackindex(dest);
+  ad1.offset:= 0;
   if indi then begin
    ad1.kind:= ark_stackindi;
    ad1.address:= ad1.address-pointersize;
-   ad1.offset:= 0;
   end
   else begin
    ad1.kind:= ark_contextdata;
@@ -3778,6 +3778,7 @@ begin
      ssa1:= source^.d.dat.fact.ssaindex; //source
 
      if needsmanage then begin
+     {
       ad1.kind:= ark_stack;
       if datasi1 = das_pointer then begin
        ad1.address:= -pointersize;
@@ -3787,6 +3788,10 @@ begin
       end;
       ad1.offset:= 0;
       ad1.ssaindex:= ssa1;
+//      ad1.typ:= destvar.typ; //done in writemanagedtypeop
+      }
+      ad1.kind:= ark_contextdata;
+      ad1.contextdata:= @source^.d;
       if needsincref then begin
        writemanagedtypeop(mo_incref,destvar.typ,ad1);
       end;
