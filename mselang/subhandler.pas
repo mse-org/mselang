@@ -2172,14 +2172,14 @@ begin
     end;
    end;
    if (sf1_incref in subflags1) and 
-                 checksysclassmethod('incref') then begin
+                 checksysobjectmethod('incref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.incref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
    if (sf1_decref in subflags1) and 
-                 checksysclassmethod('decref') then begin
+                 checksysobjectmethod('decref') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.decref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];

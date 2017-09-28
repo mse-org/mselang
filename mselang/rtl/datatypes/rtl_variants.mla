@@ -54,6 +54,9 @@ const
  VT_ARRAY = $2000;
  VT_BYREF = $4000;
  numvariantmax = VT_UI8;
+ vt_string8 = $100; //fpc vastring
+ vt_string16 = $102; //fpc vaustring
+ vt_string32 = $103;
 
 type
  varianttypety = card16;
@@ -72,6 +75,7 @@ type
     (vcard64: card64); //VT_UI8
     (vflo32: flo32);   //VT_R4
     (vflo64: flo64);   //VT_R8
+    (vstring: pointer);//vt_string8, vt_string16, vt_string32
    );
    (vbytes: array[0..13] of card8);
 
@@ -91,6 +95,9 @@ type
    method tovariant(const avalue: card64) [operator='()'];
    method tovariant(const avalue: flo32) [operator='()'];
    method tovariant(const avalue: flo64) [operator='()'];
+   method tovariant(const avalue: string8) [operator='()'];
+   method tovariant(const avalue: string16) [operator='()'];
+   method tovariant(const avalue: string32) [operator='()'];
    method tovalue(): int8 [operator='()'];
    method tovalue(): int16 [operator='()'];
    method tovalue(): int32 [operator='()'];
@@ -101,6 +108,9 @@ type
    method tovalue(): card64 [operator='()'];
    method tovalue(): flo32 [operator='()'];
    method tovalue(): flo64 [operator='()'];
+   method tovalue(): string8 [operator='()'];
+   method tovalue(): string16 [operator='()'];
+   method tovalue(): string32 [operator='()'];
    method neg() [operator='-'];
    method add(const b: variantty) [operator='+'];
    method sub(const b: variantty) [operator='-'];
@@ -190,6 +200,16 @@ end;
 
 method variantty.fini();
 begin
+ case vtype of
+  vt_string8:
+   decref(string8(vstring));
+  vt_string16:
+   decref(string16(vstring));
+  vt_string32:
+   decref(string32(vstring));
+ end;
+ vtype:= VT_EMPTY;
+ writeln('fini');
  //todo
 end;
 
@@ -261,6 +281,27 @@ begin
  fini();
  vtype:= VT_R8;
  vflo64:= avalue;
+end;
+
+method variantty.tovariant(const avalue: string8);
+begin
+ fini();
+ vtype:= vt_string8;
+ vstring:= pointer(avalue);
+end;
+
+method variantty.tovariant(const avalue: string16);
+begin
+ fini();
+ vtype:= vt_string16;
+ vstring:= pointer(avalue);
+end;
+
+method variantty.tovariant(const avalue: string32);
+begin
+ fini();
+ vtype:= vt_string32;
+ vstring:= pointer(avalue);
 end;
 
 method variantty.tovalue(): int8;
@@ -460,6 +501,48 @@ begin
    result:= vflo64;
   else
    tovalueerror(VT_R8);
+ end;
+end;
+
+method variantty.tovalue(): string8;
+begin
+ case vtype of
+  vt_string8:
+   result:= string8(vstring);
+  vt_string16:
+   result:= string16(vstring);
+  vt_string32:
+   result:= string32(vstring);
+  else
+   tovalueerror(vt_string8);
+ end;
+end;
+
+method variantty.tovalue(): string16;
+begin
+ case vtype of
+  vt_string8:
+   result:= string8(vstring);
+  vt_string16:
+   result:= string16(vstring);
+  vt_string32:
+   result:= string32(vstring);
+  else
+   tovalueerror(vt_string8);
+ end;
+end;
+
+method variantty.tovalue(): string32;
+begin
+ case vtype of
+  vt_string8:
+   result:= string8(vstring);
+  vt_string16:
+   result:= string16(vstring);
+  vt_string32:
+   result:= string32(vstring);
+  else
+   tovalueerror(vt_string8);
  end;
 end;
 

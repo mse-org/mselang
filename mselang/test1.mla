@@ -1,42 +1,32 @@
-program incdecref;
+program assignop2;
+
 type
- ttest = class
-  a,b: int32;
-  s: string8;
-  constructor create();
-  destructor destroy();
-  method incref() [incref];
-  method decref() [decref];
+ objty = object[nozeroinit]
+  fa,fb: int32;
+  method store(var dest: objty) [operator=':='];
  end;
 
-constructor ttest.create();
+method objty.store(var dest: objty);
 begin
-end;
-
-destructor ttest.destroy();
-begin
-end;
-
-method ttest.incref();
-begin
- writeln('incref');
-end;
-
-method ttest.decref();
-begin
- writeln('decref');
+ dest.fa:= fa;
+ dest.fb:= fb;
 end;
 
 var
- a: ttest;
+ a,b: objty;
+
+procedure test(): objty;
 begin
-{$internaldebug on}
- a:= ttest.create();
- incref(a);
- decref(a);
-{
- a:= ttest.create();
- a:= a;
- a.destroy();
-}
+ result:= b;
+end;
+
+begin
+
+ a.fa:= 11;
+ b.fa:= 22;
+ a.fb:= 1;
+ b.fb:= 2;
+ a:= test();
+ exitcode:= 123 + a.fa + a.fb + b.fa + b.fb - 2*(22+2);
+
 end.
