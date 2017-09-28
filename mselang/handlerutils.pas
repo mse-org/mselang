@@ -1769,6 +1769,8 @@ var
 
 var
  i1: int32;
+ typ1: ptypedataty;
+ 
 begin
  stackoffs:= aref.contextindex-info.s.stackindex;
  case aref.kind of
@@ -1793,21 +1795,19 @@ begin
       end;
      end;
      ck_fact,ck_subres: begin
-      if (co_mlaruntime in info.o.compileoptions) then begin
-       with insertitem(oc_pushstackaddr,stackoffs,-1)^ do begin
-        par.memop.tempdataaddress.offset:= 0;
-        if dat.datatyp.indirectlevel > 0 then begin
-         par.memop.tempdataaddress.a.address:= -pointersize;
-        end
-        else begin
-         par.memop.tempdataaddress.a.address:= 
-                  -alignsize(ptypedataty(
-                         ele.eledataabs(dat.datatyp.typedata))^.h.bytesize);
-        end;
+      typ1:= ele.eledataabs(dat.datatyp.typedata);
+      i1:= dat.fact.ssaindex;
+      op1:= insertitem(oc_pushstackaddr,stackoffs,-1);
+      with op1^ do begin
+       par.memop.tempdataaddress.offset:= 0;
+       if dat.datatyp.indirectlevel > 0 then begin
+        par.memop.tempdataaddress.a.address:= -pointersize;
+       end
+       else begin
+        par.memop.tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
        end;
-      end
-      else begin
-       notimplementederror('');
+       par.ssas1:= i1;
+       par.memop.t:= getopdatatype(typ1,dat.datatyp.indirectlevel);
       end;
      end;
      else begin

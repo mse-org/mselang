@@ -3792,6 +3792,7 @@ begin
       }
       ad1.kind:= ark_contextdata;
       ad1.contextdata:= @source^.d;
+      ad1.offset:= 0;
       if needsincref then begin
        writemanagedtypeop(mo_incref,destvar.typ,ad1);
       end;

@@ -711,9 +711,19 @@ end;
 
 procedure writemanagedtypeop(const op: managedopty;
                 const atype: ptypedataty; var aref: addressrefty);
+                //todo: cleanup addressref setup
 begin
  if aref.kind in [ark_stack,ark_stackref,ark_local,ark_tempvar] then begin
   aref.typ:= atype;
+ end
+ else begin
+  if aref.kind = ark_contextdata then begin
+   with pcontextdataty(aref.contextdata)^ do begin
+    if kind in factcontexts then begin
+     aref.ssaindex:= dat.fact.ssaindex;
+    end;
+   end;
+  end;
  end;
  atype^.h.manageproc(op,aref);
 end;
