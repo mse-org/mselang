@@ -1852,11 +1852,17 @@ var
                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
           d.dat.prop.propele:= ele.eledatarel(po4);
          end;
+         else begin
+          errormessage(err_illegalexpression,[],adatacontext); 
+           //??? triggered by "objtyp.property:= value;"
+         end;
+         (*
         {$ifdef mse_checkinternalerror}
          else begin
           internalerror(ie_value,'20151207B');
          end;
         {$endif}
+         *)
         end;
        end;       
       end;

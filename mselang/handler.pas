@@ -2826,6 +2826,7 @@ var
 var
  dk1:stackdatakindty;
  int1: integer;
+ op1: popinfoty;
 label
  errlab;
 begin
@@ -2994,7 +2995,11 @@ errlab:
     s.stackindex:= getpreviousnospace(s.stacktop-1);
    end
    else begin
-    with updateop(cmpops[aop])^.par do begin
+    op1:= updateop(cmpops[aop]);
+    if op1 = nil then begin
+     exit; //error state
+    end;
+    with op1^.par do begin
      stackop.compkind:= aop;
     end;
     with info,poa^ do begin

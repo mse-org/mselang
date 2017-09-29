@@ -1,32 +1,57 @@
-program assignop2;
-
+program incdecref;
 type
+{$internaldebug on}
  objty = object[nozeroinit]
-  fa,fb: int32;
-  method store(var dest: objty) [operator=':='];
+  property s: string8 read gets write sets;
+  private
+   fstring: pointer;
+  protected
+   method gets(): string8;
+   method sets(const avalue: string8);
+   method ini() [ini];
+   method fini() [fini];
+   method incref() [incref];
+   method decref() [decref];
  end;
 
-method objty.store(var dest: objty);
+method objty.gets(): string8;
 begin
- dest.fa:= fa;
- dest.fb:= fb;
+ result:= string8(fstring);
+end;
+
+method objty.sets(const avalue: string8);
+begin
+ string8(fstring):= avalue;
+end;
+var s1: string8;
+method objty.ini();
+begin
+ initialize(string8(fstring));
+s1:= s;
+// writeln('ini ',s);
+end;
+
+method objty.fini();
+begin
+ finalize(string8(fstring));
+ writeln('fini ',s);
+end;
+
+method objty.incref();
+begin
+ incref(string8(fstring);
+ writeln('incref ',s);
+end;
+
+method objty.decref();
+begin
+ decref(string8(fstring));
+ writeln('decref ',s);
 end;
 
 var
- a,b: objty;
-
-procedure test(): objty;
+ obj1,obj2: objty;
 begin
- result:= b;
-end;
-
-begin
-
- a.fa:= 11;
- b.fa:= 22;
- a.fb:= 1;
- b.fb:= 2;
- a:= test();
- exitcode:= 123 + a.fa + a.fb + b.fa + b.fb - 2*(22+2);
-
+{$internaldebug on}
+ obj1:= obj2;
 end.
