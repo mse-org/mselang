@@ -3384,18 +3384,25 @@ begin
   if d.kind <> ck_prop then begin
    internalerror(ie_handler,'20160202A');
   end;
-  if ptypedataty(ele.eledataabs(
-          ele.eleinfoabs(d.dat.prop.propele)^.header.parent))^.h.kind <> 
-                                                       dk_class then begin
+  if not (ptypedataty(ele.eledataabs(
+          ele.eleinfoabs(d.dat.prop.propele)^.header.parent))^.h.kind in
+                                             [dk_class,dk_object]) then begin
    internalerror(ie_handler,'20160202A');
   end;
  {$endif} 
   d.kind:= ck_ref;
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.prop.propele)^.header.parent;
-  d.dat.datatyp.indirectlevel:= 1;
-  inc(d.dat.indirection);
-  getvalue(acontext,das_none);
+  if ptypedataty(ele.eleinfoabs(d.dat.datatyp.typedata))^.h.kind = 
+                                                        dk_class then begin
+   d.dat.datatyp.indirectlevel:= 1;
+   inc(d.dat.indirection);
+   getvalue(acontext,das_none);
+  end
+  else begin //dk_object
+   d.dat.datatyp.indirectlevel:= 0;
+   getaddress(acontext,true);
+  end;
  end;
 end;
 
