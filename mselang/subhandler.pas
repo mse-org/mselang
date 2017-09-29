@@ -2152,7 +2152,7 @@ begin
     end;
    end;
    if (sf1_beforedestruct in subflags1) and 
-                 checksysobjectmethod('beforedestructstruct') then begin
+                 checksysobjectmethod('beforedestruct') then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
     end;

@@ -797,7 +797,7 @@ begin
        end;
       end;
      end;
-     {          //for classes only
+//     {          //for classes only
      mo_incref: begin
       with typ1^.infoclass.subattach do begin
        if incref <> 0 then begin
@@ -816,7 +816,7 @@ begin
        end;
       end;
      end;
-     }
+//     }
     end;
     if b1 then begin //not handled aready
      handlefields(op1,atyp,i1);
