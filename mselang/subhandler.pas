@@ -2807,6 +2807,14 @@ var
      end;
      ck_fact,ck_subres: begin
       with context1^ do begin
+       if (faf_varsubres in d.dat.fact.flags) and 
+                   (co_llvm in o.compileoptions) then begin
+        with insertitem(oc_pushtempaddr,stackoffset,-1)^ do begin
+         par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
+        end;
+        exclude(d.dat.fact.flags,faf_varsubres);
+        dec(d.dat.indirection);
+       end;
        if d.dat.indirection = 0 then begin
         if not (dsf_objassign in aflags) then begin
          storetempgetaddress();
