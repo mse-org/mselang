@@ -3093,6 +3093,7 @@ begin                    //todo: optimize
       par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
       d.dat.fact.ssaindex:= par.ssad;
      end;
+     exclude(d.dat.fact.flags,faf_varsubres);
     end;
     if d.dat.indirection < 0 then begin
      for i1:= d.dat.indirection+2 to 0 do begin

@@ -2274,6 +2274,13 @@ begin
            d.dat.ref.c.varele:= 0;
           end;
           ck_fact,ck_subres: begin
+           if (faf_varsubres in d.dat.fact.flags) and 
+                                      (co_llvm in o.compileoptions) then begin
+            with insertitem(oc_pushtempaddr,-1,-1)^ do begin
+             par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
+            end;
+            exclude(d.dat.fact.flags,faf_varsubres);
+           end;
            if offset <> 0 then begin
             ssabefore:= d.dat.fact.ssaindex;
             with insertitem(oc_offsetpoimm,-1,-1)^ do begin
