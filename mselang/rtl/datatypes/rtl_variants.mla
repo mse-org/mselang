@@ -209,7 +209,7 @@ begin
    decref(string32(vstring));
  end;
  vtype:= VT_EMPTY;
- writeln('fini');
+// writeln('fini');
  //todo
 end;
 
