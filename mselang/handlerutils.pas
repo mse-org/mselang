@@ -2751,6 +2751,9 @@ begin
   termgroupstart:= 0;
   indirection:= 0;
   ref.castchain:= 0;
+  if akind in factcontexts then begin
+   fact.flags:= [];
+  end;
  end;
 end;
 
@@ -3089,6 +3092,11 @@ begin                    //todo: optimize
    ck_subres,ck_fact: begin
     if (co_llvm in o.compileoptions) and 
                               (faf_varsubres in d.dat.fact.flags) then begin
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_subres then begin
+      internalerror(ie_handler,'20171009A');
+     end;
+    {$endif}
      with insertitem(oc_pushtemp,stackoffset,-1)^ do begin
       par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
       d.dat.fact.ssaindex:= par.ssad;
