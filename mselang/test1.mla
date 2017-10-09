@@ -2,56 +2,69 @@ program incdecref;
 type
 {$internaldebug on}
  objty = object[nozeroinit]
-  property s: string8 read gets write sets;
   private
-   fstring: pointer;
+   f0: int32;
+   fi: int32;
+   (v1: int32; v2: int32);
+   method getj(): int32;
+   method setj(const avalue: int32);
   protected
-   method gets(): string8;
-   method sets(const avalue: string8);
-   method ini() [ini];
-   method fini() [fini];
-   method incref() [incref];
-   method decref() [decref];
+   property i: int32 read fi write fi;
+   property j: int32 read getj write setj;
+   method test();
  end;
 
-method objty.gets(): string8;
+var
+ i1: int32;
+
+method objty.getj(): int32;
 begin
- result:= string8(fstring);
+// result:= fi;
 end;
 
-method objty.sets(const avalue: string8);
+method objty.setj(const avalue: int32);
 begin
- string8(fstring):= avalue;
-end;
-var s1: string8;
-method objty.ini();
-begin
- initialize(string8(fstring));
-s1:= s;
-// writeln('ini ',s);
+// fi:= avalue;
 end;
 
-method objty.fini();
+method objty.test();
 begin
- finalize(string8(fstring));
- writeln('fini ',s);
-end;
-
-method objty.incref();
-begin
- incref(string8(fstring);
- writeln('incref ',s);
-end;
-
-method objty.decref();
-begin
- decref(string8(fstring));
- writeln('decref ',s);
+// i:= 12;
+// i1:= i;
 end;
 
 var
  obj1,obj2: objty;
+
+procedure test(): objty;
 begin
+ result:= obj1;
+end;
+{
+procedure test1(o: objty);
+begin
+ exitcode:= o.fi;
+end;
+}
+begin
+ obj1.fi:= 123;
 {$internaldebug on}
- obj1:= obj2;
+// test1(test());
+// obj2:= test();
+//exitcode:= obj2.fi;
+ exitcode:= test().fi;
+{
+ obj1.test();
+ exitcode:= (obj1.i + i1);
+ if (exitcode = 12*2) then
+  obj1.i:= 22;
+  if obj1.i + obj1.fi = 22*2 then
+   obj1.j:= 33;
+   if obj1.j + obj1.fi = 33*2 then
+    exitcode:= 123;
+   end;
+  end;
+ end;
+ exitcode:= test().fi;
+}
 end.

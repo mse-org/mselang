@@ -1279,6 +1279,7 @@ begin
         end;
        end;
        dest1^.d.kind:= ck_subres;
+       dest1^.d.dat.fact.flags:= [];
        dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
       end;
      end;
