@@ -271,8 +271,9 @@ type
 
  varsubresinfoty = record
   startopoffset: int32;
-  endopoffset: int32;
+//  endopoffset: int32;
   tempvar: listadty;
+  ssaindex: int32; //tempvarid
   varparam: dataoffsty;
  end;
   

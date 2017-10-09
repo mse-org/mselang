@@ -3087,6 +3087,13 @@ begin                    //todo: optimize
     pushinsertconst(stackoffset,-1,adatasize);
    end;
    ck_subres,ck_fact: begin
+    if (co_llvm in o.compileoptions) and 
+                              (faf_varsubres in d.dat.fact.flags) then begin
+     with insertitem(oc_pushtemp,stackoffset,-1)^ do begin
+      par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
+      d.dat.fact.ssaindex:= par.ssad;
+     end;
+    end;
     if d.dat.indirection < 0 then begin
      for i1:= d.dat.indirection+2 to 0 do begin
       i2:= d.dat.fact.ssaindex;

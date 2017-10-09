@@ -2883,7 +2883,9 @@ var
       end;
      end;
      ck_fact,ck_subres: begin
-      if context1^.d.dat.indirection < 0 then begin //pending dereference
+      if (context1^.d.dat.indirection < 0) or //pending dereference
+         (faf_varsubres in context1^.d.dat.fact.flags) and
+                                    (co_llvm in o.compileoptions)  then begin 
        getvalue(context1,si1);                       
       end;
       if conversioncost1 > 0 then begin
@@ -3348,6 +3350,7 @@ begin
       d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
       varresulttemp:= alloctempvar(asub^.resulttype.typeele,
                                      d.dat.fact.varsubres.tempvar).tempaddress;
+      d.dat.fact.varsubres.ssaindex:= varresulttemp.ssaindex;
       if co_llvm in o.compileoptions then begin
        with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
         par.tempaddr.a:= varresulttemp;
@@ -3775,6 +3778,7 @@ begin
      end;
     end
     else begin
+    {
      if varresulttempaddr >= 0 then begin
       with insertitem(oc_pushtemp,topoffset,-1)^ do begin
        par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
@@ -3784,6 +3788,7 @@ begin
                    contextstack[topoffset+s.stackindex].opmark.address +
                                   getcontextopcount(topoffset) - opmark.address;
      end;
+    }
     end;
     if (sf_constructor in asub^.flags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);

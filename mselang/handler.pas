@@ -3433,6 +3433,7 @@ begin
  end;
 {$endif}
  setnopop(p1^);
+(*
  p1:= getoppo(source^.d.dat.fact.varsubres.endopoffset + 
                                             source^.opmark.address-1);
 {$ifdef mse_checkinternalerror}
@@ -3441,6 +3442,7 @@ begin
  end;
 {$endif}
  setnopop(p1^);
+*)
  if not (dest^.d.kind in factcontexts) then begin
   if not getaddress(dest,true) then begin
    exit;

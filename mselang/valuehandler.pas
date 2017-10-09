@@ -2273,7 +2273,7 @@ begin
            d.dat.ref.offset:= offset;
            d.dat.ref.c.varele:= 0;
           end;
-          ck_fact: begin
+          ck_fact,ck_subres: begin
            if offset <> 0 then begin
             ssabefore:= d.dat.fact.ssaindex;
             with insertitem(oc_offsetpoimm,-1,-1)^ do begin
