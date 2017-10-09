@@ -2362,10 +2362,10 @@ begin
      end;
      if (stf_params in s.currentstatementflags) and
                           (pocontext1^.d.kind in datacontexts) then begin
-      if getvalue(pocontext1,das_none) then begin
-       po3:= ele.eledataabs(pocontext1^.d.dat.datatyp.typedata);
-       if (pocontext1^.d.dat.datatyp.indirectlevel = 0) and 
+      po3:= ele.eledataabs(pocontext1^.d.dat.datatyp.typedata);
+      if (pocontext1^.d.dat.datatyp.indirectlevel = 0) and 
                              (po3^.h.kind in [dk_sub,dk_method]) then begin
+       if getvalue(pocontext1,das_none) then begin
         include(subflags,dsf_indirect);
         if po3^.h.kind = dk_method then begin
          include(subflags,dsf_instanceonstack);
