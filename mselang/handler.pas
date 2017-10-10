@@ -3614,7 +3614,8 @@ begin
      
      if (source^.d.kind = ck_ref) and 
             (source^.d.dat.ref.castchain <> 0) then begin
-      if not checkdatatypeconversion(source) then begin
+      if not checkdatatypeconversion(source) then begin 
+                                          //faf_varsubres must be valid
        goto endlab;
       end;
      end;
