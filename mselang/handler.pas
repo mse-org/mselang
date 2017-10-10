@@ -3623,7 +3623,8 @@ begin
       goto endlab;
      end;
 
-     if (destvar.typ^.h.kind = dk_object) and (indilev1 = 0) then begin
+     if (indilev1 = 0) and ((destvar.typ^.h.kind = dk_object) or
+                                   (sourcetyp^.h.kind = dk_object)) then begin
                         //todo: allow compatible descendants
 
       if not tryconvert(source,destvar.typ,indilev1,[]) then begin
@@ -3686,6 +3687,12 @@ begin
        goto endlab;
       end;
       }
+     end;
+     if (co_llvm in o.compileoptions) and (source^.d.kind = ck_subres) and
+              (faf_varsubres in source^.d.dat.fact.flags) and
+                       canvarresult(source,dest,indilev1) then begin
+      directvarresult(source,dest); //remove temp variable
+      goto endlab;
      end;
      if destvar.typ^.h.kind = dk_class then begin
       needsmanage:= (indilev1 = 1) and (tf_managed in destvar.typ^.h.flags);
