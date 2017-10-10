@@ -1,0 +1,21 @@
+program objectfieldresult;
+type
+ objty = object [nozeroinit]
+  a,b,c: int32;
+ end;
+
+var
+ o1: objty;
+ o2: objty;
+
+procedure test(): objty;
+begin
+ result:= o1;
+end;
+
+begin
+ o1.c:= 100;
+ o1.b:= 23;
+ o2:= test();
+ exitcode:= test().c+o2.b;
+end.
