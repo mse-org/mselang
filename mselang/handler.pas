@@ -3611,7 +3611,13 @@ begin
      destvar.address.indirectlevel:= d.dat.datatyp.indirectlevel;
      indilev1:= destvar.address.indirectlevel;
      sourcetyp:= ele.eledataabs(source^.d.dat.datatyp.typedata);
-
+     
+     if (source^.d.kind = ck_ref) and 
+            (source^.d.dat.ref.castchain <> 0) then begin
+      if not checkdatatypeconversion(source) then begin
+       goto endlab;
+      end;
+     end;
      if af_paramindirect in destvar.address.flags then begin
       dec(indilev1);
      end;
