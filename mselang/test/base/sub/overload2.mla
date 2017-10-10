@@ -1,38 +1,38 @@
 program overload2;
 
 var
- testvar: int32;
+ testv: int32;
  flo1: flo64;
  str1: string8;
 {
 procedure testpro(a: int32);
 begin
  writeln(a);
- testvar:= 1;
+ testv:= 1;
 end;
 }
 {
 procedure testpro(a: int8);
 begin
  writeln(a);
- testvar:= 2;
+ testv:= 2;
 end;
 
 procedure testpro(a: card32);
 begin
  writeln(a);
- testvar:= 3;
+ testv:= 3;
 end;
 }
 procedure testpro(a: flo64);
 begin
- testvar:= 4;
+ testv:= 4;
  flo1:= a;
 end;
 
 procedure testpro(a: string8);
 begin
- testvar:= 5;
+ testv:= 5;
  str1:= a;
 end;
 
@@ -43,10 +43,10 @@ var
 begin
  i1:= 123;
  testpro(i1);
- if (testvar = 4) and (flo1 = 123) then
+ if (testv = 4) and (flo1 = 123) then
   s1:= 'abc';
   testpro(s1);
-  if (testvar = 5) then
+  if (testv = 5) then
    exitcode:= 123;
    writeln(str1);
   end;

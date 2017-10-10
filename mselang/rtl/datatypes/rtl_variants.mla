@@ -200,17 +200,17 @@ end;
 
 method variantty.fini();
 begin
- case vtype of
-  vt_string8:
-   decref(string8(vstring));
-  vt_string16:
-   decref(string16(vstring));
-  vt_string32:
-   decref(string32(vstring));
+ if vtype <> VT_EMPTY then
+  case vtype of
+   vt_string8:
+    decref(string8(vstring));
+   vt_string16:
+    decref(string16(vstring));
+   vt_string32:
+    decref(string32(vstring));
+  end;
+  vtype:= VT_EMPTY;
  end;
- vtype:= VT_EMPTY;
-// writeln('fini');
- //todo
 end;
 
 method variantty.tovariant(const avalue: int8);
@@ -287,6 +287,7 @@ method variantty.tovariant(const avalue: string8);
 begin
  fini();
  vtype:= vt_string8;
+ incref(avalue);
  vstring:= pointer(avalue);
 end;
 
@@ -294,6 +295,7 @@ method variantty.tovariant(const avalue: string16);
 begin
  fini();
  vtype:= vt_string16;
+ incref(avalue);
  vstring:= pointer(avalue);
 end;
 
@@ -301,6 +303,7 @@ method variantty.tovariant(const avalue: string32);
 begin
  fini();
  vtype:= vt_string32;
+ incref(avalue);
  vstring:= pointer(avalue);
 end;
 
@@ -838,5 +841,5 @@ begin
    operandtypeerror(b,'-');
  end;
 end;
-{$internaldebug on}
+
 end.

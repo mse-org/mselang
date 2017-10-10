@@ -1000,6 +1000,7 @@ begin
    end;
   end;
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 

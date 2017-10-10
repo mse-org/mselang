@@ -418,7 +418,7 @@ begin
        end;
       end;
      end;
-     ck_fact: begin
+     ck_fact,ck_subres: begin
       af1:= [];
       if dat.indirection = -1 then begin
        ab1:= ab_stackref;
