@@ -668,7 +668,13 @@ begin
        end;
        if not result then begin
         ele.elementparent:= info.systemelement;
-        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+        if idents.d[0] = tk_system then begin
+         result:= ele.findupward(idents,akinds,visibility,eleres,
+                                                          firstnotfound,1);
+        end
+        else begin
+         result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+        end;
        end;
        ele.elementparent:= ele2;
        if result then begin

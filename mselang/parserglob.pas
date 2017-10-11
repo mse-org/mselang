@@ -355,6 +355,7 @@ type
   error: boolean;
   flags: subflagsty;
   flags1: subflags1ty;
+  libname,funcname: identty;
 //  scopemetabefore: metavaluety;
  end;
  psubinfoty = ^subinfoty;

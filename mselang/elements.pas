@@ -210,7 +210,8 @@ type
                       const akinds: elementkindsty;
                       const avislevel: visikindsty;
                       out element: elementoffsetty;
-                      out firstnotfound: integer): boolean; overload;
+                      out firstnotfound: integer;
+                      const start: int32 = 0): boolean; overload;
                   //searches in current scope and above, -1 if not found
                   //firstnotfound = index of first not matching in aident
    function findreverse(const alen: int32; const aids: pidentty;
@@ -957,7 +958,7 @@ end;
 function telementhashdatalist.findupward(const aidents: identvecty;
               const akinds: elementkindsty; const avislevel: visikindsty;
               out element: elementoffsetty;
-              out firstnotfound: integer): boolean;
+              out firstnotfound: integer; const start: int32 = 0): boolean;
 var
  parentbefore: elementoffsetty;
  pathbefore: identty;
@@ -969,15 +970,15 @@ begin //todo: optimize
  result:= false;
  element:= -1;
  firstnotfound:= 0;
- if aidents.high >= 0 then begin
+ if aidents.high >= start then begin
   k1:= [];
   if aidents.high = 0 then begin
    k1:= akinds;
   end;
-  result:= findupward(aidents.d[0],k1,avislevel,element);
+  result:= findupward(aidents.d[start],k1,avislevel,element);
   if result then begin
-   firstnotfound:= 1;
-   if aidents.high > 0 then begin
+   firstnotfound:= start+1;
+   if aidents.high > start then begin
     parentbefore:= felementparent;
     pathbefore:= felementpath;
     po1:= pointer(felementdata)+element;

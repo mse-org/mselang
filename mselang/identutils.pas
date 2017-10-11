@@ -54,6 +54,7 @@ function getident(const astart,astop: pchar): identty;
 function getident(const aname: lstringty): identty;
 function getident(const aname: pchar; const alen: integer): identty;
 function getident(const aname: string): identty;
+function getident(const aname: stringvaluety): identty;
 function getident(const anum: int32): identty; //0..255
 
 function getidentname(const aident: identty; out name: identnamety): boolean;
@@ -187,6 +188,11 @@ begin
  lstr1.po:= pointer(aname);
  lstr1.len:= length(aname);
  result:= identlist.getident(lstr1)^.data.data;
+end;
+
+function getident(const aname: stringvaluety): identty;
+begin
+ result:= getident(getstringconst(aname));
 end;
 
 var

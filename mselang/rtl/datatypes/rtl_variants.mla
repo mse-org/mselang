@@ -85,6 +85,8 @@ type
    method tovalueerror(const atype: card16);
    method ini() [ini];
    method fini() [fini];
+   method incref() [incref];
+   method decref() [decref];
    method tovariant(const avalue: int8) [operator='()'];
    method tovariant(const avalue: int16) [operator='()'];
    method tovariant(const avalue: int32) [operator='()'];
@@ -201,15 +203,32 @@ end;
 method variantty.fini();
 begin
  if vtype <> VT_EMPTY then
-  case vtype of
-   vt_string8:
-    decref(string8(vstring));
-   vt_string16:
-    decref(string16(vstring));
-   vt_string32:
-    decref(string32(vstring));
-  end;
+  decref();
   vtype:= VT_EMPTY;
+ end;
+end;
+
+method variantty.incref();
+begin
+ case vtype of
+  vt_string8:
+   system.incref(string8(vstring));
+  vt_string16:
+   system.incref(string16(vstring));
+  vt_string32:
+   system.incref(string32(vstring));
+ end;
+end;
+
+method variantty.decref();
+begin
+ case vtype of
+  vt_string8:
+   system.decref(string8(vstring));
+  vt_string16:
+   system.decref(string16(vstring));
+  vt_string32:
+   system.decref(string32(vstring));
  end;
 end;
 
@@ -287,7 +306,7 @@ method variantty.tovariant(const avalue: string8);
 begin
  fini();
  vtype:= vt_string8;
- incref(avalue);
+ system.incref(avalue);
  vstring:= pointer(avalue);
 end;
 
@@ -295,7 +314,7 @@ method variantty.tovariant(const avalue: string16);
 begin
  fini();
  vtype:= vt_string16;
- incref(avalue);
+ system.incref(avalue);
  vstring:= pointer(avalue);
 end;
 
@@ -303,7 +322,7 @@ method variantty.tovariant(const avalue: string32);
 begin
  fini();
  vtype:= vt_string32;
- incref(avalue);
+ system.incref(avalue);
  vstring:= pointer(avalue);
 end;
 

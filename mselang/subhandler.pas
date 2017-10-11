@@ -116,6 +116,10 @@ procedure handleoverride();
 procedure handleclasubheaderattach();
 procedure handleoverload();
 procedure handleexternal();
+procedure handleexternal0entry();
+procedure handleexternal0();
+procedure handleexternal1();
+procedure handleexternal2();
 procedure handleforward();
 procedure handleofobjectexpected();
 procedure subofentry();
@@ -1035,6 +1039,84 @@ begin
  end;
 end;
 
+procedure handleexternal0entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXTERNAL0ENTRY');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_subdef then begin
+   internalerror(ie_handler,'20171011A');
+  end;
+ {$endif}
+  if sublevel > 0 then begin
+   errormessage(err_cannotdeclarelocalexternal,[]);
+  end;
+  if (stf_objimp in s.currentstatementflags) then begin
+   errormessage(err_invaliddirective,['external']);
+  end
+  else begin
+   d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+   d.subdef.libname:= 0;
+   d.subdef.funcname:= 0;
+  end;
+ end;
+end;
+
+procedure handleexternal0();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXTERNAL0');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  if (d.kind <> ck_const) or (d.dat.constval.kind <> dk_string) or 
+                      (strf_empty in d.dat.constval.vstring.flags) then begin
+   errormessage(err_libnameexpected,[]);
+  end
+  else begin
+  {$ifdef mse_checkinternalerror}
+   if contextstack[s.stackindex-1].d.kind <> ck_subdef then begin
+    internalerror(ie_handler,'20171011B');
+   end;
+  {$endif}
+   contextstack[s.stackindex-1].d.subdef.libname:= 
+                                           getident(d.dat.constval.vstring);
+  end;
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handleexternal1();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXTERNAL1');
+{$endif}
+end;
+
+procedure handleexternal2();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXTERNAL2');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  if (d.kind <> ck_const) or (d.dat.constval.kind <> dk_string) or 
+                      (strf_empty in d.dat.constval.vstring.flags) then begin
+   errormessage(err_functionnameexpected,[]);
+  end
+  else begin
+  {$ifdef mse_checkinternalerror}
+   if contextstack[s.stackindex-1].d.kind <> ck_subdef then begin
+    internalerror(ie_handler,'20171011B');
+   end;
+  {$endif}
+   contextstack[s.stackindex-1].d.subdef.funcname:= 
+                               getident(d.dat.constval.vstring);
+  end;
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
 procedure handleforward();
 begin
 {$ifdef mse_debugparser}
@@ -1873,6 +1955,16 @@ begin
   sub1^.varchain:= 0;
   sub1^.paramfinichain:= 0;
   sub1^.allocs.nestedalloccount:= 0;
+  if sf_external in subflags then begin
+   with (poind-1)^ do begin
+    sub1^.libname:= d.subdef.libname;
+    sub1^.funcname:= d.subdef.funcname;
+   end;
+  end
+  else begin
+   sub1^.libname:= 0;
+   sub1^.funcname:= 0;
+  end;
   if (stf_objdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[s.stackindex-3] do begin
@@ -1995,8 +2087,15 @@ begin
      end;
 }
      if co_llvm in o.compileoptions then begin
-      sub1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(sub1,
-       getidentname2(pelementinfoty(pointer(sub1)-eledatashift)^.header.name));
+      if sub1^.funcname <> 0 then begin      //todo: handle libname
+       ident1:= sub1^.funcname;
+      end
+      else begin
+       ident1:= pelementinfoty(pointer(sub1)-eledatashift)^.header.name;
+      end;
+      sub1^.globid:= 
+             info.s.unitinfo^.llvmlists.globlist.addsubvalue(
+                                                sub1,getidentname2(ident1));
      end;
      addsubbegin(oc_externalsub,sub1);
     end

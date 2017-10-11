@@ -461,6 +461,7 @@ type
   trampolineid: int32; //for llvm
   submeta: metavaluety; //for llvm
   linkage: linkagety;
+  libname,funcname: identty;
   paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;
  end;

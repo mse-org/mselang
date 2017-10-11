@@ -66,7 +66,7 @@
  '.ini','.inizeroed','.fini','.incref','.decref','.decrefindi','.destroy'
  '.method','.operators','.operatorsright','.system'
 @.tokens
- 'mselang','pascal'
+ 'mselang','pascal','system'
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual','except','end'
@@ -472,14 +472,23 @@ subof,,subofentry,handleofobjectexpected*
  'object'.,subheader3-
 subheader3,,,
  ${whitespace}
- 'external'.,!handleexternal-
+ 'external'.,external0-
  'forward'.,!handleforward-
  ';',subheader4-+
 subheader4,,,handlesubheader*+
  ${whitespace}
- 'external'.,external-
+ 'external'.,external0-
  'forward'.,forward-
-
+external0,external1,handleexternal0entry,handleexternal0
+ ${whitespace}
+ ';',subheader3
+ '',exp^*
+external1,subheader3,,
+ ${whitespace}
+ 'name'.,external2-
+external2,subheader3,,handleexternal2
+ '',exp^*
+ 
 external,subheader3,handleexternal, 
 forward,subheader3,handleforward, 
 

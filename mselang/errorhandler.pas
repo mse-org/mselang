@@ -88,7 +88,8 @@ type
             err_exceptmusthavevirtual,err_exceptclassinstanceexpected,
             err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
             err_exceptvarexpected,err_noexceptavailable,
-            err_exceptlabelafterelse,err_invalidassignop);
+            err_exceptlabelafterelse,err_invalidassignop,
+            err_libnameexpected,err_functionnameexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -329,7 +330,11 @@ const
   (level: erl_error; message: 
              'Exception case labels not allowed after else'),
   (level: erl_error; message: 
-             'Invalid assign operator method')
+             'Invalid assign operator method'),
+  (level: erl_error; message: 
+             'Library name expected'),
+  (level: erl_error; message: 
+             'Function name expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 
