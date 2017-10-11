@@ -482,6 +482,7 @@ subheader4,,,handlesubheader*+
 external0,external1,handleexternal0entry,handleexternal0
  ${whitespace}
  ';',subheader3
+ 'name'.,external2-
  '',exp^*
 external1,subheader3,,
  ${whitespace}
@@ -1027,6 +1028,19 @@ var1,,handlevardefstart,
 var2,var3,,
  '',getfieldtype^*
 var3,checksemicolon2,,handlevar3
+ ${whitespace}
+ 'external'.,extvar0-^*
+extvar0,extvar1,handleextvar0entry,handleextvar0
+ ${whitespace}
+ ';',extvar0a
+ 'name'.,extvar2-
+ '',exp^*
+extvar0a,,,^
+extvar1,,,^
+ ${whitespace}
+ 'name'.,extvar2-
+extvar2,,,handleextvar2^
+ '',exp^*
 
 fielddef,vardef0,,
  '',commaidents^*

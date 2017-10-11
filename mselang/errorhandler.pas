@@ -64,7 +64,8 @@ type
             err_invalidunitfile,err_labelalreadydef,err_labelnotfound,
             err_invalidgototarget,err_enumnotcontiguous,
             err_duplicatesetelement,err_illegaldirective,
-            err_cannotdeclarelocalexternal,err_unknownfieldormethod,
+            err_cannotdeclarelocalexternal,err_cannotdeclarelocvarexternal,
+            err_unknownfieldormethod,
             err_nomemberaccessproperty,err_unknownrecordfield,
             err_illegalpropsymbol,err_div0,
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
@@ -89,7 +90,8 @@ type
             err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
             err_exceptvarexpected,err_noexceptavailable,
             err_exceptlabelafterelse,err_invalidassignop,
-            err_libnameexpected,err_functionnameexpected);
+            err_libnameexpected,err_functionnameexpected,
+            err_singleexternalonly);
             
  errorinfoty = record
   level: errorlevelty;
@@ -261,6 +263,7 @@ const
   (level: erl_error; message: 'Duplicate set element'),
   (level: erl_warning; message: 'Illegal compiler directive "%s"'),
   (level: erl_error; message: 'Cannot declare local subroutine as EXTERNAL'),
+  (level: erl_error; message: 'Cannot declare local variable as EXTERNAL'),
   (level: erl_error; message: 'Unknown class field or method identifier "%s"'),
   (level: erl_error; message: 'No member is provided to access property'),
   (level: erl_error; message: 'Unknown record field identifier "%s"'),
@@ -334,7 +337,9 @@ const
   (level: erl_error; message: 
              'Library name expected'),
   (level: erl_error; message: 
-             'Function name expected')
+             'Function name expected'),
+  (level: erl_error; message: 
+             'EXTERNAL can be associated with only one variable')
  );
 
 procedure message1(const atext: string; const values: array of const); 

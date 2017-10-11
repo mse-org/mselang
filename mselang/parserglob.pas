@@ -236,8 +236,12 @@ type
                     stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted);
  statementflagsty = set of statementflagty;
 
+ varflagty = (vf_external);
+ varflagsty = set of varflagty;
  varinfoty = record
   indirectlevel: indirectlevelty;
+  flags: varflagsty;
+  libname,varname: identty;
  end;
 
  refconstvaluety = record
