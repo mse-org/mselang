@@ -30,7 +30,7 @@ procedure handleextvar0entry();
 procedure handleextvar0();
 procedure handleextvar1();
 procedure handleextvar2();
-procedure handeldectop();
+procedure handledectop();
 
 procedure handlepointervar();
 
@@ -141,7 +141,7 @@ begin
  end;
 end;
 
-procedure handeldectop();
+procedure handledectop();
 begin
 {$ifdef mse_debugparser}
  outhandle('DECTOP');
@@ -164,7 +164,7 @@ var
  bo1: boolean;
  i1: int32;
  n1: identnamety;
- ispointervar: boolean;
+ ispointervar,isexternal: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -181,8 +181,8 @@ begin
     internalerror(ie_handler,'20150320A0');
    end;
   {$endif}
-   if (vf_external in d.vari.flags) and 
-                   (s.stacktop-s.stackindex > 3) then begin
+   isexternal:= vf_external in d.vari.flags;
+   if isexternal and (s.stacktop-s.stackindex > 3) then begin
     errormessage(err_singleexternalonly,[]);
    end;
 
@@ -245,12 +245,21 @@ begin
          datasize1:= das_pointer;
          include(address.flags,af_segmentpo);
         end;
+        if isexternal then begin
+         include(address.flags,af_external);
+        end;
         address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
         if not (us_implementation in s.unitinfo^.state) then begin
          nameid:= s.unitinfo^.nameid; //for llvm
         end;
-        if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
-                           (co_llvm in info.o.compileoptions) then begin
+        if (isexternal or 
+               (info.o.debugoptions*[do_proginfo,do_names] <> [])) and 
+                             (co_llvm in info.o.compileoptions) then begin
+         if isexternal then begin //todo: handle libname
+          if d.vari.varname <> 0 then begin
+           ident1:= d.vari.varname;
+          end;
+         end;
          getidentname(ident1,n1);
          if do_names in info.o.debugoptions then begin
  

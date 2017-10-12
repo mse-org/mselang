@@ -571,7 +571,7 @@ begin
   if adatasize = das_none then begin
    include(aflags,af_aggregate);
   end;
-  trackalloc(adatasize,asize,result);
+  trackalloc(adatasize,asize,result,af_external in aflags);
  end;
 end;
 

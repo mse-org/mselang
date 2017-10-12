@@ -14206,7 +14206,9 @@ begin
  extvar0co.handleentry:= @handleextvar0entry;
  extvar0co.handleexit:= @handleextvar0;
  extvar0aco.branch:= nil;
+ extvar0aco.handleexit:= @handledectop;
  extvar1co.branch:= @bextvar1;
+ extvar1co.handleexit:= @handledectop;
  extvar2co.branch:= @bextvar2;
  extvar2co.handleexit:= @handleextvar2;
  fielddefco.branch:= @bfielddef;

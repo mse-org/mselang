@@ -412,16 +412,17 @@ type
    destructor destroy(); override;
    procedure clear(); override;
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
-                                    const externunit: boolean = false): int32;
+                                    const externunit: boolean): int32;
                                                             //returns listid
-   function addbitvalue(const asize: databitsizety;
-                               const alinkage: linkagety): int32;
+   function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
+                                     const externunit: boolean): int32;
                                                             //returns listid
    function addbytevalue(const asize: integer;
-                               const alinkage: linkagety): int32;
+                               const alinkage: linkagety; 
+                                     const externunit: boolean): int32;
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty; //nil -> main sub
-                              const externunit: boolean = false): int32; 
+                              const externunit: boolean): int32; 
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty;
                            const aname: identnamety): int32;  //returns listid
@@ -2064,7 +2065,7 @@ end;
 
 function tgloballocdatalist.addvalue(const avalue: pvardataty;
                               const alinkage: linkagety;
-                              const externunit: boolean = false): int32;
+                              const externunit: boolean): int32;
 begin
  result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage,externunit);
  if externunit then begin
@@ -2074,15 +2075,17 @@ begin
 end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer; 
-                                       const alinkage: linkagety): int32;
+                                       const alinkage: linkagety; 
+                                     const externunit: boolean): int32;
 begin 
- result:= addnoinit(ftypelist.addbytevalue(asize),alinkage,false);
+ result:= addnoinit(ftypelist.addbytevalue(asize),alinkage,externunit);
 end;
 
 function tgloballocdatalist.addbitvalue(const asize: databitsizety; 
-                                       const alinkage: linkagety): int32;
+                                       const alinkage: linkagety;
+                                       const externunit: boolean): int32;
 begin 
- result:= addnoinit(ftypelist.addbitvalue(asize),alinkage,false);
+ result:= addnoinit(ftypelist.addbitvalue(asize),alinkage,externunit);
 end;
 
 function tgloballocdatalist.addinitvalue(const akind: globallockindty;
@@ -2128,7 +2131,7 @@ begin
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
-                                  const externunit: boolean = false): int32;
+                                  const externunit: boolean): int32;
 var
  dat1: globallocdataty;
 begin
@@ -2187,7 +2190,7 @@ end;
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                              const aname: identnamety): int32;
 begin
- result:= addsubvalue(avalue);
+ result:= addsubvalue(avalue,false);
  fnamelist.addname(aname,result);
 end;
 

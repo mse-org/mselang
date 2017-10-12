@@ -1035,8 +1035,8 @@ extvar0,extvar1,handleextvar0entry,handleextvar0
  ';',extvar0a
  'name'.,extvar2-
  '',exp^*
-extvar0a,,,^
-extvar1,,,^
+extvar0a,,,handledectop^
+extvar1,,,handledectop^
  ${whitespace}
  'name'.,extvar2-
 extvar2,,,handleextvar2^

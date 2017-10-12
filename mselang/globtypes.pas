@@ -105,6 +105,7 @@ const
                    seg_intf,seg_classintfcount,seg_intfitemcount];
 type
  addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_tempvar,
+                  af_external,
                   af_ssas2, 
                           //use par.ssas2 instead of tempdataaddress.a.ssaindex
                   af_managedtemp,

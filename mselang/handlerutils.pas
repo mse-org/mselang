@@ -272,7 +272,7 @@ function initopenarrayconst(var adata: dataty; const itemcount: int32;
                                          //returns pointer to data block
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                                 var address: segaddressty);
+                        var address: segaddressty; const aexternal: boolean);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 procedure tracklocalaccess(var aaddress: locaddressty; 
@@ -4129,17 +4129,25 @@ begin
 end;
 
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                                 var address: segaddressty);
+                         var address: segaddressty; const aexternal: boolean);
+var
+ li1: linkagety;
 begin
  if co_llvm in info.o.compileoptions then begin
   if address.segment = seg_globvar then begin
+   if aexternal then begin
+    li1:= li_external;
+   end
+   else begin
+    li1:= info.s.globlinkage;
+   end;
    if adatasize = das_none then begin
     address.address:= info.s.unitinfo^.llvmlists.globlist.
-                                      addbytevalue(asize,info.s.globlinkage);
+                              addbytevalue(asize,li1,aexternal);
    end
    else begin
     address.address:= info.s.unitinfo^.llvmlists.globlist.
-                                      addbitvalue(adatasize,info.s.globlinkage);
+                           addbitvalue(adatasize,li1,aexternal);
    end;
   end;
  end;

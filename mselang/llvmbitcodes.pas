@@ -153,6 +153,7 @@ type
     MODULE_CODE_GLOBALVAR,//   = 7,
                    //mse: bit 2 of isconst is explicitType flag -> 
                    //      type is base type
+                   //initid 0 -> external
     // FUNCTION:  [type, callingconv, isproto, linkage, paramattr,
     //             alignment, section, visibility, gc, unnamed_addr,
     //             prologuedata, dllstorageclass, comdat, prefixdata,

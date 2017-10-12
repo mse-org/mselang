@@ -2465,7 +2465,7 @@ begin
   if d.subdef.match <> 0 then begin
    po2:= ele.eledataabs(d.subdef.match);    
    if co_llvm in o.compileoptions then begin
-    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
+    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2,false); 
           //body order must be in header order-> nested subs first -> 
                                        //do not add to list in sub header
    end;
@@ -2527,7 +2527,7 @@ begin
   end
   else begin //no header
    if co_llvm in o.compileoptions then begin
-    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1);
+    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1,false);
           //body order must be in header order-> nested subs first -> 
                                        //do not add to list in sub header
    end;
