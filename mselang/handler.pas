@@ -3742,6 +3742,12 @@ begin
        ad1.contextdata:= @source^.d;
        ad1.offset:= 0;
        if source^.d.kind = ck_ref then begin
+        if source^.d.dat.indirection <> 0 then begin
+         if not getvalue(source,das_none) then begin
+          goto endlab;
+         end;
+         sourcessa1:= source^.d.dat.fact.ssaindex;
+        end;
         writemanagedtypeop(mo_incref,destvar.typ,ad1);
         needsincref:= false;
        end
