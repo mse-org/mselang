@@ -100,8 +100,7 @@ begin
     internalerror(ie_handler,'20171011D');
    end;
   {$endif}
-//   contextstack[s.stackindex].d.subdef.libname:= 
-//                                           getident(d.dat.constval.vstring);
+   p1^.d.vari.libname:= getident(d.dat.constval.vstring);
   end;
   s.stacktop:= s.stackindex;
  end;
@@ -124,7 +123,7 @@ begin
  with info,contextstack[s.stacktop] do begin
   if (d.kind <> ck_const) or (d.dat.constval.kind <> dk_string) or 
                       (strf_empty in d.dat.constval.vstring.flags) then begin
-   errormessage(err_libnameexpected,[]);
+   errormessage(err_varnameexpected,[]);
   end
   else begin
    p1:= @contextstack[contextstack[s.stackindex].parent];
@@ -133,8 +132,7 @@ begin
     internalerror(ie_handler,'20171011E');
    end;
   {$endif}
-//   contextstack[s.stackindex].d.subdef.libname:= 
-//                                           getident(d.dat.constval.vstring);
+   p1^.d.vari.varname:= getident(d.dat.constval.vstring);
   end;
   dec(s.stackindex);
   s.stacktop:= s.stackindex;

@@ -90,7 +90,7 @@ type
             err_wrongdefaultdestructor,err_exceptmusthavedefaultdestruct,
             err_exceptvarexpected,err_noexceptavailable,
             err_exceptlabelafterelse,err_invalidassignop,
-            err_libnameexpected,err_functionnameexpected,
+            err_libnameexpected,err_functionnameexpected,err_varnameexpected,
             err_singleexternalonly);
             
  errorinfoty = record
@@ -338,6 +338,8 @@ const
              'Library name expected'),
   (level: erl_error; message: 
              'Function name expected'),
+  (level: erl_error; message: 
+             'Variable name expected'),
   (level: erl_error; message: 
              'EXTERNAL can be associated with only one variable')
  );

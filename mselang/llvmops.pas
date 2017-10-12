@@ -55,17 +55,31 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf,
+ internalfuncty = (if_printf,if_flush,
                    {if_malloc,if_free,if_calloc,}if_realloc,if_memset,
                    if_memcpy,if_memmove,
                    if__exit,
                    if_sin64,if_cos64,if_fabs64,if_sqrt64,if_floor64,
                    if_round64,if_nearbyint64);
+
+ internalvarinfoty = record
+  name: string;
+  typelistindex: int32;
+ end;
+ internalvarty = (iv_stdin,iv_stdout,iv_stderr);
+ 
 const
+ cinttype = ord(das_32);
+ 
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
  );
  printfparams: paramsty = (count: 1; items: @printfpar);
+ fflushpar: array[0..1] of paramitemty = (
+              (typelistindex: cinttype; flags: []),   //result
+              (typelistindex: pointertype; flags: []) //*file
+ );
+ fflushparams: paramsty = (count: 2; items: @fflushpar);
  mallocpar: array[0..1] of paramitemty = (
               (typelistindex: pointertype; flags: []), //result
               (typelistindex: sizetype; flags: [])     //size
@@ -140,6 +154,8 @@ const
 //todo: use llvm intinsics where possible 
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
   (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
+  (name: 'fflush'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                   params: @fflushparams),
 //  (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
 //  (name: 'free'; flags: [sf_proto]; params: @freeparams),
 //  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
@@ -168,6 +184,12 @@ const
                                                  params: @ffunc64params)
  );
 
+ internalvarconsts: array[internalvarty] of internalvarinfoty = (
+  (name: 'stdin'; typelistindex: pointertype),
+  (name: 'stdout'; typelistindex: pointertype),
+  (name: 'stderr'; typelistindex: pointertype)
+ );
+ 
 type
  internalstringinfoty = record
   text: string;
@@ -193,6 +215,7 @@ var
  bcstream: tllvmbcwriter;
  globconst: string;
  internalfuncs: array[internalfuncty] of int32;
+ internalvars: array[internalvarty] of int32;
  internalstrings: array[internalstringty] of int32;
  nullmethodconst: int32;
  
@@ -513,6 +536,7 @@ var
  int1: integer;
  str1,str2: shortstring;
  funcs1: internalfuncty;
+ vars1: internalvarty;
  strings1: internalstringty;
  compilersub1: compilersubty;
  poclassdef,peclassdef: ^classdefinfoty;
@@ -553,6 +577,13 @@ begin
                       addexternalsubvalue(flags,params^,getidentname(name));
   end;
  end;
+ for vars1:= low(internalvars) to high(internalvars) do begin
+  with internalvarconsts[vars1] do begin
+   internalvars[vars1]:= info.s.unitinfo^.llvmlists.globlist.
+                               addexternalvalue(getident(name),typelistindex);
+  end;
+ end;
+ 
  nullmethodconst:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,
                      info.s.unitinfo^.llvmlists.constlist.
                             addvalue(zeroes,2*pointersize).listid,constlinkage);
@@ -904,6 +935,9 @@ begin
                                              bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                                       [bcstream.relval(0)]);
+  bcstream.emitloadop(bcstream.globval(internalvars[iv_stdout]));
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_flush]),
+                                   [bcstream.relval(0)]);
  end;
 end;
 
@@ -4818,7 +4852,7 @@ const
   cmpjmpgtimmssa = 1;
   cmpjmploeqimmssa = 1;
 
-  writelnssa = 1;
+  writelnssa = 3;
   writebooleanssa = 1;
   writecardinal8ssa = 1;
   writecardinal16ssa = 1;

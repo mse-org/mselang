@@ -421,6 +421,8 @@ type
                                const alinkage: linkagety; 
                                      const externunit: boolean): int32;
                                                             //returns listid
+   function addexternalvalue(const aname: identty; const atype: int32): int32;
+                                                            //returns listid
    function addsubvalue(const avalue: psubdataty; //nil -> main sub
                               const externunit: boolean): int32; 
                                                             //returns listid
@@ -2079,6 +2081,13 @@ function tgloballocdatalist.addbytevalue(const asize: integer;
                                      const externunit: boolean): int32;
 begin 
  result:= addnoinit(ftypelist.addbytevalue(asize),alinkage,externunit);
+end;
+
+function tgloballocdatalist.addexternalvalue(const aname: identty;
+               const atype: int32): int32;
+begin
+ result:= addnoinit(atype,li_external,true);
+ namelist.addname(getidentname2(aname),result);
 end;
 
 function tgloballocdatalist.addbitvalue(const asize: databitsizety; 
