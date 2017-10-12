@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7298484
+    ao=An unhandled exception occured at $B730A484
     ae=
     aec=123
     ie=0
@@ -12326,7 +12326,7 @@ c=3
    (
    kind=1
    a=0,665,4,variants
-   c=5
+   c=6
     (
     kind=2
     a=0,648,1,variants1
@@ -12435,6 +12435,28 @@ c=3
     ao=
     ae=
     aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,variantstring llvm
+    teststate=1
+    path=variantstring.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=abcabcabc
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=abcabcabc
+    ae=
+    aec=0
     ie=0
     )
    teststate=1
@@ -12656,7 +12678,8 @@ sortdescend2=0
 width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=19
+rowstate=20
+ 0 0
  0 0
  0 0
  0 0

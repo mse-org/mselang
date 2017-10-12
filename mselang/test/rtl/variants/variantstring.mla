@@ -1,0 +1,13 @@
+program variantstring;
+uses
+ rtl_variants;
+var
+ v1,v2: variantty;
+ s1,s2: system.string8;
+begin
+ v1:= 'abc';
+ v2:= v1;
+ s2:= string8(v2);
+ write(string8(v2),string8(v1));
+ writeln(s2);
+end.
