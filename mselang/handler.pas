@@ -3729,7 +3729,9 @@ begin
       goto endlab;
      end;
      if needsmanage then begin
-      sourcessa1:= source^.d.dat.fact.ssaindex;
+      if source^.d.kind in factcontexts then begin
+       sourcessa1:= source^.d.dat.fact.ssaindex;
+      end;
       b1:= (source^.d.kind in [ck_subres]);
       needstempini:= b1 and 
                       (faf_varsubres in source^.d.dat.fact.flags); //has tempvar

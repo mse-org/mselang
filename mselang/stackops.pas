@@ -200,7 +200,7 @@ var
  i1: integer;
  po1: pointer;
 begin
- if af_stacktemp in aaddress.t.flags then begin
+ if [af_stacktemp,af_tempvar] * aaddress.t.flags <> [] then begin
   result:= cpu.stacktemp + aaddress.tempdataaddress.a.address; //offset?
  end
  else begin
@@ -4935,6 +4935,12 @@ begin
  move(stackpop(i1)^,getlocaddress(cpu.pc^.par.memop)^,i1);
 end;
 
+procedure storelocpoop();
+begin
+ ppointer(getlocaddress(cpu.pc^.par.memop))^:= 
+                                        ppointer(cpu.stack-sizeof(pointer))^;
+end;
+
 procedure poplocindi8op();
 begin             
  pv8ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv8ty(stackpop(1))^;
@@ -7464,6 +7470,8 @@ const
   poplocf32ssa = 0;
   poplocf64ssa = 0;
   poplocssa = 0;
+  
+  storelocpossa = 0;
 
   poplocindi8ssa = 0;
   poplocindi16ssa = 0;

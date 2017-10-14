@@ -525,6 +525,8 @@ type
   oc_poplocf32,
   oc_poplocf64,
   oc_poploc,
+  
+  oc_storelocpo,
 
   oc_poplocindi8,
   oc_poplocindi16,
@@ -953,7 +955,7 @@ type
    oc_pushlocaddr,oc_pushstackaddr,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
    oc_incdeclocimmint,oc_incdeclocimmpo,
-   oc_storelocnilar,oc_storelocnildynar,
+   oc_storelocnilar,oc_storelocnildynar,oc_storelocpo,
    oc_finirefsizelocar,oc_increfsizelocar,oc_decrefsizelocar:(
     case integer of
      0:(locdataaddress: locdataaddressty;);

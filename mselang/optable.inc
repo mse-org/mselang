@@ -910,6 +910,9 @@
 //oc_poploc
   (ssa: poplocssa; proc: @poplocop; flags: []), 
 
+//oc_storelocpo
+  (ssa: storelocpossa; proc: @storelocpoop; flags: []), 
+
 //oc_poplocindi8
   (ssa: poplocindi8ssa; proc: @poplocindi8op; flags: []), 
 //oc_poplocindi16

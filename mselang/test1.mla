@@ -1,70 +1,41 @@
-program incdecref;
+program variantstring;
+//uses
+// rtl_variants;
 type
-{$internaldebug on}
- objty = object[nozeroinit]
-  private
-   f0: int32;
-   fi: int32;
-   (v1: int32; v2: int32);
-   method getj(): int32;
-   method setj(const avalue: int32);
-  protected
-   property i: int32 read fi write fi;
-   property j: int32 read getj write setj;
-   method test();
+ variantty = object [nozeroinit]
+  method tostring(): string16 [operator = '()'];
  end;
 
+method variantty.tostring(): string16;
+begin
+end;
+(*
+procedure test();
 var
- i1: int32;
-
-method objty.getj(): int32;
+// v1,v2: variantty;
+ s1: system.string8;
+ s2: string16;
 begin
-// result:= fi;
-end;
-
-method objty.setj(const avalue: int32);
-begin
-// fi:= avalue;
-end;
-
-method objty.test();
-begin
-// i:= 12;
-// i1:= i;
-end;
-
-var
- obj1,obj2: objty;
-
-procedure test(): objty;
-begin
- result:= obj1;
-end;
-{
-procedure test1(o: objty);
-begin
- exitcode:= o.fi;
-end;
-}
-begin
- obj1.fi:= 123;
+// v1:= 'abc';
+// v2:= v1;
+//s1:= 'def';
 {$internaldebug on}
-// test1(test());
-// obj2:= test();
-//exitcode:= obj2.fi;
- exitcode:= test().fi;
-{
- obj1.test();
- exitcode:= (obj1.i + i1);
- if (exitcode = 12*2) then
-  obj1.i:= 22;
-  if obj1.i + obj1.fi = 22*2 then
-   obj1.j:= 33;
-   if obj1.j + obj1.fi = 33*2 then
-    exitcode:= 123;
-   end;
-  end;
- end;
- exitcode:= test().fi;
-}
+ s2:= s1;
+// s2:= string16(s1);
+// s2:= string8(string16(s1));
+// writeln(s2);
+// s2:= string16(v2);
+// s2:= string8(string16(v2));
+// write(string8(v2){,string8(v1)});
+// writeln(s2);
+end;
+*)
+var
+ s1: string8;
+ s2: string16;
+begin
+ s2:= 'abc';
+ s1:= s2;
+ writeln(s1);
+// test();
 end.

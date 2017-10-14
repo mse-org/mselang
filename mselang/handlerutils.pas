@@ -1596,6 +1596,44 @@ end;
 }
 procedure addmanagedtemp(const acontext: pcontextitemty);
 var
+ ad1: addressvaluety;
+ temp1: listadty;
+ ref1: addressrefty;
+ i1: int32;
+ index1: int32;
+begin
+ with info,acontext^ do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) then begin
+   internalerror(ie_handler,'2070406H');
+  end;
+ {$endif}
+  ad1:= alloctempvar(d.dat.datatyp.typedata,temp1);
+  index1:= acontext-pcontextitemty(pointer(contextstack));
+  ref1.offset:= 0;
+  ref1.kind:= ark_tempvar;
+  ref1.tempaddress:= ad1.tempaddress;
+  ref1.typ:= ele.eledataabs(d.dat.datatyp.typedata);
+  ref1.contextindex:= index1;
+  ref1.isclass:= false;
+  i1:= d.dat.fact.ssaindex;
+  writemanagedtypeop(mo_fini,ref1.typ,ref1);
+  with insertitem(oc_storelocpo,index1-s.stackindex,-1)^.par do begin
+   ssas1:= i1;
+   memop.operanddatasize:= das_pointer;
+   memop.t:= bitoptypes[das_pointer];
+   memop.t.flags:= [af_tempvar];
+   memop.tempdataaddress.a:= ad1.tempaddress;
+   memop.tempdataaddress.offset:= 0;
+  end;
+  d.dat.fact.ssaindex:= i1;
+ end;
+end;
+
+
+(*
+procedure addmanagedtemp(const acontext: pcontextitemty);
+var
  ref1: addressrefty;
  i1: int32;
  index1: int32;
@@ -1611,6 +1649,7 @@ begin
   ref1.offset:= 0;
   ref1.kind:= ark_local;
   if co_llvm in o.compileoptions then begin
+   ref1.kind:= ark_managedtemp;
    ref1.address:= managedtemparrayid;
    setimmint32(managedtempcount*sizeof(pointer),ref1.offset);
   end
@@ -1642,7 +1681,7 @@ begin
   inc(managedtempcount);
  end;
 end;
-
+*)
 const                                //getlocaddress() checks af_temp
  pushtempindiops: array[databitsizety] of opcodety = (
  //das_none,das_1,        das_2_7,        das_8,

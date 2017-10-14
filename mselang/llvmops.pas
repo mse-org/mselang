@@ -291,29 +291,35 @@ begin
     bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.ssaval(i1));
    end
    else begin
-    with locdataaddress do begin
-     if a.framelevel >= 0 then begin  //nested variable
-      bcstream.emitgetelementptr(bcstream.subval(0),
-              //pointer to array of pointer to local alloc
-                                             bcstream.constval(a.address));
-              //byte offset in array
-      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
-      bcstream.emitloadop(bcstream.relval(0));
-              //pointer to variable
-      if af_aggregate in t.flags then begin
-       bcstream.emitnopssa();          //aggregatessa = 3
-       bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
-      end;
-      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-      bcstream.emitstoreop(source,bcstream.relval(0));
-     end
-     else begin
-      if af_aggregate in t.flags then begin
-       bcstream.emitlocdataaddresspo(memop);
+    if af_tempvar in t.flags then begin
+     bcstream.emitstoreop(bcstream.ssaval(ssas1),
+                           bcstream.tempval(tempdataaddress.a.ssaindex));
+    end
+    else begin
+     with locdataaddress do begin
+      if a.framelevel >= 0 then begin  //nested variable
+       bcstream.emitgetelementptr(bcstream.subval(0),
+               //pointer to array of pointer to local alloc
+                                              bcstream.constval(a.address));
+               //byte offset in array
+       bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+       bcstream.emitloadop(bcstream.relval(0));
+               //pointer to variable
+       if af_aggregate in t.flags then begin
+        bcstream.emitnopssa();          //aggregatessa = 3
+        bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
+       end;
+       bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
        bcstream.emitstoreop(source,bcstream.relval(0));
       end
       else begin
-       bcstream.emitstoreop(source,bcstream.allocval(a.address));
+       if af_aggregate in t.flags then begin
+        bcstream.emitlocdataaddresspo(memop);
+        bcstream.emitstoreop(source,bcstream.relval(0));
+       end
+       else begin
+        bcstream.emitstoreop(source,bcstream.allocval(a.address));
+       end;
       end;
      end;
     end;
@@ -2830,7 +2836,7 @@ procedure finirefsizetempvarop();
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.tempval(tempaddr.a.ssaindex),
-                                       bcstream.ptypeval(pointertype));
+                                       bcstream.typeval(pointertype));
   callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
  end;
 end;
@@ -3259,6 +3265,11 @@ begin
 end;
 
 procedure poplocop();
+begin
+ storeloc();
+end;
+
+procedure storelocpoop();
 begin
  storeloc();
 end;
@@ -3772,7 +3783,7 @@ begin
  bcstream.emitnopssa();
 }
 
-  bcstream.emitgetelementptr(bcstream.ssaval(managedtemparrayid),
+  bcstream.emitgetelementptr(bcstream.allocval(managedtemparrayid),
                                          bcstream.constval(voffset)); //2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer)); 
                                                                       //1ssa
@@ -5235,6 +5246,8 @@ const
   poplocf32ssa = 0;
   poplocf64ssa = 0;
   poplocssa = 0;
+
+  storelocpossa = 0;
 
   poplocindi8ssa = 2;
   poplocindi16ssa = 2;
