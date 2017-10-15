@@ -1,6 +1,7 @@
 program variantstring;
-//uses
-// rtl_variants;
+uses
+ rtl_variants;
+{
 type
  variantty = object [nozeroinit]
   method tostring(): string16 [operator = '()'];
@@ -9,33 +10,35 @@ type
 method variantty.tostring(): string16;
 begin
 end;
-(*
+}
 procedure test();
 var
-// v1,v2: variantty;
+ v1,v2: variantty;
  s1: system.string8;
  s2: string16;
 begin
-// v1:= 'abc';
-// v2:= v1;
-//s1:= 'def';
+ v1:= 'abc';
+ v2:= v1;
+s1:= 'def';
 {$internaldebug on}
  s2:= s1;
-// s2:= string16(s1);
-// s2:= string8(string16(s1));
-// writeln(s2);
-// s2:= string16(v2);
-// s2:= string8(string16(v2));
-// write(string8(v2){,string8(v1)});
-// writeln(s2);
+ s2:= string16(s1);
+ s2:= string8(string16(s1));
+ writeln(s2);
+ s2:= string16(v2);
+ s2:= string8(string16(v2));
+ write(string8(v2),string8(v1));
+ writeln(s2);
 end;
-*)
+
 var
  s1: string8;
  s2: string16;
 begin
+{
  s2:= 'abc';
  s1:= s2;
  writeln(s1);
-// test();
+}
+ test();
 end.

@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -2740,7 +2740,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,4,conversions
    c=20
     (
     kind=2
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B730A484
+    ao=An unhandled exception occured at $B7283484
     ae=
     aec=123
     ie=0
@@ -5692,7 +5692,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,chartostring
+    a=0,648,2,chartostring
     teststate=1
     path=chartostring.mla
     comment=
@@ -9227,7 +9227,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,object3
+   a=0,648,2,object3
    teststate=1
    path=object3.mla
    comment=
@@ -12668,17 +12668,103 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=684
+propcolwidthref=669
 width0=50
 sortdescend0=0
-width1=233
+width1=228
 sortdescend1=0
-width2=258
+width2=252
 sortdescend2=0
-width3=177
+width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=20
+rowstate=106
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

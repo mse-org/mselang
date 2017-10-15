@@ -657,8 +657,11 @@ var                     //todo: optimize, use tables, complete
   i1: int32;
  begin
 //  tryconvert.result:= true;
-  with info do begin
-   i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+  with info,contextstack[s.stackindex+stackoffset] do begin
+   i1:= d.dat.fact.ssaindex;
+   if d.kind = ck_subres then begin
+    exclude(d.dat.fact.flags,faf_varsubres); //not available anymore
+   end;
   end;
   result:= insertitem(aop,stackoffset,-1);
   with result^ do begin
