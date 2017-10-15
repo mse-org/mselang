@@ -1,0 +1,24 @@
+program variantstring1;
+uses
+ rtl_variants;
+
+procedure test();
+var
+ v1,v2: variantty;
+ s1,s3: system.string8;
+ s2: string16;
+begin
+ v1:= 'abc';
+ v2:= v1;
+ s1:= string8(string16(v2));
+ s2:= v1;
+ s1:= 'abc';
+ s3:= string8(string16(s1));
+ if (s1 = 'abc') and (s2 = 'abc') and (s3 = 'abc') then
+  exitcode:= 123;
+ end;
+end;
+
+begin
+ test();
+end.
