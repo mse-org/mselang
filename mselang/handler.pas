@@ -3428,7 +3428,7 @@ begin
  p1:= getoppo(source^.d.dat.fact.varsubres.startopoffset +
                                              source^.opmark.address);
 {$ifdef mse_checkinternalerror}
- if p1^.op.op <> oc_pushlocaddr then begin
+ if (p1^.op.op <> oc_pushtempaddr) then begin
   internalerror(ie_handler,'20170828D');
  end;
 {$endif}
