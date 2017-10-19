@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7247484
+    ao=An unhandled exception occured at $B72F7FD4
     ae=
     aec=123
     ie=0
@@ -11847,12 +11847,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,intrinsics
+  a=0,665,4,intrinsics
   c=1
    (
    kind=1
    a=0,665,4,managed
-   c=4
+   c=5
     (
     kind=2
     a=0,648,1,initialize
@@ -11924,6 +11924,28 @@ c=3
     a=0,648,1,incdecref llvm
     teststate=1
     path=incdecref.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,initclass llvm
+    teststate=1
+    path=initclass.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -12321,7 +12343,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,664,4,rtl
   c=1
    (
    kind=1
@@ -12700,9 +12722,7 @@ sortdescend2=0
 width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=21
- 0 0
- 0 0
+rowstate=19
  0 0
  0 0
  0 0

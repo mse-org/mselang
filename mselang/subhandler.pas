@@ -3558,7 +3558,7 @@ begin
       stacksize:= stacksize + resultsize; //alloc space for return value
       locdatapo:= locdatapo + resultsize;
      end;
-     stacksize:= stacksize+aobjsize;
+     stacksize:= stacksize + aobjsize;
     end;
     paramsize1:= 0;
     realparamco:= asub^.paramcount-(totparamco-paramco);
@@ -3591,7 +3591,7 @@ begin
      dec(subparams1,paramco);
      getnextnospace(poitem1+1,poitem1);
      doparam(poitem1,subparams1,parallocpo); //last
-     lastparamsize1:= paramsize1-lastparamsize1;
+     lastparamsize1:= paramsize1 - lastparamsize1;
     end
     else begin
      if not (dsf_noparams in aflags) then begin

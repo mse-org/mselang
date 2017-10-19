@@ -1,0 +1,39 @@
+program initclass;
+uses
+ rtl_fpccompatibility;
+type
+ ttest = class()
+  fa,fb: int32;
+  constructor create();
+  destructor destroy();
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+var
+ c1: ttest;
+begin
+
+ c1:= pointer(123);
+ initialize(c1);
+ if c1 = nil then
+  c1:= ttest.create();
+  with c1 do 
+   fa:= 11;
+   fb:= 22;
+   if fa+fb = 33 then
+    initialize(c1^);
+    if (fa = 0) and (fb = 0) then
+     exitcode:= 123;
+    end;
+   end;
+   destroy();
+  end;
+ end;
+end.
