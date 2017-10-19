@@ -3929,6 +3929,10 @@ begin
    case d.kind of
     ck_ref,ck_fact: begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
+     if po1^.h.kind = dk_class then begin //implicit dereference
+      dec(d.dat.datatyp.indirectlevel);
+      dec(d.dat.indirection);
+     end;
      if (d.dat.datatyp.indirectlevel = 1) and 
                   (po1^.h.kind in [dk_record,dk_object,dk_class]) then begin
       if d.kind = ck_ref then begin
@@ -3940,7 +3944,9 @@ begin
       end;
       with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
        address:= getpointertempaddress();
-       include(address.flags,af_withindirect);
+       if po1^.h.kind <> dk_class then begin
+        include(address.flags,af_withindirect);
+       end;
        vf.typ:= d.dat.datatyp.typedata;
        vf.flags:= [];
        vf.next:= 0;

@@ -2184,7 +2184,8 @@ begin
    include(subflags,dsf_isinherited);
   end;
   if (idents.high = 0) and 
-            not (pob^.d.kind in factcontexts) then begin
+            not (pob^.d.kind in factcontexts) and 
+                                  (po1^.header.kind <> ek_var) then begin
 //      ((pob^.d.kind = ck_fact) and (pob^.d.dat.indirection < 0)) then begin
                                              //correct?
    include(subflags,dsf_ownedmethod);

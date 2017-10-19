@@ -14,6 +14,14 @@ uses
  rtl_system,rtl_libc;
  
 type
+{$internaldebug on}
+ tobject = class()[virtual]
+  public
+   constructor create();
+   destructor destroy() [virtual,default];
+   procedure free();
+ end;
+ 
  pchar = ^char8;
  sizeint = intptr;
  tdatetime = datetimety;
@@ -63,6 +71,25 @@ end;
 function fpclose(fd: cint): cint;
 begin
  result:= close(fd);
+end;
+
+{ tobject }
+
+constructor tobject.create();
+begin
+ //dummy
+end;
+
+destructor tobject.destroy();
+begin
+ //dummy
+end;
+
+procedure tobject.free();
+begin
+ if self <> nil then begin
+  destroy();
+ end;
 end;
 
 end.

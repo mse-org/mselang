@@ -738,6 +738,8 @@ begin
  result:= pds;
 end;
 
+//todo: maybe use string result (faf_varsubres)
+
 function __mla__string8to32(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;

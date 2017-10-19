@@ -3565,7 +3565,12 @@ begin
     parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
                                  realparamco);
                                  //including default params
-    poitem1:= @contextstack[paramstart-1]; //before first param
+    if paramstart = 0 then begin
+     poitem1:= @contextstack[0];
+    end
+    else begin
+     poitem1:= @contextstack[paramstart-1]; //before first param
+    end;
     lastitem:= nil;
 //    tempsize:= 0;
     i1:= paramco;

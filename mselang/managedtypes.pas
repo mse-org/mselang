@@ -571,23 +571,43 @@ end;
 procedure handleinitialize(const paramco: integer);
 var
  typ1: ptypedataty;
+ ptop,pinstance: pcontextitemty;
 begin
- if checkaddressparamsysfunc(paramco,typ1) then begin
-  with info,contextstack[s.stacktop] do begin
-  {$ifdef mse_checkinternalerror}
-   if d.kind <> ck_fact then begin
-    internalerror(ie_handler,'20170926A');
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  if paramco = 2 then begin
+   pinstance:= getpreviousnospace(ptop);
+   if (pinstance^.d.kind in datacontexts) then begin
    end;
-  {$endif}
-   if d.dat.datatyp.indirectlevel = 1 then begin
-    case typ1^.h.kind of
-     dk_string,dk_dynarray,dk_class: begin
-      with additem(oc_storestackindipopnil)^ do begin
-       par.ssas1:= d.dat.fact.ssaindex;
+  end;
+  if checkaddressparamsysfunc(paramco,typ1) then begin
+   with ptop^ do begin
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_fact then begin
+     internalerror(ie_handler,'20170926A');
+    end;
+   {$endif}
+    case d.dat.datatyp.indirectlevel of
+     1: begin
+      case typ1^.h.kind of
+       dk_string,dk_dynarray: begin
+        with additem(oc_storestackindipopnil)^ do begin
+         par.ssas1:= d.dat.fact.ssaindex;
+        end;
+       end;
+       dk_record,dk_object,dk_class: begin
+        callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+       end;
       end;
      end;
-     dk_record,dk_object: begin
-      callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+     2: begin
+      case typ1^.h.kind of
+       dk_class: begin
+        with additem(oc_storestackindipopnil)^ do begin
+         par.ssas1:= d.dat.fact.ssaindex;
+        end;
+       end;
+      end;
      end;
     end;
    end;
