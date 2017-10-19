@@ -576,8 +576,23 @@ begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
   if paramco = 2 then begin
-   pinstance:= getpreviousnospace(ptop);
+   pinstance:= getpreviousnospace(ptop-1);
    if (pinstance^.d.kind in datacontexts) then begin
+    typ1:= ele.eledataabs(pinstance^.d.dat.datatyp.typedata);
+    if (typ1^.h.kind = dk_pointer) and 
+                   (pinstance^.d.dat.datatyp.indirectlevel = 1) then begin
+     if ptop^.d.kind = ck_typearg then begin
+      typ1:= ele.eledataabs(ptop^.d.typ.typedata);
+      if (typ1^.h.kind = dk_class) and 
+                           (ptop^.d.typ.indirectlevel = 0) then begin
+       if getvalue(pinstance,das_none) then begin
+        s.stacktop:= getstackindex(pinstance);
+        callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+        exit;
+       end;
+      end;      
+     end;
+    end;
    end;
   end;
   if checkaddressparamsysfunc(paramco,typ1) then begin

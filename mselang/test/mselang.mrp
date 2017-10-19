@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -356,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -1122,8 +1122,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divop llvm
-    teststate=1
+    a=0,648,0,divop llvm
+    teststate=0
     path=divop.mla
     comment=
     cc=${mlc_llvm}
@@ -1139,7 +1139,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=-1
     ie=0
     )
     (
@@ -11852,7 +11852,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=5
+   c=6
     (
     kind=2
     a=0,648,1,initialize
@@ -11946,6 +11946,28 @@ c=3
     a=0,648,1,initclass llvm
     teststate=1
     path=initclass.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,initclass1 llvm
+    teststate=1
+    path=initclass1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -12712,17 +12734,154 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=684
+propcolwidthref=669
 width0=50
 sortdescend0=0
-width1=233
+width1=228
 sortdescend1=0
-width2=258
+width2=252
 sortdescend2=0
-width3=177
+width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=19
+rowstate=156
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
