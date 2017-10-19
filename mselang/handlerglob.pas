@@ -176,6 +176,10 @@ type
  end;
  pinfointerfacety = ^infointerfacety;
 
+ infoclassofty = record
+  classtyp: elementoffsetty;
+ end;
+ pinfoclassofty = ^infoclassofty;
  infosubty = record
   sub: elementoffsetty;
  end;
@@ -340,6 +344,9 @@ type
    );
    dk_interface:(
     infointerface: infointerfacety;
+   );
+   dk_classof:(
+    infoclassof: infoclassofty;
    );
    dk_sub,dk_method:(
     infosub: infosubty;

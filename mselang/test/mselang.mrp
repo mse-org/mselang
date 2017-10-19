@@ -1122,8 +1122,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,0,divop llvm
-    teststate=0
+    a=0,648,1,divop llvm
+    teststate=1
     path=divop.mla
     comment=
     cc=${mlc_llvm}
@@ -1139,7 +1139,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=-1
+    aec=123
     ie=0
     )
     (
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72F7FD4
+    ao=An unhandled exception occured at $B728FFD4
     ae=
     aec=123
     ie=0

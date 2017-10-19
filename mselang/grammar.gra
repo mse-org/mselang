@@ -1067,13 +1067,17 @@ getrange3,,,handlerange3^
 // class
 //
 objectdef,classdefa,handleobjectdefstart,
-classdef,classdefa,handleclassdefstart,
+classdef,classdefa0,,
+classdefa0,classdefa,handleclassdefstart,
+ 'of'.,classof-
 classdefa,classdef0,,
  ${whitespace}
  '(',classdefparam-*,classdef0a
  '[',classdefattach-*
  ';',classdefforward
 classdefforward,,,handleclassdefforward
+classof,,,handleclassof*^
+ '',getfieldtype^*
 classdef0a,classdef0,,
  ${whitespace}
  '[',classdefattach-*

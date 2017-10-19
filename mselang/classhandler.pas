@@ -84,6 +84,8 @@ procedure handleclassdefparam3a();
 procedure handleclassdefparam4entry();
 procedure handleclassdefattach();
 
+procedure handleclassof();
+
 procedure handleclassprivate();
 procedure handleclassprotected();
 procedure handleclasspublic();
@@ -552,6 +554,60 @@ begin
   end;
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handleclassof();
+var
+ typecont: pcontextitemty;
+ typ1,typ2: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSOF');
+{$endif}
+ with info do begin
+  typecont:= @contextstack[s.stackindex-1];
+ {$ifdef mse_checkinternalerror}
+  if typecont^.d.kind <> ck_typetype then begin
+   internalerror(ie_handler,'20171019A');
+  end;
+ {$endif}
+  with contextstack[s.stacktop] do begin
+   if (d.kind = ck_fieldtype) and (d.typ.typedata <> 0) then begin
+    typ1:= ele.eledataabs(d.typ.typedata);
+    if typ1^.h.kind <> dk_class then begin
+     errormessage(err_classtypeexpected,[]);
+    end
+    else begin
+     if not ele.addelementdata(gettypeident(),ek_type,allvisi,typ2) then begin
+      currenttypedef:= 0;
+      identerror(-2,err_duplicateidentifier);
+     end
+     else begin
+      currenttypedef:= ele.eledatarel(typ2);
+      inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel,
+                                                                 das_pointer);
+      with typ2^.infoclassof do begin
+       classtyp:= d.typ.typedata;
+      end;
+(*
+      with {contextstack[s.stackindex-1],}po1^ do begin
+      {
+       kind:= dk_set; //fieldchain set in handlerecorddefstart()
+       datasize:= das_32;
+       bytesize:= 4;
+       bitsize:= 32;
+       indirectlevel:= d.typ.indirectlevel;
+      }
+       infoset.itemtype:= ele1;
+       resolveforwardtype(po1);
+      end;
+*)      
+      resolveforwardtype(typ2);
+     end;
+    end;
+   end;
+  end;
  end;
 end;
 

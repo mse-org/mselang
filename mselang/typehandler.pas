@@ -69,6 +69,7 @@ procedure setsubtype(atypetypecontext: int32;
 procedure checkpendingmanagehandlers();
 procedure reversefieldchain(const atyp: ptypedataty);
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
+function gettypeident(): identty;
 
 implementation
 uses

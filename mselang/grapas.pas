@@ -1548,6 +1548,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdef');
+ classdefa0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefa0');
  classdefaco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1558,6 +1563,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdefforward');
+ classofco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               caption: 'classof');
  classdef0aco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -8694,6 +8704,12 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bclassdefa0: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @classofco); stack: nil; 
+     keyword: $00000260{'of'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bclassdefa: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -8747,6 +8763,16 @@ const
    (flags: [bf_nt];
      dest: (context: @classdefforwardco); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bclassof: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -13936,12 +13962,16 @@ begin
  objectdefco.next:= @classdefaco;
  objectdefco.handleentry:= @handleobjectdefstart;
  classdefco.branch:= nil;
- classdefco.next:= @classdefaco;
- classdefco.handleentry:= @handleclassdefstart;
+ classdefco.next:= @classdefa0co;
+ classdefa0co.branch:= @bclassdefa0;
+ classdefa0co.next:= @classdefaco;
+ classdefa0co.handleentry:= @handleclassdefstart;
  classdefaco.branch:= @bclassdefa;
  classdefaco.next:= @classdef0co;
  classdefforwardco.branch:= nil;
  classdefforwardco.handleexit:= @handleclassdefforward;
+ classofco.branch:= @bclassof;
+ classofco.handleexit:= @handleclassof;
  classdef0aco.branch:= @bclassdef0a;
  classdef0aco.next:= @classdef0co;
  classdef0co.branch:= nil;
