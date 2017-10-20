@@ -3332,7 +3332,7 @@ begin
      dec(d.dat.datatyp.indirectlevel); //restore getaddress
     end;
    end
-   else begin
+   else begin //not getaddress
     isfactcontext:= d.kind in factcontexts;
     ismethod:= asub^.flags * [sf_method,sf_ofobject] = [sf_method];
 
@@ -3424,6 +3424,21 @@ begin
       end
       else begin
        callssa:= d.dat.fact.ssaindex;
+      end;
+     end;
+    end;
+    
+    if (dsf_instanceonstack in aflags) and 
+               (sf_classmethod in asub^.flags) and isfactcontext then begin
+     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (typ1^.h.kind in [dk_class,dk_object]) then begin
+      if icf_virtual in typ1^.infoclass.flags then begin
+      end
+      else begin
+       with insertitem(oc_pushclassdef,destoffset,-1)^ do begin
+        par.segad:= typ1^.infoclass.defs.address;
+        instancessa:= par.ssad;
+       end;
       end;
      end;
     end;
