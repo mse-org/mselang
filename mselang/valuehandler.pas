@@ -1809,6 +1809,7 @@ var
   subflags1: subflagsty;
   typ1: ptypedataty;
   i2: int32;
+  isclassof: boolean;
 //  pind: pcontextitemty;
  begin //donotfond
   if firstnotfound <= idents.high then begin
@@ -1817,6 +1818,11 @@ var
    with info do begin
 //    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
+     typ1:= ele.eledataabs(ele1);
+     isclassof:= (typ1^.h.kind = dk_classof) and (typ1^.h.indirectlevel = 0);
+     if isclassof then begin
+      ele1:= basetype(typ1^.infoclassof.classtyp);
+     end;
      ele2:= ele1; //parent backup
      case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
       ek_none: begin
@@ -1891,86 +1897,94 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         pvar1:= eletodata(po1);
          subflags1:= psubdataty(po4)^.flags;
-         typ1:= ele.eledataabs(pvar1^.vf.typ);
-         if typ1^.h.kind = dk_class then begin
-          include(subflags1,sf_class);
-         end;
-         if [sf_class,sf_interface] * subflags1 <> [] then begin
-          if pvar1^.address.indirectlevel <> 1 then begin
-           if sf_class in subflags1 then begin
-            errormessage(err_classinstanceexpected,[]);
-           end
-           else begin
-            errormessage(err_interfaceexpected,[]);
+         if isclassof then begin
+          if not (stf_getaddress in info.s.currentstatementflags) then begin
+           if not getvalue(adatacontext,das_none) then begin
+            exit;
            end;
-           exit;
+           include(subflags,dsf_instanceonstack);
           end;
-          if not getvalue(adatacontext,das_none) then begin 
-                                             //get class instance
-           exit;
-          end;
+          include(subflags1,sf_class);
          end
          else begin
-          if subflags1 * [sf_destructor,sf_class] = 
-                                           [sf_destructor,sf_class] then begin
+          pvar1:= eletodata(po1);
+          typ1:= ele.eledataabs(pvar1^.vf.typ);
+          if typ1^.h.kind = dk_class then begin
+           include(subflags1,sf_class);
+          end;
+          if [sf_class,sf_interface] * subflags1 <> [] then begin
            if pvar1^.address.indirectlevel <> 1 then begin
-            errormessage(err_classinstanceexpected,[]);
+            if sf_class in subflags1 then begin
+             errormessage(err_classinstanceexpected,[]);
+            end
+            else begin
+             errormessage(err_interfaceexpected,[]);
+            end;
+            exit;
            end;
            if not getvalue(adatacontext,das_none) then begin 
-                                              //get object pointer
+                                              //get class instance
             exit;
            end;
           end
           else begin
-           if (sf_destructor in subflags1) and 
-                  (pvar1^.address.indirectlevel = 1) then begin //object pointer
+           if subflags1 * [sf_destructor,sf_class] = 
+                                            [sf_destructor,sf_class] then begin
+            if pvar1^.address.indirectlevel <> 1 then begin
+             errormessage(err_classinstanceexpected,[]);
+            end;
             if not getvalue(adatacontext,das_none) then begin 
-                                              //get object pointer
+                                               //get object pointer
              exit;
             end;
            end
            else begin
-            if pvar1^.address.indirectlevel <> 0 then begin
-             errormessage(err_objectexpected,[]);
-            end;
-            if sf_classmethod in subflags1 then begin
-             if icf_virtual in typ1^.infoclass.flags then begin
-              if not getaddress(adatacontext,true) then begin
-               exit;
-              end;
-              offsetad(adatacontext,typ1^.infoclass.virttaboffset);
-              i2:= adatacontext^.d.dat.fact.ssaindex;
-              with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
-               par.ssas1:= i2;
-              end;
-              include(subflags,dsf_instanceonstack);
-             end
-             else begin
-              pushclassdef(typ1);
+            if (sf_destructor in subflags1) and 
+                   (pvar1^.address.indirectlevel = 1) then begin //object pointer
+             if not getvalue(adatacontext,das_none) then begin 
+                                               //get object pointer
+              exit;
              end;
             end
             else begin
-             if not getaddress(adatacontext,true) then begin
-                                                //get object address
-              exit;
+             if pvar1^.address.indirectlevel <> 0 then begin
+              errormessage(err_objectexpected,[]);
              end;
+             if sf_classmethod in subflags1 then begin
+              if icf_virtual in typ1^.infoclass.flags then begin
+               if not getaddress(adatacontext,true) then begin
+                exit;
+               end;
+               offsetad(adatacontext,typ1^.infoclass.virttaboffset);
+               i2:= adatacontext^.d.dat.fact.ssaindex;
+               with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
+                par.ssas1:= i2;
+               end;
+               include(subflags,dsf_instanceonstack);
+              end
+              else begin
+               pushclassdef(typ1);
+              end;
+             end
+             else begin
+              if not getaddress(adatacontext,true) then begin
+                                                 //get object address
+               exit;
+              end;
+             end;
+             include(subflags,dsf_nofreemem);
             end;
-            include(subflags,dsf_nofreemem);
            end;
           end;
+          include(subflags,dsf_instanceonstack);
          end;
-         include(subflags,dsf_instanceonstack);
         end;
         ek_type: begin
-        {???
-         if not (sf_constructor in psubdataty(po4)^.flags) then begin
+         if not (sf_classmethod in psubdataty(po4)^.flags) then begin
           errormessage(err_classref,[],int1+1);
           exit;
          end;
-        }
-//         pushinsert(0,-1,sysdatatypes[st_pointer],nilad,0);
          if not (stf_getaddress in info.s.currentstatementflags) and 
                not (sf_constructor in psubdataty(po4)^.flags) then begin
           pushclassdef(eletodata(po1));
