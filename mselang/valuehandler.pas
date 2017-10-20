@@ -1981,7 +1981,8 @@ var
          end;
         end;
         ek_type: begin
-         if not (sf_classmethod in psubdataty(po4)^.flags) then begin
+         if psubdataty(po4)^.flags * 
+                           [sf_classmethod,sf_constructor] = [] then begin
           errormessage(err_classref,[],int1+1);
           exit;
          end;
@@ -2014,27 +2015,28 @@ var
  var
   p1,p2: pelementinfoty;
  begin
-  result:= not (stf_classmethod in info.s.currentstatementflags) or
-    (aitem^.header.kind = ek_sub) and 
-        (sf_classmethod in psubdataty(eletodata(aitem))^.flags);
-     
-  if not result then begin
+  result:= true;
+  if (aitem^.header.kind = ek_sub) and 
+                (stf_classmethod in info.s.currentstatementflags) then begin
    p2:= ele.eleinfoabs(aitem^.header.parent);
+   if p2^.header.kind = ek_classimpnode then begin //implementation found
+    p2:= ele.eleinfoabs(p2^.header.parent);
+   end;
    p1:= ele.eleinfoabs(info.currentobject);
    while true do begin
     if p1 = p2 then begin
      errormessage(err_classmethod,[]);
+     result:= false;
      exit;
     end;
     if (p1^.header.parent = 0) then begin
      break; //not element of current class
     end;
-    p1:= ele.eledataabs(po1^.header.parent);
+    p1:= ele.eledataabs(p1^.header.parent);
     if p1^.header.kind <> ek_type then begin
      break; //not element of current class
     end;
    end;
-   result:= true;
   end;
  end;
   
