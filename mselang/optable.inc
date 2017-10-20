@@ -974,29 +974,7 @@
   (ssa: pushnilssa; proc: @pushnilop; flags: []), 
 //oc_pushnilmethod
   (ssa: pushnilmethodssa; proc: @pushnilmethodop; flags: []), 
-//  pushsegaddress
-{
-//oc_pushstack8
-  (ssa: pushstack8ssa; proc: @pushstackindi8op; flags: []), 
-//oc_pushstack16
-  (ssa: pushstack16ssa; proc: @pushstackindi16op; flags: []), 
-//oc_pushstack32
-  (ssa: pushstack32ssa; proc: @pushstackindi32op; flags: []), 
-//oc_pushstack64
-  (ssa: pushstack64ssa; proc: @pushstackindi64op; flags: []), 
-//oc_pushstackpo
-  (ssa: pushstackpossa; proc: @pushstackindipoop; flags: []), 
-//oc_pushstackindi8
-  (ssa: pushstackindi8ssa; proc: @pushstackindi8op; flags: []), 
-//oc_pushstack16
-  (ssa: pushstackindi16ssa; proc: @pushstackindi16op; flags: []), 
-//oc_pushstack32
-  (ssa: pushstackindi32ssa; proc: @pushstackindi32op; flags: []), 
-//oc_pushstack64
-  (ssa: pushstackindi64ssa; proc: @pushstackindi64op; flags: []), 
-//oc_pushstackpo
-  (ssa: pushstackindipossa; proc: @pushstackindipoop; flags: []), 
-}
+
 //oc_pushseg8
   (ssa: pushseg8ssa; proc: @pushseg8op; flags: [of_relocseg]), 
 //oc_pushseg16
@@ -1090,6 +1068,8 @@
   (ssa: pushallocaddrssa; proc: @pushallocaddrop; flags: []), 
 //oc_pushstack
   (ssa: pushstackssa; proc: @pushstackop; flags: []), 
+//oc_pushclassdef
+  (ssa: pushclassdefssa; proc: @pushclassdefop; flags: []), 
 
 //oc_pushduppo
   (ssa: pushduppossa; proc: @pushduppoop; flags: []), 

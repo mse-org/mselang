@@ -126,7 +126,7 @@ type
   oc_initobject,
 //  oc_initclass,
   oc_destroyclass,
-  oc_getclassdef,
+  oc_getclassdef, //from instance
   oc_classis,
   oc_checkclasstype,
   oc_cmpstring,
@@ -624,6 +624,7 @@ type
   oc_pushallocaddr,
 //  oc_pushstackaddrindi,
   oc_pushstack,
+  oc_pushclassdef,
 
   oc_pushduppo,
   oc_storemanagedtemp,
@@ -1481,6 +1482,9 @@ type
      oc_concatstring8,oc_concatstring16,oc_concatstring32:(
       concatstring: concatstringty;
      );
+   );
+   oc_pushclassdef:(
+    segad: dataoffsty;
    );
    {oc_initclass,}oc_initobject:(
     initclass: initclassinfoty;

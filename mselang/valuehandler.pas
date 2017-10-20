@@ -966,6 +966,21 @@ begin
          po1:= ele.eledataabs(po1^.h.ancestor);
         end;
        end;
+       dk_classof: begin
+        po1:= basetype1(ele.eledataabs(source1^.infoclassof.classtyp));
+        po2:= basetype1(ele.eledataabs(dest^.infoclassof.classtyp));
+        result:= true;
+        while true do begin
+         if po2 = po1 then begin
+          break;
+         end;
+         if po1^.h.ancestor = 0 then begin
+          result:= false;
+          break;
+         end;
+         po1:= ele.eledataabs(po1^.h.ancestor);
+        end;
+       end;
       end;
       if not result then begin
        exit; //no conversion possible
@@ -1349,7 +1364,7 @@ begin
              ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
               (source1^.h.bitsize = pointerbitsize) or 
                      (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
-      if source1^.h.kind in [dk_string,dk_dynarray] then begin
+      if source1^.h.kind in [dk_string,dk_dynarray,dk_classof] then begin
        result:= getvalue(acontext,das_pointer);
        result:= true; //todo: pchar handling
       end

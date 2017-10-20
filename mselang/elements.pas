@@ -1563,7 +1563,7 @@ function telementhashdatalist.dumpelements: msestringarty;
       end;
       dk_classof: begin
        with infoclassof do begin
-        result:= result + 'cla:'+inttostrmse(classtyp);
+        result:= result + ' cla:'+inttostrmse(classtyp);
        end;
       end;
      end;

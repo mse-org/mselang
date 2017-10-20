@@ -122,7 +122,8 @@ type
   intfnamenode: elementoffsetty;
   intftypenode: elementoffsetty;
   implnode: elementoffsetty;
-  objpotype: elementoffsetty; //^object, 0 for ck_class
+  objpotyp: elementoffsetty; //^object, 0 for ck_class
+  classoftyp: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;

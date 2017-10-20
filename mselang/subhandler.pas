@@ -2016,7 +2016,7 @@ begin
      if isobject then begin
       if h.kind = dk_object then begin
  //      include(address.flags,af_paramindirect);
-       vf.typ:= infoclass.objpotype;
+       vf.typ:= infoclass.objpotyp;
        include(address.flags,af_selfobj);
       end
       else begin

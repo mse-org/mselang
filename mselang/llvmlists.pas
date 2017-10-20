@@ -3254,6 +3254,11 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
      end;
+     dk_classof: begin
+      m2:= bytetyp;        //todo
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+     end;
      dk_sub: begin
       m1.id:= -1;
      end;

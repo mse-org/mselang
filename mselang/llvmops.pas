@@ -2883,7 +2883,6 @@ end;
 
 procedure finirefsizelocdynarop();
 begin
-// notimplemented();
  getlocaddress(); //1ssa
  callcompilersub(cs_finirefsizedynar,false,[bcstream.relval(0)]);
 end;
@@ -2911,12 +2910,8 @@ end;
 
 procedure increfsizesegop();
 begin
-// with pc^.par do begin
-//  bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
-//                                                bcstream.typeval(pointertype));
  loadseg();
  callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
-// end;
 end;
 
 procedure increfsizelocop();
@@ -3020,18 +3015,14 @@ end;
 
 procedure decrefsizesegop();
 begin
-// with pc^.par do begin
  loadseg();
-//  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
-// end;
 end;
 
 procedure decrefsizelocop();
 begin
  with pc^.par do begin
   loadloc(false);
-//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
   callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
  end;
 end;
@@ -3045,15 +3036,12 @@ procedure decrefsizestackop();
 begin
  with pc^.par do begin
   callcompilersub(cs_decrefsize,false,[bcstream.ssaval(ssas1)]);
-//  callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure decrefsizestackrefop();
 begin
  with pc^.par do begin
-//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-//  bcstream.emitloadop(bcstream.relval(0));
   callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
@@ -3426,57 +3414,6 @@ begin
  end;
 end;
 
-{
-procedure pushstack8op();
-begin
- notimplemented();
-end;
-
-procedure pushstack16op();
-begin
- notimplemented();
-end;
-
-procedure pushstack32op();
-begin
- notimplemented();
-end;
-
-procedure pushstack64op();
-begin
- notimplemented();
-end;
-
-procedure pushstackpoop();
-begin
- notimplemented();
-end;
-
-procedure pushstackindi8op();
-begin
- notimplemented();
-end;
-
-procedure pushstackindi16op();
-begin
- notimplemented();
-end;
-
-procedure pushstackindi32op();
-begin
- notimplemented();
-end;
-
-procedure pushstackindi64op();
-begin
- notimplemented();
-end;
-
-procedure pushstackindipoop();
-begin
- notimplemented();
-end;
-}
 procedure pushsegaddressop();
 begin
  notimplemented();
@@ -3526,12 +3463,7 @@ procedure pushsegop();
 begin
  loadseg();
 end;
-{
-procedure pushsegopenarop();
-begin
- notimplemented();
-end;
-}
+
 procedure pushloc8op();
 begin
  loadloc(false);
@@ -3705,19 +3637,7 @@ begin
                                        bcstream.typeval(das_pointer));
  end;
 end;
-{
-procedure pushlocaddrindiop();          //todo: nested frames
-begin
- with pc^.par do begin
-  if memop.locdataaddress.a.framelevel >= 0 then begin
-   notimplemented();
-  end;
-  bcstream.emitloadop(bcstream.allocval(memop.locdataaddress.a.address));
-  bcstream.emitgetelementptr(bcstream.relval(0),
-                bcstream.constval(memop.locdataaddress.offset));
- end;
-end;
-}
+
 procedure pushsegaddrop();
 var
  str1: shortstring;
@@ -3726,16 +3646,7 @@ begin
   bcstream.emitsegdataaddress(memop);
  end;
 end;
-{
-procedure pushsegaddrindiop(); //offset after load
-begin
- with pc^.par do begin
-  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
-  bcstream.emitgetelementptr(bcstream.relval(0),
-                bcstream.constval(memop.segdataaddress.offset));
- end;
-end;
-}
+
 procedure pushstackaddrop();
 begin
  with pc^.par do begin
@@ -3744,7 +3655,6 @@ begin
   bcstream.emitgetelementptr(bcstream.relval(0),
                    bcstream.constval(memop.tempdataaddress.offset)) //2ssa
  end;
-// bcstream.emitsegdataaddress(memop);
 end;
 
 procedure pushallocaddrop();
@@ -3753,18 +3663,20 @@ begin
   bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.constval(0));
                                                                    //2ssa
  end;
-// bcstream.emitsegdataaddress(memop);
 end;
 
-{
-procedure pushstackaddrindiop();
-begin
- notimplemented();
-end;
-}
 procedure pushstackop();
 begin
  notimplemented();
+end;
+
+procedure pushclassdefop();
+begin
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.globval(
+            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
+                                                                   //2ssa
+ end;
 end;
 
 procedure pushduppoop();
@@ -3777,12 +3689,6 @@ end;
 procedure storemanagedtempop();
 begin
  with pc^.par do begin
-{
- bcstream.emitnopssa();
- bcstream.emitnopssa();
- bcstream.emitnopssa();
-}
-
   bcstream.emitgetelementptr(bcstream.allocval(managedtemparrayid),
                                          bcstream.constval(voffset)); //2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer)); 
@@ -4440,17 +4346,7 @@ begin
                                                           bcstream.relval(0)]);
  end;
 end;
-{
-procedure initclassop();
-begin
- with pc^.par.initclass do begin
-  bcstream.emitgetelementptr(bcstream.globval(
-            pint32(getsegmentpo(seg_classdef,classdef))^),bcstream.constval(0)); 
-                                                           //2ssa
-  callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
- end;
-end;
-}
+
 procedure destroyclassop();
 begin
  with pc^.par do begin
@@ -5281,18 +5177,6 @@ const
 
   pushnilssa = 1;
   pushnilmethodssa = 1;
-{
-  pushstack8ssa = 1;
-  pushstack16ssa = 1;
-  pushstack32ssa = 1;
-  pushstack64ssa = 1;
-  pushstackpossa = 1;
-  pushstackindi8ssa = 1;
-  pushstackindi16ssa = 1;
-  pushstackindi32ssa = 1;
-  pushstackindi64ssa = 1;
-  pushstackindipossa = 1;
- }
   pushsegaddressssa = 1;
 
   pushseg8ssa = 1;
@@ -5346,6 +5230,8 @@ const
   pushallocaddrssa = 2;
 //  pushstackaddrindissa = 1;
   pushstackssa = 1;
+  
+  pushclassdefssa = 2;
   
   pushduppossa = 1;
   storemanagedtempssa = 3;
@@ -5402,7 +5288,6 @@ const
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initobjectssa = 2;
-//  initclassssa = 3;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;

@@ -235,7 +235,7 @@ begin
    end;
   end;
   contextstack[s.stackindex].b.eleparent:= ele.elementparent;
-  ele.checkcapacity(ek_type,10);
+  ele.checkcapacity(ek_type,11);
   with contextstack[s.stackindex-1] do begin
    bo1:= ele.addelementdata(id1,ek_type,globalvisi,po1);
    d.typ.typedata:= ele.eledatarel(po1);
@@ -279,17 +279,22 @@ begin
      infoclass.interfacesubcount:= 0;
      fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
      if isclass then begin
-      po1^.infoclass.objpotype:= 0;
+      po1^.infoclass.objpotyp:= 0;
       infoclass.flags:= [icf_class];
      end
      else begin
       infoclass.flags:= [];
-      po1^.infoclass.objpotype:= 
-                  ele.addelementduplicate1(tks_objpotype,ek_type,globalvisi);
-      po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotype));
+      po1^.infoclass.objpotyp:= 
+                  ele.addelementduplicate1(tks_objpotyp,ek_type,globalvisi);
+      po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotyp));
       inittypedatasize(po2^,dk_objectpo,d.typ.indirectlevel,das_pointer);
       po2^.h.base:= d.typ.typedata;
      end;
+     po1^.infoclass.classoftyp:= 
+                 ele.addelementduplicate1(tks_classoftyp,ek_type,globalvisi);
+     po2:= ptypedataty(ele.eledataabs(po1^.infoclass.classoftyp));
+     inittypedatasize(po2^,dk_classof,0,das_pointer);
+     po2^.infoclassof.classtyp:= d.typ.typedata;
     end;
    end;
   end;

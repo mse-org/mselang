@@ -1398,15 +1398,35 @@ end;
 
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                                const adatasize: databitsizety);
+var
+ typ1: ptypedataty;
 begin
  with info do begin
- {$ifdef mse_checkinternalerror}
-  if contextstack[s.stackindex+stackoffset].d.kind <> ck_const then begin
-   internalerror(ie_handler,'20160521C');
-  end;
- {$endif}
   with contextstack[s.stackindex+stackoffset] do begin
-   pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize);
+   if d.kind = ck_typearg then begin
+    typ1:= ele.eledataabs(d.typ.typedata);
+    if (d.typ.indirectlevel = 0) and
+                   (typ1^.h.kind in [dk_class,dk_object]) then begin
+     with insertitem(oc_pushclassdef,stackoffset,aopoffset)^.par do begin
+      segad:= typ1^.infoclass.defs.address;
+     end;
+     initfactcontext(stackoffset);
+     d.dat.datatyp.typedata:= typ1^.infoclass.classoftyp;
+     d.dat.datatyp.indirectlevel:= 0;
+     d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+    end
+    else begin
+     errormessage(err_constexpressionexpected,[],stackoffset,0,erl_fatal);
+    end;
+   end
+   else begin
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_const then begin
+     internalerror(ie_handler,'20160521C');
+    end;
+   {$endif}
+    pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize);
+   end;
   end;
  end;
 end;
@@ -2811,7 +2831,7 @@ begin
   initdatacontext(po1^.d,ck_fact);
   with po1^ do begin
    d.dat.fact.ssaindex:= getcontextssa(stackoffset);
-   d.dat.fact.flags:= [];
+//   d.dat.fact.flags:= [];
   end;
  end;
 end;
@@ -3016,7 +3036,7 @@ var
  end; //doref
 
 var
- po1: ptypedataty;
+ typ1: ptypedataty;
  op1: popinfoty;
  i1,i2: integer;
  pocont1,pocont2: pcontextitemty;
@@ -3037,7 +3057,7 @@ begin                    //todo: optimize
     goto errlab;
    end;
   end;
-  po1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
+  typ1:= ele.eledataabs(d.dat.datatyp.typedata); //could be invalid
   case d.kind of
    ck_ref: begin
     if d.dat.datatyp.indirectlevel < 0 then begin
@@ -3165,7 +3185,18 @@ begin                    //todo: optimize
      end;
     end;
    end;
-   ck_typearg,ck_controltoken,ck_label: begin
+   ck_typearg: begin
+    typ1:= ele.eledataabs(d.typ.typedata);
+    if (d.typ.indirectlevel = 0) and
+                   (typ1^.h.kind in [dk_class,dk_object]) then begin
+     pushinsertconst(stackoffset,-1,adatasize);                  
+    end
+    else begin
+     errormessage(err_valueexpected,[],stackoffset);
+     goto errlab;
+    end;
+   end;
+   ck_controltoken,ck_label: begin
     errormessage(err_valueexpected,[],stackoffset);
     goto errlab;
    end;
