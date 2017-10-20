@@ -1318,6 +1318,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'getnamedtype');
+ trygetfieldtypeco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'trygetfieldtype');
  getfieldtypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -8704,10 +8709,45 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdefa0: array[0..1] of branchty = (
+ bclassdef: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classofco); stack: nil; 
      keyword: $00000260{'of'}),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bclassdefa: array[0..8] of branchty = (
@@ -8771,7 +8811,7 @@ const
    );
  bclassof: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @getfieldtypeco); stack: nil; keys: (
+     dest: (context: @trygetfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -12725,7 +12765,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bident: array[0..19] of branchty = (
+ bident: array[0..20] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000023A{'implementation'}),
@@ -12747,6 +12787,9 @@ const
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $00000240{'class'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
+     keyword: $00000260{'of'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $00000243{'method'}),
@@ -13868,6 +13911,9 @@ begin
  arrayindex3co.branch:= @barrayindex3;
  getnamedtypeco.branch:= @bgetnamedtype;
  getnamedtypeco.handleexit:= @handlenamedtype;
+ trygetfieldtypeco.branch:= nil;
+ trygetfieldtypeco.next:= @gettypeco;
+ trygetfieldtypeco.handleentry:= @handletrygetfieldtypestart;
  getfieldtypeco.branch:= nil;
  getfieldtypeco.next:= @gettypeco;
  getfieldtypeco.handleentry:= @handlegetfieldtypestart;
@@ -13961,9 +14007,9 @@ begin
  objectdefco.branch:= nil;
  objectdefco.next:= @classdefaco;
  objectdefco.handleentry:= @handleobjectdefstart;
- classdefco.branch:= nil;
+ classdefco.branch:= @bclassdef;
  classdefco.next:= @classdefa0co;
- classdefa0co.branch:= @bclassdefa0;
+ classdefa0co.branch:= nil;
  classdefa0co.next:= @classdefaco;
  classdefa0co.handleentry:= @handleclassdefstart;
  classdefaco.branch:= @bclassdefa;

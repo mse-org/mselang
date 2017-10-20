@@ -922,6 +922,7 @@ arrayindex3,,,
 getnamedtype,,,handlenamedtype*^
  '',getidentpath^*
 
+trygetfieldtype,gettype,handletrygetfieldtypestart,
 getfieldtype,gettype,handlegetfieldtypestart,
 gettypetype,gettype,handlegettypetypestart,
 gettype,,,*^
@@ -1068,8 +1069,9 @@ getrange3,,,handlerange3^
 //
 objectdef,classdefa,handleobjectdefstart,
 classdef,classdefa0,,
-classdefa0,classdefa,handleclassdefstart,
+ ${whitespace}
  'of'.,classof-
+classdefa0,classdefa,handleclassdefstart,
 classdefa,classdef0,,
  ${whitespace}
  '(',classdefparam-*,classdef0a
@@ -1077,7 +1079,7 @@ classdefa,classdef0,,
  ';',classdefforward
 classdefforward,,,handleclassdefforward
 classof,,,handleclassof*^
- '',getfieldtype^*
+ '',trygetfieldtype^*
 classdef0a,classdef0,,
  ${whitespace}
  '[',classdefattach-*
@@ -1549,6 +1551,7 @@ ident,ident0,,
  'label'.,reservedword
  'begin'.,reservedword
  'class'.,reservedword
+ 'of'.,reservedword
  'method'.,reservedword
  'sub'.,reservedword
  'procedure'.,reservedword

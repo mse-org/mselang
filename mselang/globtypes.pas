@@ -295,7 +295,7 @@ type
                tf_upper,       //in range expression
                tf_subad,       //sub address
                tf_subrange,
-               tf_untyped,tf_forward,tf_sizeinvalid
+               tf_untyped,tf_forward,tf_sizeinvalid,tf_canforward
                ); 
  typeflagsty = set of typeflagty;   
 const
@@ -307,6 +307,7 @@ type
   flags: typeflagsty;
   typedata: elementoffsetty;
   indirectlevel: indirectlevelty; //total
+  forwardident: identty;
  end;
  ptypeinfoty = ^typeinfoty;
 

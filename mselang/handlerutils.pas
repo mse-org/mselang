@@ -4273,6 +4273,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
   with atyp do begin
    if typedata = 0 then begin
     write('NIL ');
+    write('fowardident:',forwardident,' ');
    end
    else begin
     po1:= ele.eledataabs(typedata);

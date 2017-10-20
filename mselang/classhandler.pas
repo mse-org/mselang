@@ -573,38 +573,34 @@ begin
   end;
  {$endif}
   with contextstack[s.stacktop] do begin
-   if (d.kind = ck_fieldtype) and (d.typ.typedata <> 0) then begin
-    typ1:= ele.eledataabs(d.typ.typedata);
-    if typ1^.h.kind <> dk_class then begin
-     errormessage(err_classtypeexpected,[]);
+   if (d.kind = ck_fieldtype) then begin
+    if d.typ.typedata <> 0 then begin
+     typ1:= ele.eledataabs(d.typ.typedata);
+     if (typ1^.h.kind <> dk_class) then begin
+      errormessage(err_classtypeexpected,[]);
+      exit;
+     end
     end
     else begin
-     if not ele.addelementdata(gettypeident(),ek_type,allvisi,typ2) then begin
-      currenttypedef:= 0;
-      identerror(-2,err_duplicateidentifier);
-     end
-     else begin
-      currenttypedef:= ele.eledatarel(typ2);
-      inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel,
-                                                                 das_pointer);
-      with typ2^.infoclassof do begin
-       classtyp:= d.typ.typedata;
-      end;
-(*
-      with {contextstack[s.stackindex-1],}po1^ do begin
-      {
-       kind:= dk_set; //fieldchain set in handlerecorddefstart()
-       datasize:= das_32;
-       bytesize:= 4;
-       bitsize:= 32;
-       indirectlevel:= d.typ.indirectlevel;
-      }
-       infoset.itemtype:= ele1;
-       resolveforwardtype(po1);
-      end;
-*)      
-      resolveforwardtype(typ2);
+     if d.typ.forwardident = 0 then begin
+      exit; //qualified type not found
      end;
+    end;
+    if not ele.addelementdata(gettypeident(),ek_type,allvisi,typ2) then begin
+     currenttypedef:= 0;
+     identerror(-2,err_duplicateidentifier);
+    end
+    else begin
+     currenttypedef:= ele.eledatarel(typ2);
+     inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel,
+                                                                das_pointer);
+     with typ2^.infoclassof do begin
+      classtyp:= d.typ.typedata;
+      if classtyp = 0 then begin
+       markforwardtype(typ2,d.typ.forwardident);
+      end;
+     end;
+     resolveforwardtype(typ2);
     end;
    end;
   end;

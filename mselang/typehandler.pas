@@ -23,6 +23,7 @@ uses
 procedure handletype();
 procedure handlegettypetypestart();
 procedure handlegetfieldtypestart();
+procedure handletrygetfieldtypestart();
 procedure handlepointertype();
 procedure handlechecktypeident();
 procedure handlecheckrangetype();
@@ -88,16 +89,33 @@ begin
  end;
 end;
 
+procedure initypecontext(const akind: contextkindty);
+begin
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= akind;
+  d.typ.indirectlevel:= 0;
+  d.typ.typedata:= 0;
+  d.typ.forwardident:= 0;
+  d.typ.flags:= [];
+ end;
+end;
+
 procedure handlegetfieldtypestart();
 begin
 {$ifdef mse_debugparser}
  outhandle('GETFIELDTYPESTART');
 {$endif}
+ initypecontext(ck_fieldtype);
+end;
+
+procedure handletrygetfieldtypestart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('TRYGETFIELDTYPESTART');
+{$endif}
+ initypecontext(ck_fieldtype);
  with info,contextstack[s.stackindex] do begin
-  d.kind:= ck_fieldtype;
-  d.typ.indirectlevel:= 0;
-  d.typ.typedata:= 0;
-  d.typ.flags:= [];
+  d.typ.flags:= [tf_canforward];
  end;
 end;
 
@@ -106,12 +124,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GETTYPETYPESTART');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.kind:= ck_typetype;
-  d.typ.indirectlevel:= 0;
-  d.typ.typedata:= 0;
-  d.typ.flags:= [];
- end;
+ initypecontext(ck_typetype);
 end;
 
 procedure handlepointertype();
@@ -143,7 +156,8 @@ begin
  {$endif}
   currenttypedef:= 0;
   ele.checkcapacity(ek_type);
-  bo1:= (d.typ.indirectlevel > 0) and (s.stacktop-s.stackindex = 1);
+  bo1:= ((d.typ.indirectlevel > 0) or (tf_canforward in d.typ.flags)) and
+                                               (s.stacktop-s.stackindex = 1);
                                         //simple type name only
   if (stf_paramsdef in info.s.currentstatementflags) and
                 (s.stacktop-s.stackindex = 1) and (d.typ.indirectlevel = 0) and
@@ -155,9 +169,19 @@ begin
    bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
   end;
   forward1:= not bo2 and bo1;
-  if forward1 then begin //forward pointer
-   po2:= ele.eleinfoabs(getsystypeele(st_forward));
-   bo2:= true;
+  if forward1 then begin
+   if tf_canforward in d.typ.flags then begin
+   {$ifdef mse_checkinternalerror}
+    if contextstack[s.stacktop].d.kind <> ck_ident then begin
+     internalerror(ie_handler,'20171020A');
+    end;
+   {$endif}
+    d.typ.forwardident:= contextstack[s.stacktop].d.ident.ident;
+   end
+   else begin //forward pointer
+    po2:= ele.eleinfoabs(getsystypeele(st_forward));
+    bo2:= true;
+   end;
   end;
   if bo2 then begin
    d.typ.typedata:= ele.eleinforel(po2);

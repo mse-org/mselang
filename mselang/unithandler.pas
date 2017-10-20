@@ -1464,13 +1464,18 @@ begin
    if (name = resolver^.header.name) and 
             (pelementinfoty(pointer(pd))^.header.parent = 
                                  resolver^.header.parent) then begin
-    ps:= @resolver^.data;
     pd:= pointer(pd)+eledatashift;
-    i1:= pd^.h.indirectlevel;
-    pd^:= ps^;
-    pd^.h.indirectlevel:= i1;
-    if pd^.h.base = 0 then begin
-     pd^.h.base:= ele.eledatarel(ps);
+    if pd^.h.kind = dk_classof then begin
+     pd^.infoclassof.classtyp:= ele.eleinforel(resolver);
+    end
+    else begin
+     ps:= @resolver^.data;
+     i1:= pd^.h.indirectlevel;
+     pd^:= ps^;
+     pd^.h.indirectlevel:= i1;
+     if pd^.h.base = 0 then begin
+      pd^.h.base:= ele.eledatarel(ps);
+     end;
     end;
     resolved:= true;
    end;
