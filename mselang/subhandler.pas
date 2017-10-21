@@ -47,7 +47,7 @@ type
 }
 type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter,
-                dsf_instanceonstack,dsf_nooverloadcheck,
+                dsf_instanceonstack,dsf_classdefonstack,dsf_nooverloadcheck,
                 dsf_useobjssa,dsf_useinstancetype,
                 dsf_usedestinstance, //use d.dat.fact.instancessa
                 dsf_noinstancecopy,dsf_noparams,{dsf_noparamscheck,}
@@ -3428,16 +3428,21 @@ begin
      end;
     end;
     
-    if (dsf_instanceonstack in aflags) and 
-               (sf_classmethod in asub^.flags) and isfactcontext then begin
+    if (aflags*[dsf_instanceonstack,dsf_classdefonstack] = 
+             [dsf_instanceonstack]) and 
+                   (sf_classmethod in asub^.flags) and isfactcontext then begin
      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
      if (typ1^.h.kind in [dk_class,dk_object]) then begin
       if icf_virtual in typ1^.infoclass.flags then begin
+       with insertitem(oc_getclassdef,destoffset,-1)^.par do begin
+        ssas1:= instancessa;
+        setimmint32(typ1^.infoclass.virttaboffset,imm);
+       end;
       end
       else begin
-       with insertitem(oc_pushclassdef,destoffset,-1)^ do begin
-        par.segad:= typ1^.infoclass.defs.address;
-        instancessa:= par.ssad;
+       with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
+        segad:= typ1^.infoclass.defs.address;
+        instancessa:= ssad;
        end;
       end;
      end;

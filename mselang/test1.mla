@@ -1,44 +1,53 @@
-program variantstring;
-uses
- rtl_variants;
-{
+program initclass1;
 type
- variantty = object [nozeroinit]
-  method tostring(): string16 [operator = '()'];
+{$internaldebug on}
+
+ testclaty = class of ttest;
+ ttest = class()[virtual]
+  fa,fb: int32;
+  constructor create();
+  destructor destroy();
+  class method test();
+  method test1();
  end;
 
-method variantty.tostring(): string16;
+{$dumpelements}
+//{$abort}
+constructor ttest.create();
 begin
 end;
-}
-procedure test();
-var
- v1,v2: variantty;
- s1: system.string8;
- s2: string16;
+
+destructor ttest.destroy();
 begin
- v1:= 'abc';
- v2:= v1;
-s1:= 'def';
-{$internaldebug on}
- s2:= s1;
- s2:= string16(s1);
- s2:= string8(string16(s1));
- writeln(s2);
- s2:= string16(v2);
- s2:= string8(string16(v2));
- write(string8(v2),string8(v1));
- writeln(s2);
+end;
+
+method ttest.test1();
+begin
+ writeln('instance ',self);
+ test();
+end;
+
+class method ttest.test();
+begin
+// test1();
+ writeln('class ',self);
 end;
 
 var
- s1: string8;
- s2: string16;
+ c1: testclaty;
+ c2: ttest;
 begin
+ c1:= ttest;
+ c2:= ttest.create();
+ writeln(pointer(c1),' ',c2);
+ c2.test();
+ c2.destroy();
 {
- s2:= 'abc';
- s1:= s2;
- writeln(s1);
+ c1:= ttest;
+ c1.test;
 }
- test();
+{
+ c2:= ttest.create();
+ c2:= c1.create();
+}
 end.

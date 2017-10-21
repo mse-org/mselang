@@ -1961,7 +1961,7 @@ var
                with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
                 par.ssas1:= i2;
                end;
-               include(subflags,dsf_instanceonstack);
+               subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
               end
               else begin
                pushclassdef(typ1);
@@ -1989,6 +1989,7 @@ var
          if not (stf_getaddress in info.s.currentstatementflags) and 
                not (sf_constructor in psubdataty(po4)^.flags) then begin
           pushclassdef(eletodata(po1));
+          include(subflags,dsf_classdefonstack);
          end;
         end;
         else begin
@@ -2017,7 +2018,9 @@ var
  begin
   result:= true;
   if (aitem^.header.kind = ek_sub) and 
-                (stf_classmethod in info.s.currentstatementflags) then begin
+                (stf_classmethod in info.s.currentstatementflags) and 
+                not (sf_classmethod in 
+                     psubdataty(eletodata(aitem))^.flags) then begin
    p2:= ele.eleinfoabs(aitem^.header.parent);
    if p2^.header.kind = ek_classimpnode then begin //implementation found
     p2:= ele.eleinfoabs(p2^.header.parent);
