@@ -1923,9 +1923,28 @@ var
             end;
             exit;
            end;
-           if not getvalue(adatacontext,das_none) then begin 
-                                              //get class instance
-            exit;
+           if sf_classmethod in subflags1 then begin
+            if icf_virtual in typ1^.infoclass.flags then begin
+             if not getvalue(adatacontext,das_none) then begin 
+                                                //get class instance
+              exit;
+             end;
+             offsetad(adatacontext,typ1^.infoclass.virttaboffset);
+             i2:= adatacontext^.d.dat.fact.ssaindex;
+             with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
+              par.ssas1:= i2;
+             end;
+            end
+            else begin
+             pushclassdef(typ1);
+            end;
+            subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
+           end
+           else begin
+            if not getvalue(adatacontext,das_none) then begin 
+                                               //get class instance
+             exit;
+            end;
            end;
           end
           else begin
@@ -1961,11 +1980,11 @@ var
                with insertitem(oc_indirectpo,adatacontext,-1)^ do begin
                 par.ssas1:= i2;
                end;
-               subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
               end
               else begin
                pushclassdef(typ1);
               end;
+              subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
              end
              else begin
               if not getaddress(adatacontext,true) then begin
