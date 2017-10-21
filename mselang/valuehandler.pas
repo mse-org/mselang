@@ -1981,12 +1981,14 @@ var
          end;
         end;
         ek_type: begin
-         if psubdataty(po4)^.flags * 
-                           [sf_classmethod,sf_constructor] = [] then begin
+         if (psubdataty(po4)^.flags * [sf_classmethod,sf_constructor] = []) and
+                    (info.s.currentstatementflags * 
+                                 [stf_getaddress,stf_addressop] = []) then begin
           errormessage(err_classref,[],int1+1);
           exit;
          end;
-         if not (stf_getaddress in info.s.currentstatementflags) and 
+         if (info.s.currentstatementflags * 
+                    [stf_getaddress,stf_addressop] = []) and 
                not (sf_constructor in psubdataty(po4)^.flags) then begin
           pushclassdef(eletodata(po1));
           include(subflags,dsf_classdefonstack);
