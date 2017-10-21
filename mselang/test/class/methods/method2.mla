@@ -31,10 +31,10 @@ var
 begin
  c1:= tcla.create();
  meth1:= @c1.test;
-
+ meth1(60,40);
  with methodty(meth1) do
-  if (code = @tcla.test) and (data = c1) then
-   exitcode:= 123;
+  if (data = c1) then
+   exitcode:= exitcode + 23;
   end;
  end;
  c1.destroy();

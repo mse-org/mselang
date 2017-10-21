@@ -1797,6 +1797,8 @@ var
    end;
    initfactcontext(adatacontext);
    adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+   adatacontext^.d.dat.datatyp.typedata:= ele.eledatarel(atyp);
+   adatacontext^.d.dat.datatyp.indirectlevel:= 1;
    include(subflags,dsf_instanceonstack);
   end;//pushclassdef
   
@@ -1895,9 +1897,9 @@ var
         errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
         exit;
        end;
+       subflags1:= psubdataty(po4)^.flags;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         subflags1:= psubdataty(po4)^.flags;
          if isclassof then begin
           if not (stf_getaddress in info.s.currentstatementflags) then begin
            if not getvalue(adatacontext,das_none) then begin
@@ -2000,14 +2002,21 @@ var
          end;
         end;
         ek_type: begin
-         if (psubdataty(po4)^.flags * [sf_classmethod,sf_constructor] = []) and
-                    (info.s.currentstatementflags * 
-                                 [stf_getaddress,stf_addressop] = []) then begin
-          errormessage(err_classref,[],int1+1);
-          exit;
+         if info.s.currentstatementflags * 
+                                 [stf_getaddress,stf_addressop] = [] then begin
+          if (subflags1 * [sf_classmethod,sf_constructor] = []) then begin
+           errormessage(err_classref,[],int1+1);
+           exit;
+          end;
+         end
+         else begin
+          if not (sf_classmethod in subflags1) then begin
+           errormessage(err_classmethodexpected,[]);
+           exit;
+          end;
          end;
-         if (info.s.currentstatementflags * 
-                    [stf_getaddress,stf_addressop] = []) and 
+         if {(info.s.currentstatementflags * 
+                    [stf_getaddress,stf_addressop] = []) and }
                not (sf_constructor in psubdataty(po4)^.flags) then begin
           pushclassdef(eletodata(po1));
           include(subflags,dsf_classdefonstack);

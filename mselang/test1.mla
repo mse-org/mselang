@@ -10,6 +10,7 @@ type
   class method test();
   method test1();
  end;
+ procty = method();
 
 {$dumpelements}
 //{$abort}
@@ -24,7 +25,7 @@ end;
 method ttest.test1();
 begin
  writeln('instance ',self);
- test();
+// test();
 end;
 
 class method ttest.test();
@@ -36,18 +37,16 @@ end;
 var
  c1: testclaty;
  c2: ttest;
+ p1: procty;
 begin
  c1:= ttest;
  c2:= ttest.create();
- writeln(pointer(c1),' ',c2);
+{$internaldebug on}
+ p1:= @ttest.test();
+ p1();
+ p1:= @c2.test1();
+ p1();
  c2.test();
+ c2.test1();
  c2.destroy();
-{
- c1:= ttest;
- c1.test;
-}
-{
- c2:= ttest.create();
- c2:= c1.create();
-}
 end.
