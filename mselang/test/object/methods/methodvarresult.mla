@@ -1,0 +1,26 @@
+program methodvarresult;
+type
+ recty = record
+  a,b,c: int32;
+ end;
+
+ ctest = object
+  fa,fb: int32;
+  method test: recty;
+ end;
+
+method ctest.test(): recty;
+begin
+ result.a:= fa;
+ result.b:= fb;
+end;
+
+var
+ o1: ctest;
+ r1: recty;
+begin
+ o1.fa:= 100;
+ o1.fb:= 23;
+ r1:= o1.test();
+ exitcode:= r1.a + r1.b;
+end.

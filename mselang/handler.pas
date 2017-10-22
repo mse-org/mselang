@@ -3801,8 +3801,7 @@ begin
    
    if typematch and not errorfla then begin
                          //todo: use destinationaddress directly
-    typematch:= isconst or 
-                   tryconvert(source,destvar.typ,indilev1,[]); 
+    typematch:= isconst or tryconvert(source,destvar.typ,indilev1,[]); 
                             //todo: tryconvert already called for objects?
     if not typematch then begin
      assignmenterror(source^.d,destvar);

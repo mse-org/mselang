@@ -1899,14 +1899,14 @@ var
        end;
        subflags1:= psubdataty(po4)^.flags;
        case po1^.header.kind of
-        ek_var: begin //todo: check class procedures
+        ek_var: begin
          if isclassof then begin
-          if not (stf_getaddress in info.s.currentstatementflags) then begin
+//          if not (stf_getaddress in info.s.currentstatementflags) then begin
            if not getvalue(adatacontext,das_none) then begin
             exit;
            end;
            include(subflags,dsf_instanceonstack);
-          end;
+//          end;
           include(subflags1,sf_class);
          end
          else begin
@@ -1962,7 +1962,7 @@ var
            end
            else begin
             if (sf_destructor in subflags1) and 
-                   (pvar1^.address.indirectlevel = 1) then begin //object pointer
+                 (pvar1^.address.indirectlevel = 1) then begin //object pointer
              if not getvalue(adatacontext,das_none) then begin 
                                                //get object pointer
               exit;
@@ -2487,10 +2487,6 @@ begin
                     contextstack[s.stackindex-1].d.dat.indirection;
           end;
          end;
-         
-       {
-         errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
-       }
         end;
        end;
       end
@@ -2501,62 +2497,38 @@ begin
        else begin
         with ptypedataty(po2)^ do begin 
          bo1:= true;
-         if (potop^.d.kind = ck_ref) then begin
-          linkaddcast(ele.eledatarel(po2),potop);
-          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
-          potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
-          potop^.d.dat.datatyp.flags:= 
-           (potop^.d.dat.datatyp.flags + h.flags) * (h.flags + [tf_subad]); 
-                                    //do not remove tf_subad
-          i1:= 0;
-          if (h.kind = dk_interface) and (h.indirectlevel = 0) and
-                ((po3^.h.kind = dk_class) and 
-                        (potop^.d.dat.datatyp.indirectlevel = 1) or
-                 (po3^.h.kind = dk_object) and 
-                        (potop^.d.dat.datatyp.indirectlevel = 0))
-                         then begin
-           i1:= 1;           //classinstance to interface
-          end;
-          potop^.d.dat.datatyp.indirectlevel:= 
-                        potop^.d.dat.indirection + h.indirectlevel + i1;
-//          potop^.d.dat.datatyp.indirectlevel:= 
-//                  potop^.d.dat.datatyp.indirectlevel + 
-//                                      (h.indirectlevel - po3^.h.indirectlevel);
-          bo1:= false;
-{
-          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
-          i1:= h.bytesize;
-          i2:= po3^.h.bytesize;
-          if h.indirectlevel > 0 then begin
-           i1:= pointersize;
-          end;
-          if potop^.d.dat.datatyp.indirectlevel > 0 then begin
-           i2:= pointersize;
-          end;
-          if i1 = i2 then begin
-           if getaddress(potop,true) then begin
-            potop^.d.dat.datatyp.indirectlevel:= 
-                      po3^.h.indirectlevel - h.indirectlevel - 1;
-            dec(potop^.d.dat.indirection);
-            potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
-            potop^.d.dat.datatyp.flags:= h.flags;
-            bo1:= false;
+         case potop^.d.kind of
+          ck_ref: begin
+           linkaddcast(ele.eledatarel(po2),potop);
+           po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+           potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
+           potop^.d.dat.datatyp.flags:= 
+            (potop^.d.dat.datatyp.flags + h.flags) * (h.flags + [tf_subad]); 
+                                     //do not remove tf_subad
+           i1:= 0;
+           if (h.kind = dk_interface) and (h.indirectlevel = 0) and
+                 ((po3^.h.kind = dk_class) and 
+                         (potop^.d.dat.datatyp.indirectlevel = 1) or
+                  (po3^.h.kind = dk_object) and 
+                         (potop^.d.dat.datatyp.indirectlevel = 0))
+                          then begin
+            i1:= 1;           //classinstance to interface
            end;
-          end
-          else begin
-           errormessage(err_typecastdifferentsize,[i2,i1]);
+           potop^.d.dat.datatyp.indirectlevel:= 
+                         potop^.d.dat.indirection + h.indirectlevel + i1;
+           bo1:= false;
           end;
-         end;
-         if bo1 then begin
-         }
-         end
-         else begin
- //        if getvalue(potop,das_none,true) then begin
-          bo1:= not tryconvert(potop,po2,
-                      ptypedataty(po2)^.h.indirectlevel,[coo_type]);
-          if bo1 then begin
-           illegalconversionerror(potop^.d,po2,
-                                       ptypedataty(po2)^.h.indirectlevel);
+          ck_typearg: begin
+           bo1:= false;
+           errormessage(err_valueexpected,[]);
+          end;
+          else begin
+           bo1:= not tryconvert(potop,po2,
+                       ptypedataty(po2)^.h.indirectlevel,[coo_type]);
+           if bo1 then begin
+            illegalconversionerror(potop^.d,po2,
+                                        ptypedataty(po2)^.h.indirectlevel);
+           end;
           end;
          end;
          if not bo1 then begin

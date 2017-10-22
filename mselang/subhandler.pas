@@ -3290,7 +3290,7 @@ begin
        end;
        initfactcontext(destoffset);
       end;
-      dk_class,dk_object: begin
+      dk_class,dk_object,dk_classof: begin
        d.dat.ref.c.address.segaddress.address:= asub^.globid;
        if asub^.flags * [sf_virtual,sf_override] <> [] then begin
         with insertitem(oc_getvirtsubad,destoffset,-1)^ do begin
