@@ -111,9 +111,24 @@ begin
 end;
 
 procedure handlesizeof(const paramco: integer);
+
+ function getsize(const typele: elementoffsetty): int32;
+ var
+  typ1: ptypedataty;
+ begin
+  typ1:= ele.eledataabs(typele);
+  if typ1^.h.kind = dk_class then begin
+   result:= typ1^.infoclass.allocsize;
+  end
+  else begin
+   result:= typ1^.h.bytesize;
+  end;
+ end;//getsize
+
 var
  int1: integer;
  po1: pcontextitemty;
+
 begin
  if checkparamco(1,paramco) then begin
   with info do begin
@@ -132,7 +147,7 @@ begin
         int1:= pointersize;
        end
        else begin
-        int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize;
+        int1:= getsize(d.dat.datatyp.typedata);
        end;
       end;
       ck_typetype,ck_fieldtype,ck_typearg: begin
@@ -140,7 +155,7 @@ begin
         int1:= pointersize;
        end
        else begin
-        int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.h.bytesize;
+        int1:= getsize(d.typ.typedata);
        end;
       end;
       else begin
