@@ -3259,6 +3259,10 @@ begin
    end;
 
    if stf_getaddress in s.currentstatementflags then begin
+    if stf_params in s.currentstatementflags then begin
+     errormessage(err_cannotaddresscall,[],destoffset);
+     exit;
+    end;
     if dsf_instanceonstack in aflags then begin
                                      //get method
     {$ifdef mse_checkinternalerror}
