@@ -49,6 +49,8 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
 function getbasevalue(const acontext: pcontextitemty;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
+procedure handlecallsubresentry();
+procedure handlecallsubres();
 procedure handlevaluepathstart();
 procedure handlevaluepath1a();
 procedure handlevaluepath2a();
@@ -1753,7 +1755,7 @@ begin
 end;
 
 //todo: simplify, use unified indirection handling
-procedure handlevalueidentifier();
+procedure handlevalueident();
 var
  paramco,paramstart: integer;
 
@@ -2096,9 +2098,6 @@ var
 label
  endlab;
 begin
-{$ifdef mse_debugparser}
- outhandle('VALUEIDENTIFIER');
-{$endif}
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
@@ -2583,12 +2582,49 @@ endlab:
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
   if stf_cutvalueident in s.currentstatementflags then begin
-                     //todo: use something more elegant
    s.stacktop:= s.stackindex;
    pob^.context:= nil;
-/////////////////////////////////////////////   pob^.context:= @dummyco;
   end;
  end;
+end;
+
+procedure handlevalueidentifier();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VALUEIDENTIFIER');
+{$endif}
+ handlevalueident();
+end;
+
+procedure handlecallsubresentry();
+var
+ i1: int32;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CALLSUBRESENTRY');
+{$endif}
+ i1:= errorcount(erl_error);
+ handlevalueident();
+ if i1 = errorcount(erl_error) then begin
+  inc(info.s.stackindex); //continue
+ end;
+end;
+
+procedure handlecallsubres();
+var
+ typ1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CALLSUBRES');
+{$endif}
+ handlevalueident();
+ {
+ with info,contextstack[s.stacktop] do begin
+  if getvalue(@contextstack[s.stackindex]) and (d.kind = ck_subres) then begin
+  end;
+  errormessage(err_tokenexpected,[';'],0);
+ end;
+ }
 end;
 
 end.

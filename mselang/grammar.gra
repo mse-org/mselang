@@ -1460,7 +1460,15 @@ valueidentifierwhite,checkvalueparams,,
 
 checkvalueparams,,,handlevalueidentifier
  ${whitespace}
- '(',params0-^*
+ '(',checkvalueparams0-
+checkvalueparams0,checkvalueparams1,,
+ '',params0-^*
+checkvalueparams1,,,handlevalueidentifier
+ ${whitespace}
+ '(',checkvalueparams2-
+checkvalueparams2,,handlecallsubresentry,handlecallsubres
+ '',params0-^*
+
 checkparams,,,^
  ${whitespace}
  '(',params0-
