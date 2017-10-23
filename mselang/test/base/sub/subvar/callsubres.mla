@@ -1,0 +1,65 @@
+program callsubres;
+
+type
+ testclaty = class of ttest;
+ ttest = class()[virtual]
+  fa,fb: int32;
+  constructor create();
+  destructor destroy();
+  class method test(a: int32);
+  method test1(a: int32);
+ end;
+
+ procty = method(a: int32);
+ proc1ty = procedure(a: int32);
+var
+ p1: procty;
+ c1: ttest;
+
+constructor ttest.create();
+begin
+ fb:= 1;
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+method ttest.test1(a: int32);
+begin
+ exitcode:= exitcode + a + fb;
+end;
+
+class method ttest.test(a: int32);
+begin
+ exitcode:= exitcode + a;
+end;
+
+procedure tt(): procty;
+begin
+ result:= @ttest.test;
+end;
+
+procedure tt2(): procty;
+begin
+ result:= @c1.test1;
+end;
+
+procedure test1(a: int32);
+begin
+ exitcode:= exitcode + a;
+end;
+
+procedure tt1(): proc1ty;
+begin
+ result:= @test1;
+end;
+
+var
+begin
+ c1:= ttest.create();
+ tt()(100);
+ tt1()(20);
+ tt2()(2);
+ c1.destroy();
+end.

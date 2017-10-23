@@ -37,7 +37,7 @@ var
  c2: ttest;
  p1: procty;
 begin
- p1:= @ttest.test();
+ p1:= @ttest.test;
  ttest.test();
  if (methodty(p1).data = classdef) and (classdef <> nil) and (classdef <> pointer(1)) then
   classdef:= pointer(1);
@@ -47,7 +47,7 @@ begin
   if (methodty(p1).data = classdef) and (classdef <> nil) and (classdef <> pointer(1)) then
    inst:= pointer(1);
    c2:= ttest.create();
-   p1:= @c2.test1();
+   p1:= @c2.test1;
    c2.test1();
    if (methodty(p1).data = inst) and (inst <> nil) and (inst <> pointer(1)) and (inst = c2) then
     inst:= pointer(1);

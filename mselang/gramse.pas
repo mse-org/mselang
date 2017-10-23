@@ -14616,8 +14616,8 @@ begin
  checkvalueparams1co.branch:= @bcheckvalueparams1;
  checkvalueparams1co.handleexit:= @handlevalueidentifier;
  checkvalueparams2co.branch:= @bcheckvalueparams2;
- checkvalueparams2co.handleentry:= @handlecallsubresentry;
- checkvalueparams2co.handleexit:= @handlecallsubres;
+ checkvalueparams2co.handleentry:= @handlefactcallentry;
+ checkvalueparams2co.handleexit:= @handlefactcall;
  checkparamsco.branch:= @bcheckparams;
  params0co.branch:= @bparams0;
  params0co.next:= @params1co;

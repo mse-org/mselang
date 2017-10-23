@@ -49,8 +49,8 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
 function getbasevalue(const acontext: pcontextitemty;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
-procedure handlecallsubresentry();
-procedure handlecallsubres();
+procedure handlefactcallentry();
+procedure handlefactcall();
 procedure handlevaluepathstart();
 procedure handlevaluepath1a();
 procedure handlevaluepath2a();
@@ -2596,7 +2596,7 @@ begin
  handlevalueident();
 end;
 
-procedure handlecallsubresentry();
+procedure handlefactcallentry();
 var
  i1: int32;
 begin
@@ -2610,21 +2610,57 @@ begin
  end;
 end;
 
-procedure handlecallsubres();
+procedure handlefactcall();
 var
  typ1: ptypedataty;
+ indpo1,potop,contextpo1: pcontextitemty;
+ subflags: dosubflagsty;
+ paramstart,paramco: int32;
+ sub1: psubdataty;
+label
+ errlab,endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle('CALLSUBRES');
+ outhandle('FACTCALL');
 {$endif}
- handlevalueident();
- {
- with info,contextstack[s.stacktop] do begin
-  if getvalue(@contextstack[s.stackindex]) and (d.kind = ck_subres) then begin
+ with info do begin
+  indpo1:= @contextstack[s.stackindex];
+  if getvalue(indpo1,das_none) and (indpo1^.d.kind in factcontexts) then begin
+   typ1:= ele.eledataabs(indpo1^.d.dat.datatyp.typedata);
+   if indpo1^.d.dat.datatyp.indirectlevel <> 0 then begin
+    goto errlab;
+   end;
+   case typ1^.h.kind of 
+    dk_sub: begin
+     subflags:= [dsf_indirect];
+    end;
+    dk_method: begin
+     subflags:= [dsf_indirect,dsf_instanceonstack];
+    end;
+    else begin
+     goto errlab;
+    end;
+   end;
+   sub1:= ele.eledataabs(typ1^.infosub.sub);
+   paramstart:= s.stackindex+1;
+   paramco:= 0;
+   contextpo1:= @contextstack[paramstart];
+   potop:= @contextstack[s.stacktop];
+   if (contextpo1 < potop) and (contextpo1^.d.kind = ck_params) then begin
+    inc(paramstart);
+    while getnextnospace(contextpo1+1,contextpo1) do begin
+     inc(paramco);
+    end;
+   end;
+   callsub(s.stackindex,sub1,paramstart,paramco,subflags);
+   goto endlab;
   end;
+errlab:  
   errormessage(err_tokenexpected,[';'],0);
+endlab:
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
- }
 end;
 
 end.
