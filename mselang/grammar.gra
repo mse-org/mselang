@@ -330,10 +330,13 @@ progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*
 
-paramsdef0,,handleparamsdefentry,
+paramsdef0,paramsdef0a,handleparamsdefentry,
  ${whitespace}
  '(',paramsdef1-
+paramsdef0a,,,handleparamsdef^
 paramsdef1,paramsdef2,,
+ ${whitespace}
+ ')',paramsdef3-
  '',paramdef0^*
 paramsdef2,,,
  ${whitespace}

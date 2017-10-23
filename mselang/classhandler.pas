@@ -1061,7 +1061,7 @@ var
  sf1: subflagsty;
 begin
 {$ifdef mse_debugparser}
- outhandle('CLASSMETHFUNCTIONENTRY');
+ outhandle('CLASSMETHMETHODENTRY');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if obf_class in d.cla.flags then begin
@@ -1074,7 +1074,7 @@ begin
  initsubdef(sf1);
 end;
 
-procedure handleclassmethfunctionentry();
+procedure handleclassmethprocedureentry();
 var
  sf1: subflagsty;
 begin
@@ -1092,7 +1092,7 @@ begin
  initsubdef(sf1);
 end;
 
-procedure handleclassmethprocedureentry();
+procedure handleclassmethfunctionentry();
 var
  sf1: subflagsty;
 begin

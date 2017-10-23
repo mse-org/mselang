@@ -752,21 +752,22 @@ begin
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin
-  {$ifdef mselang} //??? use language mode!
-   if sf_functiontype in d.subdef.flags then begin
-    errormessage(err_syntax,[';']);
-    dec(s.stackindex,2); //remove result type
-    s.stacktop:= s.stackindex;
+   if s.unitinfo^.dialect = dia_mse then begin
+    if sf_functiontype in d.subdef.flags then begin
+     errormessage(err_syntax,[';']);
+     dec(s.stackindex,2); //remove result type
+     s.stacktop:= s.stackindex;
+    end;
+    include(d.subdef.flags,sf_functiontype);
+   end
+   else begin //dia_pas
+    if (d.subdef.flags * [sf_functionx,sf_methodtoken,sf_subtoken] = []) or 
+                            (sf_functiontype in d.subdef.flags) then begin
+     errormessage(err_syntax,[';']);
+    end;
+    d.subdef.flags:= d.subdef.flags+
+                   [sf_functiontype,sf_functionx,sf_functioncall];
    end;
-   include(d.subdef.flags,sf_functiontype);
-  {$else} //msepas
-   if (d.subdef.flags * [sf_functionx,sf_methodtoken,sf_subtoken] = []) or 
-                           (sf_functiontype in d.subdef.flags) then begin
-    errormessage(err_syntax,[';']);
-   end;
-   d.subdef.flags:= d.subdef.flags+
-                  [sf_functiontype,sf_functionx,sf_functioncall];
-  {$endif}
   end;
  end;
 end;
@@ -1811,6 +1812,9 @@ begin
                       not (sf_functiontype in subflags) then begin
    tokenexpectederror(':');
    exit; //fatal
+  end;
+  if sf_functiontype in subflags then begin
+   subflags:= subflags+[sf_functionx,sf_functioncall];
   end;
   paramsize1:= 0;
   resulttype1.typeele:= 0;

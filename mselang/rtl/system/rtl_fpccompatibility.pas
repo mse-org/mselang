@@ -16,10 +16,14 @@ uses
 type
 {$internaldebug on}
  tobject = class()[virtual]
+  protected
+   procedure ini [ini];
   public
    constructor create();
    destructor destroy() [virtual,default];
    procedure free();
+   class function newinstance(): tobject [virtual];
+   class function initinstance(instance : pointer) : tobject;
  end;
  
  pchar = ^char8;
@@ -90,6 +94,18 @@ begin
  if self <> nil then begin
   destroy();
  end;
+end;
+
+procedure tobject.ini();
+begin
+end;
+
+class function tobject.newinstance(): tobject;
+begin
+end;
+
+class function tobject.initinstance(instance: pointer): tobject;
+begin
 end;
 
 end.
