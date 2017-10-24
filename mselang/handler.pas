@@ -1474,61 +1474,69 @@ begin
  with info do begin
   potop:= @contextstack[s.stacktop];
   with potop^ do begin
-   if (d.kind = ck_prop) then begin
-    getvalue(potop,das_none);
-   end
-   else begin
-    if hf_propindex in d.handlerflags then begin
-     getnextnospace(s.stackindex+1,poa);
-    {$ifdef mse_checkinternalerror}
-     if poa^.d.kind <> ck_prop then begin
-      internalerror(ie_handler,'20160214A');
-     end;
-    {$endif}
-     if getvalue(poa,das_none) then begin
-      s.stacktop:= getstackindex(poa);
-      potop:= poa;
-     end
-     else begin
-      exit;
-     end;
+   if d.kind = ck_typearg then begin
+    if d.typ.indirectlevel <= 0 then begin
+     errormessage(err_illegalqualifier,[]);
     end
     else begin
-     if not getvalue(potop,das_none) then begin
-      exit;
-     end;
+     dec(d.typ.indirectlevel);
     end;
-   end;
-  end;
-  with potop^ do begin
-   if d.dat.datatyp.indirectlevel <= 0 then begin
-    errormessage(err_illegalqualifier,[]);
    end
    else begin
-    dec(d.dat.datatyp.indirectlevel);
-    dec(d.dat.indirection);
-    case d.kind of
-     ck_ref: begin        //todo: make universal
-      if not (stf_getaddress in s.currentstatementflags) then begin
-       include(d.dat.ref.c.address.flags,af_startoffset);
+    if (d.kind = ck_prop) then begin
+     getvalue(potop,das_none);
+    end
+    else begin
+     if hf_propindex in d.handlerflags then begin
+      getnextnospace(s.stackindex+1,poa);
+     {$ifdef mse_checkinternalerror}
+      if poa^.d.kind <> ck_prop then begin
+       internalerror(ie_handler,'20160214A');
       end;
-     end;
-     ck_const: begin
-      if d.dat.constval.kind <> dk_address then begin
-       errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
+     {$endif}
+      if getvalue(poa,das_none) then begin
+       s.stacktop:= getstackindex(poa);
+       potop:= poa;
       end
       else begin
-       internalerror1(ie_notimplemented,'20140402B'); //todo
+       exit;
+      end;
+     end
+     else begin
+      if not getvalue(potop,das_none) then begin
+       exit;
       end;
      end;
-     ck_fact,ck_subres: begin
-      //nothing to do
-     end;
-     ck_none,ck_error: begin
-      exit;
-     end;
-     else begin
-      internalerror1(ie_notimplemented,'20140402A'); //todo
+    end;
+    if d.dat.datatyp.indirectlevel <= 0 then begin
+     errormessage(err_illegalqualifier,[]);
+    end
+    else begin
+     dec(d.dat.datatyp.indirectlevel);
+     dec(d.dat.indirection);
+     case d.kind of
+      ck_ref: begin        //todo: make universal
+       if not (stf_getaddress in s.currentstatementflags) then begin
+        include(d.dat.ref.c.address.flags,af_startoffset);
+       end;
+      end;
+      ck_const: begin
+       if d.dat.constval.kind <> dk_address then begin
+        errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
+       end
+       else begin
+        internalerror1(ie_notimplemented,'20140402B'); //todo
+       end;
+      end;
+      ck_fact,ck_subres: begin
+       //nothing to do
+      end;
+      ck_none,ck_error: begin
+       exit;
+      end;
+      else begin
+       internalerror1(ie_notimplemented,'20140402A'); //todo
+      end;
      end;
     end;
    end;
