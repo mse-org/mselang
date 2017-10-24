@@ -167,6 +167,8 @@ begin
   end
   else begin
    bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
+   bo2:= bo2 and (ptypedataty(eletodata(po2))^.h.kind <> dk_none);
+                            //not forward
   end;
   forward1:= not bo2 and bo1;
   if forward1 then begin

@@ -743,6 +743,7 @@ type
   usescache: telementcache;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
+  resolvedforwardtypes: listadty;
   llvmlists: tllvmlists;
   nameid: int32;
 

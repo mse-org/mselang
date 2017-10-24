@@ -147,7 +147,8 @@ procedure checkforwarderrors(const aforward: forwardindexty);
 //function addtypedef(const aname: identty; const avislevel: visikindsty;
 //                                        out aelementdata: pointer): boolean;
 procedure markforwardtype(const atype: ptypedataty; const aforwardname: identty);
-procedure resolveforwardtype(const atype: ptypedataty);
+procedure resolveforwardtype(const atype: ptypedataty;
+                                        const first: boolean = true);
 procedure checkforwardtypeerrors();
 
 procedure regclass(const aclass: elementoffsetty);
@@ -1060,6 +1061,7 @@ type
 var
  classdescendlist: linklistty;
  forwardtypes: linklistty;
+ resolvedforwardtypes: linklistty;
  
 procedure regclassdescendant(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
@@ -1448,6 +1450,12 @@ begin
 end; 
 
 type
+ resolvedforwardtypeitemty = record
+  header: linkheaderty;
+  typ: ptypedataty;
+ end;
+ presolvedforwardtypeitemty = ^resolvedforwardtypeitemty;
+
  typeresolveinfoty = record
   base: pointer;
   resolver: pelementinfoty;
@@ -1472,26 +1480,38 @@ begin
      ps:= @resolver^.data;
      i1:= pd^.h.indirectlevel;
      pd^:= ps^;
-     pd^.h.indirectlevel:= i1;
+     pd^.h.indirectlevel:= ps^.h.indirectlevel+i1;
      if pd^.h.base = 0 then begin
       pd^.h.base:= ele.eledatarel(ps);
      end;
     end;
     resolved:= true;
+    with presolvedforwardtypeitemty(addlistitem(
+          resolvedforwardtypes,info.s.unitinfo^.resolvedforwardtypes))^ do begin
+     typ:= pd;
+    end;
    end;
   end;
  end;
 end;
 
-procedure resolveforwardtype(const atype: ptypedataty);
+procedure resolveforwardtype(const atype: ptypedataty;
+                                        const first: boolean = true);
 var
  data: typeresolveinfoty;
+ p1: presolvedforwardtypeitemty;
 begin
  if info.s.unitinfo^.forwardtypes <> 0 then begin
   data.base:= ele.elebase();
   data.resolver:= pointer(atype)-eledatashift;
   checkresolve(forwardtypes,@doresolveforwardtype,
                                      info.s.unitinfo^.forwardtypes,@data);
+  if first then begin
+   while poplistitem(resolvedforwardtypes,
+                      info.s.unitinfo^.resolvedforwardtypes,p1) do begin
+    resolveforwardtype(p1^.typ,false);
+   end;
+  end;
  end;
 end;
 
@@ -1927,6 +1947,7 @@ begin
  clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
  clearlist(intfparsedlinklist,sizeof(unitlinkinfoty),256);
  clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
+ clearlist(resolvedforwardtypes,sizeof(resolvedforwardtypeitemty),256);
  clearlist(trystacklist,sizeof(trystackitemty),256);
  clearlist(tempvarlist,sizeof(tempvaritemty),256);
  clearlist(managedtemplist,sizeof(managedtempitemty),256);

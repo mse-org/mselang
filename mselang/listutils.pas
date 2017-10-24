@@ -53,6 +53,9 @@ function getlistitem(const alist: linklistty; const aitem: listadty): pointer;
 function getnextlistitem(const alist: linklistty;
                                               const aitem: listadty): pointer;
                                                //nil if there is none
+function poplistitem(var alist: linklistty; var achain: listadty; 
+                                              out aitem: pointer): boolean;
+                             //false if none
 function steplistitem(const alist: linklistty;
                                               var aitem: listadty): pointer;
                                                //nil if there is none
@@ -138,6 +141,20 @@ begin
  end
  else begin
   result:= alist.list+i1;
+ end;
+end;
+
+function poplistitem(var alist: linklistty; var achain: listadty;
+                                                 out aitem: pointer): boolean;
+                             //false if none
+begin
+ result:= achain <> 0;
+ if result then begin
+  aitem:= alist.list + achain;
+  deletelistitem(alist,achain);
+ end
+ else begin
+  aitem:= nil;
  end;
 end;
 
