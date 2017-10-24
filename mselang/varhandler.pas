@@ -22,7 +22,7 @@ uses
  globtypes,parserglob;
  
 const 
- pointervarkinds = [dk_class,dk_interface];
+ pointervarkinds = [{dk_class,}dk_interface];
  
 procedure handlevardefstart();
 procedure handlevar3();

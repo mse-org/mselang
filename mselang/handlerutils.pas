@@ -1405,7 +1405,7 @@ begin
   with contextstack[s.stackindex+stackoffset] do begin
    if d.kind = ck_typearg then begin
     typ1:= ele.eledataabs(d.typ.typedata);
-    if (d.typ.indirectlevel = 0) and
+    if (d.typ.indirectlevel = 1) and
                    (typ1^.h.kind in [dk_class,dk_object]) then begin
      with insertitem(oc_pushclassdef,stackoffset,aopoffset)^.par do begin
       segad:= typ1^.infoclass.defs.address;
@@ -3187,7 +3187,7 @@ begin                    //todo: optimize
    end;
    ck_typearg: begin
     typ1:= ele.eledataabs(d.typ.typedata);
-    if (d.typ.indirectlevel = 0) and
+    if (d.typ.indirectlevel = 1) and
                    (typ1^.h.kind in [dk_class,dk_object]) then begin
      pushinsertconst(stackoffset,-1,adatasize);                  
     end

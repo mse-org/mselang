@@ -584,7 +584,7 @@ begin
      if ptop^.d.kind = ck_typearg then begin
       typ1:= ele.eledataabs(ptop^.d.typ.typedata);
       if (typ1^.h.kind = dk_class) and 
-                           (ptop^.d.typ.indirectlevel = 0) then begin
+                           (ptop^.d.typ.indirectlevel = 1) then begin
        if getvalue(pinstance,das_none) then begin
         s.stacktop:= getstackindex(pinstance);
         callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);

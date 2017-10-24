@@ -3123,9 +3123,9 @@ procedure handleissimpexp();
   if acontext^.d.kind in datacontexts then begin
    atyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
    aindilev:= acontext^.d.dat.datatyp.indirectlevel;
-   if atyp^.h.kind = dk_class then begin
-    dec(aindilev); //implicit dereference
-   end;
+//   if atyp^.h.kind = dk_class then begin
+//    dec(aindilev); //implicit dereference
+//   end;
   end
   else begin
    if acontext^.d.kind = ck_typearg then begin
@@ -3134,7 +3134,7 @@ procedure handleissimpexp();
    end
   end;
   if atyp <> nil then begin
-   if (atyp^.h.kind = dk_class) and (aindilev = 0) or
+   if (atyp^.h.kind = dk_class) and (aindilev = 1) or
       (atyp^.h.kind = dk_object) and ((aindilev = 0) or 
                                   (aindilev = 1)) then begin
     result:= true;

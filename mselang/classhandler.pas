@@ -184,6 +184,7 @@ var
  id1: identty;
  ele1,ele2,ele3: elementoffsetty;
  bo1: boolean;
+ dk1: datakindty;
 begin
  with info do begin
  {$ifdef mse_checkinternalerror}
@@ -242,6 +243,11 @@ begin
    currentcontainer:= d.typ.typedata;
    ele.elementparent:= d.typ.typedata;
 //   inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
+   dk1:= dk_object;
+   if isclass then begin
+    dk1:= dk_class;
+    inc(d.typ.indirectlevel);
+   end;
    resolveforwardtype(po1);
    if not bo1 then begin
     if icf_defvalid in po1^.infoclass.flags then begin
@@ -258,6 +264,8 @@ begin
                                     ek_classintftypenode,globalvisi);
     ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
 //    po1:= ele.eledataabs(currentcontainer); //could be moved by list size change
+    inittypedatasize(po1^,dk1,d.typ.indirectlevel,das_none,[tf_sizeinvalid]);
+{
     if isclass then begin
      inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
     end
@@ -265,6 +273,7 @@ begin
      inittypedatasize(po1^,dk_object,d.typ.indirectlevel,das_none,
                                                           [tf_sizeinvalid]);
     end;
+}
     with po1^ do begin
      fieldchain:= 0;
      infoclass.intfnamenode:= ele1;
@@ -278,17 +287,19 @@ begin
      infoclass.interfacechain:= 0;
      infoclass.interfacesubcount:= 0;
      fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
+//     if isclass then begin
+//      po1^.infoclass.objpotyp:= 0;
+//      infoclass.flags:= [icf_class];
+//     end
+//     else begin
+     po1^.infoclass.objpotyp:= 
+                 ele.addelementduplicate1(tks_objpotyp,ek_type,globalvisi);
+     po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotyp));
+     inittypedatasize(po2^,dk_objectpo,d.typ.indirectlevel,das_pointer);
+     po2^.h.base:= d.typ.typedata;
+     infoclass.flags:= [];
      if isclass then begin
-      po1^.infoclass.objpotyp:= 0;
       infoclass.flags:= [icf_class];
-     end
-     else begin
-      infoclass.flags:= [];
-      po1^.infoclass.objpotyp:= 
-                  ele.addelementduplicate1(tks_objpotyp,ek_type,globalvisi);
-      po2:= ptypedataty(ele.eledataabs(po1^.infoclass.objpotyp));
-      inittypedatasize(po2^,dk_objectpo,d.typ.indirectlevel,das_pointer);
-      po2^.h.base:= d.typ.typedata;
      end;
      po1^.infoclass.classoftyp:= 
                  ele.addelementduplicate1(tks_classoftyp,ek_type,globalvisi);
