@@ -126,45 +126,83 @@ procedure handlesizeof(const paramco: integer);
  end;//getsize
 
 var
- int1: integer;
- po1: pcontextitemty;
+ i1: integer;
+ indpo,toppo: pcontextitemty;
+ typ1: ptypedataty;
 
 begin
  if checkparamco(1,paramco) then begin
   with info do begin
-   po1:= @contextstack[s.stackindex];
-   with po1^ do begin
-    initdatacontext(po1^.d,ck_const);
-    d.dat.datatyp:= sysdatatypes[st_int32];
-    d.dat.constval.kind:= dk_integer;
+   indpo:= @contextstack[s.stackindex];
+   toppo:= @contextstack[s.stacktop];
+   with indpo^ do begin
+    i1:= 0;
     with contextstack[s.stacktop] do begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
-       if d.kind in factcontexts then begin
-        cutopend(po1^.opmark.address);
-       end;
        if d.dat.datatyp.indirectlevel > 0 then begin
-        int1:= pointersize;
+        i1:= pointersize;
        end
        else begin
-        int1:= getsize(d.dat.datatyp.typedata);
+        typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+        if typ1^.h.kind in [dk_class,dk_object] then begin
+         if icf_virtual in typ1^.infoclass.flags then begin
+          if getaddress(toppo,true) then begin
+           i1:= toppo^.d.dat.fact.ssaindex;
+           if typ1^.infoclass.virttaboffset <> 0 then begin
+            with insertitem(oc_offsetpoimm,toppo,-1)^.par do begin
+             setimmint32(typ1^.infoclass.virttaboffset,imm);
+             ssas1:= i1;
+             i1:= ssad;
+            end;
+           end;
+           with insertitem(oc_pushallocsize,toppo,-1)^.par do begin
+            ssas1:= i1;
+            i1:= ssad;
+           end;
+           initfactcontext(indpo);
+           indpo^.d.dat.datatyp:= sysdatatypes[st_int32];
+           indpo^.d.dat.fact.ssaindex:= i1;
+           indpo^.d.dat.fact.opdatatype:= bitoptypes[das_32];
+           exit;
+          end;
+         end
+         else begin
+          i1:= typ1^.infoclass.allocsize;
+         end;
+        end
+        else begin
+         i1:= typ1^.h.bytesize;
+        end;
+       end;
+       if d.kind in factcontexts then begin
+        cutopend(indpo^.opmark.address);
        end;
       end;
       ck_typetype,ck_fieldtype,ck_typearg: begin
        if d.typ.indirectlevel > 0 then begin
-        int1:= pointersize;
+        i1:= pointersize;
        end
        else begin
-        int1:= getsize(d.typ.typedata);
+        typ1:= ele.eledataabs(d.typ.typedata);
+        if typ1^.h.kind in [dk_class,dk_object] then begin
+         i1:= typ1^.infoclass.allocsize;
+        end
+        else begin
+         i1:= typ1^.h.bytesize;
+        end;
        end;
       end;
       else begin
-       int1:= 0;
+       i1:= 0;
        errormessage(err_cannotgetsize,[]);
       end;
      end;
     end;      
-    d.dat.constval.vinteger:= int1;
+    initdatacontext(indpo^.d,ck_const);
+    d.dat.datatyp:= sysdatatypes[st_int32];
+    d.dat.constval.kind:= dk_integer;
+    d.dat.constval.vinteger:= i1;
    end;
   end;
  end;

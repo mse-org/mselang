@@ -3679,6 +3679,13 @@ begin
  end;
 end;
 
+procedure pushallocsizeop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_getallocsize,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure pushduppoop();
 begin
  with pc^.par do begin
@@ -5232,6 +5239,7 @@ const
   pushstackssa = 1;
   
   pushclassdefssa = 2;
+  pushallocsizessa = 1;
   
   pushduppossa = 1;
   storemanagedtempssa = 3;

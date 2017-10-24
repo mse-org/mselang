@@ -625,6 +625,7 @@ type
 //  oc_pushstackaddrindi,
   oc_pushstack,
   oc_pushclassdef,
+  oc_pushallocsize,
 
   oc_pushduppo,
   oc_storemanagedtemp,

@@ -108,6 +108,7 @@ type
  classprocty = targetptrintty;
 {$else}
  pclassdefinfoty = ^classdefinfoty;
+ ppclassdefinfoty = ^pclassdefinfoty;
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}

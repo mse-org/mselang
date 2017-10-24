@@ -92,6 +92,7 @@ procedure __mla__initobject(const instance: pointer; const virttaboffset: int32;
                                  const classinfo: classdefinfoty);
 function __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
+function __mla__getallocsize(const classdef: ppclassdefinfoty): int32;
 function __mla__classis(const a,b: pclassdefinfoty): bool1;
 function __mla__checkclasstype(var instance: pointer; //nil if no match
                               const classtype: pclassdefinfoty): bool1;
@@ -1497,6 +1498,11 @@ begin
  if instance <> nil then begin
   result:= ppointer(instance+virttaboffset)^;
  end;
+end;
+
+function __mla__getallocsize(const classdef: ppclassdefinfoty): int32;
+begin
+ result:= classdef^^.header.allocs.size;
 end;
 
 function __mla__classis(const a,b: pclassdefinfoty): bool1;

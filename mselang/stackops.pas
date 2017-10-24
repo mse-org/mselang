@@ -5204,6 +5204,11 @@ begin
  notimplemented();
 end;
 
+procedure pushallocsizeop();
+begin
+ notimplemented();
+end;
+
 procedure pushduppoop();
 var
  po1: pointer;
@@ -7478,6 +7483,7 @@ const
 
   pushstackssa = 0;
   pushclassdefssa = 0;
+  pushallocsizessa = 0;
 
   pushduppossa = 0;
   storemanagedtempssa = 0;

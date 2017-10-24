@@ -1070,6 +1070,8 @@
   (ssa: pushstackssa; proc: @pushstackop; flags: []), 
 //oc_pushclassdef
   (ssa: pushclassdefssa; proc: @pushclassdefop; flags: []), 
+//oc_pushallocsize
+  (ssa: pushallocsizessa; proc: @pushallocsizeop; flags: []), 
 
 //oc_pushduppo
   (ssa: pushduppossa; proc: @pushduppoop; flags: []), 
