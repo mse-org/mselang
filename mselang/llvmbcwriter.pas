@@ -221,12 +221,12 @@ type
    procedure emitlocdataaddresspo(const aaddress: memopty);
                                //for load/store, 3 ssa
 
-   procedure emitptroffset(const avalue: int32; const aoffset: int32);
+   procedure emitptroffset(const avalue: int32; const aoffset: int32);  //1 ssa
    procedure emitgetelementad(const avalue: int32; const atype: int32;
-                                                    const aindex: int32);//1 ssa
+                                                   const aindex: int32);//1 ssa
    procedure emitgetelementptr(const avalue: int32;
-                                              const aoffset: int32);
-                                         //aoffset = byteoffset, 2 ssa
+                                              const aoffset: int32);    //2 ssa
+                                         //aoffset = byteoffset         
    procedure emitbitcast(const asource: int32; const adesttype: int32); //1 ssa
    procedure emitcastop(const asource: int32; const adesttype: int32;
                                                const aop: castopcodes); //1 ssa

@@ -271,7 +271,7 @@ type
 //  arraytype: elementoffsetty;
  end;
  factflagty = (faf_varsubres,  //ck_subres function with result pointer
-               faf_create);
+               faf_create,faf_classele);
  factflagsty = set of factflagty;
 
  varsubresinfoty = record

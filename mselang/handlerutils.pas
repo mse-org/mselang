@@ -3053,11 +3053,13 @@ var
  i1,i2: integer;
  pocont1,pocont2: pcontextitemty;
  lastitem: pcontextitemty;
+ isclassele: boolean;
 label
  errlab; 
 
 begin                    //todo: optimize
  result:= false;
+ isclassele:= false;
  stackoffset:= getstackoffset(acontext);
  opdata1:= bitoptypes[das_none];
  with info,acontext^ do begin
@@ -3076,10 +3078,7 @@ begin                    //todo: optimize
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
-    if af_classele in d.dat.ref.c.address.flags then begin
-     errormessage(err_cannotaccessinclassmethod,[],stackoffset);
-     exit;
-    end;
+    isclassele:= af_classele in d.dat.ref.c.address.flags;
     if af_paramindirect in d.dat.ref.c.address.flags then begin
      dec(d.dat.indirection);
      dec(d.dat.datatyp.indirectlevel);
@@ -3236,6 +3235,9 @@ errlab:
    initfactcontext(stackoffset);
    d.dat.termgroupstart:= i1; //restore
    d.dat.fact.opdatatype:= opdata1;
+  end;
+  if isclassele then begin
+   include(d.dat.fact.flags,faf_classele);
   end;
  end;
 end;

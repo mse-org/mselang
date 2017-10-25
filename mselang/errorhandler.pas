@@ -77,7 +77,7 @@ type
             err_interfaceexpected,err_objectexpected,err_invalidattachment,
             err_missingobjectattachment,err_fieldtypeexpected,
             err_invalidmethodforattach,err_objectorclasstypeexpected,
-            err_classmethodexpected,err_classmethod,err_classreference,
+            err_classmethodexpected,err_onlyclassmethod,err_classreference,
             err_typeidentnotallowed,err_attachitemexpected,
             err_multipleoperators,err_operatoralreadydefined,
             err_invalidoperatormethod,err_objectforwardnotallowed,

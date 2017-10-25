@@ -1945,6 +1945,10 @@ var
             subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
            end
            else begin
+            if af_classele in pvar1^.address.flags then begin
+             errormessage(err_onlyclassmethod,[],adatacontext);
+             exit;
+            end;
             if not getvalue(adatacontext,das_none) then begin 
                                                //get class instance
              exit;
@@ -2060,7 +2064,7 @@ var
    p1:= ele.eleinfoabs(info.currentobject);
    while true do begin
     if p1 = p2 then begin
-     errormessage(err_classmethod,[]);
+     errormessage(err_onlyclassmethod,[]);
      result:= false;
      exit;
     end;

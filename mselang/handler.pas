@@ -3803,6 +3803,9 @@ begin
                                                 //without loading of the object
       goto endlab;
      end;
+     if faf_classele in source^.d.dat.fact.flags then begin
+      errormessage(err_cannotaccessinclassmethod,[],source);
+     end;
     end
     else begin
      goto endlab;

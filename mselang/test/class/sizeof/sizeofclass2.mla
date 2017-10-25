@@ -1,0 +1,41 @@
+program sizofclass2;
+type
+ ctest = class[virtual]
+  f1,f2: int32;
+  constructor create();
+  destructor destroy();
+  class method test();
+  method test1();
+ end;
+ ctest1 = class(ctest)
+  f3: int32;
+ end;
+
+constructor ctest.create();
+begin
+end;
+
+destructor ctest.destroy();
+begin
+end;
+
+method ctest.test1();
+begin
+end;
+
+class method ctest.test();
+begin
+ exitcode:= exitcode+sizeof(self^);
+end;
+
+var
+ c1,c2: ctest;
+begin
+ c1:= ctest.create();
+ c2:= ctest1.create();
+ c1.test();
+ c2.test();
+ c1.destroy();
+ c2.destroy();
+ exitcode:= exitcode+(123-sizeof(ctest^)-sizeof(ctest1^));
+end.

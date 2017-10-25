@@ -3766,9 +3766,14 @@ begin //offset after indirect
 end; 
 
 procedure indirectoffspoop();
-begin
- notimplemented();
-end; //offset before indirect
+begin //offset before indirect
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.constval(voffset));
+                                                                          //2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));//1ssa
+  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
+ end;
+end; 
 
 procedure indirectop();
 begin
@@ -5254,7 +5259,7 @@ const
   indirectf32ssa = 2;
   indirectf64ssa = 2;
   indirectpooffsssa = 2;
-  indirectoffspossa = 1;
+  indirectoffspossa = 4;
   indirectssa = 2;
 
   popindirect8ssa = 1;

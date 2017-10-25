@@ -137,7 +137,7 @@ begin
    toppo:= @contextstack[s.stacktop];
    with indpo^ do begin
     i1:= 0;
-    with contextstack[s.stacktop] do begin
+    with toppo^ do begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
        if d.dat.datatyp.indirectlevel > 0 then begin
@@ -147,25 +147,34 @@ begin
         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
         if typ1^.h.kind in [dk_class,dk_object] then begin
          if icf_virtual in typ1^.infoclass.flags then begin
-          if getaddress(toppo,true) then begin
-           i1:= toppo^.d.dat.fact.ssaindex;
-           if typ1^.infoclass.virttaboffset <> 0 then begin
-            with insertitem(oc_offsetpoimm,toppo,-1)^.par do begin
-             setimmint32(typ1^.infoclass.virttaboffset,imm);
+          if (d.kind in factcontexts) and 
+                     (faf_classele in d.dat.fact.flags) or 
+             (d.kind = ck_ref) and 
+                         (af_classele in d.dat.ref.c.address.flags) then begin
+           if not getaddress(toppo,true) then begin //classdef on stack
+            exit;
+           end;
+           i1:= d.dat.fact.ssaindex;
+          end
+          else begin
+           if getaddress(toppo,true) then begin
+            i1:= toppo^.d.dat.fact.ssaindex;
+            with insertitem(oc_indirectoffspo,toppo,-1)^.par do begin
+             setimmint32(typ1^.infoclass.virttaboffset,voffset);
              ssas1:= i1;
              i1:= ssad;
             end;
            end;
-           with insertitem(oc_pushallocsize,toppo,-1)^.par do begin
-            ssas1:= i1;
-            i1:= ssad;
-           end;
-           initfactcontext(indpo);
-           indpo^.d.dat.datatyp:= sysdatatypes[st_int32];
-           indpo^.d.dat.fact.ssaindex:= i1;
-           indpo^.d.dat.fact.opdatatype:= bitoptypes[das_32];
-           exit;
           end;
+          with insertitem(oc_pushallocsize,toppo,-1)^.par do begin
+           ssas1:= i1;
+           i1:= ssad;
+          end;
+          initfactcontext(indpo);
+          indpo^.d.dat.datatyp:= sysdatatypes[st_int32];
+          indpo^.d.dat.fact.ssaindex:= i1;
+          indpo^.d.dat.fact.opdatatype:= bitoptypes[das_32];
+          exit;
          end
          else begin
           i1:= typ1^.infoclass.allocsize;
