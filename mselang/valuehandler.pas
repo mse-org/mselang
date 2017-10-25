@@ -2508,6 +2508,12 @@ begin
           ck_ref: begin
            linkaddcast(ele.eledatarel(po2),potop);
            po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+           if (potop^.d.dat.datatyp.indirectlevel = 1) and
+                   (potop^.d.dat.ref.c.address.flags *
+                                    [af_selfobj,af_selfclass] <> []) then begin
+            exclude(potop^.d.dat.ref.c.address.flags,af_classele); 
+                                            //pointer(self) allowed
+           end;
            potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
            potop^.d.dat.datatyp.flags:= 
             (potop^.d.dat.datatyp.flags + h.flags) * (h.flags + [tf_subad]); 

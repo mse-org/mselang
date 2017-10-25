@@ -112,7 +112,7 @@ type
                   af_param,af_paramindirect,af_const,af_resultvar,
                   af_paramconst,af_paramconstref,af_paramvar,af_paramout, 
                                               //for paramkindty match test
-                  af_selfobj,
+                  af_selfobj,af_selfclass,
 //                  af_managedtemp,
                   af_openarray,af_listitem,af_vararg,
                   af_withindirect,

@@ -29,7 +29,7 @@ end;
 
 class method ttest.test();
 begin
- classdef:= self;
+ classdef:= pointer(self);
 end;
 
 var

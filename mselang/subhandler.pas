@@ -2031,6 +2031,7 @@ begin
        include(address.flags,af_selfobj);
       end
       else begin
+       include(address.flags,af_selfclass);
        vf.typ:= currentcontainer;
       end;
      end
