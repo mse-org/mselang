@@ -91,7 +91,8 @@ type
             err_exceptvarexpected,err_noexceptavailable,
             err_exceptlabelafterelse,err_invalidassignop,
             err_libnameexpected,err_functionnameexpected,err_varnameexpected,
-            err_singleexternalonly,err_cannotaddresscall);
+            err_singleexternalonly,err_cannotaddresscall,
+            err_cannotaccessinclassmethod);
             
  errorinfoty = record
   level: errorlevelty;
@@ -343,7 +344,9 @@ const
   (level: erl_error; message: 
              'EXTERNAL can be associated with only one variable'),
   (level: erl_error; message: 
-             'Can''t take the address of a procedure or method call')
+             'Can''t take the address of a procedure or method call'),
+  (level: erl_error; message: 
+             'Can not be accessed in class method')
  );
 
 procedure message1(const atext: string; const values: array of const); 

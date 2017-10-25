@@ -204,16 +204,18 @@ type
                   //searches in current scope and ancestors
    function findupward(const aident: identty; const akinds: elementkindsty;
                   const avislevel: visikindsty;
-                  out element: elementoffsetty): boolean; overload;
+                  out element: elementoffsetty): visikindsty; overload;
                   //searches in current scope and above
+                  //returns ored visikinds of path or [] if not found
    function findupward(const aidents: identvecty;
                       const akinds: elementkindsty;
                       const avislevel: visikindsty;
                       out element: elementoffsetty;
                       out firstnotfound: integer;
-                      const start: int32 = 0): boolean; overload;
-                  //searches in current scope and above, -1 if not found
+                      const start: int32 = 0): visikindsty; overload;
+                  //searches in current scope and above,
                   //firstnotfound = index of first not matching in aident
+                  //returns ored visikinds of path or [] if not found
    function findreverse(const alen: int32; const aids: pidentty;
                         out element: elementoffsetty): boolean;
                   //last id is top, returns true if found
@@ -921,24 +923,28 @@ begin
 end;
 
 function telementhashdatalist.findupward(const aident: identty;
-          const akinds: elementkindsty;
-          const avislevel: visikindsty; out element: elementoffsetty): boolean;
+      const akinds: elementkindsty;
+      const avislevel: visikindsty; out element: elementoffsetty): visikindsty;
 var
  parentbefore: elementoffsetty;
  pathbefore: identty;
- po1: pelementinfoty;
+ p1: pelementinfoty;
 label
  endlab;
 begin
  parentbefore:= felementparent;
  pathbefore:= felementpath;
+ result:= [];
  while true do begin
-  result:= findcurrent(aident,akinds,avislevel,element);
-  if result then begin
+  p1:= pelementinfoty(pointer(felementdata)+felementparent);
+  result:= result + p1^.header.visibility;
+  if findcurrent(aident,akinds,avislevel,element) then begin
+   include(result,vik_found);
    break;
   end;
-  with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin    
+  with p1^.header do begin    
    if path = 0 then begin
+    result:= [];
     break;
    end;
   {$ifdef mse_checkinternalerror}
@@ -958,7 +964,7 @@ end;
 function telementhashdatalist.findupward(const aidents: identvecty;
               const akinds: elementkindsty; const avislevel: visikindsty;
               out element: elementoffsetty;
-              out firstnotfound: integer; const start: int32 = 0): boolean;
+              out firstnotfound: integer; const start: int32 = 0): visikindsty;
 var
  parentbefore: elementoffsetty;
  pathbefore: identty;
@@ -967,7 +973,7 @@ var
  b1: boolean;
  k1: elementkindsty;
 begin //todo: optimize
- result:= false;
+ result:= [];
  element:= -1;
  firstnotfound:= 0;
  if aidents.high >= start then begin
@@ -976,7 +982,7 @@ begin //todo: optimize
    k1:= akinds;
   end;
   result:= findupward(aidents.d[start],k1,avislevel,element);
-  if result then begin
+  if result <> [] then begin
    firstnotfound:= start+1;
    if aidents.high > start then begin
     parentbefore:= felementparent;

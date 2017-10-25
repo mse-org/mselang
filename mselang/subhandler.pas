@@ -788,8 +788,8 @@ begin
                                   [stf_needsmanage,stf_needsini,stf_needsfini];
   int1:= s.stacktop-s.stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
-   if not ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
-             implementationvisi,ele1) then begin
+   if ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
+             implementationvisi,ele1) = [] then begin
     identerror(1,err_identifiernotfound,erl_fatal);
    end
    else begin
@@ -1951,6 +1951,9 @@ begin
   sub1^.trampolineid:= -1;
   sub1^.nestinglevel:= sublevel;
   sub1^.flags:= subflags;
+  if sf_classmethod in subflags then begin
+   include(datatoele(sub1)^.header.visibility,vik_classele);
+  end;
   sub1^.flags1:= subflags1;
   sub1^.linkage:= s.globlinkage;
   inc(s.unitinfo^.nameid);

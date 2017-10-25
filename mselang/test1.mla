@@ -1,52 +1,45 @@
-program initclass1;
+program sizofclass2;
 type
-{$internaldebug on}
-
- testclaty = class of ttest;
- ttest = class()[virtual]
-  fa,fb: int32;
+ ctest = class[virtual]
+  f1,f2: int32;
   constructor create();
   destructor destroy();
   class method test();
-  method test1();
  end;
- procty = method();
+//{$dumpelements}{$abort}
+ ctest1 = class(ctest)
+  f3: int32;
+ end;
 
-{$dumpelements}
-//{$abort}
-constructor ttest.create();
+constructor ctest.create();
 begin
 end;
 
-destructor ttest.destroy();
+destructor ctest.destroy();
 begin
 end;
 
-method ttest.test1();
+class method ctest.test();
+var
+ p1: pointer;
 begin
- writeln('instance ',self);
-// test();
-end;
-
-class method ttest.test();
-begin
-// test1();
- writeln('class ',self);
+{$internaldebug on}
+ p1:= @(f1);
+exitcode:= f1;
+ writeln(self);
+ exitcode:= sizeof(self^);
+// exitcode:= exitcode+sizeof(self^);
 end;
 
 var
- c1: testclaty;
- c2: ttest;
- p1: procty;
+ c1,c2: ctest;
 begin
- c1:= ttest;
- c2:= ttest.create();
-{$internaldebug on}
- p1:= @ttest.test();
- p1();
- p1:= @c2.test1();
- p1();
- c2.test();
- c2.test1();
- c2.destroy();
+ c1:= ctest.create();
+// c2:= ctest1.create();
+ c1.test();
+ writeln(c1);
+// c2.test();
+ c1.destroy();
+// c2.destroy();
+// exitcode:= exitcode+(123-sizeof(ctest^)-sizeof(ctest1^));
 end.

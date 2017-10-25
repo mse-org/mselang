@@ -77,7 +77,8 @@ type
 
  visikindty = (vik_global,vik_sameunit,vik_descendent,
                vik_published,vik_ancestor,vik_units,vik_implementation,
-               vik_stoponstarttype); //used by handlevalueidentifier,
+               vik_found,vik_stoponstarttype,vik_classele);
+                       //used by handlevalueidentifier,
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);

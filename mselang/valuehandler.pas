@@ -2093,7 +2093,7 @@ var
  pocontext1: pcontextitemty;
  i1,i2: int32;
  bo1: boolean;
- vis1: visikindsty;
+ vis1,foundflags1: visikindsty;
  
 label
  endlab;
@@ -2101,6 +2101,7 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
+  foundflags1:= [];
   poind:= @contextstack[s.stackindex];
   pob:= poind-1;
   potop:= @contextstack[s.stacktop];
@@ -2190,7 +2191,7 @@ begin
   if stf_objimp in s.currentstatementflags then begin
    include(vis1,vik_implementation);
   end;
-  bo1:= findkindelements(1,[],vis1,po1,firstnotfound,idents);
+  bo1:= findkindelements(1,[],vis1,po1,firstnotfound,idents,foundflags1);
   paramstart:= s.stackindex+2+idents.high;
   paramco:= 0;
   pocontext1:= @contextstack[paramstart];
@@ -2327,6 +2328,9 @@ begin
          d.dat.datatyp.indirectlevel:= indirectlevel;
 //        end;
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
+        if vik_classele in foundflags1 then begin
+         include(d.dat.ref.c.address.flags,af_classele);
+        end;
         d.dat.ref.offset:= offset;
         d.dat.ref.c.varele:= 0;
         pocontext1:= poind;

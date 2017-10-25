@@ -117,6 +117,7 @@ type
                   af_openarray,af_listitem,af_vararg,
                   af_withindirect,
                   af_classfield,af_objectfield,
+                  af_classele, //found by class method
                   af_stack,af_segmentpo,af_aggregate,
                   af_startoffset, //for indirection
                   af_arrayop //typeallocinfoty.size = count

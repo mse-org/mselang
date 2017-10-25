@@ -106,7 +106,9 @@ function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
            out firstnotfound: integer; out idents: identvecty;
-            const remainder: int32 = 0): boolean;
+           out upwardvisi: visikindsty; 
+                        //result of findupward() call, [] if none
+                                      const remainder: int32 = 0): boolean;
 function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
@@ -611,6 +613,8 @@ function findkindelements(const astackoffset: integer;
             const visibility: visikindsty;
             out aelement: pelementinfoty;
             out firstnotfound: integer; out idents: identvecty;
+            out upwardvisi: visikindsty; 
+                        //result of findupward() call, [] if none
             const remainder: int32 = 0): boolean;
 var
  eleres,ele1,ele2: elementoffsetty;
@@ -618,6 +622,7 @@ var
 begin
  result:= false;
  aelement:= nil;
+ upwardvisi:= [];
  if getidents(astackoffset,idents) then begin
   idents.high:= idents.high - remainder;
   if idents.high < 0 then begin
@@ -643,7 +648,8 @@ begin
      end;
     end;
     if not result then begin
-     result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+     upwardvisi:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+     result:= upwardvisi <> [];
      if not result then begin
       result:= s.unitinfo^.usescache.find(idents,eleres,firstnotfound);
       if not result then begin
@@ -651,7 +657,8 @@ begin
        for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
         ele.elementparent:=
           info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
-        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+        result:= ele.findupward(
+               idents,akinds,visibility,eleres,firstnotfound) <> [];
         if result then begin
          break;
         end;
@@ -660,7 +667,8 @@ begin
         for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
          ele.elementparent:=
            info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
-         result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+         result:= ele.findupward(
+                         idents,akinds,visibility,eleres,firstnotfound) <> [];
          if result then begin
           break;
          end;
@@ -670,10 +678,11 @@ begin
         ele.elementparent:= info.systemelement;
         if idents.d[0] = tk_system then begin
          result:= ele.findupward(idents,akinds,visibility,eleres,
-                                                          firstnotfound,1);
+                                                       firstnotfound,1) <> [];
         end
         else begin
-         result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
+         result:= ele.findupward(
+                         idents,akinds,visibility,eleres,firstnotfound) <> [];
         end;
        end;
        ele.elementparent:= ele2;
@@ -699,9 +708,10 @@ function findkindelements(const astackoffset: integer;
 var
  idents: identvecty;
  firstnotfound: integer;
+ vis1: visikindsty;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,
-                              aelement,firstnotfound,idents) and 
+                              aelement,firstnotfound,idents,vis1) and 
                               (firstnotfound > idents.high);
  if not result and not noerror then begin
   identerror(astackoffset+firstnotfound,err_identifiernotfound);
@@ -760,9 +770,11 @@ function findkindelementsdata(
              out ainfo: pointer; out firstnotfound: integer;
              out idents: identvecty;
              const rest: int32 = 0): boolean;
+var
+ vis1: visikindsty;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,ainfo,
-                                firstnotfound,idents,rest);
+                                firstnotfound,idents,vis1,rest);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
  end;
@@ -792,7 +804,7 @@ var
 begin
  result:= false;
  if getidents(astackoffset,idents) then begin
-  result:= ele.findupward(idents,[ek_var],visibility,ele1,int1);
+  result:= ele.findupward(idents,[ek_var],visibility,ele1,int1) <> [];
   if result then begin
    po1:= ele.eledataabs(ele1);
    varinfo.address:= po1^.address;
@@ -3062,6 +3074,10 @@ begin                    //todo: optimize
    ck_ref: begin
     if d.dat.datatyp.indirectlevel < 0 then begin
      errormessage(err_invalidderef,[],stackoffset);
+     exit;
+    end;
+    if af_classele in d.dat.ref.c.address.flags then begin
+     errormessage(err_cannotaccessinclassmethod,[],stackoffset);
      exit;
     end;
     if af_paramindirect in d.dat.ref.c.address.flags then begin
