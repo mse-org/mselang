@@ -1508,34 +1508,36 @@ begin
       end;
      end;
     end;
-    if d.dat.datatyp.indirectlevel <= 0 then begin
-     errormessage(err_illegalqualifier,[]);
-    end
-    else begin
-     dec(d.dat.datatyp.indirectlevel);
-     dec(d.dat.indirection);
-     case d.kind of
-      ck_ref: begin        //todo: make universal
-       if not (stf_getaddress in s.currentstatementflags) then begin
-        include(d.dat.ref.c.address.flags,af_startoffset);
+    with potop^ do begin //could be changed
+     if d.dat.datatyp.indirectlevel <= 0 then begin
+      errormessage(err_illegalqualifier,[]);
+     end
+     else begin
+      dec(d.dat.datatyp.indirectlevel);
+      dec(d.dat.indirection);
+      case d.kind of
+       ck_ref: begin        //todo: make universal
+        if not (stf_getaddress in s.currentstatementflags) then begin
+         include(d.dat.ref.c.address.flags,af_startoffset);
+        end;
        end;
-      end;
-      ck_const: begin
-       if d.dat.constval.kind <> dk_address then begin
-        errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
-       end
+       ck_const: begin
+        if d.dat.constval.kind <> dk_address then begin
+         errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
+        end
+        else begin
+         internalerror1(ie_notimplemented,'20140402B'); //todo
+        end;
+       end;
+       ck_fact,ck_subres: begin
+        //nothing to do
+       end;
+       ck_none,ck_error: begin
+        exit;
+       end;
        else begin
-        internalerror1(ie_notimplemented,'20140402B'); //todo
+        internalerror1(ie_notimplemented,'20140402A'); //todo
        end;
-      end;
-      ck_fact,ck_subres: begin
-       //nothing to do
-      end;
-      ck_none,ck_error: begin
-       exit;
-      end;
-      else begin
-       internalerror1(ie_notimplemented,'20140402A'); //todo
       end;
      end;
     end;
