@@ -167,8 +167,6 @@ begin
   end
   else begin
    bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
-   bo2:= bo2 and (ptypedataty(eletodata(po2))^.h.kind <> dk_none);
-                            //not forward
   end;
   forward1:= not bo2 and bo1;
   if forward1 then begin
@@ -208,7 +206,7 @@ begin
      if po4^.h.indirectlevel > 0 then begin
       po4^.h.flags-= [tf_managed,tf_needsmanage];
      end;
-     if forward1 then begin
+     if forward1 or (tf_forward in po3^.h.flags) then begin
       markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
      end
      else begin

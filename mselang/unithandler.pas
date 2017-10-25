@@ -1480,7 +1480,8 @@ begin
      ps:= @resolver^.data;
      i1:= pd^.h.indirectlevel;
      pd^:= ps^;
-     pd^.h.indirectlevel:= ps^.h.indirectlevel+i1;
+//     pd^.h.indirectlevel:= ps^.h.indirectlevel+i1;
+     pd^.h.indirectlevel:= i1;
      if pd^.h.base = 0 then begin
       pd^.h.base:= ele.eledatarel(ps);
      end;
