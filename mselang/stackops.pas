@@ -5521,9 +5521,25 @@ begin
  end;
 end;
 
+procedure callvirtclassop();
+begin
+ savecpu(sf_constructor in cpu.pc^.par.callinfo.flags);
+ cpu.frame:= cpu.stack;
+ cpu.stacklink:= cpu.frame;
+ with cpu.pc^.par.callinfo do begin
+  cpu.pc:= startpo+pptruint(
+             ppointer(cpu.stack+virt.selfinstance)^+virt.virtoffset)^;
+ end;
+end;
+
 procedure callvirtfuncop();
 begin
  callvirtop();
+end;
+
+procedure callvirtclassfuncop();
+begin
+ callvirtclassop();
 end;
 
 procedure callintfop();
@@ -7517,8 +7533,10 @@ const
   callfuncssa = 0;
   calloutssa = 0;
   callfuncoutssa = 0;
-  callvirtfuncssa = 0;
   callvirtssa = 0;
+  callvirtclassssa = 0;
+  callvirtfuncssa = 0;
+  callvirtclassfuncssa = 0;
   callintfssa = 0;
   callintffuncssa = 0;
   virttrampolinessa = 0;

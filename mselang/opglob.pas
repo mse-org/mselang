@@ -108,7 +108,9 @@ type
   oc_callout,
   oc_callfuncout,
   oc_callvirt,
+  oc_callvirtclass,
   oc_callvirtfunc,
+  oc_callvirtclassfunc,
   oc_callintf,
   oc_callintffunc,
   oc_virttrampoline,
@@ -757,7 +759,8 @@ type
   params: dataoffsty;
   paramcount: integer;
   case opcodety of
-   oc_callvirt,oc_callvirtfunc,oc_callintf,oc_callintffunc:(
+   oc_callvirt,oc_callvirtclass,oc_callvirtfunc,oc_callvirtclassfunc,
+   oc_callintf,oc_callintffunc:(
     virt: virtcallinfoty;
    );
    oc_callindi,oc_callfuncindi:(
@@ -1211,7 +1214,9 @@ const
   oc_decloop64];
 
  subops = [oc_call,oc_callfunc,oc_callout,oc_callfuncout,
-           oc_callvirt,oc_callintf,oc_callindi,oc_callfuncindi];
+           oc_callvirt,oc_callvirtclass,oc_callvirtfunc,oc_callvirtclassfunc,
+           oc_callintf,
+           oc_callindi,oc_callfuncindi];
                                     //have subinfo record
  callops = subops + [
   oc_raise,

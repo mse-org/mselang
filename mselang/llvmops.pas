@@ -3995,9 +3995,47 @@ begin
  end;
 end;
 
+procedure callvirtclassop();
+var
+ ids: idsarty;
+ idar: idarty;
+ i1: int32;
+begin
+ with pc^.par do begin               //todo: calling convention
+  idar.ids:= @ids;
+  docallparam(0,idar);
+  bcstream.emitbitcast(ids[0],bcstream.typeval(pointertype)); //1ssa **i8
+               //class def
+{
+  bcstream.emitgetelementptr(ids[0],               
+                    bcstream.constval(callinfo.virt.virttaboffset));//2ssa *i8
+  bcstream.emitbitcast(bcstream.relval(0),
+                            bcstream.ptypeval(pointertype)); //1ssa **i8
+}
+//  bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
+  bcstream.emitgetelementptr(bcstream.relval(0),               
+                     bcstream.constval(callinfo.virt.virtoffset));//2ssa *i8
+               //virtual table item address
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+                                                                  //1ssa **i8
+  bcstream.emitloadop(bcstream.relval(0));                        //1ssa *i8
+               //sub address
+  bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
+                         bcstream.ptypeval(callinfo.virt.typeid));
+  bcstream.emitcallop(sf_functioncall in 
+                                callinfo.flags,bcstream.relval(0),idar);
+ end;
+end;
+
+
 procedure callvirtfuncop();
 begin
  callvirtop();
+end;
+
+procedure callvirtclassfuncop();
+begin
+ callvirtclassop();
 end;
 
 procedure callintfop();
@@ -5274,7 +5312,9 @@ const
   calloutssa = 0;
   callfuncoutssa = 1;
   callvirtssa = 9;
+  callvirtclassssa = 6;
   callvirtfuncssa = 10;
+  callvirtclassfuncssa = 7;
   callintfssa = 11;
   callintffuncssa = 12;
   virttrampolinessa = 1;

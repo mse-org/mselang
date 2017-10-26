@@ -3537,6 +3537,10 @@ begin
 //   if (source^.d.kind = ck_list) and not listtoset(source) then begin
 //    goto endlab;
 //   end;
+   if not (dest^.d.kind in datacontexts) then begin
+    errormessage(err_argnotassign,[],dest);
+    goto endlab;
+   end;
    if (source^.d.kind <> ck_list) and (source^.d.kind in datacontexts) then begin
     concatterms(dest,source);
    end;

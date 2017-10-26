@@ -3748,10 +3748,20 @@ begin
      end
      else begin
       if sf_functioncall in asub^.flags then begin
-       po1:= insertitem(oc_callvirtfunc,topoffset,-1);
+       if sf_classmethod in asub^.flags then begin
+        po1:= insertitem(oc_callvirtclassfunc,topoffset,-1);
+       end
+       else begin
+        po1:= insertitem(oc_callvirtfunc,topoffset,-1);
+       end;
       end
       else begin
-       po1:= insertitem(oc_callvirt,topoffset,-1);
+       if sf_classmethod in asub^.flags then begin
+        po1:= insertitem(oc_callvirtclass,topoffset,-1);
+       end
+       else begin
+        po1:= insertitem(oc_callvirt,topoffset,-1);
+       end;
       end;
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                              virtualtableoffset;

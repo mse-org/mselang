@@ -48,8 +48,12 @@
   (ssa: callfuncoutssa; proc: @callfuncoutop; flags: []), 
 //oc_callvirt
   (ssa: callvirtssa; proc: @callvirtop; flags: []), 
+//oc_callvirtclass
+  (ssa: callvirtclassssa; proc: @callvirtclassop; flags: []), 
 //oc_callvirtfunc
   (ssa: callvirtfuncssa; proc: @callvirtfuncop; flags: []), 
+//oc_callvirtclassfunc
+  (ssa: callvirtclassfuncssa; proc: @callvirtclassfuncop; flags: []), 
 //oc_callintf
   (ssa: callintfssa; proc: @callintfop; flags: []), 
 //oc_callintffunc
