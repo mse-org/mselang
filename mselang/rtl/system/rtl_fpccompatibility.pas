@@ -16,12 +16,14 @@ uses
 type
 //{$internaldebug on}
  tobject = class()[virtual]
+  private
+   class function newinst(): pointer [new];
   protected
   public
    constructor create();
    destructor destroy() [virtual,default];
    procedure free();
-   class function newinstance(): tobject [new,virtual];
+   class function newinstance(): tobject [virtual];
    class function initinstance(instance : pointer) : tobject;
  end;
  
@@ -88,6 +90,11 @@ begin
  //dummy
 end;
 
+class function tobject.newinst(): pointer;
+begin
+ result:= newinstance();
+end;
+
 procedure tobject.free();
 begin
  if self <> nil then begin
@@ -99,6 +106,7 @@ class function tobject.newinstance(): tobject;
 begin
  result:= getzeromem(sizeof(self^));
  initialize(result^);
+writeln('tobject');
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;
