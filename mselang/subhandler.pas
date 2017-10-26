@@ -3557,13 +3557,17 @@ begin
       instancetype1:= resulttype1;
       with resulttype1^.infoclass do begin
        if subattach.new <> 0 then begin
-        with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
-         segad:= resulttype1^.infoclass.defs.address;
-         instancessa:= ssad;
+        if dsf_classdefonstack in aflags then begin
+        end
+        else begin
+         with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
+          segad:= resulttype1^.infoclass.defs.address;
+          instancessa:= ssad;
+         end;
         end;
         callsub(adestindex,ele.eledataabs(subattach.new),paramstart,0,
            [dsf_instanceonstack,dsf_classdefonstack,dsf_useobjssa,dsf_noparams,
-                  dsf_useinstancetype],instancessa,ele.eledatarel(resulttype1));
+                  dsf_useinstancetype],instancessa,0,resulttype1);
         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
        end
        else begin
