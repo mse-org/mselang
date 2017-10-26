@@ -1907,7 +1907,6 @@ var
            if not getvalue(adatacontext,das_none) then begin
             exit;
            end;
-           include(subflags,dsf_instanceonstack);
 //          end;
           include(subflags1,sf_class);
          end
@@ -2032,7 +2031,14 @@ var
          internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
-       callsub(s.stackindex,psubdataty(po4),paramstart,paramco,subflags);
+       if isclassof then begin
+        callsub(s.stackindex,psubdataty(po4),paramstart,paramco,
+                    subflags+[dsf_instanceonstack,dsf_classdefonstack,
+                 dsf_useinstancetype],0,0,ptypedataty(ele.eledataabs(ele2)));
+       end
+       else begin
+        callsub(s.stackindex,psubdataty(po4),paramstart,paramco,subflags);
+       end;
        exit;
       end;
       else begin

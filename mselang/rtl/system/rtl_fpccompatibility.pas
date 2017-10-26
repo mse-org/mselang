@@ -17,12 +17,11 @@ type
 //{$internaldebug on}
  tobject = class()[virtual]
   protected
-   procedure ini [ini];
   public
    constructor create();
    destructor destroy() [virtual,default];
    procedure free();
-   class function newinstance(): tobject {[virtual]};
+   class function newinstance(): tobject [new,virtual];
    class function initinstance(instance : pointer) : tobject;
  end;
  
@@ -96,22 +95,16 @@ begin
  end;
 end;
 
-procedure tobject.ini();
-begin
-end;
-
 class function tobject.newinstance(): tobject;
 begin
-writeln('**',sizeof(self^));
  result:= getzeromem(sizeof(self^));
-writeln(result);
- initialize(result);
+ initialize(result^);
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;
 begin
  result:= instance;
- initialize(result);
+ initialize(result^);
 end;
 
 end.

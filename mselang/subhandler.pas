@@ -976,6 +976,9 @@ begin
          end;
         end;
        end;
+       tk_new: begin
+        include(d.subdef.flags1,sf1_new);
+       end;
        tk_afterconstruct: begin
         include(d.subdef.flags1,sf1_afterconstruct);
        end;
@@ -1505,6 +1508,16 @@ begin
  end;
 end;
 
+const
+ attachmentnames: array[subflag1ty] of string = (
+ //sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_beforedestruct,
+      'ini',  'fini',  'afterconstruct',  'new',  'beforedestruct',
+ //sf1_incref,sf1_decref,
+      'incref',  'decref',
+ //sf1_default
+      'default'
+ );
+
 procedure handlesubheader();
 var
  sub1: psubdataty;
@@ -1515,6 +1528,7 @@ var
  impl1: boolean;
  defaultparamcount1: int32;
  subflags: subflagsty;
+ subflags1: subflags1ty;
  paramsize1: integer;
  paramco{,paramhigh}: int32;
  
@@ -1721,24 +1735,26 @@ var
   end; //lastparamindex
  end;//doparams()
 
- function checksysobjectmethod(const aname: string): boolean;
+ function checksysobjectmethod(akind: subflag1ty): boolean;
  begin
-  result:= true;
-  if not isobject or (subflags*[sf_functionx,sf_classmethod] <> []) or
-                                                  (paramco <> 1) then begin
-   errormessage(err_invalidmethodforattach,[aname]);
+  result:= akind in subflags1;
+  if result and (not isobject or (subflags*[sf_functionx,sf_classmethod] <> []) or
+                                                  (paramco <> 1)) then begin
+   errormessage(err_invalidmethodforattach,[attachmentnames[akind]]);
    result:= false;
   end;
  end;//checksysobjectmethod()
 
- function checksysclassmethod(const aname: string): boolean;
+ function checksysclassmethod(const akind: subflag1ty): boolean;
  begin
   if isclass then begin
-   result:= checksysobjectmethod(aname);
+   result:= checksysobjectmethod(akind);
   end
   else begin
    result:= false;
-   errormessage(err_invalidattachment,[aname]);
+   if akind in subflags1 then begin
+    errormessage(err_invalidattachment,[attachmentnames[akind]]);
+   end;
   end;
  end;//checksysclassmethod()
 
@@ -1754,7 +1770,6 @@ var                       //todo: move after doparams()
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
  eledatabase: ptruint;
- subflags1: subflags1ty;
 // parambase: ptruint;
  si1: integer;
  bo1,isinterface,ismethod: boolean;
@@ -2256,41 +2271,49 @@ begin
    s.stacktop:= s.stackindex;
   end
   else begin
-   if (sf1_afterconstruct in subflags1) and 
-                 checksysobjectmethod('afterconstruct') then begin
+   if (sf1_new in subflags1) then begin
+    if isobject and (subflags*[sf_functionx,sf_classmethod] = 
+             [sf_functionx,sf_classmethod]) and (paramco = 2) and 
+             (resulttype1.indirectlevel = 1) and 
+            (ptypedataty(ele.eledataabs(resulttype1.typeele))^.h.kind =
+                                                        dk_pointer) then begin
+     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+      infoclass.subattach.new:= ele.eledatarel(sub1);
+     end;
+    end
+    else begin
+     errormessage(err_invalidmethodforattach,[attachmentnames[sf1_new]]);
+    end;
+   end;
+   if checksysobjectmethod(sf1_afterconstruct) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
     end;
    end;
-   if (sf1_beforedestruct in subflags1) and 
-                 checksysobjectmethod('beforedestruct') then begin
+   if checksysobjectmethod(sf1_beforedestruct) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
     end;
    end;
-   if (sf1_ini in subflags1) and 
-                 checksysobjectmethod('ini') then begin
+   if checksysobjectmethod(sf1_ini) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.ini:= ele.eledatarel(sub1);
      include(h.flags,tf_needsini);
     end;
    end;
-   if (sf1_fini in subflags1) and 
-                 checksysobjectmethod('fini') then begin
+   if checksysobjectmethod(sf1_fini) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.fini:= ele.eledatarel(sub1);
      include(h.flags,tf_needsfini);
     end;
    end;
-   if (sf1_incref in subflags1) and 
-                 checksysobjectmethod('incref') then begin
+   if checksysobjectmethod(sf1_incref) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.incref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
-   if (sf1_decref in subflags1) and 
-                 checksysobjectmethod('decref') then begin
+   if checksysobjectmethod(sf1_decref) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.decref:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
@@ -3145,7 +3168,12 @@ var
      instancessa:= d.dat.fact.instancessa; //for sf_method
     end
     else begin
-     instancessa:= d.dat.fact.ssaindex; //for sf_method
+     if dsf_useobjssa in aflags then begin
+      instancessa:= aobjssa;
+     end
+     else begin
+      instancessa:= d.dat.fact.ssaindex; //for sf_method
+     end;
     end;
    end;
    if (sf_destructor in asub^.flags) then begin
@@ -3410,17 +3438,19 @@ begin
          end;
         end;
        end;
-       if dsf_destroy in aflags then begin
-        instancessa:= aobjssa;
-       end
-       else begin
-        if dsf_usedestinstance in aflags then begin
-         instancessa:= d.dat.fact.instancessa;
+       if not (dsf_instanceonstack in aflags) then begin
+        if dsf_destroy in aflags then begin
+         instancessa:= aobjssa;
         end
         else begin
-         instancessa:= d.dat.fact.ssaindex;
+         if dsf_usedestinstance in aflags then begin
+          instancessa:= d.dat.fact.instancessa;
+         end
+         else begin
+          instancessa:= d.dat.fact.ssaindex;
+         end;
+                             //for sf_method, invalid for constructor
         end;
-                            //for sf_method, invalid for constructor
        end;
       end;
      end; //ismethod
@@ -3481,10 +3511,10 @@ begin
     end;
     varresulttempaddr:= -1;
     hasresult:= (sf_functionx in asub^.flags) or 
-          not isfactcontext and 
+          (not isfactcontext or (dsf_classdefonstack in aflags)) and 
           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
     hasvarresult:= hasresult and 
-                      (asub^.flags*[sf_functioncall,sf_constructor] = []);
+          (asub^.flags*[sf_functioncall,sf_constructor] = []);
     
     if hasresult then begin
      initfactcontext(destoffset); //set ssaindex
@@ -3511,31 +3541,48 @@ begin
                //todo: catch exception and call destroy
       include(d.dat.fact.flags,faf_create);
       isconstructor:= true;
-      bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
-                                                   firstnotfound1,idents1,1);
-                                          //get class type
-     {$ifdef mse_checkinternalerror}
-      if not bo1 then begin 
-       internalerror(ie_handler,'20150325A'); 
+      if dsf_useinstancetype in aflags then begin
+       resulttype1:= ainstancetype;
+      end
+      else begin
+       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
+                                                    firstnotfound1,idents1,1);
+                                           //get class type
+      {$ifdef mse_checkinternalerror}
+       if not bo1 then begin 
+        internalerror(ie_handler,'20150325A'); 
+       end;
+      {$endif}
       end;
-     {$endif}
       instancetype1:= resulttype1;
       with resulttype1^.infoclass do begin
-       with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
-        setimmint32(allocsize,par.imm);
-       end;
-       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-       b1:= true;
-       if b1 and (tf_needsmanage in resulttype1^.h.flags) or
-                          (tf_needsini in resulttype1^.h.flags) then begin
-        adref1.offset:= 0;
-        adref1.ssaindex:= instancessa;
-        adref1.contextindex:= adestindex;
-        adref1.isclass:= false;
-        adref1.kind:= ark_stack;
-        adref1.address:= 0;
-        adref1.typ:= resulttype1;
-        writemanagedtypeop(mo_ini,resulttype1,adref1);
+       if subattach.new <> 0 then begin
+        with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
+         segad:= resulttype1^.infoclass.defs.address;
+         instancessa:= ssad;
+        end;
+        callsub(adestindex,ele.eledataabs(subattach.new),paramstart,0,
+           [dsf_instanceonstack,dsf_classdefonstack,dsf_useobjssa,dsf_noparams,
+                  dsf_useinstancetype],instancessa,ele.eledatarel(resulttype1));
+        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+       end
+       else begin
+        with insertitem(oc_getobjectmem,destoffset,-1)^ do begin
+         setimmint32(allocsize,par.imm);
+        end;
+        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+        b1:= true;
+        if b1 and (tf_needsmanage in resulttype1^.h.flags) or
+                           (tf_needsini in resulttype1^.h.flags) then begin
+         adref1.offset:= 0;
+         adref1.ssaindex:= instancessa;
+         adref1.contextindex:= adestindex;
+         adref1.isclass:= false;
+         adref1.kind:= ark_stack;
+         adref1.address:= 0;
+         adref1.typ:= resulttype1;
+         writemanagedtypeop(mo_ini,resulttype1,adref1);
+        end;
        end;
       end;
      end

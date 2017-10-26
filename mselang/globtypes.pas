@@ -255,7 +255,7 @@ type
 
 
                                                     //object sub attachments
- subflag1ty = (sf1_ini,sf1_fini,sf1_afterconstruct,sf1_beforedestruct,
+ subflag1ty = (sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_beforedestruct,
                sf1_incref,sf1_decref,
               {sf1_params,}sf1_default); //for destructor
  subflags1ty = set of subflag1ty;

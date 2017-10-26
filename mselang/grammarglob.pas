@@ -68,101 +68,102 @@ const
  tk_virtual = $0000022C;
  tk_except = $0000022D;
  tk_end = $0000022E;
- tk_afterconstruct = $0000022F;
- tk_beforedestruct = $00000230;
- tk_ini = $00000231;
- tk_fini = $00000232;
- tk_incref = $00000233;
- tk_decref = $00000234;
- tk_operator = $00000235;
- tk_operatorright = $00000236;
- tk_default = $00000237;
- tk_unit = $00000238;
- tk_program = $00000239;
- tk_interface = $0000023A;
- tk_implementation = $0000023B;
- tk_uses = $0000023C;
- tk_type = $0000023D;
- tk_const = $0000023E;
- tk_var = $0000023F;
- tk_label = $00000240;
- tk_class = $00000241;
- tk_procedure = $00000242;
- tk_function = $00000243;
- tk_method = $00000244;
- tk_initialization = $00000245;
- tk_finalization = $00000246;
- tk_constructor = $00000247;
- tk_destructor = $00000248;
- tk_begin = $00000249;
- tk_mode = $0000024A;
- tk_dumpelements = $0000024B;
- tk_dumpopcode = $0000024C;
- tk_abort = $0000024D;
- tk_stoponerror = $0000024E;
- tk_nop = $0000024F;
- tk_include = $00000250;
- tk_define = $00000251;
- tk_undef = $00000252;
- tk_ifdef = $00000253;
- tk_ifndef = $00000254;
- tk_if = $00000255;
- tk_else = $00000256;
- tk_endif = $00000257;
- tk_ifend = $00000258;
- tk_h = $00000259;
- tk_inline = $0000025A;
- tk_on = $0000025B;
- tk_off = $0000025C;
- tk_constref = $0000025D;
- tk_out = $0000025E;
- tk_override = $0000025F;
- tk_overload = $00000260;
- tk_of = $00000261;
- tk_object = $00000262;
- tk_external = $00000263;
- tk_forward = $00000264;
- tk_name = $00000265;
- tk_sub = $00000266;
- tk_finally = $00000267;
- tk_do = $00000268;
- tk_with = $00000269;
- tk_case = $0000026A;
- tk_while = $0000026B;
- tk_repeat = $0000026C;
- tk_for = $0000026D;
- tk_try = $0000026E;
- tk_raise = $0000026F;
- tk_goto = $00000270;
- tk_then = $00000271;
- tk_until = $00000272;
- tk_to = $00000273;
- tk_downto = $00000274;
- tk_set = $00000275;
- tk_packed = $00000276;
- tk_record = $00000277;
- tk_array = $00000278;
- tk_private = $00000279;
- tk_protected = $0000027A;
- tk_public = $0000027B;
- tk_published = $0000027C;
- tk_property = $0000027D;
- tk_read = $0000027E;
- tk_write = $0000027F;
- tk_div = $00000280;
- tk_mod = $00000281;
- tk_and = $00000282;
- tk_shl = $00000283;
- tk_shr = $00000284;
- tk_or = $00000285;
- tk_xor = $00000286;
- tk_in = $00000287;
- tk_is = $00000288;
- tk_not = $00000289;
- tk_as = $0000028A;
- tk_inherited = $0000028B;
+ tk_new = $0000022F;
+ tk_afterconstruct = $00000230;
+ tk_beforedestruct = $00000231;
+ tk_ini = $00000232;
+ tk_fini = $00000233;
+ tk_incref = $00000234;
+ tk_decref = $00000235;
+ tk_operator = $00000236;
+ tk_operatorright = $00000237;
+ tk_default = $00000238;
+ tk_unit = $00000239;
+ tk_program = $0000023A;
+ tk_interface = $0000023B;
+ tk_implementation = $0000023C;
+ tk_uses = $0000023D;
+ tk_type = $0000023E;
+ tk_const = $0000023F;
+ tk_var = $00000240;
+ tk_label = $00000241;
+ tk_class = $00000242;
+ tk_procedure = $00000243;
+ tk_function = $00000244;
+ tk_method = $00000245;
+ tk_initialization = $00000246;
+ tk_finalization = $00000247;
+ tk_constructor = $00000248;
+ tk_destructor = $00000249;
+ tk_begin = $0000024A;
+ tk_mode = $0000024B;
+ tk_dumpelements = $0000024C;
+ tk_dumpopcode = $0000024D;
+ tk_abort = $0000024E;
+ tk_stoponerror = $0000024F;
+ tk_nop = $00000250;
+ tk_include = $00000251;
+ tk_define = $00000252;
+ tk_undef = $00000253;
+ tk_ifdef = $00000254;
+ tk_ifndef = $00000255;
+ tk_if = $00000256;
+ tk_else = $00000257;
+ tk_endif = $00000258;
+ tk_ifend = $00000259;
+ tk_h = $0000025A;
+ tk_inline = $0000025B;
+ tk_on = $0000025C;
+ tk_off = $0000025D;
+ tk_constref = $0000025E;
+ tk_out = $0000025F;
+ tk_override = $00000260;
+ tk_overload = $00000261;
+ tk_of = $00000262;
+ tk_object = $00000263;
+ tk_external = $00000264;
+ tk_forward = $00000265;
+ tk_name = $00000266;
+ tk_sub = $00000267;
+ tk_finally = $00000268;
+ tk_do = $00000269;
+ tk_with = $0000026A;
+ tk_case = $0000026B;
+ tk_while = $0000026C;
+ tk_repeat = $0000026D;
+ tk_for = $0000026E;
+ tk_try = $0000026F;
+ tk_raise = $00000270;
+ tk_goto = $00000271;
+ tk_then = $00000272;
+ tk_until = $00000273;
+ tk_to = $00000274;
+ tk_downto = $00000275;
+ tk_set = $00000276;
+ tk_packed = $00000277;
+ tk_record = $00000278;
+ tk_array = $00000279;
+ tk_private = $0000027A;
+ tk_protected = $0000027B;
+ tk_public = $0000027C;
+ tk_published = $0000027D;
+ tk_property = $0000027E;
+ tk_read = $0000027F;
+ tk_write = $00000280;
+ tk_div = $00000281;
+ tk_mod = $00000282;
+ tk_and = $00000283;
+ tk_shl = $00000284;
+ tk_shr = $00000285;
+ tk_or = $00000286;
+ tk_xor = $00000287;
+ tk_in = $00000288;
+ tk_is = $00000289;
+ tk_not = $0000028A;
+ tk_as = $0000028B;
+ tk_inherited = $0000028C;
 
- tokens: array[0..139] of string = ('',
+ tokens: array[0..140] of string = ('',
   '.void','.classes','.private','.protected','.public','.published',
   '.classintfname','.classintftype','.classimp','.objpotyp','.classoftyp',
   '.self','.units','.ancestors','.nestedvarref','.defines','.ini','.inizeroed',
@@ -170,8 +171,8 @@ const
   '.operatorsright','.system',
   'mselang','pascal','system','nil','result','exitcode','sizeof','defined',
   'break','continue','self','b','booleval','internaldebug','nozeroinit',
-  'zeroinit','virtual','except','end','afterconstruct','beforedestruct','ini',
-  'fini','incref','decref','operator','operatorright','default','unit',
+  'zeroinit','virtual','except','end','new','afterconstruct','beforedestruct',
+  'ini','fini','incref','decref','operator','operatorright','default','unit',
   'program','interface','implementation','uses','type','const','var','label',
   'class','procedure','function','method','initialization','finalization',
   'constructor','destructor','begin','mode','dumpelements','dumpopcode','abort',
@@ -183,7 +184,7 @@ const
   'published','property','read','write','div','mod','and','shl','shr','or',
   'xor','in','is','not','as','inherited');
 
- tokenids: array[0..139] of identty = (
+ tokenids: array[0..140] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
   $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
   $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
@@ -203,7 +204,8 @@ const
   $00000270,$00000271,$00000272,$00000273,$00000274,$00000275,$00000276,
   $00000277,$00000278,$00000279,$0000027A,$0000027B,$0000027C,$0000027D,
   $0000027E,$0000027F,$00000280,$00000281,$00000282,$00000283,$00000284,
-  $00000285,$00000286,$00000287,$00000288,$00000289,$0000028A,$0000028B);
+  $00000285,$00000286,$00000287,$00000288,$00000289,$0000028A,$0000028B,
+  $0000028C);
 
 implementation
 end.

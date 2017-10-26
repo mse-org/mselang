@@ -584,7 +584,7 @@ begin
  with info do begin
   typecont:= @contextstack[s.stackindex-1];
  {$ifdef mse_checkinternalerror}
-  if typecont^.d.kind <> ck_typetype then begin
+  if not (typecont^.d.kind in typecontexts) then begin
    internalerror(ie_handler,'20171019A');
   end;
  {$endif}
