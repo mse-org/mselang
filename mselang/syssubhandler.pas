@@ -26,6 +26,7 @@ procedure handleexit(const paramco: int32);
 procedure handlewriteln(const paramco: int32);
 procedure handlewrite(const paramco: int32);
 procedure handlesizeof(const paramco: int32);
+procedure handleclassof(const paramco: int32);
 procedure handleord(const paramco: int32);
 procedure handleinc(const paramco: int32);
 procedure handledec(const paramco: int32);
@@ -62,8 +63,10 @@ const
   @handlesetlength,@handleunique,
   //syf_initialize, syf_finalize,   syf_incref,   syf_decref,
   @handleinitialize,@handlefinalize,@handleincref,@handledecref,
-  //syf_sizeof,  syf_ord
-  @handlesizeof, @handleord,
+  //syf_sizeof,  syf_classof,
+  @handlesizeof,@handleclassof,
+  //syf_ord
+  @handleord,
   //syf_inc,  syf_dec    syf_abs,   
   @handleinc,@handledec,@handleabs,
   //syf_getmem,  syf_getzeromem,   syf_freemem
@@ -214,6 +217,81 @@ begin
     d.dat.constval.vinteger:= i1;
    end;
   end;
+ end;
+end;
+
+procedure handleclassof(const paramco: integer);
+var
+ i1: integer;
+ indpo,toppo: pcontextitemty;
+ typ1: ptypedataty;
+label
+ errorlab;
+begin
+ if checkparamco(1,paramco) then begin
+  with info do begin
+   indpo:= @contextstack[s.stackindex];
+   toppo:= @contextstack[s.stacktop];
+   with toppo^ do begin
+    case d.kind of
+     ck_typearg: begin
+      typ1:= ele.eledataabs(d.typ.typedata);
+      if typ1^.h.kind in [dk_object,dk_class] then begin
+       with insertitem(oc_pushclassdef,toppo,-1)^.par do begin
+        segad:= typ1^.infoclass.defs.address;
+        i1:= ssad;
+       end;
+       initfactcontext(indpo);
+       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+       indpo^.d.dat.fact.ssaindex:= i1;
+       indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+       exit;
+      end;
+     end;
+     ck_ref,ck_fact,ck_subres: begin
+      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+      if typ1^.h.kind in [dk_object,dk_class] then begin
+       if icf_virtual in typ1^.infoclass.flags then begin
+        case d.dat.datatyp.indirectlevel of 
+         0: begin
+          if not getaddress(toppo,true) then begin
+           exit;
+          end;
+         end;
+         1: begin
+          if not getvalue(toppo,das_none) then begin
+           exit;
+          end;
+         end;
+         else begin
+          goto errorlab;
+         end;
+        end;
+        i1:= d.dat.fact.ssaindex;
+        with insertitem(oc_getclassdef,toppo,-1)^.par do begin
+         ssas1:= i1;
+         setimmint32(typ1^.infoclass.virttaboffset,imm);
+         i1:= ssad;
+        end;
+       end
+       else begin
+        with insertitem(oc_pushclassdef,toppo,-1)^.par do begin
+         segad:= typ1^.infoclass.defs.address;
+         i1:= ssad;
+        end;
+       end; 
+       initfactcontext(indpo);
+       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+       indpo^.d.dat.fact.ssaindex:= i1;
+       indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+       exit;
+      end;
+     end;
+    end;
+   end;
+  end;
+errorlab:
+  errormessage(err_cannotgetclass,[]);
  end;
 end;
 
@@ -1536,6 +1614,7 @@ const
    (name: 'incref'; data: (func: syf_incref)),
    (name: 'decref'; data: (func: syf_decref)),
    (name: 'sizeof'; data: (func: syf_sizeof)),
+   (name: 'classof'; data: (func: syf_classof)),
    (name: 'ord'; data: (func: syf_ord)),
    (name: 'inc'; data: (func: syf_inc)),
    (name: 'dec'; data: (func: syf_dec)),

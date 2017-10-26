@@ -1082,7 +1082,7 @@ classdefa,classdef0,,
  '[',classdefattach-*
  ';',classdefforward
 classdefforward,,,handleclassdefforward
-classof,,,handleclassof*^
+classof,,,handleclassoftyp*^
  '',trygetfieldtype^*
 classdef0a,classdef0,,
  ${whitespace}

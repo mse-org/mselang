@@ -14147,7 +14147,7 @@ begin
  classdefforwardco.branch:= nil;
  classdefforwardco.handleexit:= @handleclassdefforward;
  classofco.branch:= @bclassof;
- classofco.handleexit:= @handleclassof;
+ classofco.handleexit:= @handleclassoftyp;
  classdef0aco.branch:= @bclassdef0a;
  classdef0aco.next:= @classdef0co;
  classdef0co.branch:= nil;

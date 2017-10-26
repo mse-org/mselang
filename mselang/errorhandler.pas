@@ -92,7 +92,7 @@ type
             err_exceptlabelafterelse,err_invalidassignop,
             err_libnameexpected,err_functionnameexpected,err_varnameexpected,
             err_singleexternalonly,err_cannotaddresscall,
-            err_cannotaccessinclassmethod);
+            err_cannotaccessinclassmethod,err_cannotgetclass);
             
  errorinfoty = record
   level: errorlevelty;
@@ -346,7 +346,8 @@ const
   (level: erl_error; message: 
              'Can''t take the address of a procedure or method call'),
   (level: erl_error; message: 
-             'Can not be accessed in class method')
+             'Can not be accessed in class method'),
+  (level: erl_error; message: 'Can not get class of this expression')
  );
 
 procedure message1(const atext: string; const values: array of const); 

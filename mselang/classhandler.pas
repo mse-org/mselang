@@ -84,7 +84,7 @@ procedure handleclassdefparam3a();
 procedure handleclassdefparam4entry();
 procedure handleclassdefattach();
 
-procedure handleclassof();
+procedure handleclassoftyp();
 
 procedure handleclassprivate();
 procedure handleclassprotected();
@@ -573,7 +573,7 @@ begin
  end;
 end;
 
-procedure handleclassof();
+procedure handleclassoftyp();
 var
  typecont: pcontextitemty;
  typ1,typ2: ptypedataty;

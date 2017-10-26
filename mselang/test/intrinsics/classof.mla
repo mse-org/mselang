@@ -1,0 +1,62 @@
+program classof;
+uses
+ __mla__internaltypes;
+type
+ ttest = class()[virtual]
+  f1,f2: int32;
+  class method newinstance(): pointer [new,virtual];
+  constructor create();
+  destructor destroy();
+  class method test();
+ end;
+ ttest1 = class(ttest)
+  f3: int32;
+  class method newinstance(): pointer [override];
+ end;
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+class method ttest.newinstance(): pointer;
+begin
+ result:= getmem(sizeof(ttest^));
+ initialize(result^);
+end;
+
+class method ttest1.newinstance(): pointer;
+begin
+ result:= inherited newinstance();
+ ttest1(result).f3:= 123;
+end;
+
+class method ttest.test();
+begin
+end;
+
+type
+ tty = class of ttest;
+ procty = method();
+var
+ c1: ttest;
+ t1: tty;
+ c2: ttest;
+ p1: pointer;
+ proc1: procty;
+begin
+ p1:= classof(ttest);
+ proc1:= @ttest.test;
+ if p1 = methodty(proc1).data then
+  exitcode:= 123;
+  c2:= ttest1.create();
+  p1:= classof(c2);
+  proc1:= @ttest.test;
+  if p1 = methodty(proc1).data then
+   exitcode:= ttest1(c2).f3;
+  end;
+  c2.destroy();
+ end;
+end.
