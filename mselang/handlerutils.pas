@@ -391,6 +391,10 @@ const
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infoint64:(min: int64($8000000000000000); max: $7fffffffffffffff))),
+   (name: 'intpo'; data: (h: (ancestor: 0; kind: dk_none;
+       base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
+       dummy1: 0)), //dummy
    (name: 'card8'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; manageproc: nil; flags: [];indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
@@ -407,6 +411,10 @@ const
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infocard64:(min: $0000000000000000; max: card64($ffffffffffffffff)))),
+   (name: 'cardpo'; data: (h: (ancestor: 0; kind: dk_none;
+       base: 0; rtti: 0; manageproc: nil; flags: [tf_untyped]; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
+       dummy1: 0)), //dummy
    (name: 'flo32'; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; manageproc: nil; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_f32; next: 0; signature: 0);
@@ -430,19 +438,19 @@ const
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
-       bitsize: pointerbitsize; bytesize: pointersize;
+       bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 1; infostring: (dummy2: 0))),
    (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
-       bitsize: pointerbitsize; bytesize: pointersize;
+       bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 2; infostring: (dummy2: 0))),
    (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; manageproc: @managestring;
        flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
-       bitsize: pointerbitsize; bytesize: pointersize;
+       bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 4; infostring: (dummy2: 0)))
   );
@@ -912,7 +920,7 @@ function pushinsertvar(const stackoffset: int32; const aopoffset: int32;
 begin
  with insertitem(oc_push,stackoffset,aopoffset)^ do begin
   if indirectlevel > 0 then begin
-   result:= pointersize;
+   result:= targetpointersize;
   end
   else begin
    result:= alignsize(atype^.h.bytesize);
@@ -1030,7 +1038,7 @@ begin
   i1:= d.dat.fact.ssaindex;
   with insertitem(oc_pushstackaddr,stackoffset,aopoffset)^.par do begin
    if d.dat.datatyp.indirectlevel > 0 then begin
-    memop.tempdataaddress.a.address:= -pointersize;
+    memop.tempdataaddress.a.address:= -targetpointersize;
    end
    else begin
     memop.tempdataaddress.a.address:= -alignsize(pt1^.h.bytesize);
@@ -1465,7 +1473,7 @@ begin
     dk_character: begin
      i1:= d.dat.fact.opoffset;
      with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
-      par.voffset:= -pointersize;
+      par.voffset:= -targetpointersize;
       par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
      end;
      inc(i1);            //todo: item size !!!!!!!!!!!!!
@@ -1571,7 +1579,7 @@ begin
   if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - info.stacktempoffset;
    if result.indirectlevel > 0 then begin
-    locdatapo:= locdatapo + pointersize;
+    locdatapo:= locdatapo + targetpointersize;
    end
    else begin
     locdatapo:= locdatapo + alignsize(p1^.h.bytesize);
@@ -1878,7 +1886,7 @@ begin
       with op1^ do begin
        par.memop.tempdataaddress.offset:= 0;
        if dat.datatyp.indirectlevel > 0 then begin
-        par.memop.tempdataaddress.a.address:= -pointersize;
+        par.memop.tempdataaddress.a.address:= -targetpointersize;
        end
        else begin
         par.memop.tempdataaddress.a.address:= -alignsize(typ1^.h.bytesize);
@@ -1897,7 +1905,7 @@ begin
                  //for constructor, destructor, instance pointer on stack
    if (co_mlaruntime in info.o.compileoptions) then begin
     with insertitem(oc_pushduppo,stackoffs,-1)^ do begin
-     par.voffset:= aref.address-pointersize;
+     par.voffset:= aref.address-targetpointersize;
     end;
    end;
    result:= aref.ssaindex;
@@ -2264,7 +2272,7 @@ begin
       po1^.next:= nestedvarchain;
       po1^.address.datatype:= aopdatatype;
       po1^.address.arrayoffset:= info.s.unitinfo^.llvmlists.constlist.
-                              addi32((nestedvarcount{-1})*pointersize).listid;
+                         addi32((nestedvarcount{-1})*targetpointersize).listid;
       po1^.address.origin:= addressbefore;
       po1^.address.nested:= true;
       if int1 = 0 then begin //last
@@ -3264,10 +3272,10 @@ begin
   i1:= h.bytesize;
   i2:= sourcetyp^.h.bytesize;
   if h.indirectlevel > 0 then begin
-   i1:= pointersize;
+   i1:= targetpointersize;
   end;
   if item.olddatatyp.indirectlevel > 0 then begin
-   i2:= pointersize;
+   i2:= targetpointersize;
   end;
   if i1 = i2 then begin
    if d.kind = ck_ref then begin
@@ -3529,13 +3537,34 @@ begin
 end;
 
 procedure init();
+
  procedure addsystype(const aitem: systypety);
  var
   po1: pelementinfoty;
   po2: ptypedataty;
+  item1: systypety;
  begin
-  with systypeinfos[aitem] do begin
-   po1:= ele.addelement(getident(name),ek_type,globalvisi);
+  item1:= aitem;
+  case aitem of
+   st_intpo: begin
+    if targetpointersize = 8 then begin
+     item1:= st_int64;
+    end
+    else begin
+     item1:= st_int64;
+    end;
+   end;
+   st_cardpo: begin
+    if targetpointersize = 8 then begin
+     item1:= st_card64;
+    end
+    else begin
+     item1:= st_card64;
+    end;
+   end;
+  end;
+  po1:= ele.addelement(getident(systypeinfos[aitem].name),ek_type,globalvisi);
+  with systypeinfos[item1] do begin
    po2:= @po1^.data;
    po2^:= data;
    po2^.h.signature:= getident();
@@ -3545,7 +3574,8 @@ procedure init();
     typedata:= ele.eleinforel(po1);
    end;
   end;
- end; //addsystype
+ end;//addsystype
+ 
 var
  ty1: systypety;
  po1: pelementinfoty;
@@ -3560,7 +3590,7 @@ begin
   internalerror(ie_handler,'20160809A');
  end;
 {$endif}
- inittypedatabyte(po2^,dk_method,0,2*pointersize);
+ inittypedatabyte(po2^,dk_method,0,2*targetpointersize);
  po2^.infosub.sub:= 0; //undefined
  with methoddatatype do begin
   flags:= [];
@@ -3711,7 +3741,7 @@ begin
 //                               //alloca + pointer to alloc
   if co_mlaruntime in info.o.compileoptions then begin
    if aparam^.d.dat.datatyp.indirectlevel > 0 then begin
-    i4:= pointersize;
+    i4:= targetpointersize;
    end
    else begin
     i4:= alignsize(ptparam^.h.bytesize);
@@ -3719,7 +3749,7 @@ begin
    if af_paramindirect in var1^.address.flags then begin
     with insertitem(oc_pushstackaddr,adest,-1)^.par.memop do begin
      tempdataaddress.a.address:= 
-                 -(i4 + alignsize(ptdest^.h.bytesize)+pointersize);
+                 -(i4 + alignsize(ptdest^.h.bytesize)+targetpointersize);
      tempdataaddress.offset:= 0;
     end;
    end
@@ -3727,14 +3757,14 @@ begin
     with insertitem(oc_pushstack,adest,-1)^.par.memop do begin
      t.size:= ptparam^.h.bytesize;
      tempdataaddress.a.address:= 
-                 -(i4 + alignsize(ptdest^.h.bytesize)+pointersize);
+                 -(i4 + alignsize(ptdest^.h.bytesize)+targetpointersize);
      tempdataaddress.offset:= 0;
     end;
    end;
    callsub(i2,asub,getstackindex(aparam),1,
                    [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams]);
    with additem(oc_push)^ do begin
-    par.imm.vsize:= pointersize; //compensate missing instance copy
+    par.imm.vsize:= targetpointersize; //compensate missing instance copy
    end;
    with additem(oc_movestack)^.par.swapstack do begin
     size:= alignsize(ptdest^.h.bytesize);

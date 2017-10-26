@@ -771,7 +771,7 @@ begin
        end;
 
        if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
-        i4:= pointersize;
+        i4:= targetpointersize;
        end
        else begin
         i4:= alignsize(source1^.h.bytesize);
@@ -782,7 +782,7 @@ begin
        if af_paramindirect in var1^.address.flags then begin
         with insertitem(oc_pushstackaddr,acontext,-1)^.par.memop do begin
          tempdataaddress.a.address:= 
-                     -(i4 + alignsize(dest^.h.bytesize)+pointersize);
+                     -(i4 + alignsize(dest^.h.bytesize)+targetpointersize);
          tempdataaddress.offset:= 0;
         end;
        end
@@ -790,7 +790,7 @@ begin
         with insertitem(oc_pushstack,acontext,-1)^.par.memop do begin
          t.size:= source1^.h.bytesize;
          tempdataaddress.a.address:= 
-                     -(i4 + i1 + pointersize);
+                     -(i4 + i1 + targetpointersize);
          tempdataaddress.offset:= 0;
         end;
        end;
@@ -798,7 +798,7 @@ begin
                    [dsf_instanceonstack,dsf_noinstancecopy,dsf_noparams,
                                                        dsf_nooverloadcheck]);
        with additem(oc_push)^ do begin
-        par.imm.vsize:= pointersize; //compensate missing instance copy
+        par.imm.vsize:= targetpointersize; //compensate missing instance copy
        end;
        with additem(oc_movestack)^.par.swapstack do begin
         size:= i1;
@@ -1364,7 +1364,7 @@ begin
      if (coo_type in aoptions) and 
            (destindirectlevel <> d.dat.datatyp.indirectlevel) and
              ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
-              (source1^.h.bitsize = pointerbitsize) or 
+              (source1^.h.bitsize = targetpointerbitsize) or 
                      (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
       if source1^.h.kind in [dk_string,dk_dynarray,dk_classof] then begin
        result:= getvalue(acontext,das_pointer);

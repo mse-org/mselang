@@ -303,7 +303,7 @@ begin
     ref^:= nil;
    end
    else begin
-    getmem(d,i1+dynarrayallocsize);
+    d:= getmem(i1+dynarrayallocsize);
     memcpy(@d^.data,@s^.data,i1);
     i2:= (s^.high+1) * itemsize;
     if i1 > i2 then begin  //new bigger
@@ -318,7 +318,7 @@ begin
  end
  else begin
   if count > 0 then begin
-   getzeromem(s,i1+dynarrayallocsize);
+   s:= getzeromem(i1+dynarrayallocsize);
    s^.ref.count:= 1;
    s^.high:= count-1;
    ref^:= @s^.data;
@@ -354,7 +354,7 @@ begin
     ref^:= nil;
    end
    else begin
-    getmem(d,i1+string8allocsize);
+    d:= getmem(i1+string8allocsize);
     i2:= s^.len * 1; //old bytesize
     if i2 <= i1 then begin
      memcpy(@d^.data,@s^.data,i2);
@@ -372,7 +372,7 @@ begin
  end
  else begin
   if count > 0 then begin
-   getmem(s,i1+string8allocsize);
+   s:= getmem(i1+string8allocsize);
    s^.ref.count:= 1;
    s^.len:= count;
    ref^:= @s^.data;
@@ -409,7 +409,7 @@ begin
     ref^:= nil;
    end
    else begin
-    getmem(d,i1+string16allocsize);
+    d:= getmem(i1+string16allocsize);
     i2:= s^.len * 2; //old bytesize
     if i2 <= i1 then begin
      memcpy(@d^.data,@s^.data,i2);
@@ -427,7 +427,7 @@ begin
  end
  else begin
   if count > 0 then begin
-   getmem(s,i1+string16allocsize);
+   s:= getmem(i1+string16allocsize);
    s^.ref.count:= 1;
    s^.len:= count;
    ref^:= @s^.data;
@@ -464,7 +464,7 @@ begin
     ref^:= nil;
    end
    else begin
-    getmem(d,i1+string32allocsize);
+    d:= getmem(i1+string32allocsize);
     i2:= s^.len * 4; //old bytesize
     if i2 <= i1 then begin
      memcpy(@d^.data,@s^.data,i2);
@@ -482,7 +482,7 @@ begin
  end
  else begin
   if count > 0 then begin
-   getmem(s,i1+string32allocsize);
+   s:= getmem(i1+string32allocsize);
    s^.ref.count:= 1;
    s^.len:= count;
    ref^:= @s^.data;
@@ -502,7 +502,7 @@ begin
   dec(s);
   if s^.ref.count <> 1 then begin
    i1:= (s^.high+1)*itemsize + dynarrayallocsize;
-   getmem(d,i1);
+   d:= getmem(i1);
    memcpy(d,s,i1);
    dec(s^.ref.count);
    d^.ref.count:= 1;
@@ -521,7 +521,7 @@ begin
   dec(s);
   if s^.ref.count <> 1 then begin
    i1:= (s^.len)*1 + string8allocsize;
-   getmem(d,i1);
+   d:= getmem(i1);
    memcpy(d,s,i1);
    if s^.ref.count > 0 then begin
     dec(s^.ref.count);
@@ -542,7 +542,7 @@ begin
   dec(s);
   if s^.ref.count <> 1 then begin
    i1:= (s^.len)*2 + string16allocsize;
-   getmem(d,i1);
+   d:= getmem(i1);
    memcpy(d,s,i1);
    if s^.ref.count > 0 then begin
     dec(s^.ref.count);
@@ -563,7 +563,7 @@ begin
   dec(s);
   if s^.ref.count <> 1 then begin
    i1:= (s^.len)*4 + string32allocsize;
-   getmem(d,i1);
+   d:= getmem(i1);
    memcpy(d,s,i1);
    if s^.ref.count > 0 then begin
     dec(s^.ref.count);
@@ -712,7 +712,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2); //max
+  pds:= getmem(string16allocsize+pss^.len*2); //max
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -752,7 +752,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string32allocsize+pss^.len*4); //max
+  pds:= getmem(string32allocsize+pss^.len*4); //max
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -782,7 +782,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*3); //max
+  pds:= getmem(string8allocsize+pss^.len*3); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -812,7 +812,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string32allocsize+pss^.len*4); //max
+  pds:= getmem(string32allocsize+pss^.len*4); //max
   p2:= pointer(pds+1);
   p3:= p2;
   while p1 < pe do begin
@@ -842,7 +842,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string8allocsize+pss^.len*4); //max
+  pds:= getmem(string8allocsize+pss^.len*4); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -873,7 +873,7 @@ begin
   p1:= pointer(pss);
   dec(pss); //header
   pe:= p1+pss^.len;
-  getmem(pds,string16allocsize+pss^.len*2*2); //max
+  pds:= getmem(string16allocsize+pss^.len*2*2); //max
                                             //todo: use less memory
   p2:= pointer(pds+1);
   p3:= p2;
@@ -920,7 +920,7 @@ begin
   inc(p1);
  end;
  if i1 > 0 then begin
-  getmem(pd,string8allocsize+i1*1);
+  pd:= getmem(string8allocsize+i1*1);
   pd^.ref.count:= temprefcount;
   pd^.len:= i1;
   inc(pd);
@@ -960,7 +960,7 @@ begin
   inc(p1);
  end;
  if i1 > 0 then begin
-  getmem(pd,string8allocsize+i1*1);
+  pd:= getmem(string8allocsize+i1*1);
   pd^.ref.count:= temprefcount;
   pd^.len:= i1;
   inc(pd);
@@ -1000,7 +1000,7 @@ begin
   inc(p1);
  end;
  if i1 > 0 then begin
-  getmem(pd,string8allocsize+i1*1);
+  pd:= getmem(string8allocsize+i1*1);
   pd^.ref.count:= temprefcount;
   pd^.len:= i1;
   inc(pd);
@@ -1353,7 +1353,7 @@ function __mla__chartostring8(achar: card8): pointer;
 var
  po1: pstringheaderty;
 begin
- getmem(po1,1*1+string8allocsize);
+ po1:= getmem(1*1+string8allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  result:= po1+1; //data
@@ -1365,7 +1365,7 @@ function __mla__chartostring16(achar: card16): pointer;
 var
  po1: pstringheaderty;
 begin
- getmem(po1,1*2+string16allocsize);
+ po1:= getmem(1*2+string16allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  result:= po1+1; //data
@@ -1377,7 +1377,7 @@ function __mla__chartostring32(achar: card32): pointer;
 var
  po1: pstringheaderty;
 begin
- getmem(po1,1*4+string32allocsize);
+ po1:= getmem(1*4+string32allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  result:= po1+1; //data
@@ -1598,7 +1598,7 @@ procedure __mla__raise(const data: pointer);
 var
  po1: pexceptinfoty;
 begin  //todo: handle out of memory situation
- getmem(po1,sizeof(exceptinfoty));
+ po1:= getmem(sizeof(exceptinfoty));
  with po1^.header do begin
   exception_class:= mlaexceptionid;
   exception_cleanup:= @exceptioncleanup;

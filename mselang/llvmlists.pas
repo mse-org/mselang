@@ -1147,7 +1147,7 @@ begin
    addbitvalue(k1);
   end;
 //  addstructvalue([pointertype,pointertype]); //method, bittypemax+1
-  addbytevalue(2*pointersize); //method, bittypemax+1
+  addbytevalue(2*targetpointersize); //method, bittypemax+1
   fmetadata:= addbitvalue(das_meta);
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fopenarray:= addbytevalue(sizeof(openarrayty));
@@ -1298,7 +1298,7 @@ begin
    i1:= avalue^.allocs.nestedalloccount+1; 
             //first item is possible pointer to outer frame
    if i1 > 1 then begin
-    avalue^.allocs.nestedallocstypeindex:= addbytevalue(i1*pointersize);
+    avalue^.allocs.nestedallocstypeindex:= addbytevalue(i1*targetpointersize);
    end
    else begin
     avalue^.allocs.nestedallocstypeindex:= -1;
@@ -1464,7 +1464,7 @@ begin
    addi8(int8(c1));                   //0..127,-128..-1
   end;
   for i1:= 0 to maxpointeroffset do begin
-   addi32(i1*globtypes.pointersize);
+   addi32(i1*globtypes.targetpointersize);
   end;
   addnullvalue(ord(das_1));         //nco_i1
   addnullvalue(ord(das_8));         //nco_i8
@@ -1493,10 +1493,10 @@ begin
   addi32(31);  //asco_i32
   addi64(65);  //asco_i64
   if target64 then begin
-   fpointersize:= addi64(globtypes.pointersize).listid;
+   fpointersize:= addi64(globtypes.targetpointersize).listid;
   end
   else begin
-   fpointersize:= addi32(globtypes.pointersize).listid;
+   fpointersize:= addi32(globtypes.targetpointersize).listid;
   end;
  end;
 end;
@@ -3096,14 +3096,14 @@ begin
 //   end;
    m2:= addtype(atype,aindirection-1{,false}); //next base type
    m1:= adddiderivedtype(typekind1,file1,context1,
-                     emptylstring,0,pointerbitsize,pointerbitsize,0,0,m2);
+             emptylstring,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
   end
   else begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
     m2:= addtype(po2^.h.base,0{po2^.h.indirectlevel-1}{,false});
     m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
    end
    else begin
     case po2^.h.kind of
@@ -3163,7 +3163,7 @@ begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
                                    po2^.infodynarray.i.itemindirectlevel);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
                        //todo
 //      m1:= adddigenericdebug(DW_TAG_pointer_type,[m2]);
 {
@@ -3183,7 +3183,7 @@ begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
                                    po2^.infodynarray.i.itemindirectlevel);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
      end;
      dk_string: begin         //todo: use refstringtype
       case po2^.itemsize of
@@ -3199,19 +3199,19 @@ begin
       end;
       m2:= addtype(sysdatatypes[st1].typedata,0);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
 //      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
      end;
      dk_method: begin
       initmetabuffer();
       addbufferitem(adddiderivedtype(didk_member,file1,context1,name_data,0,
-           pointerbitsize,0,pointerbitsize,0,pointertyp));
+           targetpointerbitsize,0,targetpointerbitsize,0,pointertyp));
       addbufferitem(adddiderivedtype(didk_member,file1,context1,name_code,0,
-           pointerbitsize,0,0,0,pointertyp));
+           targetpointerbitsize,0,0,0,pointertyp));
 
       m2:= addbufferreverse();
       m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
-                                          dummymeta,2*pointerbitsize,0,0,0,m2);
+                                     dummymeta,2*targetpointerbitsize,0,0,0,m2);
                                         //todo: use correct alignment
      end;
      dk_record,dk_object,dk_class,dk_objectpo: begin
@@ -3252,12 +3252,12 @@ begin
      dk_interface: begin
       m2:= addtype(0,0);        //todo
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
      end;
      dk_classof: begin
       m2:= bytetyp;        //todo
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
      end;
      dk_sub: begin
       m1.id:= -1;

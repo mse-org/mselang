@@ -580,14 +580,18 @@ const
  bitsizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      7,    8,      15,    16,       31,    32,
-//das_33_63,das_64,das_pointer,das_f16,das_f23,das_f64,das_sub,       das_meta
-         63,    64,pointerbitsize,16,  32,     64,     pointerbitsize,0);
+//das_33_63,das_64,das_pointer,         das_f16,das_f32,das_f64,
+         63,    64,targetpointerbitsize,     16,     32,     64,
+//das_sub,             das_meta
+  targetpointerbitsize,0);
          
  bytesizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      1,    1,       2,     2,        4,     4,
-//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,das_sub,    das_meta
-          8,     8,pointersize,2,      4,      8,      pointersize,0);
+//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
+          8,     8,targetpointersize,2,      4,      8,
+//das_sub,          das_meta
+  targetpointersize,0);
  
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
@@ -620,7 +624,7 @@ function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
  result:= typedata.h.bytesize;
  if typedata.h.indirectlevel <> 0 then begin
-  result:= pointersize;
+  result:= targetpointersize;
  end;
 end;
 
@@ -688,7 +692,7 @@ begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
  atype.h.bytesize:= abytesize;
  atype.h.bitsize:= abytesize*8;
- if abytesize >= pointersize then begin
+ if abytesize >= targetpointersize then begin
   atype.h.datasize:= das_none;
 //  atype.h.bitsize:= 0;
  end
@@ -701,7 +705,7 @@ procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 begin
  atype.h.bytesize:= abytesize;
  atype.h.bitsize:= abytesize*8;
- if (abytesize >= pointersize) or (atype.h.kind = dk_object) then begin
+ if (abytesize >= targetpointersize) or (atype.h.kind = dk_object) then begin
   atype.h.datasize:= das_none;
  end
  else begin
@@ -717,8 +721,8 @@ begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
  atype.h.datasize:= adatasize;
  if akind = dk_method then begin
-  atype.h.bytesize:= 2*pointersize;
-  atype.h.bitsize:= 8*2*pointersize;
+  atype.h.bytesize:= 2*targetpointersize;
+  atype.h.bitsize:= 8*2*targetpointersize;
  end
  else begin
   atype.h.bytesize:= bytesizes[adatasize];

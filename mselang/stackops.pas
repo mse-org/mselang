@@ -18,7 +18,6 @@ uses
  globtypes,parserglob,opglob;
 
 const
- pointersize = sizeof(pointer);
  //todo: use variable alignment, remove stacklink
  alignstep = 4;
  alignmask = ptrint(-alignstep);
@@ -86,6 +85,7 @@ uses
  mseapplication;
 
 const
+ pointersize = sizeof(pointer);
  temprefcount = 1;
    
 type
@@ -6796,8 +6796,9 @@ var
  int1: int32;
  po1: ppointer;
 begin
- int1:= pinteger(stackpop(sizeof(int32)))^;
- po1:= ppointer(stackpop(pointersize))^;
+ int1:= pinteger(stackpop(pointersize))^; //intpo
+ po1:= stackpush(pointersize);
+// po1:= ppointer(stackpop(pointersize))^;
  po1^:= getmem1(int1); //todo: out of memory
 end;
 {
@@ -6816,8 +6817,9 @@ var
  int1: int32;
  po1: ppointer;
 begin
- int1:= pinteger(stackpop(sizeof(int32)))^;
- po1:= ppointer(stackpop(pointersize))^;
+ int1:= pinteger(stackpop(pointersize))^; //intpo
+ po1:= stackpush(pointersize);
+// po1:= ppointer(stackpop(pointersize))^;
  po1^:= intgetzeromem(int1);
 // getmem1(po1^,int1); //todo: out of memory
 end;

@@ -44,32 +44,32 @@ const
   (kind: das_32; size: 32; listindex: ord(das_32); flags: []),
   (kind: das_33_63; size: 63; listindex: ord(das_33_63); flags: []),
   (kind: das_64; size: 64; listindex: ord(das_64); flags: []),
-  (kind: das_pointer; size: pointerbitsize;
+  (kind: das_pointer; size: targetpointerbitsize;
                                    listindex: ord(das_pointer); flags: []),
   (kind: das_f16; size: 16; listindex: ord(das_f16); flags: []),
   (kind: das_f32; size: 32; listindex: ord(das_f32); flags: []),
   (kind: das_f64; size: 64; listindex: ord(das_f64); flags: []),
-  (kind: das_sub; size: pointerbitsize; listindex: -1; flags: []),
+  (kind: das_sub; size: targetpointerbitsize; listindex: -1; flags: []),
   (kind: das_meta; size: 0; listindex: -1; flags: [])
  );
 
  bitopsizes: array[databitsizety] of int32 = (
-  -1,            //das_none
-  1,             //das_1
-  7,             //das_2_7
-  8,             //das_8
-  15,            //das_9_15
-  16,            //das_16
-  31,            //das_17_31
-  32,            //das_32
-  63,            //das_33_63
-  64,            //das_64
-  pointerbitsize,//das_pointer
-  16,            //das_f16
-  32,            //das_f32
-  64,            //das_f64
-  pointerbitsize,//das_sub
-  0              //das_meta
+  -1,                  //das_none
+  1,                   //das_1
+  7,                   //das_2_7
+  8,                   //das_8
+  15,                  //das_9_15
+  16,                  //das_16
+  31,                  //das_17_31
+  32,                  //das_32
+  63,                  //das_33_63
+  64,                  //das_64
+  targetpointerbitsize,//das_pointer
+  16,                  //das_f16
+  32,                  //das_f32
+  64,                  //das_f64
+  targetpointerbitsize,//das_sub
+  0                    //das_meta
  );
  
 type

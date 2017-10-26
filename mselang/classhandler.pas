@@ -174,7 +174,7 @@ begin
                                  [ek_classintftype],allvisi,pointer(po1));
  if result then begin
   offset:= aclass^.infoclass.allocsize - 
-              (aclass^.infoclass.interfacecount-po1^.intfindex) * pointersize;
+         (aclass^.infoclass.interfacecount-po1^.intfindex) * targetpointersize;
  end;
 end;
 
@@ -465,7 +465,7 @@ begin
               not (icf_virtual in infoclass.flags) then begin
     infoclass.virttaboffset:= d.cla.rec.fieldoffset;
     include(infoclass.flags,icf_virtual);
-    d.cla.rec.fieldoffset:= d.cla.rec.fieldoffset + pointersize;
+    d.cla.rec.fieldoffset:= d.cla.rec.fieldoffset + targetpointersize;
     d.cla.rec.fieldoffsetmax:= d.cla.rec.fieldoffset;
                       //pointer to virtual methodtable
     h.flags:= h.flags + [tf_needsini,tf_complexini];
@@ -742,7 +742,7 @@ begin
   infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
 
         //alloc classinfo
-  interfacealloc:= infoclass.interfacecount*pointersize;
+  interfacealloc:= infoclass.interfacecount*targetpointersize;
   infoclass.allocsize:= aclassinfo^.rec.fieldoffsetmax + interfacealloc;
   if not (icf_class in infoclass.flags) then begin
    updatetypedatabyte(atyp^,infoclass.allocsize);
@@ -847,10 +847,10 @@ begin
      updateobjalloc(typ1,classinfo1);
     end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
-    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
+    int1:= sizeof(classdefinfoty)+ targetpointersize*infoclass.virtualcount;
                      //interfacetable start
     classdefs1:= getclassinfoaddress(
-            int1+infoclass.interfacecount*pointersize,infoclass.interfacecount);
+      int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
     infoclass.defs:= classdefs1;
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
      header.allocs.size:= infoclass.allocsize;
@@ -863,7 +863,8 @@ begin
       header.parentclass:= 
                       parentinfoclass1^.defs.address; //todo: relocate
       if parentinfoclass1^.virtualcount > 0 then begin
-       fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
+       fillchar(virtualmethods,
+                    parentinfoclass1^.virtualcount*targetpointersize,0);
        if icf_virtualtablevalid in parentinfoclass1^.flags then begin
         copyvirtualtable(parentinfoclass1^.defs,infoclass.defs,
                                         parentinfoclass1^.virtualcount);
@@ -884,7 +885,7 @@ begin
       int1:= -infoclass.allocsize; 
       ele1:= infoclass.interfacechain;
       while ele1 <> 0 do begin
-       inc(int1,pointersize);
+       inc(int1,targetpointersize);
        dec(po1);
        po1^:= checkinterface(int1,{infoclass.virttaboffset,}
                                                  ele.eledataabs(ele1));

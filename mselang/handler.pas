@@ -1304,7 +1304,7 @@ begin
      end
      else begin
       if india > 1 then begin
-       i2:= pointersize;
+       i2:= targetpointersize;
       end
       else begin
        with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
@@ -2801,7 +2801,7 @@ procedure concatterms(const wanted,terms: pcontextitemty);
    if co_llvm in info.o.compileoptions then begin
     setimmint32(i1,par.concatstring.alloccount);
     par.concatstring.arraytype:= info.s.unitinfo^.
-            llvmlists.typelist.addbytevalue(i1*pointersize);
+            llvmlists.typelist.addbytevalue(i1*targetpointersize);
     par.listinfo.allocs:= i3;
    end;
    addmanagedtemp(terms);
@@ -3497,7 +3497,7 @@ var
   ad1.offset:= 0;
   if indi then begin
    ad1.kind:= ark_stackindi;
-   ad1.address:= ad1.address-pointersize;
+   ad1.address:= ad1.address-targetpointersize;
   end
   else begin
    ad1.kind:= ark_contextdata;
@@ -3667,7 +3667,7 @@ begin
         if not getaddress(source,true) then begin
          goto endlab;
         end;
-        i1:= -pointersize;
+        i1:= -targetpointersize;
         i2:= source^.d.dat.fact.ssaindex;
        end
        else begin
@@ -3683,13 +3683,13 @@ begin
          memop.t:= getopdatatype(sourcetyp,0);
         end;
         i2:= source^.d.dat.fact.ssaindex;
-        i1:= i1-pointersize;
+        i1:= i1-targetpointersize;
        end;
        flags1:= [dsf_instanceonstack,dsf_noinstancecopy,
                            dsf_nooverloadcheck,dsf_objassign,dsf_useobjssa];
        if co_mlaruntime in o.compileoptions then begin
         with additem(oc_pushduppo)^ do begin       //dest
-         par.voffset:= i1-pointersize;
+         par.voffset:= i1-targetpointersize;
         end;
         flags1:= flags1 + [dsf_noparams];
        end;
@@ -3697,7 +3697,7 @@ begin
                                               getstackindex(dest),1,flags1,i2);
        if co_mlaruntime in o.compileoptions then begin
         with additem(oc_pop)^ do begin
-         par.imm.vsize:= -i1-pointersize; //compensate instance pop
+         par.imm.vsize:= -i1-targetpointersize; //compensate instance pop
         end;
        end;
        goto endlab;
@@ -3772,7 +3772,7 @@ begin
                             (source^.d.dat.indirection = -1) then begin
                                    //address on stack
          if datasi1 = das_pointer then begin
-          ad1.offset:= -pointersize;
+          ad1.offset:= -targetpointersize;
          end
          else begin
           ad1.offset:= -destvar.typ^.h.bytesize;

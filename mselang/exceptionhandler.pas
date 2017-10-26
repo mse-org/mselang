@@ -361,7 +361,7 @@ begin
         acquiressa:= contextstack[s.stacktop].d.dat.fact.ssaindex;
        end;
        with additem(oc_pushduppo)^.par do begin
-        voffset:= -(2*pointersize);
+        voffset:= -(2*targetpointersize);
         ssas1:= ptop^.d.dat.fact.ssaindex;
         i2:= ssad;
        end;
@@ -376,7 +376,7 @@ begin
         memop.t:= bitoptypes[das_pointer];
        end;
        with additem(oc_push)^ do begin
-        par.imm.vsize:= pointersize; //address still valid
+        par.imm.vsize:= targetpointersize; //address still valid
        end;
        with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
         memop.segdataaddress.a:= typ1^.infoclass.defs;
@@ -405,7 +405,7 @@ begin
        getoppo(opcount,-2)^.par.opaddress.opaddress:= opcount - 1;
        getoppo(opcount,-3)^.par.opaddress.opaddress:= opcount - 1;
        addlabel();                                        //op 0
-       i2:= alignsize(sizeof(vbooleanty)) + pointersize;
+       i2:= alignsize(sizeof(vbooleanty)) + targetpointersize;
        with additem(oc_movestack)^.par do begin //checkclasstype result
         swapstack.size:= alignsize(sizeof(vbooleanty));
         swapstack.offset:= -i2;

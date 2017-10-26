@@ -615,7 +615,7 @@ begin
 //  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - stacktempoffset;
-   locdatapo:= locdatapo + pointersize;
+   locdatapo:= locdatapo + targetpointersize;
   end
   else begin
    result.tempaddress.ssaindex:= info.s.ssa.nextindex-1;
@@ -628,9 +628,9 @@ procedure releasepointertempaddress();
 begin
  with info do begin
   if not (co_llvm in o.compileoptions) then begin
-   locdatapo:= locdatapo - pointersize;
+   locdatapo:= locdatapo - targetpointersize;
    with additem(oc_pop)^ do begin
-    par.imm.vsize:= pointersize;
+    par.imm.vsize:= targetpointersize;
    end;
   end;
  end;

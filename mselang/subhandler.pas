@@ -1362,7 +1362,7 @@ begin
  with info do begin
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
-  managedtempsize1:= managedtempcount*pointersize; 
+  managedtempsize1:= managedtempcount*targetpointersize; 
 {
   with addcontrolitem(oc_return)^ do begin
    if pointerparam then begin
@@ -1385,7 +1385,7 @@ begin
   end;
   with addcontrolitem(oc_return)^ do begin
    if pointerparam then begin
-    par.stacksize:= pointersize + sizeof(frameinfoty);
+    par.stacksize:= targetpointersize + sizeof(frameinfoty);
    end
    else begin
     par.stacksize:= 0 + sizeof(frameinfoty);
@@ -1493,10 +1493,10 @@ begin
    i2:= p3^.h.bytesize;
    if (p2^.address.flags * [af_paramconst,af_paramindirect] = 
                                                [af_paramconst]) then begin
-    if i2 > pointersize then begin
+    if i2 > targetpointersize then begin
      inc(p2^.address.indirectlevel);
      include(p2^.address.flags,af_paramindirect);
-     i2:= pointersize;
+     i2:= targetpointersize;
     end;
    end;
 //   shift:= shift+i2-p1^.size;
@@ -1600,7 +1600,7 @@ var
          end;
          address.indirectlevel:= d.typ.indirectlevel;
          if (address.indirectlevel > 0) then begin
-          si1:= pointersize;
+          si1:= targetpointersize;
          end
          else begin
           si1:= typ1^.h.bytesize;
@@ -1623,10 +1623,10 @@ var
           if tf_sizeinvalid in typ1^.h.flags then begin //size not known yet
            needssizeupdate:= true;
           end;
-          if si1 > pointersize then begin
+          if si1 > targetpointersize then begin
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
-           si1:= pointersize;
+           si1:= targetpointersize;
           end;
           include(address.flags,af_const);
          end
@@ -1634,7 +1634,7 @@ var
           if paramkind1 in [pk_constref,pk_var,pk_out] then begin
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
-           si1:= pointersize;
+           si1:= targetpointersize;
            if paramkind1 = pk_constref then begin
             include(address.flags,af_const);
            end;
@@ -1673,7 +1673,7 @@ var
            if not (af_paramindirect in address.flags) then begin
             inc(address.indirectlevel);
             include(address.flags,af_paramindirect);
-            si1:= pointersize;
+            si1:= targetpointersize;
            end;
           end;
          end;
@@ -1839,7 +1839,7 @@ begin
      if resulttype1.indirectlevel = 0 then begin
       with ptypedataty(ele.eledataabs(resulttype1.typeele))^ do begin
        if (h.flags*[tf_managed,tf_needsmanage] <> []) or
-                (h.bytesize > pointersize) and (h.kind <> dk_float) then begin
+           (h.bytesize > targetpointersize) and (h.kind <> dk_float) then begin
         d.paramdef.kind:= pk_var; //pk_out?
         exclude(subflags,sf_functioncall);
        end;
@@ -2010,10 +2010,10 @@ begin
    curparam^:= elementoffsetty(var1); //absoluteaddress //??? 64 bit ???
    inc(curparam);          //todo: class proc
    with var1^ do begin //self variable
-    inc(paramsize1,pointersize);
+    inc(paramsize1,targetpointersize);
     address.indirectlevel:= 1;
     if impl1 then begin
-     address.locaddress:= getlocvaraddress(das_pointer,pointersize,
+     address.locaddress:= getlocvaraddress(das_pointer,targetpointersize,
                                                               address.flags);
     end;
     address.locaddress.framelevel:= sublevel+1;
@@ -2666,7 +2666,7 @@ begin
   end;
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);
-  managedtempsize1:= managedtempcount*pointersize; 
+  managedtempsize1:= managedtempcount*targetpointersize; 
   tempsize1:= locdatapo-stacktempoffset;
   varsize1:= managedtempsize1+tempsize1+d.subdef.varsize;
   if varsize1 <> 0 then begin
@@ -2799,7 +2799,7 @@ var
               //dest can be untyped
    i3:= context1^.d.dat.fact.ssaindex; //data ssa
    if context1^.d.dat.datatyp.indirectlevel > 1 then begin
-    i2:= pointersize;
+    i2:= targetpointersize;
     si1:= das_pointer;
    end
    else begin
@@ -3109,10 +3109,10 @@ var
    if co_mlaruntime in info.o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
      if dsf_destroy in aflags then begin
-      par.imm.vsize:= 2*pointersize; //compensate stackpop
+      par.imm.vsize:= 2*targetpointersize; //compensate stackpop
      end
      else begin
-      par.imm.vsize:= pointersize; //compensate stackpop
+      par.imm.vsize:= targetpointersize; //compensate stackpop
      end;
     end;
    end;
@@ -3340,7 +3340,7 @@ begin
       end;
      end;
      methodtype1:= ele.addelementdata(getident(),ek_type,nonevisi); //anonymous
-     inittypedatabyte(methodtype1^,dk_method,0,2*pointersize);
+     inittypedatabyte(methodtype1^,dk_method,0,2*targetpointersize);
      methodtype1^.infosub.sub:= ele.eledatarel(asub);
      d.dat.datatyp:= methoddatatype; //sub type undefined
      d.dat.datatyp.typedata:= ele.eledatarel(methodtype1);
@@ -3791,9 +3791,9 @@ begin
        end
        else begin
         po1^.par.callinfo.indi.calladdr:= -asub^.paramsize -
-                                                   resultsize - pointersize;
+                                               resultsize - targetpointersize;
         if sf_ofobject in asub^.flags then begin
-         dec(po1^.par.callinfo.indi.calladdr,pointersize); 
+         dec(po1^.par.callinfo.indi.calladdr,targetpointersize); 
                      //method pointer is [code,data]
         end;
        end;
@@ -3867,7 +3867,7 @@ begin
                      (aflags * [dsf_isinherited,dsf_nofreemem] = []) then begin
      if dsf_destroy in aflags then begin
       with insertitem(oc_push,topoffset,-1)^ do begin
-       par.imm.vsize:= pointersize; //compensate missing instance copy
+       par.imm.vsize:= targetpointersize; //compensate missing instance copy
       end;
      end;
      if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
@@ -3900,12 +3900,12 @@ begin
      if hasresult then begin
       with insertitem(oc_movestack,topoffset,-1)^ do begin
                                    //move result to calladdress
-       par.swapstack.offset:= -pointersize;
+       par.swapstack.offset:= -targetpointersize;
        par.swapstack.size:= resultsize;
       end;
      end;
      with insertitem(oc_pop,topoffset,-1)^ do begin   
-      setimmsize(pointersize,par.imm); //remove call address
+      setimmsize(targetpointersize,par.imm); //remove call address
      end;
     end;
     if co_mlaruntime in o.compileoptions then begin
@@ -3914,7 +3914,7 @@ begin
       with insertitem(oc_pushtemp,topoffset,-1)^ do begin
        par.tempaddr.a.address:= varresulttemp.address;
        if asub^.resulttype.indirectlevel > 0 then begin
-        par.tempaddr.bytesize:= pointersize;
+        par.tempaddr.bytesize:= targetpointersize;
        end
        else begin
         par.tempaddr.bytesize:= resulttype1^.h.bytesize;
@@ -3946,7 +3946,7 @@ begin
   if (aflags*[dsf_objini,dsf_objfini] <> []) or isconstructor then begin
    if co_mlaruntime in o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
-     par.imm.vsize:= pointersize;    //compensate stack pop
+     par.imm.vsize:= targetpointersize;    //compensate stack pop
     end;
    end;
   end;

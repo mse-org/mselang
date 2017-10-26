@@ -455,7 +455,7 @@ begin
      size1:= po2^.h.bytesize;
     end
     else begin
-     size1:= pointersize;
+     size1:= targetpointersize;
     end;
    end;
    aoffset:= aoffset+size1;
@@ -736,7 +736,7 @@ begin
      a.address:= 0; //first param
     end
     else begin
-     a.address:= -pointersize-stacklinksize; //single pointer param
+     a.address:= -targetpointersize-stacklinksize; //single pointer param
     end;
     a.framelevel:= -1;    
     offset:= 0;
@@ -744,7 +744,7 @@ begin
   end;
 //  ad1.kind:= ark_stackref;
   ad1.kind:= ark_stackindi;
-  ad1.address:= -pointersize; //pointer to var
+  ad1.address:= -targetpointersize; //pointer to var
   ad1.offset:= 0;
   ad1.isclass:= false;
 //  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
@@ -847,7 +847,7 @@ begin
      handlefields(op1,atyp,i1);
     end;
    end;
-   poptemp(pointersize);
+   poptemp(targetpointersize);
    endsimplesub(true);
   end;
   typ1:= ele.eledataabs(atyp); //can be changed because of added items
@@ -1094,7 +1094,7 @@ begin
      indilev:= d.typ.indirectlevel;
 //     if indilev + h.indirectlevel > 0 then begin //??? why addition?
      if indilev > 0 then begin
-      totsize:= pointersize;
+      totsize:= targetpointersize;
       flags1:= flags1 - [tf_managed,tf_needsmanage];
      end
      else begin

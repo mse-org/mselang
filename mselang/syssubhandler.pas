@@ -141,7 +141,7 @@ begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
        if d.dat.datatyp.indirectlevel > 0 then begin
-        i1:= pointersize;
+        i1:= targetpointersize;
        end
        else begin
         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -190,7 +190,7 @@ begin
       end;
       ck_typetype,ck_fieldtype,ck_typearg: begin
        if d.typ.indirectlevel > 0 then begin
-        i1:= pointersize;
+        i1:= targetpointersize;
        end
        else begin
         typ1:= ele.eledataabs(d.typ.typedata);
@@ -344,7 +344,7 @@ var
       end;
      end
      else begin
-      po3^.par.memimm.vint32:= pointersize;
+      po3^.par.memimm.vint32:= targetpointersize;
      end;
     end
     else begin
@@ -367,7 +367,7 @@ var
       end;
      end
      else begin
-      i1:= pointersize;
+      i1:= targetpointersize;
      end;
      with contextstack[s.stacktop] do begin
       if i1 <> 1 then begin
@@ -731,7 +731,7 @@ begin
    with poitem^ do begin //todo: use table
     if d.dat.datatyp.indirectlevel > 0 then begin
      po1:= additem(oc_writepointer);
-     po1^.par.voffset:= alignsize(pointersize);
+     po1^.par.voffset:= alignsize(targetpointersize);
     end
     else begin
      po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
@@ -809,7 +809,7 @@ begin
         {$endif}
         end;
        end;
-       po1^.par.voffset:= alignsize(pointersize);
+       po1^.par.voffset:= alignsize(targetpointersize);
       end;
       dk_character: begin
        case po2^.h.datasize of
@@ -834,15 +834,15 @@ begin
       end;
       dk_class: begin
        po1:= additem(oc_writeclass);
-       po1^.par.voffset:= alignsize(pointersize);
+       po1^.par.voffset:= alignsize(targetpointersize);
       end;
       dk_pointer: begin
        po1:= additem(oc_writepointer);
-       po1^.par.voffset:= alignsize(pointersize);
+       po1^.par.voffset:= alignsize(targetpointersize);
       end;
       dk_enum: begin
        po1:= additem(oc_writeenum);
-       po1^.par.voffset:= alignsize(pointersize);
+       po1^.par.voffset:= alignsize(targetpointersize);
        po1^.par.voffsaddress:= getrtti(po2);
       end;
       else begin
@@ -942,14 +942,36 @@ begin
  end;
 end;
 
+procedure callgetmemsysfunc(const paramco: integer; const aop: opcodety);
+var
+ po1: pcontextitemty;
+begin
+ with info do begin
+  if checkparamco(1,paramco) and 
+          getbasevalue(@contextstack[s.stacktop],pointerintsize) then begin
+   with additem(aop)^ do begin
+    par.ssas1:= info.s.ssa.index-1;
+   end;
+   po1:= @contextstack[s.stackindex];
+   initdatacontext(po1^.d,ck_subres);
+   with po1^ do begin
+    d.dat.fact.ssaindex:= info.s.ssa.index;
+    d.dat.datatyp:= sysdatatypes[st_pointer];
+   end;
+  end;
+ end;
+end;
+
 procedure handlegetmem(const paramco: integer);
 begin
- call2param(paramco,oc_getmem);
+ callgetmemsysfunc(paramco,oc_getmem);
+// call2param(paramco,oc_getmem);
 end;
 
 procedure handlegetzeromem(const paramco: integer);
 begin
- call2param(paramco,oc_getzeromem);
+ callgetmemsysfunc(paramco,oc_getzeromem);
+// call2param(paramco,oc_getzeromem);
 end;
 
 procedure handlefreemem(const paramco: integer);

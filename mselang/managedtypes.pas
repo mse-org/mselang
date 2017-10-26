@@ -646,11 +646,11 @@ begin
      dk_string,dk_dynarray: begin
       with additem(oc_finirefsizestackindi)^ do begin
        par.memop.podataaddress.offset:= 0;
-       par.memop.podataaddress.address:= -pointersize;
+       par.memop.podataaddress.address:= -targetpointersize;
        par.ssas1:= d.dat.fact.ssaindex;
       end;
       with additem(oc_pop)^ do begin
-       par.imm.vsize:= pointersize;
+       par.imm.vsize:= targetpointersize;
       end;
      end;
      dk_record,dk_object,dk_class: begin
@@ -679,11 +679,11 @@ begin
                   (d.dat.datatyp.indirectlevel = 0) then begin
      with additem(oc_increfsizestack)^ do begin
       par.memop.podataaddress.offset:= 0;
-      par.memop.podataaddress.address:= -pointersize;
+      par.memop.podataaddress.address:= -targetpointersize;
       par.ssas1:= d.dat.fact.ssaindex;
      end;
      with additem(oc_pop)^ do begin
-      par.imm.vsize:= pointersize;
+      par.imm.vsize:= targetpointersize;
      end;
     end;
    end;
@@ -720,11 +720,11 @@ begin
                   (d.dat.datatyp.indirectlevel = 0) then begin
      with additem(oc_decrefsizestack)^ do begin
       par.memop.podataaddress.offset:= 0;
-      par.memop.podataaddress.address:= -pointersize;
+      par.memop.podataaddress.address:= -targetpointersize;
       par.ssas1:= d.dat.fact.ssaindex;
      end;
      with additem(oc_pop)^ do begin
-      par.imm.vsize:= pointersize;
+      par.imm.vsize:= targetpointersize;
      end;
     end;
    end;
@@ -863,10 +863,10 @@ begin
   while ad1 <> 0 do begin
    po1:= po2+ad1;
    if co_llvm in info.o.compileoptions then begin
-    setimmint32(po1^.index*pointersize,ref1.offset);
+    setimmint32(po1^.index*targetpointersize,ref1.offset);
    end
    else begin
-    ref1.address:= {info.managedtempref+}po1^.index*pointersize;
+    ref1.address:= {info.managedtempref+}po1^.index*targetpointersize;
    end;
    ref1.typ:= ele.eledataabs(po1^.typ);
    writemanagedtypeop(op,ref1.typ,ref1);

@@ -14,7 +14,7 @@ uses
  rtl_system,rtl_libc;
  
 type
-{$internaldebug on}
+//{$internaldebug on}
  tobject = class()[virtual]
   protected
    procedure ini [ini];
@@ -22,7 +22,7 @@ type
    constructor create();
    destructor destroy() [virtual,default];
    procedure free();
-   class function newinstance(): tobject [virtual];
+   class function newinstance(): tobject {[virtual]};
    class function initinstance(instance : pointer) : tobject;
  end;
  
@@ -102,10 +102,16 @@ end;
 
 class function tobject.newinstance(): tobject;
 begin
+writeln('**',sizeof(self^));
+ result:= getzeromem(sizeof(self^));
+writeln(result);
+ initialize(result);
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;
 begin
+ result:= instance;
+ initialize(result);
 end;
 
 end.

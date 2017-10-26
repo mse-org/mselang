@@ -592,7 +592,7 @@ begin
  
  nullmethodconst:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_const,
                      info.s.unitinfo^.llvmlists.constlist.
-                            addvalue(zeroes,2*pointersize).listid,constlinkage);
+                      addvalue(zeroes,2*targetpointersize).listid,constlinkage);
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
                                        //string consts
   with internalstringconsts[strings1] do begin
@@ -630,7 +630,7 @@ begin
                          addclassdef(poclassdef,countpo^).listid,constlinkage);
    poclassdef:= pointer(poclassdef) +
                         poclassdef^.header.allocs.classdefinterfacestart +
-                                                         countpo^*pointersize;
+                                                    countpo^*targetpointersize;
    inc(countpo);
   end;
 // finally
@@ -2190,7 +2190,8 @@ begin
  with pc^.par do begin
   bcstream.emitalloca(bcstream.ptypeval(methodtype)); //1 ssa
   bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
-  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(pointersize));
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                         bcstream.constval(targetpointersize));
                                                       //2 ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
                                                       //1 ssa
@@ -4593,11 +4594,9 @@ end;
 procedure getmemop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_malloc,true,[bcstream.ssaval(ssas2)]);
-//  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_malloc]),
-//                                                    [bcstream.ssaval(ssas2)]);
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+  callcompilersub(cs_malloc,true,[bcstream.ssaval(ssas1)]); //1ssa
+//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+//  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
 {
@@ -4611,12 +4610,10 @@ end;
 procedure getzeromemop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_calloc,true,[bcstream.ssaval(ssas2),
+  callcompilersub(cs_calloc,true,[bcstream.ssaval(ssas1),
                                          bcstream.constval(i32consts[1])]);
-//  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
-//               [bcstream.ssaval(ssas2),bcstream.constval(i32consts[1])]);
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+//  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+//  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
 end;
 {
@@ -5323,9 +5320,9 @@ const
   nilexceptionssa = 7;
   finiexceptionssa = 4;
   continueexceptionssa = 0;
-  getmemssa = 2;
+  getmemssa = 1;
 //  getmem1ssa = 1;
-  getzeromemssa = 2;
+  getzeromemssa = 1;
 //  getzeromem1ssa = 1;
   freememssa = 0;
   reallocmemssa = 3;

@@ -2,7 +2,7 @@ program getmem;
 var
  po1: ^int32;
 begin
- getmem(po1,100);
+ po1:= getmem(100);
  po1^:= 123;
  exitcode:= po1^;
  freemem(po1);

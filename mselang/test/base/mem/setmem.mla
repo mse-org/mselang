@@ -2,7 +2,7 @@ program setmem;
 var
  po1: ^int32;
 begin
- getmem(po1,123);
+ po1:= getmem(123);
  setmem(po1,123,$ff);
  writeln(po1^);
  freemem(po1);
