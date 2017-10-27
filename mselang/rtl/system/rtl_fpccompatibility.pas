@@ -106,7 +106,6 @@ class function tobject.newinstance(): tobject;
 begin
  result:= getzeromem(sizeof(self^));
  initialize(result^);
-writeln('tobject');
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;

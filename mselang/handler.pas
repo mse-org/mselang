@@ -1503,13 +1503,14 @@ begin
       end;
      end
      else begin
-      if not getvalue(potop,das_none) then begin
-       exit;
-      end;
+//      if not getvalue(potop,das_none) then begin
+//       exit;
+//      end;
      end;
     end;
     with potop^ do begin //could be changed
-     if d.dat.datatyp.indirectlevel <= 0 then begin
+     if not (d.kind in datacontexts) or 
+                    (d.dat.datatyp.indirectlevel <= 0) then begin
       errormessage(err_illegalqualifier,[]);
      end
      else begin
