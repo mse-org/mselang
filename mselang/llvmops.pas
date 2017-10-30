@@ -4400,7 +4400,6 @@ end;
 
 procedure initobject1op();
 begin
-notimplemented();
  with pc^.par do begin
   callcompilersub(cs_initobject,false,
          [bcstream.ssaval(ssas1),{bcstream.constval(initclass.virttaboffset),}

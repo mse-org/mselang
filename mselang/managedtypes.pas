@@ -619,6 +619,9 @@ begin
         end;
        end;
        if isclassdef then begin
+        if not getvalue(ptop,das_none) then begin
+         exit; //error
+        end;
         i1:= ptop^.d.dat.fact.ssaindex;
         with insertitem(oc_initobject1,ptop,-1)^.par do begin
          ssas1:= pinstance^.d.dat.fact.ssaindex; //instance
