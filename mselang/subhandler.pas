@@ -2040,13 +2040,11 @@ begin
     with ptypedataty(
              ele.eledataabs(currentcontainer))^ do begin
      if isobject then begin
+      include(address.flags,af_self);
       if h.kind = dk_object then begin
- //      include(address.flags,af_paramindirect);
        vf.typ:= infoclass.objpotyp;
-       include(address.flags,af_selfobj);
       end
       else begin
-       include(address.flags,af_selfclass);
        vf.typ:= currentcontainer;
       end;
      end

@@ -572,6 +572,7 @@ procedure handleinitialize(const paramco: integer);
 var
  typ1: ptypedataty;
  ptop,pinstance: pcontextitemty;
+ indilev1: int32;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
@@ -581,17 +582,25 @@ begin
     typ1:= ele.eledataabs(pinstance^.d.dat.datatyp.typedata);
     if (typ1^.h.kind = dk_pointer) and 
                    (pinstance^.d.dat.datatyp.indirectlevel = 1) then begin
+     typ1:= nil;
      if ptop^.d.kind = ck_typearg then begin
       typ1:= ele.eledataabs(ptop^.d.typ.typedata);
-      if (typ1^.h.kind = dk_class) and 
-                           (ptop^.d.typ.indirectlevel = 1) then begin
-       if getvalue(pinstance,das_none) then begin
-        s.stacktop:= getstackindex(pinstance);
-        callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
-        exit;
-       end;
-      end;      
+      indilev1:= ptop^.d.typ.indirectlevel;
+     end
+     else begin
+      if ptop^.d.kind in datacontexts then begin
+       typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+       indilev1:= ptop^.d.dat.datatyp.indirectlevel;
+      end;
      end;
+     if (typ1 <> nil) and (typ1^.h.kind in [dk_class,dk_object]) and 
+                                                    (indilev1 = 1) then begin
+      if getvalue(pinstance,das_none) then begin
+       s.stacktop:= getstackindex(pinstance);
+       callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+       exit;
+      end;
+     end;      
     end;
    end;
   end;

@@ -1754,7 +1754,8 @@ begin
                        //todo: what about variables with name "self"?
 end;
 
-//todo: simplify, use unified indirection handling
+var testvar: ptypedataty;
+//todo: simplify
 procedure handlevalueident();
 var
  paramco,paramstart: integer;
@@ -2396,10 +2397,13 @@ begin
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
        d.dat.datatyp.flags:= [];
+testvar:= ele.eledataabs(d.dat.datatyp.typedata);
        if (d.dat.ref.c.address.flags *
                           [af_paramindirect,af_withindirect] <> []) or 
-              (af_selfobj in d.dat.ref.c.address.flags) and
-                                  (firstnotfound <= idents.high) then begin
+              (af_self in d.dat.ref.c.address.flags) and 
+                 (ptypedataty(ele.eledataabs(
+                       d.dat.datatyp.typedata))^.h.kind = dk_objectpo) and
+                                      (firstnotfound <= idents.high) then begin
         d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
                                        [af_paramindirect,af_withindirect];
         dec(d.dat.indirection);
@@ -2515,8 +2519,7 @@ begin
            linkaddcast(ele.eledatarel(po2),potop);
            po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
            if (potop^.d.dat.datatyp.indirectlevel = 1) and
-                   (potop^.d.dat.ref.c.address.flags *
-                                    [af_selfobj,af_selfclass] <> []) then begin
+                   (af_self in potop^.d.dat.ref.c.address.flags) then begin
             exclude(potop^.d.dat.ref.c.address.flags,af_classele); 
                                             //pointer(self) allowed
            end;

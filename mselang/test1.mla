@@ -26,7 +26,8 @@ class method ttest.newinstance(): pointer;
 begin
  writeln(sizeof(self^));
  result:= getmem(sizeof(self^));
- initialize(self^);
+{$internaldebug on}
+ initialize(result,self);
 end;
 
 class method ttest1.newinstance(): pointer;
@@ -56,6 +57,9 @@ var
 begin
 {$internaldebug on}
  c2:= ttest1.create();
- exitcode:= sizeof(c2^);
+// writeln(sizeof(c2);
+ writeln(sizeof(c2^);
+// exitcode:= sizeof(c2);
+ writeln(c2);
  c2.destroy();
 end.
