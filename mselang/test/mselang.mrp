@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B729D23C
+    ao=An unhandled exception occured at $B72F04E8
     ae=
     aec=123
     ie=0
@@ -8413,7 +8413,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,object
+  a=0,665,5,object
   c=28
    (
    kind=1
@@ -9315,8 +9315,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,object4
-   teststate=1
+   a=0,648,2,object4
+   teststate=2
    path=object4.mla
    comment=
    cc=${mlc}
@@ -9329,16 +9329,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=abcabc
-   ae=
+   cr=9
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,object4 llvm
-   teststate=1
+   a=0,648,2,object4 llvm
+   teststate=2
    path=object4.mla
    comment=
    cc=${mlc_llvm}
@@ -9351,9 +9351,9 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=abcabc
-   ae=
+   cr=9
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9753,7 +9753,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=object/
   comment=
   cc=
@@ -9771,7 +9771,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,664,5,class
   c=33
    (
    kind=1
@@ -11438,7 +11438,7 @@ c=3
    (
    kind=2
    a=0,648,1,classfield
-   teststate=1
+   teststate=2
    path=classfield.mla
    comment=
    cc=${mlc}
@@ -11451,16 +11451,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=
-   ae=
+   cr=9
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
    a=0,648,1,classfield llvm
-   teststate=1
+   teststate=2
    path=classfield.mla
    comment=
    cc=${mlc_llvm}
@@ -11473,9 +11473,9 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=
-   ae=
+   cr=9
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11787,7 +11787,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -12729,7 +12729,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -12842,17 +12842,78 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=684
+propcolwidthref=669
 width0=50
 sortdescend0=0
-width1=233
+width1=228
 sortdescend1=0
-width2=258
+width2=252
 sortdescend2=0
-width3=177
+width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=21
+rowstate=82
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
