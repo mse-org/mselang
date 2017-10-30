@@ -115,6 +115,7 @@ type
  classdefheaderty = record
   parentclass: pclassdefinfoty;
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
+  virttaboffset: int32;             //field offset in instance
   defaultdestructor: classprocty;
   allocs: allocsinfoty;
  end;

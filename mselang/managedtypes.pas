@@ -573,6 +573,8 @@ var
  typ1: ptypedataty;
  ptop,pinstance: pcontextitemty;
  indilev1: int32;
+ isclassdef: boolean;
+ i1: int32;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
@@ -583,6 +585,7 @@ begin
     if (typ1^.h.kind = dk_pointer) and 
                    (pinstance^.d.dat.datatyp.indirectlevel = 1) then begin
      typ1:= nil;
+     isclassdef:= false;
      if ptop^.d.kind = ck_typearg then begin
       typ1:= ele.eledataabs(ptop^.d.typ.typedata);
       indilev1:= ptop^.d.typ.indirectlevel;
@@ -591,13 +594,42 @@ begin
       if ptop^.d.kind in datacontexts then begin
        typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
        indilev1:= ptop^.d.dat.datatyp.indirectlevel;
+       if  tf_classdef in ptop^.d.dat.datatyp.flags then begin
+        isclassdef:= true;
+       end;
       end;
      end;
      if (typ1 <> nil) and (typ1^.h.kind in [dk_class,dk_object]) and 
                                                     (indilev1 = 1) then begin
       if getvalue(pinstance,das_none) then begin
-       s.stacktop:= getstackindex(pinstance);
-       callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+       if ptop^.d.kind <> ck_typearg then begin
+        if not isclassdef and (icf_virtual in typ1^.infoclass.flags) then begin
+         if getvalue(ptop,das_none) then begin
+          i1:= ptop^.d.dat.fact.ssaindex;
+          with insertitem(oc_getclassdef,ptop,-1)^.par do begin
+           ssas1:= i1;
+           setimmint32(typ1^.infoclass.virttaboffset,imm);
+          end;
+          isclassdef:= true;
+         end
+         else begin
+          s.stacktop:= getstackindex(pinstance);
+          exit; //error
+         end;
+        end;
+       end;
+       if isclassdef then begin
+        i1:= ptop^.d.dat.fact.ssaindex;
+        with insertitem(oc_initobject1,ptop,-1)^.par do begin
+         ssas1:= pinstance^.d.dat.fact.ssaindex; //instance
+         ssas2:= i1;                             //classdef
+        end;
+        s.stacktop:= getstackindex(pinstance);
+      end
+       else begin
+        s.stacktop:= getstackindex(pinstance);
+        callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+       end;
        exit;
       end;
      end;      

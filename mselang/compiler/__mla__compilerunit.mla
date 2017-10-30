@@ -88,7 +88,7 @@ function __mla__highdynarray(ref: pointer): int32;
 function __mla__highopenarray(ref: popenarrayty): int32;
 function __mla__highstring(ref: pointer): int32;
 
-procedure __mla__initobject(const instance: pointer; const virttaboffset: int32;
+procedure __mla__initobject(const instance: pointer;{ const virttaboffset: int32;}
                                  const classinfo: classdefinfoty);
 function __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
@@ -1454,14 +1454,15 @@ begin
  end;
 end;
 
-procedure __mla__initobject(const instance: pointer; const virttaboffset: int32;
+procedure __mla__initobject(const instance: pointer;{ const virttaboffset: int32;}
                                  const classinfo: classdefinfoty);
 var
  ps,pd,pe: ppointer;
  po1: pclassdefinfoty;
 begin
  po1:= @classinfo;
- ppointer(instance+virttaboffset)^:= po1;//@classinfo;
+// ppointer(instance+virttaboffset)^:= po1;//@classinfo;
+ ppointer(instance+classinfo.header.virttaboffset)^:= po1;//@classinfo;
 {$ifdef mse_debugclass}
  writeln('***initobject ',result);
 {$endif}

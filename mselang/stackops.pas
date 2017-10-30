@@ -5718,7 +5718,8 @@ begin
  with cpu.pc^.par do begin
   po2:= classdefinfopoty(segments[seg_classdef].basepo+initclass.classdef);
   po1:= ppointer(cpu.stack-pointersize)^; //object instance
-  ppointer(po1+initclass.virttaboffset)^:= po2;
+//  ppointer(po1+initclass.virttaboffset)^:= po2;
+  ppointer(po1+po2^.header.virttaboffset)^:= po2;
   repeat
    pd:= po1 + po2^.header.allocs.instanceinterfacestart; //copy interface table
    pe:= po1 + po2^.header.allocs.size;
@@ -5737,45 +5738,12 @@ begin
   until po2 = nil;
  end;
 end;
-(*
-procedure initclassop();
-var
- po1: pointer;
- po2: classdefinfopoty;
- self1: ppointer;
- ps: popaddressty;
- pd: ppointer;
- pe: pointer;
-begin
- with cpu.pc^.par do begin
-  po2:= classdefinfopoty(segments[seg_classdef].basepo+initclass.classdef);
-  self1:= stackpush(pointersize);
-//  po2:= self1^;  //class type
-//  po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
-  po1:= intgetzeromem(po2^.header.allocs.size);
-  ppointer(po1)^:= po2;    //class type info
-  self1^:= po1;            //class instance
-  ppointer(cpu.stack-2*pointersize)^:= po1; //result
 
-  repeat
-   pd:= po1 + po2^.header.allocs.instanceinterfacestart; //copy interface table
-   pe:= po1 + po2^.header.allocs.size;
-   ps:= (pointer(po2)+po2^.header.allocs.classdefinterfacestart);
-   while pd < pe do begin
-    pd^:= segments[seg_intf].basepo+ps^;
-    inc(pd);
-    inc(ps);
-   end;
-   if po2^.header.interfaceparent >= 0 then begin
-    po2:= segments[seg_classdef].basepo+po2^.header.interfaceparent;
-   end
-   else begin
-    po2:= nil;
-   end;
-  until po2 = nil;
- end;
+procedure initobject1op();
+begin
+ notimplemented();
 end;
-*)
+
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
@@ -7560,7 +7528,7 @@ const
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
   initobjectssa = 0;
-//  initclassssa = 0;
+  initobject1ssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;

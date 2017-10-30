@@ -779,7 +779,7 @@ begin
 end;
 
 procedure resolveforwardprop(var item) forward;
-
+var testvar: classdefinfopoty;
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -852,7 +852,9 @@ begin
     classdefs1:= getclassinfoaddress(
       int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
     infoclass.defs:= classdefs1;
+testvar:= classdefinfopoty(getsegmentpo(classdefs1));
     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
+     header.virttaboffset:= infoclass.virttaboffset;
      header.allocs.size:= infoclass.allocsize;
      header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
      header.allocs.classdefinterfacestart:= int1;

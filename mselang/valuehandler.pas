@@ -1754,7 +1754,6 @@ begin
                        //todo: what about variables with name "self"?
 end;
 
-var testvar: ptypedataty;
 //todo: simplify
 procedure handlevalueident();
 var
@@ -2397,7 +2396,10 @@ begin
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
        d.dat.datatyp.flags:= [];
-testvar:= ele.eledataabs(d.dat.datatyp.typedata);
+       if (af_self in d.dat.ref.c.address.flags) and 
+                        (stf_classmethod in s.currentstatementflags) then begin
+        include(d.dat.datatyp.flags,tf_classdef);
+       end;
        if (d.dat.ref.c.address.flags *
                           [af_paramindirect,af_withindirect] <> []) or 
               (af_self in d.dat.ref.c.address.flags) and 

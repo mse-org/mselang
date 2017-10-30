@@ -783,7 +783,7 @@ begin
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_initobject)^.par do begin
          ssas1:= baseadssa;
-         setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+//         setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
          initclass.classdef:= typ1^.infoclass.defs.address;
         end;
        end;
@@ -795,7 +795,7 @@ begin
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_initobject)^.par do begin
          ssas1:= baseadssa;
-         setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
+//         setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
          initclass.classdef:= typ1^.infoclass.defs.address;
         end;
        end;

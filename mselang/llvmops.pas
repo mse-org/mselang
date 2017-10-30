@@ -4393,8 +4393,18 @@ begin
                                                         bcstream.constval(0)); 
                                                            //2ssa
   callcompilersub(cs_initobject,false,
-         [bcstream.ssaval(ssas1),bcstream.constval(initclass.virttaboffset),
+         [bcstream.ssaval(ssas1),{bcstream.constval(initclass.virttaboffset),}
                                                           bcstream.relval(0)]);
+ end;
+end;
+
+procedure initobject1op();
+begin
+notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_initobject,false,
+         [bcstream.ssaval(ssas1),{bcstream.constval(initclass.virttaboffset),}
+                                                       bcstream.ssaval(ssas2)]);
  end;
 end;
 
@@ -5338,6 +5348,7 @@ const
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   initobjectssa = 2;
+  initobject1ssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;

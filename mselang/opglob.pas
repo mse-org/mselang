@@ -125,8 +125,8 @@ type
   oc_zeromemindi,
   oc_getobjectmem,
   oc_getobjectzeromem,
-  oc_initobject,
-//  oc_initclass,
+  oc_initobject,       //classdef directly from typedataty.classinfo
+  oc_initobject1,      //classdef from ssas2
   oc_destroyclass,
   oc_getclassdef, //from instance
   oc_classis,
@@ -777,7 +777,7 @@ type
  initclassinfoty = record
 //  selfinstance: dataoffsty; //stackoffset
   classdef: dataoffsty;
-  virttaboffset: int32;
+//  virttaboffset: int32;
 //  result: dataoffsty;   //stackoffset to result pointer
  end;
 
@@ -1245,6 +1245,7 @@ const
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_initobject,
+  oc_initobject1,
   oc_destroyclass,
   oc_getclassdef,
   oc_classis,
