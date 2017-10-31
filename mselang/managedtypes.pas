@@ -628,7 +628,7 @@ begin
          ssas2:= i1;                             //classdef
         end;
         s.stacktop:= getstackindex(pinstance);
-      end
+       end
        else begin
         s.stacktop:= getstackindex(pinstance);
         callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);

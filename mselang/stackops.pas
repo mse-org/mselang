@@ -5474,7 +5474,6 @@ begin
  callindiop();
 end;
 
-
 procedure calloutop();
 var
  i1: integer;

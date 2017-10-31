@@ -894,14 +894,22 @@ begin
       end;
      end;
      reversefieldchain(typ1);
-     if (h.flags * 
-             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
-                                  (infoclass.subattach.destroy <> 0) then begin
-      createrecordmanagehandler(d.typ.typedata);
-     end;
+//     if (h.flags * 
+//             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
+//                                  (infoclass.subattach.destroy <> 0) then begin
+      createrecordmanagehandler(d.typ.typedata); 
+                              //always called because of iniproc
+//     end;
      typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
                      //could be relocated by createrecordmanagehandler
      with typ1^ do begin
+//      if infoclass.subattach.ini <> 0 then begin
+       header.iniproc:= pinternalsubdataty(
+               ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
+//      end
+//      else begin
+//       header.iniproc:= 0;
+//      end;
       if infoclass.subattach.destroy <> 0 then begin
        header.defaultdestructor:= pinternalsubdataty(
                ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
