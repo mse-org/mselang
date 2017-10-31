@@ -1,85 +1,34 @@
-program classof;
-uses
- __mla__internaltypes;
+program ini2;
 type
 {$internaldebug on}
  ttest = class()[virtual]
   f1,f2: int32;
-{
-  class method newinstance(): pointer [virtual,new];
-
-  constructor create();
-
   destructor destroy();
-}
-  class method test()[virtual];
-
+  method ini1() [ini,virtual];
  end;
-{
+
  ttest1 = class(ttest) [virtual]
   f3: int32;
-  class method newinstance(): pointer [override];
-  method ini() [ini];
  end;
-}
-{
-constructor ttest.create();
+
+method ttest.ini1();
 begin
+ writeln('ini ',sizeof(self^));
 end;
 
 destructor ttest.destroy();
 begin
 end;
-}
-class method ttest.test();
-begin
-end;
-{
-class method ttest.newinstance(): pointer;
-begin
-// writeln('newinstance ',self,' ',sizeof(self^));
-// result:= getmem(sizeof(self^));
-// initialize(result,self);
-end;
-}
-{
-class method ttest1.newinstance(): pointer;
-begin
-// result:= inherited newinstance();
-// ttest1(result).f3:= 123;
-end;
-}
 
-{
-method ttest1.ini();
-begin
-// writeln('ini ',classof(self),' ',sizeof(self^));
-end;
-}
-{
-type
- tty = class of ttest;
- procty = method();
 var
- c1: ttest;
- t1,t2: tty;
  c2: ttest;
- p1: pointer;
- proc1: procty;
-}
 begin
+ writeln(classof(ttest),' ',classof(ttest1));
+ writeln(sizeof(ttest^),' ',sizeof(ttest1^));
+// c2:= ttest1.create();
+c2:= getmem(sizeof(ttest1^);
 {$internaldebug on}
-{
- t1:= ttest;
- t2:= ttest1;
- writeln(pointer(t1),' ',pointer(t2));
- writeln(pclassdefheaderty(t1)^.allocs.size,' ',pclassdefheaderty(t1)^.virttaboffset);
- writeln(pclassdefheaderty(t2)^.allocs.size,' ',pclassdefheaderty(t2)^.virttaboffset);
- c2:= ttest1.create();
-// writeln(sizeof(c2);
- writeln(sizeof(c2^);
-// exitcode:= sizeof(c2);
- writeln(c2);
+initialize(c2,ttest1);
+// exitcode:= exitcode+ttest1(c2).f3;
  c2.destroy();
-}
 end.

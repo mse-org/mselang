@@ -112,38 +112,39 @@ procedure handlewriteprop();
 procedure handledefaultprop();
 procedure handleclassproperty();
 
+function checkclassis(base,ancestor: ptypedataty): boolean;
+
 implementation
 uses
  parserglob,elements,handler,errorhandler,unithandler,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler,
  identutils,valuehandler,grammarglob;
-{
-const
- vic_private = vis_3;
- vic_protected = vis_2;
- vic_public = vis_1;
- vic_published = vis_0;
-}
-{
-procedure classesscopeset();
+
+function checkclassis(base,ancestor: ptypedataty): boolean;
 var
- po2: pclassesdataty;
+ p1,p2: ptypedataty;
 begin
- po2:= @pelementinfoty(
-          ele.eleinfoabs(info.unitinfo^.classeselement))^.data;
- po2^.scopebefore:= ele.elementparent;
- ele.elementparent:= info.unitinfo^.classeselement;
+ result:= false;
+{$ifdef mse_checkinternalerror}
+ if not (base^.h.kind in [dk_object,dk_class]) or 
+    not (ancestor^.h.kind in [dk_object,dk_class]) then begin
+  internalerror(ie_handler,'20171031A');
+ end;
+{$endif}
+ p1:= basetype1(ancestor);
+ p2:= basetype1(base);
+ while true do begin
+  if p1 = p2 then begin
+   result:= true;
+   break;
+  end;
+  if p1^.h.ancestor = 0 then begin
+   break;
+  end;
+  p1:= ele.eledataabs(p1^.h.ancestor);
+ end;
 end;
 
-procedure classesscopereset();
-var
- po2: pclassesdataty;
-begin
- po2:= @pelementinfoty(
-          ele.eleinfoabs(info.unitinfo^.classeselement))^.data;
- ele.elementparent:= po2^.scopebefore;
-end;
-}
 procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
 var

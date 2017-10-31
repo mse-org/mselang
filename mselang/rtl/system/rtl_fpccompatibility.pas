@@ -98,13 +98,13 @@ end;
 class function tobject.newinstance(): tobject;
 begin
  result:= getmem(sizeof(self^));
- initialize(pointer(result),classof(self));
+ initialize(result,classof(self));
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;
 begin
  result:= instance;
- initialize(pointer(result),classof(self));
+ initialize(result,classof(self));
 end;
 
 procedure tobject.free();

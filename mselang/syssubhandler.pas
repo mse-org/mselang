@@ -242,7 +242,13 @@ begin
         i1:= ssad;
        end;
        initfactcontext(indpo);
-       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+//       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+       with indpo^.d.dat.datatyp do begin
+        flags:= typ1^.h.flags + [tf_classdef];
+        typedata:= d.typ.typedata;// sysdatatypes[st_pointer];
+        indirectlevel:= 1;
+        forwardident:= 0;
+       end;
        include(indpo^.d.dat.datatyp.flags,tf_classdef);
        indpo^.d.dat.fact.ssaindex:= i1;
        indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
@@ -285,7 +291,12 @@ begin
        end; 
        initfactcontext(indpo);
        indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
-       include(indpo^.d.dat.datatyp.flags,tf_classdef);
+       with indpo^.d.dat.datatyp do begin
+        flags:= typ1^.h.flags + [tf_classdef];
+        typedata:= d.dat.datatyp.typedata;// sysdatatypes[st_pointer];
+        indirectlevel:= 1;
+        forwardident:= 0;
+       end;
        indpo^.d.dat.fact.ssaindex:= i1;
        indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
        exit;

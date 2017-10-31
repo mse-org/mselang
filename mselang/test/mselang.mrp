@@ -3675,7 +3675,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72A69A8
+    ao=An unhandled exception occured at $B72519A8
     ae=
     aec=123
     ie=0
@@ -12676,7 +12676,7 @@ c=3
     ie=0
     )
    teststate=1
-   path=
+   path=tobject/
    comment=
    cc=
    cd=

@@ -85,7 +85,7 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils,valuehandler,msetypes;
+ stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -570,7 +570,7 @@ end;
 
 procedure handleinitialize(const paramco: integer);
 var
- typ1: ptypedataty;
+ typ1,typ2: ptypedataty;
  ptop,pinstance: pcontextitemty;
  indilev1: int32;
  isclassdef: boolean;
@@ -582,29 +582,36 @@ begin
    pinstance:= getpreviousnospace(ptop-1);
    if (pinstance^.d.kind in datacontexts) then begin
     typ1:= ele.eledataabs(pinstance^.d.dat.datatyp.typedata);
-    if (typ1^.h.kind = dk_pointer) and 
+    if (typ1^.h.kind = dk_class) and 
+                   (pinstance^.d.dat.datatyp.indirectlevel = 1) or
+       (typ1^.h.kind = dk_object) and 
                    (pinstance^.d.dat.datatyp.indirectlevel = 1) then begin
-     typ1:= nil;
+     typ2:= nil;
      isclassdef:= false;
      if ptop^.d.kind = ck_typearg then begin
-      typ1:= ele.eledataabs(ptop^.d.typ.typedata);
+      typ2:= ele.eledataabs(ptop^.d.typ.typedata);
       indilev1:= ptop^.d.typ.indirectlevel;
      end
      else begin
       if ptop^.d.kind in datacontexts then begin
-       typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+       typ2:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
        indilev1:= ptop^.d.dat.datatyp.indirectlevel;
        if tf_classdef in ptop^.d.dat.datatyp.flags then begin
         isclassdef:= true;
        end;
       end;
      end;
-     if (typ1 <> nil) and 
-             (isclassdef or (typ1^.h.kind in [dk_class,dk_object])) and 
-                                                    (indilev1 = 1) then begin
-      if getvalue(pinstance,das_none) then begin
+     if (typ2 <> nil) and 
+             (isclassdef or (typ2^.h.kind in [dk_class,dk_object])) then begin
+      if (isclassdef or (indilev1 = 1)) and getvalue(pinstance,das_none) or
+       (typ2^.h.kind = dk_object) and (indilev1 = 0) and 
+                                          getaddress(pinstance,true) then begin
+       if not checkclassis(typ1,typ2) then begin
+        errormessage(err_doesnotinheritfromtype,[]);
+        exit;
+       end;
        if ptop^.d.kind <> ck_typearg then begin
-        if not isclassdef and (icf_virtual in typ1^.infoclass.flags) then begin
+        if not isclassdef and (icf_virtual in typ2^.infoclass.flags) then begin
          if getvalue(ptop,das_none) then begin
           i1:= ptop^.d.dat.fact.ssaindex;
           with insertitem(oc_getclassdef,ptop,-1)^.par do begin
@@ -632,7 +639,7 @@ begin
        end
        else begin
         s.stacktop:= getstackindex(pinstance);
-        callmanagesyssub(typ1^.recordmanagehandlers[mo_ini]);
+        callmanagesyssub(typ2^.recordmanagehandlers[mo_ini]);
        end;
        exit;
       end;

@@ -92,7 +92,8 @@ type
             err_exceptlabelafterelse,err_invalidassignop,
             err_libnameexpected,err_functionnameexpected,err_varnameexpected,
             err_singleexternalonly,err_cannotaddresscall,
-            err_cannotaccessinclassmethod,err_cannotgetclass);
+            err_cannotaccessinclassmethod,err_cannotgetclass,
+            err_doesnotinheritfromtype);
             
  errorinfoty = record
   level: errorlevelty;
@@ -347,7 +348,9 @@ const
              'Can''t take the address of a procedure or method call'),
   (level: erl_error; message: 
              'Can not be accessed in class method'),
-  (level: erl_error; message: 'Can not get class of this expression')
+  (level: erl_error; message: 'Can not get class of this expression'),
+  (level: erl_error; message: 
+               'Initialization type does not inherit from instance type')
  );
 
 procedure message1(const atext: string; const values: array of const); 
