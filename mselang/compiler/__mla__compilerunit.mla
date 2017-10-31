@@ -88,8 +88,10 @@ function __mla__highdynarray(ref: pointer): int32;
 function __mla__highopenarray(ref: popenarrayty): int32;
 function __mla__highstring(ref: pointer): int32;
 
-procedure __mla__initobject(const instance: pointer;{ const virttaboffset: int32;}
-                                 const classinfo: classdefinfoty);
+procedure __mla__initobject(const instance: pointer;
+                                        const classinfo: classdefinfoty);
+procedure __mla__callinitobject(const instance: pointer;
+                                        const classinfo: classdefinfoty);
 function __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
 function __mla__getallocsize(const classdef: pclassdefinfoty): int32;
@@ -1454,8 +1456,8 @@ begin
  end;
 end;
 
-procedure __mla__initobject(const instance: pointer;{ const virttaboffset: int32;}
-                                 const classinfo: classdefinfoty);
+procedure __mla__initobject(const instance: pointer;
+                                           const classinfo: classdefinfoty);
 var
  ps,pd,pe: ppointer;
  po1: pclassdefinfoty;
@@ -1490,6 +1492,12 @@ begin
   end;
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
+end;
+
+procedure __mla__callinitobject(const instance: pointer;
+                                          const classinfo: classdefinfoty);
+begin
+ classinfo.header.iniproc(instance);
 end;
 
 function __mla__getclassdef(const instance: pointer;

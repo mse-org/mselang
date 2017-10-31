@@ -4393,17 +4393,15 @@ begin
                                                         bcstream.constval(0)); 
                                                            //2ssa
   callcompilersub(cs_initobject,false,
-         [bcstream.ssaval(ssas1),{bcstream.constval(initclass.virttaboffset),}
-                                                          bcstream.relval(0)]);
+                                [bcstream.ssaval(ssas1),bcstream.relval(0)]);
  end;
 end;
 
 procedure initobject1op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_initobject,false,
-         [bcstream.ssaval(ssas1),{bcstream.constval(initclass.virttaboffset),}
-                                                       bcstream.ssaval(ssas2)]);
+  callcompilersub(cs_callinitobject,false,
+                             [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
  end;
 end;
 
