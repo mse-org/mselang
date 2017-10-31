@@ -104,7 +104,7 @@ end;
 class function tobject.initinstance(instance: pointer): tobject;
 begin
  result:= instance;
- initialize(result^);
+ initialize(pointer(result),classof(self));
 end;
 
 procedure tobject.free();

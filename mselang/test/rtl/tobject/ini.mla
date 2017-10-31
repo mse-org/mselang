@@ -1,0 +1,27 @@
+program ini;
+uses
+ rtl_fpccompatibility;
+
+type
+ ttest = class(tobject)
+  f1,f2: int32;
+ end;
+
+ ttest1 = class(ttest)
+  f3: int32;
+  constructor create();
+ end;
+
+constructor ttest1.create();
+begin
+ exitcode:= sizeof(self^);
+ f3:= 123-(4+8+4);
+end;
+
+var
+ c2: ttest;
+begin
+ c2:= ttest1.create();
+ exitcode:= exitcode+ttest1(c2).f3;
+ c2.destroy();
+end.
