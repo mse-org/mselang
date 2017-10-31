@@ -269,10 +269,12 @@ begin
          end;
         end;
         i1:= d.dat.fact.ssaindex;
-        with insertitem(oc_getclassdef,toppo,-1)^.par do begin
-         ssas1:= i1;
-         setimmint32(typ1^.infoclass.virttaboffset,imm);
-         i1:= ssad;
+        if not (tf_classdef in d.dat.datatyp.flags) then begin
+         with insertitem(oc_getclassdef,toppo,-1)^.par do begin
+          ssas1:= i1;
+          setimmint32(typ1^.infoclass.virttaboffset,imm);
+          i1:= ssad;
+         end;
         end;
        end
        else begin
