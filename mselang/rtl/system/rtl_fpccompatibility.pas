@@ -95,17 +95,10 @@ begin
  result:= newinstance();
 end;
 
-procedure tobject.free();
-begin
- if self <> nil then begin
-  destroy();
- end;
-end;
-
 class function tobject.newinstance(): tobject;
 begin
- result:= getzeromem(sizeof(self^));
- initialize(result^);
+ result:= getmem(sizeof(self^));
+ initialize(pointer(result),classof(self));
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;
@@ -113,5 +106,13 @@ begin
  result:= instance;
  initialize(result^);
 end;
+
+procedure tobject.free();
+begin
+ if self <> nil then begin
+  destroy();
+ end;
+end;
+
 
 end.

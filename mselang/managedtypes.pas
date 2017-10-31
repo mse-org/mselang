@@ -594,12 +594,13 @@ begin
       if ptop^.d.kind in datacontexts then begin
        typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
        indilev1:= ptop^.d.dat.datatyp.indirectlevel;
-       if  tf_classdef in ptop^.d.dat.datatyp.flags then begin
+       if tf_classdef in ptop^.d.dat.datatyp.flags then begin
         isclassdef:= true;
        end;
       end;
      end;
-     if (typ1 <> nil) and (typ1^.h.kind in [dk_class,dk_object]) and 
+     if (typ1 <> nil) and 
+             (isclassdef or (typ1^.h.kind in [dk_class,dk_object])) and 
                                                     (indilev1 = 1) then begin
       if getvalue(pinstance,das_none) then begin
        if ptop^.d.kind <> ck_typearg then begin

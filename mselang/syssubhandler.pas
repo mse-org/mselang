@@ -243,6 +243,7 @@ begin
        end;
        initfactcontext(indpo);
        indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+       include(indpo^.d.dat.datatyp.flags,tf_classdef);
        indpo^.d.dat.fact.ssaindex:= i1;
        indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
        exit;
@@ -282,6 +283,7 @@ begin
        end; 
        initfactcontext(indpo);
        indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+       include(indpo^.d.dat.datatyp.flags,tf_classdef);
        indpo^.d.dat.fact.ssaindex:= i1;
        indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
        exit;
