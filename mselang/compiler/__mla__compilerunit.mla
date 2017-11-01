@@ -90,7 +90,7 @@ function __mla__highstring(ref: pointer): int32;
 
 procedure __mla__initobject(const instance: pointer;
                                         const classinfo: classdefinfoty);
-procedure __mla__callinitobject(const instance: pointer;
+procedure __mla__calliniobject(const instance: pointer;
                                         const classinfo: classdefinfoty);
 function __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
@@ -1494,7 +1494,7 @@ begin
  until po1 = nil;
 end;
 
-procedure __mla__callinitobject(const instance: pointer;
+procedure __mla__calliniobject(const instance: pointer;
                                           const classinfo: classdefinfoty);
 begin
  classinfo.header.iniproc(instance);

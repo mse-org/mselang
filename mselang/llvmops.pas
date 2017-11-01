@@ -4385,7 +4385,7 @@ begin
  end;
 end;
 
-procedure initobjectop();
+procedure iniobjectop();
 begin
  with pc^.par do begin
   bcstream.emitgetelementptr(bcstream.globval(
@@ -4397,10 +4397,10 @@ begin
  end;
 end;
 
-procedure initobject1op();
+procedure iniobject1op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_callinitobject,false,
+  callcompilersub(cs_calliniobject,false,
                              [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
  end;
 end;
@@ -5344,8 +5344,8 @@ const
   zeromemindissa = 1;
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
-  initobjectssa = 2;
-  initobject1ssa = 0;
+  iniobjectssa = 2;
+  iniobject1ssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;

@@ -5706,7 +5706,7 @@ begin
  end;
 end;
 
-procedure initobjectop();
+procedure iniobjectop();
 var
  po1: pointer;
  po2: classdefinfopoty;
@@ -5738,7 +5738,7 @@ begin
  end;
 end;
 
-procedure initobject1op();
+procedure iniobject1op();
 begin
  notimplemented();
 end;
@@ -7526,8 +7526,8 @@ const
   zeromemindissa = 0;
   getobjectmemssa = 0;
   getobjectzeromemssa = 0;
-  initobjectssa = 0;
-  initobject1ssa = 0;
+  iniobjectssa = 0;
+  iniobject1ssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;

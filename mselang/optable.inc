@@ -80,9 +80,9 @@
 //oc_getobjectzeromem
   (ssa: getobjectzeromemssa; proc: @getobjectzeromemop; flags: []), 
 //oc_initobject
-  (ssa: initobjectssa; proc: @initobjectop; flags: []), 
+  (ssa: iniobjectssa; proc: @iniobjectop; flags: []), 
 //oc_initobject1
-  (ssa: initobject1ssa; proc: @initobject1op; flags: []), 
+  (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
 //oc_destroyclass
   (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
 //oc_getclassdef,

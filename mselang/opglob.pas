@@ -125,8 +125,8 @@ type
   oc_zeromemindi,
   oc_getobjectmem,
   oc_getobjectzeromem,
-  oc_initobject,       //classdef directly from typedataty.classinfo
-  oc_initobject1,      //classdef from ssas2
+  oc_iniobject,       //classdef directly from typedataty.classinfo
+  oc_iniobject1,      //classdef from ssas2
   oc_destroyclass,
   oc_getclassdef, //from instance
   oc_classis,
@@ -1244,8 +1244,8 @@ const
   oc_zeromem,
   oc_getobjectmem,
   oc_getobjectzeromem,
-  oc_initobject,
-  oc_initobject1,
+  oc_iniobject,
+  oc_iniobject1,
   oc_destroyclass,
   oc_getclassdef,
   oc_classis,
@@ -1493,7 +1493,7 @@ type
    oc_pushclassdef:(
     segad: dataoffsty;
    );
-   {oc_initclass,}oc_initobject:(
+   {oc_initclass,}oc_iniobject:(
     initclass: initclassinfoty;
    );
    oc_destroyclass:(
