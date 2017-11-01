@@ -1,0 +1,39 @@
+program ini2;
+type
+ ttest = class()[virtual]
+  f1,f2: int32;
+  destructor destroy();
+  method ini1() [ini,virtual];
+ end;
+
+ ttest1 = class(ttest) [virtual]
+  f3: int32;
+  method ini1() [override];
+ end;
+
+var
+ i1: int32;
+
+method ttest.ini1();
+begin
+ i1:= sizeof(self^);
+end;
+
+method ttest1.ini1();
+begin
+ inherited ini1();
+ f3:= 123 - (4+8+4) + i1;
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+var
+ c2: ttest;
+begin
+ c2:= getmem(sizeof(ttest1^);
+ initialize(c2,ttest1);
+ exitcode:= ttest1(c2).f3;
+ c2.destroy();
+end.
