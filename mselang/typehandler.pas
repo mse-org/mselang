@@ -810,7 +810,7 @@ begin
          end;
         end;
         callsub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
-                                                     [dsf_objini],startssa);
+                                  [dsf_objini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
@@ -818,7 +818,7 @@ begin
       with typ1^.infoclass.subattach do begin
        if fini <> 0 then begin
         callsub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
-                                                    [dsf_objfini],baseadssa);
+                                 [dsf_objfini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
@@ -827,7 +827,7 @@ begin
       with typ1^.infoclass.subattach do begin
        if incref <> 0 then begin
         callsub(s.stacktop,ele.eledataabs(incref),s.stacktop,0,
-                                                    [dsf_objini],baseadssa);
+                                  [dsf_objini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
@@ -837,7 +837,7 @@ begin
         handlefields(op1,atyp,i1);
         b1:= false;
         callsub(s.stacktop,ele.eledataabs(decref),s.stacktop,0,
-                                                    [dsf_objfini],baseadssa);
+                                 [dsf_objfini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;

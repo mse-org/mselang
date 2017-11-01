@@ -3400,6 +3400,7 @@ begin
      else begin
       if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
        instancessa:= aobjssa;
+       instancetype1:= ainstancetype;
       end
       else begin
        if aflags*[dsf_instanceonstack,dsf_indirect,

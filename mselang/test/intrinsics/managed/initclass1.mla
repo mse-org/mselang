@@ -21,7 +21,7 @@ begin
  c1.fa:= 11;
  c1.fb:= 22;
  if c1.fa+c1.fb = 33 then
-  initialize(pointer(c1),ttest);
+  initialize(c1,ttest);
   if c1.fa+c1.fb = 0 then
    exitcode:= 123;
   end;
