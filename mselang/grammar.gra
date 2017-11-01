@@ -71,7 +71,8 @@
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','virtual','except','end'
- 'new','afterconstruct','beforedestruct','ini','fini','incref','decref'
+ 'new','dispose','afterconstruct','beforedestruct'
+ 'ini','fini','incref','decref'
  'operator','operatorright'
  'default'
 start,nounit,,

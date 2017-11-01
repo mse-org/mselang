@@ -979,6 +979,9 @@ begin
        tk_new: begin
         include(d.subdef.flags1,sf1_new);
        end;
+       tk_dispose: begin
+        include(d.subdef.flags1,sf1_dispose);
+       end;
        tk_afterconstruct: begin
         include(d.subdef.flags1,sf1_afterconstruct);
        end;
@@ -1510,8 +1513,8 @@ end;
 
 const
  attachmentnames: array[subflag1ty] of string = (
- //sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_beforedestruct,
-      'ini',  'fini',  'afterconstruct',  'new',  'beforedestruct',
+ //sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_dispose,sf1_beforedestruct,
+      'ini',  'fini',  'afterconstruct',  'new',  'dispose',  'beforedestruct',
  //sf1_incref,sf1_decref,
       'incref',  'decref',
  //sf1_default
@@ -2281,6 +2284,11 @@ begin
     end
     else begin
      errormessage(err_invalidmethodforattach,[attachmentnames[sf1_new]]);
+    end;
+   end;
+   if checksysobjectmethod(sf1_afterconstruct) then begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     infoclass.subattach.dispose:= ele.eledatarel(sub1);
     end;
    end;
    if checksysobjectmethod(sf1_afterconstruct) then begin

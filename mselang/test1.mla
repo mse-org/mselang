@@ -4,16 +4,27 @@ type
  ttest = class()[virtual]
   f1,f2: int32;
   destructor destroy();
-  method ini1() [ini,virtual];
+  method ini() [ini,virtual];
+  method fini() [fini,virtual];
+  method dispose() [dispose];
  end;
 
  ttest1 = class(ttest) [virtual]
   f3: int32;
  end;
 
-method ttest.ini1();
+method ttest.ini();
 begin
  writeln('ini ',sizeof(self^));
+end;
+
+method ttest.fini();
+begin
+ writeln('fini ');
+end;
+
+method ttest.dispose();
+begin
 end;
 
 destructor ttest.destroy();

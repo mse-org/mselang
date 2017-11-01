@@ -110,7 +110,7 @@ type
  end;
 
  subattachty = record
-  new,ini,fini,afterconstruct,beforedestruct,incref,decref,destroy,
+  new,dispose,ini,fini,afterconstruct,beforedestruct,incref,decref,destroy,
   assign: elementoffsetty;
  end;
 

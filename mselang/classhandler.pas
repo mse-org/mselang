@@ -907,6 +907,8 @@ begin
 //      if infoclass.subattach.ini <> 0 then begin
        header.iniproc:= pinternalsubdataty(
                ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
+       header.finiproc:= pinternalsubdataty(
+               ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
 //      end
 //      else begin
 //       header.iniproc:= 0;

@@ -1815,12 +1815,14 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
 type
  classdefty = record
   header: aggregateconstty;                       
-  //0           1               2             3        4
-  //parentclass,interfaceparent,virttaboffset,initproc,defaultdestructor,
+  //0           1               2             3       4
+  //parentclass,interfaceparent,virttaboffset,iniproc,finiproc,
+  //5
+  //defaultdestructor,
   //       optional       optional
-  //5      6              7
+  //6      7              8
   //allocs,virtualmethods,interfaces
-  items: array[0..7] of int32; //constlist ids
+  items: array[0..8] of int32; //constlist ids
  end;
 var
  pd: pint32;
@@ -1866,8 +1868,21 @@ begin
   classdef1.items[3]:= addpointercast(pop1^.par.subbegin.globid).listid;
  end;
  types1[4]:= pointertype;
- if aclassdef^.header.defaultdestructor = 0 then begin
+ if aclassdef^.header.finiproc = 0 then begin
   classdef1.items[4]:= nullpointer;
+ end
+ else begin
+  pop1:= getoppo(aclassdef^.header.finiproc);
+ {$ifdef mse_checkinternalerror}
+  if pop1^.op.op <> oc_subbegin then begin
+   internalerror(ie_llvmlist,'20171101A');
+  end;
+ {$endif}
+  classdef1.items[4]:= addpointercast(pop1^.par.subbegin.globid).listid;
+ end;
+ types1[5]:= pointertype;
+ if aclassdef^.header.defaultdestructor = 0 then begin
+  classdef1.items[5]:= nullpointer;
  end
  else begin
   pop1:= getoppo(aclassdef^.header.defaultdestructor);
@@ -1876,13 +1891,13 @@ begin
    internalerror(ie_llvmlist,'20171031A');
   end;
  {$endif}
-  classdef1.items[4]:= addpointercast(pop1^.par.subbegin.globid).listid;
+  classdef1.items[5]:= addpointercast(pop1^.par.subbegin.globid).listid;
  end;
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
- types1[5]:= co1.typeid;             
- classdef1.items[5]:= co1.listid;
+ types1[6]:= co1.typeid;             
+ classdef1.items[6]:= co1.listid;
 
- classdef1.header.header.itemcount:= 6;
+ classdef1.header.header.itemcount:= 7;
  
  ps:= @aclassdef^.virtualmethods;
  pd:= pointer(ps);
@@ -1895,9 +1910,9 @@ begin
    inc(ps);
   end;
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
-  types1[6]:= co1.typeid;
-  classdef1.items[6]:= co1.listid;
-  classdef1.header.header.itemcount:= 7;
+  types1[classdef1.header.header.itemcount]:= co1.typeid;
+  classdef1.items[classdef1.header.header.itemcount]:= co1.listid;
+  inc(classdef1.header.header.itemcount);
  end;
  if aintfcount > 0 then begin
   po1:= getsegmentbase(seg_intf);

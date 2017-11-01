@@ -118,6 +118,7 @@ type
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
   virttaboffset: int32;             //field offset in instance
   iniproc: classprocty;
+  finiproc: classprocty;
   defaultdestructor: classprocty;
   allocs: allocsinfoty;
  end;
