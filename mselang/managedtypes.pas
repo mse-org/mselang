@@ -596,6 +596,10 @@ begin
      else begin
       if ptop^.d.kind in datacontexts then begin
        typ2:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+       if typ2^.h.kind = dk_classof then begin
+        isclassdef:= true;
+        typ2:= ele.eledataabs(typ2^.infoclassof.classtyp);
+       end;
        indilev1:= ptop^.d.dat.datatyp.indirectlevel;
        if tf_classdef in ptop^.d.dat.datatyp.flags then begin
         isclassdef:= true;
@@ -686,6 +690,8 @@ end;
 procedure callclassdefproc(const aitem: classdefprocty;
                         const virttaboffset: int32;
                                            const astackindex: int32);
+var
+ dummy1: classdefinfoty;
 begin
  with info,contextstack[astackindex] do begin
  {$ifdef mse_checkinternalerror}
@@ -696,7 +702,8 @@ begin
   with insertitem(oc_callclassdefproc,astackindex,-1)^.par do begin
    ssas1:= d.dat.fact.ssaindex;
    setimmint32(virttaboffset,classdefcall.virttaboffset);
-   classdefcall.item:= cdp_fini;
+   setimmint32(pointer(@(dummy1.header.procs[aitem])) -
+                            pointer(@dummy1),classdefcall.procoffset);
   end;
  end;
 end;

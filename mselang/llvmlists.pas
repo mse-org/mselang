@@ -205,6 +205,7 @@ type
 //   fmethod: int32;
    fintfitem: int32;
    flandingpad: int32;
+   fpointerproc: int32;
    fmetadata: int32;
    fvoid: int32;
 //   fpointerid: int32;
@@ -237,6 +238,7 @@ type
 //   property method: int32 read fmethod;
    property intfitem: int32 read fintfitem;
    property landingpad: int32 read flandingpad;
+   property pointerproc: int32 read fpointerproc;
    property metadata: int32 read fmetadata;
    property void: int32 read fvoid;
 //   property pointerid: int32 read fpointerid;
@@ -1135,6 +1137,12 @@ begin
  result:= sizeof(typelisthashdataty);
 end;
 
+const
+ pointerprocpar: array[0..0] of paramitemty = (
+              (typelistindex: pointertype; flags: [])
+ );
+ pointerprocparams: paramsty = (count: 1; items: @pointerprocpar);
+
 procedure ttypehashdatalist.clear;
 var
  k1: databitsizety;
@@ -1153,6 +1161,7 @@ begin
   fopenarray:= addbytevalue(sizeof(openarrayty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
+  fpointerproc:= addsubvalue([],pointerprocparams);
   fvoid:= 0;
 {
   t1.header.size:= -1;

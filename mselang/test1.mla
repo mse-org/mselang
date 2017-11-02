@@ -20,7 +20,7 @@ end;
 
 method ttest.fini();
 begin
- writeln('fini ');
+ writeln('fini ',sizeof(self^));
 end;
 
 method ttest.dispose();

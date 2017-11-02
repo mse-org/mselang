@@ -771,7 +771,7 @@ type
  
  classdefcallty = record
   virttaboffset: int32;
-  item: classdefprocty;
+  procoffset: int32;
  end;
  
  intfcallinfoty = record

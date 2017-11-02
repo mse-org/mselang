@@ -4407,8 +4407,20 @@ end;
 
 procedure callclassdefprocop();
 begin
- notimplemented();
  with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),
+                    bcstream.constval(classdefcall.virttaboffset));  //2ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                    bcstream.ptypeval(das_pointer));                 //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                           //1ssa
+  bcstream.emitptroffset(bcstream.relval(0),
+                    bcstream.constval(classdefcall.procoffset));     //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                    bcstream.ptypeval(das_pointer));                 //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                           //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                    bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -5353,7 +5365,7 @@ const
   getobjectzeromemssa = 1;
   iniobjectssa = 2;
   iniobject1ssa = 0;
-  callclassdefprocssa = 0;
+  callclassdefprocssa = 8;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;
