@@ -1429,6 +1429,7 @@ fact1,,fact1entry,handlefact1
  '[',getindex-^*>
  '..',*
  '.',fact2-
+ '(',checkvalueparams3-
 
 fact2,fact1,fact2entry,
  '',valueidentifierwhite*
@@ -1469,8 +1470,11 @@ checkvalueparams0,checkvalueparams1,,
  '',params0-^*
 checkvalueparams1,,,handlevalueidentifier
  ${whitespace}
- '(',checkvalueparams2-
-checkvalueparams2,,handlefactcallentry,handlefactcall
+// '(',checkvalueparams2-
+//checkvalueparams2,,handlefactcallentry,handlefactcall
+// '',params0-^*
+checkvalueparams3,,,handlefactcall
+//no handlevalueident call
  '',params0-^*
 
 checkparams,,,^

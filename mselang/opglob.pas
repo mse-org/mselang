@@ -18,7 +18,7 @@ unit opglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,msestrings;
+ globtypes,msestrings,__mla__internaltypes;
  
 type
  backendty = (bke_direct,bke_llvm);
@@ -127,6 +127,7 @@ type
   oc_getobjectzeromem,
   oc_iniobject,       //classdef directly from typedataty.classinfo
   oc_iniobject1,      //classdef from ssas2
+  oc_callclassdefproc,
   oc_destroyclass,
   oc_getclassdef, //from instance
   oc_classis,
@@ -767,7 +768,12 @@ type
     indi: indicallinfoty;
    );
  end; 
-
+ 
+ classdefcallty = record
+  virttaboffset: int32;
+  item: classdefprocty;
+ end;
+ 
  intfcallinfoty = record
   selfinstance: dataoffsty; 
     //stackoffset, points to interface item in obj instance.
@@ -1246,6 +1252,7 @@ const
   oc_getobjectzeromem,
   oc_iniobject,
   oc_iniobject1,
+  oc_callclassdefproc,
   oc_destroyclass,
   oc_getclassdef,
   oc_classis,
@@ -1469,6 +1476,9 @@ type
    oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf,
    oc_callindi,oc_callfuncindi:(                               //subops
     callinfo: callinfoty;
+   );
+   oc_callclassdefproc:(
+    classdefcall: classdefcallty;
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(
     stacksize: datasizety;

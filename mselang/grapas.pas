@@ -2113,11 +2113,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'checkvalueparams1');
- checkvalueparams2co: contextty = (branch: nil; 
+ checkvalueparams3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'checkvalueparams2');
+               caption: 'checkvalueparams3');
  checkparamsco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -11956,7 +11956,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bfact1: array[0..9] of branchty = (
+ bfact1: array[0..10] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -12016,6 +12016,13 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @fact2co); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @checkvalueparams3co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -12317,7 +12324,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcheckvalueparams1: array[0..6] of branchty = (
+ bcheckvalueparams1: array[0..5] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -12353,16 +12360,9 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @checkvalueparams2co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['(']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcheckvalueparams2: array[0..1] of branchty = (
+ bcheckvalueparams3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @params0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -14371,9 +14371,8 @@ begin
  checkvalueparams0co.next:= @checkvalueparams1co;
  checkvalueparams1co.branch:= @bcheckvalueparams1;
  checkvalueparams1co.handleexit:= @handlevalueidentifier;
- checkvalueparams2co.branch:= @bcheckvalueparams2;
- checkvalueparams2co.handleentry:= @handlefactcallentry;
- checkvalueparams2co.handleexit:= @handlefactcall;
+ checkvalueparams3co.branch:= @bcheckvalueparams3;
+ checkvalueparams3co.handleexit:= @handlefactcall;
  checkparamsco.branch:= @bcheckparams;
  params0co.branch:= @bparams0;
  params0co.next:= @params1co;

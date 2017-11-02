@@ -1506,7 +1506,7 @@ begin
      
     end;
     getvalue(ptop,das_32);
-    if not tryconvert(ptop,st_int32) then begin           //pointer size?
+    if not tryconvert(ptop,st_int32,[coo_enum]) then begin  //pointer size?
      errormessage(err_illegalqualifier,[],topoffset);
      goto errorlab;
     end;

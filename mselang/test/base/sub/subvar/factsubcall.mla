@@ -1,0 +1,24 @@
+program factsubcall;
+type
+ enuty = (en_1,en_2,en_3);
+ procty = procedure(a: int32);
+
+procedure test(a: int32);
+begin
+ exitcode:= exitcode+a;
+end;
+
+procedure fu(): procty;
+begin
+ result:= @test;
+end;
+
+var
+ ar1: array[enuty] of procty;
+ v1: enuty;
+ p1: procty;
+begin
+ fu()(100); 
+ ar1[en_2]:= @test;
+ ar1[en_2](23);
+end.

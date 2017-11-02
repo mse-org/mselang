@@ -5743,6 +5743,11 @@ begin
  notimplemented();
 end;
 
+procedure callclassdefprocop();
+begin
+ notimplemented();
+end;
+
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
@@ -5830,10 +5835,10 @@ var
  p1: pclassdefheaderty;
 begin
  p1:= ppointer(ref^)^;
- if p1^.defaultdestructor <> 0 then begin
+ if p1^.procs[cdp_destruct] <> 0 then begin
   ppointer(stackpush(sizeof(pointer)))^:= ref^;
   docall(false);
-  cpu.pc:= startpo+p1^.defaultdestructor-1;
+  cpu.pc:= startpo+p1^.procs[cdp_destruct]-1;
  end
  else begin
   intfreemem(ref^);
@@ -7528,6 +7533,7 @@ const
   getobjectzeromemssa = 0;
   iniobjectssa = 0;
   iniobject1ssa = 0;
+  callclassdefprocssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;

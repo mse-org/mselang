@@ -1497,7 +1497,7 @@ end;
 procedure __mla__calliniobject(const instance: pointer;
                                           const classinfo: classdefinfoty);
 begin
- classinfo.header.iniproc(instance);
+ classinfo.header.procs[cdp_ini](instance);
 end;
 
 function __mla__getclassdef(const instance: pointer;
@@ -1589,8 +1589,8 @@ var
  p1: pclassdefinfoty;
 begin
  p1:= ppointer(instance)^;
- if p1^.header.defaultdestructor <> nil then begin
-  p1^.header.defaultdestructor(instance);
+ if p1^.header.procs[cdp_destruct] <> nil then begin
+  p1^.header.procs[cdp_destruct](instance);
  end
  else begin
   freemem(instance);

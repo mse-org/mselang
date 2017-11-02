@@ -83,6 +83,8 @@
   (ssa: iniobjectssa; proc: @iniobjectop; flags: []), 
 //oc_initobject1
   (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
+//oc_callclassdefproc
+  (ssa: callclassdefprocssa; proc: @callclassdefprocop; flags: []), 
 //oc_destroyclass
   (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
 //oc_getclassdef,

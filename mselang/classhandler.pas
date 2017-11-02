@@ -905,20 +905,20 @@ begin
                      //could be relocated by createrecordmanagehandler
      with typ1^ do begin
 //      if infoclass.subattach.ini <> 0 then begin
-       header.iniproc:= pinternalsubdataty(
+       header.procs[cdp_ini]:= pinternalsubdataty(
                ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
-       header.finiproc:= pinternalsubdataty(
+       header.procs[cdp_fini]:= pinternalsubdataty(
                ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
 //      end
 //      else begin
 //       header.iniproc:= 0;
 //      end;
       if infoclass.subattach.destroy <> 0 then begin
-       header.defaultdestructor:= pinternalsubdataty(
+       header.procs[cdp_destruct]:= pinternalsubdataty(
                ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
       end
       else begin
-       header.defaultdestructor:= 0;
+       header.procs[cdp_destruct]:= 0;
       end;
      end;
     end;

@@ -4202,6 +4202,9 @@ begin
      result:= 0;
     end;
    end;
+   dk_enum: begin
+    result:= venum.value;
+   end;
   {$ifdef mse_checkinternalerror}
    else begin
     internalerror(ie_handler,'20140329A');

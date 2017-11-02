@@ -85,7 +85,8 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler;
+ stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler,
+ __mla__internaltypes;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -650,7 +651,7 @@ begin
   if checkaddressparamsysfunc(paramco,typ1) then begin
    with ptop^ do begin
    {$ifdef mse_checkinternalerror}
-    if d.kind <> ck_fact then begin
+    if not (d.kind in factcontexts) then begin
      internalerror(ie_handler,'20170926A');
     end;
    {$endif}
@@ -682,6 +683,24 @@ begin
  end;
 end;
 
+procedure callclassdefproc(const aitem: classdefprocty;
+                        const virttaboffset: int32;
+                                           const astackindex: int32);
+begin
+ with info,contextstack[astackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) then begin
+   internalerror(ie_handler,'20171101B');
+  end;
+ {$endif}
+  with insertitem(oc_callclassdefproc,astackindex,-1)^.par do begin
+   ssas1:= d.dat.fact.ssaindex;
+   setimmint32(virttaboffset,classdefcall.virttaboffset);
+   classdefcall.item:= cdp_fini;
+  end;
+ end;
+end;
+
 procedure handlefinalize(const paramco: integer);
 var
  typ1: ptypedataty;
@@ -705,8 +724,16 @@ begin
        par.imm.vsize:= targetpointersize;
       end;
      end;
-     dk_record,dk_object,dk_class: begin
+     dk_record: begin
       callmanagesyssub(typ1^.recordmanagehandlers[mo_fini]);
+     end;
+     dk_object,dk_class: begin
+      if icf_virtual in typ1^.infoclass.flags then begin
+       callclassdefproc(cdp_fini,typ1^.infoclass.virttaboffset,s.stacktop);
+      end
+      else begin
+       callmanagesyssub(typ1^.recordmanagehandlers[mo_fini]);
+      end;
      end;
     end;
    end;

@@ -1815,14 +1815,12 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
 type
  classdefty = record
   header: aggregateconstty;                       
-  //0           1               2             3       4
-  //parentclass,interfaceparent,virttaboffset,iniproc,finiproc,
-  //5
-  //defaultdestructor,
-  //       optional       optional
-  //6      7              8
-  //allocs,virtualmethods,interfaces
-  items: array[0..8] of int32; //constlist ids
+  //0           1               2             3..3+high(procs)
+  //parentclass,interfaceparent,virttaboffset,procs iniproc,
+  //                optional        optional
+  //3+high(procs)+1 3+high(procs)+2 3+high(procs)+3
+  //allocs,         virtualmethods, interfaces
+  items: array[0..6+ord(high(classdefprocty))] of int32; //constlist ids
  end;
 var
  pd: pint32;
@@ -1830,10 +1828,11 @@ var
  
  classdef1: classdefty;
  types1: array[0..high(classdefty.items)] of int32;
- i1: int32;
+ i1,i2: int32;
  ps1,ps,pe: popaddressty;
  po1: pointer;
  pop1: popinfoty;
+ proc1: classdefprocty;
 begin
  types1[0]:= pointertype;
  types1[1]:= pointertype;
@@ -1854,6 +1853,25 @@ begin
  end;
  types1[2]:= ord(das_32);
  classdef1.items[2]:= addi32(aclassdef^.header.virttaboffset).listid;
+
+ i2:= 3;
+ for proc1:= low(proc1) to high(proc1) do begin
+  types1[i2]:= pointertype;
+  if aclassdef^.header.procs[proc1] = 0 then begin
+   classdef1.items[i2]:= nullpointer;
+  end
+  else begin
+   pop1:= getoppo(aclassdef^.header.procs[proc1]);
+  {$ifdef mse_checkinternalerror}
+   if pop1^.op.op <> oc_subbegin then begin
+    internalerror(ie_llvmlist,'20170721A');
+   end;
+  {$endif}
+   classdef1.items[i2]:= addpointercast(pop1^.par.subbegin.globid).listid;
+  end;
+  inc(i2);
+ end;
+(*
  types1[3]:= pointertype;
  if aclassdef^.header.iniproc = 0 then begin
   classdef1.items[3]:= nullpointer;
@@ -1893,11 +1911,11 @@ begin
  {$endif}
   classdef1.items[5]:= addpointercast(pop1^.par.subbegin.globid).listid;
  end;
+*)
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
- types1[6]:= co1.typeid;             
- classdef1.items[6]:= co1.listid;
-
- classdef1.header.header.itemcount:= 7;
+ types1[i2]:= co1.typeid;             
+ classdef1.items[i2]:= co1.listid;
+ inc(i2);
  
  ps:= @aclassdef^.virtualmethods;
  pd:= pointer(ps);
@@ -1910,9 +1928,9 @@ begin
    inc(ps);
   end;
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
-  types1[classdef1.header.header.itemcount]:= co1.typeid;
-  classdef1.items[classdef1.header.header.itemcount]:= co1.listid;
-  inc(classdef1.header.header.itemcount);
+  types1[i2]:= co1.typeid;
+  classdef1.items[i2]:= co1.listid;
+  inc(i2);
  end;
  if aintfcount > 0 then begin
   po1:= getsegmentbase(seg_intf);
@@ -1924,10 +1942,11 @@ begin
    inc(ps);
   end;
   co1:= addpointerarray(aintfcount,pointer(ps1));
-  classdef1.items[classdef1.header.header.itemcount]:= co1.listid;
-  types1[classdef1.header.header.itemcount]:= co1.typeid;
-  inc(classdef1.header.header.itemcount);
+  classdef1.items[i2]:= co1.listid;
+  types1[i2]:= co1.typeid;
+  inc(i2);
  end;
+ classdef1.header.header.itemcount:= i2;
  classdef1.header.header.typeid:= ftypelist.addstructvalue(
                                   classdef1.header.header.itemcount,@types1);
  result:= addaggregate(@classdef1); 
@@ -3185,8 +3204,12 @@ begin
      }
      end;
      dk_array: begin
-      m2:= addtype(po2^.infoarray.i.itemtypedata,
-                                   po2^.infoarray.i.itemindirectlevel);
+      po4:= ele.eledataabs(po2^.infoarray.i.itemtypedata);
+      i1:= po2^.infoarray.i.itemindirectlevel;
+      if po4^.h.kind = dk_sub then begin
+       inc(i1);
+      end;
+      m2:= addtype(po2^.infoarray.i.itemtypedata,i1);
       m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);
       m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
                                    m2,po2^.h.bitsize,0,0,0,m3);

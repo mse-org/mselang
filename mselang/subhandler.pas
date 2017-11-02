@@ -3898,7 +3898,7 @@ begin
        end;
       end;
      end;
-     if (asub^.address = 0) and 
+     if (asub^.address = 0) and not(dsf_indirect in aflags) and
                    (not modularllvm or 
                     (s.unitinfo = datatoele(asub)^.header.defunit)) then begin 
                                              //unresolved header

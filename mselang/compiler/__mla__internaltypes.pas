@@ -112,14 +112,18 @@ type
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}
+
+ classdefprocty = (cdp_ini,cdp_fini,cdp_destruct);
+
  classdefheaderty = record 
    //layout fix, used in compiler llvmlists.tconsthashdatalist.addclassdef()
   parentclass: pclassdefinfoty;
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
   virttaboffset: int32;             //field offset in instance
-  iniproc: classprocty;
-  finiproc: classprocty;
-  defaultdestructor: classprocty;
+  procs: array[classdefprocty] of classprocty;
+//  iniproc: classprocty;
+//  finiproc: classprocty;
+//  defaultdestructor: classprocty;
   allocs: allocsinfoty;
  end;
  pclassdefheaderty = ^classdefheaderty;

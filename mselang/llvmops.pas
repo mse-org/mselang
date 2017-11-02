@@ -4405,6 +4405,13 @@ begin
  end;
 end;
 
+procedure callclassdefprocop();
+begin
+ notimplemented();
+ with pc^.par do begin
+ end;
+end;
+
 procedure destroyclassop();
 begin
  with pc^.par do begin
@@ -5346,6 +5353,7 @@ const
   getobjectzeromemssa = 1;
   iniobjectssa = 2;
   iniobject1ssa = 0;
+  callclassdefprocssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;
