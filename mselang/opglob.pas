@@ -128,6 +128,7 @@ type
   oc_iniobject,       //classdef directly from typedataty.classinfo
   oc_iniobject1,      //classdef from ssas2
   oc_callclassdefproc,
+  oc_callclassdefproc2,
   oc_destroyclass,
   oc_getclassdef, //from instance
   oc_classis,
@@ -770,8 +771,11 @@ type
  end; 
  
  classdefcallty = record
-  virttaboffset: int32;
   procoffset: int32;
+  case opcodety of
+   oc_callclassdefproc:(
+    virttaboffset: int32;
+   );
  end;
  
  intfcallinfoty = record
@@ -1253,6 +1257,7 @@ const
   oc_iniobject,
   oc_iniobject1,
   oc_callclassdefproc,
+  oc_callclassdefproc2,
   oc_destroyclass,
   oc_getclassdef,
   oc_classis,
@@ -1477,7 +1482,8 @@ type
    oc_callindi,oc_callfuncindi:(                               //subops
     callinfo: callinfoty;
    );
-   oc_callclassdefproc:(
+   oc_callclassdefproc,    //ssas1 instance, classdef from instance
+    oc_callclassdefproc2:( //ssas1 instance, ssas2 classdef
     classdefcall: classdefcallty;
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(

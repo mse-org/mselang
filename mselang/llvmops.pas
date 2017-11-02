@@ -4413,8 +4413,23 @@ begin
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(das_pointer));                 //1ssa
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
+                                   //classdef
   bcstream.emitptroffset(bcstream.relval(0),
                     bcstream.constval(classdefcall.procoffset));     //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                    bcstream.ptypeval(das_pointer));                 //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                           //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                    bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure callclassdefproc2op();
+begin
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas2), //classdef
+                    bcstream.constval(classdefcall.procoffset));     //2ssa
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(das_pointer));                 //1ssa
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
@@ -5366,6 +5381,7 @@ const
   iniobjectssa = 2;
   iniobject1ssa = 0;
   callclassdefprocssa = 8;
+  callclassdefproc2ssa = 5;
   destroyclassssa = 0;
   
   getvirtsubadssa = 6;

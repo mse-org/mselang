@@ -5748,6 +5748,11 @@ begin
  notimplemented();
 end;
 
+procedure callclassdefproc2op();
+begin
+ notimplemented();
+end;
+
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
@@ -7534,6 +7539,7 @@ const
   iniobjectssa = 0;
   iniobject1ssa = 0;
   callclassdefprocssa = 0;
+  callclassdefproc2ssa = 0;
   destroyclassssa = 0;
   
   getvirtsubadssa = 0;

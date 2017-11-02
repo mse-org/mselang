@@ -568,6 +568,50 @@ begin
  end;
 end;
 
+procedure callclassdefproc(const aitem: classdefprocty;
+                        const virttaboffset: int32;
+                                           const astackindex: int32);
+var
+ dummy1: classdefinfoty;
+begin
+ with info,contextstack[astackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) then begin
+   internalerror(ie_handler,'20171101B');
+  end;
+ {$endif}
+  with insertitem(oc_callclassdefproc,astackindex,-1)^.par do begin
+   ssas1:= d.dat.fact.ssaindex;
+   setimmint32(virttaboffset,classdefcall.virttaboffset);
+   setimmint32(pointer(@(dummy1.header.procs[aitem])) -
+                            pointer(@dummy1),classdefcall.procoffset);
+  end;
+ end;
+end;
+
+procedure callclassdefproc2(const aitem: classdefprocty;
+                        const aclassdefcontext: pcontextitemty;
+                        const ainstancessa: int32);
+var
+ dummy1: classdefinfoty;
+ i1: int32;
+begin
+ with info,aclassdefcontext^ do begin
+ {$ifdef mse_checkinternalerror}
+  if not (d.kind in factcontexts) then begin
+   internalerror(ie_handler,'20171101C');
+  end;
+ {$endif}
+  i1:= d.dat.fact.ssaindex;
+  with insertitem(oc_callclassdefproc2,aclassdefcontext,-1)^.par do begin
+   ssas1:= ainstancessa;
+   ssas2:= i1;
+//   setimmint32(virttaboffset,classdefcall.virttaboffset);
+   setimmint32(pointer(@(dummy1.header.procs[aitem])) -
+                            pointer(@dummy1),classdefcall.procoffset);
+  end;
+ end;
+end;
 
 procedure handleinitialize(const paramco: integer);
 var
@@ -635,11 +679,14 @@ begin
         if not getvalue(ptop,das_none) then begin
          exit; //error
         end;
+        {
         i1:= ptop^.d.dat.fact.ssaindex;
         with insertitem(oc_iniobject1,ptop,-1)^.par do begin
          ssas1:= pinstance^.d.dat.fact.ssaindex; //instance
          ssas2:= i1;                             //classdef
         end;
+        }
+        callclassdefproc2(cdp_ini,ptop,pinstance^.d.dat.fact.ssaindex);
         s.stacktop:= getstackindex(pinstance);
        end
        else begin
@@ -683,27 +730,6 @@ begin
      end;
     end;
    end;
-  end;
- end;
-end;
-
-procedure callclassdefproc(const aitem: classdefprocty;
-                        const virttaboffset: int32;
-                                           const astackindex: int32);
-var
- dummy1: classdefinfoty;
-begin
- with info,contextstack[astackindex] do begin
- {$ifdef mse_checkinternalerror}
-  if not (d.kind in factcontexts) then begin
-   internalerror(ie_handler,'20171101B');
-  end;
- {$endif}
-  with insertitem(oc_callclassdefproc,astackindex,-1)^.par do begin
-   ssas1:= d.dat.fact.ssaindex;
-   setimmint32(virttaboffset,classdefcall.virttaboffset);
-   setimmint32(pointer(@(dummy1.header.procs[aitem])) -
-                            pointer(@dummy1),classdefcall.procoffset);
   end;
  end;
 end;
