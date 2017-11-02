@@ -82,7 +82,7 @@
 //oc_initobject
   (ssa: iniobjectssa; proc: @iniobjectop; flags: []), 
 //oc_initobject1
-  (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
+//  (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
 //oc_callclassdefproc
   (ssa: callclassdefprocssa; proc: @callclassdefprocop; flags: []), 
 //oc_callclassdefproc2

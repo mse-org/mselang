@@ -4396,7 +4396,7 @@ begin
                                 [bcstream.ssaval(ssas1),bcstream.relval(0)]);
  end;
 end;
-
+{
 procedure iniobject1op();
 begin
  with pc^.par do begin
@@ -4404,7 +4404,7 @@ begin
                              [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
  end;
 end;
-
+}
 procedure callclassdefprocop();
 begin
  with pc^.par do begin
@@ -5379,7 +5379,7 @@ const
   getobjectmemssa = 1;
   getobjectzeromemssa = 1;
   iniobjectssa = 2;
-  iniobject1ssa = 0;
+//  iniobject1ssa = 0;
   callclassdefprocssa = 8;
   callclassdefproc2ssa = 5;
   destroyclassssa = 0;

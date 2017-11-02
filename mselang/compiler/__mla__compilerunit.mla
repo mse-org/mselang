@@ -90,8 +90,8 @@ function __mla__highstring(ref: pointer): int32;
 
 procedure __mla__initobject(const instance: pointer;
                                         const classinfo: classdefinfoty);
-procedure __mla__calliniobject(const instance: pointer;
-                                        const classinfo: classdefinfoty);
+//procedure __mla__calliniobject(const instance: pointer;
+//                                        const classinfo: classdefinfoty);
 function __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
 function __mla__getallocsize(const classdef: pclassdefinfoty): int32;
@@ -1493,13 +1493,13 @@ begin
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
 end;
-
+{
 procedure __mla__calliniobject(const instance: pointer;
                                           const classinfo: classdefinfoty);
 begin
  classinfo.header.procs[cdp_ini](instance);
 end;
-
+}
 function __mla__getclassdef(const instance: pointer;
                           const virttaboffset: int32): pointer;
 begin

@@ -126,7 +126,7 @@ type
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_iniobject,       //classdef directly from typedataty.classinfo
-  oc_iniobject1,      //classdef from ssas2
+//  oc_iniobject1,      //classdef from ssas2
   oc_callclassdefproc,
   oc_callclassdefproc2,
   oc_destroyclass,
@@ -1255,7 +1255,7 @@ const
   oc_getobjectmem,
   oc_getobjectzeromem,
   oc_iniobject,
-  oc_iniobject1,
+//  oc_iniobject1,
   oc_callclassdefproc,
   oc_callclassdefproc2,
   oc_destroyclass,
