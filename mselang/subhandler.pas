@@ -2072,7 +2072,10 @@ begin
   sub1^.defaultparamcount:= defaultparamcount1;
   sub1^.address:= 0; //init
   if impl1 then begin //implementation
-   inc(sublevel);   
+   if sublevel = 0 then begin
+    currentzerolevelsub:= ele.eledatarel(sub1);
+   end;
+   inc(sublevel);
    inclocvaraddress(stacklinksize);
    with (poind-1)^ do begin
     ele.markelement(b.elemark); 
@@ -2730,6 +2733,7 @@ begin
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   if sublevel = 0 then begin
+   currentzerolevelsub:= 0;
    checkpendingmanagehandlers(); //needs local definitions
    ele.releaseelement(b.elemark); //remove local definitions
   end;

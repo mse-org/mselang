@@ -1713,7 +1713,17 @@ begin
   ident.ident:= getident(start.po,ident.len);
   exclude(ident.flags,idf_continued);
   if ident.len = 0 then begin
-   errormessage(err_identexpected,[]);
+   if idf_inherited in ident.flags then begin
+   {$ifdef mse_checkinternalerror}
+    if currentzerolevelsub = 0 then begin
+     internalerror(ie_handler,'20171102A');
+    end;
+   {$endif}
+    ident.ident:= ele.eleinfoabs(currentzerolevelsub)^.header.name;
+   end
+   else begin
+    errormessage(err_identexpected,[]);
+   end;
   end;
  end;
 end;
@@ -1742,10 +1752,12 @@ begin
  outhandle('VALUEINHRITED');
 {$endif}
  with info,contextstack[s.stacktop],d do begin
-  if idf_inherited in ident.flags then begin
-   errormessage(err_identexpected,[]);
+  if (currentobject <> 0) and (sublevel > 0) then begin
+   if idf_inherited in ident.flags then begin
+    errormessage(err_identexpected,[]);
+   end;
+   include(ident.flags,idf_inherited);
   end;
-  include(ident.flags,idf_inherited);
  end;
 end;
 

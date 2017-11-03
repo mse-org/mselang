@@ -866,7 +866,8 @@ type
   stacktempoffset: targetcardty;
   simplesubstart: opaddressty;
 
-  lasttempvar: tempaddressty; //set by alloctempvar()  
+  lasttempvar: tempaddressty; //set by alloctempvar()
+  currentzerolevelsub: elementoffsetty;
   currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
