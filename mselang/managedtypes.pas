@@ -18,7 +18,8 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,handlerglob,opglob,opcode,listutils,grammarglob;
+ globtypes,parserglob,handlerglob,opglob,opcode,listutils,grammarglob,
+ __mla__internaltypes;
  
 type
  managedtempitemty = record
@@ -82,11 +83,13 @@ procedure managearraystring(const op: managedopty;{ const atype: ptypedataty;}
 procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 
+procedure callclassdefproc(const aitem: classdefprocty;
+                        const atype: ptypedataty; const ainstancessa: int32;
+                                           const astackindex: int32);
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler,
- __mla__internaltypes;
+ stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -569,20 +572,20 @@ begin
 end;
 
 procedure callclassdefproc(const aitem: classdefprocty;
-                        const virttaboffset: int32;
+                        const atype: ptypedataty; const ainstancessa: int32;
                                            const astackindex: int32);
 var
  dummy1: classdefinfoty;
 begin
- with info,contextstack[astackindex] do begin
+ with info do begin
  {$ifdef mse_checkinternalerror}
-  if not (d.kind in factcontexts) then begin
+  if not (atype^.h.kind in [dk_object,dk_class]) then begin
    internalerror(ie_handler,'20171101B');
   end;
  {$endif}
   with insertitem(oc_callclassdefproc,astackindex,-1)^.par do begin
-   ssas1:= d.dat.fact.ssaindex;
-   setimmint32(virttaboffset,classdefcall.virttaboffset);
+   ssas1:= ainstancessa;
+   setimmint32(atype^.infoclass.virttaboffset,classdefcall.virttaboffset);
    setimmint32(pointer(@(dummy1.header.procs[aitem])) -
                             pointer(@dummy1),classdefcall.procoffset);
   end;
@@ -762,7 +765,7 @@ begin
      end;
      dk_object,dk_class: begin
       if icf_virtual in typ1^.infoclass.flags then begin
-       callclassdefproc(cdp_fini,typ1^.infoclass.virttaboffset,s.stacktop);
+       callclassdefproc(cdp_fini,typ1,d.dat.fact.ssaindex,s.stacktop);
       end
       else begin
        callmanagesyssub(typ1^.recordmanagehandlers[mo_fini]);
