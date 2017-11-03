@@ -1,0 +1,71 @@
+program dispose;
+type
+ ttest = class()[virtual]
+  f1,f2: int32;
+  constructor create();
+  destructor destroy();
+  method ini() [ini,virtual];
+  method fini() [virtual];
+  method dispose() [virtual,dispose];
+ end;
+
+ ttest1 = class(ttest) [virtual]
+  f3: int32;
+  f4: int32;
+  fs: string16;
+  method fini() [override,fini];
+  method ini() [override];
+  method dispose() [override];
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+method ttest.ini();
+begin
+ f1:= 100;
+end;
+
+method ttest.fini();
+begin
+ f2:= 20;
+end;
+
+method ttest.dispose();
+begin
+ finalize(self^);
+ freemem(self);
+end;
+
+method ttest1.ini();
+begin
+ f3:= 2;
+ inherited ini();
+end;
+
+method ttest1.fini();
+begin
+ inherited fini;
+ exitcode:= f1+f2+f3+f4;
+end;
+
+method ttest1.dispose();
+begin
+ f4:= 1;
+ inherited dispose();
+end;
+
+var
+ c2: ttest;
+ v1: string8;
+begin
+ v1:= 'abc';
+ c2:= ttest1.create();
+ ttest1(c2).fs:= v1;
+ c2.destroy();
+end.

@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -3849,7 +3849,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72E2C54
+    ao=An unhandled exception occured at $B72A4748
     ae=
     aec=123
     ie=0
@@ -9838,7 +9838,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=33
+  c=34
    (
    kind=1
    a=0,664,4,properties
@@ -11503,6 +11503,28 @@ c=3
    )
    (
    kind=2
+   a=0,648,1,dispose llvm
+   teststate=1
+   path=dispose.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
    a=0,648,1,classfield
    teststate=1
    path=classfield.mla
@@ -12982,106 +13004,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=166
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=67
  0 0
  0 0
  0 0
