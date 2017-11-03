@@ -23,8 +23,8 @@ end;
 
 class method ttest.newinstance(): pointer;
 begin
- result:= getmem(sizeof(ttest^));
- initialize(result^);
+ result:= getmem(sizeof(self));
+ initialize(ttest(result),classof(self));
 end;
 
 class method ttest1.newinstance(): pointer;
@@ -40,6 +40,7 @@ end;
 type
  tty = class of ttest;
  procty = method();
+ ppointer = ^pointer;
 var
  c1: ttest;
  t1: tty;

@@ -3,15 +3,25 @@ type
 {$internaldebug on}
  ttest = class()[virtual]
   f1,f2: int32;
+  constructor create();
   destructor destroy();
   method ini() [ini,virtual];
-  method fini() [fini,virtual];
+  method fini() [virtual];
   method dispose() [dispose];
  end;
 
  ttest1 = class(ttest) [virtual]
-  f3: int32;
+  f3: string16;
+  method fini() [override,fini];
  end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
 
 method ttest.ini();
 begin
@@ -27,19 +37,23 @@ method ttest.dispose();
 begin
 end;
 
-destructor ttest.destroy();
+method ttest1.fini();
 begin
+ writeln('fini1');
+ inherited fini;
 end;
 
+type
+ cty = class of ttest;
 var
+ cc: cty;
  c2: ttest;
+ v1: string8;
 begin
- writeln(classof(ttest),' ',classof(ttest1));
- writeln(sizeof(ttest^),' ',sizeof(ttest1^));
-// c2:= ttest1.create();
-c2:= getmem(sizeof(ttest1^);
 {$internaldebug on}
-initialize(c2,ttest1);
-// exitcode:= exitcode+ttest1(c2).f3;
+ v1:= 'abc';
+ c2:= ttest1.create();
+ ttest1(c2).f3:= v1;
+// finalize(c2^);
  c2.destroy();
 end.

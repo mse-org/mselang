@@ -3938,7 +3938,9 @@ begin
        par.imm.vsize:= targetpointersize; //compensate missing instance copy
       end;
      end;
-     if icf_virtual in instancetype1^.infoclass.flags then begin
+     if (icf_virtual in instancetype1^.infoclass.flags) and 
+                           not (co_mlaruntime in o.compileoptions) then begin
+                                //not implemented in runtime mode
       callclassdefproc(cdp_fini,instancetype1,instancessa,topoffset);
      end
      else begin
