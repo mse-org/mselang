@@ -1099,14 +1099,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GOTO');
 {$endif}
- with info do begin
+ with info,contextstack[s.stacktop] do begin
  {$ifdef mse_checkinternalerror}
   if (s.stacktop-s.stackindex <> 1) or 
-          (contextstack[s.stacktop].d.kind <> ck_ident) then begin
+          (d.kind <> ck_ident) then begin
    internalerror(ie_handler,'20150918A');
   end;
  {$endif}
-  if ele.findcurrent(contextstack[s.stacktop].d.ident.ident,
+  if ele.findcurrent(d.ident.ident,
                          [ek_labeldef],allvisi,po1) <> ek_labeldef then begin
    identerror(1,err_labelnotfound);
   end
@@ -1121,7 +1121,8 @@ begin
     end
     else begin
      if po1^.mark = 0 then begin
-      forwardmark(po1^.mark,s.source); //todo: use label specific list
+      forwardmark(po1^.mark,s.source,d.ident.ident); 
+                               //todo: use label specific list
      end;
      linkmark(po1^.adlinks,getsegaddress(seg_op,@par.opaddress));
     end;

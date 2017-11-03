@@ -2135,7 +2135,7 @@ begin
       exit;
      end
      else begin
-      forwardmark(sub1^.mark,s.source);
+      forwardmark(sub1^.mark,poind^.start,datatoele(sub1)^.header.name);
      end;
     end;
    end
@@ -3129,12 +3129,16 @@ var
   end;
  end;
 
+var
+ instancetype1: ptypedataty;
+
  procedure callclasssubattach(const asub: elementoffsetty);
  begin
   if asub <> 0 then begin
    callsub(adestindex,ele.eledataabs(asub),paramstart,0,
             [dsf_instanceonstack,dsf_attach] + 
-            aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],instancessa);
+            aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],
+                                               instancessa,0,instancetype1);
    if co_mlaruntime in info.o.compileoptions then begin
     with insertitem(oc_push,topoffset,-1)^ do begin
      if dsf_destroy in aflags then begin
@@ -3147,9 +3151,6 @@ var
    end;
   end;
  end;
-
-var
- instancetype1: ptypedataty;
 
  procedure doinstanceonstack();
  begin

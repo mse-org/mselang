@@ -141,7 +141,8 @@ function linkgetcasttype(const alinks: linkindexty): elementoffsetty;
 procedure linkinsertop(const alinks: linkindexty; const aaddress: opaddressty);
 
 
-procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
+procedure forwardmark(out aforward: forwardindexty;
+                          const asource: sourceinfoty; const aident: identty);
 procedure forwardresolve(const aforward: forwardindexty);
 procedure checkforwarderrors(const aforward: forwardindexty);
 //function addtypedef(const aname: identty; const avislevel: visikindsty;
@@ -1536,6 +1537,7 @@ type
   prev: forwardindexty;
   next: forwardindexty;
   source: sourceinfoty;
+  ident: identty;
  end;
  pforwardinfoty = ^forwardinfoty;
  forwardarty = array of forwardinfoty;
@@ -1546,7 +1548,7 @@ var
  deletedforwards: forwardindexty;
 
 procedure forwardmark(out aforward: forwardindexty; 
-                                              const asource: sourceinfoty);
+                         const asource: sourceinfoty; const aident: identty);
 var
  fo1: forwardindexty;
  po1: pforwardinfoty;
@@ -1568,6 +1570,7 @@ begin
   po1^.prev:= 0;
   po1^.next:= forwardlist;
   po1^.source:= asource;
+  po1^.ident:= aident;
   forwards[forwardlist].prev:= fo1;
   forwardlist:= fo1;
  end;
@@ -1596,7 +1599,7 @@ begin
  fo1:= aforward;
  while fo1 <> 0 do begin
   with forwards[fo1] do begin
-   errormessage(source,err_forwardnotsolved,['']);
+   errormessage(source,err_forwardnotsolved,[getidentname(ident)]);
                       //todo show header
    fo1:= next;
   end;
