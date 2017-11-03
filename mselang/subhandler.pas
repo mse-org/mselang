@@ -2286,7 +2286,7 @@ begin
      errormessage(err_invalidmethodforattach,[attachmentnames[sf1_new]]);
     end;
    end;
-   if checksysobjectmethod(sf1_afterconstruct) then begin
+   if checksysobjectmethod(sf1_dispose) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      infoclass.subattach.dispose:= ele.eledatarel(sub1);
     end;
@@ -3938,37 +3938,37 @@ begin
        par.imm.vsize:= targetpointersize; //compensate missing instance copy
       end;
      end;
-     if (icf_virtual in instancetype1^.infoclass.flags) and 
-                           not (co_mlaruntime in o.compileoptions) then begin
-                                //not implemented in runtime mode
-      callclassdefproc(cdp_fini,instancetype1,instancessa,topoffset);
+     if instancetype1^.infoclass.subattach.dispose <> 0 then begin
+      callclasssubattach(instancetype1^.infoclass.subattach.dispose);
      end
      else begin
-      if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
-       adref1.offset:= 0;
-       adref1.ssaindex:= instancessa;
-       adref1.contextindex:= s.stacktop;
-       adref1.isclass:= false;
-       adref1.kind:= ark_stack;
-       adref1.address:= 0; //instance removed by destroy()
-       adref1.typ:= instancetype1;
-       if tf_needsfini in instancetype1^.h.flags then begin
-        mo1:= mo_fini;
-       end
-       else begin
-        mo1:= mo_decref;
+      if (icf_virtual in instancetype1^.infoclass.flags) and 
+                            not (co_mlaruntime in o.compileoptions) then begin
+                                 //not implemented in runtime mode
+       callclassdefproc(cdp_fini,instancetype1,instancessa,topoffset);
+      end
+      else begin
+       if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
+        adref1.offset:= 0;
+        adref1.ssaindex:= instancessa;
+        adref1.contextindex:= s.stacktop;
+        adref1.isclass:= false;
+        adref1.kind:= ark_stack;
+        adref1.address:= 0; //instance removed by destroy()
+        adref1.typ:= instancetype1;
+        if tf_needsfini in instancetype1^.h.flags then begin
+         mo1:= mo_fini;
+        end
+        else begin
+         mo1:= mo_decref;
+        end;
+        writemanagedtypeop(mo1,instancetype1,adref1);
        end;
-       writemanagedtypeop(mo1,instancetype1,adref1);
       end;
-     end;
-     with insertitem(oc_destroyclass,topoffset,-1)^ do begin
-      par.ssas1:= instancessa;
-      par.destroyclass.flags:= [];
-     { 
-      if dsf_nofreemem in aflags then begin
-       include(par.destroyclass.flags,dcf_nofreemem);
+      with insertitem(oc_destroyclass,topoffset,-1)^ do begin
+       par.ssas1:= instancessa;
+       par.destroyclass.flags:= [];
       end;
-     }
      end;
     end;
     if dsf_indirect in aflags then begin
