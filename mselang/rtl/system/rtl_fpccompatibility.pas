@@ -24,6 +24,7 @@ type
    destructor destroy() [virtual,default];
    procedure free();
    class function newinstance(): tobject [virtual];
+   procedure freeinstance [dispose,virtual];
    class function initinstance(instance : pointer) : tobject;
  end;
  
@@ -99,6 +100,12 @@ class function tobject.newinstance(): tobject;
 begin
  result:= getmem(sizeof(self^));
  initialize(result,classof(self));
+end;
+
+procedure tobject.freeinstance();
+begin
+ finalize(self^);
+ freemem(self);
 end;
 
 class function tobject.initinstance(instance: pointer): tobject;

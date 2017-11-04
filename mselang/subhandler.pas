@@ -3140,7 +3140,7 @@ var
  begin
   if asub <> 0 then begin
    callsub(adestindex,ele.eledataabs(asub),paramstart,0,
-            [dsf_instanceonstack,dsf_attach] + 
+            [dsf_instanceonstack,dsf_attach,dsf_useobjssa] + 
             aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],
                                                instancessa,0,instancetype1);
    if co_mlaruntime in info.o.compileoptions then begin
@@ -3724,7 +3724,7 @@ begin
        dodefaultparams(); //varargs can not have defaultparams
       end;
       if dsf_instanceonstack in aflags then begin
-       if not (dsf_usedestinstance in aflags) then begin
+       if aflags * [dsf_usedestinstance,dsf_useobjssa] = [] then begin
         selfpo^.ssaindex:= d.dat.fact.ssaindex; 
                //could be shifted by right side operator param
        end;
