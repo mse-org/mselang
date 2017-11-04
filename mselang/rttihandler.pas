@@ -27,7 +27,8 @@ procedure deinit();
 }
 implementation
 uses
- errorhandler,elements,msestrings,msertti,opcode,segmentutils,identutils;
+ errorhandler,elements,msestrings,msertti,opcode,segmentutils,identutils,
+ __mla__internaltypes;
 
 //var
 // rttibuffer: pointer;
@@ -66,7 +67,7 @@ end;
 function allocrttibuffer(const akind: datatypety; 
                                          const asize: integer): pointer;
 var
- po1: prttity;
+ po1: pcomprttity;
 begin
  po1:= allocsegmentpo(seg_rtti,sizeof(rttiheaderty)+asize);
  po1^.header.kind:= akind;

@@ -67,7 +67,7 @@ implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
  opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
- gramse,parser,listutils,classhandler;
+ gramse,parser,listutils,classhandler,__mla__internaltypes;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin

@@ -45,11 +45,11 @@ type
  end;
  penumrttity = ^enumrttity;
   
- rttity = record
+ comprttity = record
   header: rttiheaderty;
   data: record end;
  end;
- prttity = ^rttity;
+ pcomprttity = ^comprttity;
 
 implementation
 end.

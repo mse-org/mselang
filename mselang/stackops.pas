@@ -15,7 +15,7 @@ unit stackops;
 //
 interface
 uses
- globtypes,parserglob,opglob;
+ msestrings,globtypes,parserglob,opglob,__mla__internaltypes;
 
 const
  //todo: use variable alignment, remove stacklink
@@ -79,9 +79,9 @@ function getoptable: poptablety;
 
 implementation
 uses
- msestrings,sysutils,handlerglob,mseformatstr,msetypes,internaltypes,
+ sysutils,handlerglob,mseformatstr,msetypes,{internaltypes,}
  mserttiutils,errorhandler,
- segmentutils,classhandler,interfacehandler,__mla__internaltypes,
+ segmentutils,classhandler,interfacehandler,
  mseapplication;
 
 const

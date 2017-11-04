@@ -449,7 +449,7 @@ function errorcount(const alevel: errorlevelty): integer;
 implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys,
- identutils,grammarglob;
+ identutils,grammarglob,__mla__internaltypes;
  
 function typename(const ainfo: contextdataty;
                                     const aindirection: int32=0): string;

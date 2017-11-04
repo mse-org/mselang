@@ -19,7 +19,7 @@ unit varhandler;
 
 interface
 uses
- globtypes,parserglob;
+ msestrings,globtypes,parserglob,__mla__internaltypes;
  
 const 
  pointervarkinds = [{dk_class,}dk_interface];
@@ -44,8 +44,8 @@ procedure handletypedconstarray();
 implementation
 uses
  handlerutils,elements,errorhandler,handlerglob,opcode,llvmlists,segmentutils,
- identutils,msestrings,gramse,grapas,parser,valuehandler,mseformatstr,
- stackops,msetypes,llvmbitcodes,__mla__internaltypes;
+ identutils,gramse,grapas,parser,valuehandler,mseformatstr,
+ stackops,msetypes,llvmbitcodes;
  
 procedure handlevardefstart();
 begin

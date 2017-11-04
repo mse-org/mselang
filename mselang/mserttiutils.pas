@@ -20,11 +20,11 @@ interface
 uses
  msertti;
 
-function getenumname(const enumvalue: integer; const rtti: prttity): string;
+function getenumname(const enumvalue: integer; const rtti: pcomprttity): string;
 
 implementation
 
-function getenumname(const enumvalue: integer; const rtti: prttity): string;
+function getenumname(const enumvalue: integer; const rtti: pcomprttity): string;
 var
  po1: penumrttity;
  po2: penumitemrttity;

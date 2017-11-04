@@ -95,7 +95,8 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils,llvmlists,valuehandler,identutils,unithandler,msestrings;
+ segmentutils,llvmlists,valuehandler,identutils,unithandler,msestrings,
+ __mla__internaltypes;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin

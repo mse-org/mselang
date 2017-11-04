@@ -64,7 +64,8 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse;
+ identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse,
+ __mla__internaltypes;
   
 //
 //todo: move context-end flag handling to handler procedures.

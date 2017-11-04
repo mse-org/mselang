@@ -1836,7 +1836,7 @@ type
   //                optional        optional
   //4+high(procs)+1 4+high(procs)+2 4+high(procs)+3
   //allocs,         virtualmethods, interfaces
-  items: array[0..6+ord(high(classdefprocty))] of int32; //constlist ids
+  items: array[0..7+ord(high(classdefprocty))] of int32; //constlist ids
  end;
 var
  pd: pint32;
@@ -1895,47 +1895,6 @@ begin
   end;
   inc(i2);
  end;
-(*
- types1[3]:= pointertype;
- if aclassdef^.header.iniproc = 0 then begin
-  classdef1.items[3]:= nullpointer;
- end
- else begin
-  pop1:= getoppo(aclassdef^.header.iniproc);
- {$ifdef mse_checkinternalerror}
-  if pop1^.op.op <> oc_subbegin then begin
-   internalerror(ie_llvmlist,'20170721A');
-  end;
- {$endif}
-  classdef1.items[3]:= addpointercast(pop1^.par.subbegin.globid).listid;
- end;
- types1[4]:= pointertype;
- if aclassdef^.header.finiproc = 0 then begin
-  classdef1.items[4]:= nullpointer;
- end
- else begin
-  pop1:= getoppo(aclassdef^.header.finiproc);
- {$ifdef mse_checkinternalerror}
-  if pop1^.op.op <> oc_subbegin then begin
-   internalerror(ie_llvmlist,'20171101A');
-  end;
- {$endif}
-  classdef1.items[4]:= addpointercast(pop1^.par.subbegin.globid).listid;
- end;
- types1[5]:= pointertype;
- if aclassdef^.header.defaultdestructor = 0 then begin
-  classdef1.items[5]:= nullpointer;
- end
- else begin
-  pop1:= getoppo(aclassdef^.header.defaultdestructor);
- {$ifdef mse_checkinternalerror}
-  if pop1^.op.op <> oc_subbegin then begin
-   internalerror(ie_llvmlist,'20171031A');
-  end;
- {$endif}
-  classdef1.items[5]:= addpointercast(pop1^.par.subbegin.globid).listid;
- end;
-*)
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
  types1[i2]:= co1.typeid;             
  classdef1.items[i2]:= co1.listid;

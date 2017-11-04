@@ -18,7 +18,7 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,parserglob,globtypes,opglob,handlerglob;
+ msetypes,parserglob,globtypes,opglob,handlerglob,__mla__internaltypes;
  
 type
  loopinfoty = record

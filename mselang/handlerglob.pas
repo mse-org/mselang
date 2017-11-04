@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,{opcode,}opglob,listutils,llvmbitcodes;
+ globtypes,{opcode,}opglob,listutils,llvmbitcodes,__mla__internaltypes;
 const
  maxidentvector = 200;
 

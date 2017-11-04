@@ -31,6 +31,7 @@ type
   method test(a: int32) [override];
 //  method freeinstance() [override];
  end;
+ tclass1 = class of ttest1;
 
 { tobject }
 (*
@@ -96,13 +97,13 @@ end;
 
 class method ttest.classtype: tclass;
 begin
- result:= tclass(self);
+// result:= tclass(self);
 end;
 
 method ttest1.test(a: int32);
 begin
 {$internaldebug on}
- inherited;
+// inherited;
 end;
 {
 method ttest1.freeinstance();
@@ -113,10 +114,12 @@ end;
 }
 var
  c2: ttest;
- v1: tclass;
+ v1: tclass1;
+ i1: int32;
 begin
 {$internaldebug on}
- v1:= ttest;
+ v1:= ttest1;
  c2:= ttest1.create();
  c2.destroy();
+ writeln(typeinfo(i1));
 end.

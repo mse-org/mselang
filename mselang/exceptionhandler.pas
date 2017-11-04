@@ -43,7 +43,8 @@ procedure handlegetexceptobj(const paramco: int32);
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
- segmentutils,opglob,unithandler,classhandler,syssubhandler;
+ segmentutils,opglob,unithandler,classhandler,syssubhandler,
+ __mla__internaltypes;
  
 procedure handlefinallyexpected();
 begin

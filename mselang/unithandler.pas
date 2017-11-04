@@ -181,7 +181,7 @@ uses
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,
  unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler,
- elementcache,grammarglob;
+ elementcache,grammarglob,__mla__internaltypes;
  
 type
  unithashdataty = record

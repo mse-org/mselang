@@ -19,7 +19,7 @@ unit handlerutils;
 interface
 uses
  globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes,
- listutils,elementcache;
+ listutils,elementcache,__mla__internaltypes;
 
 type
  datasizetyxx = type integer;
@@ -337,7 +337,7 @@ uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
  subhandler,classhandler,
- identutils,llvmbitcodes,llvmlists,grammarglob,__mla__internaltypes;
+ identutils,llvmbitcodes,llvmlists,grammarglob;
    
 const
  minflo32 = -3.4e38;
