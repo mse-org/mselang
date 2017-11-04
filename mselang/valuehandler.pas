@@ -70,7 +70,8 @@ uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
- __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob;
+ __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
+ parser;
 
 function listtoset(const acontext: pcontextitemty;
                                out lastitem: pcontextitemty): boolean;
@@ -1702,7 +1703,40 @@ begin
  end;
 end;
 
+procedure setupvarrefcontext(const acontext: pcontextitemty;
+                          const avar: pvardataty; const continued: boolean);
+begin
+ initdatacontext(acontext^.d,ck_ref);
+ with info,acontext^ do begin
+  d.dat.ref.c.address:= trackaccess(avar);
+  d.dat.ref.offset:= 0;
+  d.dat.ref.c.varele:= ele.eledatarel(avar); //used to store ssaindex
+  d.dat.datatyp.typedata:= avar^.vf.typ;
+  d.dat.datatyp.indirectlevel:= avar^.address.indirectlevel;
+  d.dat.datatyp.flags:= [];
+  if (af_self in d.dat.ref.c.address.flags) and 
+                   (stf_classmethod in s.currentstatementflags) then begin
+   include(d.dat.datatyp.flags,tf_classdef);
+  end;
+  if (d.dat.ref.c.address.flags *
+                     [af_paramindirect,af_withindirect] <> []) or 
+         (af_self in d.dat.ref.c.address.flags) and 
+            (ptypedataty(ele.eledataabs(
+                  d.dat.datatyp.typedata))^.h.kind = dk_objectpo) and
+                                                          continued then begin
+   d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
+                                  [af_paramindirect,af_withindirect];
+   dec(d.dat.indirection);
+   dec(d.dat.datatyp.indirectlevel);
+  end;
+ end;
+end;
+
 procedure handlevaluepath1a();
+var
+ sub1: psubdataty;
+ var1: pvardataty;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('VALUEPATH1A');
@@ -1720,6 +1754,26 @@ begin
     end;
    {$endif}
     ident.ident:= ele.eleinfoabs(currentzerolevelsub)^.header.name;
+    pushdummycontext(ck_params);
+    sub1:= ele.eledataabs(currentzerolevelsub);
+    i1:= sub1^.paramcount-1; //skip self
+    var1:= ele.eledataabs(sub1^.varchain);
+    if sf_functionx in sub1^.flags then begin
+     var1:= ele.eledataabs(var1^.vf.next); //result
+     dec(i1);
+    end;
+//    var1:= ele.eledataabs(var1^.vf.next); //self
+    while i1 > 0 do begin
+    {$ifdef mse_checkinternalerror}
+     if var1^.vf.next = 0 then begin
+      internalerror(ie_handler,'20171104A');
+     end;
+    {$endif}
+     var1:= ele.eledataabs(var1^.vf.next);
+     pushdummycontext(ck_ref);
+     setupvarrefcontext(@contextstack[s.stacktop],var1,false);
+     dec(i1);
+    end;
    end
    else begin
     errormessage(err_identexpected,[]);
@@ -2402,28 +2456,7 @@ begin
      end
      else begin //ek_var
       if isgetfact then begin
-       initdatacontext(poind^.d,ck_ref);
-       d.dat.ref.c.address:= trackaccess(pvardataty(po2));
-       d.dat.ref.offset:= 0;
-       d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
-       d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
-       d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
-       d.dat.datatyp.flags:= [];
-       if (af_self in d.dat.ref.c.address.flags) and 
-                        (stf_classmethod in s.currentstatementflags) then begin
-        include(d.dat.datatyp.flags,tf_classdef);
-       end;
-       if (d.dat.ref.c.address.flags *
-                          [af_paramindirect,af_withindirect] <> []) or 
-              (af_self in d.dat.ref.c.address.flags) and 
-                 (ptypedataty(ele.eledataabs(
-                       d.dat.datatyp.typedata))^.h.kind = dk_objectpo) and
-                                      (firstnotfound <= idents.high) then begin
-        d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
-                                       [af_paramindirect,af_withindirect];
-        dec(d.dat.indirection);
-        dec(d.dat.datatyp.indirectlevel);
-       end;
+       setupvarrefcontext(poind,pvardataty(po2),firstnotfound <= idents.high);
        pocontext1:= poind;
       end
       else begin
