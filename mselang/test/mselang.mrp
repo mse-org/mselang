@@ -10630,12 +10630,56 @@ c=3
    (
    kind=1
    a=0,665,4,classof
-   c=1
+   c=3
     (
     kind=2
     a=0,648,1,classmethod mla
     teststate=1
     path=classmethod.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classmethod1 mla
+    teststate=1
+    path=classmethod1.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classmethod2 mla
+    teststate=1
+    path=classmethod2.mla
     comment=
     cc=
     cd=
@@ -13068,7 +13112,9 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=50
+rowstate=52
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

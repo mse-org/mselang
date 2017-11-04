@@ -992,357 +992,364 @@ begin
      end;
     end;
     if not result then begin
-     if destindirectlevel = 0 then begin
-      case d.kind of
-       ck_const: begin
-        with d.dat.constval do begin
-         if kind = dk_none then begin //nil
-          case dest^.h.kind of
-           dk_method: begin
-            kind:= dest^.h.kind;
-            vaddress:= niladdress;
-            result:= true;
-           end;
-          end;
-         end
-         else begin
-          case dest^.h.kind of //todo: use table
-           dk_float: begin
-            case source1^.h.kind of
-             dk_float: begin
-              result:= true;
-             end;
-             dk_integer: begin
-              case intbits[source1^.h.datasize] of
-               ibs_8: begin
-                vfloat:= int8(vinteger);
-               end;
-               ibs_16: begin
-                vfloat:= int16(vinteger);
-               end;
-               ibs_32: begin
-                vfloat:= int32(vinteger);
-               end;
-               ibs_64: begin
-                vfloat:= int64(vinteger);
-               end;
-               else begin
-                internalerror1(ie_handler,'20160519B');
-               end;
-              end;
-              result:= true;
-             end;
-             dk_cardinal: begin
-              case intbits[source1^.h.datasize] of
-               ibs_8: begin
-                vfloat:= card8(vcardinal);
-               end;
-               ibs_16: begin
-                vfloat:= card16(vcardinal);
-               end;
-               ibs_32: begin
-                vfloat:= card32(vcardinal);
-               end;
-               ibs_64: begin
-                vfloat:= card64(vcardinal);
-               end;
-               else begin
-                internalerror1(ie_handler,'20160519C');
-               end;
-              end;
-              result:= true;
-             end;
-            end;
-           end;
-           dk_cardinal: begin
-            case source1^.h.kind of
-             dk_cardinal: begin
-              result:= true;
-             end;
-             dk_integer: begin
-              result:= true;
-             end;
-             dk_enum: begin
-              if coo_enum in aoptions then begin
-               result:= true;
-              end;
-              vcardinal:= venum.value;
-             end;
-             {
-             dk_boolean: begin
-              if coo_boolean in aoptions then begin
-               result:= true;
-              end;
-              vboolean:= venum.value <> 0;
-             end;
-             }
-             dk_character: begin
-              if coo_character in aoptions then begin
-               result:= true;
-              end;
-              vcardinal:= vcharacter;
-             end;
-             dk_set: begin //todo: arbitrary size
-              if coo_set in aoptions then begin
-               result:= true;
-              end;
-              vcardinal:= vset.value;
-             end;
-            end;
-           end;
-           dk_integer: begin
-            case source1^.h.kind of
-             dk_integer: begin
-              result:= true;
-             end;
-             dk_cardinal: begin
-              result:= true;
-             end;
-             dk_enum: begin
-              if coo_enum in aoptions then begin
-               result:= true;
-              end;
-              vinteger:= venum.value;
-             end;
-             {
-             dk_boolean: begin
-              if coo_boolean in aoptions then begin
-               result:= true;
-              end;
-              if vboolean then begin
-               vinteger:= 1;
-              end
-              else begin
-               vinteger:= 0;
-              end;
-             end;
-             }
-             dk_character: begin
-              if coo_character in aoptions then begin
-               result:= true;
-              end;
-              vinteger:= vcharacter;
-             end;
-             dk_set: begin //todo: arbitrary size
-              if coo_set in aoptions then begin
-               result:= true;
-              end;
-              vinteger:= vset.value;
-             end;
-            end;
-           end;
-           dk_set: begin
-            case source1^.h.kind of
-             dk_set: begin
-              if vset.value = 0 then begin //empty set
-               result:= true; 
-              end;
-             end;
-            end;
-           end;
-           dk_character: begin
-            case source1^.h.kind of
-             dk_string: begin 
-              lstr1:= getstringconst(vstring);
-              if lstr1.len > 0 then begin
-               p1:= pointer(lstr1.po);
-               p2:= p1 + lstr1.len;
-               if getcodepoint(p1,p2,vcharacter) and (p1 = p2) then begin
-                result:= true;
-               end;
-              end;
-             end;
-            end;
-           end;
-           dk_string: begin
-            case dest^.itemsize of
-             1: begin
-              result:= true;
-             end;
-             2: begin
-              include(vstring.flags,strf_16);
-              result:= true;
-             end;
-             4: begin
-              include(vstring.flags,strf_32);
-              result:= true;
-             end;
-             else begin
-             {$ifdef mse_checkinternalerrror}
-              internalerror(ie_handler,'20170326A');
-             {$endif}
-             end;
-            end;
-           end;
-          end;
-         end;
-         if result then begin
-          d.dat.datatyp.typedata:= ele.eledatarel(dest);
-         end;
-        end;
-       end;
-       ck_ref: begin
-        case dest^.h.kind of
-         dk_openarray: begin
-          case source1^.h.kind of
-           dk_dynarray: begin
-            if issametype(source1^.infodynarray.i.itemtypedata,
-                               dest^.infodynarray.i.itemtypedata) then begin
-             if getvalue(acontext,das_pointer,false) then begin
-              with convert(oc_dynarraytoopenar)^ do begin
-              end;
-              result:= true;
-             end;
-            end;
-           end;
-           dk_array: begin
-            if issametype(source1^.infoarray.i.itemtypedata,
-                               dest^.infodynarray.i.itemtypedata) then begin
-             if getaddress(acontext,true) then begin
-              with convert(oc_arraytoopenar)^ do begin
-               setimmint32(source1^.infoarray.i.totitemcount-1,par.imm);
-              end;
-              result:= true;
-             end;
-            end;
-           end;
-          end;
-         end;
-         else begin
-          if (destindirectlevel = 0) and
-                not (dest^.h.kind in structdatakinds) and
-                not (source1^.h.kind in structdatakinds) then begin
-                           //otherwise probably address calculation
-           if getvalue(acontext,das_none,false) then begin
-            result:= tryconvert(acontext,dest,destindirectlevel,aoptions);
-           end;
-          end;
-         end;
-        end;
-       end;
-       ck_fact,ck_subres: begin
-        case dest^.h.kind of //todo: use table
-         dk_float: begin
-          case source1^.h.kind of
-           dk_integer,dk_cardinal: begin //todo: data size
-            i1:= d.dat.fact.ssaindex;
-            if dest^.h.datasize = das_f32 then begin
-             op1:= convtoflo32[source1^.h.kind = dk_integer,
-                               source1^.h.datasize];
-            end
-            else begin
-             op1:= convtoflo64[source1^.h.kind = dk_integer,
-                               source1^.h.datasize];
-            end;
-            with insertitem(op1,stackoffset,-1)^ do begin
-             par.ssas1:= i1;
-            end;
-            result:= true;
-           end;
-           dk_float: begin
-            if source1^.h.datasize = das_f32 then begin
-             op1:= oc_flo32toflo64;
-            end
-            else begin
-             op1:= oc_flo64toflo32;
-            end;
-            i1:= d.dat.fact.ssaindex;
-            with insertitem(op1,stackoffset,-1)^ do begin
-             par.ssas1:= i1;
-            end;
-            result:= true;
-           end;
-          end;
-         end;
-         dk_cardinal: begin
-          case source1^.h.kind of
-           dk_integer: begin
-            convertsize(inttocard);
-           end;
-           dk_cardinal: begin
-            convertsize(cardtocard);
-           end;
-           dk_enum: begin
-            if coo_enum in aoptions then begin
-             convertsize(inttocard);
-            end;
-           end;
-           {
-           dk_boolean: begin
-            if coo_boolean in aoptions then begin
-             convertsize(inttocard);
-            end;
-           end;
-           }
-           dk_character: begin
-            if coo_character in aoptions then begin
-             convertsize(cardtocard);
-            end;
-           end;
-          end;
-         end;
-         dk_integer: begin
-          case source1^.h.kind of
-           dk_cardinal: begin
-            convertsize(cardtoint);
-           end;
-           dk_integer: begin
-            convertsize(inttoint);
-           end;
-           dk_enum: begin
-            if coo_enum in aoptions then begin
-             convertsize(inttoint);
-            end;
-           end;
-           {
-           dk_boolean: begin
-            if coo_boolean in aoptions then begin
-             convertsize(inttoint);
-            end;
-           end;
-           }
-           dk_character: begin
-            if coo_character in aoptions then begin
-             convertsize(cardtoint);
-            end;
-           end;
-          end;
-         end;
-         dk_set: begin
-          if (source1^.h.kind = dk_set) and 
-               (d.dat.datatyp.typedata = emptyset.typedata) then begin
-           result:= true;
-          end;
-         end;
-         dk_string: begin
-          case source1^.h.kind of
-           dk_character: begin
-            convert(oc_chartostring8); //todo: sizes !!!!!!!!!!!!!!!!!!!
-            result:= true;
-           end;
-           dk_string: begin
-            convert(getconvstringop(source1^.itemsize,dest^.itemsize));
-            result:= true;
-           end;
-          end;
-          needsmanagedtemp:= true;
-         end;
-        end;
-       end;
-      {$ifdef mse_checkinternalerror}
-       else begin
-        internalerror(ie_handler,'20131121B');
-       end;
-      {$endif}
-      end;
+     if (dest^.h.kind = dk_classof) and 
+           (source1^.h.kind = dk_class) and (destindirectlevel = 1) and 
+                  (tf_classdef in acontext^.d.dat.datatyp.flags) then begin
+      result:= true;
      end
      else begin
-      if (destindirectlevel > 0) and 
-          ((((dest^.h.kind = dk_pointer) or 
-                           (source1^.h.kind = dk_pointer))) or //untyped pointer
-           (coo_type in aoptions) and (source1^.h.indirectlevel > 0)) then begin
-       result:= true; 
-       pointerconv:= true;
+      if destindirectlevel = 0 then begin
+       case d.kind of
+        ck_const: begin
+         with d.dat.constval do begin
+          if kind = dk_none then begin //nil
+           case dest^.h.kind of
+            dk_method: begin
+             kind:= dest^.h.kind;
+             vaddress:= niladdress;
+             result:= true;
+            end;
+           end;
+          end
+          else begin
+           case dest^.h.kind of //todo: use table
+            dk_float: begin
+             case source1^.h.kind of
+              dk_float: begin
+               result:= true;
+              end;
+              dk_integer: begin
+               case intbits[source1^.h.datasize] of
+                ibs_8: begin
+                 vfloat:= int8(vinteger);
+                end;
+                ibs_16: begin
+                 vfloat:= int16(vinteger);
+                end;
+                ibs_32: begin
+                 vfloat:= int32(vinteger);
+                end;
+                ibs_64: begin
+                 vfloat:= int64(vinteger);
+                end;
+                else begin
+                 internalerror1(ie_handler,'20160519B');
+                end;
+               end;
+               result:= true;
+              end;
+              dk_cardinal: begin
+               case intbits[source1^.h.datasize] of
+                ibs_8: begin
+                 vfloat:= card8(vcardinal);
+                end;
+                ibs_16: begin
+                 vfloat:= card16(vcardinal);
+                end;
+                ibs_32: begin
+                 vfloat:= card32(vcardinal);
+                end;
+                ibs_64: begin
+                 vfloat:= card64(vcardinal);
+                end;
+                else begin
+                 internalerror1(ie_handler,'20160519C');
+                end;
+               end;
+               result:= true;
+              end;
+             end;
+            end;
+            dk_cardinal: begin
+             case source1^.h.kind of
+              dk_cardinal: begin
+               result:= true;
+              end;
+              dk_integer: begin
+               result:= true;
+              end;
+              dk_enum: begin
+               if coo_enum in aoptions then begin
+                result:= true;
+               end;
+               vcardinal:= venum.value;
+              end;
+              {
+              dk_boolean: begin
+               if coo_boolean in aoptions then begin
+                result:= true;
+               end;
+               vboolean:= venum.value <> 0;
+              end;
+              }
+              dk_character: begin
+               if coo_character in aoptions then begin
+                result:= true;
+               end;
+               vcardinal:= vcharacter;
+              end;
+              dk_set: begin //todo: arbitrary size
+               if coo_set in aoptions then begin
+                result:= true;
+               end;
+               vcardinal:= vset.value;
+              end;
+             end;
+            end;
+            dk_integer: begin
+             case source1^.h.kind of
+              dk_integer: begin
+               result:= true;
+              end;
+              dk_cardinal: begin
+               result:= true;
+              end;
+              dk_enum: begin
+               if coo_enum in aoptions then begin
+                result:= true;
+               end;
+               vinteger:= venum.value;
+              end;
+              {
+              dk_boolean: begin
+               if coo_boolean in aoptions then begin
+                result:= true;
+               end;
+               if vboolean then begin
+                vinteger:= 1;
+               end
+               else begin
+                vinteger:= 0;
+               end;
+              end;
+              }
+              dk_character: begin
+               if coo_character in aoptions then begin
+                result:= true;
+               end;
+               vinteger:= vcharacter;
+              end;
+              dk_set: begin //todo: arbitrary size
+               if coo_set in aoptions then begin
+                result:= true;
+               end;
+               vinteger:= vset.value;
+              end;
+             end;
+            end;
+            dk_set: begin
+             case source1^.h.kind of
+              dk_set: begin
+               if vset.value = 0 then begin //empty set
+                result:= true; 
+               end;
+              end;
+             end;
+            end;
+            dk_character: begin
+             case source1^.h.kind of
+              dk_string: begin 
+               lstr1:= getstringconst(vstring);
+               if lstr1.len > 0 then begin
+                p1:= pointer(lstr1.po);
+                p2:= p1 + lstr1.len;
+                if getcodepoint(p1,p2,vcharacter) and (p1 = p2) then begin
+                 result:= true;
+                end;
+               end;
+              end;
+             end;
+            end;
+            dk_string: begin
+             case dest^.itemsize of
+              1: begin
+               result:= true;
+              end;
+              2: begin
+               include(vstring.flags,strf_16);
+               result:= true;
+              end;
+              4: begin
+               include(vstring.flags,strf_32);
+               result:= true;
+              end;
+              else begin
+              {$ifdef mse_checkinternalerrror}
+               internalerror(ie_handler,'20170326A');
+              {$endif}
+              end;
+             end;
+            end;
+           end;
+          end;
+          if result then begin
+           d.dat.datatyp.typedata:= ele.eledatarel(dest);
+          end;
+         end;
+        end;
+        ck_ref: begin
+         case dest^.h.kind of
+          dk_openarray: begin
+           case source1^.h.kind of
+            dk_dynarray: begin
+             if issametype(source1^.infodynarray.i.itemtypedata,
+                                dest^.infodynarray.i.itemtypedata) then begin
+              if getvalue(acontext,das_pointer,false) then begin
+               with convert(oc_dynarraytoopenar)^ do begin
+               end;
+               result:= true;
+              end;
+             end;
+            end;
+            dk_array: begin
+             if issametype(source1^.infoarray.i.itemtypedata,
+                                dest^.infodynarray.i.itemtypedata) then begin
+              if getaddress(acontext,true) then begin
+               with convert(oc_arraytoopenar)^ do begin
+                setimmint32(source1^.infoarray.i.totitemcount-1,par.imm);
+               end;
+               result:= true;
+              end;
+             end;
+            end;
+           end;
+          end;
+          else begin
+           if (destindirectlevel = 0) and
+                 not (dest^.h.kind in structdatakinds) and
+                 not (source1^.h.kind in structdatakinds) then begin
+                            //otherwise probably address calculation
+            if getvalue(acontext,das_none,false) then begin
+             result:= tryconvert(acontext,dest,destindirectlevel,aoptions);
+            end;
+           end;
+          end;
+         end;
+        end;
+        ck_fact,ck_subres: begin
+         case dest^.h.kind of //todo: use table
+          dk_float: begin
+           case source1^.h.kind of
+            dk_integer,dk_cardinal: begin //todo: data size
+             i1:= d.dat.fact.ssaindex;
+             if dest^.h.datasize = das_f32 then begin
+              op1:= convtoflo32[source1^.h.kind = dk_integer,
+                                source1^.h.datasize];
+             end
+             else begin
+              op1:= convtoflo64[source1^.h.kind = dk_integer,
+                                source1^.h.datasize];
+             end;
+             with insertitem(op1,stackoffset,-1)^ do begin
+              par.ssas1:= i1;
+             end;
+             result:= true;
+            end;
+            dk_float: begin
+             if source1^.h.datasize = das_f32 then begin
+              op1:= oc_flo32toflo64;
+             end
+             else begin
+              op1:= oc_flo64toflo32;
+             end;
+             i1:= d.dat.fact.ssaindex;
+             with insertitem(op1,stackoffset,-1)^ do begin
+              par.ssas1:= i1;
+             end;
+             result:= true;
+            end;
+           end;
+          end;
+          dk_cardinal: begin
+           case source1^.h.kind of
+            dk_integer: begin
+             convertsize(inttocard);
+            end;
+            dk_cardinal: begin
+             convertsize(cardtocard);
+            end;
+            dk_enum: begin
+             if coo_enum in aoptions then begin
+              convertsize(inttocard);
+             end;
+            end;
+            {
+            dk_boolean: begin
+             if coo_boolean in aoptions then begin
+              convertsize(inttocard);
+             end;
+            end;
+            }
+            dk_character: begin
+             if coo_character in aoptions then begin
+              convertsize(cardtocard);
+             end;
+            end;
+           end;
+          end;
+          dk_integer: begin
+           case source1^.h.kind of
+            dk_cardinal: begin
+             convertsize(cardtoint);
+            end;
+            dk_integer: begin
+             convertsize(inttoint);
+            end;
+            dk_enum: begin
+             if coo_enum in aoptions then begin
+              convertsize(inttoint);
+             end;
+            end;
+            {
+            dk_boolean: begin
+             if coo_boolean in aoptions then begin
+              convertsize(inttoint);
+             end;
+            end;
+            }
+            dk_character: begin
+             if coo_character in aoptions then begin
+              convertsize(cardtoint);
+             end;
+            end;
+           end;
+          end;
+          dk_set: begin
+           if (source1^.h.kind = dk_set) and 
+                (d.dat.datatyp.typedata = emptyset.typedata) then begin
+            result:= true;
+           end;
+          end;
+          dk_string: begin
+           case source1^.h.kind of
+            dk_character: begin
+             convert(oc_chartostring8); //todo: sizes !!!!!!!!!!!!!!!!!!!
+             result:= true;
+            end;
+            dk_string: begin
+             convert(getconvstringop(source1^.itemsize,dest^.itemsize));
+             result:= true;
+            end;
+           end;
+           needsmanagedtemp:= true;
+          end;
+         end;
+        end;
+       {$ifdef mse_checkinternalerror}
+        else begin
+         internalerror(ie_handler,'20131121B');
+        end;
+       {$endif}
+       end;
+      end
+      else begin
+       if (destindirectlevel > 0) and 
+           ((((dest^.h.kind = dk_pointer) or 
+                            (source1^.h.kind = dk_pointer))) or //untyped pointer
+            (coo_type in aoptions) and (source1^.h.indirectlevel > 0)) then begin
+        result:= true; 
+        pointerconv:= true;
+       end;
       end;
      end;
     end;
