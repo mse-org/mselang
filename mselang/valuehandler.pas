@@ -672,6 +672,45 @@ var                     //todo: optimize, use tables, complete
    par.ssas1:= i1;
   end;
  end; //convert
+
+ function checkancestorclass(base,ancestor: ptypedataty): boolean;
+ var
+  p1,p2: ptypedataty;
+ begin
+  if base^.h.kind = dk_classof then begin
+   base:= ele.eledataabs(base^.infoclassof.classtyp);
+  end;
+  ancestor:= ancestor;
+  if ancestor^.h.kind = dk_classof then begin
+   ancestor:= ele.eledataabs(ancestor^.infoclassof.classtyp);
+  end;
+  p1:= basetype1(ancestor);
+  p2:= basetype1(base);
+  result:= true;
+  while true do begin
+   if p2 = p1 then begin
+    break;
+   end;
+   if p1^.h.ancestor = 0 then begin
+    result:= false;
+    break;
+   end;
+   p1:= ele.eledataabs(p1^.h.ancestor);
+  end;
+  if not result then begin
+   p1:= base;
+   if p1^.h.kind = dk_classof then begin
+    p1:= ele.eledataabs(p1^.infoclassof.classtyp);
+   end;
+   p2:= ancestor;
+   if p2^.h.kind = dk_classof then begin
+    p2:= ele.eledataabs(p2^.infoclassof.classtyp);
+   end;
+   errormessage(err_doesnotinheritfromclass,[
+              getidentname(datatoele(ancestor)^.header.name),
+              getidentname(datatoele(base)^.header.name)],acontext);
+  end;
+ end;
   
 var
  pointerconv: boolean;
@@ -971,18 +1010,9 @@ begin
         end;
        end;
        dk_classof: begin
-        po1:= basetype1(ele.eledataabs(source1^.infoclassof.classtyp));
-        po2:= basetype1(ele.eledataabs(dest^.infoclassof.classtyp));
-        result:= true;
-        while true do begin
-         if po2 = po1 then begin
-          break;
-         end;
-         if po1^.h.ancestor = 0 then begin
-          result:= false;
-          break;
-         end;
-         po1:= ele.eledataabs(po1^.h.ancestor);
+        if not checkancestorclass(dest,source1) then begin
+         result:= false;
+         exit;
         end;
        end;
       end;
@@ -995,6 +1025,9 @@ begin
      if (dest^.h.kind = dk_classof) and 
            (source1^.h.kind = dk_class) and (destindirectlevel = 1) and 
                   (tf_classdef in acontext^.d.dat.datatyp.flags) then begin
+      if not checkancestorclass(dest,source1) then begin
+       exit;
+      end;
       result:= true;
      end
      else begin
@@ -1977,7 +2010,7 @@ var
        case po1^.header.kind of
         ek_var: begin
          if isclassof then begin
-          if not (sf_classmethod in subflags1) then begin
+          if subflags1 * [sf_classmethod,sf_constructor] = [] then begin
            errormessage(err_classmethodexpected,[]);
            exit;
           end;
