@@ -305,7 +305,7 @@ begin
      po1^.infoclass.classoftyp:= 
                  ele.addelementduplicate1(tks_classoftyp,ek_type,globalvisi);
      po2:= ptypedataty(ele.eledataabs(po1^.infoclass.classoftyp));
-     inittypedatasize(po2^,dk_classof,0,das_pointer);
+     inittypedatasize(po2^,dk_classof,1,das_pointer);
      po2^.infoclassof.classtyp:= d.typ.typedata;
     end;
    end;
@@ -609,7 +609,7 @@ begin
     end
     else begin
      currenttypedef:= ele.eledatarel(typ2);
-     inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel,
+     inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel+1,
                                                                 das_pointer);
      with typ2^.infoclassof do begin
       classtyp:= d.typ.typedata;

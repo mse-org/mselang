@@ -15,6 +15,12 @@ uses
  
 type
 //{$internaldebug on}
+ tobject = class;
+// iunknown = interface;
+
+ tclass  = class of tobject;
+ pclass  = ^tclass;
+
  tobject = class()[virtual]
   private
    class function newinst(): pointer [new];
@@ -25,7 +31,9 @@ type
    procedure free();
    class function newinstance(): tobject [virtual];
    procedure freeinstance [dispose,virtual];
-   class function initinstance(instance : pointer) : tobject;
+   class function initinstance(instance : pointer): tobject;
+   procedure cleanupinstance();
+   class function classtype: tclass;
  end;
  
  pchar = ^char8;
@@ -114,6 +122,11 @@ begin
  initialize(result,classof(self));
 end;
 
+procedure tobject.cleanupinstance();
+begin
+ finalize(self^);
+end;
+
 procedure tobject.free();
 begin
  if self <> nil then begin
@@ -121,5 +134,9 @@ begin
  end;
 end;
 
-
+class function tobject.classtype: tclass;
+begin
+ result:= tclass(self);
+end;
+   
 end.

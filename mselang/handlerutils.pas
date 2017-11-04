@@ -1432,7 +1432,7 @@ begin
      end;
      initfactcontext(stackoffset);
      d.dat.datatyp.typedata:= typ1^.infoclass.classoftyp;
-     d.dat.datatyp.indirectlevel:= 0;
+     d.dat.datatyp.indirectlevel:= 1;
      d.dat.fact.opdatatype:= bitoptypes[das_pointer];
     end
     else begin

@@ -1890,7 +1890,7 @@ var
 //    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
      typ1:= ele.eledataabs(ele1);
-     isclassof:= (typ1^.h.kind = dk_classof) and (typ1^.h.indirectlevel = 0);
+     isclassof:= (typ1^.h.kind = dk_classof) and (typ1^.h.indirectlevel = 1);
      if isclassof then begin
       ele1:= basetype(typ1^.infoclassof.classtyp);
      end;
@@ -1970,11 +1970,13 @@ var
        case po1^.header.kind of
         ek_var: begin
          if isclassof then begin
-//          if not (stf_getaddress in info.s.currentstatementflags) then begin
-           if not getvalue(adatacontext,das_none) then begin
-            exit;
-           end;
-//          end;
+          if not (sf_classmethod in subflags1) then begin
+           errormessage(err_classmethodexpected,[]);
+           exit;
+          end;
+          if not getvalue(adatacontext,das_none) then begin
+           exit;
+          end;
           include(subflags1,sf_class);
          end
          else begin

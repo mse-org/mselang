@@ -1,20 +1,80 @@
-program ini2;
+//{$mode pascal}
+program dispose;
+//uses
+// rtl_fpccompatibility;
 type
-{$internaldebug on}
- ttest = class()[virtual]
-  f1,f2: int32;
+{
+ tobject = class()[virtual]
+  private
+   class method newinst(): pointer [new];
+  protected
+  public
+   constructor create();
+   destructor destroy() [virtual,default];
+   procedure free();
+   class method newinstance(): tobject [virtual];
+   procedure freeinstance [dispose,virtual];
+   class method initinstance(instance : pointer) : tobject;
+ end;
+}
+ ttest = class;
+ tclass = class of ttest;
+ ttest = class({tobject})[virtual]
   constructor create();
   destructor destroy();
-  method ini() [ini,virtual];
-  method fini() [virtual];
-  method dispose() [dispose];
+  method test(a: int32) [virtual];
+  class method classtype: tclass;
+//  method dispose() [dispose,virtual];
  end;
 
- ttest1 = class(ttest) [virtual]
-  f3: string16;
-  method fini() [override,fini];
+ ttest1 = class(ttest)
+  method test(a: int32) [override];
+//  method freeinstance() [override];
  end;
 
+{ tobject }
+(*
+constructor tobject.create();
+begin
+ //dummy
+end;
+
+destructor tobject.destroy();
+begin
+ //dummy
+end;
+
+class method tobject.newinst(): pointer;
+begin
+ result:= newinstance();
+end;
+
+class method tobject.newinstance(): tobject;
+begin
+ result:= getmem(sizeof(self^));
+ initialize(result,classof(self));
+end;
+
+procedure tobject.freeinstance();
+begin
+writeln('freeinstance');
+ finalize(self^);
+ freemem(self);
+end;
+
+class method tobject.initinstance(instance: pointer): tobject;
+begin
+ result:= instance;
+ initialize(result,classof(self));
+end;
+
+procedure tobject.free();
+begin
+ if self <> nil then
+  destroy();
+ end;
+end;
+*)
 constructor ttest.create();
 begin
 end;
@@ -22,38 +82,41 @@ end;
 destructor ttest.destroy();
 begin
 end;
-
-method ttest.ini();
-begin
- writeln('ini ',sizeof(self^));
-end;
-
-method ttest.fini();
-begin
- writeln('fini ',sizeof(self^));
-end;
-
+{
 method ttest.dispose();
 begin
+ writeln('dispose');
+ finalize(self^);
+ freemem(self);
 end;
-
-method ttest1.fini();
+}
+method ttest.test(a: int32);
 begin
- writeln('fini1');
- inherited fini;
 end;
 
-type
- cty = class of ttest;
-var
- cc: cty;
- c2: ttest;
- v1: string8;
+class method ttest.classtype: tclass;
+begin
+ result:= tclass(self);
+end;
+
+method ttest1.test(a: int32);
 begin
 {$internaldebug on}
- v1:= 'abc';
+ inherited;
+end;
+{
+method ttest1.freeinstance();
+begin
+ writeln('freeinstance');
+ inherited;
+end;
+}
+var
+ c2: ttest;
+ v1: tclass;
+begin
+{$internaldebug on}
+ v1:= ttest;
  c2:= ttest1.create();
- ttest1(c2).f3:= v1;
-// finalize(c2^);
  c2.destroy();
 end.
