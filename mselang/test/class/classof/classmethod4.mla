@@ -1,0 +1,48 @@
+program classmethod4;
+type
+ ttest = class;
+ tclass = class of ttest;
+ ttest = class()[virtual]
+  constructor create();
+  destructor destroy();
+  class method test(a: int32) [virtual];
+  class method classtype: tclass;
+ end;
+
+ ttest1 = class(ttest)
+  class method test(a: int32) [override];
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+class method ttest.test(a: int32);
+begin
+ exitcode:= a;
+end;
+
+class method ttest.classtype: tclass;
+begin
+ result:= tclass(self);
+end;
+
+class method ttest1.test(a: int32);
+begin
+ inherited;
+ exitcode:= exitcode + 23;
+end;
+
+var
+ c2: ttest;
+ v1: tclass;
+begin
+ c2:= ttest1.create;
+ v1:= c2.classtype;
+ v1.test(100);
+ c2.destroy();
+end.
