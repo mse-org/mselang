@@ -860,6 +860,7 @@ begin
      header.allocs.classdefinterfacestart:= int1;
      header.parentclass:= -1;
      header.interfaceparent:= -1;
+     header.typeinfo:= -1;
      if h.ancestor <> 0 then begin 
       parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
       header.parentclass:= 

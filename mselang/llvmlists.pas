@@ -1821,13 +1821,20 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
   result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
  end; //getclassid
 
+ function getrttiid(const asegoffset: int32): int32;
+ begin
+  result:= pint32(getsegmentpo(seg_rtti,asegoffset))^;
+ end; //getclassid
+
 type
  classdefty = record
   header: aggregateconstty;                       
-  //0           1               2             3..3+high(procs)
-  //parentclass,interfaceparent,virttaboffset,procs iniproc,
+  //0           1               2             3
+  //parentclass,interfaceparent,virttaboffset,typeinfo,
+  //4..4+high(procs)
+  //procs iniproc,
   //                optional        optional
-  //3+high(procs)+1 3+high(procs)+2 3+high(procs)+3
+  //4+high(procs)+1 4+high(procs)+2 4+high(procs)+3
   //allocs,         virtualmethods, interfaces
   items: array[0..6+ord(high(classdefprocty))] of int32; //constlist ids
  end;
@@ -1862,8 +1869,16 @@ begin
  end;
  types1[2]:= ord(das_32);
  classdef1.items[2]:= addi32(aclassdef^.header.virttaboffset).listid;
-
- i2:= 3;
+ types1[3]:= ord(das_pointer);
+ if aclassdef^.header.typeinfo < 0 then begin
+  classdef1.items[3]:= nullpointer;
+ end
+ else begin
+  classdef1.items[3]:= addpointercast(
+                    getrttiid(aclassdef^.header.typeinfo)).listid;
+ end;
+ 
+ i2:= 4;
  for proc1:= low(proc1) to high(proc1) do begin
   types1[i2]:= pointertype;
   if aclassdef^.header.procs[proc1] = 0 then begin

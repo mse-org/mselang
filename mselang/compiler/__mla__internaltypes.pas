@@ -97,6 +97,9 @@ const
  dynarrayallocsize = dynarrayheadersize;
 
 type
+ rttity = object
+ end;
+ 
  allocsinfoty = record
   size: int32;
   instanceinterfacestart: int32; //offset in instance record
@@ -104,11 +107,13 @@ type
  end;
 {$ifdef mse_compiler}
  pclassdefinfoty = targetptrintty;
+ prttity = targetptrintty;
  classdefinfopoty = ^classdefinfoty;
  classprocty = targetptrintty;
 {$else}
  pclassdefinfoty = ^classdefinfoty;
  ppclassdefinfoty = ^pclassdefinfoty;
+ prttity = ^rttity;
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}
@@ -120,6 +125,7 @@ type
   parentclass: pclassdefinfoty;
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
   virttaboffset: int32;             //field offset in instance
+  typeinfo: prttity;
   procs: array[classdefprocty] of classprocty;
   allocs: allocsinfoty;
  end;
