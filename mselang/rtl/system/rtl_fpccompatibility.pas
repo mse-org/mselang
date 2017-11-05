@@ -11,7 +11,7 @@ unit rtl_fpccompatibility;
 interface
 //FPC compatibility
 uses
- rtl_system,rtl_libc;
+ rtl_system,rtl_libc,__mla__internaltypes;
  
 type
 //{$internaldebug on}
@@ -34,7 +34,8 @@ type
    class function initinstance(instance : pointer): tobject;
    procedure cleanupinstance();
    class function classtype: tclass;
- end;
+   class function classinfo : pointer; //returns prttity
+ end; 
  
  pchar = ^char8;
  sizeint = intptr;
@@ -51,7 +52,7 @@ function fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
 function fpclose(fd: cint): cint;
 
 implementation
- 
+  
 procedure move(const source; var dest; count: sizeint);
 begin
  memmove(@dest,@source,count);
@@ -139,4 +140,9 @@ begin
  result:= tclass(self);
 end;
    
+class function tobject.classinfo : pointer; //returns prttity
+begin
+ result:= pclassdefinfoty(self)^.header.typeinfo;
+end;
+
 end.

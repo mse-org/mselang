@@ -548,8 +548,6 @@ var
  poclassdef,peclassdef: ^classdefinfoty;
  povirtual,pevirtual: popaddressty;
  i1,i2,i3: int32;
- virtualcapacity: int32;
- virtualsubs,virtualsubconsts: pint32;
  countpo,counte: pint32;
  intfpo: pintfdefinfoty;
  unitheader1: bcunitinfoty;
@@ -619,26 +617,18 @@ begin
 
  poclassdef:= getsegmentbase(seg_classdef);
  peclassdef:= getsegmenttop(seg_classdef);
- virtualcapacity:= 0;
- virtualsubs:= nil; 
- virtualsubconsts:= nil;
  countpo:= getsegmentbase(seg_classintfcount);
-// try
-  while poclassdef < peclassdef do begin   //classes
-   pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
-            addinitvalue(gak_const,info.s.unitinfo^.llvmlists.constlist.
-                         addclassdef(poclassdef,countpo^).listid,constlinkage);
-   poclassdef:= pointer(poclassdef) +
-                        poclassdef^.header.allocs.classdefinterfacestart +
-                                                    countpo^*targetpointersize;
-   inc(countpo);
-  end;
-// finally
-  if virtualsubs <> nil then begin
-   freemem(virtualsubs);
-   freemem(virtualsubconsts);
-  end;
-// end;
+ while poclassdef < peclassdef do begin   //classes
+  pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
+          addinitvalue(gak_const,
+           info.s.unitinfo^.llvmlists.constlist.addclassdef(
+                                   poclassdef,countpo^).listid,constlinkage);
+                                          //replace data by id
+  poclassdef:= pointer(poclassdef) +
+                       poclassdef^.header.allocs.classdefinterfacestart +
+                                                   countpo^*targetpointersize;
+  inc(countpo);
+ end;
  with info.s.unitinfo^ do begin
   unitheader1.guid:= filematch.guid;
   with llvmlists do begin

@@ -1816,6 +1816,7 @@ end;
 
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmvaluety;
+
  function getclassid(const asegoffset: int32): int32;
  begin
   result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
@@ -1824,7 +1825,7 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
  function getrttiid(const asegoffset: int32): int32;
  begin
   result:= pint32(getsegmentpo(seg_rtti,asegoffset))^;
- end; //getclassid
+ end; //getrttiid
 
 type
  classdefty = record

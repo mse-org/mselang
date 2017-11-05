@@ -863,8 +863,7 @@ begin
      header.typeinfo:= -1;
      if h.ancestor <> 0 then begin 
       parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
-      header.parentclass:= 
-                      parentinfoclass1^.defs.address; //todo: relocate
+      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
       if parentinfoclass1^.virtualcount > 0 then begin
        fillchar(virtualmethods,
                     parentinfoclass1^.virtualcount*targetpointersize,0);
