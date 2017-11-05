@@ -791,7 +791,7 @@ begin
       else begin
       {$ifdef mse_checkinternalerror}
        if databitsizety(pc2^.typeid) <= lastdatakind then begin
-        internalerror(ie_bcwriter,'141220A');
+        internalerror(ie_bcwriter,'20141220A');
        end;
       {$endif}
        emitdataconst(consts.absdata(pc2^.header.buffer)^,

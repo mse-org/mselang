@@ -27,7 +27,7 @@ procedure deinit();
 }
 implementation
 uses
- errorhandler,elements,msestrings,msertti,opcode,segmentutils,identutils,
+ errorhandler,elements,msestrings,{msertti,}opcode,segmentutils,identutils,
  __mla__internaltypes;
 
 //var
@@ -64,20 +64,14 @@ begin
 }
 end;
 
-function allocrttibuffer(const akind: datatypety; 
+function allocrttibuffer(const akind: rttikindty; 
                                          const asize: integer): pointer;
 var
- po1: pcomprttity;
+ po1: ^rttity;
 begin
- po1:= allocsegmentpo(seg_rtti,sizeof(rttiheaderty)+asize);
- po1^.header.kind:= akind;
- result:= @po1^.data;
-{
- rttibufferindex:= 0;
- checkbuffer(sizeof(rttiheaderty)+asize);
- prttity(rttibuffer)^.header.kind:= akind;
- result:= @prttity(rttibuffer)^.data;
-}
+ po1:= allocsegmentpo(seg_rtti,asize);
+ po1^.kind:= akind;
+ result:= po1;
 end;
 
 procedure addname(const aname: identty; var abuffer: pointer);
@@ -102,11 +96,18 @@ begin
  end;
 end;
 
+function rttiname(const aident: identty): string8;
+begin
+ result:= allocstringconst(getidentname3(aident)).address;
+ if co_llvm in info.o.compileoptions then begin
+ end;
+end;
+
 function getrtti(const atype: ptypedataty): dataaddressty;
 var
- po1: penumrttity;
+ po1: ^enumrttity;
  po2: ptypedataty;
- po3: penumitemrttity;
+ po3: ^enumitemrttity;
  ele1: elementoffsetty;
  int1,int2: integer;
 begin
@@ -115,8 +116,8 @@ begin
   case atype^.h.kind of 
    dk_enum: begin
     int2:= sizeof(enumrttity)+atype^.infoenum.itemcount*sizeof(enumitemrttity);
-    po1:= allocrttibuffer(dt_enum,int2);
-    result:= getsegmentoffset(seg_rtti,po1)-sizeof(rttiheaderty);
+    po1:= allocrttibuffer(rtk_enum,int2);
+    result:= getsegmentoffset(seg_rtti,po1);
     po1^.itemcount:= atype^.infoenum.itemcount;
     po1^.flags:= [];
     if enf_contiguous in atype^.infoenum.flags then begin
@@ -127,9 +128,9 @@ begin
     for int1:= 0 to atype^.infoenum.itemcount-1 do begin
      po2:= ele.eledataabs(ele1);
      po3^.value:= po2^.infoenumitem.value;
-     po3^.name:= getsegmenttop(seg_rtti)-pointer(po3);
-//     po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
-     addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
+     po3^.name:= rttiname(datatoele(po2)^.header.name);
+//     po3^.name:= getsegmenttop(seg_rtti)-pointer(po3);
+//     addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
      inc(po3);
      ele1:= po2^.infoenumitem.next;
     end;

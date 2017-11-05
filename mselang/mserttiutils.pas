@@ -18,33 +18,37 @@ unit mserttiutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msertti;
-
-function getenumname(const enumvalue: integer; const rtti: pcomprttity): string;
+ __mla__internaltypes;
+type
+ prttity = ^rttity;
+ 
+function getenumname(const enumvalue: integer; const rtti: prttity): string;
 
 implementation
-
-function getenumname(const enumvalue: integer; const rtti: pcomprttity): string;
+uses
+ segmentutils,globtypes;
+ 
+function getenumname(const enumvalue: integer; const rtti: prttity): string;
 var
- po1: penumrttity;
- po2: penumitemrttity;
+ po1: ^enumrttity;
+ po2: ^enumitemrttity;
 
  procedure doname();
  var
-  po3: pbyte;
+  po3: pstringheaderty;
  begin
-  po3:= pointer(po2)+po2^.name;
-  setlength(result,po3^);
-  move((po3+1)^,pointer(result)^,po3^);
-end; //doname
+  po3:= getsegmentpo(seg_globconst,po2^.name);
+  setlength(result,(po3)^.len);
+  move((po3+1)^,pointer(result)^,length(result));
+ end; //doname
 
 var
  int1: integer;
   
 begin
  result:= '';
- if rtti^.header.kind = dt_enum then begin
-  po1:= @rtti^.data;
+ if rtti^.kind = rtk_enum then begin
+  po1:= pointer(rtti);
   po2:= @po1^.items;
   if erf_contiguous in po1^.flags then begin
    if (enumvalue >= 0) and (enumvalue < po1^.itemcount) then begin

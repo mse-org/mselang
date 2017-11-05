@@ -97,13 +97,29 @@ const
  dynarrayallocsize = dynarrayheadersize;
 
 type
+{$ifdef mse_compiler}
+ string8 = targetptrintty;
+{$endif}
 
- rttikindty = (rtk_enum);
+ rttikindty = (rtk_none,rtk_enum,rtk_enumitem);
+
  rttity = object
   size: int32;
   kind: rttikindty;
  end;
+ 
+ enumrttiflagty = (erf_contiguous);
+ enumrttiflagsty = set of enumrttiflagty;
+
+ enumitemrttity = record
+  value: int32;
+  name: string8;
+ end;
+
  enumrttity = object(rttity)
+  itemcount: integer;
+  flags: enumrttiflagsty;
+  items: record end; //array of enumitemrttity
  end;
  
  allocsinfoty = record
@@ -111,6 +127,7 @@ type
   instanceinterfacestart: int32; //offset in instance record
   classdefinterfacestart: int32; //offset in classdefheaderty
  end;
+
 {$ifdef mse_compiler}
  pclassdefinfoty = targetptrintty;
  prttity = targetptrintty;

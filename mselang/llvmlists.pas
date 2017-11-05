@@ -3169,7 +3169,7 @@ begin
       while ele1 <> 0 do begin
        po4:= ele.eledataabs(ele1);
        addbufferitem(adddienumerator(
-              getidentnamel(datatoele(po4)^.header.name),
+              getidentname1(datatoele(po4)^.header.name),
                                                po4^.infoenumitem.value));
        ele1:= po4^.infoenumitem.next;
       end;
@@ -3274,7 +3274,7 @@ begin
         inc(i1);
        end;
        addbufferitem(adddiderivedtype(didk_member,file1,context1,
-           getidentnamel(pointer(po3)),0,po4^.h.bitsize,0,po3^.offset*8,
+           getidentname1(pointer(po3)),0,po4^.h.bitsize,0,po3^.offset*8,
                                                    0,addtype(po3^.vf.typ,i1)));
        ele1:= po3^.vf.next;
       end;

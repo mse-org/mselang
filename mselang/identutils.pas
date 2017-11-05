@@ -63,10 +63,11 @@ function getidentname(const aident: identty; out name: lstringty): boolean;
                              //true if found
 function getidentname(const aname: string): identnamety;
 function getidentname(const aident: identty): string;
-function getidentnamel(const aident: identty): lstringty;
-function getidentnamel(const aeledata: pointer): lstringty;
+function getidentname1(const aident: identty): lstringty;
+function getidentname1(const aeledata: pointer): lstringty;
 function getidentname2(const aident: identty): identnamety;
 function getidentname2(const aeledata: pointer): identnamety;
+function getidentname3(const aident: identty): stringvaluety;
 
 function nametolstring(const aname: identnamety): lstringty; inline;
 
@@ -246,7 +247,7 @@ begin
  end;
 end;
 
-function getidentnamel(const aident: identty): lstringty;
+function getidentname1(const aident: identty): lstringty;
 begin
 {$ifdef mse_checkinternalerror}
  if not 
@@ -260,7 +261,7 @@ begin
 {$endif}
 end;
 
-function getidentnamel(const aeledata: pointer): lstringty;
+function getidentname1(const aeledata: pointer): lstringty;
 begin
 {$ifdef mse_checkinternalerror}
  if not 
@@ -300,6 +301,11 @@ begin
 {$else}
  ;
 {$endif}
+end;
+
+function getidentname3(const aident: identty): stringvaluety;
+begin
+ result:= newstringconst(getidentname1(aident));
 end;
 
 const

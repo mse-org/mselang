@@ -2618,11 +2618,11 @@ begin
       with s.unitinfo^.llvmlists.metadatalist do begin
        if id1 = tks_self then begin
         id1:= tk_self;
-        debuginfo:= adddivariable(getidentnamel(id1),lnr1,int1,po4^,
+        debuginfo:= adddivariable(getidentname1(id1),lnr1,int1,po4^,
                                                              addtype(po4^));
        end
        else begin
-        debuginfo:= adddivariable(getidentnamel(id1),lnr1,int1,po4^);
+        debuginfo:= adddivariable(getidentname1(id1),lnr1,int1,po4^);
        end;
       end;
      end;
