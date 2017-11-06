@@ -70,6 +70,7 @@ var
  po1: ^rttity;
 begin
  po1:= allocsegmentpo(seg_rtti,asize);
+ po1^.size:= asize;
  po1^.kind:= akind;
  result:= po1;
 end;

@@ -1378,25 +1378,6 @@ begin
      par.ssas1:= i2;
      setimmint32(constval.vopenarray.high,par.imm);
     end;
-{
-    with insertitem(oc_pushsegopenar,stackoffset,aopoffset)^ do begin
-     setmemimm(constval.vopenarray.high,par);
-     par.memop.segdataaddress.a:= segad1;
-     par.memop.segdataaddress.offset:= 0;
-     par.memop.t:= bitoptypes[das_pointer];
-    end; 
-}
-   {
-    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-     setimmint32(constval.vopenarray.high,par);
-    end;
-    with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
-               pushsegaddrssaar[constval.vopenarray.address.segment])^ do begin
-     par.memop.segdataaddress.a:= segad1;
-     par.memop.segdataaddress.offset:= 0;
-     par.memop.t:= bitoptypes[das_pointer];
-    end;
-   }
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin

@@ -18,17 +18,15 @@ unit mserttiutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- __mla__internaltypes;
-type
- prttity = ^rttity;
+ __mla__internaltypes,globtypes;
  
-function getenumname(const enumvalue: integer; const rtti: prttity): string;
+function getenumname(const enumvalue: integer; const rtti: pcrttity): string;
 
 implementation
 uses
- segmentutils,globtypes;
+ segmentutils;
  
-function getenumname(const enumvalue: integer; const rtti: prttity): string;
+function getenumname(const enumvalue: integer; const rtti: pcrttity): string;
 var
  po1: ^enumrttity;
  po2: ^enumitemrttity;

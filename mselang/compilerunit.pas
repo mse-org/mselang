@@ -161,11 +161,19 @@ const
   '__mla__personality',
   '__mla__finiexception'
  );
+
+type
+ internaltypety = (it_rtti);
+const
+ internaltypenames : array[internaltypety] of string =  (
+  'rttity'
+ );
  
 var
  compilersubs: array[compilersubty] of elementoffsetty;
  compilersubids: array[compilersubty] of int32;
- 
+ internaltypes: array[internaltypety] of elementoffsetty;
+  
 procedure initcompilersubs(const aunit: punitinfoty);
 
 implementation
@@ -175,9 +183,24 @@ uses
 procedure initcompilersubs(const aunit: punitinfoty);
 var
  s1,se: compilersubty;
+ t1: internaltypety;
  
 begin
  if aunit^.namestring = compilerunitname then begin
+ {$ifdef mse_checkinternalerror}
+  if (high(aunit^.interfaceuses) <= 0) or 
+     (aunit^.interfaceuses[1]^.namestring <> '__mla__internaltypes') then begin
+   internalerror(ie_parser,'20171106A');
+  end;
+ {$endif}
+  ele.pushelementparent(aunit^.interfaceuses[1]^.interfaceelement);
+  for t1:= low(internaltypety) to high(internaltypety) do begin
+   if not ele.findcurrent(getident(internaltypenames[t1]),[ek_type],
+                                          allvisi,internaltypes[t1]) then begin
+    internalerror(ie_parser,'20171106B');
+   end;
+  end;
+  ele.popelementparent();
   s1:= cs_zeropointerar;
   se:= high(compilersubnames);
  end
@@ -202,6 +225,7 @@ begin
   end;
  end;
  ele.popelementparent();
+
 end;
 
 end.

@@ -477,6 +477,7 @@ var
  separator1: char;
  wrap: bcunitheaderty;
  addressinfo1: paddressconstty;
+
 begin
  fdatalayout:= adatalayout;
  ftriple:= atriple;

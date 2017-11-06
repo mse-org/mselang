@@ -107,6 +107,12 @@ type
   size: int32;
   kind: rttikindty;
  end;
+{$ifdef mse_compiler}
+ prttity = targetptrintty;
+ pcrttity = ^rttity; 
+{$else}
+ prttity = ^rttity;
+{$endif}
  
  enumrttiflagty = (erf_contiguous);
  enumrttiflagsty = set of enumrttiflagty;
@@ -115,12 +121,24 @@ type
   value: int32;
   name: string8;
  end;
+{$ifdef mse_compiler}
+ penumitemrttity = targetptrintty;
+ pcenumitemrttity = ^enumitemrttity; 
+{$else}
+ penumitemrttity = ^enumitemrttity;
+{$endif}
 
  enumrttity = object(rttity)
   itemcount: integer;
   flags: enumrttiflagsty;
   items: record end; //array of enumitemrttity
  end;
+{$ifdef mse_compiler}
+ penumrttity = targetptrintty;
+ pcenumrttity = ^enumrttity; 
+{$else}
+ penumrttity = ^enumrttity;
+{$endif}
  
  allocsinfoty = record
   size: int32;
@@ -130,13 +148,11 @@ type
 
 {$ifdef mse_compiler}
  pclassdefinfoty = targetptrintty;
- prttity = targetptrintty;
  classdefinfopoty = ^classdefinfoty;
  classprocty = targetptrintty;
 {$else}
  pclassdefinfoty = ^classdefinfoty;
  ppclassdefinfoty = ^pclassdefinfoty;
- prttity = ^rttity;
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}

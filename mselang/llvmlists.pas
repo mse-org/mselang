@@ -327,10 +327,9 @@ type
    function addpointercast(const aid: int32): llvmvaluety;
    function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
    function addaggregate(const avalue: paggregateconstty): llvmvaluety;
+   function addrtti(const artti: pcrttity): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
-                                const aintfcount: int32
-                        {const virtualcount: int32; const virtualsubs: pint32;
-                                  const virtualsubconsts: pint32}): llvmvaluety;
+                                        const aintfcount: int32): llvmvaluety;
                         //virtualsubconsts[virtualcount] used fot typeid
    function addintfdef(const aintf: pintfdefinfoty;
                                        const acount: int32): llvmvaluety;
@@ -1814,6 +1813,64 @@ begin
  result.typeid:= avalue^.header.typeid;
 end;
 
+function tconsthashdatalist.addrtti(const artti: pcrttity): llvmvaluety;
+type
+ aglocty = record
+  header: aggregateconstty;                       
+  items: array[0..255] of int32; //constlist ids
+ end;
+ paglocty = ^aglocty;
+var
+ agloc1: aglocty;
+ ag1: paglocty;
+ pi1: pint32; //items
+ 
+ procedure getag1(count: int32);
+ begin
+  if (ag1 <> nil) and (ag1 <> @agloc1) then begin
+   freemem(ag1);
+  end;
+  if count > length(aglocty.items) then begin
+   ag1:= getmem(sizeof(aglocty.header)+count*sizeof(int32));
+  end
+  else begin
+   ag1:= @agloc1;
+  end;
+  count:= count + 2;
+  ag1^.header.header.itemcount:= count;
+  pi1:= ag1^.items;
+  pi1^:= addi32(artti^.size).listid;
+  inc(pi1);                                      //1
+  pi1^:= addi32(ord(artti^.kind)).listid;
+  inc(pi1);                                      //2
+ end;
+ 
+var
+ p1,pe: pointer;
+begin
+ ag1:= nil;
+ case artti^.kind of
+  rtk_enum: begin
+   with pcenumrttity(artti)^ do begin
+    getag1(itemcount);
+    p1:= @items;
+    pe:= pcenumitemrttity(p1)+itemcount;
+//    getag2(2); //value,name
+    while p1 < pe do begin
+//     pi2^:= addi32(value);
+//     inc(pi2);
+    end;
+   end;
+  end
+  else begin
+   internalerror(ie_llvm,'20171105A');
+  end;
+ end;
+ if (ag1 <> nil) and (ag1 <> @agloc1) then begin
+  freemem(ag1);
+ end;
+end;
+
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmvaluety;
 
@@ -1935,21 +1992,7 @@ begin
                                   classdef1.header.header.itemcount,@types1);
  result:= addaggregate(@classdef1); 
 end;
-{
-function tconsthashdatalist.addintfitem(const aitem: intfitemconstty): int32;
-var
- alloc1: constallocdataty;
- po1: pconstlisthashdataty;
-begin
- alloc1.header.size:= sizeof(aitem);
- alloc1.header.data:= @aitem;
- alloc1.typeid:= -ord(ct_intfitem);
- if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
-  po1^.data.typeid:= alloc1.typeid;
- end;
- result:= po1^.data.header.listindex;
-end;
-}
+
 function tconsthashdatalist.addintfdef(const aintf: pintfdefinfoty;
                const acount: int32): llvmvaluety;
                 //overwrites aintf data

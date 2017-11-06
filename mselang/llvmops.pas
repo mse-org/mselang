@@ -545,6 +545,7 @@ var
  vars1: internalvarty;
  strings1: internalstringty;
  compilersub1: compilersubty;
+ portti,pertti: ^rttity;
  poclassdef,peclassdef: ^classdefinfoty;
  povirtual,pevirtual: popaddressty;
  i1,i2,i3: int32;
@@ -615,6 +616,17 @@ begin
   inc(countpo);
  end;
 
+ portti:= getsegmentbase(seg_rtti);
+ pertti:= getsegmenttop(seg_rtti);
+ while portti < pertti do begin
+  portti:= pointer(portti)+portti^.size;
+  pint32(portti)^:= info.s.unitinfo^.llvmlists.globlist.
+          addinitvalue(gak_const,
+           info.s.unitinfo^.llvmlists.constlist.addrtti(portti).listid,
+                                                               constlinkage);
+                                          //replace data by id
+ end;
+  
  poclassdef:= getsegmentbase(seg_classdef);
  peclassdef:= getsegmenttop(seg_classdef);
  countpo:= getsegmentbase(seg_classintfcount);
@@ -1094,7 +1106,7 @@ end;
 
 procedure writeenumop();
 begin
- notimplemented();
+// notimplemented();
 end;
 
 procedure nopssaop();
