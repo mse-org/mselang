@@ -307,9 +307,12 @@ type
   types: array[0..aglocitemhigh] of int32;
  end;
  
+ tgloballocdatalist = class;
+ 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
+   fgloblist: tgloballocdatalist;
    fpointersize: int32;
   protected
    function hashkey(const akey): hashvaluety override;
@@ -338,11 +341,13 @@ type
                //ids[asize] used for type id not restored
    function addpointercast(const aid: int32): llvmvaluety;
    function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
+   function addident(const aident: identty): llvmvaluety; //string8 pointer
    function addaggregate(const avalue: paggregateconstty): llvmvaluety;
    function addtypedconst(const atype: elementoffsetty;
                                      var adata: pointer): llvmvaluety;
                                    //increments adata to next item
    function addrtti(const artti: pcrttity): llvmvaluety;
+   function addrtti(const atype: ptypedataty): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                         const aintfcount: int32): llvmvaluety;
                         //virtualsubconsts[virtualcount] used fot typeid
@@ -351,12 +356,14 @@ type
                                                    //overwrites aintf data
    function addagloc(const agloc: aglocty): llvmvaluety; //frees agloc
    function addnullvalue(const atypeid: int32): llvmvaluety;
+
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
    function i8const(const avalue: int8): llvmvaluety;
+   function nilpointer(): llvmvaluety;
    function gettype(const aindex: int32): int32;
    property pointersize: int32 read fpointersize; //type = pointerint
  end;
@@ -1464,6 +1471,7 @@ constructor tconsthashdatalist.create(const atypelist: ttypehashdatalist);
 
 begin
  ftypelist:= atypelist;
+// fgloblist:= agloblist; //set by tllvmlists
  inherited create();
 // inherited create(sizeof(constlisthashdataty)-sizeof(bufferhashdataty));
 // inherited create(sizeof(constallocdataty));
@@ -1547,6 +1555,12 @@ function tconsthashdatalist.i8const(const avalue: int8): llvmvaluety;
 begin
  result.listid:= card8(avalue);
  result.typeid:= ord(das_8);
+end;
+
+function tconsthashdatalist.nilpointer(): llvmvaluety;
+begin
+ result.listid:= ord(nco_pointer);
+ result.typeid:= ord(das_pointer);
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;
@@ -1780,6 +1794,31 @@ begin
  end;
 end;
 
+function tconsthashdatalist.addident(const aident: identty): llvmvaluety;
+var
+ buf1: record
+  header: stringheaderty;
+  data: array[0..maxidentlen+1] of byte;
+ end;
+ ls1: lstringty;
+ m1: llvmvaluety;
+ i1: int32;
+begin
+ ls1:= getidentname1(aident);
+ if ls1.len = 0 then begin
+  result:= nilpointer();
+ end
+ else begin
+  buf1.header.ref.count:= -1;
+  buf1.header.len:= ls1.len;
+  move(ls1.po^,buf1.data,ls1.len);
+  buf1.data[ls1.len]:= 0;
+  m1:= addvalue(buf1,sizeof(stringheaderty)+ls1.len+1);
+  i1:= fgloblist.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
+  result:= addaddress(i1,sizeof(stringheaderty)); //string8 pointer
+ end;
+end;
+
 function tconsthashdatalist.addpointerarray(const asize: int32;
                                               const ids: pint32): llvmvaluety;
 var
@@ -1990,6 +2029,53 @@ begin
   end;
  end;
 end;
+
+function tconsthashdatalist.addrtti(const atype: ptypedataty): llvmvaluety;
+var
+ agloc1: aglocty;
+ 
+ procedure initmainagloc(const count: int32; const asize: int32;
+                                                      const akind: rttikindty);
+ begin
+  initagloc(agloc1,count+2);
+  putagitem(agloc1,addi32(asize));      //1
+  putagitem(agloc1,addi32(ord(akind))); //2
+ end;
+ 
+var
+ p1,pe: pointer;
+ enuflags1: enumrttiflagsty;
+ ele1: elementoffsetty;
+ i1: int32;
+begin
+ case atype^.h.kind of
+  dk_enum: begin
+   with atype^.infoenum do begin
+    initmainagloc(itemcount+2,sizeof(enumrttity)+
+                              itemcount*sizeof(enumitemrttity),rtk_enum);
+    putagitem(agloc1,addi32(itemcount));          //1
+    enuflags1:= [];
+    if enf_contiguous in flags then begin
+     include(enuflags1,erf_contiguous);
+    end;
+    putagitem(agloc1,addi32(int32(enuflags1)));   //2
+    ele1:= first;
+    while ele1 <> 0 do begin
+     with ptypedataty(ele.eledataabs(ele1))^.infoenumitem do begin
+      putagitem(agloc1,addi32(value));            //1
+      putagitem(agloc1,addident(ele.eleinfoabs(ele1)^.header.name));
+      ele1:= next;
+     end;
+    end;
+    result:= addagloc(agloc1);
+   end;
+  end
+  else begin
+   internalerror(ie_llvm,'20171107A');
+  end;
+ end;
+end;
+
 
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmvaluety;
@@ -3594,6 +3680,7 @@ begin
  ftypelist:= ttypehashdatalist.create();
  fconstlist:= tconsthashdatalist.create(ftypelist);
  fgloblist:= tgloballocdatalist.create(ftypelist,fconstlist);
+ fconstlist.fgloblist:= fgloblist;
  fmetadatalist:= tmetadatalist.create(ftypelist,fconstlist,fgloblist);
 end;
 

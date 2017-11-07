@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -101,10 +101,11 @@ function rttiname(const aident: identty): string8;
 begin
  result:= allocstringconst(getidentname3(aident)).address;
  if co_llvm in info.o.compileoptions then begin
+  internalerror1(ie_rtti,'20171107C');
  end;
 end;
 
-function getrtti(const atype: ptypedataty): dataaddressty;
+function getrttistackops(const atype: ptypedataty): dataaddressty;
 var
  po1: ^enumrttity;
  po2: ptypedataty;
@@ -147,6 +148,20 @@ begin
 //  move(rttibuffer^,info.constseg[result],rttibufferindex);
  end;
 end;
+
+function getrtti(const atype: ptypedataty): dataaddressty;
+begin
+ result:= atype^.h.rtti;
+ if result = 0 then begin
+  if co_llvm in info.o.compileoptions then begin
+   result:= info.s.unitinfo^.llvmlists.constlist.addrtti(atype).listid;
+  end
+  else begin
+   result:= getrttistackops(atype);
+  end;
+ end;
+end;
+
 {
 procedure init();
 begin
