@@ -92,7 +92,8 @@ type
 //  cs_finiclass,
   cs_raise,
   cs_personality,
-  cs_finiexception
+  cs_finiexception,
+  cs_writeenum
  );
 const
  compilersubnames: array[compilersubty] of string = (
@@ -159,14 +160,15 @@ const
 //  '__mla__finiclass',
   '__mla__raise',
   '__mla__personality',
-  '__mla__finiexception'
+  '__mla__finiexception',
+  '__mla__writeenum'
  );
 
 type
- internaltypety = (it_rtti);
+ internaltypety = (it_rtti,it_enumitemrtti);
 const
  internaltypenames : array[internaltypety] of string =  (
-  'rttity'
+  'rttity','enumitemrttity'
  );
  
 var

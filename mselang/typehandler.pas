@@ -377,6 +377,7 @@ begin
 //    flags:= [];
 //    datasize:= das_none;
     h.kind:= dk_none; //inhibit dump
+    fieldcount:= 0;
     fieldchain:= 0;  //used in checkrecordfield()
    end;
   end;
@@ -436,6 +437,7 @@ begin
    po1^.offset:= aoffset;
    po1^.vf.flags:= [];
    with ptypedataty(ele.parentdata)^ do begin
+    inc(fieldcount);
     po1^.vf.next:= fieldchain;
     fieldchain:= ele.eledatarel(po1);
    end;

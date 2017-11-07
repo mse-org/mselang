@@ -331,6 +331,7 @@ type
     infoaddress: infoaddressty;
    );
    dk_record,dk_object,dk_class:(
+    fieldcount: int32; //including ancestors
     fieldchain: elementoffsetty;
     case datakindty of
      dk_record,dk_class,dk_object:(
@@ -399,7 +400,7 @@ type
   vf: vfinfoty;           //same layout as vardataty
   offset: dataoffsty;
   flags: addressflagsty;
-  indirectlevel: integer;
+  indirectlevel: integer; //total
  end;
  pfielddataty = ^fielddataty;
 

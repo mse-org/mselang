@@ -294,6 +294,18 @@ type
  end;
  pintfitemconstty = ^intfitemconstty;
 }
+
+const
+ aglocitemhigh = 0;
+type
+ aglocty = record
+  ag: paggregateconstty;
+  li,li1: pint32;
+  ty,ty1: pint32;
+  header: aggregateconstty;                       
+  items: array[0..aglocitemhigh] of int32; //constlist ids
+  types: array[0..aglocitemhigh] of int32;
+ end;
  
  tconsthashdatalist = class(tbufferhashdatalist)
   private
@@ -327,6 +339,9 @@ type
    function addpointercast(const aid: int32): llvmvaluety;
    function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
    function addaggregate(const avalue: paggregateconstty): llvmvaluety;
+   function addtypedconst(const atype: elementoffsetty;
+                                     var adata: pointer): llvmvaluety;
+                                   //increments adata to next item
    function addrtti(const artti: pcrttity): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                         const aintfcount: int32): llvmvaluety;
@@ -334,6 +349,7 @@ type
    function addintfdef(const aintf: pintfdefinfoty;
                                        const acount: int32): llvmvaluety;
                                                    //overwrites aintf data
+   function addagloc(const agloc: aglocty): llvmvaluety; //frees agloc
    function addnullvalue(const atypeid: int32): llvmvaluety;
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
@@ -904,7 +920,7 @@ procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode,handlerutils;
+ opcode,handlerutils,compilerunit;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
@@ -1727,14 +1743,19 @@ var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
 begin
- alloc1.header.size:= -1;
- alloc1.header.data:= pointer(ptrint(aid));
- alloc1.typeid:= -ord(ct_pointercast);
- if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
-  po1^.data.typeid:= alloc1.typeid;
+ if aid <= 0 then begin
+  result:= addnullvalue(ord(das_pointer));
+ end
+ else begin
+  alloc1.header.size:= -1;
+  alloc1.header.data:= pointer(ptrint(aid));
+  alloc1.typeid:= -ord(ct_pointercast);
+  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+   po1^.data.typeid:= alloc1.typeid;
+  end;
+  result.listid:= po1^.data.header.listindex;
+  result.typeid:= pointertype;
  end;
- result.listid:= po1^.data.header.listindex;
- result.typeid:= pointertype;
 end;
 
 function tconsthashdatalist.addaddress(const aid: int32;
@@ -1755,7 +1776,7 @@ begin
    po1^.data.typeid:= alloc1.typeid;
   end;
   result.listid:= po1^.data.header.listindex;
-  result.typeid:= po1^.data.typeid;
+//  result.typeid:= po1^.data.typeid;
  end;
 end;
 
@@ -1813,61 +1834,160 @@ begin
  result.typeid:= avalue^.header.typeid;
 end;
 
-function tconsthashdatalist.addrtti(const artti: pcrttity): llvmvaluety;
-type
- aglocty = record
-  header: aggregateconstty;                       
-  items: array[0..255] of int32; //constlist ids
- end;
- paglocty = ^aglocty;
-var
- agloc1: aglocty;
- ag1: paglocty;
- pi1: pint32; //items
- 
- procedure getag1(count: int32);
- begin
-  if (ag1 <> nil) and (ag1 <> @agloc1) then begin
-   freemem(ag1);
-  end;
+procedure initagloc(var agloc: aglocty; const count: int32);
+begin
+ with agloc do begin
   if count > length(aglocty.items) then begin
-   ag1:= getmem(sizeof(aglocty.header)+count*sizeof(int32));
+   ag:= getmem(sizeof(aglocty.header)+count*sizeof(int32));
+   ty:= getmem(count*sizeof(int32));
   end
   else begin
-   ag1:= @agloc1;
+   ag:= @agloc.header;
+   ty:= @agloc.types;
   end;
-  count:= count + 2;
-  ag1^.header.header.itemcount:= count;
-  pi1:= ag1^.items;
-  pi1^:= addi32(artti^.size).listid;
-  inc(pi1);                                      //1
-  pi1^:= addi32(ord(artti^.kind)).listid;
-  inc(pi1);                                      //2
+  li:= @ag^.items;
+  ty1:= ty;
+  li1:= li;
+  ag^.header.itemcount:= count;
+ end;
+end;
+
+procedure putagitem(var agloc: aglocty; const avalue: llvmvaluety);
+begin
+ with agloc do begin
+  ty1^:= avalue.typeid;
+  li1^:= avalue.listid;
+  inc(ty1);
+  inc(li1);
+ end;
+end;
+
+procedure freeagloc(const agloc: aglocty);
+begin
+ if (agloc.ag <> nil) and (agloc.ag <> @agloc.header) then begin
+  freemem(agloc.ag);
+  freemem(agloc.ty);
+ end;
+end;
+
+function tconsthashdatalist.addagloc(const agloc: aglocty): llvmvaluety;
+begin
+ agloc.ag^.header.typeid:= typelist.addstructvalue(
+                                  agloc.ag^.header.itemcount,agloc.ty);
+ result:= addaggregate(agloc.ag);
+ freeagloc(agloc);
+end;
+
+function tconsthashdatalist.addtypedconst(const atype: elementoffsetty;
+                                         var adata: pointer): llvmvaluety;
+                        //todo: alignment
+var
+ agloc1: aglocty;
+ typ1: ptypedataty;
+ ele1: elementoffsetty;
+ field1: pfielddataty;
+ p1: pointer;
+ m1: llvmvaluety; 
+begin
+ typ1:= ele.eledataabs(basetype(atype));
+{$ifdef mse_checkinternalerror}
+ if datatoele(typ1)^.header.kind <> ek_type then begin
+  internalerror(ie_parser,'20171106B');
+ end;
+{$endif}
+ if (typ1^.h.indirectlevel > 0) then begin
+  result:= addpointercast(ptargetptrintty(adata)^);
+  inc(adata,sizeof(targetptrintty));
+ end
+ else begin
+  case typ1^.h.kind of
+   dk_integer,dk_cardinal: begin
+    case typ1^.h.datasize of
+     das_8: begin
+      result:= addi8(pint8(adata)^);
+     end;
+     das_16: begin
+      result:= addi16(pint16(adata)^);
+     end;
+     das_32: begin
+      result:= addi32(pint32(adata)^);
+     end;
+     das_64: begin
+      result:= addi64(pint64(adata)^);
+     end;
+     else begin
+      internalerror1(ie_parser,'20171106D');
+     end;
+    end;
+   end;
+   dk_string: begin
+    result:= addaddress(ptargetptrintty(adata)^,sizeof(stringheaderty));
+    inc(adata,sizeof(targetptrintty));
+   end;
+   dk_dynarray: begin
+    result:= addaddress(ptargetptrintty(adata)^,sizeof(dynarrayheaderty));
+    inc(adata,sizeof(targetptrintty));
+   end;
+   dk_record: begin
+    initagloc(agloc1,typ1^.fieldcount);
+    ele1:= typ1^.fieldchain;
+    while ele1 > 0 do begin
+     field1:= ele.eledataabs(ele1);
+     p1:= adata + field1^.offset;
+     if field1^.indirectlevel > 0 then begin
+      putagitem(agloc1,addpointercast(ptargetptrintty(p1)^));
+     end
+     else begin
+      putagitem(agloc1,addtypedconst(field1^.vf.typ,p1));
+     end;
+     ele1:= field1^.vf.next;
+    end;
+    result:= addagloc(agloc1);
+   end;
+   else begin
+    internalerror1(ie_parser,'20171106C');
+   end;
+  end;
+  inc(adata,typ1^.h.bytesize);
+ end;
+end;
+
+function tconsthashdatalist.addrtti(const artti: pcrttity): llvmvaluety;
+var
+ agloc1: aglocty;
+// ag1: paggregateconstty;
+// pi1: pint32; //items
+ 
+ procedure initmainagloc(const count: int32);
+ begin
+  initagloc(agloc1,count+2);
+  putagitem(agloc1,addi32(artti^.size));      //1
+  putagitem(agloc1,addi32(ord(artti^.kind))); //2
  end;
  
 var
  p1,pe: pointer;
 begin
- ag1:= nil;
+// ag1:= nil;
  case artti^.kind of
   rtk_enum: begin
    with pcenumrttity(artti)^ do begin
-    getag1(itemcount);
+    initmainagloc(itemcount+2);
+    putagitem(agloc1,addi32(itemcount));
+    putagitem(agloc1,addi32(int32(flags)));
     p1:= @items;
     pe:= pcenumitemrttity(p1)+itemcount;
-//    getag2(2); //value,name
     while p1 < pe do begin
-//     pi2^:= addi32(value);
-//     inc(pi2);
+     putagitem(agloc1,addtypedconst(internaltypes[it_enumitemrtti],p1));
+//     inc(pi1);
+//     inc(pcenumitemrttity(p1));
     end;
+    result:= addagloc(agloc1);
    end;
   end
   else begin
    internalerror(ie_llvm,'20171105A');
   end;
- end;
- if (ag1 <> nil) and (ag1 <> @agloc1) then begin
-  freemem(ag1);
  end;
 end;
 

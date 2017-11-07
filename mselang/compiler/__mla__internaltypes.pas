@@ -20,6 +20,7 @@ type
 type
 {$ifdef mse_compiler}
  targetptrintty = int32;
+ ptargetptrintty = ^targetptrintty;
  card32 = longword;
  card64 = qword;
  targetpointerty = card32;

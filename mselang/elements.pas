@@ -1738,7 +1738,7 @@ begin
       case h.kind of
        dk_class,dk_object: begin
         if icf_defvalid in infoclass.flags then begin
-         mstr1:= mstr1+lineend+
+         mstr1:= mstr1+' fcount:'+inttostrmse(fieldcount)+lineend+
             ' flags:'+
               msestring(settostring(ptypeinfo(typeinfo(infoclass.flags)),
                                          integer(infoclass.flags),true))+

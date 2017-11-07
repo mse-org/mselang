@@ -99,7 +99,9 @@ function __mla__classis(const a,b: pclassdefinfoty): bool1;
 function __mla__checkclasstype(var instance: pointer; //nil if no match
                               const classtype: pclassdefinfoty): bool1;
                                                       //false if no match
-
+procedure __mla__writeenum(const avalue: int32;
+                              const artti: penumrttity);
+                              
 //function __mla__initclass(const classinfo: classdefinfoty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
 procedure __mla__raise(const data: pointer);
@@ -1542,6 +1544,36 @@ begin
   result:= false;
   instance:= nil;  
  end;
+end;
+var testvar: prttity;
+function getenumname(const enumvalue: int32; const rtti: penumrttity): string8;
+var
+ p1,pe: ^enumitemrttity;
+begin
+testvar:= rtti;
+ result:= '';
+ p1:= pointer(@rtti^.items);
+ if erf_contiguous in rtti^.flags then begin
+  if (enumvalue >= 0) and (enumvalue < rtti^.itemcount) then begin
+   result:= (p1 + enumvalue)^.name;
+  end;
+ end
+ else begin
+  pe:= p1+rtti^.itemcount;
+  while p1 < pe do begin
+   if p1^.value = enumvalue then begin
+    result:= p1^.name;
+    break;
+   end;
+   inc(p1);
+  end;
+ end;
+end;
+
+procedure __mla__writeenum(const avalue: int32;
+                              const artti: penumrttity);
+begin
+ write(getenumname(avalue,artti));
 end;
 
 (*

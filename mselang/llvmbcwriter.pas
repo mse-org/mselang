@@ -1480,7 +1480,8 @@ end;
 
 procedure tllvmbcwriter.emitgepconst(const avalue: int32; const aoffset: int32);
 begin
- emitrec(ord(CST_CODE_CE_GEP),[typeval(das_8),ptypeval(das_8),avalue,typeval(das_32),aoffset]);
+ emitrec(ord(CST_CODE_CE_GEP),[typeval(das_8),ptypeval(das_8),
+                                          avalue,typeval(das_32),aoffset]);
 end;
 
 procedure tllvmbcwriter.emitsub(const atype: int32;

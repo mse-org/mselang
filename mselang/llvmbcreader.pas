@@ -1428,6 +1428,9 @@ begin
           defoutconst();
          end;
         end;
+        CST_CODE_CE_GEP: begin
+         defoutconst();
+        end;
         else begin
          defoutconst();
         end;
@@ -2058,6 +2061,9 @@ var
       result:= b and not pointermask = ftypelist.parenttypeindex(a);
      end;
     end;
+   end;
+   if not result then begin
+    result:= ftypelist.sametype(a,b);
    end;
    result:= result or (b and pointermask = 0) and (b < ftypelist.count) and 
                          (ftypelist.item(b)^.kind = TYPE_CODE_METADATA);

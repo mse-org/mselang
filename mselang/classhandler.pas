@@ -276,6 +276,7 @@ begin
     end;
 }
     with po1^ do begin
+     fieldcount:= 0;
      fieldchain:= 0;
      infoclass.intfnamenode:= ele1;
      infoclass.intftypenode:= ele2;
@@ -424,6 +425,7 @@ begin
                                       icf_except];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
      po1^.infoclass.subattach:= po2^.infoclass.subattach;
+     po1^.fieldcount:= po2^.fieldcount;
      if po2^.infoclass.interfacecount > 0 then begin
       po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end

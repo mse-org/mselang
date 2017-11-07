@@ -619,12 +619,12 @@ begin
  portti:= getsegmentbase(seg_rtti);
  pertti:= getsegmenttop(seg_rtti);
  while portti < pertti do begin
-  portti:= pointer(portti)+portti^.size;
   pint32(portti)^:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
            info.s.unitinfo^.llvmlists.constlist.addrtti(portti).listid,
                                                                constlinkage);
                                           //replace data by id
+  portti:= pointer(portti)+portti^.size;
  end;
   
  poclassdef:= getsegmentbase(seg_classdef);
@@ -1105,8 +1105,15 @@ begin
 end;
 
 procedure writeenumop();
+var
+ i1: int32;
 begin
-// notimplemented();
+ with pc^.par do begin
+  i1:= pint32(getsegmentpo(seg_rtti,voffsaddress))^; //globalid
+  bcstream.emitbitcast(bcstream.globval(i1),bcstream.pointertype); //1ssa
+  callcompilersub(cs_writeenum,false,
+                                 [bcstream.ssaval(ssas1),bcstream.relval(0)]);
+ end;
 end;
 
 procedure nopssaop();
