@@ -1475,7 +1475,7 @@ begin
         (coo_type in aoptions) and (destindirectlevel > 0) and 
                                           (d.dat.datatyp.indirectlevel > 0);
                    //pointer type conversion
-     result:= result and ((dest^.h.kind <> dk_string) or
+     result:= result and ((d.kind <> ck_const) or (dest^.h.kind <> dk_string) or
                                            (destindirectlevel <> 0));
      pointerconv:= result;
     end;
