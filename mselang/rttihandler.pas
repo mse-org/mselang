@@ -154,11 +154,12 @@ begin
  result:= atype^.h.rtti;
  if result = 0 then begin
   if co_llvm in info.o.compileoptions then begin
-   result:= info.s.unitinfo^.llvmlists.constlist.addrtti(atype).listid;
+   result:= info.s.unitinfo^.llvmlists.globlist.addrtticonst(atype).listid;
   end
   else begin
    result:= getrttistackops(atype);
   end;
+  atype^.h.rtti:= result;
  end;
 end;
 

@@ -1109,8 +1109,9 @@ var
  i1: int32;
 begin
  with pc^.par do begin
-  i1:= pint32(getsegmentpo(seg_rtti,voffsaddress))^; //globalid
-  bcstream.emitbitcast(bcstream.globval(i1),bcstream.pointertype); //1ssa
+//  i1:= pint32(getsegmentpo(seg_rtti,voffsaddress))^; //globalid
+  bcstream.emitbitcast(bcstream.constval(voffsaddress),
+                                           bcstream.pointertype); //1ssa
   callcompilersub(cs_writeenum,false,
                                  [bcstream.ssaval(ssas1),bcstream.relval(0)]);
  end;

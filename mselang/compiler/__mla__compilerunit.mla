@@ -1555,14 +1555,16 @@ testvar:= rtti;
  p1:= pointer(@rtti^.items);
  if erf_contiguous in rtti^.flags then begin
   if (enumvalue >= 0) and (enumvalue < rtti^.itemcount) then begin
-   result:= (p1 + enumvalue)^.name;
+   decref(result);
+   pointer(result):= pointer((p1 + enumvalue)^.name); //const string, no incref
   end;
  end
  else begin
   pe:= p1+rtti^.itemcount;
   while p1 < pe do begin
    if p1^.value = enumvalue then begin
-    result:= p1^.name;
+    decref(result);
+    pointer(result):= pointer(p1^.name);     //const string, no incref
     break;
    end;
    inc(p1);
