@@ -1,0 +1,6 @@
+program pointertostring2;
+var
+ s1: string8;
+begin
+ s1:= string8(nil);
+end.
