@@ -1462,7 +1462,7 @@ begin
      end;
     end
     else begin
-     result:=                           //todo: optimise
+     result:=          //todo: optimise
         ((dest^.h.kind in nilpointerdatakinds) and 
                                        (destindirectlevel = 0) or
                 (dest^.h.kind = dk_pointer) and (destindirectlevel = 1)) and 
@@ -1475,6 +1475,8 @@ begin
         (coo_type in aoptions) and (destindirectlevel > 0) and 
                                           (d.dat.datatyp.indirectlevel > 0);
                    //pointer type conversion
+     result:= result and ((dest^.h.kind <> dk_string) or
+                                           (destindirectlevel <> 0));
      pointerconv:= result;
     end;
    end;
@@ -1483,7 +1485,7 @@ begin
                               (dest^.h.bytesize = source1^.h.bytesize);
    end;
    if result then begin
-    if (d.kind = ck_const) and not pointerconv then begin
+    if not pointerconv and (d.kind = ck_const) then begin
      d.dat.constval.kind:= dest^.h.kind;
     end;    
     d.dat.datatyp.indirectlevel:= destindirectlevel;
