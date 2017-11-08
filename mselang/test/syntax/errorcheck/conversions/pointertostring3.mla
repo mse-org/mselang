@@ -1,0 +1,7 @@
+program pointertostring3;
+var
+ s1: string8;
+ p1: pointer;
+begin
+ s1:= p1;
+end.

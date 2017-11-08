@@ -3849,7 +3849,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7299D60
+    ao=An unhandled exception occured at $B728DE90
     ae=
     aec=123
     ie=0
@@ -12594,7 +12594,7 @@ c=3
     (
     kind=1
     a=0,665,4,conversions
-    c=2
+    c=3
      (
      kind=2
      a=0,648,1,pointertostring1
@@ -12607,9 +12607,9 @@ c=3
      rd=
      in=
      eo=
-     ao=0
+     ao=1
      ee=
-     ae=0
+     ae=1
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
@@ -12630,6 +12630,29 @@ c=3
      rd=
      in=
      eo=
+     ao=0
+     ee=
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2017 by Martin Schreiber
+     ae=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
+     aec=1
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointertostring3
+     teststate=1
+     path=pointertostring3.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
      ao=1
      ee=
      ae=1
@@ -12637,7 +12660,7 @@ c=3
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2017 by Martin Schreiber
-     ae=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
+     ae=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
      aec=1
      ie=0
      )
@@ -12801,11 +12824,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,rtl
+  a=0,665,4,rtl
   c=2
    (
    kind=1
-   a=0,664,4,variants
+   a=0,665,4,variants
    c=7
     (
     kind=2
@@ -13222,7 +13245,18 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=75
+rowstate=86
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
