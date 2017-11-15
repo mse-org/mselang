@@ -834,13 +834,6 @@ begin
      include(h.flags,tf_complexini);
     end;
 
-   {
-    with contextstack[s.stackindex] do begin
-     if obf_zeroed in d.cla.flags then begin
-      include(infoclass.flags,icf_zeroed);
-     end;
-    end;
-   }
     regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
@@ -862,7 +855,13 @@ begin
      header.allocs.classdefinterfacestart:= int1;
      header.parentclass:= -1;
      header.interfaceparent:= -1;
-     header.typeinfo:= -1;
+     if co_llvm in o.compileoptions then begin
+      header.typeinfo:= 
+                     s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
+     end
+     else begin
+      header.typeinfo:= -1;
+     end;
      if h.ancestor <> 0 then begin 
       parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
       header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate

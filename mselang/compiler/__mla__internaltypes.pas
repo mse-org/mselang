@@ -102,7 +102,7 @@ type
  string8 = targetptrintty;
 {$endif}
 
- rttikindty = (rtk_none,rtk_enum,rtk_enumitem);
+ rttikindty = (rtk_none,rtk_enum,rtk_enumitem,rtk_object);
 
  rttity = object
   size: int32;
@@ -140,6 +140,9 @@ type
 {$else}
  penumrttity = ^enumrttity;
 {$endif}
+
+ objectrttity = object(rttity)
+ end;
  
  allocsinfoty = record
   size: int32;

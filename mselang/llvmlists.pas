@@ -2066,8 +2066,10 @@ begin
   classdef1.items[3]:= nullpointer;
  end
  else begin
-  classdef1.items[3]:= addpointercast(
-                    getrttiid(aclassdef^.header.typeinfo)).listid;
+//  classdef1.items[3]:= nullpointer;
+  classdef1.items[3]:= aclassdef^.header.typeinfo;
+//  classdef1.items[3]:= addpointercast(
+//                    getrttiid(aclassdef^.header.typeinfo)).listid;
  end;
  
  i2:= 4;
@@ -2552,15 +2554,18 @@ begin
        ele1:= next;
       end;
      end;
-     m1:= addagloc(agloc1);
-     i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
-     result:= addpointercast(i1); //prtti
     end;
-   end
+   end;
+   dk_class,dk_object: begin
+    initmainagloc(0,sizeof(objectrttity),rtk_object);
+   end;
    else begin
-    internalerror(ie_llvm,'20171107A');
+    internalerror1(ie_llvm,'20171107A');
    end;
   end;
+  m1:= addagloc(agloc1);
+  i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
+  result:= addpointercast(i1); //prtti
  end;
 end;
 
