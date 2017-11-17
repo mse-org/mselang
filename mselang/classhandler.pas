@@ -806,6 +806,10 @@ begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
    currenttypedef:= d.typ.typedata;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   regclass(d.typ.typedata);
+   createrecordmanagehandler(d.typ.typedata); 
+                               //always called because of iniproc
+   typ1^.infoclass.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
    if obf_except in contextstack[s.stackindex].d.cla.flags then begin
     if typ1^.infoclass.subattach.destroy = 0 then begin
      errormessage(err_exceptmusthavedefaultdestruct,[]);
@@ -834,7 +838,7 @@ begin
      include(h.flags,tf_complexini);
     end;
 
-    regclass(d.typ.typedata);
+//    regclass(d.typ.typedata);
     h.flags:= h.flags+d.typ.flags;
     h.indirectlevel:= d.typ.indirectlevel;
     if not (icf_allocvalid in infoclass.flags) or 
@@ -843,86 +847,92 @@ begin
      updateobjalloc(typ1,classinfo1);
     end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
-    int1:= sizeof(classdefinfoty)+ targetpointersize*infoclass.virtualcount;
-                     //interfacetable start
-    classdefs1:= getclassinfoaddress(
-      int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
-    infoclass.defs:= classdefs1;
-    with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
-     header.virttaboffset:= infoclass.virttaboffset;
-     header.allocs.size:= infoclass.allocsize;
-     header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
-     header.allocs.classdefinterfacestart:= int1;
-     header.parentclass:= -1;
-     header.interfaceparent:= -1;
-     if co_llvm in o.compileoptions then begin
-      header.typeinfo:= 
-                     s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
-     end
-     else begin
-      header.typeinfo:= -1;
-     end;
-     if h.ancestor <> 0 then begin 
-      parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
-      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
-      if parentinfoclass1^.virtualcount > 0 then begin
-       fillchar(virtualmethods,
-                    parentinfoclass1^.virtualcount*targetpointersize,0);
-       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
-        copyvirtualtable(parentinfoclass1^.defs,infoclass.defs,
-                                        parentinfoclass1^.virtualcount);
+    reversefieldchain(typ1);
+    if co_llvm in o.compileoptions then begin
+     infoclass.defs.address:=
+            s.unitinfo^.llvmlists.globlist.addclassdefconst(typ1).listid;
+    end
+    else begin
+     int1:= sizeof(classdefinfoty)+ targetpointersize*infoclass.virtualcount;
+                      //interfacetable start
+     classdefs1:= getclassinfoaddress(
+       int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
+     infoclass.defs:= classdefs1;
+     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
+      header.virttaboffset:= infoclass.virttaboffset;
+      header.allocs.size:= infoclass.allocsize;
+      header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
+      header.allocs.classdefinterfacestart:= int1;
+      header.parentclass:= -1;
+      header.interfaceparent:= -1;
+      if co_llvm in o.compileoptions then begin
+       header.typeinfo:= 
+                      s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
+      end
+      else begin
+       header.typeinfo:= -1;
+      end;
+      if h.ancestor <> 0 then begin 
+       parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
+       header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
+       if parentinfoclass1^.virtualcount > 0 then begin
+        fillchar(virtualmethods,
+                     parentinfoclass1^.virtualcount*targetpointersize,0);
+        if icf_virtualtablevalid in parentinfoclass1^.flags then begin
+         copyvirtualtable(parentinfoclass1^.defs,infoclass.defs,
+                                         parentinfoclass1^.virtualcount);
+        end
+        else begin
+         regclassdescendant(d.typ.typedata,h.ancestor);
+        end;
+       end;
+      end;
+      if infoclass.interfaceparent <> 0 then begin
+       header.interfaceparent:= ptypedataty(ele.eledataabs(
+              infoclass.interfaceparent))^.infoclass.defs.address;
+                                                           //todo: relocate
+      end;
+      if infoclass.interfacecount <> 0 then begin       //alloc interface table
+       po1:= pointer(@header) + header.allocs.classdefinterfacestart;
+       inc(po1,infoclass.interfacecount); //top - down
+       int1:= -infoclass.allocsize; 
+       ele1:= infoclass.interfacechain;
+       while ele1 <> 0 do begin
+        inc(int1,targetpointersize);
+        dec(po1);
+        po1^:= checkinterface(int1,{infoclass.virttaboffset,}
+                                                  ele.eledataabs(ele1));
+        ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
+       end;
+      end;
+ //     if (h.flags * 
+ //             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
+ //                                  (infoclass.subattach.destroy <> 0) then begin
+//       createrecordmanagehandler(d.typ.typedata); 
+                               //always called because of iniproc
+ //     end;
+      typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
+                      //could be relocated by createrecordmanagehandler
+      with typ1^ do begin
+ //      if infoclass.subattach.ini <> 0 then begin
+        header.procs[cdp_ini]:= pinternalsubdataty(
+                ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
+        header.procs[cdp_fini]:= pinternalsubdataty(
+                ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
+ //      end
+ //      else begin
+ //       header.iniproc:= 0;
+ //      end;
+       if infoclass.subattach.destroy <> 0 then begin
+        header.procs[cdp_destruct]:= pinternalsubdataty(
+                ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
        end
        else begin
-        regclassdescendant(d.typ.typedata,h.ancestor);
+        header.procs[cdp_destruct]:= 0;
        end;
       end;
      end;
-     if infoclass.interfaceparent <> 0 then begin
-      header.interfaceparent:= ptypedataty(ele.eledataabs(
-             infoclass.interfaceparent))^.infoclass.defs.address;
-                                                          //todo: relocate
-     end;
-     if infoclass.interfacecount <> 0 then begin       //alloc interface table
-      po1:= pointer(@header) + header.allocs.classdefinterfacestart;
-      inc(po1,infoclass.interfacecount); //top - down
-      int1:= -infoclass.allocsize; 
-      ele1:= infoclass.interfacechain;
-      while ele1 <> 0 do begin
-       inc(int1,targetpointersize);
-       dec(po1);
-       po1^:= checkinterface(int1,{infoclass.virttaboffset,}
-                                                 ele.eledataabs(ele1));
-       ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
-      end;
-     end;
-     reversefieldchain(typ1);
-//     if (h.flags * 
-//             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
-//                                  (infoclass.subattach.destroy <> 0) then begin
-      createrecordmanagehandler(d.typ.typedata); 
-                              //always called because of iniproc
-//     end;
-     typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
-                     //could be relocated by createrecordmanagehandler
-     with typ1^ do begin
-//      if infoclass.subattach.ini <> 0 then begin
-       header.procs[cdp_ini]:= pinternalsubdataty(
-               ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
-       header.procs[cdp_fini]:= pinternalsubdataty(
-               ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
-//      end
-//      else begin
-//       header.iniproc:= 0;
-//      end;
-      if infoclass.subattach.destroy <> 0 then begin
-       header.procs[cdp_destruct]:= pinternalsubdataty(
-               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
-      end
-      else begin
-       header.procs[cdp_destruct]:= 0;
-      end;
-     end;
-    end;
+    end; //not llvm
    end;
    if currentparamupdatechain >= 0 then begin
     p1:= getsegmentpo(seg_temp,currentparamupdatechain);

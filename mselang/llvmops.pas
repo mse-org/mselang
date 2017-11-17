@@ -3684,8 +3684,10 @@ end;
 procedure pushclassdefop();
 begin
  with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.globval(
-            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
+  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
+                                                                   //2ssa
+//  bcstream.emitgetelementptr(bcstream.globval(
+//            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
                                                                    //2ssa
  end;
 end;

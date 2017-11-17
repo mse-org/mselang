@@ -469,8 +469,11 @@ type
    function addinitvalue(const akind: globallockindty;
               const aconstlistindex: integer; const alinkage: linkagety): int32;
                                                             //returns listid
-   function addidentconst(const aident: identty): llvmvaluety;   //string8 pointer
+   function addidentconst(const aident: identty): llvmvaluety;
+                                                    //string8 pointer
    function addrtticonst(const atype: ptypedataty): llvmvaluety; //prtti
+   function addclassdefconst(const atype: ptypedataty): llvmvaluety; 
+                                                    //pclassdefinfoty
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
    function gettype1(const alistid: int32): metavaluety;
@@ -1876,6 +1879,25 @@ begin
  end;
 end;
 
+procedure putagsub(var agloc: aglocty; const avalue: opaddressty);
+var
+ pop1: popinfoty;
+begin
+ if avalue = 0 then begin
+  putagitem(agloc,info.s.unitinfo^.llvmlists.constlist.nilpointer);
+ end
+ else begin
+  pop1:= getoppo(avalue);
+ {$ifdef mse_checkinternalerror}
+  if pop1^.op.op <> oc_subbegin then begin
+   internalerror(ie_llvmlist,'20171116A');
+  end;
+ {$endif}
+  putagitem(agloc,info.s.unitinfo^.llvmlists.constlist.
+                                addpointercast(pop1^.par.subbegin.globid));
+ end;
+end;
+
 procedure freeagloc(const agloc: aglocty);
 begin
  if (agloc.ag <> nil) and (agloc.ag <> @agloc.header) then begin
@@ -2549,8 +2571,9 @@ begin
      ele1:= first;
      while ele1 <> 0 do begin
       with ptypedataty(ele.eledataabs(ele1))^.infoenumitem do begin
-       putagitem(agloc1,addi32(value));                                    //1
-       putagitem(agloc1,self.addidentconst(ele.eleinfoabs(ele1)^.header.name)); //2
+       putagitem(agloc1,addi32(value));            //1
+       putagitem(agloc1,self.addidentconst(ele.eleinfoabs(ele1)^.header.name)); 
+                                                   //2
        ele1:= next;
       end;
      end;
@@ -2566,6 +2589,86 @@ begin
   m1:= addagloc(agloc1);
   i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
   result:= addpointercast(i1); //prtti
+ end;
+end;
+
+function tgloballocdatalist.addclassdefconst(
+                                const atype: ptypedataty): llvmvaluety;
+var
+ agloc1: aglocty;
+ 
+ procedure putvirttab(atype: ptypedataty);
+ var
+  typ1: ptypedataty;
+  i1: int32;
+ begin
+  if atype^.h.ancestor <> 0 then begin
+   typ1:= ele.eledataabs(atype^.h.ancestor);
+   if typ1^.infoclass.virtualcount > 0 then begin
+    putvirttab(typ1);
+   end;
+   //todo
+  end;
+ end;//putvirttab
+ 
+ procedure putinterface(atype: ptypedataty);
+ begin
+  //todo
+ end;
+var
+ m1: llvmvaluety;
+ i1: int32;
+  
+begin
+ with fconstlist,atype^ do begin
+  initagloc(agloc1,10+infoclass.virtualcount+infoclass.interfacecount);
+
+   //parentclass: pclassdefinfoty;
+  if h.ancestor <> 0 then begin
+   putagitem(agloc1,addpointercast(
+         ptypedataty(ele.eledataabs(h.ancestor))^.infoclass.defs.address));
+                                                              //1
+  end
+  else begin
+   putagitem(agloc1,nilpointer);                              //1
+  end;
+   //interfaceparent: pclassdefinfoty; //last parent class with interfaces
+  if infoclass.interfaceparent <> 0 then begin
+   putagitem(agloc1,addpointercast(ptypedataty(ele.eledataabs(
+                         infoclass.interfaceparent))^.infoclass.defs.address)); 
+                                                              //2
+  end
+  else begin
+   putagitem(agloc1,nilpointer);                              //2
+  end;
+   //virttaboffset: int32;             //field offset in instance
+  putagitem(agloc1,addi32(infoclass.virttaboffset));          //3
+   //typeinfo: prttity;
+  putagitem(agloc1,addpointercast(infoclass.rttiid));         //4
+   //procs: array[classdefprocty] of classprocty;
+  putagsub(agloc1,pinternalsubdataty(
+                ele.eledataabs(recordmanagehandlers[mo_ini]))^.address);
+                                                              //5
+  putagsub(agloc1,pinternalsubdataty(
+                ele.eledataabs(recordmanagehandlers[mo_fini]))^.address);
+                                                              //6
+  putagsub(agloc1,pinternalsubdataty(
+             ele.eledataabs(recordmanagehandlers[mo_destroy]))^.address);
+                                                              //7
+   //allocs: allocsinfoty;
+    //size: int32;
+  putagitem(agloc1,addi32(infoclass.allocsize));              //8
+    //instanceinterfacestart: int32; //offset in instance record
+  putagitem(agloc1,addi32(infoclass.instanceinterfacestart)); //9
+    //classdefinterfacestart: int32; //offset in classdefheaderty
+  putagitem(agloc1,addi32(sizeof(classdefinfoty) + 
+             targetpointersize*infoclass.virtualcount));      //10
+
+  putvirttab(atype);
+  putinterface(atype);
+  m1:= addagloc(agloc1);
+  i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
+  result:= addpointercast(i1); //pclassdefinfoty
  end;
 end;
 
@@ -3399,9 +3502,17 @@ begin
   else begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
-    m2:= addtype(po2^.h.base,0{po2^.h.indirectlevel-1}{,false});
     m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
+              lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,dummymeta);
+                 //preliminary for forward pointer
+    po1:= ftypemetalist.getdatapo(offs1); //possibly moved
+    po1^.id:= m1.id;
+    m2:= addtype(po2^.h.base,0);
+    with pdiderivedtypety(getdata(m1))^ do begin
+     basetype:= m2;
+    end;
+//    m1:= adddiderivedtype(didk_pointertype,file1,context1,
+//                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
    end
    else begin
     case po2^.h.kind of
