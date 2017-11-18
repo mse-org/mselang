@@ -130,26 +130,22 @@ type
 {$endif}
 
  enumrttity = object(rttity)
-  itemcount: integer;
-  flags: enumrttiflagsty;
+  itemcount: integer;                 //0
+  flags: enumrttiflagsty;             //1
   items: record end; //array of enumitemrttity
  end;
+
+const
+ rttifieldcount = 2;
+ classrttidefindex = rttifieldcount + 0;
+
+type
 {$ifdef mse_compiler}
  penumrttity = targetptrintty;
  pcenumrttity = ^enumrttity; 
 {$else}
  penumrttity = ^enumrttity;
 {$endif}
-
- objectrttity = object(rttity)
- end;
- pobjectrttity = ^objectrttity;
- 
- allocsinfoty = record
-  size: int32;
-  instanceinterfacestart: int32; //offset in instance record
-  classdefinterfacestart: int32; //offset in classdefheaderty
- end;
 
 {$ifdef mse_compiler}
  pclassdefinfoty = targetptrintty;
@@ -161,6 +157,16 @@ type
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}
+ 
+ objectrttity = object(rttity)
+  classdef: pclassdefinfoty; //0 -> classrttidefindex
+ end;
+ pobjectrttity = ^objectrttity;
+ allocsinfoty = record
+  size: int32;
+  instanceinterfacestart: int32; //offset in instance record
+  classdefinterfacestart: int32; //offset in classdefheaderty
+ end;
 
  classdefprocty = (cdp_ini,cdp_fini,cdp_destruct);
 

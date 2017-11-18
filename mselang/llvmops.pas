@@ -36,7 +36,7 @@ uses
  globtypes,sysutils,msesys,segmentutils,handlerglob,elements,msestrings,
  compilerunit,bcunitglob,identutils,
  handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
- interfacehandler;
+ interfacehandler,rttihandler;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -537,7 +537,9 @@ var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
  po2: pvardataty;
- po3: ptypedataty;
+ typ1: ptypedataty;
+ hashdat1: pconstlisthashdataty;
+ bufdat1: paggregateconstty;
  po4: popinfoty;
  int1: integer;
  str1,str2: shortstring;
@@ -627,7 +629,7 @@ begin
   portti:= pointer(portti)+portti^.size;
  end;
   
- poclassdef:= getsegmentbase(seg_classdef);
+ poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
  peclassdef:= getsegmenttop(seg_classdef);
  countpo:= getsegmentbase(seg_classintfcount);
  while poclassdef < peclassdef do begin   //classes
@@ -636,7 +638,23 @@ begin
            info.s.unitinfo^.llvmlists.constlist.addclassdef(
                                    poclassdef,countpo^).listid,constlinkage);
                                           //replace data by id
-  poclassdef:= pointer(poclassdef) +
+  typ1:= ele.eledataabs((pclassdefconstheaderty(
+                                       pointer(poclassdef))-1)^.typedata);
+             //header in negative offset
+ {$ifdef mse_checkinternalerror}
+  if not (typ1^.h.kind in [dk_object,dk_class]) then begin
+   internalerror(ie_llvmlist,'20171118A');
+  end;
+ {$endif}
+  getrtti(typ1);
+  with info.s.unitinfo^.llvmlists.constlist do begin
+   hashdat1:= pconstlisthashdataty(data) + typ1^.h.llvmrtticonst + 1;
+   bufdat1:= absdata(hashdat1^.data.header.buffer);
+   pint32(@bufdat1^.items)[classrttidefindex]:= 
+                        addpointercast(pint32(poclassdef)^).listid;
+  end;
+  
+  poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
                        poclassdef^.header.allocs.classdefinterfacestart +
                                                    countpo^*targetpointersize;
   inc(countpo);

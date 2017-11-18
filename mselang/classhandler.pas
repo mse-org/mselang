@@ -797,6 +797,7 @@ var
 // interfacealloc: int32;
  typ1,typ2: ptypedataty;
  p1: pparamupdatechainty;
+ p2: pointer;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -859,7 +860,11 @@ begin
      classdefs1:= getclassinfoaddress(
        int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
      infoclass.defs:= classdefs1;
-     with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
+     p2:= getsegmentpo(classdefs1);
+     with (pclassdefconstheaderty(p2)-1)^ do begin
+      typedata:= d.typ.typedata;
+     end;
+     with classdefinfopoty(p2)^ do begin
       header.virttaboffset:= infoclass.virttaboffset;
       header.allocs.size:= infoclass.allocsize;
       header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;

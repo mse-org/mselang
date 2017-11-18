@@ -26,6 +26,11 @@ type
   size: databitsizety;
  end;
  aropty = (aro_none,aro_static,aro_dynamic); //for refcount helpers
+
+ classdefconstheaderty = record
+  typedata: elementoffsetty;
+ end;
+ pclassdefconstheaderty = ^classdefconstheaderty;
  
 var
  optable: poptablety;
@@ -721,7 +726,8 @@ end;
 function getclassinfoaddress(const asize: int32;
                                    const ainterfacecount: int32): segaddressty;
 begin
- result:= allocsegment(seg_classdef,asize);
+ result:= allocsegment(seg_classdef,asize+sizeof(classdefconstheaderty));
+ result.address:= result.address + sizeof(classdefconstheaderty);
  pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
 end;
 

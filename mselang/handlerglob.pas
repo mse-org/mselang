@@ -268,6 +268,7 @@ type
   base: elementoffsetty; //base type, ex: precordty = ^recordty -> recordty type
                          //used for addressing record fields or typex = typey
   rtti: dataaddressty; //0 -> none
+  llvmrtticonst: int32; //listid in constlist
   manageproc: managedtypeprocty; //nil -> none
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count

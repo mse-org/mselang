@@ -54,8 +54,8 @@ type
  tbufferhashdatalist = class(thashdatalist)
   private
    fbuffer: pointer;
-   fbuffersize: integer;
-   fbuffercapacity: integer;
+   fbuffersize: int32;
+   fbuffercapacity: int32;
   protected
    procedure checkbuffercapacity(const asize: integer);
    function hashkey(const akey): hashvaluety override;
@@ -72,7 +72,8 @@ type
    procedure clear(); override;
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
-   function absdata(const aoffset: ptruint): pointer; inline;
+   function absdata(const aoffset: int32): pointer; inline;
+   property buffersize: int32 read fbuffersize;
  end;
 
 
@@ -104,7 +105,7 @@ type
    procedure clear(); override;
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
-   function absdata(const aoffset: ptruint): pointer; inline;
+   function absdata(const aoffset: int32): pointer; inline;
  end;
   
  int32bufferdataty = record
@@ -931,7 +932,7 @@ procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode,handlerutils,compilerunit,typehandler;
+ opcode,handlerutils,compilerunit,typehandler,rttihandler;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
@@ -1077,7 +1078,7 @@ begin
  result:= addunique(a1,res);
 end;
 
-function tbufferhashdatalist.absdata(const aoffset: ptruint): pointer; inline;
+function tbufferhashdatalist.absdata(const aoffset: int32): pointer; inline;
 begin
  result:= fbuffer+aoffset;
 end;
@@ -1143,7 +1144,7 @@ begin
  fbuffersize:= ref.bufferref;
 end;
 
-function tkeybufferhashdatalist.absdata(const aoffset: ptruint): pointer;
+function tkeybufferhashdatalist.absdata(const aoffset: int32): pointer;
 begin
  result:= fbuffer+aoffset;
 end;
@@ -2167,7 +2168,7 @@ begin
  classdef1.header.header.itemcount:= i2;
  classdef1.header.header.typeid:= ftypelist.addstructvalue(
                                   classdef1.header.header.itemcount,@types1);
- result:= addaggregate(@classdef1); 
+ result:= addaggregate(@classdef1);
 end;
 
 function tconsthashdatalist.addintfdef(const aintf: pintfdefinfoty;
@@ -2581,13 +2582,16 @@ begin
     with atype^.infoenum do begin
      initmainagloc(2+itemcount*2,sizeof(enumrttity)+
                                itemcount*sizeof(enumitemrttity),rtk_enum);
+      //itemcount: integer;
      putagitem(agloc1,addi32(itemcount));          //1
      enuflags1:= [];
      if enf_contiguous in flags then begin
       include(enuflags1,erf_contiguous);
      end;
+      //flags: enumrttiflagsty;
      putagitem(agloc1,addi32(int32(enuflags1)));   //2
      ele1:= first;
+      //items: record end; //array of enumitemrttity
      while ele1 <> 0 do begin
       with ptypedataty(ele.eledataabs(ele1))^.infoenumitem do begin
        putagitem(agloc1,addi32(value));            //1
@@ -2599,15 +2603,19 @@ begin
     end;
    end;
    dk_class,dk_object: begin
-    initmainagloc(0,sizeof(objectrttity),rtk_object);
+    initmainagloc(1,sizeof(objectrttity),rtk_object);
+     //classdef: pclassdefinfoty;
+    putagitem(agloc1,nilpointer); //dummy          //1
    end;
    else begin
     internalerror1(ie_llvm,'20171107A');
    end;
   end;
   m1:= addagloc(agloc1);
+  atype^.h.llvmrtticonst:= m1.listid;
   i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
   result:= addpointercast(i1); //prtti
+  atype^.h.rtti:= result.listid;
  end;
 end;
 (*
