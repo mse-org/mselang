@@ -143,6 +143,7 @@ type
 
  objectrttity = object(rttity)
  end;
+ pobjectrttity = ^objectrttity;
  
  allocsinfoty = record
   size: int32;
