@@ -140,9 +140,9 @@ begin
  result:= tclass(self);
 end;
    
-class function tobject.classinfo : pointer; //returns prttity
+class function tobject.classinfo : pointer; //returns pobjectrttity
 begin
- result:= pclassdefinfoty(self)^.header.typeinfo;
+ result:= pclassdefinfoty(self)^.header.rtti;
 end;
 
 end.

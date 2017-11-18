@@ -652,6 +652,7 @@ begin
    bufdat1:= absdata(hashdat1^.data.header.buffer);
    pint32(@bufdat1^.items)[classrttidefindex]:= 
                         addpointercast(pint32(poclassdef)^).listid;
+//todo: hide for search because hash is wrong
   end;
   
   poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +

@@ -175,7 +175,7 @@ type
   parentclass: pclassdefinfoty;
   interfaceparent: pclassdefinfoty; //last parent class with interfaces
   virttaboffset: int32;             //field offset in instance
-  typeinfo: prttity;
+  rtti: prttity;
   procs: array[classdefprocty] of classprocty;
   allocs: allocsinfoty;
  end;

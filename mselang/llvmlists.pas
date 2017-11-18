@@ -2095,12 +2095,12 @@ begin
  types1[2]:= ord(das_32);
  classdef1.items[2]:= addi32(aclassdef^.header.virttaboffset).listid;
  types1[3]:= ord(das_pointer);
- if aclassdef^.header.typeinfo < 0 then begin
+ if aclassdef^.header.rtti < 0 then begin
   classdef1.items[3]:= nullpointer;
  end
  else begin
 //  classdef1.items[3]:= nullpointer;
-  classdef1.items[3]:= aclassdef^.header.typeinfo;
+  classdef1.items[3]:= aclassdef^.header.rtti;
 //  classdef1.items[3]:= addpointercast(
 //                    getrttiid(aclassdef^.header.typeinfo)).listid;
  end;
