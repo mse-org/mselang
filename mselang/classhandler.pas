@@ -807,8 +807,8 @@ begin
    currenttypedef:= d.typ.typedata;
    typ1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    regclass(d.typ.typedata);
-   createrecordmanagehandler(d.typ.typedata); 
-                               //always called because of iniproc
+//   createrecordmanagehandler(d.typ.typedata); 
+//                               //always called because of iniproc
    typ1^.infoclass.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
    if obf_except in contextstack[s.stackindex].d.cla.flags then begin
     if typ1^.infoclass.subattach.destroy = 0 then begin
@@ -848,11 +848,12 @@ begin
     end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
     reversefieldchain(typ1);
-    if co_llvm in o.compileoptions then begin
-     infoclass.defs.address:=
-            s.unitinfo^.llvmlists.globlist.addclassdefconst(typ1).listid;
-    end
-    else begin
+//    if co_llvm in o.compileoptions then begin
+//     s.unitinfo^.llvmlists.globlist.addclassdefconst(typ1);
+//     infoclass.defs.address:=
+//            s.unitinfo^.llvmlists.globlist.addclassdefconst(typ1).listid;
+//    end
+//    else begin
      int1:= sizeof(classdefinfoty)+ targetpointersize*infoclass.virtualcount;
                       //interfacetable start
      classdefs1:= getclassinfoaddress(
@@ -908,7 +909,7 @@ begin
  //     if (h.flags * 
  //             [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini] <> []) or
  //                                  (infoclass.subattach.destroy <> 0) then begin
-//       createrecordmanagehandler(d.typ.typedata); 
+       createrecordmanagehandler(d.typ.typedata); 
                                //always called because of iniproc
  //     end;
       typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
@@ -932,7 +933,7 @@ begin
        end;
       end;
      end;
-    end; //not llvm
+//    end; //not llvm
    end;
    if currentparamupdatechain >= 0 then begin
     p1:= getsegmentpo(seg_temp,currentparamupdatechain);

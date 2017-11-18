@@ -348,7 +348,7 @@ type
    function addrtti(const artti: pcrttity): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                         const aintfcount: int32): llvmvaluety;
-                        //virtualsubconsts[virtualcount] used fot typeid
+                        //virtualsubconsts[virtualcount] used for typeid
    function addintfdef(const aintf: pintfdefinfoty;
                                        const acount: int32): llvmvaluety;
                                                    //overwrites aintf data
@@ -930,7 +930,7 @@ procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode,handlerutils,compilerunit;
+ opcode,handlerutils,compilerunit,typehandler;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
@@ -2131,6 +2131,15 @@ begin
  i1:= pe - ps;
  if i1 > 0 then begin
   while ps < pe do begin
+  (*
+   pop1:= getoppo(ps^);
+  {$ifdef mse_checkinternalerror}
+   if pop1^.op.op <> oc_subbegin then begin
+    internalerror(ie_llvmlist,'20171118A');
+   end;
+  {$endif}
+   pd^:= addpointercast(pop1^.par.subbegin.globid).listid;
+  *)
    pd^:= addpointercast(ps^).listid;
    inc(pd);
    inc(ps);
@@ -2630,6 +2639,9 @@ var
   
 begin
  with fconstlist,atype^ do begin
+  infoclass.defs.address:= -1;
+  createrecordmanagehandler(ele.eledatarel(atype));
+
   initagloc(agloc1,10+infoclass.virtualcount+infoclass.interfacecount);
 
    //parentclass: pclassdefinfoty;
@@ -2678,6 +2690,7 @@ begin
   m1:= addagloc(agloc1);
   i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
   result:= addpointercast(i1); //pclassdefinfoty
+  infoclass.defs.address:= result.listid;
  end;
 end;
 

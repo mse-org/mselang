@@ -2557,14 +2557,13 @@ begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      if co_llvm in o.compileoptions then begin
       ad1:= po1^.globid;
-      //todo!!!!!!!!!!!!!!!!!
      end
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
-      popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
+     end;
+     popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
                                      virtualmethods))[po2^.tableindex]:= ad1;
               //resolve virtual table entry
-     end;
     end;
    end;
    linkresolvecall(po2^.calllinks,po1^.address,po1^.globid);

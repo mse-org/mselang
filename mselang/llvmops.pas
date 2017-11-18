@@ -3684,10 +3684,10 @@ end;
 procedure pushclassdefop();
 begin
  with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
+//  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
                                                                    //2ssa
-//  bcstream.emitgetelementptr(bcstream.globval(
-//            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
+  bcstream.emitgetelementptr(bcstream.globval(
+            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
                                                                    //2ssa
  end;
 end;
@@ -4400,12 +4400,18 @@ end;
 procedure iniobjectop();
 begin
  with pc^.par do begin
+ {
+  callcompilersub(cs_initobject,false,
+               [bcstream.ssaval(ssas1),bcstream.constval(initclass.classdef)]);
+ }
+ 
   bcstream.emitgetelementptr(bcstream.globval(
             pint32(getsegmentpo(seg_classdef,initclass.classdef))^),
                                                         bcstream.constval(0)); 
                                                            //2ssa
   callcompilersub(cs_initobject,false,
                                 [bcstream.ssaval(ssas1),bcstream.relval(0)]);
+ 
  end;
 end;
 {
