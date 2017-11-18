@@ -472,8 +472,9 @@ type
    function addidentconst(const aident: identty): llvmvaluety;
                                                     //string8 pointer
    function addrtticonst(const atype: ptypedataty): llvmvaluety; //prtti
-   function addclassdefconst(const atype: ptypedataty): llvmvaluety; 
+//   function addclassdefconst(const atype: ptypedataty): llvmvaluety; 
                                                     //pclassdefinfoty
+                        //too complicated because of forward definitions
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
    function gettype1(const alistid: int32): metavaluety;
@@ -2609,7 +2610,7 @@ begin
   result:= addpointercast(i1); //prtti
  end;
 end;
-
+(*
 function tgloballocdatalist.addclassdefconst(
                                 const atype: ptypedataty): llvmvaluety;
 var
@@ -2693,7 +2694,7 @@ begin
   infoclass.defs.address:= result.listid;
  end;
 end;
-
+*)
 function tgloballocdatalist.addtypecopy(const alistid: int32): int32;
 begin
  result:= fcount;
