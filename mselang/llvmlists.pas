@@ -1879,6 +1879,15 @@ begin
  end;
 end;
 
+procedure putagpointer(var agloc: aglocty; const constid: int32);
+var
+ m1: llvmvaluety;
+begin
+ m1.listid:= constid;
+ m1.typeid:= ord(das_pointer);
+ putagitem(agloc,m1);
+end;
+
 procedure putagsub(var agloc: aglocty; const avalue: opaddressty);
 var
  pop1: popinfoty;
@@ -2625,8 +2634,8 @@ begin
 
    //parentclass: pclassdefinfoty;
   if h.ancestor <> 0 then begin
-   putagitem(agloc1,addpointercast(
-         ptypedataty(ele.eledataabs(h.ancestor))^.infoclass.defs.address));
+   putagpointer(agloc1,ptypedataty(
+                      ele.eledataabs(h.ancestor))^.infoclass.defs.address);
                                                               //1
   end
   else begin
@@ -2634,8 +2643,8 @@ begin
   end;
    //interfaceparent: pclassdefinfoty; //last parent class with interfaces
   if infoclass.interfaceparent <> 0 then begin
-   putagitem(agloc1,addpointercast(ptypedataty(ele.eledataabs(
-                         infoclass.interfaceparent))^.infoclass.defs.address)); 
+   putagpointer(agloc1,ptypedataty(
+          ele.eledataabs(infoclass.interfaceparent))^.infoclass.defs.address); 
                                                               //2
   end
   else begin
