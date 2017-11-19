@@ -148,7 +148,9 @@ end;
 
 class function tobject.classname: string8;
 begin
- result:= prttity(classinfo)^.typename;
+ decref(result);
+ pointer(result):= pointer(prttity(classinfo)^.typename); 
+                                          //const, no incref needed
 end;
 
 end.

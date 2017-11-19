@@ -1,4 +1,4 @@
-program classtype;
+program classname;
 uses
  rtl_fpccompatibility,__mla__internaltypes;
 type
@@ -29,7 +29,7 @@ begin
  p1:= pointer(cc1);
  p2:= pointer(p1^.rtti);
  c1:= ctest.create();
- if (pointer(cc1) = c1.classtype) and (p2 = c1.classinfo) and (p2^.kind = rtk_object) then
+ if (pointer(cc1) = c1.classtype) and (p2 = c1.classinfo) and (p2^.kind = rtk_object) and (c1.classname = 'ctest') then
   exitcode:= 123;
  end;
  c1.destroy();
