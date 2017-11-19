@@ -34,7 +34,8 @@ type
    class function initinstance(instance : pointer): tobject;
    procedure cleanupinstance();
    class function classtype: tclass;
-   class function classinfo : pointer; //returns pobjectrttity
+   class function classinfo: pointer; //returns pobjectrttity
+   class function classname: string8;
  end; 
  
  pchar = ^char8;
@@ -143,6 +144,11 @@ end;
 class function tobject.classinfo : pointer; //returns pobjectrttity
 begin
  result:= pclassdefinfoty(self)^.header.rtti;
+end;
+
+class function tobject.classname: string8;
+begin
+ result:= prttity(classinfo)^.typename;
 end;
 
 end.

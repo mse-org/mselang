@@ -347,7 +347,7 @@ type
    function addtypedconst(const atype: elementoffsetty;
                                      var adata: pointer): llvmvaluety;
                                    //increments adata to next item
-   function addrtti(const artti: pcrttity): llvmvaluety;
+//   function addrtti(const artti: pcrttity): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                         const aintfcount: int32): llvmvaluety;
                         //virtualsubconsts[virtualcount] used for typeid
@@ -2018,7 +2018,7 @@ begin
   inc(adata,typ1^.h.bytesize);
  end;
 end;
-
+(*
 function tconsthashdatalist.addrtti(const artti: pcrttity): llvmvaluety;
 var
  agloc1: aglocty;
@@ -2057,7 +2057,7 @@ begin
   end;
  end;
 end;
-
+*)
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmvaluety;
 
@@ -2582,10 +2582,11 @@ var
  procedure initmainagloc(const count: int32; const asize: int32;
                                                       const akind: rttikindty);
  begin
-  initagloc(agloc1,count+2);
+  initagloc(agloc1,count+rttifieldcount);
   with fconstlist do begin
-   putagitem(agloc1,addi32(asize));      //1
-   putagitem(agloc1,addi32(ord(akind))); //2
+   putagitem(agloc1,addi32(asize));                                     //0
+   putagitem(agloc1,addi32(ord(akind)));                                //1
+   putagitem(agloc1,self.addidentconst(datatoele(atype)^.header.name)); //2
   end;
  end;
  
@@ -2603,20 +2604,20 @@ begin
      initmainagloc(2+itemcount*2,sizeof(enumrttity)+
                                itemcount*sizeof(enumitemrttity),rtk_enum);
       //itemcount: integer;
-     putagitem(agloc1,addi32(itemcount));          //1
+     putagitem(agloc1,addi32(itemcount));          //0
      enuflags1:= [];
      if enf_contiguous in flags then begin
       include(enuflags1,erf_contiguous);
      end;
       //flags: enumrttiflagsty;
-     putagitem(agloc1,addi32(int32(enuflags1)));   //2
+     putagitem(agloc1,addi32(int32(enuflags1)));   //1
      ele1:= first;
       //items: record end; //array of enumitemrttity
      while ele1 <> 0 do begin
       with ptypedataty(ele.eledataabs(ele1))^.infoenumitem do begin
-       putagitem(agloc1,addi32(value));            //1
+       putagitem(agloc1,addi32(value));            //0
        putagitem(agloc1,self.addidentconst(ele.eleinfoabs(ele1)^.header.name)); 
-                                                   //2
+                                                   //1
        ele1:= next;
       end;
      end;
@@ -2625,7 +2626,7 @@ begin
    dk_class,dk_object: begin
     initmainagloc(1,sizeof(objectrttity),rtk_object);
      //classdef: pclassdefinfoty;
-    putagitem(agloc1,nilpointer); //dummy          //1
+    putagitem(agloc1,nilpointer); //dummy          //0
    end;
    else begin
     internalerror1(ie_llvm,'20171107A');

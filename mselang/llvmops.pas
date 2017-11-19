@@ -616,7 +616,7 @@ begin
   inc(pointer(intfpo),sizeof(intfpo^)+countpo^*opaddresssize);
   inc(countpo);
  end;
-
+(*
  portti:= getsegmentbase(seg_rtti);
  pertti:= getsegmenttop(seg_rtti);
  while portti < pertti do begin
@@ -627,7 +627,7 @@ begin
                                           //replace data by id
   portti:= pointer(portti)+portti^.size;
  end;
-  
+*)  
  poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
  peclassdef:= getsegmenttop(seg_classdef);
  countpo:= getsegmentbase(seg_classintfcount);

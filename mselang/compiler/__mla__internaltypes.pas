@@ -105,8 +105,9 @@ type
  rttikindty = (rtk_none,rtk_enum,rtk_enumitem,rtk_object);
 
  rttity = object
-  size: int32;
-  kind: rttikindty;
+  size: int32;            //0
+  kind: rttikindty;       //1
+  typename: string8;      //2
  end;
 {$ifdef mse_compiler}
  prttity = targetptrintty;
@@ -114,7 +115,12 @@ type
 {$else}
  prttity = ^rttity;
 {$endif}
- 
+
+const
+ rttifieldcount = 3;
+ classrttidefindex = rttifieldcount + 0;
+
+type
  enumrttiflagty = (erf_contiguous);
  enumrttiflagsty = set of enumrttiflagty;
 
@@ -134,10 +140,6 @@ type
   flags: enumrttiflagsty;             //1
   items: record end; //array of enumitemrttity
  end;
-
-const
- rttifieldcount = 2;
- classrttidefindex = rttifieldcount + 0;
 
 type
 {$ifdef mse_compiler}
