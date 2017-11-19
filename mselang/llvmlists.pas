@@ -57,7 +57,7 @@ type
    fbuffersize: int32;
    fbuffercapacity: int32;
   protected
-   procedure checkbuffercapacity(const asize: integer);
+   procedure checkbuffercapacity(const asize: int32);
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitem: phashdataty): boolean override;
    function addunique(const adata: bufferallocdataty;
@@ -74,6 +74,7 @@ type
    procedure release(const ref: buffermarkinfoty);
    function absdata(const aoffset: int32): pointer; inline;
    property buffersize: int32 read fbuffersize;
+   function getitemdata(aid: int32): pointer;
  end;
 
 
@@ -957,9 +958,9 @@ begin
  result:= sizeof(bufferhashdataty);
 end;
 
-procedure tbufferhashdatalist.checkbuffercapacity(const asize: integer);
+procedure tbufferhashdatalist.checkbuffercapacity(const asize: int32);
 begin
- fbuffersize:= fbuffersize + asize;
+ fbuffersize:= ((fbuffersize + asize)+3) and -4;
  if fbuffersize > fbuffercapacity then begin
   fbuffercapacity:= fbuffersize*2 + 1024;
   reallocmem(fbuffer,fbuffercapacity);
@@ -1081,6 +1082,25 @@ end;
 function tbufferhashdatalist.absdata(const aoffset: int32): pointer; inline;
 begin
  result:= fbuffer+aoffset;
+end;
+
+function tbufferhashdatalist.getitemdata(aid: int32): pointer;
+var
+ p1: pbufferhashdataty;
+begin
+ inc(aid);
+{$ifdef mse_checkinternalerror}
+ if (aid < 1) or (aid >= count) then begin
+  internalerror(ie_llvmlist,'20171119A');
+ end;
+{$endif}
+ p1:= fdata + aid * recsize;
+ if p1^.data.buffersize < 0 then begin
+  result:= @p1^.data.buffer;
+ end
+ else begin
+  result:= fbuffer+p1^.data.buffer;
+ end;
 end;
 
 { tkeybufferhashdatalist }

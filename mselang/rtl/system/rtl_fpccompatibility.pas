@@ -34,7 +34,7 @@ type
    class function initinstance(instance : pointer): tobject;
    procedure cleanupinstance();
    class function classtype: tclass;
-   class function classinfo : pointer; //returns prttity
+   class function classinfo : pointer; //returns pobjectrttity
  end; 
  
  pchar = ^char8;

@@ -538,7 +538,6 @@ var
  po1: punitdataty;
  po2: pvardataty;
  typ1: ptypedataty;
- hashdat1: pconstlisthashdataty;
  bufdat1: paggregateconstty;
  po4: popinfoty;
  int1: integer;
@@ -648,8 +647,7 @@ begin
  {$endif}
   getrtti(typ1);
   with info.s.unitinfo^.llvmlists.constlist do begin
-   hashdat1:= pconstlisthashdataty(data) + typ1^.h.llvmrtticonst + 1;
-   bufdat1:= absdata(hashdat1^.data.header.buffer);
+   bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
    pint32(@bufdat1^.items)[classrttidefindex]:= 
                         addpointercast(pint32(poclassdef)^).listid;
 //todo: hide for search because hash is wrong
