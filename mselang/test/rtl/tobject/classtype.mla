@@ -1,0 +1,36 @@
+program classtype;
+uses
+ rtl_fpccompatibility,__mla__internaltypes;
+type
+
+
+ ctest = class(tobject)
+  f1: int32;
+  constructor create();
+  destructor destroy();
+ end;
+ cty = class of ctest;
+
+constructor ctest.create();
+begin
+end;
+
+destructor ctest.destroy();
+begin
+end;
+
+var
+ cc1: cty;
+ p1: pclassdefheaderty;
+ p2: pobjectrttity;
+ c1: ctest;
+begin
+ cc1:= ctest;
+ p1:= pointer(cc1);
+ p2:= pointer(p1^.rtti);
+ c1:= ctest.create();
+ if (pointer(cc1) = c1.classtype) and (p2 = c1.classinfo) and (p2^.kind = rtk_object) then
+  exitcode:= 123;
+ end;
+ c1.destroy();
+end.
