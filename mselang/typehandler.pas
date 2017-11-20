@@ -166,7 +166,11 @@ begin
    bo2:= true;
   end
   else begin
-   bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
+   bo2:= findkindelements(1,[{ek_type}],allvisi,po2,bo1);
+   if bo2 and (po2^.header.kind <> ek_type) then begin
+    errormessage(err_typeidentexpected,[],1);
+    bo2:= false;
+   end;
   end;
   forward1:= not bo2 and bo1;
   if forward1 then begin
