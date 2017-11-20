@@ -3555,7 +3555,7 @@ procedure init();
      item1:= st_int64;
     end
     else begin
-     item1:= st_int64;
+     item1:= st_int32;
     end;
    end;
    st_cardpo: begin
@@ -3563,7 +3563,7 @@ procedure init();
      item1:= st_card64;
     end
     else begin
-     item1:= st_card64;
+     item1:= st_card32;
     end;
    end;
   end;
@@ -4169,6 +4169,25 @@ begin
     range.max:= ptypedataty(ele.eledataabs(typedata^.infoenum.last))^.
                                                          infoenumitem.value;
    end;
+   dk_character: begin
+    case h.datasize of
+     das_8: begin
+      range.min:= infochar8.min;
+      range.max:= infochar8.max;
+     end;
+     das_16: begin
+      range.min:= infochar16.min;
+      range.max:= infochar16.max;
+     end;
+     das_32: begin
+      range.min:= infochar32.min;
+      range.max:= infochar32.max;
+     end;
+     else begin
+      internalerror1(ie_handler,'20171120A');
+     end;
+    end;
+   end;
   {$ifdef mse_checkinternalerror}
    else begin
     internalerror(ie_handler,'20120327B');
@@ -4208,6 +4227,9 @@ begin
    end;
    dk_enum: begin
     result:= venum.value;
+   end;
+   dk_character: begin
+    result:= vcharacter;
    end;
   {$ifdef mse_checkinternalerror}
    else begin

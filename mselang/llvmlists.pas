@@ -2584,9 +2584,12 @@ var
  begin
   initagloc(agloc1,count+rttifieldcount);
   with fconstlist do begin
-   putagitem(agloc1,addi32(asize));                                     //0
-   putagitem(agloc1,addi32(ord(akind)));                                //1
-   putagitem(agloc1,self.addidentconst(datatoele(atype)^.header.name)); //2
+    //size: int32;            //0
+   putagitem(agloc1,addi32(asize));
+    //kind: rttikindty;       //1
+   putagitem(agloc1,addi32(ord(akind)));
+    //typename: string8;      //2
+   putagitem(agloc1,self.addidentconst(datatoele(atype)^.header.name));
   end;
  end;
  

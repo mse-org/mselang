@@ -277,6 +277,7 @@ const
  compatiblesubflags = [sf_functionx,
                        sf_method,sf_class,sf_constructor,sf_destructor];
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
+ arrayindexdatakinds = ordinaldatakinds + [dk_character];
  numericdatakinds = [dk_cardinal,dk_integer,dk_float];
  pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string];

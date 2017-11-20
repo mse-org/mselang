@@ -11,7 +11,7 @@ unit rtl_fpccompatibility;
 interface
 //FPC compatibility
 uses
- rtl_system,rtl_libc,__mla__internaltypes;
+ rtl_system,rtl_string,rtl_libc,__mla__internaltypes;
  
 type
 //{$internaldebug on}
@@ -36,6 +36,7 @@ type
    class function classtype: tclass;
    class function classinfo: pointer; //returns pobjectrttity
    class function classname: string8;
+   class function classnameis(const name: string8): boolean;
  end; 
  
  pchar = ^char8;
@@ -151,6 +152,12 @@ begin
  decref(result);
  pointer(result):= pointer(prttity(classinfo)^.typename); 
                                           //const, no incref needed
+end;
+
+class function tobject.classnameis(const name: string8): boolean;
+begin
+ result:= stringcomp(name,
+                 prttity(pclassdefinfoty(self)^.header.rtti)^.typename) = 0;
 end;
 
 end.

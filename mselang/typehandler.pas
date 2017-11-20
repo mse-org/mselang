@@ -1144,7 +1144,7 @@ begin
      {$endif}
       po1:= ele.eledataabs(d.typ.typedata);
       if (d.typ.indirectlevel <> 0) or (po1^.h.indirectlevel <> 0) or
-        not (po1^.h.kind in ordinaldatakinds) or 
+        not (po1^.h.kind in arrayindexdatakinds) or 
                                          (po1^.h.bitsize > 32) then begin
        err(err_ordinaltypeexpected);
        goto endlab;
@@ -1175,12 +1175,7 @@ begin
       end;
       currenttypedef:= ele.eledatarel(arty);
       exclude(flags1,tf_managed); //only item type can be managed
-//      if indilev > 0 then begin
-//       flags1:= flags1 - [tf_managed,tf_needsmanage];
-//      end;
-//      arty^.h.flags:= flags1;
       inittypedata(arty^,dk_array,0,flags1,0,0);
-//      arty^.h.manageproc:= manageproc1;
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs1;
        i.itemindirectlevel:= indilev;

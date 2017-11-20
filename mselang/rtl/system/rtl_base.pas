@@ -12,6 +12,8 @@ unit rtl_base;
 interface
 
 type
+ pcard8 = ^card8;
+ 
  filenamety = string16;
 
  cbase = class() [virtual]
