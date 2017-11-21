@@ -1264,6 +1264,7 @@ var
   with additem(op1)^ do begin
    par.ssas1:= info.s.ssa.index-1;
   end;
+  initfactcontext(dest1);
   dest1^.d.kind:= ck_subres;
   dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
  end; //checkfact
