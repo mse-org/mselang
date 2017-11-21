@@ -1,0 +1,14 @@
+program array1;
+type
+ enuty = (en_1,en_2,en_3);
+
+var
+ ar1: array[enuty] of int32;
+ v1: enuty;
+begin
+ ar1[en_1]:= 100;
+ v1:= en_2;
+ ar1[v1]:= 20;
+ ar1[en_3]:= 3;
+ exitcode:= ar1[en_1]+ar1[en_2]+ar1[en_3];
+end.

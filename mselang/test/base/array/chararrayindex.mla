@@ -1,0 +1,12 @@
+program chararrayindex;
+var
+ ar1: array[char8] of card8;
+ v1: int32;
+ ar2: array['a'..'c'] of card8;
+begin
+ ar1['a']:= 90;
+ ar2['a']:= 10;
+ ar2['b']:= 20;
+ ar2['c']:= 3;
+ exitcode:= ar1['a'] + ar2['a']+ar2['b']+ar2['c'];
+end.

@@ -1,0 +1,11 @@
+program stringicomp1;
+uses
+ rtl_string;
+const
+ s1 = 'abc';
+ s2 = 'aBc';
+begin
+ if (stringicomp(s1,s2) = 0) and (stringcomp(s1,s2) <> 0) then
+  exitcode:= 123;
+ end;
+end.
