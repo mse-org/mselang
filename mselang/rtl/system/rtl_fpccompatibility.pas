@@ -33,11 +33,12 @@ type
    procedure freeinstance [dispose,virtual];
    class function initinstance(instance : pointer): tobject;
    procedure cleanupinstance();
-   class function classtype: tclass;
-   class function classinfo: pointer; //returns pobjectrttity
-   class function classname: string8;
+   class function classtype(): tclass;
+   class function classinfo(): pointer; //returns pobjectrttity
+   class function classname(): string8;
    class function classnameis(const name: string8): boolean;
-   class function classparent: tclass;
+   class function classparent(): tclass;
+   class function instancesize(): int32;
  end; 
  
  pchar = ^char8;
@@ -138,22 +139,22 @@ begin
  end;
 end;
 
-class function tobject.classtype: tclass;
+class function tobject.classtype(): tclass;
 begin
  result:= tclass(self);
 end;
 
-class function tobject.classparent: tclass;
+class function tobject.classparent(): tclass;
 begin
  result:= tclass(pclassdefinfoty(classof(self))^.header.parentclass);
 end;
    
-class function tobject.classinfo : pointer; //returns pobjectrttity
+class function tobject.classinfo(): pointer; //returns pobjectrttity
 begin
  result:= pclassdefinfoty(self)^.header.rtti;
 end;
 
-class function tobject.classname: string8;
+class function tobject.classname(): string8;
 begin
  decref(result);
  pointer(result):= pointer(prttity(classinfo)^.typename); 
@@ -164,6 +165,11 @@ class function tobject.classnameis(const name: string8): boolean;
 begin
  result:= stringicomp(name,
                  prttity(pclassdefinfoty(self)^.header.rtti)^.typename) = 0;
+end;
+
+class function tobject.instancesize(): int32;
+begin
+ result:= pclassdefinfoty(self)^.header.allocs.size;
 end;
 
 end.
