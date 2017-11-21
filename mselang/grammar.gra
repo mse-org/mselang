@@ -995,7 +995,8 @@ const2,const3,,
 const3,,handleconst3,
  '',checksemicolon1
 typedconst,typedconst1,,                     
- '',gettype^*
+ '',typedconst0^*
+typedconst0,gettype,handlegetfieldtypestart,
 typedconst1,,,handleequalityexpected
  ${whitespace}
  '=',typedconst2-

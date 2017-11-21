@@ -13,6 +13,7 @@ interface
 
 type
  pcard8 = ^card8;
+ pchar8 = ^char8;
  
  filenamety = string16;
 

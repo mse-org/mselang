@@ -1418,6 +1418,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'typedconst');
+ typedconst0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'typedconst0');
  typedconst1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -8032,7 +8037,7 @@ const
    );
  btypedconst: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @gettypeco); stack: nil; keys: (
+     dest: (context: @typedconst0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -14078,6 +14083,9 @@ begin
  const3co.handleentry:= @handleconst3;
  typedconstco.branch:= @btypedconst;
  typedconstco.next:= @typedconst1co;
+ typedconst0co.branch:= nil;
+ typedconst0co.next:= @gettypeco;
+ typedconst0co.handleentry:= @handlegetfieldtypestart;
  typedconst1co.branch:= @btypedconst1;
  typedconst1co.handleexit:= @handleequalityexpected;
  typedconst2co.branch:= @btypedconst2;

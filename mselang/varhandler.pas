@@ -402,6 +402,36 @@ begin
         end;
        end;
       end;
+      dk_character: begin
+       case p1^.h.datasize of
+        das_8: begin
+         with p1^.infochar8 do begin
+          if (vcharacter < min) or (vcharacter > max) then begin
+           errormessage(err_valuerange,[''''+char8(min)+'''',
+                                             ''''+char8(max)+''''],
+                                                       minint,0,erl_warning);
+          end;
+         end;
+        end;
+        das_16: begin
+         with p1^.infochar16 do begin
+          if (vcharacter < min) or (vcharacter > max) then begin
+           errormessage(err_valuerange,[''''+char16(min)+'''',
+                                                ''''+char16(max)+''''],
+                                                       minint,0,erl_warning);
+          end;
+         end;
+        end;
+        das_32: begin
+         with p1^.infochar32 do begin
+          if (vcharacter < min) or (vcharacter > max) then begin
+           errormessage(err_valuerange,[inttostrmse(min)+inttostrmse(max)],
+                                                       minint,0,erl_warning);
+          end;
+         end;
+        end;
+       end;
+      end;
       else begin
        notimplementederror('20170613E');
       end;

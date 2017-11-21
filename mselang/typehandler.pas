@@ -302,6 +302,8 @@ var
  id1: identty;
  po1: ptypedataty;
  poa,pob: pcontextitemty;
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKRANGETYPE');
@@ -309,6 +311,28 @@ begin
  with info do begin
   if getnextnospace(s.stackindex+2,poa) and 
                                 getnextnospace(poa+1,pob) then begin
+   if poa^.d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[],poa);
+    goto endlab;
+   end;
+   if pob^.d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[],pob);
+    goto endlab;
+   end;
+   if poa^.d.dat.constval.kind = dk_string then begin
+    tryconvert(poa,st_char32);
+   end;
+   if pob^.d.dat.constval.kind = dk_string then begin
+    tryconvert(pob,st_char32);
+   end;
+   if not (poa^.d.dat.constval.kind in rangedatakinds) then begin
+    errormessage(err_ordinalconstexpected,[],poa);
+    goto endlab;
+   end;
+   if (poa^.d.dat.constval.kind <> pob^.d.dat.constval.kind) then begin
+    errormessage(err_typemismatch,[],pob);
+    goto endlab;
+   end;
    with contextstack[s.stackindex-2] do begin
     if (d.kind = ck_ident) and 
                 (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
@@ -323,15 +347,32 @@ begin
      identerror(-1,err_duplicateidentifier);
     end;
     d.typ.typedata:= ele.eledatarel(po1);
-    inittypedatasize(po1^,dk_integer,d.typ.indirectlevel,das_32);
+    inittypedatasize(po1^,poa^.d.dat.constval.kind,d.typ.indirectlevel,das_32);
+                                                       //todo: other datasizes
     include(po1^.h.flags,tf_subrange);
-    with po1^.infoint32 do begin     //todo: other datasizes
-     //todo: check datasize
-     min:= poa^.d.dat.constval.vinteger;
-     max:= pob^.d.dat.constval.vinteger;
+    case poa^.d.dat.constval.kind of
+     dk_integer: begin
+      with po1^.infoint32 do begin  
+       min:= poa^.d.dat.constval.vinteger;
+       max:= pob^.d.dat.constval.vinteger;
+      end;
+     end;
+     dk_cardinal: begin
+      with po1^.infocard32 do begin  
+       min:= poa^.d.dat.constval.vcardinal;
+       max:= pob^.d.dat.constval.vcardinal;
+      end;
+     end;
+     dk_character: begin
+      with po1^.infochar32 do begin  
+       min:= poa^.d.dat.constval.vcharacter;
+       max:= pob^.d.dat.constval.vcharacter;
+      end;
+     end;
     end;
    end;
   end;
+endlab:
   s.stacktop:= s.stackindex-1;
   s.stackindex:= contextstack[s.stackindex].parent;
  end;
@@ -1276,11 +1317,18 @@ begin
 {$endif}
     end;
    end;
+//   {
    with contextstack[s.stackindex-1] do begin
+   {$ifdef mse_checkinternalerror}
+    if not (d.kind in [ck_typetype,ck_fieldtype]) then begin
+     internalerror(ie_handler,'20171121');
+    end;
+   {$endif}
     arty^.h.indirectlevel:= d.typ.indirectlevel;
     d.typ.indirectlevel:= 0;
     d.typ.typedata:= ele.eledatarel(arty);
    end;
+//   }
    resolveforwardtype(arty);
   end
   else begin
