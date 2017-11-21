@@ -37,6 +37,7 @@ type
    class function classinfo: pointer; //returns pobjectrttity
    class function classname: string8;
    class function classnameis(const name: string8): boolean;
+   class function classparent: tclass;
  end; 
  
  pchar = ^char8;
@@ -141,6 +142,11 @@ class function tobject.classtype: tclass;
 begin
  result:= tclass(self);
 end;
+
+class function tobject.classparent: tclass;
+begin
+ result:= tclass(pclassdefinfoty(classof(self))^.header.parentclass);
+end;
    
 class function tobject.classinfo : pointer; //returns pobjectrttity
 begin
@@ -156,7 +162,7 @@ end;
 
 class function tobject.classnameis(const name: string8): boolean;
 begin
- result:= stringcomp(name,
+ result:= stringicomp(name,
                  prttity(pclassdefinfoty(self)^.header.rtti)^.typename) = 0;
 end;
 
