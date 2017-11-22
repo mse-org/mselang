@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72873C4
+    ao=An unhandled exception occured at $B7295F58
     ae=
     aec=123
     ie=0
@@ -9860,7 +9860,7 @@ c=3
   (
   kind=1
   a=0,664,4,class
-  c=35
+  c=36
    (
    kind=1
    a=0,664,4,properties
@@ -10651,7 +10651,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,classof
+   a=0,664,4,classof
    c=5
     (
     kind=2
@@ -10781,7 +10781,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=15
     (
     kind=2
@@ -11131,7 +11131,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sizeof
+   a=0,664,4,sizeof
    c=1
     (
     kind=2
@@ -12032,6 +12032,28 @@ c=3
    a=0,648,1,classis llvm
    teststate=1
    path=classis.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classis1 llvm
+   teststate=1
+   path=classis1.mla
    comment=
    cc=${mlc_llvm}
    cd=
@@ -13025,7 +13047,7 @@ c=3
    (
    kind=1
    a=0,665,4,tobject
-   c=2
+   c=3
     (
     kind=2
     a=0,648,1,ini llvm
@@ -13053,6 +13075,28 @@ c=3
     a=0,648,1,classtype llvm
     teststate=1
     path=classtype.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,free llvm
+    teststate=1
+    path=free.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13321,196 +13365,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=199
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=20
  0 0
  0 0
  0 0

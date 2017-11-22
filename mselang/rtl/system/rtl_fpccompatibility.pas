@@ -40,6 +40,17 @@ type
    class function classparent(): tclass;
    class function instancesize(): int32;
    class function inheritsfrom(aclass: tclass): boolean;
+   //class function stringmessagetable : pstringmessagetable;
+                         //not implemented
+
+        //todo
+   //class function MethodAddress(const name : shortstring) : codepointer;         
+   //class function MethodName(address : codepointer) : shortstring;
+   //function FieldAddress(const name : shortstring) : pointer;
+
+   procedure afterconstruction() [afterconstruct,virtual];
+   procedure beforedestruction() [beforedestruct,virtual];
+   
  end; 
  
  pchar = ^char8;
@@ -176,6 +187,16 @@ end;
 class function tobject.inheritsfrom(aclass: tclass): boolean;
 begin
  result:= self is aclass;
+end;
+
+procedure tobject.afterconstruction();
+begin
+ //dummy
+end;
+
+procedure tobject.beforedestruction();
+begin
+ //dummy
 end;
 
 end.

@@ -3426,6 +3426,9 @@ begin
        instancessa:= par.ssad;
       end;
       instancetype1:= ele.eledataabs(vardata1^.vf.typ);
+      if (sf_destructor in asub^.flags) then begin
+       callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+      end;
      end
      else begin
       if aflags*[dsf_objini,dsf_objfini,dsf_attach] <> [] then begin
