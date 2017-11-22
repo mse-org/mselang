@@ -1,0 +1,33 @@
+program classis1;
+type
+ testclassty = class of ctest;
+ ctest = class()
+  v1: int32;
+  class procedure test(): boolean;
+  class procedure test1(aclass: testclassty): boolean;
+ end;
+
+ ctest1 = class(ctest)
+ end;
+
+class procedure ctest.test1(aclass: testclassty): boolean;
+begin
+ result:= self is aclass;
+end;
+
+class procedure ctest.test(): boolean;
+begin
+ result:= self is ctest1;
+end;
+
+var
+ cc1,cc2: testclassty;
+begin
+ cc1:= ctest;
+ cc2:= ctest1;
+ if ctest1.test1(ctest1) and not ctest.test1(ctest1) and ctest.test1(ctest) and 
+                 not ctest.test() and ctest1.test() and 
+                 ctest.test1(cc1) and not ctest.test1(cc2) and ctest.test1(cc1) and ctest1.test1(cc1) then
+  exitcode:= 123;
+ end;
+end.

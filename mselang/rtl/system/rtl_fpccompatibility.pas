@@ -39,6 +39,7 @@ type
    class function classnameis(const name: string8): boolean;
    class function classparent(): tclass;
    class function instancesize(): int32;
+   class function inheritsfrom(aclass: tclass): boolean;
  end; 
  
  pchar = ^char8;
@@ -170,6 +171,11 @@ end;
 class function tobject.instancesize(): int32;
 begin
  result:= pclassdefinfoty(self)^.header.allocs.size;
+end;
+
+class function tobject.inheritsfrom(aclass: tclass): boolean;
+begin
+ result:= self is aclass;
 end;
 
 end.

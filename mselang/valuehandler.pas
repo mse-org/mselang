@@ -1569,13 +1569,15 @@ var
  pocont1,poe: pcontextitemty;
  i1,i2: int32;
  addr1: addressvaluety;
+ p1,p2: ptypedataty;
 begin
  with info,sourcecontext^ do begin
  {$ifdef mse_checkinternalerror}
-  if not (d.kind in (datacontexts + [ck_list])) then begin
+  if not (d.kind in (datacontexts + [ck_list,ck_typearg])) then begin
    internalerror(ie_parser,'141211A');
   end;
  {$endif}
+  result:= false;
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
   if (dest^.h.kind = dk_none) and 
@@ -1597,7 +1599,6 @@ begin
    inc(destindirectlevel);
   end;
   if d.kind = ck_list then begin
-   result:= false;
    if destindirectlevel <> 0 then begin
     exit;
    end;
@@ -1650,6 +1651,25 @@ begin
      exit;
     end;
    end;
+  end;
+  if d.kind = ck_typearg then begin
+   p1:= basetype1(ele.eledataabs(d.typ.typedata));
+   if (dest^.h.kind <> dk_classof) or (p1^.h.kind <> dk_class) or 
+            (destindirectlevel <> 1) or (d.typ.indirectlevel <> 1) then begin
+    exit;
+   end;
+   p2:= basetype1(ele.eledataabs(dest^.infoclassof.classtyp));
+   while true do begin
+    if p1 = p2 then begin
+     result:= true;
+     break;
+    end;
+    if p1^.h.ancestor = 0 then begin
+     break;
+    end;
+    p1:= ele.eledataabs(p1^.h.ancestor);
+   end;
+   exit;
   end;
   
 //  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin

@@ -2899,8 +2899,14 @@ var
                                        conversioncost1,destindilev1) then begin
     err1:= err_incompatibletypeforarg;
     with context1^ do begin
-     sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
-     i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
+     if d.kind = ck_typearg then begin
+      sourcetype:= ele.eledataabs(d.typ.typedata);
+      i1:= 0;
+     end
+     else begin
+      sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
+      i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
+     end;
     end;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
@@ -2922,6 +2928,11 @@ var
                                                    destindilev1)],stackoffset);
     end;
     exit;
+   end;
+   if context1^.d.kind = ck_typearg then begin
+    if not getvalue(context1,das_none) then begin
+     internalerror1(ie_handler,'20171122C');
+    end;
    end;
    if af_paramindirect in vardata1^.address.flags then begin
     case context1^.d.kind of
@@ -2972,6 +2983,9 @@ var
         end;
        end;
       end;
+     end;
+     else begin
+      internalerror1(ie_parser,'20171122A');
      end;
     end;
    end
@@ -3043,6 +3057,9 @@ var
       if conversioncost1 > 0 then begin
        doconvert();
       end;
+     end;
+     else begin
+      internalerror1(ie_handler,'20171122B');
      end;
     end;
    end;

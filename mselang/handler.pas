@@ -3145,10 +3145,16 @@ procedure handleissimpexp();
    end
   end;
   if atyp <> nil then begin
-   if (atyp^.h.kind = dk_class) and (aindilev = 1) or
-      (atyp^.h.kind = dk_object) and ((aindilev = 0) or 
-                                  (aindilev = 1)) then begin
+   if (atyp^.h.kind = dk_classof) and (aindilev = 1) then begin
+    atyp:= ele.eledataabs(atyp^.infoclassof.classtyp);
     result:= true;
+   end
+   else begin
+    if (atyp^.h.kind = dk_class) and (aindilev = 1) or
+       (atyp^.h.kind = dk_object) and ((aindilev = 0) or 
+                                   (aindilev = 1)) then begin
+     result:= true;
+    end;
    end;
   end;
   if not result then begin
@@ -3185,16 +3191,27 @@ procedure handleissimpexp();
     if getvalue(acontext,das_none) then begin
      result:= true;
     end;
+    if typ1^.h.kind = dk_classof then begin
+     exit;
+    end;
    end
    else begin
     if getaddress(acontext,true) then begin
      result:= true;
     end;
    end;
-   i1:= acontext^.d.dat.fact.ssaindex;
-   with insertitem(oc_getclassdef,acontext,-1)^.par do begin
-    ssas1:= i1;
-    setimmint32(typ1^.infoclass.virttaboffset,imm);
+   if not (tf_classdef in acontext^.d.dat.datatyp.flags) then begin
+    if not (icf_virtual in typ1^.infoclass.flags) then begin
+     result:= false;
+     errormessage(err_objectorclassvirtual,[],acontext);   
+    end
+    else begin
+     i1:= acontext^.d.dat.fact.ssaindex;
+     with insertitem(oc_getclassdef,acontext,-1)^.par do begin
+      ssas1:= i1;
+      setimmint32(typ1^.infoclass.virttaboffset,imm);
+     end;
+    end;
    end;
   end;
  end; //getclassdef();
@@ -3219,7 +3236,7 @@ begin
   if not gettyp(poa,typa,indileva) or not gettyp(pob,typb,indilevb) then begin
    goto endlab;
   end;
-  if (typa^.h.kind <> typa^.h.kind) or (indileva <> indilevb) then begin
+  if (typa^.h.kind <> typb^.h.kind) or (indileva <> indilevb) then begin
    errormessage(err_isopnomatch,[],pob);
    goto endlab;
   end;
@@ -3253,6 +3270,7 @@ begin
    end;
    typ1:= ele.eledataabs(ele1);
   end;
+  {
   if not (icf_virtual in typa^.infoclass.flags) then begin
    errormessage(err_objectorclassvirtual,[],poa);
    goto endlab;
@@ -3261,6 +3279,7 @@ begin
    errormessage(err_objectorclassvirtual,[],pob);
    goto endlab;
   end;
+  }
   if getclassdef(poa) then begin
    i1:= poa^.d.dat.fact.ssaindex;
    if getclassdef(pob) then begin
@@ -3272,6 +3291,7 @@ begin
     end;
     poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
     poa^.d.dat.fact.opdatatype:= getopdatatype(poa^.d.dat.datatyp);
+    exclude(poa^.d.dat.fact.flags,faf_classele);
    end;
   end;
 endlab:
