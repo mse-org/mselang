@@ -2381,7 +2381,7 @@ begin
   else begin //no condition
    if not isgetfact or not(stf_loop in s.currentstatementflags) or 
                                            not checkloopcommand() then begin
-    identerror(1,err_identifiernotfound);
+    identerror(idents.d[0],err_identifiernotfound);
    end;
    goto endlab;
   end;
