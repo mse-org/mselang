@@ -25,7 +25,7 @@ type
 procedure handleexit(const paramco: int32);
 procedure handlewriteln(const paramco: int32);
 procedure handlewrite(const paramco: int32);
-procedure handlesizeof(const paramco: int32);           //code navig
+procedure handlesizeof(const paramco: int32);
 procedure handleclassof(const paramco: int32);
 procedure handleord(const paramco: int32);
 procedure handleinc(const paramco: int32);
@@ -114,7 +114,7 @@ begin
  end;
 end;
 
-procedure handlesizeof(const paramco: integer);
+procedure handlesizeof(const paramco: int32);
 
  function getsize(const typele: elementoffsetty): int32;
  var
@@ -237,7 +237,7 @@ pushalloclab:
  end;
 end;
 
-procedure handleclassof(const paramco: integer);
+procedure handleclassof(const paramco: int32);
 var
  i1: integer;
  indpo,toppo: pcontextitemty;
@@ -428,7 +428,7 @@ const
 //meo_paramindi         //meo_indi
   oc_decparindipo,oc_decindipo);
  
-procedure handleincdec(const paramco: integer; const adec: boolean);
+procedure handleincdec(const paramco: int32; const adec: boolean);
                              //todo: operand sizes
 var
  par2isconst: boolean;
@@ -621,17 +621,17 @@ begin
  end;
 end;
 
-procedure handleinc(const paramco: integer);
+procedure handleinc(const paramco: int32);
 begin
  handleincdec(paramco,false);
 end;
 
-procedure handledec(const paramco: integer);
+procedure handledec(const paramco: int32);
 begin
  handleincdec(paramco,true);
 end;
 
-procedure handleord(const paramco: integer);
+procedure handleord(const paramco: int32);
 
  procedure ordinalerror();
  begin
@@ -725,7 +725,7 @@ begin
  end;
 end;
 
-procedure handleabs(const paramco: integer);
+procedure handleabs(const paramco: int32);
 var
  typ1: ptypedataty;
  op1: opcodety;
@@ -789,7 +789,7 @@ begin
  end;
 end;
 
-procedure handleexit(const paramco: integer);
+procedure handleexit(const paramco: int32);
 begin
  with info do begin         //todo: try/finally
   if checkparamco(0,paramco) then begin
@@ -812,7 +812,7 @@ begin
  end;
 end;
 
-procedure handlewrite(const paramco: integer);
+procedure handlewrite(const paramco: int32);
 var
  int1,int3: integer;
  po1: popinfoty; 
@@ -981,7 +981,7 @@ errlab:
  end;
 end;
 
-procedure handlewriteln(const paramco: integer);
+procedure handlewriteln(const paramco: int32);
 begin
  handlewrite(paramco);
  with additem(oc_writeln)^ do begin
@@ -989,7 +989,7 @@ begin
 end;
 
 (*
-procedure handlewriteln(const paramco: integer);
+procedure handlewriteln(const paramco: int32);
 var
  int1: integer;
  stacksize1: datasizety;
@@ -1016,11 +1016,11 @@ begin
 end;
 *)
 
-procedure handlesetlength(const paramco: integer);
+procedure handlesetlength(const paramco: int32);
 begin
 end;
 
-procedure call2param(const paramco: integer; const op: opcodety);
+procedure call2param(const paramco: int32; const op: opcodety);
      //(var [stacktop-1]: pointer; [stacktop]: i32)
 var
  po1,po2: pcontextitemty;
@@ -1052,7 +1052,7 @@ begin
  end;
 end;
 
-procedure callgetmemsysfunc(const paramco: integer; const aop: opcodety);
+procedure callgetmemsysfunc(const paramco: int32; const aop: opcodety);
 var
  po1: pcontextitemty;
 begin
@@ -1072,19 +1072,19 @@ begin
  end;
 end;
 
-procedure handlegetmem(const paramco: integer);
+procedure handlegetmem(const paramco: int32);
 begin
  callgetmemsysfunc(paramco,oc_getmem);
 // call2param(paramco,oc_getmem);
 end;
 
-procedure handlegetzeromem(const paramco: integer);
+procedure handlegetzeromem(const paramco: int32);
 begin
  callgetmemsysfunc(paramco,oc_getzeromem);
 // call2param(paramco,oc_getzeromem);
 end;
 
-procedure handlefreemem(const paramco: integer);
+procedure handlefreemem(const paramco: int32);
 begin
  with info do begin
   if checkparamco(1,paramco) and 
@@ -1098,12 +1098,12 @@ begin
  end;
 end;
 
-procedure handlereallocmem(const paramco: integer);
+procedure handlereallocmem(const paramco: int32);
 begin
  call2param(paramco,oc_reallocmem);
 end;
  
-procedure handlesetmem(const paramco: integer);
+procedure handlesetmem(const paramco: int32);
 var
  po1,po2,po3: pcontextitemty;
 begin
@@ -1152,7 +1152,7 @@ begin
  domemtransfer(paramco,oc_memmove);
 end;
 
-procedure handlehalt(const paramco: integer);
+procedure handlehalt(const paramco: int32);
 begin
  with info do begin
   if checkparamco(0,paramco) then begin
@@ -1169,7 +1169,7 @@ begin
  end;
 end;
 
-procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
+procedure handlelowhigh(const paramco: int32; const ahigh: boolean);
 
  procedure checktype(const atype: elementoffsetty);
  var
@@ -1369,12 +1369,12 @@ begin
  end;
 end;
 
-procedure handlelow(const paramco: integer);
+procedure handlelow(const paramco: int32);
 begin
  handlelowhigh(paramco,false);
 end;
 
-procedure handlehigh(const paramco: integer);
+procedure handlehigh(const paramco: int32);
 begin
  handlelowhigh(paramco,true);
 end;
@@ -1504,7 +1504,7 @@ begin
  end;
 end;
 
-procedure floatsysfunc(const paramco: integer; const aop: opcodety);
+procedure floatsysfunc(const paramco: int32; const aop: opcodety);
 var
  po1: pcontextitemty;
 begin
@@ -1524,7 +1524,7 @@ begin
  end;
 end;
 
-procedure i32floatsysfunc(const paramco: integer; const aop64: opcodety;
+procedure i32floatsysfunc(const paramco: int32; const aop64: opcodety;
                                               const aop32: opcodety = oc_none);
 var
  po1: pcontextitemty;
@@ -1559,7 +1559,7 @@ begin
  end;
 end;
 
-procedure i64floatsysfunc(const paramco: integer; const aop: opcodety);
+procedure i64floatsysfunc(const paramco: int32; const aop: opcodety);
 var
  po1: pcontextitemty;
 begin
@@ -1579,52 +1579,52 @@ begin
  end;
 end;
 
-procedure handlesin(const paramco: integer);
+procedure handlesin(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_sin64);
 end;
 
-procedure handlecos(const paramco: integer);
+procedure handlecos(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_cos64);
 end;
 
-procedure handlesqrt(const paramco: integer);
+procedure handlesqrt(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_sqrt64);
 end;
 
-procedure handlefloor(const paramco: integer);
+procedure handlefloor(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_floor64);
 end;
 
-procedure handleround(const paramco: integer);
+procedure handleround(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_round64);
 end;
 
-procedure handlenearbyint(const paramco: integer);
+procedure handlenearbyint(const paramco: int32);
 begin
  floatsysfunc(paramco,oc_nearbyint64);
 end;
 
-procedure handletruncint32(const paramco: integer);
+procedure handletruncint32(const paramco: int32);
 begin
  i32floatsysfunc(paramco,oc_truncint32flo64,oc_truncint32flo32);
 end;
 
-procedure handletruncint64(const paramco: integer);
+procedure handletruncint64(const paramco: int32);
 begin
  i64floatsysfunc(paramco,oc_truncint64flo64);
 end;
 
-procedure handletrunccard32(const paramco: integer);
+procedure handletrunccard32(const paramco: int32);
 begin
  i32floatsysfunc(paramco,oc_trunccard32flo64,oc_trunccard32flo32);
 end;
 
-procedure handletrunccard64(const paramco: integer);
+procedure handletrunccard64(const paramco: int32);
 begin
  i64floatsysfunc(paramco,oc_trunccard64flo64);
 end;
