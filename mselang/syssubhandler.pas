@@ -25,7 +25,7 @@ type
 procedure handleexit(const paramco: int32);
 procedure handlewriteln(const paramco: int32);
 procedure handlewrite(const paramco: int32);
-procedure handlesizeof(const paramco: int32);
+procedure handlesizeof(const paramco: int32);           //code navig
 procedure handleclassof(const paramco: int32);
 procedure handleord(const paramco: int32);
 procedure handleinc(const paramco: int32);
@@ -133,7 +133,8 @@ var
  i1: integer;
  indpo,toppo: pcontextitemty;
  typ1: ptypedataty;
-
+label
+ pushalloclab;
 begin
  if checkparamco(1,paramco) then begin
   with info do begin
@@ -149,7 +150,15 @@ begin
        end
        else begin
         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-        if typ1^.h.kind in [dk_class,dk_object] then begin
+        if typ1^.h.kind in [dk_class,dk_object,dk_classof] then begin
+         if (typ1^.h.kind = dk_classof) or 
+                   (tf_classdef in d.dat.datatyp.flags) then begin
+          if not getaddress(toppo,true) then begin
+           exit;
+          end;
+          i1:= toppo^.d.dat.fact.ssaindex;
+          goto pushalloclab;
+         end;
          if icf_virtual in typ1^.infoclass.flags then begin
           if (d.kind in factcontexts) and 
                      (faf_classele in d.dat.fact.flags) or 
@@ -170,6 +179,7 @@ begin
             end;
            end;
           end;
+pushalloclab:
           with insertitem(oc_pushallocsize,toppo,-1)^.par do begin
            ssas1:= i1;
            i1:= ssad;
@@ -198,11 +208,17 @@ begin
        end
        else begin
         typ1:= ele.eledataabs(d.typ.typedata);
-        if typ1^.h.kind in [dk_class,dk_object] then begin
-         i1:= typ1^.infoclass.allocsize;
-        end
-        else begin
-         i1:= typ1^.h.bytesize;
+        case typ1^.h.kind of
+         dk_class,dk_object: begin
+          i1:= typ1^.infoclass.allocsize;
+         end;
+         dk_classof: begin
+          i1:= ptypedataty(ele.eledataabs(typ1^.infoclassof.classtyp))^.
+                                                         infoclass.allocsize;
+         end;
+         else begin
+          i1:= typ1^.h.bytesize;
+         end;
         end;
        end;
       end;
@@ -801,13 +817,13 @@ var
  int1,int3: integer;
  po1: popinfoty; 
  po2: ptypedataty;
- poitem,poe: pcontextitemty;
+ poitem{,poe}: pcontextitemty;
 label
  errlab;
 begin                      
  with info do begin
   int3:= 0;
-  poe:= @contextstack[s.stacktop];
+//  poe:= @contextstack[s.stacktop];
   poitem:= @contextstack[s.stackindex+2];
   while getnextnospace(poitem+1,poitem) do begin
    if (poitem^.d.kind in datacontexts) and 
@@ -1109,7 +1125,7 @@ end;
 procedure domemtransfer(const paramco: int32; const aop: opcodety);
 var
  po1,po2,po3: pcontextitemty;
- i1: int32;
+// i1: int32;
 begin
  with info do begin
   po3:= @contextstack[s.stacktop];

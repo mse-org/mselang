@@ -181,7 +181,7 @@ end;
 
 class function tobject.instancesize(): int32;
 begin
- result:= pclassdefinfoty(self)^.header.allocs.size;
+ result:= sizeof(self^);
 end;
 
 class function tobject.inheritsfrom(aclass: tclass): boolean;

@@ -1,44 +1,58 @@
-program pointertostring1;
+program free;
 uses
- rtl_fpccompatibility,__mla__internaltypes;
+ rtl_fpccompatibility;
 type
 
-
- ctest = class(tobject)
-  f1: int32;
+ ctest2 = class(tobject)
   constructor create();
-  destructor destroy();
+  destructor destroy() [override];
+  procedure freeinstance() [override];
+  procedure afterconstruction() [afterconstruct,override];
+  procedure beforedestruction() [beforedestruct,override];
  end;
- cty = class of ctest;
 
-constructor ctest.create();
+constructor ctest2.create();
 begin
+ exitcode:= 85;
 end;
 
-destructor ctest.destroy();
+destructor ctest2.destroy();
 begin
+ if exitcode = 100 then 
+  exitcode:= 120;
+ end;
+end;
+
+procedure ctest2.afterconstruction();
+begin
+ if exitcode = 85 then
+  exitcode:= 90;
+ end;
+end;
+
+procedure ctest2.beforedestruction();
+begin
+ if exitcode = 90 then
+  exitcode:= 100;
+ end;
+end;
+
+procedure ctest2.freeinstance();
+begin
+ if exitcode = 120 then
+  exitcode:= 123;
+ end;
+ inherited;
 end;
 
 var
- cc1: cty;
- p1: pclassdefheaderty;
- p2: pobjectrttity;
- c1: ctest;
+ c1: ctest2;
 begin
- cc1:= ctest;
- p1:= pointer(cc1);
- p2:= pointer(p1^.rtti);
- writeln(cc1,' ',p1^.allocs.size,' ',p1^.rtti,' ',p2^.kind,' ',p2^.size,' ',p2^.classdef);
- c1:= ctest.create();
- writeln(c1.classtype,' ',c1.classinfo,' ',c1.classname);
- if (pointer(cc1) = c1.classtype) and (p2 = c1.classinfo) then
-  exitcode:= 123;
+ c1:= ctest2.create();
+ if c1.instancesize <> sizeof(ctest2) then
+  exitcode:= 0;
  end;
- c1.destroy();
-// exitcode:= 123;
-// p1:= pointer(cc1);
-// c1:= ctest.create();
-// p1:= c1.classinfo;
-// writeln(p1);
-// c1.destroy();
+ c1.free();
+ c1:= nil;
+ c1.free();
 end.
