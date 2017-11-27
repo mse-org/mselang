@@ -358,8 +358,8 @@ type
    function addnullvalue(const atypeid: int32): llvmvaluety;
 
    property typelist: ttypehashdatalist read ftypelist;
-   function first(): pconstlistdataty;
-   function next(): pconstlistdataty;
+   function first(): pconstlisthashdataty;
+   function next(): pconstlisthashdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
    function i8const(const avalue: int8): llvmvaluety;
@@ -404,6 +404,7 @@ type
   public
 //   constructor create();
    procedure addlink(const adata: pointer; const aglobid: int32);
+   function find(const akey: integer): plinkhashdataty;
  end;
  
  globallockindty = (gak_var,gak_const,gak_sub); 
@@ -2229,14 +2230,14 @@ begin
  result:= addaggregate(@agg1);
 end;
 
-function tconsthashdatalist.first: pconstlistdataty;
+function tconsthashdatalist.first: pconstlisthashdataty;
 begin
- result:= @pconstlisthashdataty(internalfirstx())^.data;
+ result:= pconstlisthashdataty(internalfirstx());
 end;
 
-function tconsthashdatalist.next: pconstlistdataty;
+function tconsthashdatalist.next: pconstlisthashdataty;
 begin
- result:= @pconstlisthashdataty(internalnextx())^.data;
+ result:= pconstlisthashdataty(internalnextx());
 end;
 
 function tconsthashdatalist.gettype(const aindex: int32): int32;
@@ -3897,6 +3898,11 @@ begin
  with plinkdataty(add(ele.eledatarel(adata)))^ do begin
   globid:= aglobid;
  end;
+end;
+
+function tlinklist.find(const akey: integer): plinkhashdataty;
+begin
+ result:= pointer(inherited find(akey));
 end;
 
 { tint32bufferhashdatalist }

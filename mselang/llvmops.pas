@@ -630,12 +630,13 @@ begin
 *)  
  poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
  peclassdef:= getsegmenttop(seg_classdef);
- countpo:= getsegmentbase(seg_classintfcount);
+// countpo:= getsegmentbase(seg_classintfcount);
  while poclassdef < peclassdef do begin   //classes
+  i1:= (pclassdefconstheaderty(poclassdef)-1)^.intfcount;
   pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
            info.s.unitinfo^.llvmlists.constlist.addclassdef(
-                                   poclassdef,countpo^).listid,constlinkage);
+                                   poclassdef,i1).listid,constlinkage);
                                           //replace data by id
   typ1:= ele.eledataabs((pclassdefconstheaderty(
                                        pointer(poclassdef))-1)^.typedata);
@@ -655,7 +656,7 @@ begin
   
   poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
                        poclassdef^.header.allocs.classdefinterfacestart +
-                                                   countpo^*targetpointersize;
+                                                          i1*targetpointersize;
   inc(countpo);
  end;
  with info.s.unitinfo^ do begin

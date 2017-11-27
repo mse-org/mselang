@@ -227,6 +227,22 @@ var
       with pimplementationdataty(po)^ do begin
       end;
      end;
+     ek_classintfnamenode: begin
+      with pclassintfnamenodedataty(po)^ do begin
+      end;
+     end;
+     ek_classintftypenode: begin
+      with pclassintftypenodedataty(po)^ do begin
+      end;
+     end;
+     ek_classimpnode: begin
+      with pclassimpnodedataty(po)^ do begin
+      end;
+     end;
+     ek_internalsub: begin
+      with pinternalsubdataty(po)^ do begin
+      end;
+     end;
      ek_none: begin
      end;
      else begin

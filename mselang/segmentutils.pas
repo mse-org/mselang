@@ -148,8 +148,8 @@ const
   0,      0,        0,          1024,         1024,     
 //seg_op,seg_classinfo,seg_rtti,
   1024,  1024,         1024,
-//seg_intf,seg_paralloc,seg_classintfcount,seg_intfitemcount,
-  1024,    1024,        1024,              1024,             
+//seg_intf,seg_paralloc,{seg_classintfcount,}seg_intfitemcount,
+  1024,    1024,        {1024,}              1024,             
 //seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
   1024,        1024,          1024,         1024,
 //set_temp

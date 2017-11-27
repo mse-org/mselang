@@ -2310,7 +2310,7 @@ function llvmlink(const adata: pointer; out destunitid: identty;
                                               // -1 -> new
 var
  po1: pelementinfoty;
- po2: plinkdataty;
+ po2: plinkhashdataty;
 begin
  with info do begin
   result:= modularllvm;
@@ -2319,10 +2319,10 @@ begin
    destunitid:= po1^.header.defunit^.key;
    result:= destunitid <> s.unitinfo^.key;
    if result then begin
-    po2:= @plinkhashdataty(info.s.unitinfo^.llvmlists.globlist.linklist.find(
-                                              ele.eledatarel(adata)))^.data;
+    po2:= info.s.unitinfo^.llvmlists.globlist.linklist.find(
+                                                       ele.eledatarel(adata));
     if po2 <> nil then begin
-     globid:= po2^.globid;
+     globid:= po2^.data.globid;
     end
     else begin
      globid:= -1; //new

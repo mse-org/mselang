@@ -29,6 +29,7 @@ type
 
  classdefconstheaderty = record
   typedata: elementoffsetty;
+  intfcount: int32;
  end;
  pclassdefconstheaderty = ^classdefconstheaderty;
  
@@ -725,10 +726,14 @@ end;
 
 function getclassinfoaddress(const asize: int32;
                                    const ainterfacecount: int32): segaddressty;
+var
+ p1: pclassdefconstheaderty;
 begin
  result:= allocsegment(seg_classdef,asize+sizeof(classdefconstheaderty));
+ p1:= getsegmentpo(result);
+ p1^.intfcount:= ainterfacecount;
  result.address:= result.address + sizeof(classdefconstheaderty);
- pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
+// pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
 end;
 
 procedure setimmboolean(const value: boolean; var aimm: immty);

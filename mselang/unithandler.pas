@@ -802,6 +802,10 @@ begin
 //todo: use mmap(), problem: no terminating 0.
   result:= parseunit(readfiledatastring(filepath),defaultdialect(filepath),
                                                                    aunit,true);
+{$ifdef mse_debugparser}
+  writeln('***************************************** usesend');
+  writeln(filepath);
+{$endif}
  end;
 end;
 

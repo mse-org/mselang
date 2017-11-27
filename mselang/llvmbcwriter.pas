@@ -463,7 +463,7 @@ var
 
 var
  pt1: ptypelistdataty;
- pc2: pconstlistdataty;
+ pc2: pconstlisthashdataty;
  pp3,pp4: pparamitemty;
  pga5,pgae: pgloballocdataty;
  pgn7,pgne: pglobnamedataty;
@@ -718,29 +718,30 @@ begin
    id1:= -1;
    pc2:= consts.first;
    for i1:= 0 to consts.count-1 do begin
-    if pc2^.typeid < 0 then begin //consttypety
-     case consttypety(-pc2^.typeid) of
+    if pc2^.data.typeid < 0 then begin //consttypety
+     case consttypety(-pc2^.data.typeid) of
       ct_null: begin       
-       checkconsttypeid(int32(pc2^.header.buffer));
+       checkconsttypeid(int32(pc2^.data.header.buffer));
        emitrec(ord(CST_CODE_NULL),[]);
       end;
       ct_pointercast: begin
        checkconsttypeid(pointertype);
-       emitpointercastconst(globval(pc2^.header.buffer),
+       emitpointercastconst(globval(pc2^.data.header.buffer),
                  ptypeval(info.s.unitinfo^.llvmlists.globlist.
-                                                gettype(pc2^.header.buffer)));
+                                           gettype(pc2^.data.header.buffer)));
       end;
       ct_address: begin
        checkconsttypeid(pointertype);
-       addressinfo1:= 
-              info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
+       addressinfo1:= info.s.unitinfo^.llvmlists.constlist.absdata(
+                                                pc2^.data.header.buffer);
        with addressinfo1^ do begin
         emitgepconst(constval(addressid),constval(offsetid));
        end;
       end;
       ct_pointerarray,ct_aggregatearray: begin
-       pa:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
-       i2:= pc2^.header.buffersize div sizeof(int32) - 1;
+       pa:= info.s.unitinfo^.llvmlists.constlist.absdata(
+                                               pc2^.data.header.buffer);
+       i2:= pc2^.data.header.buffersize div sizeof(int32) - 1;
        checkconsttypeid(pa[i2]); //last item is type
        emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
        pe:= pa+i2;
@@ -750,7 +751,7 @@ begin
        end;
       end;
       ct_aggregate: begin
-       po9:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
+       po9:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.data.header.buffer);
        checkconsttypeid(po9^.header.typeid);
        pa:= @po9^.items;
        i2:= po9^.header.itemcount;
@@ -767,36 +768,36 @@ begin
      end;
     end
     else begin //typeid
-     checkconsttypeid(pc2^.typeid);
-     case databitsizety(pc2^.typeid) of
+     checkconsttypeid(pc2^.data.typeid);
+     case databitsizety(pc2^.data.typeid) of
       das_1..das_32: begin
-       emitintconst(int32(pc2^.header.buffer));
+       emitintconst(int32(pc2^.data.header.buffer));
       end;
       das_64: begin
      {$ifdef cpu64}
        emitintconst(int64(pc2^.header.buffer));
      {$else}
-       emitintconst(pint64(consts.absdata(pc2^.header.buffer))^);
+       emitintconst(pint64(consts.absdata(pc2^.data.header.buffer))^);
      {$endif}
       end;
       das_f32: begin
-       emitfloatconst(pflo32(@pc2^.header.buffer)^);
+       emitfloatconst(pflo32(@pc2^.data.header.buffer)^);
       end;
       das_f64: begin
      {$ifdef cpu64}
-       emitfloatconst(pflo64(pc2^.header.buffer)^);
+       emitfloatconst(pflo64(pc2^.data.header.buffer)^);
      {$else}
-       emitfloatconst(pflo64(consts.absdata(pc2^.header.buffer))^);
+       emitfloatconst(pflo64(consts.absdata(pc2^.data.header.buffer))^);
      {$endif}
       end;
       else begin
       {$ifdef mse_checkinternalerror}
-       if databitsizety(pc2^.typeid) <= lastdatakind then begin
+       if databitsizety(pc2^.data.typeid) <= lastdatakind then begin
         internalerror(ie_bcwriter,'20141220A');
        end;
       {$endif}
-       emitdataconst(consts.absdata(pc2^.header.buffer)^,
-                                                pc2^.header.buffersize);
+       emitdataconst(consts.absdata(pc2^.data.header.buffer)^,
+                                                pc2^.data.header.buffersize);
       end;
      end;
     end;
