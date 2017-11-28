@@ -26,6 +26,7 @@ type
   endpo: pointer;
  end;
  pbufferinfoty = ^bufferinfoty;
+ unitsegmentinfoty = array[unitsegmentty] of bufferinfoty;
  
  segmentstatety = record
   segment: segmentty;
@@ -68,6 +69,8 @@ function allocbufferoffset(var abuffer: bufferinfoty; asize: int32;
 function allocbufferpo(var abuffer: bufferinfoty; asize: int32): pointer;
 function getbufferbase(const abuffer: bufferinfoty): pointer;
 function getbuffertop(const abuffer: bufferinfoty): pointer;
+
+procedure freesegments(var asegments: unitsegmentinfoty);
 
 function getfilekind(const akind: mlafilekindty): int32;
 
@@ -220,13 +223,22 @@ function getbuffertop(const abuffer: bufferinfoty): pointer;
 begin
  result:= abuffer.endpo;
 end;
+
+procedure freesegments(var asegments: unitsegmentinfoty);
+var
+ seg1: segmentty;
+begin
+ for seg1:= low(asegments) to high(asegments) do begin
+  freebuffer(asegments[seg1]);
+ end;
+end;
  
 const
  minsize: array[segmentty] of integer = (
-//seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
-  0,      0,        0,          1024,         1024,     
-//seg_op,seg_classinfo,seg_rtti,
-  1024,  1024,         1024,
+//seg_classdef,seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
+  1024,        0,      0,        0,          1024,         1024,     
+//seg_op,{seg_classinfo,}seg_rtti,
+  1024,  {1024,}         1024,
 //seg_intf,seg_paralloc,{seg_classintfcount,}seg_intfitemcount,
   1024,    1024,        {1024,}              1024,             
 //seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
@@ -235,7 +247,18 @@ const
   1024);          
   
 var
- segments: array[segmentty] of bufferinfoty;
+ segmentsx: array[segmentty] of bufferinfoty;
+ useunitsegments: boolean;
+ 
+function getsegbuffer(const asegment: segmentty): pbufferinfoty; inline;
+begin
+ if not useunitsegments or (asegment > high(unitsegmentty)) then begin
+  result:= @segmentsx[asegment];
+ end
+ else begin
+  result:= @info.s.unitinfo^.segments[asegment];
+ end;
+end;
 
 function getfilekind(const akind: mlafilekindty): int32;
 begin
@@ -302,7 +325,7 @@ begin
     with segitems[segmentty(i1)] do begin
      kind:= seg1;
      flags:= [shf_load];
-     with segments[seg1] do begin
+     with getsegbuffer(seg1)^ do begin
       size:= toppo - data;
      end;
     end;
@@ -316,7 +339,7 @@ begin
                   info1.header.segmentcount*sizeof(segmentitemty)) then begin
   for seg1:= low(segmentsty) to high(segmentsty) do begin
    if seg1 in astoredsegments then begin
-    with segments[seg1] do begin
+    with getsegbuffer(seg1)^ do begin
      if not writedata(data^,toppo-data) then begin
       break;
      end;
@@ -473,7 +496,7 @@ var
  po1: pointer;
  int1: integer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   int1:= (toppo-data)*2 + minsize[asegment];
   po1:= data;
   reallocmem(data,int1+minsegmentreserve);
@@ -498,7 +521,7 @@ end;
 procedure topalign(const asegment: segmentty;
                           const asize: int32); {$ifdef mse_inline}inline;{$endif}
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   toppo:= pointer(ptruint((ptruint(toppo)+alignstep-1) and ptruint(alignmask)));
  end;
 end;
@@ -506,7 +529,7 @@ end;
 function allocsegment(const asegment: segmentty;
                                     asize: integer): segaddressty;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   result.segment:= asegment;
   result.address:= toppo-pointer(data);
@@ -529,7 +552,7 @@ begin
   internalerror(ie_segment,'20170326B');
  end;
 {$endif}
- with segments[address.segment] do begin
+ with getsegbuffer(address.segment)^ do begin
   dec(toppo,oldsize-newsize);
  end;
 end;
@@ -537,7 +560,7 @@ end;
 function allocsegment(const asegment: segmentty;
                              asize: integer; out adata: pointer): segaddressty;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   result.segment:= asegment;
   adata:= toppo;
@@ -556,7 +579,7 @@ end;
 function allocsegmentoffset(const asegment: segmentty;
                                     asize: integer): dataoffsty;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   result:= toppo-pointer(data);
 //  sizealign(asize);
@@ -570,7 +593,7 @@ end;
 function allocsegmentoffset(const asegment: segmentty; asize: integer; 
                                                out adata: pointer): dataoffsty;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   adata:= toppo;
   result:= toppo-pointer(data);
@@ -588,7 +611,7 @@ end;
 function allocsegmentpo(const asegment: segmentty;
                                     asize: integer): pointer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   result:= toppo;
 //  sizealign(asize);
@@ -602,7 +625,7 @@ end;
 function allocsegmentpounaligned(const asegment: segmentty;
                                                 const asize: integer): pointer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   result:= toppo;
   inc(toppo,asize);
   if toppo > endpo then begin
@@ -616,7 +639,7 @@ function allocsegmentpo(const asegment: segmentty;
 var
  po1: pointer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   topalign(asegment,asize);
   result:= toppo;
 //  sizealign(asize);
@@ -634,7 +657,7 @@ procedure checksegmentcapacity(const asegment: segmentty;
 var
  p1,p2: pointer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   p1:= toppo;
   p2:= data;
   topalign(asegment,asize);
@@ -653,7 +676,7 @@ function checksegmentcapacity(const asegment: segmentty;
 var
  p1,p2: pointer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   p1:= toppo;
   p2:= data;
   topalign(asegment,asize);
@@ -691,14 +714,14 @@ end;
 }
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   toppo:= atop;
  end; 
 end;
 
 procedure setsegmenttop(const asegment: segmentty; const atop: dataoffsty);
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   toppo:= data+atop;
  {$ifdef mse_checkinternalerror}
   if (toppo < data) or (toppo > endpo) then begin
@@ -710,7 +733,7 @@ end;
 
 procedure movesegmenttop(const asegment: segmentty; const adelta: int32);
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   toppo:= toppo + adelta;
   if toppo > endpo then begin
    grow(seg_op);
@@ -725,7 +748,7 @@ end;
 
 procedure resetsegment(const asegment: segmentty);
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   toppo:= data;
  end; 
 end;
@@ -733,7 +756,7 @@ end;
 function savesegment(const asegment: segmentty): segmentstatety;
 begin
  result.segment:= asegment;
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   result.data:= data;
   result.toppo:= toppo;
  end;
@@ -741,7 +764,7 @@ end;
 
 procedure restoresegment(const aseg: segmentstatety);
 begin
- with segments[aseg.segment] do begin
+ with getsegbuffer(aseg.segment)^ do begin
   toppo:= aseg.toppo + (data-aseg.data);
   if toppo > endpo then begin
    internalerror1(ie_segment,'20150710B'); //invalid size
@@ -751,7 +774,7 @@ end;
 
 function getbuffersize(const aseg: segmentstatety): int32;
 begin
- with segments[aseg.segment] do begin
+ with getsegbuffer(aseg.segment)^ do begin
   result:= (toppo + (aseg.data-data)) - aseg.toppo;
  end;
 end;
@@ -760,8 +783,8 @@ function setsubsegment(const asubseg: subsegmentty): subsegmentstatety;
                                                  //returns old state
 begin
  result.segment:= asubseg.segment;
- result.state:= segments[asubseg.segment];
- with segments[asubseg.segment] do begin
+ result.state:= getsegbuffer(asubseg.segment)^;
+ with getsegbuffer(asubseg.segment)^ do begin
   data:= data + asubseg.start;
   toppo:= data + asubseg.size;
  end;
@@ -770,7 +793,7 @@ end;
 function getsubsegment(const asegment: segmentty): subsegmentty;
 begin
  result.segment:= asegment;
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   result.start:= toppo-data;
   result.size:= 0;
  end;
@@ -778,31 +801,31 @@ end;
 
 procedure setsubsegmentsize(var asubseg: subsegmentty);
 begin
- with segments[asubseg.segment] do begin
+ with getsegbuffer(asubseg.segment)^ do begin
   asubseg.size:= toppo - data - asubseg.start;
  end;
 end;
 
 procedure restoresubsegment(const aseg: subsegmentstatety);
 begin
- segments[aseg.segment]:= aseg.state;
+ getsegbuffer(aseg.segment)^:= aseg.state;
 end;
 
 function getsegmentoffset(const asegment: segmentty;
                                     const apo: pointer): dataoffsty;
 begin
- result:= apo - segments[asegment].data;
+ result:= apo - getsegbuffer(asegment)^.data;
 end;
 
 function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
 begin
- result:= segments[asegment].data + aoffset;
+ result:= getsegbuffer(asegment)^.data + aoffset;
 end;
 
 function getsegmentpo(const aaddress: segaddressty): pointer;
 begin
- result:= segments[aaddress.segment].data + aaddress.address;
+ result:= getsegbuffer(aaddress.segment)^.data + aaddress.address;
 end;
 
 function getsegaddress(const asegment: segmentty;
@@ -816,29 +839,29 @@ function getsegaddress(const asegment: segmentty;
                              const aref: pointer): segaddressty;
 begin
  result.segment:= asegment;
- result.address:= aref-segments[asegment].data;
+ result.address:= aref-getsegbuffer(asegment)^.data;
 end;
 
 function getsegmentbase(const asegment: segmentty): pointer;
 begin
- result:= segments[asegment].data;
+ result:= getsegbuffer(asegment)^.data;
 end;
 
 function getsegmenttop(const asegment: segmentty): pointer;
 begin
- result:= segments[asegment].toppo;
+ result:= getsegbuffer(asegment)^.toppo;
 end;
 
 function getsegmenttopoffs(const asegment: segmentty): dataoffsty;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   result:= toppo-pointer(data);
  end;
 end;
 
 function getsegmentsize(const asegment: segmentty): integer;
 begin
- with segments[asegment] do begin
+ with getsegbuffer(asegment)^ do begin
   result:= toppo-pointer(data);
  end;
 end;
@@ -858,7 +881,7 @@ var
  po1: pbufferinfoty;
 begin
  for i1:= 0 to high(state) do begin
-  po1:= @segments[unitsegments[i1]];
+  po1:= getsegbuffer(unitsegments[i1]);
   state[i1]:= po1^;
   with po1^ do begin
    data:= nil;
@@ -874,7 +897,7 @@ var
  po1: pbufferinfoty;
 begin
  for i1:= 0 to high(state) do begin
-  po1:= @segments[unitsegments[i1]];
+  po1:= getsegbuffer(unitsegments[i1]);
   if po1^.data <> nil then begin
    freemem(po1^.data);
   end;
@@ -887,7 +910,7 @@ var
  seg1: segmentty;
 begin
  for seg1:= low(segmentty) to high(segmentty) do begin
-  with segments[seg1] do begin
+  with getsegbuffer(seg1)^ do begin
    if data <> nil then begin
     freemem(data);
    end;
@@ -898,7 +921,8 @@ end;
 procedure init();
 begin
  dofinalize();
- fillchar(segments,sizeof(segments),0);
+ fillchar(segmentsx,sizeof(segmentsx),0);
+ useunitsegments:= co_writeunits in info.o.compileoptions;
 {
  with plocallocinfoty(allocsegmentpo(seg_localloc,
                                    sizeof(locallocinfoty)))^ do begin

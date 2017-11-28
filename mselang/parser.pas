@@ -95,7 +95,6 @@ begin
   elements.clear();
  end;
  segmentutils.deinit();
- freebuffer(info.classdefbuffer);
 end;
 
 

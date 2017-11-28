@@ -413,6 +413,9 @@ begin
       llvmops.run(llvmout1,false);
      finally
       llvmout1.free();
+      if co_llvm in info.o.compileoptions then begin
+       freebuffer(info.s.unitinfo^.segments[seg_classdef]); //not used anymore
+      end;
      end;
     end
     else begin
