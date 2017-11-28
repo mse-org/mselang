@@ -943,6 +943,7 @@ begin
 }
  with punithashdataty(aitem)^ do begin
   system.finalize(data^);
+  freebuffer(data^.classdefbuffer);
 //  metadatalist.free();
   freeparsercontext(data^.implstart);
   freemem(data);

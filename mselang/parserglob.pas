@@ -724,6 +724,7 @@ type
 //  param1poallocs: suballocinfoty;
   
   opseg: subsegmentty;
+  classdefbuffer: bufferinfoty;
   mainad: int32;
     
   state: unitstatesty;
@@ -881,6 +882,7 @@ type
 //  currentoperators: objectoperatorsty;
 //  currentconversionoperatorcount: int32;
   stringbuffer: string; //todo: use faster type
+  classdefbuffer: bufferinfoty;
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;
 //  systemunit: punitinfoty;

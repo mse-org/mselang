@@ -20,12 +20,12 @@ interface
 uses
  globtypes,opglob,msetypes,classes,mclasses;
 type
- segmentinfoty = record
+ bufferinfoty = record
   data: pointer;
   toppo: pointer;
   endpo: pointer;
  end;
- psegmentinfoty = ^segmentinfoty;
+ pbufferinfoty = ^bufferinfoty;
  
  segmentstatety = record
   segment: segmentty;
@@ -35,7 +35,7 @@ type
 
  subsegmentstatety = record
   segment: segmentty;
-  state: segmentinfoty;
+  state: bufferinfoty;
  end;
  subsegmentty = record
   segment: segmentty;
@@ -59,7 +59,15 @@ const
  unitsegments: array[0..unitsegmentcount-1] of segmentty = 
                (seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl);
 type
- unitsegmentsstatety = array[0..unitsegmentcount-1] of segmentinfoty;
+ unitsegmentsstatety = array[0..unitsegmentcount-1] of bufferinfoty;
+
+procedure resetbuffer(var abuffer: bufferinfoty);
+procedure freebuffer(var abuffer: bufferinfoty);
+function allocbufferoffset(var abuffer: bufferinfoty; asize: int32;
+                                               out adata: pointer): dataoffsty;
+function allocbufferpo(var abuffer: bufferinfoty; asize: int32): pointer;
+function getbufferbase(const abuffer: bufferinfoty): pointer;
+function getbuffertop(const abuffer: bufferinfoty): pointer;
 
 function getfilekind(const akind: mlafilekindty): int32;
 
@@ -141,6 +149,77 @@ implementation
 uses
  errorhandler,stackops,mseformatstr,msesystypes,msestream,msestrings,parserglob,
  llvmlists;
+
+procedure resetbuffer(var abuffer: bufferinfoty);
+begin
+ with abuffer do begin
+  toppo:= data;
+ end;
+end;
+
+procedure freebuffer(var abuffer: bufferinfoty);
+begin
+ with abuffer do begin
+  if data <> nil then begin
+   freemem(data);
+   data:= nil;
+   toppo:= nil;
+   endpo:= nil;
+  end;
+ end;
+end;
+
+procedure topalign(var abuffer: bufferinfoty; const asize: int32); 
+                                             {$ifdef mse_inline}inline;{$endif}
+begin
+ with abuffer do begin
+  toppo:= pointer(ptruint((ptruint(toppo)+alignstep-1) and ptruint(alignmask)));
+ end;
+end;
+
+procedure grow(var abuffer: bufferinfoty; var ref: pointer);
+var
+ po1: pointer;
+ int1: integer;
+begin
+ with abuffer do begin
+  int1:= (toppo-data)*2 + 1024;
+  po1:= data;
+  reallocmem(data,int1+minsegmentreserve);
+  endpo:= data + int1;
+  toppo:= toppo + (data - po1);
+  ref:= ref + (data - po1);
+ end;
+end;
+
+function allocbufferoffset(var abuffer: bufferinfoty; asize: int32;
+                                               out adata: pointer): dataoffsty;
+begin
+ with abuffer do begin
+  topalign(abuffer,asize);
+  adata:= toppo;
+  result:= toppo-pointer(data);
+  inc(toppo,asize);
+  if toppo > endpo then begin
+   grow(abuffer,adata);
+  end;
+ end;
+end;
+
+function allocbufferpo(var abuffer: bufferinfoty; asize: int32): pointer;
+begin
+ allocbufferoffset(abuffer,asize,result);
+end;
+
+function getbufferbase(const abuffer: bufferinfoty): pointer;
+begin
+ result:= abuffer.data;
+end;
+
+function getbuffertop(const abuffer: bufferinfoty): pointer;
+begin
+ result:= abuffer.endpo;
+end;
  
 const
  minsize: array[segmentty] of integer = (
@@ -156,7 +235,7 @@ const
   1024);          
   
 var
- segments: array[segmentty] of segmentinfoty;
+ segments: array[segmentty] of bufferinfoty;
 
 function getfilekind(const akind: mlafilekindty): int32;
 begin
@@ -776,7 +855,7 @@ end;
 procedure saveunitsegments(out state: unitsegmentsstatety);
 var
  i1: int32;
- po1: psegmentinfoty;
+ po1: pbufferinfoty;
 begin
  for i1:= 0 to high(state) do begin
   po1:= @segments[unitsegments[i1]];
@@ -792,7 +871,7 @@ end;
 procedure restoreunitsegments(const state: unitsegmentsstatety);
 var
  i1: int32;
- po1: psegmentinfoty;
+ po1: pbufferinfoty;
 begin
  for i1:= 0 to high(state) do begin
   po1:= @segments[unitsegments[i1]];
