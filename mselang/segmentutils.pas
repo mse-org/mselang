@@ -910,7 +910,7 @@ var
  seg1: segmentty;
 begin
  for seg1:= low(segmentty) to high(segmentty) do begin
-  with getsegbuffer(seg1)^ do begin
+  with segmentsx[seg1] do begin
    if data <> nil then begin
     freemem(data);
    end;

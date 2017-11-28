@@ -243,6 +243,10 @@ var
       with pinternalsubdataty(po)^ do begin
       end;
      end;
+     ek_alias: begin
+      with paliasdataty(po)^ do begin
+      end;
+     end;
      ek_none: begin
      end;
      else begin
@@ -394,7 +398,7 @@ begin
     aunit^.rtfilepath:= fna1;
     segs1:= [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op];
     if co_llvm in info.o.compileoptions then begin
-     exclude(segs1,seg_op);
+     segs1:= segs1 - [seg_op,seg_classdef];
     end;
     stat1:= setsubsegment(aunit^.opseg);
     writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
