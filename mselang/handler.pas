@@ -22,7 +22,7 @@ uses
  globtypes,parserglob,opglob,typinfo,msetypes,handlerglob;
 
 procedure beginparser(const aoptable: poptablety);
-procedure endparser();
+//procedure endparser();
 
 //procedure push(const avalue: real); overload;
 //procedure push(const avalue: integer); overload;
@@ -198,7 +198,7 @@ begin
   end;
  end;
 end;
-
+{
 procedure endparser();
 var
  ele1: elementoffsetty;
@@ -209,7 +209,7 @@ begin
  with additem(oc_endparse)^ do begin
  end;
 end;
-
+}
 procedure handleprogbegin();
 var
  ad1: listadty;

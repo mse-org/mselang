@@ -724,6 +724,7 @@ type
 //  param1poallocs: suballocinfoty;
   
   opseg: subsegmentty;
+  opstart: int32;
   segments: unitsegmentinfoty;
 //  classdefbuffer: bufferinfoty;
   mainad: int32;

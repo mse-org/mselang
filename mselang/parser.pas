@@ -1215,7 +1215,7 @@ begin
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
      end;
     end;
-    endparser();
+//    endparser();
 //    mainmetadatalist:= unit1^.metadatalist;
 //    unit1^.metadatalist:= nil;
    finally

@@ -296,7 +296,19 @@ begin
   implementationglobstart:= info.globdatapo;
   reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
-  with additem(oc_beginunitcode)^ do begin
+  opstart:= info.opcount;
+  with info do begin
+   if modularllvm and (unitlevel = 1) then begin //main
+    with additem(oc_beginparse)^ do begin
+     with par.beginparse do begin
+      finisub:= 0;
+     end;
+    end;
+   end
+   else begin
+    with additem(oc_beginunitcode)^ do begin
+    end;
+   end;
   end;
  end;
 end;
@@ -442,6 +454,7 @@ begin
  checkforwardtypeerrors();
  markinterfaceend();
  with info do begin
+ {
   if modularllvm and (unitlevel = 1) then begin //main
    with additem(oc_beginparse)^ do begin
     with par.beginparse do begin
@@ -449,6 +462,7 @@ begin
     end;
    end;
   end;
+ }
   include(s.unitinfo^.state,us_interfaceparsed);
   if us_implementation in s.unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
@@ -1909,6 +1923,17 @@ begin
 }
 end;
 
+procedure endparser();
+var
+ ele1: elementoffsetty;
+begin
+ with getoppo(startupoffset)^.par.beginparse do begin
+  unitinfochain:= info.unitinfochain;
+ end;
+ with additem(oc_endparse)^ do begin
+ end;
+end;
+
 function endunit(const aunit: punitinfoty): boolean;
 var
  m1,m2: metavaluety;
@@ -1935,7 +1960,10 @@ begin
     end;
    end;
   end;
-  if co_writeunits in o.compileoptions then begin
+  if unitlevel = 1 then begin
+   endparser();
+  end;
+  if modularllvm then begin
    result:= writeunitfile(aunit);
    freeandnil(aunit^.llvmlists);
   end;

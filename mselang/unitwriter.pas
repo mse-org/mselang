@@ -435,6 +435,7 @@ begin
    restoresubsegment(stat1);
    if info.modularllvm then begin
     setsegmenttop(seg_op,aunit^.opseg.start);
+    info.opcount:= aunit^.opstart;
    end;
   end
   else begin
