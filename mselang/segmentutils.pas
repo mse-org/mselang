@@ -250,7 +250,8 @@ var
  segmentsx: array[segmentty] of bufferinfoty;
  useunitsegments: boolean;
  
-function getsegbuffer(const asegment: segmentty): pbufferinfoty; inline;
+function getsegbuffer(const asegment: segmentty): pbufferinfoty; 
+                               {$ifndef mse_debugparser}inline;{$endif}
 begin
  if not useunitsegments or (asegment > high(unitsegmentty)) then begin
   result:= @segmentsx[asegment];

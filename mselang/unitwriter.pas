@@ -404,6 +404,9 @@ begin
     writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
                                                      aunit^.filematch.timestamp);
                                //todo: complete
+   {$ifdef mse_debugparser}
+    writeln('   '+fna1);
+   {$endif}
    finally
     stream1.destroy();
    end;
@@ -411,6 +414,9 @@ begin
     fna1:= getbcunitfilename(aunit^.rtfilepath);
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;
+   {$ifdef mse_debugparser}
+    writeln('   '+fna1);
+   {$endif}
     if result then begin
      aunit^.bcfilepath:= fna1;
      try
@@ -427,6 +433,9 @@ begin
     end;
    end;
    restoresubsegment(stat1);
+   if info.modularllvm then begin
+    setsegmenttop(seg_op,aunit^.opseg.start);
+   end;
   end
   else begin
    filewriteerror(fna1);

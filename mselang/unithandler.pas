@@ -442,6 +442,13 @@ begin
  checkforwardtypeerrors();
  markinterfaceend();
  with info do begin
+  if modularllvm and (unitlevel = 1) then begin //main
+   with additem(oc_beginparse)^ do begin
+    with par.beginparse do begin
+     finisub:= 0;
+    end;
+   end;
+  end;
   include(s.unitinfo^.state,us_interfaceparsed);
   if us_implementation in s.unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
@@ -505,7 +512,7 @@ begin
  markunitend();
  with info do begin
   with s.unitinfo^ do begin
-//   setsubsegmentsize(opseg);
+   setsubsegmentsize(opseg);
    if unitlevel > 1 then begin
     ele.releaseelement(implementationstart);
         //possible pending implementation units
