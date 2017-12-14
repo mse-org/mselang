@@ -318,6 +318,10 @@ begin
  with info.s.unitinfo^ do begin
   with additem(oc_endunit)^ do begin
   end;
+  if info.modularllvm then begin
+   with additem(oc_endparse)^ do begin
+   end;
+  end;
   setsubsegmentsize(opseg);
   reloc.opsize:= info.opcount-reloc.opstart;
   implementationglobsize:= info.globdatapo - implementationglobstart;
@@ -1930,7 +1934,9 @@ begin
  with getoppo(startupoffset)^.par.beginparse do begin
   unitinfochain:= info.unitinfochain;
  end;
- with additem(oc_endparse)^ do begin
+ if not info.modularllvm then begin
+  with additem(oc_endparse)^ do begin
+  end;
  end;
 end;
 

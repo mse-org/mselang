@@ -393,7 +393,7 @@ type
  end;
  plinkdataty = ^linkdataty;
  linkhashdataty = record
-  header: hashheaderty;
+  header: integerhashdataty;
   data: linkdataty;
  end;
  plinkhashdataty = ^linkhashdataty;
@@ -3895,8 +3895,8 @@ end;
 
 procedure tlinklist.addlink(const adata: pointer; const aglobid: int32);
 begin
- with plinkdataty(add(ele.eledatarel(adata)))^ do begin
-  globid:= aglobid;
+ with plinkhashdataty(add(ele.eledatarel(adata)))^ do begin
+  data.globid:= aglobid;
  end;
 end;
 

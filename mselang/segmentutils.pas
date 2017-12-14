@@ -789,7 +789,7 @@ begin
  result.state:= getsegbuffer(asubseg.segment)^;
  with getsegbuffer(asubseg.segment)^ do begin
   data:= data + asubseg.start+aoffset;
-  toppo:= data + asubseg.size;
+  toppo:= data + asubseg.size-aoffset;
  end;
 end;
 

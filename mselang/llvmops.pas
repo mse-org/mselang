@@ -709,9 +709,11 @@ end;
 
 procedure endunitop();
 begin
+{
  if info.modularllvm and not ismain then begin
   bcstream.stop();
  end;
+}
 end;
 
 procedure alloctemps(const acount: int32; const afirst: dataoffsty);
