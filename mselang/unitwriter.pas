@@ -25,7 +25,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  msetypes,elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,
- msestream,
+ msestream,opglob,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
  sysutils,llvmbcwriter,llvmops,elementcache;
 {
@@ -400,7 +400,7 @@ begin
     if co_llvm in info.o.compileoptions then begin
      segs1:= segs1 - [seg_op,seg_classdef];
     end;
-    stat1:= setsubsegment(aunit^.opseg);
+    stat1:= setsubsegment(aunit^.opseg,-startupoffset*sizeof(opinfoty));
     writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
                                                      aunit^.filematch.timestamp);
                                //todo: complete
@@ -420,7 +420,7 @@ begin
     if result then begin
      aunit^.bcfilepath:= fna1;
      try
-      llvmops.run(llvmout1,false);
+      llvmops.run(llvmout1,true);
      finally
       llvmout1.free();
       if co_llvm in info.o.compileoptions then begin

@@ -107,7 +107,8 @@ procedure restoresegment(const aseg: segmentstatety);
 function getbuffersize(const aseg: segmentstatety): int32;
 
 function getsubsegment(const asegment: segmentty): subsegmentty;
-function setsubsegment(const asubseg: subsegmentty): subsegmentstatety;
+function setsubsegment(const asubseg: subsegmentty; 
+                    const aoffset: int32 = 0): subsegmentstatety;
                                 //returns old state, do not change size
 procedure restoresubsegment(const aseg: subsegmentstatety);
 procedure setsubsegmentsize(var asubseg: subsegmentty);
@@ -780,13 +781,14 @@ begin
  end;
 end;
 
-function setsubsegment(const asubseg: subsegmentty): subsegmentstatety; 
+function setsubsegment(const asubseg: subsegmentty;
+                               const aoffset: int32 = 0): subsegmentstatety; 
                                                  //returns old state
 begin
  result.segment:= asubseg.segment;
  result.state:= getsegbuffer(asubseg.segment)^;
  with getsegbuffer(asubseg.segment)^ do begin
-  data:= data + asubseg.start;
+  data:= data + asubseg.start+aoffset;
   toppo:= data + asubseg.size;
  end;
 end;
