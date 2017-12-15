@@ -2128,7 +2128,7 @@ begin
              info.s.unitinfo^.llvmlists.globlist.addsubvalue(
                                                 sub1,getidentname2(ident1));
      end;
-     addsubbegin(oc_externalsub,sub1);
+//     addsubbegin(oc_externalsub,sub1);
     end
     else begin
      if sf_typedef in subflags then begin
