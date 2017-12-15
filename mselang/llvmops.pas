@@ -828,6 +828,11 @@ begin
   while p1^.op.op = oc_lineinfo do begin
    inc(p1);
   end;
+ {$ifdef mse_checkinternalerror}
+  if (p1^.op.op <> oc_label) then begin
+   internalerror(ie_opcode,'20171215A');
+  end;
+ {$endif}
   bcstream.emitbrop(p1^.par.opaddress.bbindex);
  end;
 end;

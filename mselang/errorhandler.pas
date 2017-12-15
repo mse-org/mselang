@@ -118,7 +118,8 @@ type
                         ie_llvmlist, //error in llvm lists
                         ie_llvmmeta, //error in llvm metadata
                         ie_module,   //error in modular compilation
-                        ie_dialect   //unknown dialect
+                        ie_dialect,  //unknown dialect
+                        ie_opcode    //error in code generator
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -128,8 +129,8 @@ const
      'T',    'M',
  //ie_sub,ie_value,ie_idents,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
      'SUB',   'V',   'I',       'E',        'I',    'SEG',     'BC',     'LLVM',
- //ie_llvmlist,ie_llvmmeta,ie_module,ie_dialect
-     'LLVML',  'LLVMME',   'MO',     'DIA'
+ //ie_llvmlist,ie_llvmmeta,ie_module,ie_dialect,ie_opcode
+     'LLVML',  'LLVMME',   'MO',     'DIA',     'OP'
  );
  
  stoperrorlevel = erl_fatal;
