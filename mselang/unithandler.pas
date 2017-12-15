@@ -495,7 +495,7 @@ begin
    d.kind:= ck_implementation;
 //   ele.markelement(d.impl.elemark);
   end;
-  checkpendingmanagehandlers();
+//  checkpendingmanagehandlers();
  end;
 end;
 
@@ -519,6 +519,7 @@ begin
  outhandle('AFTERIMPLUSES');
 {$endif}
  markimplementationstart();
+ checkpendingmanagehandlers();
 end;
 
 procedure handleimplementation();
