@@ -523,7 +523,7 @@ begin
                                                     opreloc1,opreloccount);
                                       //own op segment
      opoffset1:= info.opcount-reloc.opstart;
-     aunit^.internalsubs:= internalsubs;
+     aunit^.internalsubidsx:= internalsubids;
     end;
     setlength(globreloc1,globvarreloccount);
     setlength(opreloc1,opreloccount);
@@ -542,11 +542,13 @@ errorlab:
 oklab:
     with aunit^ do begin
      mainad:= intf^.header.mainad + opoffset1;
+{
      for isub1:= low(internalsubs) to high(internalsubs) do begin
       if internalsubs[isub1] <> 0 then begin
        inc(internalsubs[isub1],opoffset1);
       end;
      end;
+}
     end;
     if co_llvm in info.o.compileoptions then begin
      result:= true;

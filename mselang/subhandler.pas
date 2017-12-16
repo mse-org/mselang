@@ -141,6 +141,12 @@ function getinternalsub(const asub: internalsubty;
 function callinternalsub(const asub: opaddressty;
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
+{
+function callinternalsub(const aunit: punitinfoty; const asubid: int32;
+                                   const stackindex: int32 = bigint): popinfoty;
+}
+function callinternalsub(const aunit: punitinfoty; const asub: internalsubty;
+                                   const stackindex: int32 = bigint): popinfoty;
 function callinternalsubpo(const asub: opaddressty;
                             const pointerparamssa: int32; 
                                    const stackindex: int32 = bigint): popinfoty;
@@ -149,8 +155,8 @@ procedure initsubstartinfo();
 procedure begintempvars();
 procedure endtempvars();
 procedure settempvars(var allocs: suballocllvmty);
-function startsimplesub(const aname: identty;
-                        const pointerparam: boolean): opaddressty;
+function startsimplesub(const aname: identty; const pointerparam: boolean; 
+                                   const global: boolean = false): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
@@ -185,8 +191,9 @@ begin
   aaddress:=  internalsubs[asub];
   result:= aaddress = 0;
   if result then begin
-   aaddress:= startsimplesub(internalsubidents[asub],false);
+   aaddress:= startsimplesub(internalsubidents[asub],false,true);
    internalsubs[asub]:= aaddress;
+   internalsubidsx[asub]:= nameid{-1};
   end;
  end;
 end;
@@ -199,6 +206,35 @@ begin
   if asub <> 0 then begin
    ad.globid:= getoppo(asub)^.par.subbegin.globid;
    ad.ad:= asub-1; //compensate inc(pc)
+  end;
+  flags:= [];
+  linkcount:= 0;
+  paramcount:= 0;
+ end;
+end;
+{
+function callinternalsub(const aunit: punitinfoty; const asubid: int32;
+                                   const stackindex: int32 = bigint): popinfoty;
+begin
+ result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
+ with result^.par.callinfo do begin
+  ad.globid:= tracksimplesubaccess(aunit,asubid);
+  flags:= [];
+  linkcount:= 0;
+  paramcount:= 0;
+ end;
+end;
+}
+function callinternalsub(const aunit: punitinfoty; const asub: internalsubty;
+                                   const stackindex: int32 = bigint): popinfoty;
+begin
+ result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
+ with result^.par.callinfo do begin
+  if info.modularllvm then begin
+   ad.globid:= tracksimplesubaccess(aunit,aunit^.internalsubidsx[asub]);
+   if ad.globid < 0 then begin
+    ad.globid:= aunit^.internalsubs[asub]; //local
+   end;
   end;
   flags:= [];
   linkcount:= 0;
@@ -1220,8 +1256,8 @@ begin
  end;
 end;
 
-function startsimplesub(const aname: identty;
-                             const pointerparam: boolean): opaddressty;
+function startsimplesub(const aname: identty; const pointerparam: boolean;
+                                   const global: boolean = false): opaddressty;
 var
  m1: metavaluety;
  var1: vardataty;
@@ -1250,11 +1286,26 @@ begin
    
    if co_llvm in o.compileoptions then begin
     with s.unitinfo^ do begin
-     if pointerparam then begin
-      subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
+     if global then begin
+      if pointerparam then begin
+       subbegin.globid:= llvmlists.globlist.addsubvalue([],li_external,
+                                                                params1po);
+      end
+      else begin
+       subbegin.globid:= llvmlists.globlist.addsubvalue([],li_external,
+                                                                noparams);
+      end;
+      inc(info.s.unitinfo^.nameid);
+      llvmlists.globlist.namelist.addname(info.s.unitinfo,
+                                     info.s.unitinfo^.nameid,subbegin.globid);
      end
      else begin
-      subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+      if pointerparam then begin
+       subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
+      end
+      else begin
+       subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+      end;
      end;
      if do_proginfo in s.debugoptions then begin
       with pdisubprogramty(llvmlists.metadatalist.getdata(

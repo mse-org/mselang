@@ -282,6 +282,8 @@ procedure tracklocalaccess(var aaddress: locaddressty;
                                  const aopdatatype: typeallocinfoty);
 function trackaccess(const avar: pvardataty): addressvaluety;
 function trackaccess(const asub: psubdataty): int32;
+function tracksimplesubaccess(const aunit: punitinfoty;
+                                             const anameid: int32): int32;
 
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
@@ -2332,6 +2334,31 @@ begin
  end;
 end;
 
+function llvmlink(const aunit: punitinfoty; const extglobid: int32;
+                                              out locglobid: int32): boolean;
+                                              // -1 -> new
+var
+ po1: pelementinfoty;
+ po2: plinkhashdataty;
+begin
+ with info do begin
+  result:= modularllvm;
+  if result then begin
+   result:= aunit^.key <> s.unitinfo^.key;
+   if result then begin
+    po2:= info.s.unitinfo^.llvmlists.globlist.linklist.find(
+                                       -(extglobid+aunit^.globidbasex));
+    if po2 <> nil then begin
+     locglobid:= po2^.data.globid;
+    end
+    else begin
+     locglobid:= -1; //new
+    end;
+   end;
+  end;
+ end;
+end;
+
 function trackaccess(const avar: pvardataty): addressvaluety;
 var
  unitid: identty;
@@ -2376,6 +2403,25 @@ begin
  end
  else begin
   result:= asub^.globid;
+ end;
+end;
+
+function tracksimplesubaccess(const aunit: punitinfoty;
+                                           const anameid: int32): int32;
+var
+ globid: int32;
+begin
+ if llvmlink(aunit,anameid,globid) then begin
+  if globid < 0 then begin
+   result:= info.s.unitinfo^.llvmlists.globlist.
+                             addexternalsimplesub(aunit,anameid);
+  end
+  else begin
+   result:= globid;
+  end;
+ end
+ else begin
+  result:= -1;
  end;
 end;
 

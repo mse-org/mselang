@@ -276,6 +276,7 @@ begin
   ele.markelement(interfacestart); 
   reloc.interfaceelestart:= interfacestart.bufferref;
   reloc.interfaceglobstart:= info.globdatapo;
+                //reloc.globidcount set in putunit()
  end;
 end;
 
@@ -297,6 +298,7 @@ begin
   reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
   opstart:= info.opcount;
+  globidbasex:= info.globidcountx;
   with info do begin
    if modularllvm and (unitlevel = 1) then begin //main
     with additem(oc_beginparse)^ do begin
@@ -321,6 +323,7 @@ begin
   if info.modularllvm then begin
    with additem(oc_endparse)^ do begin
    end;
+   info.globidcountx:= info.globidcountx+nameid;
   end;
   setsubsegmentsize(opseg);
   reloc.opsize:= info.opcount-reloc.opstart;
@@ -989,6 +992,7 @@ begin
  po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty)); //todo: memory fragmentation?
  fillchar(result^,sizeof(result^),0);
+// result^.nameid:= 1;
  result^.key:= aname;
  result^.usescache:= telementcache.create();
 {
@@ -1211,7 +1215,6 @@ begin
   end;
  end;
 end;
-
 
 procedure linkresolve(var alinks: linkindexty); //delete chain
 var

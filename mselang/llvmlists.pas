@@ -207,6 +207,7 @@ type
 //   fmethod: int32;
    fintfitem: int32;
    flandingpad: int32;
+   fsimplesub: int32;
    fpointerproc: int32;
    fmetadata: int32;
    fvoid: int32;
@@ -244,7 +245,7 @@ type
    property metadata: int32 read fmetadata;
    property void: int32 read fvoid;
 //   property pointerid: int32 read fpointerid;
-//   property simplesub: int32 read fsimplesub; //no params, 
+   property simplesub: int32 read fsimplesub; //no params, 
 //                                         //for initialization, finalizition
  end;
 
@@ -404,6 +405,7 @@ type
   public
 //   constructor create();
    procedure addlink(const adata: pointer; const aglobid: int32);
+   procedure addlink(const extglobid: int32; const locglobid: int32);
    function find(const akey: integer): plinkhashdataty;
  end;
  
@@ -450,6 +452,9 @@ type
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty; //nil -> main sub
                               const externunit: boolean): int32; 
+                                                            //returns listid
+   function addexternalsimplesub(const aunit: pointer; //punitinfoty
+                                             const anameid: int32): int32;
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty;
                            const aname: identnamety): int32;  //returns listid
@@ -1186,6 +1191,7 @@ begin
 end;
 
 const
+ simpleprocparams: paramsty = (count: 0; items: nil);
  pointerprocpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
  );
@@ -1209,6 +1215,7 @@ begin
   fopenarray:= addbytevalue(sizeof(openarrayty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
+  fsimplesub:= addsubvalue([],simpleprocparams);
   fpointerproc:= addsubvalue([],pointerprocparams);
   fvoid:= 0;
 {
@@ -2448,6 +2455,23 @@ begin
   dat1.flags:= [sf_external];
   dat1.linkage:= li_external;
  end;
+ dat1.kind:= gak_sub;
+ dat1.initconstindex:= -1;
+ inccount();
+ flastitem^:= dat1;
+end;
+
+function tgloballocdatalist.addexternalsimplesub(const aunit: pointer;
+                                                const anameid: int32): int32;
+var
+ dat1: globallocdataty;
+begin
+ result:= fcount;
+ dat1.flags:= [sf_proto];
+ dat1.linkage:= li_external;
+ dat1.typeindex:= ftypelist.simplesub;
+ fnamelist.addname(aunit,anameid,result);
+ flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
  dat1.kind:= gak_sub;
  dat1.initconstindex:= -1;
  inccount();
@@ -3897,6 +3921,13 @@ procedure tlinklist.addlink(const adata: pointer; const aglobid: int32);
 begin
  with plinkhashdataty(add(ele.eledatarel(adata)))^ do begin
   data.globid:= aglobid;
+ end;
+end;
+
+procedure tlinklist.addlink(const extglobid: int32; const locglobid: int32);
+begin
+ with plinkhashdataty(add(-extglobid))^ do begin
+  data.globid:= locglobid;
  end;
 end;
 

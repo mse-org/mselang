@@ -690,6 +690,7 @@ type
 
  internalsubty = (isub_ini,isub_fini);
  internalsubarty = array[internalsubty] of opaddressty;
+ internalsubidarty = array[internalsubty] of int32;
  
  unitrelocty = record
   interfaceelestart: elementoffsetty;
@@ -698,6 +699,7 @@ type
   interfaceglobsize: targetsizety;
   opstart: targetadty;
   opsize: targetsizety;
+  globidcountx: int32;
  end;
 
  punitinfoty = ^unitinfoty;
@@ -742,6 +744,7 @@ type
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;
   globallocstart: int32; //first index in llvm globallocdatalist
+  globidbasex: int32; //for unique linklist key
 
   interfaceuses,implementationuses: unitinfopoarty;
   usescache: telementcache;
@@ -758,6 +761,7 @@ type
   pendingmanagechain: elementoffsetty;
   implstart: pparsercontextty; //start of implementation parsing
   internalsubs: internalsubarty;
+  internalsubidsx: internalsubidarty;
   codestop: opaddressty;
   stoponerror: boolean;
  end;
@@ -849,6 +853,7 @@ type
   errors: array[errorlevelty] of integer; //total count
   opcount: int32;
   start: int32;
+  globidcountx: int32; //for unique linklist key
   globdatapo: targetadty;
   locdatapo: targetadty;
   llvmtempcount: int32;

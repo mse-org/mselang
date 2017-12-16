@@ -265,6 +265,13 @@ var
 } 
 begin
  result:= false;
+ if info.modularllvm then begin
+  aunit^.globidbasex:= info.globidcountx;
+  aunit^.reloc.globidcountx:= aunit^.nameid - aunit^.globidbasex;
+  info.globidcountx:= info.globidcountx + aunit^.reloc.globidcountx;
+                  //for unique linklist key
+ end;
+  
  elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.interfaceend.bufferref - aunit^.interfacestart.bufferref;
  eleend:= elestart + s1;
@@ -335,7 +342,7 @@ begin
    filematch:= aunit^.filematch;
    namecount:= nameindex1;
    anoncount:= -anonindex1 - 1;
-   internalsubs:= aunit^.internalsubs;
+   internalsubids:= aunit^.internalsubidsx;
   end;
   result:= true;
 {$ifdef mse_debugparser}

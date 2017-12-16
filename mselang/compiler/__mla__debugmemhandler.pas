@@ -24,7 +24,7 @@ procedure free(ptr: pointer) external;
 implementation
 var
  alloccount: int32;
- 
+//{$internaldebug on}
 function __mla__malloc(size: size_t): pointer;
 begin
  result:= malloc(size);
