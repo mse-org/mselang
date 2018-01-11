@@ -703,7 +703,7 @@ begin
  end;
  inc(dest);
 end;
-
+(*
 function __mla__string8to16(source: pointer): pointer;
 var
  pss,pds: pstringheaderty;
@@ -735,6 +735,98 @@ begin
   p2^:= 0;
   pds^.ref.count:= temprefcount;
   pds^.len:= p2-p3;
+  inc(pds); //data
+ end
+ else begin
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+*)
+function __mla__string8to16(source: pointer): pointer;
+var
+ pss,pds: pstringheaderty;
+ by1: card8;
+ wo1: card16;
+ ps,pe: pcard8;
+ pd,pd0: pcard16;
+begin
+ pss:= source;
+ if pss <> nil then begin
+  ps:= pointer(pss); //data
+  dec(pss); //header
+  pe:= ps+pss^.len;
+  pds:= getmem(string16allocsize+pss^.len*2); //max
+  pd:= pointer(pds+1);//data
+  pd0:= pd;           //startref
+  while ps < pe do begin
+   by1:= ps^;
+   inc(ps);
+   if by1 < $80 then begin //1 byte
+    pd^:= by1;
+   end
+   else begin
+    if by1 < $e0 then begin //2 byte
+     if (ps < pe) and (ps^ and $c0 = $80) then begin 
+      wo1:= (card16(by1 and $1f) shl 6) or (ps^ and $3f);
+      pd^:= wo1;
+      if pd^ < $80 then begin
+       pd^:= errorcodepoint;  //overlong
+      end;
+      inc(ps);
+     end
+     else begin
+      pd^:= errorcodepoint;
+     end;
+    end
+    else begin
+     if (by1 < $f0) then begin //3byte
+      if (pe - ps >= 1) and (ps^ and $c0 = $80) and 
+                                          ((ps+1)^ and $c0 = $80) then begin 
+       pd^:= (card16(by1) shl 12) or 
+             (card16(ps^ and $3f) shl 6) or ((ps+1)^ and $3f);
+       if pd^ < $0800 then begin
+        pd^:= errorcodepoint; //overlong
+       end;
+       inc(ps,2);
+      end
+      else begin
+       pd^:= errorcodepoint;
+      end;
+     end
+     else begin
+      if (by1 < $f8) then begin //4byte
+       if (pe - ps >= 2) and (ps^ and $c0 = $80) and ((ps+1)^ and $c0 = $80) and 
+                               ((ps+2)^ and $c0 = $80) then begin
+        if ((by1 <= $e0) and (ps^ < $90)) then begin //overlong
+         pd^:= errorcodepoint; //overlong;
+        end
+        else begin                                     
+         pd^:= ((card16(by1 and $07) shl 8) or 
+                (card16(ps^ and $3f) shl 2) or
+                (card16((ps+1)^ and $30) shr 4)) + 
+                          (card16($d800) - card16($10000 shr 10));
+         inc(pd);
+         pd^:= (card16((ps+1)^ and $0f) shl 6) or 
+                                          ((ps+2)^ and $3f) or word($dc00);
+        end;
+        inc(ps,3);
+       end
+       else begin
+        pd^:= errorcodepoint;
+       end;
+      end
+      else begin
+       pd^:= errorcodepoint;
+      end;
+     end;
+    end;
+   end;
+   inc(pd);
+  end;
+  pd^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= pd-pd0;
   inc(pds); //data
  end
  else begin

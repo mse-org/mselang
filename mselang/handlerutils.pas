@@ -1467,6 +1467,7 @@ end;
 procedure checkneedsunique(const stackoffset: int32);
 var
  i1: int32;
+ oc1: opcodety;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if hf_needsunique in d.handlerflags then begin
@@ -1475,20 +1476,36 @@ begin
     internalerror(ie_handler,'20160405B');
    end;
   {$endif}
-   case ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind of
-    dk_character: begin
-     i1:= d.dat.fact.opoffset;
-     with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
-      par.voffset:= -targetpointersize;
-      par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
+   with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+    case h.kind of
+     dk_character,dk_integer,dk_cardinal: begin
+      i1:= d.dat.fact.opoffset;
+      with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
+       par.voffset:= -targetpointersize;
+       par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
+      end;
+      inc(i1);            //todo: item size !!!!!!!!!!!!!
+      case h.datasize of
+       das_8: begin
+        oc1:= oc_uniquestr8;
+       end;
+       das_16: begin
+        oc1:= oc_uniquestr16;
+       end;
+       das_32: begin
+        oc1:= oc_uniquestr32;
+       end;
+       else begin
+        internalerror1(ie_handler,'20180111A');
+       end;
+      end;
+      with insertitem(oc1,stackoffset,i1)^ do begin
+       par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
+      end;
+     end
+     else begin
+      internalerror1(ie_handler,'20160405A');
      end;
-     inc(i1);            //todo: item size !!!!!!!!!!!!!
-     with insertitem(oc_uniquestr8,stackoffset,i1)^ do begin
-      par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
-     end;
-    end
-    else begin
-     internalerror1(ie_handler,'20160405A');
     end;
    end;
   end;

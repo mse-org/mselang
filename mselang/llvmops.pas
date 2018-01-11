@@ -4607,12 +4607,18 @@ end;
 
 procedure uniquestr16op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring16,false,[bcstream.ssaval(ssas1)]);
+                                                   //dest
+ end;
 end;
 
 procedure uniquestr32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring32,false,[bcstream.ssaval(ssas1)]);
+                                                   //dest
+ end;
 end;
 
 procedure uniquedynarrayop();
