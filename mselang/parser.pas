@@ -586,7 +586,7 @@ begin
      with pstartupdataty(getoppo(0))^ do begin
       globdatasize:= globdatapo;
      end;
-     with getoppo(startupoffset)^ do begin
+     with getoppo(startupoffsetnum)^ do begin
       par.beginparse.mainad:= info.s.unitinfo^.mainad;
      end;
     end;
@@ -1180,7 +1180,7 @@ begin
     setlength(contextstack,stackdepth);
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
-    opcount:= startupoffset;
+    opcount:= startupoffsetnum;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     if co_llvm in o.compileoptions then begin
      beginparser(llvmops.getoptable());

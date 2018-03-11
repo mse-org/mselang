@@ -19,7 +19,7 @@ unit llvmops;
 
 interface
 uses
- opglob,parserglob,msestream,llvmbcwriter,llvmbitcodes;
+ opglob,parserglob,msestream,llvmbcwriter,llvmbitcodes,segmentutils;
 const
  mse_DWARF_VERSION = 2;
  
@@ -29,11 +29,12 @@ function getoptable: poptablety;
 //function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
-procedure run(const atarget: tllvmbcwriter; const amain: boolean);
+procedure run(const atarget: tllvmbcwriter; const amain: boolean;
+                                                const opseg: subsegmentty);
  
 implementation
 uses
- globtypes,sysutils,msesys,segmentutils,handlerglob,elements,msestrings,
+ globtypes,sysutils,msesys,handlerglob,elements,msestrings,
  compilerunit,bcunitglob,identutils,
  handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
  interfacehandler,rttihandler;
@@ -5495,7 +5496,8 @@ const
 var
  startpo: popinfoty;//for debugging
 
-procedure run(const atarget: tllvmbcwriter; const amain: boolean);
+procedure run(const atarget: tllvmbcwriter; const amain: boolean;
+                                 const opseg: subsegmentty);
 var
  endpo: pointer;
  lab: shortstring;
@@ -5505,12 +5507,14 @@ begin
  codestarted:= false;
  stop:= false;
  ismain:= amain;
- pc:= getsegmentbase(seg_op);
- startpo:= pc; //for debugging
- endpo:= pointer(pc)+getsegmentsize(seg_op);
+ pc:= getsegmentbase(seg_op)+opseg.start;
+ endpo:= pointer(pc)+opseg.size;
+{
  if amain then begin
   inc(pc,startupoffset);
  end;
+}
+ startpo:= pc; //for debugging
  while (pc < endpo) and not stop do begin
   optable[pc^.op.op].proc();
   inc(pc);

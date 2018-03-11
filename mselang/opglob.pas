@@ -1565,8 +1565,12 @@ type
  poptablety = ^optablety;
  
 const
- startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
-                                                         sizeof(opinfoty);
+// startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
+//                                                         sizeof(opinfoty);
+ startupoffsetnum = 
+     ((sizeof(startupdataty)+sizeof(opinfoty)-1) div sizeof(opinfoty));
+                            //round up
+ startupoffset = startupoffsetnum * sizeof(opinfoty);
 
 function checkop(var aop: opty; const aopcode: opcodety): boolean;
                        {$ifndef mse_debugparser} inline;{$endif}

@@ -389,9 +389,12 @@ begin
  end;
 end;
 
+//var
+// opsegstart: popinfoty;
+ 
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
- stat1: subsegmentstatety;
+// stat1: subsegmentstatety;
  stream1: tmsefilestream;
  fna1: filenamety;
  llvmout1: tllvmbcwriter = nil;
@@ -407,7 +410,8 @@ begin
     if co_llvm in info.o.compileoptions then begin
      segs1:= segs1 - [seg_op,seg_classdef];
     end;
-    stat1:= setsubsegment(aunit^.opseg,-startupoffset*sizeof(opinfoty));
+//    stat1:= setsubsegment(aunit^.opseg,-startupoffset);
+//    opsegstart:= stat1.state.data;
     writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
                                                      aunit^.filematch.timestamp);
                                //todo: complete
@@ -427,7 +431,7 @@ begin
     if result then begin
      aunit^.bcfilepath:= fna1;
      try
-      llvmops.run(llvmout1,true);
+      llvmops.run(llvmout1,true,aunit^.opseg);
      finally
       llvmout1.free();
       if co_llvm in info.o.compileoptions then begin
@@ -439,7 +443,7 @@ begin
      filewriteerror(fna1);
     end;
    end;
-   restoresubsegment(stat1);
+//   restoresubsegment(stat1);
    if info.modularllvm then begin
     setsegmenttop(seg_op,aunit^.opseg.start);
     info.opcount:= aunit^.opstart;

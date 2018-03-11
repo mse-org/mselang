@@ -38,7 +38,7 @@ implementation
 uses
  globtypes,compmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
  msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler,
- msearrayutils,identutils;
+ msearrayutils,identutils,opglob;
  
 const
  startupmessage =
@@ -60,6 +60,7 @@ var
  targetstream: tmsefilestream;
  llvmstream: tllvmbcwriter;
  compoptions: compileoptionsty;
+ seg1: subsegmentty;
 begin
  initparams();
  foutputstream:= ttextstream.create(stdoutputhandle);
@@ -94,8 +95,9 @@ begin
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
                           filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
+      seg1:= getfullsegment(seg_op,startupoffset);
       try
-       llvmops.run(llvmstream,true);
+       llvmops.run(llvmstream,true,seg1);
       except
        on e: exception do begin
         errormessage1(e.message,[]);

@@ -198,18 +198,7 @@ begin
   end;
  end;
 end;
-{
-procedure endparser();
-var
- ele1: elementoffsetty;
-begin
- with getoppo(startupoffset)^.par.beginparse do begin
-  unitinfochain:= info.unitinfochain;
- end;
- with additem(oc_endparse)^ do begin
- end;
-end;
-}
+
 procedure handleprogbegin();
 var
  ad1: listadty;
@@ -259,7 +248,7 @@ begin
   end;
 
   s.unitinfo^.mainad:= opcount;
-  with getoppo(startupoffset)^ do begin
+  with getoppo(startupoffsetnum)^ do begin
    par.beginparse.mainad:= opcount;
   end;
   resetssa();
@@ -394,7 +383,7 @@ begin
   end;
   
   if hasfini then begin
-   with getoppo(startupoffset)^ do begin
+   with getoppo(startupoffsetnum)^ do begin
     par.beginparse.finisub:= opcount;
    end;
    i1:= startsimplesub(tks_fini,false);

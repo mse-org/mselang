@@ -1832,9 +1832,9 @@ begin
    if opad1 = 0 then begin
     opad1:= unit1^.inistop;
    end;
-   po1[opad1].par.opaddress:= po1[startupoffset].par.opaddress; //goto
-   include(po1[po1[startupoffset].par.opaddress].op.flags,opf_label);
-   po1[startupoffset].par.opaddress:= start1-1; //inject ini code
+   po1[opad1].par.opaddress:= po1[startupoffsetnum].par.opaddress; //goto
+   include(po1[po1[startupoffsetnum].par.opaddress].op.flags,opf_label);
+   po1[startupoffsetnum].par.opaddress:= start1-1; //inject ini code
    include(po1[start1].op.flags,opf_label);
   end;
 
@@ -1935,7 +1935,7 @@ procedure endparser();
 var
  ele1: elementoffsetty;
 begin
- with getoppo(startupoffset)^.par.beginparse do begin
+ with getoppo(startupoffsetnum)^.par.beginparse do begin
   unitinfochain:= info.unitinfochain;
  end;
  if not info.modularllvm then begin

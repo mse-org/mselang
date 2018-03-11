@@ -96,7 +96,7 @@ var
 implementation
 uses
  errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,msearrayutils,
- msefileutils,patheditform,compmoduledebug,
+ msefileutils,patheditform,compmoduledebug,opglob,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
@@ -168,7 +168,7 @@ begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
        end
        else begin
-        llvmops.run(targetstream,true);
+        llvmops.run(targetstream,true,getfullsegment(seg_op,startupoffset));
        {$ifdef mse_debugparser}
         writeln('***************** LLVM BC gen end ***********');
        {$endif}

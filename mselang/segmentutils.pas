@@ -106,6 +106,8 @@ function savesegment(const asegment: segmentty): segmentstatety;
 procedure restoresegment(const aseg: segmentstatety);
 function getbuffersize(const aseg: segmentstatety): int32;
 
+function getfullsegment(const asegment: segmentty;
+                                const offset: int32 = 0): subsegmentty;
 function getsubsegment(const asegment: segmentty): subsegmentty;
 function setsubsegment(const asubseg: subsegmentty; 
                     const aoffset: int32 = 0): subsegmentstatety;
@@ -791,6 +793,14 @@ begin
   data:= data + asubseg.start+aoffset;
   toppo:= data + asubseg.size-aoffset;
  end;
+end;
+
+function getfullsegment(const asegment: segmentty;
+                          const offset: int32 = 0): subsegmentty;
+begin
+ result.segment:= asegment;
+ result.start:= offset;
+ setsubsegmentsize(result)
 end;
 
 function getsubsegment(const asegment: segmentty): subsegmentty;

@@ -7621,7 +7621,7 @@ begin
   fillchar(basepo^,endpo-basepo,0);
  end;
 // constdata:= segments[seg_globconst].basepo;
- inc(cpu.pc,startupoffset);
+ inc(cpu.pc,startupoffsetnum);
  try
   while not cpu.stop do begin
    optable[cpu.pc^.op.op].proc();
@@ -7684,7 +7684,7 @@ begin
   fillchar(globdata^,globdatasize,0);
  end;
  constdata:= constseg;
- inc(cpu.pc,startupoffset);
+ inc(cpu.pc,startupoffsetnum);
  while cpu.pc^.op <> nil do begin
   cpu.pc^.op;
   inc(cpu.pc);
