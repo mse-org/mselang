@@ -913,6 +913,7 @@ end;
 
 constructor tllvmbcreader.create(ahandle: integer);
 begin
+ reader:= self;
  ftypelist:= ttypelist.create();
  fgloblist:= tgloblist.create(ftypelist);
  fmetalist:= tmetalist.create;

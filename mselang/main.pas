@@ -215,6 +215,11 @@ begin
       else begin
        ar1:= bcfiles();
        filename2:= removefileext(filena.value)+'_all.bc';
+       grid.appendrow('link -> '+filename2);
+       for int1:= 0 to high(ar1) do begin
+        grid.appendrow(' '+ar1[int1]);
+       end;
+       grid.appendrow();
        int1:= getprocessoutput(llvmbindir+'llvm-link -o='+filename2+' '+
                 quotefilename(ar1),'',str1);
        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);

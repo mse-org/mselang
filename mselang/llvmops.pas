@@ -5494,7 +5494,9 @@ const
 {$include optable.inc}
 
 var
- startpo: popinfoty;//for debugging
+ opsegstart: popinfoty;    //for debugging
+ startpo: popinfoty;    //for debugging
+ target: tllvmbcwriter; //for debugging
 
 procedure run(const atarget: tllvmbcwriter; const amain: boolean;
                                  const opseg: subsegmentty);
@@ -5514,7 +5516,9 @@ begin
   inc(pc,startupoffset);
  end;
 }
+ opsegstart:= getsegmentbase(seg_op);
  startpo:= pc; //for debugging
+ target:= atarget;
  while (pc < endpo) and not stop do begin
   optable[pc^.op.op].proc();
   inc(pc);
