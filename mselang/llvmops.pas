@@ -5508,6 +5508,7 @@ begin
  bcstream:= atarget;
  codestarted:= false;
  stop:= false;
+ finihandler:= 0;
  ismain:= amain;
  pc:= getsegmentbase(seg_op)+opseg.start;
  endpo:= pointer(pc)+opseg.size;
