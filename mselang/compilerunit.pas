@@ -29,6 +29,7 @@ const
  
 type
  compilersubty = (
+  cs_none,
   cs_malloc,
   cs_calloc,
   cs_free,
@@ -37,7 +38,7 @@ type
   cs_increfsizeref,
   cs_decrefsize,
   cs_decrefsizeref,
-  cs_finifrefsize,
+  cs_finirefsize,
   cs_finirefsizear,
   cs_finirefsizedynar,
   cs_storenildynar,
@@ -97,6 +98,7 @@ type
  );
 const
  compilersubnames: array[compilersubty] of string = (
+  '',
   '__mla__malloc',
   '__mla__calloc',
   '__mla__free',
@@ -170,7 +172,25 @@ const
  internaltypenames : array[internaltypety] of string =  (
   'rttity','enumitemrttity'
  );
+type
+ compilerunitty = (cu_none,cu_memhandler,cu_compilerunit);
+ compilerunitdefty = record
+  name: filenamety;
+  first,last: compilersubty;
+ end;
+ compilerunitinfoty = record
+  unitpo: punitinfoty;
+ end;
  
+const
+ compilerunitdefs: array[compilerunitty] of compilerunitdefty = (
+  (name: ''; first: cs_none; last: cs_none),
+  (name: memhandlerunitname; first: cs_malloc; last: cs_free),
+  (name: compilerunitname; first: cs_zeropointerar; last: high(compilersubty))
+ );
+var
+ compilerunits: array[compilerunitty] of compilerunitinfoty;
+    
 var
  compilersubs: array[compilersubty] of elementoffsetty;
  compilersubids: array[compilersubty] of int32;
@@ -186,9 +206,11 @@ procedure initcompilersubs(const aunit: punitinfoty);
 var
  s1,se: compilersubty;
  t1: internaltypety;
- 
+ cu1: compilerunitty; 
 begin
+ cu1:= cu_none;
  if aunit^.namestring = compilerunitname then begin
+  cu1:= cu_compilerunit;
  {$ifdef mse_checkinternalerror}
   if (high(aunit^.interfaceuses) <= 0) or 
      (aunit^.interfaceuses[1]^.namestring <> '__mla__internaltypes') then begin
@@ -203,31 +225,30 @@ begin
    end;
   end;
   ele.popelementparent();
-  s1:= cs_zeropointerar;
-  se:= high(compilersubnames);
  end
  else begin
   if aunit^.namestring = memhandlerunitname then begin
-   s1:= cs_malloc;
-   se:= cs_free;
-  end
-  else begin
-   exit;
+   cu1:= cu_memhandler;
   end;
  end;
- ele.pushelementparent(aunit^.interfaceelement);
- for s1:= s1 to se do begin
-  if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
-                                              compilersubs[s1]) then begin
-   internalerror1(ie_parser,'20141031A');
-  end
-  else begin
-   compilersubids[s1]:= psubdataty(ele.eledataabs(
-       psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
+ if cu1 <> cu_none then begin
+  with compilerunitdefs[cu1] do begin
+   s1:= first;
+   se:= last;
   end;
+  ele.pushelementparent(aunit^.interfaceelement);
+  for s1:= s1 to se do begin
+   if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
+                                               compilersubs[s1]) then begin
+    internalerror1(ie_parser,'20141031A');
+   end
+   else begin
+    compilersubids[s1]:= psubdataty(ele.eledataabs(
+        psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
+   end;
+  end;
+  ele.popelementparent();
  end;
- ele.popelementparent();
-
 end;
 
 end.

@@ -883,9 +883,9 @@ begin
   end;
   inc(info.unitlevel);
   result:= parseusesunit(aunit);
-  if result then begin
-   initcompilersubs(aunit);
-  end;
+//  if result then begin
+//   initcompilersubs(aunit);
+//  end;
   dec(info.unitlevel);
  end;
 end;
@@ -1973,6 +1973,7 @@ begin
   if unitlevel = 1 then begin
    endparser();
   end;
+  initcompilersubs(aunit);
   if modularllvm then begin
    result:= writeunitfile(aunit);
    freeandnil(aunit^.llvmlists);

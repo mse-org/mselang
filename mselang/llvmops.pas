@@ -2825,7 +2825,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
                                                 bcstream.typeval(pointertype));
-  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.relval(0)]);
  end;
 end;
 
@@ -2835,7 +2835,7 @@ begin
   bcstream.emitlocdataaddress(memop);
 //  bcstream.emitbitcast(bcstream.allocval(voffset),
 //                                                bcstream.typeval(pointertype));
-  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.relval(0)]);
  end;
 end;
 
@@ -2846,21 +2846,21 @@ end;
 procedure finirefsizestackop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_finifrefsize,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure finirefsizestackindiop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_finifrefsize,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure finirefsizestackrefop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_finifrefsize,false,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.ssaval(ssas1)]);
 { 
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
@@ -2874,7 +2874,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.tempval(tempaddr.a.ssaindex),
                                        bcstream.typeval(pointertype));
-  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+  callcompilersub(cs_finirefsize,false,[bcstream.relval(0)]);
  end;
 end;
 

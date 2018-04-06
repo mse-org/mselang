@@ -1117,6 +1117,7 @@ var
  pcond: pconditiondataty;
  lstr1: lstringty;
  rtlunit1: rtlunitty;
+ cu1: compilerunitty;
 begin
  result:= false;
 // init();
@@ -1182,6 +1183,7 @@ begin
     s.stackindex:= s.stacktop;
     opcount:= startupoffsetnum;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
+    fillchar(compilersubs,sizeof(compilersubs),0);
     if co_llvm in o.compileoptions then begin
      beginparser(llvmops.getoptable());
     end
@@ -1195,10 +1197,19 @@ begin
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= info.rtlunits[rtl_system];
      if result and not (co_nocompilerunit in aoptions) then begin
+      for cu1:= succ(low(cu1)) to high(cu1) do begin
+       result:= parsecompilerunit(compilerunitdefs[cu1].name,
+                                             compilerunits[cu1].unitpo);
+       if not result then begin
+        break;
+       end;
+      end;
+      {
       result:= parsecompilerunit(memhandlerunitname,unit2);
       if result  then begin
        result:= parsecompilerunit(compilerunitname,unit2);
       end;
+      }
      end;
      if result and not (co_nortlunits in aoptions)then begin
       rtlunit1:= rtl_system;

@@ -25,7 +25,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  msetypes,elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,
- msestream,opglob,
+ msestream,opglob,compilerunit,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
  sysutils,llvmbcwriter,llvmops,elementcache;
 {
@@ -399,6 +399,10 @@ var
  fna1: filenamety;
  llvmout1: tllvmbcwriter = nil;
  segs1: segmentsty;
+ ps1: psubdataty;
+ sub1: compilersubty;
+ cu1: compilerunitty;
+
 begin
  result:= putunit(aunit);
  if result then begin
@@ -422,6 +426,29 @@ begin
     stream1.destroy();
    end;
    if co_llvm in info.o.compileoptions then begin
+    if info.modularllvm then begin
+     for cu1:= succ(low(cu1)) to high(cu1) do begin
+      with compilerunitdefs[cu1] do begin
+       if name <> filenamety(aunit^.namestring) then begin
+        for sub1:= first to last do begin
+         if compilersubs[sub1] <> 0 then begin
+          ps1:= ele.eledataabs(compilersubs[sub1]);
+          compilersubids[sub1]:= 
+                     info.s.unitinfo^.llvmlists.globlist.addsubvalue(ps1,true);
+         end;
+        end;
+       end
+       else begin
+        for sub1:= first to last do begin
+         if compilersubs[sub1] <> 0 then begin
+          ps1:= ele.eledataabs(compilersubs[sub1]);
+          compilersubids[sub1]:= ps1^.globid;
+         end;
+        end;
+       end;
+      end;
+     end;
+    end;
     fna1:= getbcunitfilename(aunit^.rtfilepath);
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;
