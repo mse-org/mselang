@@ -654,7 +654,7 @@ begin
   getident(tokens[tk1]);
  end;
  clear1();
- info.rootelement:= ele.eleinforel(ele.pushelement(idstart,ek_none,[])); //root
+ info.rootelement:= ele.eleinforel(ele.pushelement(tks_rootele,ek_none,[]));
 end;
 
 function alignsize(const asize: int32): int32; inline;
