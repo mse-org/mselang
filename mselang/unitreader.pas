@@ -471,6 +471,8 @@ begin
          inc(pointer(pele1),paramcount*sizeof(elementoffsetty));
         end;
        end;
+       ek_internalsub: begin
+       end;
        ek_unit: begin
        end;
        ek_implementation: begin
@@ -480,6 +482,12 @@ begin
        ek_uses: begin
        end;
        ek_none: begin
+       end;
+       ek_classintfnamenode: begin
+       end;
+       ek_classintftypenode: begin
+       end;
+       ek_classimpnode: begin
        end;
        else begin
         goto errorlab;
