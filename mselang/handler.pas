@@ -284,8 +284,15 @@ begin
    while ad1 <> 0 do begin         //insert ini calls
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
-      if internalsubs[isub_ini] <> 0 then begin
-       callinternalsub(internalsubs[isub_ini]);
+      if modularllvm then begin
+       if internalsubidsx[isub_ini] > 0 then begin
+        callinternalsub(ref,isub_ini);
+       end;
+      end
+      else begin
+       if internalsubs[isub_ini] <> 0 then begin
+        callinternalsub(internalsubs[isub_ini]);
+       end;
       end;
      end;
      ad1:= header.next;

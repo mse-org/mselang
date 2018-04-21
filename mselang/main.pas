@@ -214,6 +214,7 @@ begin
       end
       else begin
        ar1:= bcfiles();
+//setlength(ar1,length(ar1)-10);
        filename2:= removefileext(filena.value)+'_all.bc';
        grid.appendrow('link -> '+filename2);
        for int1:= 0 to high(ar1) do begin
