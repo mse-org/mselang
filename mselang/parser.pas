@@ -590,6 +590,7 @@ begin
       par.beginparse.mainad:= info.s.unitinfo^.mainad;
      end;
     end;
+    finalizeunit(aunit);
     exit;
    end;
   end;
