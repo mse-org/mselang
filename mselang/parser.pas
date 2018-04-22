@@ -597,6 +597,7 @@ begin
   if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
    if co_writeunits in info.o.compileoptions then begin
     aunit^.llvmlists:= tllvmlists.create();
+    aunit^.llvmlists.clear();
    end
    else begin 
     aunit^.llvmlists:= globllvmlists;

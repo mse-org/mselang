@@ -761,6 +761,8 @@ type
    function getbytetyp: metavaluety;
    function getparams1posubtyp: metavaluety;
    function getdynarrayindex: metavaluety;
+   function getnoparamssubtyp: metavaluety;
+   function getnoparams: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -872,10 +874,10 @@ type
 //   property voidtyp: metavaluety read getvoidtyp;
    property pointertyp: metavaluety read getpointertyp;
    property bytetyp: metavaluety read getbytetyp;
-   property noparams: metavaluety read fnoparams; //[dummymeta]
+   property noparams: metavaluety read getnoparams; //[dummymeta]
    property params1po: metavaluety read getparams1po; 
                                              //[dummymeta,pointertype]
-   property noparamssubtyp: metavaluety read fnoparamssubtyp;
+   property noparamssubtyp: metavaluety read getnoparamssubtyp;
    property params1posubtyp: metavaluety read getparams1posubtyp;
    property dynarrayindex: metavaluety read getdynarrayindex; //[0..-1]
 
@@ -2541,17 +2543,16 @@ function tgloballocdatalist.addsubvalue(const aflags: subflagsty;
                              const alinkage: linkagety; 
                              const aparams: paramsty): int32; 
                                                              //returns listid
-var
- dat1: globallocdataty;
 begin
- dat1.linkage:= alinkage;
- dat1.flags:= aflags;
- dat1.kind:= gak_sub;
- dat1.typeindex:= ftypelist.addsubvalue(aflags,aparams);
- dat1.initconstindex:= -1;
  result:= fcount;
  inccount();
- flastitem^:= dat1;
+ with flastitem^ do begin
+  linkage:= alinkage;
+  flags:= aflags;
+  kind:= gak_sub;
+  typeindex:= ftypelist.addsubvalue(aflags,aparams);
+  initconstindex:= -1;
+ end;
 end;
 
 function tgloballocdatalist.addinternalsubvalue(const aflags: subflagsty; 
@@ -2869,12 +2870,14 @@ begin
 //   fopenarrayaddrexp:= adddiexpression([DW_OP_addr,DW_OP_plus,
 //                                        sizeof(openarrayty.high),DW_OP_deref]);
                //llvm 3.7 can deref, plus and bit_piece only
+{
    fnoparams:= addnode([dummymeta]);
    with pdisubroutinetypety(
     adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
                                              fnoparamssubtyp))^ do begin
     params:= noparams;
    end;
+}
 //   fvoidtyp.id:= 0;         //initialized in getter func
    fpointertyp.id:= 0;      //initialized in getter func
    fbytetyp.id:= 0;         //initialized in getter func
@@ -2884,13 +2887,6 @@ begin
  end;
 end;
 
-function tmetadatalist.getparams1po: metavaluety;
-begin
- if fparams1po.id = 0 then begin
-  fparams1po:= addnode([dummymeta,pointertyp]);
- end;
- result:= fparams1po;
-end;
 
 function tmetadatalist.getpointertyp: metavaluety;
 begin
@@ -2916,6 +2912,34 @@ begin
  result:= fvoidtyp;
 end;
 }
+function tmetadatalist.getnoparams: metavaluety;
+begin
+ if fnoparams.id = 0 then begin
+  fnoparams:= addnode([dummymeta]);
+ end;
+ result:= fnoparams;
+end;
+
+function tmetadatalist.getparams1po: metavaluety;
+begin
+ if fparams1po.id = 0 then begin
+  fparams1po:= addnode([dummymeta,pointertyp]);
+ end;
+ result:= fparams1po;
+end;
+
+function tmetadatalist.getnoparamssubtyp: metavaluety;
+begin
+ if fnoparamssubtyp.id = 0 then begin
+  with pdisubroutinetypety(
+   adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
+                                            fnoparamssubtyp))^ do begin
+   params:= noparams;
+  end;
+ end;
+ result:= fnoparamssubtyp;
+end;
+
 function tmetadatalist.getparams1posubtyp: metavaluety;
 begin
  if fparams1posubtyp.id = 0 then begin
@@ -3337,7 +3361,7 @@ begin
    po2:= @params1;
    if not (sf_functioncall in asub^.flags) then begin //todo: handle result deref
     if parcount1 = 0 then begin
-     m1:= fnoparams;
+     m1:=  noparams;
     end
     else begin
      po2^:= dummymeta;
