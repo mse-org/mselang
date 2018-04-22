@@ -1467,6 +1467,16 @@ end;
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 
+ function getidentstring(const ident: identty): msestring;
+ begin
+  if ident = 0 then begin
+   result:= '''''';
+  end
+  else begin
+   result:= ''''+msestring(getidentname(ident))+'''';
+  end;
+ end;
+ 
  function dumptyp(const atyp: elementoffsetty): msestring;
  var
   po2: pelementinfoty;
@@ -1791,6 +1801,10 @@ begin
       mstr1:= mstr1+lineend+' result:'+'I:'+
                inttostrmse(resulttype.indirectlevel)+
                dumptyp(resulttype.typeele);
+     end;
+     if (libname <> 0) or (funcname <> 0) then begin
+      mstr1:= mstr1+lineend+' lib:'+getidentstring(libname)+
+                            ' func:'+getidentstring(funcname);
      end;
     end;
    end;
