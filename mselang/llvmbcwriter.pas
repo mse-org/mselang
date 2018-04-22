@@ -177,6 +177,8 @@ type
    procedure emitrec(const id: int32; const len: int32; const data: pcard8);
    procedure emitrec(const id: int32; const len: int32; const data: pint32);
 
+   procedure emitalias(const typid: int32; const aliasee: int32;
+                                                     const linkage: linkagety);
    procedure emitnopssa(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
@@ -675,6 +677,13 @@ begin
      else begin
       emitvar(pga5^.typeindex,pga5^.linkage);
      end;
+    end;
+    gak_alias: begin
+     emitalias(ptypeval(pga5^.typeindex),globval(pga5^.initconstindex),
+                                                              pga5^.linkage);
+    end;
+    else begin
+     internalerror1(ie_bcwriter,'20180421A');
     end;
    end;
    inc(pga5);
@@ -1259,6 +1268,12 @@ begin
   emitvbr6(po1^);
   inc(po1);
  end;
+end;
+
+procedure tllvmbcwriter.emitalias(const typid: int32; const aliasee: int32;
+               const linkage: linkagety);
+begin
+ emitrec(ord(MODULE_CODE_ALIAS),[typid,aliasee,ord(linkage),0]);
 end;
 
 procedure tllvmbcwriter.emitnopssa();

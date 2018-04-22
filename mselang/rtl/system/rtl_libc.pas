@@ -98,6 +98,7 @@ const
 {$endif}
 
 function gettimeofday(__tv: ptimeval; __tz: ptimezone): cint external;
+{$internaldebug on}
 function open(__file:  pcchar; __oflag: cint;
                                  args:array of const): cint external;
 function close(fd: cint): cint external;

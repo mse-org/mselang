@@ -1246,6 +1246,13 @@ begin
        end;
       end;
      end;
+     MODULE_CODE_ALIAS: begin
+      // 2            3             4       5   
+      //alias type, aliasee val#, linkage, visibility
+      checkmindatalen(rec1,5);
+      str1:= inttostr(rec1[3])+':'+ftypelist.typename(rec1[2]);
+      outglobalvalue(str1,[]);
+     end;
      else begin
       outrecord(modulecodenames[modulecodes(rec1[1])],
                        dynarraytovararray(copy(rec1,2,bigint)));

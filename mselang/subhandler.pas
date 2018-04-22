@@ -2175,9 +2175,19 @@ begin
       else begin
        ident1:= pelementinfoty(pointer(sub1)-eledatashift)^.header.name;
       end;
-      sub1^.globid:= 
+      {
+      if sf_named in sub1^.flags then begin
+       i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
+                                                sub1,getidentname2(ident1));
+       sub1^.globid:= info.s.unitinfo^.llvmlists.globlist.addalias(i1,
+                                                                sub1^.nameid);
+      end
+      else begin
+      }
+       sub1^.globid:= 
              info.s.unitinfo^.llvmlists.globlist.addsubvalue(
                                                 sub1,getidentname2(ident1));
+//      end;
      end;
 //     addsubbegin(oc_externalsub,sub1);
     end

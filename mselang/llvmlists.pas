@@ -409,10 +409,10 @@ type
    function find(const akey: integer): plinkhashdataty;
  end;
  
- globallockindty = (gak_var,gak_const,gak_sub); 
+ globallockindty = (gak_var,gak_const,gak_sub,gak_alias);
  globallocdataty = record
   typeindex: int32;
-  initconstindex: int32;
+  initconstindex: int32; //aliasee for gak_alias
   linkage: linkagety;
   debuginfo: metavaluety;
   case kind: globallockindty of
@@ -440,6 +440,8 @@ type
    procedure clear(); override;
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
                                     const externunit: boolean): int32;
+                                                            //returns listid
+   function addalias(const aliasee: int32; const name: identty): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
                                      const externunit: boolean): int32;
@@ -2361,6 +2363,20 @@ begin
  end;
 end;
 
+function tgloballocdatalist.addalias(const aliasee: int32;
+               const name: identty): int32;
+begin
+ result:= fcount;
+ inccount();
+ with flastitem^ do begin;
+  typeindex:= pgloballocdataty(getitempo(aliasee))^.typeindex;
+  initconstindex:= aliasee;
+  linkage:= li_external;
+  debuginfo:= dummymeta;
+  kind:= gak_alias;
+ end;
+end;
+
 function tgloballocdatalist.addbytevalue(const asize: integer; 
                                        const alinkage: linkagety; 
                                      const externunit: boolean): int32;
@@ -2428,6 +2444,7 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                   const externunit: boolean): int32;
 var
  dat1: globallocdataty;
+ i1: int32;
 begin
  result:= fcount;
  if avalue <> nil then begin
@@ -2435,12 +2452,21 @@ begin
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
-    fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
+    if flags * [sf_external,sf_proto] = [sf_external,sf_proto] then begin
+     i1:= funcname;
+     if i1 = 0 then begin
+      i1:= datatoele(avalue)^.header.name;
+     end;
+     fnamelist.addname(getidentname2(i1),result);
+    end
+    else begin
+     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid,result);
+    end;
     flinklist.addlink(avalue,result);
    end
    else begin
     if sf_named in flags then begin
-     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
+     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid,result);
     end;
     dat1.flags:= flags;
     dat1.linkage:= linkage;
@@ -2501,8 +2527,14 @@ end;
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                              const aname: identnamety): int32;
 begin
+ if avalue <> nil then begin //main() otherwise
+  exclude(avalue^.flags,sf_named);
+ end;
  result:= addsubvalue(avalue,false);
  fnamelist.addname(aname,result);
+ if avalue <> nil then begin //main() otherwise
+  include(avalue^.flags,sf_named);
+ end;
 end;
 
 function tgloballocdatalist.addsubvalue(const aflags: subflagsty; 

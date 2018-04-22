@@ -41,5 +41,4 @@ type
 var
  exitcode: int32;
 implementation
-{$dumpelements}
 end.
