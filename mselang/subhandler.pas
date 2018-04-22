@@ -2073,7 +2073,7 @@ begin
     internalerror(ie_sub,'20140415A');
    end;
   {$else}
-    addvar(tks_self,allvisi,sub1^.varchain,var1);
+   addvar(tks_self,allvisi,sub1^.varchain,var1);
   {$endif}
    ele.addalias(tk_self,ele.eledatarel(var1),allvisi);
    curparam^:= elementoffsetty(var1); //absoluteaddress //??? 64 bit ???

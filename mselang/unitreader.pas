@@ -473,6 +473,8 @@ begin
        end;
        ek_internalsub: begin
        end;
+       ek_alias: begin
+       end;
        ek_unit: begin
        end;
        ek_implementation: begin
