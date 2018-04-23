@@ -2881,6 +2881,8 @@ begin
 //   fvoidtyp.id:= 0;         //initialized in getter func
    fpointertyp.id:= 0;      //initialized in getter func
    fbytetyp.id:= 0;         //initialized in getter func
+   fnoparams.id:= 0;        //initialized in getter func
+   fnoparamssubtyp.id:= 0;    //initialized in getter func
    fparams1po.id:= 0;       //initialized in getter func
    fparams1posubtyp.id:= 0; //initialized in getter func
   end;
