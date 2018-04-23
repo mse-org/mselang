@@ -196,8 +196,10 @@ type
  compileoptionty = (co_mlaruntime, //mla interpreter
                     co_nocompilerunit,co_nortlunits,
                     co_llvm,co_hasfunction,
-                    co_writeunits,     //write unitfiles //preliminary
-                    co_readunits,      //read unitfiles  //preliminary
+                    co_modular,    //modular compilation
+                    co_objmodules, //compile to object units, bc units otherwise
+ //                   co_writeunits,     //write unitfiles //preliminary
+//                    co_readunits,      //read unitfiles  //preliminary
                     co_build,          //compile all unit files
                     co_lineinfo,co_proginfo,co_names //debug
                     );

@@ -935,7 +935,7 @@ procedure init();
 begin
  dofinalize();
  fillchar(segmentsx,sizeof(segmentsx),0);
- useunitsegments:= co_writeunits in info.o.compileoptions;
+ useunitsegments:= co_modular in info.o.compileoptions;
 {
  with plocallocinfoty(allocsegmentpo(seg_localloc,
                                    sizeof(locallocinfoty)))^ do begin

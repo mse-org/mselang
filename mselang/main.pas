@@ -53,8 +53,8 @@ type
    tsyntaxpainter1: tsyntaxpainter;
    lineinfoed: tbooleanedit;
    norun: tbooleanedit;
-   wrtued: tbooleanedit;
-   rrtued: tbooleanedit;
+   modulared: tbooleanedit;
+   objed: tbooleanedit;
    builded: tbooleanedit;
    proginfoed: tbooleanedit;
    nameed: tbooleanedit;
@@ -110,9 +110,11 @@ var
  compoptions: compileoptionsty;
  str1: string;
  int1: integer;
- filename1,filename2,optname: filenamety;
+ filename1,filename2,filename3,optname: filenamety;
  dirbefore: msestring;
  ar1: filenamearty;
+ i1,i2: int32;
+  dt1,dt2: tdatetime;
 begin
 {$ifdef mse_debugparser}
  writeln('*****************************************');
@@ -137,15 +139,25 @@ begin
  else begin
   compoptions:= mlaruntimecompileoptions;
  end;
+ if modulared.value then begin
+  include(compoptions,co_modular);
+ end;
+ if objed.value then begin
+  include(compoptions,co_objmodules);
+ end;
+ {
  if wrtued.value then begin
   include(compoptions,co_writeunits);
  end;
+ }
  if builded.value then begin
   include(compoptions,co_build);
  end;
+ {
  if rrtued.value then begin
   include(compoptions,co_readunits);
  end;
+ }
  if nocompilerunited.value then begin
   include(compoptions,co_nocompilerunit);
  end;
@@ -161,8 +173,9 @@ begin
    if bo1 then begin
     if llvm.value then begin
      try
-      if not rrtued.value then begin
-       filename1:= replacefileext(filena.value,'bc');
+//      if not rrtued.value then begin
+      filename1:= replacefileext(filena.value,'bc');
+      if not (co_modular in compoptions) then begin
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
@@ -176,7 +189,7 @@ begin
         optname:= filenamebase(filename1);
         if opted.value <> '' then begin
          optname:= optname+'_opt';
-         int1:= getprocessoutput(llvmbindir+'opt '+opted.value+
+         i2:= getprocessoutput(llvmbindir+'opt '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        {$ifdef mse_debugparser}
@@ -184,23 +197,24 @@ begin
        {$endif}
         end
         else begin
-         int1:= 0;
+         i2:= 0;
         end;
-        if int1 = 0 then begin
-         int1:= getprocessoutput(llvmbindir+'llc '+llced.value+' -o '+
+        if i2 = 0 then begin
+         i2:= getprocessoutput(llvmbindir+'llc '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        {$ifdef mse_debugparser}
          writeln('***************** LLC end ***********');
        {$endif}
-         if int1 = 0 then begin
-          int1:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
+         if i2 = 0 then begin
+          i2:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         {$ifdef mse_debugparser}
           writeln('***************** gcc end ***********');
         {$endif}
+        {
           if int1 = 0 then begin
            if not norun.value then begin
             int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
@@ -208,38 +222,77 @@ begin
             grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
            end;
           end;
+        }
          end;
         end;
        end;
       end
       else begin
        ar1:= bcfiles();
-//setlength(ar1,length(ar1)-10);
-       filename2:= removefileext(filena.value)+'_all.bc';
-       grid.appendrow('link -> '+filename2);
-       for int1:= 0 to high(ar1) do begin
-        grid.appendrow(' '+ar1[int1]);
-       end;
-       grid.appendrow();
-       int1:= getprocessoutput(llvmbindir+'llvm-link -o='+filename2+' '+
-                quotefilename(ar1),'',str1);
-       grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-       if int1 = 0 then begin
-        int1:= getprocessoutput(llvmbindir+'llc '+llced.value+' '+
-                                                        filename2,'',str1);
-        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        if int1 = 0 then begin
-         int1:= getprocessoutput('gcc -lm -o'+filenamebase(filename1)+'.bin '+
-                           filenamebase(filename2)+'.s','',str1);
-         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         if int1 = 0 then begin
-          if not norun.value then begin
-           int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+       if co_objmodules in compoptions then begin
+        grid.appendrow('compile modules');
+        i2:= 0;
+        for i1:= 0 to high(ar1) do begin
+         dt1:= getfilemodtime(ar1[i1]);
+         if dt1 = emptydatetime then begin
+          grid.appendrow(' '+ar1[i1]+' not found. *error*');
+          i2:= -1;
+         end
+         else begin
+          filename3:= quotefilename(removefileext(ar1[i1])+'.s');
+          filename2:= quotefilename(removefileext(ar1[i1])+'.o');
+          dt2:= getfilemodtime(filename2);
+          if dt2 < dt1 then begin
+           grid.appendrow(' '+ar1[i1]);
+           i2:= getprocessoutput(llvmbindir+'llc '+llced.value+' '+
+                                  '-o '+filename3+' '+ar1[i1],'',str1);
            grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-           grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+           i2:= getprocessoutput('as -o'+filename2+' '+filename3,'',str1);
+           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
           end;
          end;
+         if i2 <> 0 then begin
+          break;
+         end;
         end;
+        if i2 = 0 then begin
+         for i1:= 0 to high(ar1) do begin
+          ar1[i1]:= replacefileext(ar1[i1],'o');
+         end;
+         i2:= getprocessoutput('gcc -lm -o'+
+                               filenamebase(filename1)+'.bin '+
+                                                 quotefilename(ar1),'',str1);
+         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        end;
+       end
+       else begin
+        filename2:= removefileext(filena.value)+'_all.bc';
+        grid.appendrow('link -> '+filename2);
+        for int1:= 0 to high(ar1) do begin
+         grid.appendrow(' '+ar1[int1]);
+        end;
+        grid.appendrow();
+        i2:= getprocessoutput(llvmbindir+'llvm-link -o='+filename2+' '+
+                 quotefilename(ar1),'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        if i2 = 0 then begin
+         i2:= getprocessoutput(llvmbindir+'llc '+llced.value+' '+
+                                                         filename2,'',str1);
+         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         if i2 = 0 then begin
+          i2:= getprocessoutput('gcc -lm -o'+filenamebase(filename1)+'.bin '+
+                            filenamebase(filename2)+'.s','',str1);
+          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         end;
+        end;
+       end;
+      end;
+      if i2 = 0 then begin
+       if not norun.value then begin
+        grid.appendrow;
+        i2:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
        end;
       end;
      finally

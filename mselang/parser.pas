@@ -575,7 +575,7 @@ begin
   end;
   s.dialect:= aunit^.dialect;
   aunit^.dwarflangid:= DW_LANG_Pascal83;
-  if o.compileoptions * [co_readunits,co_build] = [co_readunits] then begin
+  if o.compileoptions * [co_modular,co_build] = [co_modular] then begin
    if not (us_invalidunitfile in aunit^.state) and 
                                       readunitfile(aunit) then begin
     result:= true;
@@ -595,7 +595,7 @@ begin
    end;
   end;
   if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
-   if co_writeunits in info.o.compileoptions then begin
+   if co_modular in info.o.compileoptions then begin
     aunit^.llvmlists:= tllvmlists.create();
     aunit^.llvmlists.clear();
    end
@@ -1141,7 +1141,7 @@ begin
     end;
     s.debugoptions:= o.debugoptions;
     s.compilerswitches:= o.compilerswitches;
-    modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
+    modularllvm:= aoptions * [co_llvm,co_modular] = [co_llvm,co_modular];
     init();
 //    globelement:= ele.addelementduplicate1(idstart,ek_global,[]); //globals
     for i1:= 0 to high(o.defines) do begin

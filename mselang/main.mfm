@@ -23,9 +23,9 @@ object mainfo: tmainfo
     bounds_cx = 50
     bounds_cy = 20
     anchors = [an_top, an_right]
+    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     state = [as_localcaption, as_localonexecute]
     caption = 'parse'
-    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     onexecute = parseev
   end
   object grid: tstringgrid
@@ -214,8 +214,8 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     statfile = statf
   end
-  object wrtued: tbooleanedit
-    frame.caption = 'wrtu'
+  object modulared: tbooleanedit
+    frame.caption = 'mod'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
@@ -232,20 +232,20 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     statfile = statf
   end
-  object rrtued: tbooleanedit
-    frame.caption = 'rrtu'
+  object objed: tbooleanedit
+    frame.caption = 'obj'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
       0
       1
-      26
+      22
       2
     )
     taborder = 12
     bounds_x = 408
     bounds_y = 15
-    bounds_cx = 39
+    bounds_cx = 35
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
@@ -374,6 +374,7 @@ object mainfo: tmainfo
   end
   object opted: tmemodialoghistoryedit
     frame.caption = 'opt'
+    frame.captiontextflags = [tf_ycentered]
     frame.captionpos = cp_right
     frame.localprops = []
     frame.localprops1 = []
@@ -405,6 +406,7 @@ object mainfo: tmainfo
   end
   object llced: tmemodialoghistoryedit
     frame.caption = 'llc'
+    frame.captiontextflags = [tf_ycentered]
     frame.captionpos = cp_right
     frame.localprops = []
     frame.localprops1 = []
