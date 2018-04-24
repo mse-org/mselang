@@ -66,7 +66,7 @@ procedure postlineinfo();
 
 implementation
 uses
- typinfo,handler,elements,sysutils,handlerglob,
+ typinfo,handler,elements,sysutils,handlerglob,mseprocutils,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
@@ -1126,6 +1126,8 @@ var
  lstr1: lstringty;
  rtlunit1: rtlunitty;
  cu1: compilerunitty;
+ ar1: filenamearty;
+ fna1,fna2: filenamety;
 begin
  result:= false;
 // init();
@@ -1234,6 +1236,50 @@ begin
      end;
      if result then begin
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
+      if result and (o.compileoptions * [co_llvm,co_buildexe] = 
+                                              [co_llvm,co_buildexe]) then begin
+       if co_modular in o.compileoptions then begin
+        with info.buildoptions do begin
+         fna2:= removefileext(exefile);
+         if co_objmodules in o.compileoptions then begin
+          ar1:= objfiles();
+         {$ifdef mse_debugparser}
+          writeln('link -> '+tosysfilepath(exefile));
+          for i1:= 0 to high(ar1) do begin
+           writeln(' ',ar1[i1]);
+          end;
+         {$endif}
+          writeln('Linking (gcc)');
+          result:= execwaitmse(gcccommand+
+                         ' -lm -o'+tosysfilepath(exefile)+' '+
+                              quotefilename(tosysfilepath(ar1))) = 0;
+         end
+         else begin
+          ar1:= bcfiles();
+          fna1:= tosysfilepath(fna2)+'_all.bc';
+          fna2:= fna2+'.s';
+         {$ifdef mse_debugparser}
+          writeln('link -> '+fna1);
+          for i1:= 0 to high(ar1) do begin
+           writeln(' ',ar1[i1]);
+          end;
+         {$endif}
+          writeln('Linking bc modules (llvm-link)');
+          result:= execwaitmse(llvmlinkcommand+
+                           ' -o='+fna1+' '+quotefilename(ar1)) = 0;
+          if result then begin
+           result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
+           writeln('Compiling bc code (llc)');
+           if result then begin
+            writeln('Assembling (gcc)');
+            result:= execwaitmse(gcccommand+
+                           ' -lm -o'+tosysfilepath(exefile)+' '+fna2) = 0;
+           end;
+          end;
+         end;
+        end;
+       end;
+      end;
      end;
     end;
 //    endparser();

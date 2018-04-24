@@ -201,6 +201,7 @@ type
  //                   co_writeunits,     //write unitfiles //preliminary
 //                    co_readunits,      //read unitfiles  //preliminary
                     co_build,          //compile all unit files
+                    co_buildexe,
                     co_lineinfo,co_proginfo,co_names //debug
                     );
  compileoptionsty = set of compileoptionty;
@@ -797,6 +798,9 @@ type
  buildoptionsty = record
   llccommand: msestring;
   ascommand: msestring;
+  llvmlinkcommand: msestring;
+  gcccommand: msestring;
+  exefile: filenamety;
  end;
  
  savedparseinfoty = record

@@ -124,12 +124,18 @@ begin
  resetinfo();
  initio(outstream,errstream);
  initparams();
+ parserparams.buildoptions.llvmlinkcommand:= 
+                                    tosysfilepath(llvmbindir+'llvm-link');
  parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
                                                             ' '+llced.value;
+ parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
+ 
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
+ parserparams.buildoptions.exefile:= tosysfilepath(
+                                        replacefileext(filena.value,'bin'));
  parserparams.compileoptions:= [];
  if llvm.value then begin
-	  parserparams.compileoptions:= llvmcompileoptions;
+	  parserparams.compileoptions:= llvmcompileoptions + [co_buildexe];
   if lineinfoed.value then begin
    include(parserparams.compileoptions,co_lineinfo);
   end;
@@ -232,6 +238,7 @@ begin
        end;
       end
       else begin
+      {
        if co_objmodules in parserparams.compileoptions then begin
         ar1:= objfiles();
         filename2:= filenamebase(filename1)+'.bin';
@@ -265,6 +272,8 @@ begin
          end;
         end;
        end;
+      }
+       i2:= 0;
       end;
       if i2 = 0 then begin
        if not norun.value then begin
