@@ -716,7 +716,8 @@ type
   filematch: filematchinfoty;
   rtfilepath: filenamety; //elements and opcode (interpreter only)
   bcfilepath: filenamety; //llvm bitcode
-  bcfilename: filenamety;
+  objfilepath: filenamety; //*.o files
+//  bcfilename: filenamety;
   
   dwarflangid: int32;
   filepathmeta: metavaluety;
@@ -792,6 +793,11 @@ type
   unitdirs: filenamearty;
   defines: defineinfoarty;
  end;
+
+ buildoptionsty = record
+  llccommand: msestring;
+  ascommand: msestring;
+ end;
  
  savedparseinfoty = record
   filename: filenamety;
@@ -836,6 +842,7 @@ type
   scopemetaindex: int32;
 //  compilerswitches: compilerswitchesty;
   modularllvm: boolean;
+  buildoptions: buildoptionsty;
 
   unitinfochain: elementoffsetty;
   locallocid: integer;

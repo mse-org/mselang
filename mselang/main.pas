@@ -107,7 +107,7 @@ var
  mlistream: tmsefilestream;
  targetstream: tllvmbcwriter;
  bo1: boolean;
- compoptions: compileoptionsty;
+ parserparams: parserparamsty;
  str1: string;
  int1: integer;
  filename1,filename2,filename3,optname: filenamety;
@@ -124,26 +124,29 @@ begin
  resetinfo();
  initio(outstream,errstream);
  initparams();
+ parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
+                                                            ' '+llced.value;
+ parserparams.buildoptions.ascommand:= tosysfilepath('as');
  if llvm.value then begin
-	  compoptions:= llvmcompileoptions;
+	  parserparams.compileoptions:= llvmcompileoptions;
   if lineinfoed.value then begin
-   include(compoptions,co_lineinfo);
+   include(parserparams.compileoptions,co_lineinfo);
   end;
   if proginfoed.value then begin
-   include(compoptions,co_proginfo);
+   include(parserparams.compileoptions,co_proginfo);
   end;
   if nameed.value then begin
-   include(compoptions,co_names);
+   include(parserparams.compileoptions,co_names);
   end;
  end
  else begin
-  compoptions:= mlaruntimecompileoptions;
+  parserparams.compileoptions:= mlaruntimecompileoptions;
  end;
  if modulared.value then begin
-  include(compoptions,co_modular);
+  include(parserparams.compileoptions,co_modular);
  end;
  if objed.value then begin
-  include(compoptions,co_objmodules);
+  include(parserparams.compileoptions,co_objmodules);
  end;
  {
  if wrtued.value then begin
@@ -151,7 +154,7 @@ begin
  end;
  }
  if builded.value then begin
-  include(compoptions,co_build);
+  include(parserparams.compileoptions,co_build);
  end;
  {
  if rrtued.value then begin
@@ -159,14 +162,14 @@ begin
  end;
  }
  if nocompilerunited.value then begin
-  include(compoptions,co_nocompilerunit);
+  include(parserparams.compileoptions,co_nocompilerunit);
  end;
  if nortlunitsed.value then begin
-  include(compoptions,co_nortlunits);
+  include(parserparams.compileoptions,co_nortlunits);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
-  bo1:= parser.parse(ansistring(ed.gettext),filena.value,compoptions);
+  bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
@@ -175,7 +178,7 @@ begin
      try
 //      if not rrtued.value then begin
       filename1:= replacefileext(filena.value,'bc');
-      if not (co_modular in compoptions) then begin
+      if not (co_modular in parserparams.compileoptions) then begin
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
@@ -228,44 +231,19 @@ begin
        end;
       end
       else begin
-       ar1:= bcfiles();
-       if co_objmodules in compoptions then begin
-        grid.appendrow('compile modules');
-        i2:= 0;
-        for i1:= 0 to high(ar1) do begin
-         dt1:= getfilemodtime(ar1[i1]);
-         if dt1 = emptydatetime then begin
-          grid.appendrow(' '+ar1[i1]+' not found. *error*');
-          i2:= -1;
-         end
-         else begin
-          filename3:= quotefilename(removefileext(ar1[i1])+'.s');
-          filename2:= quotefilename(removefileext(ar1[i1])+'.o');
-          dt2:= getfilemodtime(filename2);
-          if dt2 < dt1 then begin
-           grid.appendrow(' '+ar1[i1]);
-           i2:= getprocessoutput(llvmbindir+'llc '+llced.value+' '+
-                                  '-o '+filename3+' '+ar1[i1],'',str1);
-           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-           i2:= getprocessoutput('as -o'+filename2+' '+filename3,'',str1);
-           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-          end;
-         end;
-         if i2 <> 0 then begin
-          break;
-         end;
+       if co_objmodules in parserparams.compileoptions then begin
+        ar1:= objfiles();
+        filename2:= filenamebase(filename1)+'.bin';
+        grid.appendrow('link -> '+filename2);
+        for int1:= 0 to high(ar1) do begin
+         grid.appendrow(' '+ar1[int1]);
         end;
-        if i2 = 0 then begin
-         for i1:= 0 to high(ar1) do begin
-          ar1[i1]:= replacefileext(ar1[i1],'o');
-         end;
-         i2:= getprocessoutput('gcc -lm -o'+
-                               filenamebase(filename1)+'.bin '+
+        grid.appendrow();
+        i2:= getprocessoutput('gcc -lm -o'+filename2+' '+
                                                  quotefilename(ar1),'',str1);
-         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        end;
        end
        else begin
+        ar1:= bcfiles();
         filename2:= removefileext(filena.value)+'_all.bc';
         grid.appendrow('link -> '+filename2);
         for int1:= 0 to high(ar1) do begin
@@ -318,7 +296,7 @@ begin
   finally
    errstream.destroy();
    outstream.destroy();
-   if not (co_mlaruntime in compoptions) then begin
+   if not (co_mlaruntime in parserparams.compileoptions) then begin
     elements.clear();
    end;
 //   freeandnil(mainmetadatalist);

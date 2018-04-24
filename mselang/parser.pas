@@ -36,9 +36,15 @@ const
 
 procedure resetinfo();
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
-  
+
+type
+ parserparamsty = record
+  buildoptions: buildoptionsty;
+  compileoptions: compileoptionsty;
+ end;
+ 
 function parse(const input: string; const afilename: filenamety;
-                                     const aoptions: compileoptionsty): boolean;
+                                     const aparams: parserparamsty): boolean;
                               //true if ok
 function parseunit(const input: string; const adialect: dialectty;
                    const aunit: punitinfoty;
@@ -1109,7 +1115,7 @@ begin
 end;
 
 function parse(const input: string; const afilename: filenamety; 
-                                     const aoptions: compileoptionsty): boolean;
+                                     const aparams: parserparamsty): boolean;
                               //true if ok
 var                           
  po1: punitinfoty;
@@ -1126,8 +1132,10 @@ begin
  with info do begin
   try
    try
-    o.compileoptions:= aoptions;
+    buildoptions:= aparams.buildoptions;
+    o.compileoptions:= aparams.compileoptions;
     o.debugoptions:= [];
+    {
     if co_llvm in aoptions then begin
      if co_lineinfo in aoptions then begin
       include(info.o.debugoptions,do_lineinfo);
@@ -1139,9 +1147,11 @@ begin
       include(info.o.debugoptions,do_names);
      end;    
     end;
+    }
     s.debugoptions:= o.debugoptions;
     s.compilerswitches:= o.compilerswitches;
-    modularllvm:= aoptions * [co_llvm,co_modular] = [co_llvm,co_modular];
+    modularllvm:= o.compileoptions * [co_llvm,co_modular] = [co_llvm,co_modular];
+//    modularllvm:= aoptions * [co_llvm,co_modular] = [co_llvm,co_modular];
     init();
 //    globelement:= ele.addelementduplicate1(idstart,ek_global,[]); //globals
     for i1:= 0 to high(o.defines) do begin
@@ -1198,7 +1208,7 @@ begin
 //     po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= info.rtlunits[rtl_system];
-     if result and not (co_nocompilerunit in aoptions) then begin
+     if result and not (co_nocompilerunit in o.compileoptions) then begin
       for cu1:= succ(low(cu1)) to high(cu1) do begin
        result:= parsecompilerunit(compilerunitdefs[cu1].name,
                                              compilerunits[cu1].unitpo);
@@ -1213,7 +1223,7 @@ begin
       end;
       }
      end;
-     if result and not (co_nortlunits in aoptions)then begin
+     if result and not (co_nortlunits in o.compileoptions)then begin
       rtlunit1:= rtl_system;
       inc(rtlunit1);
       for rtlunit1:= rtlunit1 to high(rtlunits) do begin
@@ -1233,7 +1243,7 @@ begin
 //    unit1^.metadatalist:= nil;
    finally
 //    system.finalize(info);
-    deinit(not result or not (co_llvm in aoptions));
+    deinit(not result or not (co_llvm in o.compileoptions));
    end;
   except
    result:= false;

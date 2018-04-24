@@ -59,7 +59,7 @@ var
  err: syserrorty;
  targetstream: tmsefilestream;
  llvmstream: tllvmbcwriter;
- compoptions: compileoptionsty;
+ parserparams: parserparamsty;
  seg1: subsegmentty;
 begin
  initparams();
@@ -73,24 +73,25 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
-   compoptions:= mlaruntimecompileoptions;
+   parserparams.compileoptions:= mlaruntimecompileoptions;
    if sysenv.defined[ord(pa_llvm)] then begin
-    compoptions:= llvmcompileoptions;
+    parserparams.compileoptions:= llvmcompileoptions;
     if sysenv.defined[ord(pa_debug)] then begin
-     compoptions:= compoptions + [co_lineinfo,co_proginfo];
+     parserparams.compileoptions:= 
+                       parserparams.compileoptions + [co_lineinfo,co_proginfo];
     end;
     if sysenv.defined[ord(pa_debugline)] then begin
-     compoptions:= compoptions + [co_lineinfo];
+     parserparams.compileoptions:= parserparams.compileoptions + [co_lineinfo];
     end;
    end;
    if sysenv.defined[ord(pa_nocompilerunit)] then begin
-    include(compoptions,co_nocompilerunit);
+    include(parserparams.compileoptions,co_nocompilerunit);
    end;
    if sysenv.defined[ord(pa_nortlunits)] then begin
-    include(compoptions,co_nortlunits);
+    include(parserparams.compileoptions,co_nortlunits);
    end;
-   if parse(str1,filename1,compoptions) then begin
-    if co_llvm in compoptions then begin
+   if parse(str1,filename1,parserparams) then begin
+    if co_llvm in parserparams.compileoptions then begin
      filename1:= replacefileext(filename1,llvmbcextension);
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
                           filename1,fm_create),

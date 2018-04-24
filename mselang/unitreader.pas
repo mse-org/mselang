@@ -26,7 +26,7 @@ function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  filehandler,segmentutils,msestream,
- msetypes,msestrings,msesys,msesystypes,globtypes,
+ msetypes,msestrings,msesys,msesystypes,globtypes,msefileutils,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
  identutils,opglob,opcode,errorhandler,bcunitglob,elementcache;
 
@@ -105,7 +105,7 @@ begin
   end;
  end;
 end;
-                                      //!!navigerror
+
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
  names1,anons1: identarty;
@@ -250,7 +250,7 @@ var
  
 var
  stream1,stream2: tmsefilestream;
- fna1: filenamety;
+ fna1,fna2: filenamety;
  intf: punitintfinfoty;
  interfaceuses1,implementationuses1: usesitemarty;
  interfaceunits1: unitinfopoarty;
@@ -301,21 +301,33 @@ begin
     end;
     aunit^.filematch.guid:= intf^.header.filematch.guid;
     if co_llvm in info.o.compileoptions then begin
-     fna1:= getbcunitfile(aunit);
-     if fna1 = '' then begin
-      goto endlab; //llvm bc file not found
+     if co_objmodules in info.o.compileoptions then begin
+      fna2:= getobjunitfile(aunit);
+      if fna2 = '' then begin
+       goto endlab; //*.o file not found
+      end;
+      if getfilemodtime(fna2) < getfilemodtime(fna1) then begin
+       goto endlab; //invalid     //todo: use guid
+      end;
+      aunit^.objfilepath:= fna2;
+     end
+     else begin
+      fna1:= getbcunitfile(aunit);
+      if fna1 = '' then begin
+       goto endlab; //llvm bc file not found
+      end;
+      if tmsefilestream.trycreate(stream2,fna1) <> sye_ok then begin
+       goto endlab;
+      end;
+      bo1:= (stream2.tryreadbuffer(bcheader1,sizeof(bcheader1)) = sye_ok) and
+               (comparebyte(bcheader1.header.guid,
+                                      aunit^.filematch.guid,sizeof(tguid)) = 0);
+      stream2.destroy();
+      if not bo1 then begin
+       goto endlab;
+      end;
+      aunit^.bcfilepath:= fna1;
      end;
-     if tmsefilestream.trycreate(stream2,fna1) <> sye_ok then begin
-      goto endlab;
-     end;
-     bo1:= (stream2.tryreadbuffer(bcheader1,sizeof(bcheader1)) = sye_ok) and
-              (comparebyte(bcheader1.header.guid,
-                                     aunit^.filematch.guid,sizeof(tguid)) = 0);
-     stream2.destroy();
-     if not bo1 then begin
-      goto endlab;
-     end;
-     aunit^.bcfilepath:= fna1;
     end;
     allocuninitedarray(intf^.header.anoncount,sizeof(identty),anons1);
     pd:= pointer(anons1);

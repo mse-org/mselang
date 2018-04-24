@@ -26,6 +26,7 @@ const
  compunitextension = 'mcu';
  rtunitextension = 'mru';
  bcunitextension = 'bc';
+ objunitextension = 'o';
  mlaextension = 'mla';
  pasextension = 'pas';
 
@@ -38,6 +39,8 @@ function getrtunitfile(const aunitname: lstringty): filenamety;
 function getrtunitfilename(const aname: filenamety): filenamety;
 function getbcunitfilename(const aname: filenamety): filenamety;
 function getbcunitfile(const aunit: punitinfoty): filenamety;
+function getobjunitfilename(const aname: filenamety): filenamety;
+function getobjunitfile(const aunit: punitinfoty): filenamety;
 
 //function getsysfile(const aname: filenamety): filenamety;
 
@@ -116,11 +119,27 @@ begin
  result:= replacefileext(aname,bcunitextension);
 end;
 
+function getobjunitfilename(const aname: filenamety): filenamety;
+begin
+ result:= replacefileext(aname,objunitextension);
+end;
+
 function getbcunitfile(const aunit: punitinfoty): filenamety;
 begin
  result:= '';
  if aunit^.rtfilepath <> '' then begin
   result:= getbcunitfilename(aunit^.rtfilepath);
+  if not findfile(result) then begin
+   result:= '';
+  end;
+ end;
+end;
+
+function getobjunitfile(const aunit: punitinfoty): filenamety;
+begin
+ result:= '';
+ if aunit^.rtfilepath <> '' then begin
+  result:= getobjunitfilename(aunit^.rtfilepath);
   if not findfile(result) then begin
    result:= '';
   end;

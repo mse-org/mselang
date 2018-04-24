@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2015 by Martin Schreiber
+{ MSElang Copyright (c) 2015-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  msetypes,elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,
- msestream,opglob,compilerunit,
+ msestream,opglob,compilerunit,mseprocutils,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
  sysutils,llvmbcwriter,llvmops,elementcache;
 {
@@ -392,6 +392,25 @@ end;
 //var
 // opsegstart: popinfoty;
  
+function compileobjmodule(const aunit: punitinfoty): boolean; //true if ok
+var
+ fna1: filenamety;
+ fna2: filenamety;
+begin
+ result:= false;
+ if aunit^.bcfilepath = '' then begin
+  internalerror1(ie_unit,'20180424A');
+ end;
+ fna1:= tosysfilepath(aunit^.bcfilepath);
+ fna2:= tosysfilepath(replacefileext(aunit^.bcfilepath,'s'));
+ aunit^.objfilepath:= getobjunitfilename(aunit^.filepath);
+ result:= (execwaitmse(info.buildoptions.llccommand+' -o '+fna2+' '+fna1) = 0) and
+          (execwaitmse(info.buildoptions.ascommand+' -o '+
+                   tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0);
+ trydeletefile(fna1); 
+ trydeletefile(fna2); 
+end;
+
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
 // stat1: subsegmentstatety;
@@ -474,6 +493,14 @@ begin
    if info.modularllvm then begin
     setsegmenttop(seg_op,aunit^.opseg.start);
     info.opcount:= aunit^.opstart;
+    if result and (co_objmodules in info.o.compileoptions) then begin
+     result:= compileobjmodule(aunit);
+    {$ifdef mse_debugparser}
+     if result then begin
+      writeln('   '+aunit^.objfilepath);
+     end;
+    {$endif}
+    end;
    end;
   end
   else begin

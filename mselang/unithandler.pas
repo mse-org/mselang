@@ -171,6 +171,7 @@ procedure finalizeunit(const aunit: punitinfoty);
 
 function getexitcodeaddress: segaddressty;
 function bcfiles(): filenamearty;
+function objfiles(): filenamearty;
 
 procedure init;
 procedure deinit(const freeunitlist: boolean);
@@ -193,7 +194,8 @@ type
  tunitlist = class(thashdatalist)
   private
    ffilenameiteratepo: pfilenamety;
-   procedure filenameiterator(const aitem: phashdataty);
+   procedure bcfilenameiterator(const aitem: phashdataty);
+   procedure objfilenameiterator(const aitem: phashdataty);
   protected
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitem: phashdataty): boolean; override;
@@ -204,6 +206,7 @@ type
    function findunit(const aname: identty): punitinfoty;
    function newunit(const aname: identty): punitinfoty;
    function bcfiles(): filenamearty;
+   function objfiles(): filenamearty;
  end;
 
 var
@@ -1013,7 +1016,7 @@ begin
  end;
 end;
 
-procedure tunitlist.filenameiterator(const aitem: phashdataty);
+procedure tunitlist.bcfilenameiterator(const aitem: phashdataty);
 begin
  with punithashdataty(aitem)^.data^ do begin
   ffilenameiteratepo^:= bcfilepath;
@@ -1021,11 +1024,27 @@ begin
  inc(ffilenameiteratepo);
 end;
 
+procedure tunitlist.objfilenameiterator(const aitem: phashdataty);
+begin
+ with punithashdataty(aitem)^.data^ do begin
+  ffilenameiteratepo^:= objfilepath;
+ end;
+ inc(ffilenameiteratepo);
+end;
+
+
 function tunitlist.bcfiles: filenamearty;
 begin
  setlength(result,count);
  ffilenameiteratepo:= pointer(result);
- iterate(@filenameiterator);
+ iterate(@bcfilenameiterator);
+end;
+
+function tunitlist.objfiles: filenamearty;
+begin
+ setlength(result,count);
+ ffilenameiteratepo:= pointer(result);
+ iterate(@objfilenameiterator);
 end;
 
 (*
@@ -1994,6 +2013,11 @@ end;
 function bcfiles(): filenamearty;
 begin
  result:= unitlist.bcfiles();
+end;
+
+function objfiles(): filenamearty;
+begin
+ result:= unitlist.objfiles();
 end;
 
 procedure clear;
