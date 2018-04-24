@@ -270,7 +270,7 @@ begin
         grid.appendrow;
         i2:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+        grid.appendrow(['EXITCODE: '+inttostrmse(i2)]);
        end;
       end;
      finally
