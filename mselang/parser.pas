@@ -1135,19 +1135,17 @@ begin
     buildoptions:= aparams.buildoptions;
     o.compileoptions:= aparams.compileoptions;
     o.debugoptions:= [];
-    {
-    if co_llvm in aoptions then begin
-     if co_lineinfo in aoptions then begin
+    if co_llvm in o.compileoptions then begin
+     if co_lineinfo in o.compileoptions then begin
       include(info.o.debugoptions,do_lineinfo);
      end;
-     if co_proginfo in aoptions then begin
+     if co_proginfo in o.compileoptions then begin
       include(info.o.debugoptions,do_proginfo);
      end;    
-     if co_names in aoptions then begin
+     if co_names in o.compileoptions then begin
       include(info.o.debugoptions,do_names);
      end;    
     end;
-    }
     s.debugoptions:= o.debugoptions;
     s.compilerswitches:= o.compilerswitches;
     modularllvm:= o.compileoptions * [co_llvm,co_modular] = [co_llvm,co_modular];

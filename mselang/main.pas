@@ -127,6 +127,7 @@ begin
  parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
                                                             ' '+llced.value;
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
+ parserparams.compileoptions:= [];
  if llvm.value then begin
 	  parserparams.compileoptions:= llvmcompileoptions;
   if lineinfoed.value then begin
