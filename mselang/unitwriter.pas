@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit unitwriter;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  parserglob,unitglob;
@@ -25,7 +25,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  msetypes,elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,
- msestream,opglob,compilerunit,mseprocutils,
+ msestream,opglob,compilerunit,mseprocutils,unithandler,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
  sysutils,llvmbcwriter,llvmops,elementcache;
 {
@@ -393,22 +393,37 @@ end;
 // opsegstart: popinfoty;
  
 function compileobjmodule(const aunit: punitinfoty): boolean; //true if ok
+//todo: use threads for multicore systems
 var
- fna1: filenamety;
+ fna1,fna1no: filenamety;
  fna2: filenamety;
+label
+ errlab1;
 begin
  result:= false;
  if aunit^.bcfilepath = '' then begin
   internalerror1(ie_unit,'20180424A');
  end;
  fna1:= tosysfilepath(aunit^.bcfilepath);
- fna2:= tosysfilepath(replacefileext(aunit^.bcfilepath,'s'));
- aunit^.objfilepath:= getobjunitfilename(aunit^.filepath);
- result:= (execwaitmse(info.buildoptions.llccommand+' -o '+fna2+' '+fna1) = 0) and
-          (execwaitmse(info.buildoptions.ascommand+' -o '+
-                   tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0);
- trydeletefile(fna1); 
- trydeletefile(fna2); 
+ fna1no:= fna1;
+ with info.buildoptions do begin
+  if llvmoptcommand <> '' then begin
+   fna1:= fna1 + '.opt';
+   result:= execwaitmse(llvmoptcommand+' -o '+fna1+' '+fna1no) = 0;
+   deletetempfile(fna1no);
+   if not result then begin
+    goto errlab1;
+   end;
+  end;
+  fna2:= tosysfilepath(replacefileext(aunit^.bcfilepath,'s'));
+  aunit^.objfilepath:= getobjunitfilename(aunit^.filepath);
+  result:= (execwaitmse(llccommand+' -o '+fna2+' '+fna1) = 0) and
+           (execwaitmse(ascommand+' -o '+
+                    tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0);
+  deletetempfile(fna2); 
+errlab1:
+  deletetempfile(fna1); 
+ end;
 end;
 
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
@@ -477,7 +492,7 @@ begin
     if result then begin
      aunit^.bcfilepath:= fna1;
      try
-      llvmops.run(llvmout1,true,aunit^.opseg);
+      llvmops.run(llvmout1,info.unitlevel = 1,aunit^.opseg);
      finally
       llvmout1.free();
       if co_llvm in info.o.compileoptions then begin

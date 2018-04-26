@@ -1127,7 +1127,7 @@ var
  rtlunit1: rtlunitty;
  cu1: compilerunitty;
  ar1: filenamearty;
- fna1,fna2: filenamety;
+ fna1,fna1no,fna2: filenamety;
 begin
  result:= false;
 // init();
@@ -1257,6 +1257,10 @@ begin
          else begin
           ar1:= bcfiles();
           fna1:= tosysfilepath(fna2)+'_all.bc';
+          fna1no:= fna1;
+          if llvmoptcommand <> '' then begin
+           fna1:= fna1+'.noopt';
+          end;
           fna2:= fna2+'.s';
          {$ifdef mse_debugparser}
           writeln('link -> '+fna1);
@@ -1268,13 +1272,24 @@ begin
           result:= execwaitmse(llvmlinkcommand+
                            ' -o='+fna1+' '+quotefilename(ar1)) = 0;
           if result then begin
-           result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
+           if llvmoptcommand <> '' then begin
+            writeln('Optimizing bc code (llvm-opt)');
+            result:= execwaitmse(llvmoptcommand+' -o='+fna1no+' '+fna1) = 0;
+            deletetempfile(fna1);
+            if not result then begin
+             exit;
+            end;
+            fna1:= fna1no;
+           end;
            writeln('Compiling bc code (llc)');
+           result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
+           deletetempfile(fna1);
            if result then begin
             writeln('Assembling (gcc)');
             result:= execwaitmse(gcccommand+
                            ' -lm -o'+tosysfilepath(exefile)+' '+fna2) = 0;
            end;
+           deletetempfile(fna2);
           end;
          end;
         end;

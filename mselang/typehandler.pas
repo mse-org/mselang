@@ -798,7 +798,8 @@ begin
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
    typ1:= ele.eledataabs(atyp); //can be changed because of added items
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
-   sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
+   sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true,
+                modularllvm and not (us_implementationblock in s.unitinfo^.state));
    if sub1^.calllinks <> 0 then begin
     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
                                 //fetch globid from subbegin op

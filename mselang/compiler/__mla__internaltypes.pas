@@ -107,7 +107,11 @@ type
  rttity = object
   size: int32;            //0
   kind: rttikindty;       //1
+ {$ifdef mse_compiler}
   typename: string8;      //2
+ {$else}
+  typename: pointer;      //2  
+ {$endif}
  end;
 {$ifdef mse_compiler}
  prttity = targetptrintty;
@@ -126,7 +130,11 @@ type
 
  enumitemrttity = record
   value: int32;
+ {$ifdef mse_compiler}
   name: string8;
+ {$else}
+  name: pointer;
+ {$endif}
  end;
 {$ifdef mse_compiler}
  penumitemrttity = targetptrintty;
@@ -247,6 +255,6 @@ const
  _UA_HANDLER_FRAME = 4;
  _UA_FORCE_UNWIND = 8;
  exco_unhandledexception = 217;
-
+{$internaldebug on}
 implementation
 end.

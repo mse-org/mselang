@@ -63,6 +63,7 @@ type
    nortlunitsed: tbooleanedit;
    opted: tmemodialoghistoryedit;
    llced: tmemodialoghistoryedit;
+   keeptmped: tbooleanedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -128,6 +129,9 @@ begin
                                     tosysfilepath(llvmbindir+'llvm-link');
  parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
                                                             ' '+llced.value;
+ if opted.value <> '' then begin
+  parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
+ end;
  parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
  
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
@@ -154,6 +158,9 @@ begin
  end;
  if objed.value then begin
   include(parserparams.compileoptions,co_objmodules);
+ end;
+ if keeptmped.value then begin
+  include(parserparams.compileoptions,co_keeptmpfiles);
  end;
  {
  if wrtued.value then begin

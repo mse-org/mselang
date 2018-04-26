@@ -176,7 +176,7 @@ end;
 class function tobject.classnameis(const name: string8): boolean;
 begin
  result:= stringicomp(name,
-                 prttity(pclassdefinfoty(self)^.header.rtti)^.typename) = 0;
+            string8(prttity(pclassdefinfoty(self)^.header.rtti)^.typename)) = 0;
 end;
 
 class function tobject.instancesize(): int32;

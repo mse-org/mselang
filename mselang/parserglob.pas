@@ -197,6 +197,7 @@ type
                     co_nocompilerunit,co_nortlunits,
                     co_llvm,co_hasfunction,
                     co_modular,    //modular compilation
+                    co_keeptmpfiles, //do not delete temporary files
                     co_objmodules, //compile to object units, bc units otherwise
  //                   co_writeunits,     //write unitfiles //preliminary
 //                    co_readunits,      //read unitfiles  //preliminary
@@ -685,7 +686,8 @@ type
  pparsercontextty = ^parsercontextty;
  
  unitstatety = ({us_interface,}us_program,us_interfaceparsed,
-                     us_implementation,us_implementationparsed,
+                     us_implementation,us_implementationblock,
+                     us_implementationparsed,
                      us_end, //pendings resolved
                      us_invalidunitfile
                      );
@@ -799,6 +801,7 @@ type
   llccommand: msestring;
   ascommand: msestring;
   llvmlinkcommand: msestring;
+  llvmoptcommand: msestring;
   gcccommand: msestring;
   exefile: filenamety;
  end;

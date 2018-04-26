@@ -173,6 +173,8 @@ function getexitcodeaddress: segaddressty;
 function bcfiles(): filenamearty;
 function objfiles(): filenamearty;
 
+procedure deletetempfile(const afile: filenamety);
+
 procedure init;
 procedure deinit(const freeunitlist: boolean);
 
@@ -526,6 +528,7 @@ begin
 {$endif}
  markimplementationstart();
  checkpendingmanagehandlers();
+ include(info.s.unitinfo^.state,us_implementationblock);
 end;
 
 procedure handleimplementation();
@@ -2018,6 +2021,13 @@ end;
 function objfiles(): filenamearty;
 begin
  result:= unitlist.objfiles();
+end;
+
+procedure deletetempfile(const afile: filenamety);
+begin
+ if not (co_keeptmpfiles in info.o.compileoptions) then begin
+  trydeletefile(afile);
+ end;
 end;
 
 procedure clear;
