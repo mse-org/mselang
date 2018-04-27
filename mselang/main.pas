@@ -26,7 +26,7 @@ uses
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
  msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode,mseact,
- msememodialog;
+ msememodialog,msedropdownlist;
 
 const
  llvmbindir = 
@@ -64,6 +64,7 @@ type
    opted: tmemodialoghistoryedit;
    llced: tmemodialoghistoryedit;
    keeptmped: tbooleanedit;
+   gcced: tmemodialoghistoryedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -132,7 +133,7 @@ begin
  if opted.value <> '' then begin
   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
  end;
- parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
+ parserparams.buildoptions.gcccommand:= tosysfilepath('gcc')+' '+gcced.value;
  
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
  parserparams.buildoptions.exefile:= tosysfilepath(

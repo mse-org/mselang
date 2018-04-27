@@ -78,9 +78,9 @@ object mainfo: tmainfo
     frame.localprops1 = []
     taborder = 3
     bounds_x = 16
-    bounds_y = 104
+    bounds_y = 144
     bounds_cx = 620
-    bounds_cy = 220
+    bounds_cy = 180
     anchors = [an_left, an_top, an_right]
     optionsgrid = [og_focuscellonenter, og_autofirstrow, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     fixcols.count = 1
@@ -454,6 +454,38 @@ object mainfo: tmainfo
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
+  end
+  object gcced: tmemodialoghistoryedit
+    frame.caption = 'gcc'
+    frame.captiontextflags = [tf_ycentered]
+    frame.captionpos = cp_right
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.buttons.count = 2
+    frame.buttons.items = <    
+      item
+      end    
+      item
+        imagenr = 17
+      end>
+    frame.buttondialog.imagenr = 17
+    frame.outerframe = (
+      0
+      0
+      25
+      0
+    )
+    taborder = 22
+    bounds_x = 16
+    bounds_y = 104
+    bounds_cx = 470
+    anchors = [an_left, an_top, an_right]
+    statfile = statf
+    dropdown.cols.count = 1
+    dropdown.cols.items = <    
+      item
+      end>
+    reffontheight = 14
   end
   object statf: tstatfile
     filename = 'status.sta'
