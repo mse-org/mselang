@@ -80,92 +80,94 @@ const
  tk_operator = $00000238;
  tk_operatorright = $00000239;
  tk_default = $0000023A;
- tk_unit = $0000023B;
- tk_program = $0000023C;
- tk_interface = $0000023D;
- tk_implementation = $0000023E;
- tk_uses = $0000023F;
- tk_type = $00000240;
- tk_const = $00000241;
- tk_var = $00000242;
- tk_label = $00000243;
- tk_class = $00000244;
- tk_procedure = $00000245;
- tk_function = $00000246;
- tk_method = $00000247;
- tk_initialization = $00000248;
- tk_finalization = $00000249;
- tk_constructor = $0000024A;
- tk_destructor = $0000024B;
- tk_begin = $0000024C;
- tk_mode = $0000024D;
- tk_dumpelements = $0000024E;
- tk_dumpopcode = $0000024F;
- tk_abort = $00000250;
- tk_stoponerror = $00000251;
- tk_nop = $00000252;
- tk_include = $00000253;
- tk_define = $00000254;
- tk_undef = $00000255;
- tk_ifdef = $00000256;
- tk_ifndef = $00000257;
- tk_if = $00000258;
- tk_else = $00000259;
- tk_endif = $0000025A;
- tk_ifend = $0000025B;
- tk_h = $0000025C;
- tk_inline = $0000025D;
- tk_on = $0000025E;
- tk_off = $0000025F;
- tk_constref = $00000260;
- tk_out = $00000261;
- tk_override = $00000262;
- tk_overload = $00000263;
- tk_of = $00000264;
- tk_object = $00000265;
- tk_external = $00000266;
- tk_forward = $00000267;
- tk_name = $00000268;
- tk_sub = $00000269;
- tk_finally = $0000026A;
- tk_do = $0000026B;
- tk_with = $0000026C;
- tk_case = $0000026D;
- tk_while = $0000026E;
- tk_repeat = $0000026F;
- tk_for = $00000270;
- tk_try = $00000271;
- tk_raise = $00000272;
- tk_goto = $00000273;
- tk_then = $00000274;
- tk_until = $00000275;
- tk_to = $00000276;
- tk_downto = $00000277;
- tk_set = $00000278;
- tk_packed = $00000279;
- tk_record = $0000027A;
- tk_array = $0000027B;
- tk_private = $0000027C;
- tk_protected = $0000027D;
- tk_public = $0000027E;
- tk_published = $0000027F;
- tk_property = $00000280;
- tk_read = $00000281;
- tk_write = $00000282;
- tk_div = $00000283;
- tk_mod = $00000284;
- tk_and = $00000285;
- tk_shl = $00000286;
- tk_shr = $00000287;
- tk_or = $00000288;
- tk_xor = $00000289;
- tk_in = $0000028A;
- tk_is = $0000028B;
- tk_not = $0000028C;
- tk_as = $0000028D;
- tk_inherited = $0000028E;
+ tk_streaming = $0000023B;
+ tk_unit = $0000023C;
+ tk_program = $0000023D;
+ tk_interface = $0000023E;
+ tk_implementation = $0000023F;
+ tk_uses = $00000240;
+ tk_type = $00000241;
+ tk_const = $00000242;
+ tk_var = $00000243;
+ tk_label = $00000244;
+ tk_class = $00000245;
+ tk_procedure = $00000246;
+ tk_function = $00000247;
+ tk_method = $00000248;
+ tk_initialization = $00000249;
+ tk_finalization = $0000024A;
+ tk_constructor = $0000024B;
+ tk_destructor = $0000024C;
+ tk_begin = $0000024D;
+ tk_mode = $0000024E;
+ tk_dumpelements = $0000024F;
+ tk_dumpopcode = $00000250;
+ tk_abort = $00000251;
+ tk_stoponerror = $00000252;
+ tk_nop = $00000253;
+ tk_include = $00000254;
+ tk_define = $00000255;
+ tk_undef = $00000256;
+ tk_ifdef = $00000257;
+ tk_ifndef = $00000258;
+ tk_if = $00000259;
+ tk_else = $0000025A;
+ tk_endif = $0000025B;
+ tk_ifend = $0000025C;
+ tk_h = $0000025D;
+ tk_inline = $0000025E;
+ tk_rtti = $0000025F;
+ tk_on = $00000260;
+ tk_off = $00000261;
+ tk_constref = $00000262;
+ tk_out = $00000263;
+ tk_override = $00000264;
+ tk_overload = $00000265;
+ tk_of = $00000266;
+ tk_object = $00000267;
+ tk_external = $00000268;
+ tk_forward = $00000269;
+ tk_name = $0000026A;
+ tk_sub = $0000026B;
+ tk_finally = $0000026C;
+ tk_do = $0000026D;
+ tk_with = $0000026E;
+ tk_case = $0000026F;
+ tk_while = $00000270;
+ tk_repeat = $00000271;
+ tk_for = $00000272;
+ tk_try = $00000273;
+ tk_raise = $00000274;
+ tk_goto = $00000275;
+ tk_then = $00000276;
+ tk_until = $00000277;
+ tk_to = $00000278;
+ tk_downto = $00000279;
+ tk_set = $0000027A;
+ tk_packed = $0000027B;
+ tk_record = $0000027C;
+ tk_array = $0000027D;
+ tk_private = $0000027E;
+ tk_protected = $0000027F;
+ tk_public = $00000280;
+ tk_published = $00000281;
+ tk_property = $00000282;
+ tk_read = $00000283;
+ tk_write = $00000284;
+ tk_div = $00000285;
+ tk_mod = $00000286;
+ tk_and = $00000287;
+ tk_shl = $00000288;
+ tk_shr = $00000289;
+ tk_or = $0000028A;
+ tk_xor = $0000028B;
+ tk_in = $0000028C;
+ tk_is = $0000028D;
+ tk_not = $0000028E;
+ tk_as = $0000028F;
+ tk_inherited = $00000290;
 
- tokens: array[0..142] of string = ('',
+ tokens: array[0..144] of string = ('',
   '.rootele','.void','.classes','.private','.protected','.public','.published',
   '.classintfname','.classintftype','.classimp','.objpotyp','.classoftyp',
   '.self','.units','.ancestors','.nestedvarref','.defines','.ini','.inizeroed',
@@ -175,18 +177,18 @@ const
   'break','continue','self','b','booleval','internaldebug','nozeroinit',
   'zeroinit','virtual','except','end','new','dispose','afterconstruct',
   'beforedestruct','ini','fini','incref','decref','operator','operatorright',
-  'default','unit','program','interface','implementation','uses','type','const',
-  'var','label','class','procedure','function','method','initialization',
-  'finalization','constructor','destructor','begin','mode','dumpelements',
-  'dumpopcode','abort','stoponerror','nop','include','define','undef','ifdef',
-  'ifndef','if','else','endif','ifend','h','inline','on','off','constref','out',
-  'override','overload','of','object','external','forward','name','sub',
-  'finally','do','with','case','while','repeat','for','try','raise','goto',
-  'then','until','to','downto','set','packed','record','array','private',
-  'protected','public','published','property','read','write','div','mod','and',
-  'shl','shr','or','xor','in','is','not','as','inherited');
+  'default','streaming','unit','program','interface','implementation','uses',
+  'type','const','var','label','class','procedure','function','method',
+  'initialization','finalization','constructor','destructor','begin','mode',
+  'dumpelements','dumpopcode','abort','stoponerror','nop','include','define',
+  'undef','ifdef','ifndef','if','else','endif','ifend','h','inline','rtti','on',
+  'off','constref','out','override','overload','of','object','external',
+  'forward','name','sub','finally','do','with','case','while','repeat','for',
+  'try','raise','goto','then','until','to','downto','set','packed','record',
+  'array','private','protected','public','published','property','read','write',
+  'div','mod','and','shl','shr','or','xor','in','is','not','as','inherited');
 
- tokenids: array[0..142] of identty = (
+ tokenids: array[0..144] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
   $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
   $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
@@ -207,7 +209,7 @@ const
   $00000277,$00000278,$00000279,$0000027A,$0000027B,$0000027C,$0000027D,
   $0000027E,$0000027F,$00000280,$00000281,$00000282,$00000283,$00000284,
   $00000285,$00000286,$00000287,$00000288,$00000289,$0000028A,$0000028B,
-  $0000028C,$0000028D,$0000028E);
+  $0000028C,$0000028D,$0000028E,$0000028F,$00000290);
 
 implementation
 end.

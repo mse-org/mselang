@@ -42,6 +42,7 @@ procedure handleendif();
 procedure handleskipifelseentry();
 
 procedure handleignoreddirective();
+procedure handlerttidirective();
 
 //procedure adddefine(const id: identty);
 
@@ -333,6 +334,61 @@ begin
  outhandle('IGNOREDDIRECTIVE');
 {$endif}
  identerror(1,err_ignoreddirective);
+end;
+
+procedure handlerttidirective();
+var
+ pt,p1,pe: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('RTTIDIRECTIVE');
+{$endif}
+ with info do begin
+  pt:= @contextstack[s.stacktop];
+  if (pt^.d.kind = ck_ident) then begin
+   if sublevel > 0 then begin
+    identerror(1,err_invaliddirective);
+    exit;
+   end;
+   p1:= @contextstack[1];
+   pe:= @contextstack[s.stackindex-1]; //directive
+   while p1 < pe do begin
+    if p1^.d.kind = ck_typedef then begin
+     break;
+    end;
+    inc(p1);
+   end;
+   if p1 >= pe then begin
+    identerror(1,err_invaliddirective);
+    exit;
+   end;
+   with contextstack[s.stackindex-2] do begin
+    if not (d.kind in [ck_typedef,ck_recorddef,ck_classdef]) then begin
+     identerror(1,err_invaliddirective);
+     exit;
+    end;
+    case pt^.d.ident.ident of
+     tk_on: begin
+      include(s.currentstatementflags,stf_rtti);
+      exclude(s.currentstatementflags,stf_rttistreaming);
+     end;
+     tk_off: begin
+      b.flags:= s.currentstatementflags - [stf_rtti,stf_rttistreaming]
+     end;
+     tk_streaming: begin
+      b.flags:= s.currentstatementflags + [stf_rtti,stf_rttistreaming]
+     end;
+     else begin
+      identerror(2,err_invaliddirective);
+      exit;
+     end;
+    end;
+   end;
+  end
+  else begin
+   internalerror1(ie_handler,'20180501A');
+  end;
+ end;
 end;
 
 end.

@@ -102,7 +102,8 @@ type
  string8 = targetptrintty;
 {$endif}
 
- rttikindty = (rtk_none,rtk_enum,rtk_enumitem,rtk_object);
+ rttikindty = (rtk_none,rtk_enum,rtk_enumitem,rtk_object,
+               rtk_property);
 
  rttity = object
   size: int32;            //0
@@ -167,9 +168,20 @@ type
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}
- 
+
+ propertyrttity = object(rttity)
+  
+ end;
+
+ rttilistty = record
+  count: int32;
+  items: record //array of rttity
+  end;
+ end;
+   
  objectrttity = object(rttity)
   classdef: pclassdefinfoty; //0 -> classrttidefindex
+  properties: rttilistty;
  end;
  pobjectrttity = ^objectrttity;
  allocsinfoty = record

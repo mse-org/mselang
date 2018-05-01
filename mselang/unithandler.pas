@@ -688,9 +688,11 @@ type
  compilerswitchesidentsty = array[compilerswitchty] of identty;
 const
  shortcompilerswitches: compilerswitchesidentsty =
- (0,tk_b,0);
+//cos_none,cos_booleval,cos_internaldebug
+ (0,       tk_b,        0);
  longcompilerswitches: compilerswitchesidentsty =
- (0,tk_booleval,tk_internaldebug);
+//cos_none,cos_booleval,cos_internaldebug
+ (0,       tk_booleval, tk_internaldebug);
  
 procedure handlecompilerswitch();
  function check(const aident: identty;

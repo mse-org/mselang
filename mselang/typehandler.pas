@@ -20,6 +20,7 @@ interface
 uses
  globtypes,parserglob,handlerglob;
 
+procedure handletypedefentry();
 procedure handletype();
 procedure handlegettypetypestart();
 procedure handlegetfieldtypestart();
@@ -77,6 +78,16 @@ uses
  elements,errorhandler,handlerutils,parser,opcode,stackops,
  opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
  segmentutils,__mla__internaltypes,grammarglob;
+
+procedure handletypedefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('TYPEDEFENTRY');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  d.kind:= ck_typedef;
+ end;
+end;
 
 procedure handletype();
 begin

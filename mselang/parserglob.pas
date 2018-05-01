@@ -166,7 +166,7 @@ type
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
                   ck_subres,ck_subcall,ck_controltoken,
                   ck_getfact,ck_getindex,ck_label,
-                  ck_typedata,ck_typeref,
+                  ck_typedef,ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,ck_shortcutexp,
                   ck_recorddef,ck_recordcase,
@@ -238,7 +238,8 @@ type
                     stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
-                    stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted);
+                    stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted,
+                    stf_rtti,stf_rttistreaming);
  statementflagsty = set of statementflagty;
 
  varflagty = (vf_external);

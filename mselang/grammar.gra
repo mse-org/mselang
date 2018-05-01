@@ -74,7 +74,7 @@
  'new','dispose','afterconstruct','beforedestruct'
  'ini','fini','incref','decref'
  'operator','operatorright'
- 'default'
+ 'default','streaming'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
@@ -229,6 +229,7 @@ directive,directive1,handledirectiveentry,*
  'h'.,ignoreddirective*
  'mode'.,ignoreddirective*
  'inline'.,ignoreddirective*
+  'rtti'.,rttidirective*
  '',compilerswitch*
  '}',-*
  '',-
@@ -236,6 +237,11 @@ directive1,,,*
  '}',-*
  '',-
 ignoreddirective,directiveend,,handleignoreddirective
+ '',getident^*
+rttidirective,rttidirective1,,
+ '',getident^*
+rttidirective1,directiveend,,handlerttidirective
+ @whitespace,-
  '',getident^*
 
 include,include1,,
@@ -950,7 +956,7 @@ typedefreturn,,,*>
 //
 // defs
 //
-type,,,handletype>
+type,,handletypedefentry,handletype>
  ${whitespace}
  ${blockswitch}
  '',type0*^
