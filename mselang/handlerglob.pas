@@ -666,6 +666,7 @@ procedure inittypedata(var atype: typedataty; akind: datakindty;
 begin
  atype.h.base:= 0;
  atype.h.rtti:= artti;
+ atype.h.llvmrtticonst:= -1;
  atype.h.flags:= aflags;
  atype.h.indirectlevel:= aindirectlevel;
  atype.h.ancestor:= aancestor;

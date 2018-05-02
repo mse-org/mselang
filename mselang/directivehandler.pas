@@ -363,23 +363,43 @@ begin
     exit;
    end;
    with contextstack[s.stackindex-2] do begin
-    if not (d.kind in [ck_typedef,ck_recorddef,ck_classdef]) then begin
-     identerror(1,err_invaliddirective);
-     exit;
-    end;
-    case pt^.d.ident.ident of
-     tk_on: begin
-      include(s.currentstatementflags,stf_rtti);
-      exclude(s.currentstatementflags,stf_rttistreaming);
+    case d.kind of
+     ck_typedef: begin
+      case pt^.d.ident.ident of
+       tk_on: begin
+        include(s.currentstatementflags,stf_rtti);
+       end;
+       tk_off: begin
+        exclude(s.currentstatementflags,stf_rtti);
+       end;
+       else begin
+        identerror(2,err_invaliddirective);
+        exit;
+       end;
+      end;
      end;
-     tk_off: begin
-      b.flags:= s.currentstatementflags - [stf_rtti,stf_rttistreaming]
-     end;
-     tk_streaming: begin
-      b.flags:= s.currentstatementflags + [stf_rtti,stf_rttistreaming]
+     ck_classdef: begin
+      case pt^.d.ident.ident of
+       tk_on: begin
+        include(s.currentstatementflags,stf_objrtti);
+        exclude(s.currentstatementflags,stf_objrttistreaming);
+       end;
+       tk_off: begin
+        s.currentstatementflags:= s.currentstatementflags - 
+                                         [stf_objrtti,stf_objrttistreaming];
+       end;
+       tk_streaming: begin
+        s.currentstatementflags:= s.currentstatementflags +
+                                         [stf_objrtti,stf_objrttistreaming];
+       end;
+       else begin
+        identerror(2,err_invaliddirective);
+        exit;
+       end;
+      end;
      end;
      else begin
-      identerror(2,err_invaliddirective);
+      identerror(1,err_invaliddirective);
       exit;
      end;
     end;

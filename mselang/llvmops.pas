@@ -647,12 +647,14 @@ begin
    internalerror(ie_llvmlist,'20171118A');
   end;
  {$endif}
-  getrtti(typ1);
-  with info.s.unitinfo^.llvmlists.constlist do begin
-   bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
-   pint32(@bufdat1^.items)[classrttidefindex]:= 
-                        addpointercast(pint32(poclassdef)^).listid;
-//todo: hide for search because hash is wrong
+  if typ1^.h.llvmrtticonst > 0 then begin
+   with info.s.unitinfo^.llvmlists.constlist do begin
+    bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
+    getrtti(typ1);
+    pint32(@bufdat1^.items)[classrttidefindex]:= 
+                           addpointercast(pint32(poclassdef)^).listid;
+             //todo: hide for search because hash is wrong
+   end;
   end;
   
   poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +

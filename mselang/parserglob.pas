@@ -227,19 +227,21 @@ type
  end;
 
 
- statementflagty = (stf_rightside,stf_params,stf_paramsdef,stf_cutvalueident,
-                    stf_condition,stf_invalidcondition,
-                    stf_leftreference,stf_proccall,
-                    stf_loop,{stf_propindex,}
-                    stf_objdef,stf_class,
-                    stf_objimp,        //in method implementation
-                    stf_classmethod,   //current method implementation 
-                                       //is class method
-                    stf_interfacedef,
-                    stf_implementation,
-                    stf_getaddress,stf_addressop,
-                    stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted,
-                    stf_rtti,stf_rttistreaming);
+ statementflagty = (
+  stf_rightside,stf_params,stf_paramsdef,stf_cutvalueident,
+  stf_condition,stf_invalidcondition,
+  stf_leftreference,stf_proccall,
+  stf_loop,{stf_propindex,}
+  stf_objdef,stf_class,
+  stf_objimp,        //in method implementation
+  stf_classmethod,   //current method implementation 
+                     //is class method
+  stf_interfacedef,
+  stf_implementation,
+  stf_getaddress,stf_addressop,
+  stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted,
+  stf_rtti,stf_objrtti,stf_objrttistreaming
+ );
  statementflagsty = set of statementflagty;
 
  varflagty = (vf_external);

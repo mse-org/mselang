@@ -871,11 +871,10 @@ begin
       header.allocs.classdefinterfacestart:= int1;
       header.parentclass:= -1;
       header.interfaceparent:= -1;
-      if co_llvm in o.compileoptions then begin
+      header.rtti:= -1;
+      if (co_llvm in o.compileoptions) and 
+                         (stf_rtti in s.currentstatementflags) then begin
        header.rtti:= s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
-      end
-      else begin
-       header.rtti:= -1;
       end;
       if h.ancestor <> 0 then begin 
        parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
