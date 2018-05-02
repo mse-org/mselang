@@ -3720,6 +3720,14 @@ begin
  end;
 end;
 
+procedure pushrttiop();
+begin
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
+                                                                   //2ssa
+ end;
+end;
+
 procedure pushallocsizeop();
 begin
  with pc^.par do begin
@@ -5372,6 +5380,7 @@ const
   pushstackssa = 1;
   
   pushclassdefssa = 2;
+  pushrttissa = 2;
   pushallocsizessa = 1;
   
   pushduppossa = 1;

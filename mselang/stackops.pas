@@ -5204,6 +5204,11 @@ begin
  notimplemented();
 end;
 
+procedure pushrttiop();
+begin
+ notimplemented();
+end;
+
 procedure pushallocsizeop();
 begin
  notimplemented();
@@ -7478,6 +7483,7 @@ const
 
   pushstackssa = 0;
   pushclassdefssa = 0;
+  pushrttissa = 0;
   pushallocsizessa = 0;
 
   pushduppossa = 0;

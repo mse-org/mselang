@@ -93,7 +93,8 @@ type
             err_libnameexpected,err_functionnameexpected,err_varnameexpected,
             err_singleexternalonly,err_cannotaddresscall,
             err_cannotaccessinclassmethod,err_cannotgetclass,
-            err_doesnotinheritfromtype,err_doesnotinheritfromclass);
+            err_doesnotinheritfromtype,err_doesnotinheritfromclass,
+            err_cannotgettypeinfo);
             
  errorinfoty = record
   level: errorlevelty;
@@ -352,7 +353,8 @@ const
   (level: erl_error; message: 'Can not get class of this expression'),
   (level: erl_error; message: 
                'Initialization type does not inherit from instance type'),
-  (level: erl_error; message: '"%s" does not inherit from "%s"')
+  (level: erl_error; message: '"%s" does not inherit from "%s"'),
+  (level: erl_error; message: 'Can not get typeinfo of this expression')
  );
 
 procedure message1(const atext: string; const values: array of const); 

@@ -27,6 +27,7 @@ procedure handlewriteln(const paramco: int32);
 procedure handlewrite(const paramco: int32);
 procedure handlesizeof(const paramco: int32);
 procedure handleclassof(const paramco: int32);
+procedure handletypeinfo(const paramco: int32);
 procedure handleord(const paramco: int32);
 procedure handleinc(const paramco: int32);
 procedure handledec(const paramco: int32);
@@ -63,8 +64,8 @@ const
   @handlesetlength,@handleunique,
   //syf_initialize, syf_finalize,   syf_incref,   syf_decref,
   @handleinitialize,@handlefinalize,@handleincref,@handledecref,
-  //syf_sizeof,  syf_classof,
-  @handlesizeof,@handleclassof,
+  //syf_sizeof,  syf_classof,  syf_typeinfo,
+  @handlesizeof,@handleclassof,@handletypeinfo,
   //syf_ord
   @handleord,
   //syf_inc,  syf_dec    syf_abs,   
@@ -324,6 +325,43 @@ begin
   end;
 errorlab:
   errormessage(err_cannotgetclass,[]);
+ end;
+end;
+
+procedure handletypeinfo(const paramco: int32);
+var
+ indpo,toppo: pcontextitemty;
+ i1: int32;
+ ad1: dataaddressty;
+label
+ errorlab;
+begin
+ if checkparamco(1,paramco) then begin
+  with info do begin
+   indpo:= @contextstack[s.stackindex];
+   toppo:= @contextstack[s.stacktop];
+   with toppo^ do begin
+    case d.kind of
+     ck_typearg: begin
+      ad1:= getrtti(ele.eledataabs(d.typ.typedata));
+      with insertitem(oc_pushrtti,toppo,-1)^.par do begin
+       segad:= ad1;
+       i1:= ssad;
+      end;
+     end;
+     else begin
+      goto errorlab;
+     end;
+    end;
+    initfactcontext(indpo);
+    indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+    indpo^.d.dat.fact.ssaindex:= i1;
+    indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+    exit;
+   end;
+  end;
+errorlab:
+  errormessage(err_cannotgettypeinfo,[]);
  end;
 end;
 
@@ -1648,6 +1686,7 @@ const
    (name: 'decref'; data: (func: syf_decref)),
    (name: 'sizeof'; data: (func: syf_sizeof)),
    (name: 'classof'; data: (func: syf_classof)),
+   (name: 'typeinfo'; data: (func: syf_typeinfo)),
    (name: 'ord'; data: (func: syf_ord)),
    (name: 'inc'; data: (func: syf_inc)),
    (name: 'dec'; data: (func: syf_dec)),

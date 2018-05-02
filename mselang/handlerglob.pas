@@ -489,7 +489,7 @@ type
  sysfuncty = (syf_exit,syf_write,syf_writeln,
               syf_setlength,syf_unique,
               syf_initialize,syf_finalize,syf_incref,syf_decref,
-              syf_sizeof,syf_classof,
+              syf_sizeof,syf_classof,syf_typeinfo,
               syf_ord,
               syf_inc,syf_dec,syf_abs,
               syf_getmem,syf_getzeromem,syf_freemem,syf_reallocmem,syf_setmem,

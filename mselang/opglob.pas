@@ -629,6 +629,7 @@ type
 //  oc_pushstackaddrindi,
   oc_pushstack,
   oc_pushclassdef,
+  oc_pushrtti,
   oc_pushallocsize,
 
   oc_pushduppo,

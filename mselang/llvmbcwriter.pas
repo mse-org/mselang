@@ -1766,7 +1766,7 @@ end;
 procedure tllvmbcwriter.emitsegdataaddress(const aaddress: memopty);
 begin
  case aaddress.segdataaddress.a.segment of
-  seg_globvar,seg_op,seg_globconst: begin
+  seg_globvar,seg_op,seg_globconst,seg_rtti: begin
    emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
   end;
