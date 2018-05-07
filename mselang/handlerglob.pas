@@ -125,11 +125,12 @@ type
   objpotyp: elementoffsetty; //^object, 0 for ck_class
   classoftyp: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
-//  defsid: int32;      //for llvm
+  defsid: int32;      //for llvm
   rttiid: int32;      //for llvm
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;
   allocsize: dataoffsty;
+  subchain: elementoffsetty; //0 ->none
   virttaboffset: int32;
   virtualcount: int32;
   flags: infoclassflagsty;

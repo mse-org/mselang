@@ -1,28 +1,99 @@
-program untyped;
-{$internaldebug on}
+program params;
 
 type
- ppint32 = ^^int32;
+ itest = interface
+  method test1(a,b: int32);
+  method test2(a,b: int32): int32;
+ end;
 
-function comparestring(const l,r: flo64): int32;
-//{$dumpelements}
+ tobject = class [virtual]
+  method test1(a,b: int32); virtual;
+  method test2(a,b: int32): int32; virtual;
+ end;
+
+ ttestcla = class(tobject,itest)
+  private
+   f1: int32;
+  public
+   constructor create();
+   destructor destroy();
+   method test1(a,b: int32); override;
+   method test2(a,b: int32): int32; override;
+   method test3(a,b: int32);
+   method test4(a,b: int32): int32;
+ end;
+
+method tobject.test1(a,b: int32);
 begin
-// exitcode:= int32(l) + int32(r);
-// exitcode:= ppint32(l)^^+ppint32(r)^^
+end;
+
+method tobject.test2(a,b: int32): int32;
+begin
+ result:= 0;
+end;
+
+constructor ttestcla.create();
+begin
+ f1:= 10;
+end;
+
+destructor ttestcla.destroy();
+begin
+end;
+
+method ttestcla.test1(a,b: int32);
+begin
+ exitcode:= a + b + f1;
+end;
+
+method ttestcla.test2(a,b: int32): int32;
+begin
+ result:= a + b + f1;
+end;
+
+method ttestcla.test3(a,b: int32);
+begin
+ exitcode:= a + b + f1;
+end;
+
+method ttestcla.test4(a,b: int32): int32;
+begin
+ result:= a + b + f1;
+end;
+
+procedure test1(a,b: int32): int32;
+begin
+ result:= a + b;
+end;
+
+procedure test(a,b: int32);
+begin
+ exitcode:= a + b;
 end;
 
 var
- p1,p2: pointer;
- i1,i2: int32;
+ t1: ttestcla;
+ i1: itest;
 begin
-
- i1:= 100;
- i2:= 23;
-{
- p1:= @i1;
- p2:= @i2;
- comparestring(@p1,@p2)
-}
-// comparestring(i1,i2);
- comparestring(100.0,23.0);
+ if test1(10,23) = 33 then
+  test(1,2);
+  if exitcode = 3 then
+   t1:= ttestcla.create();
+   t1.test1(5,9);
+   if exitcode = 24 then
+    exitcode:= t1.test2(13,3);
+    if exitcode = 26 then
+     i1:= itest(t1);
+     i1.test1(13,17);
+     if exitcode = 40 then
+      t1.test3(5,9);
+      if exitcode = 24 then
+       exitcode:= t1.test4(100,13);
+      end;
+     end;
+    end;
+   end;
+   t1.destroy;
+  end;
+ end;
 end.

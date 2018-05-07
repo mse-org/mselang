@@ -682,13 +682,6 @@ begin
         if not getvalue(ptop,das_none) then begin
          exit; //error
         end;
-        {
-        i1:= ptop^.d.dat.fact.ssaindex;
-        with insertitem(oc_iniobject1,ptop,-1)^.par do begin
-         ssas1:= pinstance^.d.dat.fact.ssaindex; //instance
-         ssas2:= i1;                             //classdef
-        end;
-        }
         callclassdefproc2(cdp_ini,ptop,pinstance^.d.dat.fact.ssaindex);
         s.stacktop:= getstackindex(pinstance);
        end

@@ -205,6 +205,7 @@ begin
    errormessage(err_localclassdef,[]);
   end;
   selfobjparamchain:= 0;
+  currentsubchain:= 0;
   currentparamupdatechain:= -1;
   forwardpropchain:= 0;
   with contextstack[s.stackindex] do begin
@@ -282,12 +283,15 @@ begin
      infoclass.intftypenode:= ele2;
      infoclass.implnode:= ele3;
      infoclass.defs.address:= 0;
+     infoclass.subchain:= 0;
      infoclass.virttaboffset:= 0;
      infoclass.pendingdescends:= 0;
      infoclass.interfaceparent:= 0;
      infoclass.interfacecount:= 0;
      infoclass.interfacechain:= 0;
      infoclass.interfacesubcount:= 0;
+     infoclass.defsid:= -1;
+     infoclass.rttiid:= -1;
      fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
 //     if isclass then begin
 //      po1^.infoclass.objpotyp:= 0;
@@ -780,9 +784,9 @@ begin
   end;
  end;
 end;
-
+var testvar1: int32;
 procedure resolveforwardprop(var item) forward;
-
+var testvar4: pint32;
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -849,6 +853,8 @@ begin
     end;
     infoclass.virtualcount:= classinfo1^.virtualindex;
     reversefieldchain(typ1);
+    infoclass.subchain:= currentsubchain;
+    reversesubchain(typ1);
 //    if co_llvm in o.compileoptions then begin
 //     s.unitinfo^.llvmlists.globlist.addclassdefconst(typ1);
 //     infoclass.defs.address:=
@@ -859,8 +865,10 @@ begin
                       //interfacetable start
      classdefs1:= getclassinfoaddress(
        int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
+ inc(testvar1);
      infoclass.defs:= classdefs1;
      p2:= getsegmentpo(classdefs1);
+testvar4:= @(classdefinfopoty(p2)^.virtualmethods);
      with (pclassdefconstheaderty(p2)-1)^ do begin
       typedata:= d.typ.typedata;
      end;

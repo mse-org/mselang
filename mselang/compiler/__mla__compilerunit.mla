@@ -1,3 +1,4 @@
+//__mla__compilerunit
 { MSEgui Copyright (c) 2014-2017 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
@@ -1637,12 +1638,11 @@ begin
   instance:= nil;  
  end;
 end;
-var testvar: prttity;
+
 function getenumname(const enumvalue: int32; const rtti: penumrttity): string8;
 var
  p1,pe: ^enumitemrttity;
 begin
-testvar:= rtti;
  result:= '';
  p1:= pointer(@rtti^.items);
  if erf_contiguous in rtti^.flags then begin

@@ -79,9 +79,9 @@
   (ssa: getobjectmemssa; proc: @getobjectmemop; flags: []), 
 //oc_getobjectzeromem
   (ssa: getobjectzeromemssa; proc: @getobjectzeromemop; flags: []), 
-//oc_initobject
+//oc_iniobject
   (ssa: iniobjectssa; proc: @iniobjectop; flags: []), 
-//oc_initobject1
+//oc_iniobject1
 //  (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
 //oc_callclassdefproc
   (ssa: callclassdefprocssa; proc: @callclassdefprocop; flags: []), 

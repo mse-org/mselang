@@ -99,6 +99,7 @@ procedure handleuses();
 
 procedure handleafterintfuses();
 procedure handleimplementationentry();
+procedure handlemainentry();
 procedure handleimplusesentry();
 procedure handleafterimpluses();
 procedure handleimplementation();
@@ -507,12 +508,29 @@ begin
  end;
 end;
 
+procedure handlemainentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('MAINENTRY');
+{$endif}
+ with info do begin
+  if co_llvm in o.compileoptions then begin
+   updatellvmclassdefs(false);
+  end;
+ end;
+end;
+
 procedure handleimplusesentry();
 begin
 {$ifdef mse_debugparser}
  outhandle('IMPLUSESENTRY');
 {$endif}
  with info do begin
+ {
+  if co_llvm in o.compileoptions then begin
+   updatellvmclassdefs();
+  end;
+ }
   s.unitinfo^.usescache.clear(); //override interface uses
   if s.interfaceonly then begin
    saveparsercontext(s.unitinfo^.implstart,s.stacktop-s.unitinfo^.stackstart+1);

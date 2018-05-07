@@ -516,7 +516,7 @@ var
 
 procedure startllvmcode();
 const
- constlinkage = li_internal;    //0 1 2 3 4 5 6 7 8 9 a b c d e f
+                                //0 1 2 3 4 5 6 7 8 9 a b c d e f
  zeroes: array[0..255] of byte = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //0
                                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //1
                                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //2
@@ -538,8 +538,6 @@ var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
  po2: pvardataty;
- typ1: ptypedataty;
- bufdat1: paggregateconstty;
  po4: popinfoty;
  int1: integer;
  str1,str2: shortstring;
@@ -548,7 +546,6 @@ var
  strings1: internalstringty;
  compilersub1: compilersubty;
  portti,pertti: ^rttity;
- poclassdef,peclassdef: ^classdefinfoty;
  povirtual,pevirtual: popaddressty;
  i1,i2,i3: int32;
  countpo,counte: pint32;
@@ -628,40 +625,10 @@ begin
                                           //replace data by id
   portti:= pointer(portti)+portti^.size;
  end;
-*)  
- poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
- peclassdef:= getsegmenttop(seg_classdef);
-// countpo:= getsegmentbase(seg_classintfcount);
- while poclassdef < peclassdef do begin   //classes
-  i1:= (pclassdefconstheaderty(poclassdef)-1)^.intfcount;
-  pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
-          addinitvalue(gak_const,
-           info.s.unitinfo^.llvmlists.constlist.addclassdef(
-                                   poclassdef,i1).listid,constlinkage);
-                                          //replace data by id
-  typ1:= ele.eledataabs((pclassdefconstheaderty(
-                                       pointer(poclassdef))-1)^.typedata);
-             //header in negative offset
- {$ifdef mse_checkinternalerror}
-  if not (typ1^.h.kind in [dk_object,dk_class]) then begin
-   internalerror(ie_llvmlist,'20171118A');
-  end;
- {$endif}
-  if typ1^.h.llvmrtticonst > 0 then begin
-   with info.s.unitinfo^.llvmlists.constlist do begin
-    bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
-    getrtti(typ1);
-    pint32(@bufdat1^.items)[classrttidefindex]:= 
-                           addpointercast(pint32(poclassdef)^).listid;
-             //todo: hide for search because hash is wrong
-   end;
-  end;
-  
-  poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
-                       poclassdef^.header.allocs.classdefinterfacestart +
-                                                          i1*targetpointersize;
-  inc(countpo);
- end;
+*)
+ updatellvmclassdefs(true);
+ 
+ 
  with info.s.unitinfo^ do begin
   unitheader1.guid:= filematch.guid;
   with llvmlists do begin
@@ -3714,8 +3681,10 @@ begin
  with pc^.par do begin
 //  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
                                                                    //2ssa
-  bcstream.emitgetelementptr(bcstream.globval(
-            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
+  bcstream.emitgetelementptr(bcstream.globval(classdefid),bcstream.constval(0)); 
+                                           //2ssa
+//  bcstream.emitgetelementptr(bcstream.globval(
+//            pint32(getsegmentpo(seg_classdef,segad))^),bcstream.constval(0)); 
                                                                    //2ssa
  end;
 end;
@@ -3723,7 +3692,7 @@ end;
 procedure pushrttiop();
 begin
  with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.constval(segad),bcstream.constval(0)); 
+  bcstream.emitgetelementptr(bcstream.constval(rttiid),bcstream.constval(0)); 
                                                                    //2ssa
  end;
 end;
@@ -4433,6 +4402,12 @@ begin
  end;
 end;
 
+function getclassdefid(const aoffset: dataoffsty): int32;
+begin
+ result:= (pclassdefconstheaderty(getsegmentpo(seg_classdef,aoffset))-1)^.
+                                                                       defsid;
+end;
+
 procedure iniobjectop();
 begin
  with pc^.par do begin
@@ -4442,7 +4417,7 @@ begin
  }
  
   bcstream.emitgetelementptr(bcstream.globval(
-            pint32(getsegmentpo(seg_classdef,initclass.classdef))^),
+                                 getclassdefid(initclass.classdef)),
                                                         bcstream.constval(0)); 
                                                            //2ssa
   callcompilersub(cs_initobject,false,

@@ -256,7 +256,12 @@ begin
       typ1:= ele.eledataabs(d.typ.typedata);
       if typ1^.h.kind in [dk_object,dk_class] then begin
        with insertitem(oc_pushclassdef,toppo,-1)^.par do begin
-        segad:= typ1^.infoclass.defs.address;
+        if co_llvm in o.compileoptions then begin
+         classdefid:= getclassdefid(typ1);
+        end
+        else begin
+         classdefstackops:= typ1^.infoclass.defs.address;
+        end;
         i1:= ssad;
        end;
        initfactcontext(indpo);
@@ -303,7 +308,12 @@ begin
        end
        else begin
         with insertitem(oc_pushclassdef,toppo,-1)^.par do begin
-         segad:= typ1^.infoclass.defs.address;
+         if co_llvm in o.compileoptions then begin
+          classdefid:= getclassdefid(typ1);
+         end
+         else begin
+          classdefstackops:= typ1^.infoclass.defs.address;
+         end;
          i1:= ssad;
         end;
        end; 
@@ -345,7 +355,12 @@ begin
      ck_typearg: begin
       ad1:= getrtti(ele.eledataabs(d.typ.typedata));
       with insertitem(oc_pushrtti,toppo,-1)^.par do begin
-       segad:= ad1;
+       if co_llvm in o.compileoptions then begin
+        rttiid:= ad1;
+       end
+       else begin
+        rttistackops:= ad1;
+       end;
        i1:= ssad;
       end;
      end;

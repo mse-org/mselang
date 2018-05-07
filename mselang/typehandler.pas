@@ -70,13 +70,14 @@ procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
 procedure checkpendingmanagehandlers();
 procedure reversefieldchain(const atyp: ptypedataty);
+procedure reversesubchain(const atyp: ptypedataty);
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
 function gettypeident(): identty;
 
 implementation
 uses
  elements,errorhandler,handlerutils,parser,opcode,stackops,
- opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
+ opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,llvmlists,
  segmentutils,__mla__internaltypes,grammarglob;
 
 procedure handletypedefentry();
@@ -842,8 +843,15 @@ begin
        if(icf_virtual in typ1^.infoclass.flags) then begin
         with additem(oc_iniobject)^.par do begin
          ssas1:= baseadssa;
-//         setimmint32( typ1^.infoclass.virttaboffset,initclass.virttaboffset);
          initclass.classdef:= typ1^.infoclass.defs.address;
+{
+         if co_llvm in o.compileoptions then begin
+          initclass.classdefid:= getclassdefid(typ1);
+         end
+         else begin
+          initclass.classdefstackops:= typ1^.infoclass.defs.address;
+         end;
+}
         end;
        end;
        if tf_hascomplexini in typ1^.h.flags then begin
@@ -856,6 +864,14 @@ begin
          ssas1:= baseadssa;
 //         setimmint32(typ1^.infoclass.virttaboffset,initclass.virttaboffset);
          initclass.classdef:= typ1^.infoclass.defs.address;
+{
+         if co_llvm in o.compileoptions then begin
+          initclass.classdefid:= getclassdefid(typ1);
+         end
+         else begin
+          initclass.classdefstackops:= typ1^.infoclass.defs.address;
+         end;
+}
         end;
        end;
        handlefields(op1,atyp,i1); //does not touch vitual table address
@@ -1019,6 +1035,23 @@ begin
   offs1:= offs2;
  end;
  atyp^.fieldchain:= offs3;
+end;
+
+procedure reversesubchain(const atyp: ptypedataty);
+var
+ offs1,offs2,offs3: elementoffsetty;
+begin
+ offs1:= atyp^.infoclass.subchain;
+ offs3:= 0;
+ while offs1 <> 0 do begin      //reverse order
+  with psubdataty(ele.eledataabs(offs1))^ do begin
+   offs2:= next;
+   next:= offs3;
+  end;
+  offs3:= offs1;
+  offs1:= offs2;
+ end;
+ atyp^.infoclass.subchain:= offs3;
 end;
 
 procedure handlerecordtype();

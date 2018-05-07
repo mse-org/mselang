@@ -1434,7 +1434,12 @@ begin
     if (d.typ.indirectlevel = 1) and
                    (typ1^.h.kind in [dk_class,dk_object]) then begin
      with insertitem(oc_pushclassdef,stackoffset,aopoffset)^.par do begin
-      segad:= typ1^.infoclass.defs.address;
+      if co_llvm in o.compileoptions then begin
+       classdefid:= getclassdefid(typ1);
+      end
+      else begin
+       classdefstackops:= typ1^.infoclass.defs.address;
+      end;
      end;
      initfactcontext(stackoffset);
      d.dat.datatyp.typedata:= typ1^.infoclass.classoftyp;

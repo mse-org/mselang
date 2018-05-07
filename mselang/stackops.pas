@@ -5720,7 +5720,8 @@ var
  pe: pointer;
 begin
  with cpu.pc^.par do begin
-  po2:= classdefinfopoty(segments[seg_classdef].basepo+initclass.classdef);
+  po2:= classdefinfopoty(segments[seg_classdef].basepo+
+                                     initclass.classdef);
   po1:= ppointer(cpu.stack-pointersize)^; //object instance
 //  ppointer(po1+initclass.virttaboffset)^:= po2;
   ppointer(po1+po2^.header.virttaboffset)^:= po2;

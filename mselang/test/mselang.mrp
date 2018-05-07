@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72BB728
+    ao=An unhandled exception occured at $B731C728
     ae=
     aec=123
     ie=0
@@ -12195,7 +12195,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,intrinsics
+  a=0,665,4,intrinsics
   c=2
    (
    kind=1
@@ -12846,11 +12846,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=3
    (
    kind=1
-   a=0,664,4,variants
+   a=0,664,5,variants
    c=7
     (
     kind=2
@@ -12876,8 +12876,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variants1 llvm
-    teststate=1
+    a=0,648,2,variants1 llvm
+    teststate=2
     path=variant1.mla
     comment=
     cc=${mlc_llvm}
@@ -12892,8 +12892,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
     (
@@ -12920,8 +12920,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variants2 llvm
-    teststate=1
+    a=0,648,2,variants2 llvm
+    teststate=2
     path=variant2.mla
     comment=
     cc=${mlc_llvm}
@@ -12936,14 +12936,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,tostring llvm
-    teststate=1
+    a=0,648,2,tostring llvm
+    teststate=2
     path=tostring.mla
     comment=
     cc=${mlc_llvm}
@@ -12958,14 +12958,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,variantstring llvm
-    teststate=1
+    a=0,648,2,variantstring llvm
+    teststate=2
     path=variantstring.mla
     comment=
     cc=${mlc_llvm}
@@ -12979,15 +12979,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abcabcabc
-    ae=
-    aec=0
+    ao=
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,variantstring1 llvm
-    teststate=1
+    a=0,648,2,variantstring1 llvm
+    teststate=2
     path=variantstring1.mla
     comment=
     cc=${mlc_llvm}
@@ -13002,11 +13002,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=variants/
    comment=
    cc=
@@ -13024,12 +13024,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,tobject
+   a=0,665,5,tobject
    c=3
     (
     kind=2
-    a=0,648,1,ini llvm
-    teststate=1
+    a=0,648,2,ini llvm
+    teststate=2
     path=ini.mla
     comment=
     cc=${mlc_llvm}
@@ -13044,14 +13044,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid record
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,classtype llvm
-    teststate=1
+    a=0,648,2,classtype llvm
+    teststate=2
     path=classtype.mla
     comment=
     cc=${mlc_llvm}
@@ -13066,14 +13066,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=LLVM ERROR: Type mismatch in constant table!
+    aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,free llvm
-    teststate=1
+    a=0,648,2,free llvm
+    teststate=2
     path=free.mla
     comment=
     cc=${mlc_llvm}
@@ -13088,11 +13088,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=LLVM ERROR: Type mismatch in constant table!
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=tobject/
    comment=
    cc=
@@ -13150,7 +13150,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -13230,7 +13230,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -13340,7 +13340,7 @@ y=89
 cx=775
 cy=512
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=669
@@ -13353,7 +13353,16 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=220
+rowstate=229
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

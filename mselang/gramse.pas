@@ -13815,6 +13815,7 @@ begin
  implementationend1co.branch:= @bimplementationend1;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
+ mainco.handleentry:= @handlemainentry;
  mainco.handleexit:= @handleafterimpluses;
  implusesco.branch:= @bimpluses;
  implusesco.next:= @main1co;

@@ -2537,7 +2537,7 @@ begin
   end;
  end;
 end;
-
+var testvar5: popaddressty;
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -2622,6 +2622,7 @@ begin
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
+testvar5:= @(classdefinfopoty(getsegmentpo(infoclass.defs))^.virtualmethods);
      popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
                                      virtualmethods))[po2^.tableindex]:= ad1;
               //resolve virtual table entry
@@ -3580,7 +3581,12 @@ begin
       end
       else begin
        with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
-        segad:= typ1^.infoclass.defs.address;
+        if co_llvm in o.compileoptions then begin
+         classdefid:= getclassdefid(typ1);
+        end
+        else begin
+         classdefstackops:= typ1^.infoclass.defs.address;
+        end;
         instancessa:= ssad;
        end;
       end;
@@ -3654,7 +3660,12 @@ begin
         end
         else begin
          with insertitem(oc_pushclassdef,destoffset,-1)^.par do begin
-          segad:= resulttype1^.infoclass.defs.address;
+          if co_llvm in o.compileoptions then begin
+           classdefid:= getclassdefid(resulttype1);
+          end
+          else begin
+           classdefstackops:= resulttype1^.infoclass.defs.address;
+          end;
           instancessa:= ssad;
          end;
         end;

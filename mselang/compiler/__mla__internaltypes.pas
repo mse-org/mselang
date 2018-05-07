@@ -1,3 +1,4 @@
+//__mla__internaltypes
 { MSEgui Copyright (c) 2014-2017 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
@@ -194,24 +195,26 @@ type
 
  classdefheaderty = record 
    //layout fix, used in compiler llvmlists.tconsthashdatalist.addclassdef()
-  parentclass: pclassdefinfoty;
-  interfaceparent: pclassdefinfoty; //last parent class with interfaces
-  virttaboffset: int32;             //field offset in instance
-  rtti: prttity;
-  procs: array[classdefprocty] of classprocty;
-  allocs: allocsinfoty;
+  parentclass: pclassdefinfoty;                                          //0
+  interfaceparent: pclassdefinfoty; //last parent class with interfaces  //1
+  virttaboffset: int32;             //field offset in instance           //2
+  rtti: prttity;                                                         //3
+  procs: array[classdefprocty] of classprocty;  //4             
+  allocs: allocsinfoty;                         //4+high(procs)+1
  end;
  pclassdefheaderty = ^classdefheaderty;
  
  classdefinfoty = record
-  header: classdefheaderty;
-  virtualmethods: record //array of targetpointer to sub
+  header: classdefheaderty;                                //0
+  virtualmethods: record //array of targetpointer to sub   //4+high(procs)+2
   end;
   interfaces: record     //array of targetpointer to intfdefinfoty,
                          //copied to instance
   end;  
  end;
- 
+const
+ classvirttabindex = 4+ord(high(classdefprocty))+2;
+type 
  intfdefheaderty = record
   instanceoffset: int32; //offset from interface pointer to class instance
  end;

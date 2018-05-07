@@ -26,6 +26,8 @@ const
  typeindexstep = 3;   //type list stack =   basetype [0]
                       //                   *basetype [1]
                       //                  **basetype [2]
+ constlinkage = li_internal;
+
 
 type
  bufferdataty = record
@@ -60,6 +62,10 @@ type
    procedure checkbuffercapacity(const asize: int32);
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitem: phashdataty): boolean override;
+   function doadd(const adata: bufferallocdataty;
+                out res: pbufferhashdataty; const unique: boolean): boolean;
+   procedure addnotunique(const adata: bufferallocdataty;
+                                          out res: pbufferhashdataty);
    function addunique(const adata: bufferallocdataty;
                        out res: pbufferhashdataty): boolean; //true if new
    function addunique(const adata: card32;
@@ -73,6 +79,7 @@ type
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
    function absdata(const aoffset: int32): pointer; inline;
+   property buffer: pointer read fbuffer;
    property buffersize: int32 read fbuffersize;
    function getitemdata(aid: int32): pointer;
  end;
@@ -336,15 +343,16 @@ type
    function addvalue(const avalue; const asize: int32): llvmvaluety;
    function addvalue(const avalue: segaddressty;
                               const asize: int32): llvmvaluety;
-   function addpointerarray(const asize: int32;
-                                     const ids: pint32): llvmvaluety;
+   function addpointerarray(const asize: int32; const ids: pint32;
+                                 const unique: boolean = true): llvmvaluety;
                //ids[asize] used for type id, restored
    function addaggregatearray(const asize: int32; const atype: int32; 
                                               const ids: pint32): llvmvaluety;
                //ids[asize] used for type id not restored
    function addpointercast(const aid: int32): llvmvaluety;
    function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
-   function addaggregate(const avalue: paggregateconstty): llvmvaluety;
+   function addaggregate(const avalue: paggregateconstty;
+                                 const unique: boolean = true): llvmvaluety;
    function addtypedconst(const atype: elementoffsetty;
                                      var adata: pointer): llvmvaluety;
                                    //increments adata to next item
@@ -486,6 +494,7 @@ type
                                                     //pclassdefinfoty
                         //too complicated because of forward definitions
    function addtypecopy(const alistid: int32): int32;
+   function getinitconst(const alistid: int32): int32; //returns const listid
    function gettype(const alistid: int32): int32; //returns type listid
    function gettype1(const alistid: int32): metavaluety;
    property namelist: tglobnamelist read fnamelist;
@@ -939,11 +948,119 @@ const
   asco_none,asco_none);
 
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
+procedure updatellvmclassdefs(const updatesubs: boolean);
+function getclassdefid(const atype: ptypedataty): int32;
 
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
  opcode,handlerutils,compilerunit,typehandler,rttihandler;
+var testvar: int32;
+procedure updatellvmclassdefs(const updatesubs: boolean);
+
+var
+ offse: int32;
+ 
+ procedure setvirtsubs(const atyp: ptypedataty; var offs: int32);
+ var
+  ele1: elementoffsetty;
+  sub1: psubdataty;
+  v1: llvmvaluety;
+ begin
+  if atyp^.h.ancestor > 0 then begin
+   setvirtsubs(ele.eledataabs(atyp^.h.ancestor),offs);
+  end;
+  ele1:= atyp^.infoclass.subchain;
+  while ele1 <> 0 do begin
+   sub1:= ele.eledataabs(ele1);
+   if sf_virtual in sub1^.flags then begin
+   {$ifdef mse_checkinternalerror}
+    if offs >= offse then begin
+     internalerror(ie_llvmlist,'20180506A');
+    end;
+   {$endif}
+    with info.s.unitinfo^.llvmlists.constlist do begin
+     v1:= addpointercast(sub1^.globid);
+     pint32(absdata(offs))^:= v1.listid;
+    end;
+    inc(offs,sizeof(int32));
+   end;
+   ele1:= sub1^.next;
+  end;
+ end; //setvirtsubs()
+
+var
+ poclassdef,peclassdef: ^classdefinfoty;
+ header1: pclassdefconstheaderty;
+ i1,i2: int32;
+ typ1: ptypedataty;
+ globdat1: pgloballocdataty;
+ bufdat1: paggregateconstty;
+ p1: pointer;
+
+begin
+ poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
+ peclassdef:= getsegmenttop(seg_classdef);
+// countpo:= getsegmentbase(seg_classintfcount);
+ while poclassdef < peclassdef do begin   //classes
+  header1:= pclassdefconstheaderty(poclassdef)-1; //header in negative offset
+  typ1:= ele.eledataabs(header1^.typedata);
+  i1:= header1^.intfcount;
+  if typ1^.infoclass.defsid < 0 then begin
+   typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
+          addinitvalue(gak_const,
+           info.s.unitinfo^.llvmlists.constlist.addclassdef(
+                                   poclassdef,i1).listid,constlinkage);
+inc(testvar);
+   header1^.defsid:= typ1^.infoclass.defsid;
+  {$ifdef mse_checkinternalerror}
+   if not (typ1^.h.kind in [dk_object,dk_class]) then begin
+    internalerror(ie_llvmlist,'20171118A');
+   end;
+  {$endif}
+   if typ1^.h.llvmrtticonst > 0 then begin
+    with info.s.unitinfo^.llvmlists.constlist do begin
+     bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
+     getrtti(typ1);
+     pint32(@bufdat1^.items)[classrttidefindex]:= 
+                            addpointercast(pint32(poclassdef)^).listid;
+              //todo: hide for search because hash is wrong
+    end;
+   end;
+  end;
+  if updatesubs and (typ1^.infoclass.virtualcount > 0) then begin
+   with info.s.unitinfo^.llvmlists do begin
+    bufdat1:= constlist.getitemdata(
+                      globlist.getinitconst(typ1^.infoclass.defsid));
+    i2:= constlist.getitemdata(pint32(@bufdat1^.items)[classvirttabindex]) -
+                                                              constlist.buffer;
+//    pd:= @bufdat2.
+   end;
+   offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
+   setvirtsubs(typ1,i2);
+  {$ifdef mse_checkinternalerror}
+   if i2 <> offse then begin
+    internalerror(ie_llvmlist,'20180506B');
+   end;
+  {$endif}
+  end;
+  
+  poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
+                       poclassdef^.header.allocs.classdefinterfacestart +
+                                                          i1*targetpointersize;
+ end;
+end;
+
+function getclassdefid(const atype: ptypedataty): int32;
+begin
+ if atype^.infoclass.defsid < 0 then begin
+  updatellvmclassdefs(false);
+  if atype^.infoclass.defsid < 0 then begin
+   internalerror1(ie_handler,'20180503');
+  end;
+ end;
+ result:= atype^.infoclass.defsid;
+end;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
@@ -1043,13 +1160,16 @@ begin
  end;
 end;
 
-function tbufferhashdatalist.addunique(const adata: bufferallocdataty;
-                              out res: pbufferhashdataty): boolean;
+function tbufferhashdatalist.doadd(const adata: bufferallocdataty;
+                   out res: pbufferhashdataty; const unique: boolean): boolean;
 var
  po1: pbufferhashdataty;
 begin
- po1:= pointer(internalfind(adata));
- result:= po1 = nil;
+ result:= true;
+ if unique then begin
+  po1:= pointer(internalfind(adata));
+  result:= po1 = nil;
+ end;
  if result then begin
   po1:= pointer(internaladd(adata));
   if adata.size < 0 then begin
@@ -1065,6 +1185,18 @@ begin
   po1^.data.listindex:= count-1;
  end;
  res:= po1;
+end;
+
+procedure tbufferhashdatalist.addnotunique(const adata: bufferallocdataty;
+               out res: pbufferhashdataty);
+begin
+ doadd(adata,res,false);
+end;
+
+function tbufferhashdatalist.addunique(const adata: bufferallocdataty;
+               out res: pbufferhashdataty): boolean;
+begin
+ result:= doadd(adata,res,true);
 end;
 
 function tbufferhashdatalist.addunique(const adata: card32;
@@ -1832,23 +1964,32 @@ begin
 end;
 
 function tconsthashdatalist.addpointerarray(const asize: int32;
-                                              const ids: pint32): llvmvaluety;
+                                              const ids: pint32;
+                                 const unique: boolean = true): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
  i1: int32;
+ b1: boolean;
 begin
  alloc1.header.size:= (asize+1)*sizeof(int32);
  alloc1.header.data:= ids;
- i1:= ids[asize];
+ i1:= ids[asize]; //backup
  ids[asize]:= ftypelist.addpointerarrayvalue(asize);
  alloc1.typeid:= -ord(ct_pointerarray);
- if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+ if unique then begin
+  b1:= addunique(bufferallocdataty((@alloc1)^),pointer(po1));
+ end
+ else begin
+  addnotunique(bufferallocdataty((@alloc1)^),pointer(po1));
+  b1:= true;
+ end;
+ if b1 then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result.listid:= po1^.data.header.listindex;
  result.typeid:= ids[asize];
- ids[asize]:= i1;
+ ids[asize]:= i1; //restore
 end;
 
 function tconsthashdatalist.addaggregatearray(const asize: int32;
@@ -1869,16 +2010,24 @@ begin
  result.typeid:= ids[asize];
 end;
 
-function tconsthashdatalist.addaggregate(
-                               const avalue: paggregateconstty): llvmvaluety;
+function tconsthashdatalist.addaggregate(const avalue: paggregateconstty; 
+                                   const unique: boolean = true): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
+ b1: boolean;
 begin
  alloc1.header.size:= sizeof(avalue^)+avalue^.header.itemcount*sizeof(int32);
  alloc1.header.data:= avalue;
  alloc1.typeid:= -ord(ct_aggregate);
- if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+ if unique then begin
+  b1:= addunique(bufferallocdataty((@alloc1)^),pointer(po1));
+ end
+ else begin
+  addnotunique(bufferallocdataty((@alloc1)^),pointer(po1));
+  b1:= true;
+ end;
+ if b1 then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result.listid:= po1^.data.header.listindex;
@@ -2070,24 +2219,27 @@ begin
  end;
 end;
 *)
+
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmvaluety;
 
  function getclassid(const asegoffset: int32): int32;
  begin
-  result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
- end; //getclassid
+  result:= (pclassdefconstheaderty(aclassdef)-1)^.defsid;
+                                              //header in negative offset
+//  result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
+ end; //getclassid()
 
  function getrttiid(const asegoffset: int32): int32;
  begin
   result:= pint32(getsegmentpo(seg_rtti,asegoffset))^;
- end; //getrttiid
+ end; //getrttiid()
 
 type
  classdefty = record
   header: aggregateconstty;                       
   //0           1               2             3
-  //parentclass,interfaceparent,virttaboffset,typeinfo,
+  //parentclass,interfaceparent,virttaboffset,rtti,
   //4..4+high(procs)
   //procs iniproc,
   //                optional        optional
@@ -2095,18 +2247,24 @@ type
   //allocs,         virtualmethods, interfaces
   items: array[0..7+ord(high(classdefprocty))] of int32; //constlist ids
  end;
+
 var
- pd: pint32;
+ pd,pe: pint32;
+ 
  co1: llvmvaluety;
  
  classdef1: classdefty;
  types1: array[0..high(classdefty.items)] of int32;
  i1,i2: int32;
- ps1,ps,pe: popaddressty;
+ ps1,ps,pe1: popaddressty;
  po1: pointer;
  pop1: popinfoty;
  proc1: classdefprocty;
+ typ1: ptypedataty;
+ sub1: psubdataty;
+ ele1: elementoffsetty;
 begin
+ typ1:= ele.eledataabs((pclassdefconstheaderty(aclassdef)-1)^.typedata);
  types1[0]:= pointertype;
  types1[1]:= pointertype;
  if aclassdef^.header.parentclass < 0 then begin
@@ -2131,16 +2289,13 @@ begin
   classdef1.items[3]:= nullpointer;
  end
  else begin
-//  classdef1.items[3]:= nullpointer;
   classdef1.items[3]:= aclassdef^.header.rtti;
-//  classdef1.items[3]:= addpointercast(
-//                    getrttiid(aclassdef^.header.typeinfo)).listid;
  end;
  
  i2:= 4;
  for proc1:= low(proc1) to high(proc1) do begin
   types1[i2]:= pointertype;
-  if aclassdef^.header.procs[proc1] = 0 then begin
+  if aclassdef^.header.procs[proc1] <= 0 then begin
    classdef1.items[i2]:= nullpointer;
   end
   else begin
@@ -2159,35 +2314,34 @@ begin
  classdef1.items[i2]:= co1.listid;
  inc(i2);
  
- ps:= @aclassdef^.virtualmethods;
- pd:= pointer(ps);
- pe:= pointer(aclassdef)+aclassdef^.header.allocs.classdefinterfacestart;
- i1:= pe - ps;
+ pd:= @aclassdef^.virtualmethods;
+ pe:= pd+typ1^.infoclass.virtualcount;
+ i1:= pe - pd;
  if i1 > 0 then begin
+  while pd < pe do begin
+   pd^:= nullpointer;
+   inc(pd);
+  end;
+{
   while ps < pe do begin
-  (*
-   pop1:= getoppo(ps^);
-  {$ifdef mse_checkinternalerror}
-   if pop1^.op.op <> oc_subbegin then begin
-    internalerror(ie_llvmlist,'20171118A');
-   end;
-  {$endif}
-   pd^:= addpointercast(pop1^.par.subbegin.globid).listid;
-  *)
    pd^:= addpointercast(ps^).listid;
    inc(pd);
    inc(ps);
   end;
-  co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
+}
+  co1:= addpointerarray(i1,@aclassdef^.virtualmethods,false);
   types1[i2]:= co1.typeid;
   classdef1.items[i2]:= co1.listid;
   inc(i2);
  end;
  if aintfcount > 0 then begin
   po1:= getsegmentbase(seg_intf);
+  ps:= @aclassdef^.virtualmethods;
+  inc(ps,typ1^.infoclass.virtualcount);
+  pd:= pointer(ps);
   ps1:= ps;
-  pe:= ps+aintfcount;
-  while ps < pe do begin
+  pe1:= ps+aintfcount;
+  while ps < pe1 do begin
    pd^:= addpointercast(pint32(po1+ps^)^).listid;
    inc(pd);
    inc(ps);
@@ -2200,7 +2354,7 @@ begin
  classdef1.header.header.itemcount:= i2;
  classdef1.header.header.typeid:= ftypelist.addstructvalue(
                                   classdef1.header.header.itemcount,@types1);
- result:= addaggregate(@classdef1);
+ result:= addaggregate(@classdef1,false);
 end;
 
 function tconsthashdatalist.addintfdef(const aintf: pintfdefinfoty;
@@ -2594,6 +2748,11 @@ begin
   f1:= [sf_proto];
  end;
  result:= addexternalsubvalue(f1,params1,aname);
+end;
+
+function tgloballocdatalist.getinitconst(const alistid: int32): int32;
+begin
+ result:= (pgloballocdataty(fdata) + alistid)^.initconstindex;
 end;
 
 function tgloballocdatalist.gettype(const alistid: int32): int32;

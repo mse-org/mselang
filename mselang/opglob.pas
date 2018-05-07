@@ -786,10 +786,16 @@ type
  end;
   
  initclassinfoty = record
-//  selfinstance: dataoffsty; //stackoffset
   classdef: dataoffsty;
-//  virttaboffset: int32;
-//  result: dataoffsty;   //stackoffset to result pointer
+ {
+  case boolean of
+   false:(           //stackops
+    classdefstackops: dataoffsty;
+   );
+   true:(            //llvm
+    classdefid: int32;
+   );
+  }
  end;
 
  destroyclassflagty = (dcf_nofreemem); //for object destroy
@@ -1508,8 +1514,23 @@ type
      );
    );
    oc_pushclassdef:(
-    segad: dataoffsty;
+    case boolean of
+     false:(
+      classdefstackops: dataoffsty; //stackops
+     );
+     true:(              //llvm
+      classdefid: int32;
+     );
    );
+   oc_pushrtti:(
+    case boolean of
+     false:(
+      rttistackops: dataoffsty //stackops
+     );
+     true:(
+      rttiid: int32; //llvm
+     );
+    );
    {oc_initclass,}oc_iniobject:(
     initclass: initclassinfoty;
    );
