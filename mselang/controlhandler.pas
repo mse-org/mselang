@@ -67,7 +67,7 @@ implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
  opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
- gramse,parser,listutils,classhandler,__mla__internaltypes;
+ gramse,parser,listutils,classhandler,__mla__internaltypes,llvmlists;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -877,6 +877,17 @@ begin
     setimmint32(0,imm);
     i1:= ssad;
    end;                                            //op 3
+   typ1:= ele.eledataabs(contextstack[s.stackindex].d.statement.excepttype);
+   with additem(oc_pushclassdef)^.par do begin
+    if co_llvm in info.o.compileoptions then begin
+     classdefid:= getclassdefid(typ1);
+    end
+    else begin
+     classdefstackops:= typ1^.infoclass.defs.address;
+    end;
+    i2:= ssad;
+   end;
+{
    with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
     memop.segdataaddress.a:= ptypedataty(ele.eledataabs(
           contextstack[s.stackindex].d.statement.excepttype))^.infoclass.defs;
@@ -884,6 +895,7 @@ begin
     memop.t:= bitoptypes[das_pointer];
     i2:= ssad;
    end;
+}
    with additem(oc_classis)^.par do begin          //op 4
     ssas1:= i1;
     ssas2:= i2;

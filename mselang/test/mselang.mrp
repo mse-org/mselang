@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -210,7 +210,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,address llvm
+    a=0,648,1,address llvm
     teststate=1
     path=address.mla
     comment=
@@ -278,7 +278,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,and1 llvm
+     a=0,648,1,and1 llvm
      teststate=1
      path=and1.mla
      comment=
@@ -322,7 +322,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,or1 llvm
+     a=0,648,1,or1 llvm
      teststate=1
      path=or1.mla
      comment=
@@ -366,7 +366,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,not1 llvm
+     a=0,648,1,not1 llvm
      teststate=1
      path=not1.mla
      comment=
@@ -410,7 +410,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,booleaval1 llvm
+     a=0,648,1,booleaval1 llvm
      teststate=1
      path=booleval1.mla
      comment=
@@ -474,7 +474,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,cmppointer llvm
+     a=0,648,1,cmppointer llvm
      teststate=1
      path=cmppointer.mla
      comment=
@@ -518,7 +518,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,cmpenum llvm
+     a=0,648,1,cmpenum llvm
      teststate=1
      path=cmpenum.mla
      comment=
@@ -562,7 +562,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,cmpstring8 llvm
+     a=0,648,1,cmpstring8 llvm
      teststate=1
      path=cmpstring8.mla
      comment=
@@ -626,7 +626,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,floatassign llvm
+     a=0,648,1,floatassign llvm
      teststate=1
      path=floatassign.mla
      comment=
@@ -670,7 +670,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,sin llvm
+     a=0,648,1,sin llvm
      teststate=1
      path=sin.mla
      comment=
@@ -734,7 +734,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointeradd llvm
+     a=0,648,1,pointeradd llvm
      teststate=1
      path=pointeradd.mla
      comment=
@@ -778,7 +778,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerecadd llvm
+     a=0,648,1,pointerecadd llvm
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -822,7 +822,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerdiff llvm
+     a=0,648,1,pointerdiff llvm
      teststate=1
      path=pointerdiff.mla
      comment=
@@ -866,7 +866,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerdiff1 llvm
+     a=0,648,1,pointerdiff1 llvm
      teststate=1
      path=pointerdiff1.mla
      comment=
@@ -910,7 +910,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerindex llvm
+     a=0,648,1,pointerindex llvm
      teststate=1
      path=pointerindex.mla
      comment=
@@ -970,7 +970,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,updatesize llvm
+    a=0,648,1,updatesize llvm
     teststate=1
     path=updatesize.mla
     comment=
@@ -1014,7 +1014,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,divop llvm
+    a=0,648,1,divop llvm
     teststate=1
     path=divop.mla
     comment=
@@ -1058,7 +1058,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,divisionop llvm
+    a=0,648,1,divisionop llvm
     teststate=1
     path=divisionop.mla
     comment=
@@ -1102,7 +1102,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,addsubint llvm
+    a=0,648,1,addsubint llvm
     teststate=1
     path=addsubint.mla
     comment=
@@ -1146,7 +1146,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,bitexp1 llvm
+    a=0,648,1,bitexp1 llvm
     teststate=1
     path=bitexp1.mla
     comment=
@@ -1190,7 +1190,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incdec llvm
+    a=0,648,1,incdec llvm
     teststate=1
     path=incdec.mla
     comment=
@@ -1234,7 +1234,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,inc1 llvm
+    a=0,648,1,inc1 llvm
     teststate=1
     path=inc1.mla
     comment=
@@ -1278,7 +1278,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incval1 llvm
+    a=0,648,1,incval1 llvm
     teststate=1
     path=incval1.mla
     comment=
@@ -1322,7 +1322,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incvalpo1 llvm
+    a=0,648,1,incvalpo1 llvm
     teststate=1
     path=incvalpo1.mla
     comment=
@@ -1366,7 +1366,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incdecind llvm
+    a=0,648,1,incdecind llvm
     teststate=1
     path=incdecind.mla
     comment=
@@ -1410,7 +1410,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,shl1 llvm
+    a=0,648,1,shl1 llvm
     teststate=1
     path=shl1.mla
     comment=
@@ -1454,7 +1454,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,shr1 llvm
+    a=0,648,1,shr1 llvm
     teststate=1
     path=shr1.mla
     comment=
@@ -1498,7 +1498,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incdecindpo llvm
+    a=0,648,1,incdecindpo llvm
     teststate=1
     path=incdecindpo.mla
     comment=
@@ -1542,7 +1542,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,not1 llvm
+    a=0,648,1,not1 llvm
     teststate=1
     path=not1.mla
     comment=
@@ -1586,7 +1586,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,neg1 llvm
+    a=0,648,1,neg1 llvm
     teststate=1
     path=neg1.mla
     comment=
@@ -1630,7 +1630,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,abs llvm
+    a=0,648,1,abs llvm
     teststate=1
     path=abs.mla
     comment=
@@ -1674,7 +1674,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,andorxor1 llvm
+    a=0,648,1,andorxor1 llvm
     teststate=1
     path=andorxor1.mla
     comment=
@@ -3750,7 +3750,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,enum1 llvm
+    a=0,648,1,enum1 llvm
     teststate=1
     path=enum1.mla
     comment=
@@ -3852,8 +3852,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,exception
-   c=18
+   a=0,665,4,exception
+   c=13
     (
     kind=2
     a=0,648,1,raise1
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72B9690
+    ao=An unhandled exception occured at $B72F7690
     ae=
     aec=123
     ie=0
@@ -4032,30 +4032,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,except2
+    a=0,648,1,except2 llvm
     teststate=1
-    path=except2.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,2,except2 llvm
-    teststate=2
     path=except2.mla
     comment=
     cc=${mlc_llvm}
@@ -4070,36 +4048,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid cast
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,except3
-    teststate=1
-    path=except3.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,except3 llvm
-    teststate=2
+    a=0,648,1,except3 llvm
+    teststate=1
     path=except3.mla
     comment=
     cc=${mlc_llvm}
@@ -4114,36 +4070,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,except4
-    teststate=1
-    path=except4.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,except4 llvm
-    teststate=2
+    a=0,648,1,except4 llvm
+    teststate=1
     path=except4.mla
     comment=
     cc=${mlc_llvm}
@@ -4158,36 +4092,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,except5
-    teststate=1
-    path=except5.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,except5 llvm
-    teststate=2
+    a=0,648,1,except5 llvm
+    teststate=1
     path=except5.mla
     comment=
     cc=${mlc_llvm}
@@ -4202,36 +4114,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid cast
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,except6
-    teststate=1
-    path=except6.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,except6 llvm
-    teststate=2
+    a=0,648,1,except6 llvm
+    teststate=1
     path=except6.mla
     comment=
     cc=${mlc_llvm}
@@ -4246,11 +4136,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -4294,7 +4184,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,indirectloc llvm
+    a=0,648,1,indirectloc llvm
     teststate=1
     path=indirectloc.mla
     comment=
@@ -4338,7 +4228,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,indirectpar llvm
+    a=0,648,1,indirectpar llvm
     teststate=1
     path=indirectpar.mla
     comment=
@@ -4382,7 +4272,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varpar llvm
+    a=0,648,1,varpar llvm
     teststate=1
     path=varpar.mla
     comment=
@@ -4426,7 +4316,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varparrec llvm
+    a=0,648,1,varparrec llvm
     teststate=1
     path=varparrec.mla
     comment=
@@ -4470,7 +4360,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varparload llvm
+    a=0,648,1,varparload llvm
     teststate=1
     path=varparload.mla
     comment=
@@ -4514,7 +4404,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varparrecload llvm
+    a=0,648,1,varparrecload llvm
     teststate=1
     path=varparrecload.mla
     comment=
@@ -4558,7 +4448,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recindi llvm
+    a=0,648,1,recindi llvm
     teststate=1
     path=recindi.mla
     comment=
@@ -4602,7 +4492,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,parrecindi llvm
+    a=0,648,1,parrecindi llvm
     teststate=1
     path=parrecindi.mla
     comment=
@@ -4646,7 +4536,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recderef llvm
+    a=0,648,1,recderef llvm
     teststate=1
     path=recderef.mla
     comment=
@@ -4690,7 +4580,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,pointerrec llvm
+    a=0,648,1,pointerrec llvm
     teststate=1
     path=pointerrec.mla
     comment=
@@ -4734,7 +4624,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,pointerrec1 llvm
+    a=0,648,1,pointerrec1 llvm
     teststate=1
     path=pointerrec1.mla
     comment=
@@ -4906,7 +4796,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,getmem llvm
+    a=0,648,1,getmem llvm
     teststate=1
     path=getmem.mla
     comment=
@@ -4950,7 +4840,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setmem llvm
+    a=0,648,1,setmem llvm
     teststate=1
     path=setmem.mla
     comment=
@@ -4994,7 +4884,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,memcpy llvm
+    a=0,648,1,memcpy llvm
     teststate=1
     path=memcpy.mla
     comment=
@@ -5058,7 +4948,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,program llvm
+    a=0,648,1,program llvm
     teststate=1
     path=minprog.mla
     comment=
@@ -5122,7 +5012,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordfield llvm
+    a=0,648,1,recordfield llvm
     teststate=1
     path=recordfield.mla
     comment=
@@ -5166,7 +5056,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordfieldind llvm
+    a=0,648,1,recordfieldind llvm
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -5210,7 +5100,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordfieldind2 llvm
+    a=0,648,1,recordfieldind2 llvm
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -5254,7 +5144,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,pointerinrec llvm
+    a=0,648,1,pointerinrec llvm
     teststate=1
     path=pointerinrec.mla
     comment=
@@ -5298,7 +5188,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordcopy llvm
+    a=0,648,1,recordcopy llvm
     teststate=1
     path=recordcopy.mla
     comment=
@@ -5342,7 +5232,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case llvm
+    a=0,648,1,case llvm
     teststate=1
     path=case.mla
     comment=
@@ -5386,7 +5276,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case1 llvm
+    a=0,648,1,case1 llvm
     teststate=1
     path=case1.mla
     comment=
@@ -5430,7 +5320,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case2 llvm
+    a=0,648,1,case2 llvm
     teststate=1
     path=case2.mla
     comment=
@@ -5474,7 +5364,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case3 llvm
+    a=0,648,1,case3 llvm
     teststate=1
     path=case3.mla
     comment=
@@ -5518,7 +5408,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,case4 llvm
+    a=0,648,1,case4 llvm
     teststate=1
     path=case4.mla
     comment=
@@ -5582,7 +5472,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setconstructro1 llvm
+    a=0,648,1,setconstructro1 llvm
     teststate=1
     path=setconstructor1.mla
     comment=
@@ -5626,7 +5516,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setop1 llvm
+    a=0,648,1,setop1 llvm
     teststate=1
     path=setops1.mla
     comment=
@@ -5670,7 +5560,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,xorset1 llvm
+    a=0,648,1,xorset1 llvm
     teststate=1
     path=xorset1.mla
     comment=
@@ -5714,7 +5604,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setcomp1 llvm
+    a=0,648,1,setcomp1 llvm
     teststate=1
     path=setcomp1.mla
     comment=
@@ -5758,7 +5648,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,inset1 llvm
+    a=0,648,1,inset1 llvm
     teststate=1
     path=inset1.mla
     comment=
@@ -5802,7 +5692,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,set2 llvm
+    a=0,648,1,set2 llvm
     teststate=1
     path=set2.mla
     comment=
@@ -5866,7 +5756,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringtest llvm
+    a=0,648,1,stringtest llvm
     teststate=1
     path=stringtest.mla
     comment=
@@ -5910,7 +5800,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,chartostring llvm
+    a=0,648,1,chartostring llvm
     teststate=1
     path=chartostring.mla
     comment=
@@ -5954,7 +5844,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringconcat llvm
+    a=0,648,1,stringconcat llvm
     teststate=1
     path=stringconcat.mla
     comment=
@@ -5998,7 +5888,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,stringconcat1 llvm
+    a=0,648,1,stringconcat1 llvm
     teststate=1
     path=stringconcat1.mla
     comment=
@@ -6036,7 +5926,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,sub
+   a=0,665,4,sub
    c=41
     (
     kind=1
@@ -6066,7 +5956,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,subres1 llvm
+     a=0,648,1,subres1 llvm
      teststate=1
      path=subres1.mla
      comment=
@@ -6110,7 +6000,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,subvarres1 llvm
+     a=0,648,1,subvarres1 llvm
      teststate=1
      path=subvarres1.mla
      comment=
@@ -6154,7 +6044,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,subvarres2 llvm
+     a=0,648,1,subvarres2 llvm
      teststate=1
      path=subvarres2.mla
      comment=
@@ -6198,7 +6088,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,subvarres3 llvm
+     a=0,648,1,subvarres3 llvm
      teststate=1
      path=subvarres3.mla
      comment=
@@ -6236,7 +6126,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,subvar
+    a=0,665,4,subvar
     c=11
      (
      kind=2
@@ -6416,8 +6306,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,callsubres llvm
-     teststate=2
+     a=0,648,1,callsubres llvm
+     teststate=1
      path=callsubres.mla
      comment=
      cc=${mlc_llvm}
@@ -6432,8 +6322,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -6480,7 +6370,7 @@ c=3
      aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=subvar/
     comment=
     cc=
@@ -6524,7 +6414,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray1 llvm
+     a=0,648,1,openarray1 llvm
      teststate=1
      path=openarray1.mla
      comment=
@@ -6568,7 +6458,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray2 llvm
+     a=0,648,1,openarray2 llvm
      teststate=1
      path=openarray2.mla
      comment=
@@ -6612,7 +6502,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray3 llvm
+     a=0,648,1,openarray3 llvm
      teststate=1
      path=openarray3.mla
      comment=
@@ -6656,7 +6546,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray4 llvm
+     a=0,648,1,openarray4 llvm
      teststate=1
      path=openarray4.mla
      comment=
@@ -6700,7 +6590,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray5 llvm
+     a=0,648,1,openarray5 llvm
      teststate=1
      path=openarray5.mla
      comment=
@@ -6744,7 +6634,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray6 llvm
+     a=0,648,1,openarray6 llvm
      teststate=1
      path=openarray6.mla
      comment=
@@ -6788,7 +6678,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,openarray7 llvm
+     a=0,648,1,openarray7 llvm
      teststate=1
      path=openarray7.mla
      comment=
@@ -7660,7 +7550,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=sub/
    comment=
    cc=
@@ -8483,7 +8373,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -8501,12 +8391,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,object
+  a=0,665,4,object
   c=28
    (
    kind=1
-   a=0,665,5,methods
-   c=13
+   a=0,665,4,methods
+   c=12
     (
     kind=2
     a=0,648,1,method
@@ -8553,13 +8443,13 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,classmethod
+    a=0,648,1,classmethod llvm
     teststate=1
     path=classmethod.mla
     comment=
-    cc=${mlc}
+    cc=${mlc_llvm}
     cd=
-    rc=${mli}
+    rc=${lli}
     rd=
     in=
     eo=
@@ -8575,30 +8465,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classmethod llvm
-    teststate=2
-    path=classmethod.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=error: Invalid record
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,2,classmethod1 llvm
-    teststate=2
+    a=0,648,1,classmethod1 llvm
+    teststate=1
     path=classmethod1.mla
     comment=
     cc=${mlc_llvm}
@@ -8613,8 +8481,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -8793,7 +8661,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=methods/
    comment=
    cc=
@@ -8837,7 +8705,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,operator1 llvm
+    a=0,648,1,operator1 llvm
     teststate=1
     path=operator1.mla
     comment=
@@ -9601,7 +9469,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,object8 llvm
+   a=0,648,1,object8 llvm
    teststate=1
    path=object8.mla
    comment=
@@ -9645,7 +9513,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,object9 llvm
+   a=0,648,1,object9 llvm
    teststate=1
    path=object9.mla
    comment=
@@ -9689,7 +9557,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,objectintf llvm
+   a=0,648,1,objectintf llvm
    teststate=1
    path=objectintf.mla
    comment=
@@ -9841,7 +9709,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=object/
   comment=
   cc=
@@ -9859,8 +9727,8 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
-  c=35
+  a=0,665,4,class
+  c=34
    (
    kind=1
    a=0,664,4,properties
@@ -10613,7 +10481,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,inheritedfunc llvm
+    a=0,648,1,inheritedfunc llvm
     teststate=1
     path=inheritedfunc.mla
     comment=
@@ -11199,7 +11067,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterface llvm
+    a=0,648,1,classinterface llvm
     teststate=1
     path=classinterface.mla
     comment=
@@ -11243,7 +11111,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterface2 llvm
+    a=0,648,1,classinterface2 llvm
     teststate=1
     path=classinterface2.mla
     comment=
@@ -11287,7 +11155,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt llvm
+    a=0,648,1,classinterfacevirt llvm
     teststate=1
     path=classinterfacevirt.mla
     comment=
@@ -11331,7 +11199,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface llvm
+    a=0,648,1,classinhinterface llvm
     teststate=1
     path=classinhinterface.mla
     comment=
@@ -11375,7 +11243,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface1 llvm
+    a=0,648,1,classinhinterface1 llvm
     teststate=1
     path=classinhinterface1.mla
     comment=
@@ -12007,30 +11875,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classis
+   a=0,648,1,classis llvm
    teststate=1
-   path=classis.mla
-   comment=
-   cc=${mlc}
-   cd=
-   rc=${mli}
-   rd=
-   in=
-   eo=
-   ao=0
-   ee=
-   ae=0
-   eec=123
-   cr=0
-   ao=
-   ae=
-   aec=123
-   ie=0
-   )
-   (
-   kind=2
-   a=0,648,2,classis llvm
-   teststate=2
    path=classis.mla
    comment=
    cc=${mlc_llvm}
@@ -12045,11 +11891,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=error: Invalid record
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -12195,7 +12041,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,intrinsics
+  a=0,665,4,intrinsics
   c=2
    (
    kind=1
@@ -12373,8 +12219,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classof llvm
-   teststate=2
+   a=0,648,1,classof llvm
+   teststate=1
    path=classof.mla
    comment=
    cc=${mlc_llvm}
@@ -12389,11 +12235,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=error: Invalid record
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=intrinsics/
   comment=
   cc=
@@ -12846,7 +12692,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=3
    (
    kind=1
@@ -13024,7 +12870,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,tobject
+   a=0,665,4,tobject
    c=3
     (
     kind=2
@@ -13050,8 +12896,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classtype llvm
-    teststate=2
+    a=0,648,1,classtype llvm
+    teststate=1
     path=classtype.mla
     comment=
     cc=${mlc_llvm}
@@ -13066,8 +12912,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=LLVM ERROR: Type mismatch in constant table!
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -13092,7 +12938,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=tobject/
    comment=
    cc=
@@ -13150,7 +12996,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -13230,7 +13076,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -13340,7 +13186,7 @@ y=89
 cx=775
 cy=512
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=669
@@ -13353,7 +13199,61 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=262
+rowstate=316
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

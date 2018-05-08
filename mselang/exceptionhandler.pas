@@ -43,7 +43,7 @@ procedure handlegetexceptobj(const paramco: int32);
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
- segmentutils,opglob,unithandler,classhandler,syssubhandler,
+ segmentutils,opglob,unithandler,classhandler,syssubhandler,llvmlists,
  __mla__internaltypes;
  
 procedure handlefinallyexpected();
@@ -379,12 +379,23 @@ begin
        with additem(oc_push)^ do begin
         par.imm.vsize:= targetpointersize; //address still valid
        end;
+       with additem(oc_pushclassdef)^.par do begin
+        if co_llvm in o.compileoptions then begin
+         classdefid:= getclassdefid(typ1);
+        end
+        else begin
+         classdefstackops:= typ1^.infoclass.defs.address;
+        end;
+        i2:= ssad;
+       end;
+{
        with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
         memop.segdataaddress.a:= typ1^.infoclass.defs;
         memop.segdataaddress.offset:= 0;
         memop.t:= bitoptypes[das_pointer];
         i2:= ssad;
        end;
+}
        with additem(oc_checkclasstype)^.par do begin 
                    //returns nil in par 0 if no match
         ssas1:= ptop^.d.dat.fact.ssaindex;
