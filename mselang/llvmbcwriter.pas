@@ -298,7 +298,8 @@ function signedvbr(const avalue: int64): int64; inline;
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits,mseformatstr,identutils,msearrayutils;
+ errorhandler,msesys,sysutils,msebits,mseformatstr,identutils,msearrayutils,
+ opcode;
 
  //abreviations, made by createabbrev tool todo: use more abbrevs
  
@@ -1519,7 +1520,7 @@ begin
  else begin
   emit1(0);
  {$ifdef mse_debugparser}
-  additem(ffuncids,fglobcount,ffunccount);
+  msearrayutils.additem(ffuncids,fglobcount,ffunccount);
  {$endif}
  end;
  emitvbr6(ord(alinkage));
@@ -1770,20 +1771,15 @@ begin
    emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
   end;
- {
-  seg_globconst: begin
-   emitgetelementptr(globval(fconstseg),
-                                   constval(aaddress.segdataaddress.a.address));
-   emitgetelementptr(relval(0),constval(aaddress.segdataaddress.offset));
-  end;
- }
+  {
   seg_classdef: begin
-   emitgetelementptr(globval(
-       pint32(fclassdefs+aaddress.segdataaddress.a.address)^),
+   emitgetelementptr(constval(
+       (pclassdefconstheaderty(
+              fclassdefs+aaddress.segdataaddress.a.address)-1)^.defsid),
                                       constval(aaddress.segdataaddress.offset)); 
                                                            //2ssa
-//   notimplementederror('20150327A');
   end;
+  }
   seg_nil: begin
    emitpushconst(nullconst);
   end;

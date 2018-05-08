@@ -1921,12 +1921,22 @@ var
     internalerror(ie_handler,'20170510A');
    end;
   {$endif} 
-   with insertitem(oc_pushsegaddr,adatacontext,-1,
+   with insertitem(oc_pushclassdef,adatacontext,-1)^.par do begin
+    if co_llvm in info.o.compileoptions then begin
+     classdefid:= getclassdefid(atyp);
+    end
+    else begin
+     classdefstackops:= atyp^.infoclass.defs.address;
+    end;
+   end;
+{
+   with insertitem(oc_pushclassdef,adatacontext,-1,
                            pushsegaddrssaar[seg_classdef])^ do begin
     par.memop.segdataaddress.a:= atyp^.infoclass.defs;
     par.memop.segdataaddress.offset:= 0;
     par.memop.t:= bitoptypes[das_pointer];
    end;
+}
    initfactcontext(adatacontext);
    adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
    adatacontext^.d.dat.datatyp.typedata:= ele.eledatarel(atyp);
