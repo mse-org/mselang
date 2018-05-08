@@ -1034,9 +1034,9 @@ inc(testvar);
    if typ1^.h.llvmrtticonst > 0 then begin
     with info.s.unitinfo^.llvmlists.constlist do begin
      bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
-     getrtti(typ1);
-     pint32(@bufdat1^.items)[classrttidefindex]:= 
-                            addpointercast(pint32(poclassdef)^).listid;
+     pint32(@bufdat1^.items)[classrttidefindex]:= getrtti(typ1);
+//     pint32(@bufdat1^.items)[classrttidefindex]:= 
+//                            addpointercast(pint32(poclassdef)^).listid;
               //todo: hide for search because hash is wrong
     end;
    end;
