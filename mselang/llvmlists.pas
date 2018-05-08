@@ -1232,7 +1232,7 @@ var
 begin
  inc(aid);
 {$ifdef mse_checkinternalerror}
- if (aid < 1) or (aid >= count) then begin
+ if (aid < 1) or (aid > count) then begin
   internalerror(ie_llvmlist,'20171119A');
  end;
 {$endif}
