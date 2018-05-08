@@ -3166,12 +3166,22 @@ procedure handleissimpexp();
   result:= false;
   if acontext^.d.kind = ck_typearg then begin
    typ1:=  ptypedataty(ele.eledataabs(acontext^.d.typ.typedata));
+   with insertitem(oc_pushclassdef,acontext,-1)^.par do begin
+    if co_llvm in info.o.compileoptions then begin
+     classdefid:= getclassdefid(typ1);
+    end
+    else begin
+     classdefstackops:= typ1^.infoclass.defs.address;
+    end;
+   end;
+{
    with insertitem(oc_pushsegaddr,acontext,-1,
                                     pushsegaddrssaar[seg_classdef])^ do begin
     par.memop.segdataaddress.a:= typ1^.infoclass.defs;
     par.memop.segdataaddress.offset:= 0;
     par.memop.t:= bitoptypes[das_pointer];
    end;
+}
    initfactcontext(acontext);
    result:= true;
   end
