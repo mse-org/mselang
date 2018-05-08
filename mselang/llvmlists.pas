@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2225,9 +2225,9 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
 
  function getclassid(const asegoffset: int32): int32;
  begin
-  result:= (pclassdefconstheaderty(aclassdef)-1)^.defsid;
+  result:= (pclassdefconstheaderty(getsegmentpo(seg_classdef,asegoffset))-1)^.
+                                                                         defsid;
                                               //header in negative offset
-//  result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
  end; //getclassid()
 
  function getrttiid(const asegoffset: int32): int32;
