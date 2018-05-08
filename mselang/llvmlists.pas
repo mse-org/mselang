@@ -959,13 +959,14 @@ var testvar: int32;
 procedure updatellvmclassdefs(const updatesubs: boolean);
 
 var
- offse: int32;
+ offss,offse: int32;
  
  procedure setvirtsubs(const atyp: ptypedataty; var offs: int32);
  var
   ele1: elementoffsetty;
   sub1: psubdataty;
   v1: llvmvaluety;
+  i1: int32;
  begin
   if atyp^.h.ancestor > 0 then begin
    setvirtsubs(ele.eledataabs(atyp^.h.ancestor),offs);
@@ -984,6 +985,18 @@ var
      pint32(absdata(offs))^:= v1.listid;
     end;
     inc(offs,sizeof(int32));
+   end;
+   if sf_override in sub1^.flags then begin
+    i1:= offss + sub1^.tableindex * sizeof(int32);
+   {$ifdef mse_checkinternalerror}
+    if i1 >= offse then begin
+     internalerror(ie_llvmlist,'20180508A');
+    end;
+   {$endif}
+    with info.s.unitinfo^.llvmlists.constlist do begin
+     v1:= addpointercast(sub1^.globid);
+     pint32(absdata(i1))^:= v1.listid;
+    end;
    end;
    ele1:= sub1^.next;
   end;
@@ -1036,6 +1049,7 @@ inc(testvar);
                                                               constlist.buffer;
 //    pd:= @bufdat2.
    end;
+   offss:= i2;
    offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
    setvirtsubs(typ1,i2);
   {$ifdef mse_checkinternalerror}
