@@ -513,11 +513,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('MAINENTRY');
 {$endif}
+{
  with info do begin
   if co_llvm in o.compileoptions then begin
    updatellvmclassdefs(false);
   end;
  end;
+}
 end;
 
 procedure handleimplusesentry();
@@ -546,6 +548,11 @@ begin
 {$endif}
  markimplementationstart();
  checkpendingmanagehandlers();
+ with info do begin
+  if co_llvm in o.compileoptions then begin
+   updatellvmclassdefs(false);
+  end;
+ end;
  include(info.s.unitinfo^.state,us_implementationblock);
 end;
 
