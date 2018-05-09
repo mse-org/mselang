@@ -284,6 +284,7 @@ function trackaccess(const avar: pvardataty): addressvaluety;
 function trackaccess(const asub: psubdataty): int32;
 function tracksimplesubaccess(const aunit: punitinfoty;
                                              const anameid: int32): int32;
+function trackaccess(const atype: ptypedataty): int32; //for classdef
 
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
@@ -340,7 +341,10 @@ uses
  syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
  subhandler,classhandler,
  identutils,llvmbitcodes,llvmlists,grammarglob;
-   
+
+type
+ tgloballocdatalist1 = class(tgloballocdatalist);
+ 
 const
  minflo32 = -3.4e38;
  maxflo32 = 3.4e38; //todo: use exact values
@@ -2398,16 +2402,6 @@ begin
    end;
   end;
  end;
-{
- if info.compileoptions * [co_llvm,co_writeunits] = 
-                                            [co_llvm,co_writeunits] then begin
-  if af_segment in avar^.address.flags then begin
-   po1:= datatoele(avar);
-   if po1^.header.defunit <> info.s.unitinfo then begin
-   end;
-  end;
- end;
-}
 end;
 
 function trackaccess(const asub: psubdataty): int32;
@@ -2444,6 +2438,36 @@ begin
  end
  else begin
   result:= -1;
+ end;
+end;
+
+function trackaccess(const atype: ptypedataty): int32;
+                                    //for classdef
+var
+ unitid: identty;
+ globid: int32;
+begin
+{$ifdef checkinternalerror}
+ if not (atyp^.kind in [dk_class,dk_object] then begin
+  internalerror(ie_handler,'201180509A');
+ end;
+{$endif}
+ if info.modularllvm and llvmlink(atype,unitid,globid) then begin
+  if globid < 0 then begin
+   with info.s.unitinfo^.llvmlists do begin
+    result:= tgloballocdatalist1(globlist).addnoinit(
+                               typelist.void,li_external,true);
+    globlist.namelist.addname(datatoele(atype)^.header.defunit,
+                                         atype^.infoclass.nameid,result);
+    globlist.linklist.addlink(atype,result);
+   end;
+  end
+  else begin
+   result:= globid;
+  end;
+ end
+ else begin
+  result:= atype^.infoclass.defsid;
  end;
 end;
 

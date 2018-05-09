@@ -1000,6 +1000,7 @@ procedure checkpendingmanagehandlers();
 var
  ele1,ele2: elementoffsetty;
  typ1: ptypedataty;
+ p1: classdefinfopoty;
 begin
  with info do begin
   ele1:= s.unitinfo^.pendingmanagechain;
@@ -1010,6 +1011,19 @@ begin
    case typ1^.h.kind of
     dk_record,dk_object,dk_class: begin
      createrecordmanagehandlersubs(ele2);
+     typ1:= ele.eledataabs(ele2); //can be moved
+     if typ1^.h.kind in [dk_object,dk_class] then begin
+      p1:= getsegmentpo(typ1^.infoclass.defs);
+      p1^.header.procs[cdp_ini]:= pinternalsubdataty(
+              ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
+      p1^.header.procs[cdp_fini]:= pinternalsubdataty(
+              ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
+      if typ1^.infoclass.subattach.destroy <> 0 then begin
+       p1^.header.procs[cdp_destruct]:= pinternalsubdataty(
+               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
+      end;
+
+     end;
     end;
     else begin
      notimplementederror('20160314D');

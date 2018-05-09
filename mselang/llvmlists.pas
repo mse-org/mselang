@@ -1012,6 +1012,7 @@ var
  p1: pointer;
 
 begin
+ checkpendingmanagehandlers();
  poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
  peclassdef:= getsegmenttop(seg_classdef);
 // countpo:= getsegmentbase(seg_classintfcount);
@@ -1073,7 +1074,8 @@ begin
    internalerror1(ie_handler,'20180503');
   end;
  end;
- result:= atype^.infoclass.defsid;
+ result:= trackaccess(atype);
+// result:= atype^.infoclass.defsid;
 end;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);

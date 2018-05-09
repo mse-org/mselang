@@ -270,6 +270,5 @@ const
  _UA_HANDLER_FRAME = 4;
  _UA_FORCE_UNWIND = 8;
  exco_unhandledexception = 217;
-{$internaldebug on}
 implementation
 end.

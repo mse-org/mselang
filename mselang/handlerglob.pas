@@ -127,6 +127,7 @@ type
   defs: segaddressty; //classdefinfoty in target const
   defsid: int32;      //for llvm
   rttiid: int32;      //for llvm
+  nameid: int32; //for llvm
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;
   allocsize: dataoffsty;
