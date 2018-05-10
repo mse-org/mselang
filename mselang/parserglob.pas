@@ -770,7 +770,7 @@ type
   pendingmanagechain: elementoffsetty;
   implstart: pparsercontextty; //start of implementation parsing
   internalsubs: internalsubarty;
-  internalsubidsx: internalsubidarty;
+  internalsubnames: internalsubidarty;
   codestop: opaddressty;
   stoponerror: boolean;
  end;

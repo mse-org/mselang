@@ -545,7 +545,7 @@ begin
                                                     opreloc1,opreloccount);
                                       //own op segment
      opoffset1:= info.opcount-reloc.opstart;
-     aunit^.internalsubidsx:= internalsubids;
+     aunit^.internalsubnames:= internalsubnames;
     end;
     setlength(globreloc1,globvarreloccount);
     setlength(opreloc1,opreloccount);

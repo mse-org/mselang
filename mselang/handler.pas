@@ -285,7 +285,7 @@ begin
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
       if modularllvm then begin
-       if internalsubidsx[isub_ini] > 0 then begin
+       if internalsubnames[isub_ini] > 0 then begin
         callinternalsub(ref,isub_ini);
        end;
       end
@@ -404,7 +404,7 @@ begin
      with punitlinkinfoty(list+ad1)^ do begin
       with ref^ do begin
        if modularllvm then begin
-        if internalsubidsx[isub_fini] > 0 then begin
+        if internalsubnames[isub_fini] > 0 then begin
          callinternalsub(ref,isub_fini);
         end;
        end

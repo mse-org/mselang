@@ -54,7 +54,7 @@ type
   implementationglobsize: card32;
   namecount: int32; //idents
   anoncount: int32; //idents without name, first item is parserglob.idstart
-  internalsubids: internalsubidarty;
+  internalsubnames: internalsubidarty;
  end;
  
  unitintfinfoty = record

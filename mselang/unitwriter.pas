@@ -342,7 +342,7 @@ begin
    filematch:= aunit^.filematch;
    namecount:= nameindex1;
    anoncount:= -anonindex1 - 1;
-   internalsubids:= aunit^.internalsubidsx;
+   internalsubnames:= aunit^.internalsubnames;
   end;
   result:= true;
 {$ifdef mse_debugparser}

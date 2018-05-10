@@ -199,7 +199,7 @@ begin
   if result then begin
    aaddress:= startsimplesub(internalsubidents[asub],false,true);
    internalsubs[asub]:= aaddress;
-   internalsubidsx[asub]:= nameid{-1};
+   internalsubnames[asub]:= nameid{-1};
   end;
  end;
 end;
@@ -237,7 +237,7 @@ begin
  result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
  with result^.par.callinfo do begin
   if info.modularllvm then begin
-   ad.globid:= tracksimplesubaccessx(aunit,aunit^.internalsubidsx[asub]);
+   ad.globid:= tracksimplesubaccessx(aunit,aunit^.internalsubnames[asub]);
    if ad.globid < 0 then begin
     ad.globid:= getoppo(aunit^.internalsubs[asub])^.par.subbegin.globid; //local
    end;
