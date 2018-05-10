@@ -239,7 +239,7 @@ begin
   if info.modularllvm then begin
    ad.globid:= tracksimplesubaccessx(aunit,aunit^.internalsubidsx[asub]);
    if ad.globid < 0 then begin
-    ad.globid:= aunit^.internalsubs[asub]; //local
+    ad.globid:= getoppo(aunit^.internalsubs[asub])^.par.subbegin.globid; //local
    end;
   end;
   flags:= [];
