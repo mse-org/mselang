@@ -189,7 +189,8 @@ type
    procedure emitvar(const atype: int32; const alinkage: linkagety);
    procedure emitvar(const atype: int32; const ainitconst: int32;
                                                    const alinkage: linkagety);
-   procedure emitconst(const atype: int32; const ainitconst: int32);
+   procedure emitconst(const atype: int32; const ainitconst: int32;
+                                                   const alinkage: linkagety);
    procedure emitalloca(const atype: int32); //1 ssa //todo: use explicittype
    procedure resetssa(); //sets ssastart to current ssa
    
@@ -669,7 +670,7 @@ begin
      apersonality+1);
     end;
     gak_const: begin
-     emitconst(pga5^.typeindex,pga5^.initconstindex);
+     emitconst(pga5^.typeindex,pga5^.initconstindex,pga5^.linkage);
     end;
     gak_var: begin
      if pga5^.initconstindex >= 0 then begin
@@ -1573,11 +1574,12 @@ begin
 {$endif}
 end;
 
-procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);
+procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32;
+                                                   const alinkage: linkagety);
 begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[
  {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
-          1 or explicitvartype,ainitconst+1+fconststart,ord(li_internal),0,0]);
+          1 or explicitvartype,ainitconst+1+fconststart,ord(alinkage),0,0]);
 {$ifdef mse_debugparser}
  inc(fglobcount);
 {$endif}

@@ -1010,6 +1010,7 @@ var
  globdat1: pgloballocdataty;
  bufdat1: paggregateconstty;
  p1: pointer;
+ li1: linkagety;
 
 begin
  checkpendingmanagehandlers();
@@ -1021,10 +1022,20 @@ begin
   typ1:= ele.eledataabs(header1^.typedata);
   i1:= header1^.intfcount;
   if typ1^.infoclass.defsid < 0 then begin
+   li1:= constlinkage;
+   if vik_global in datatoele(typ1)^.header.visibility then begin
+    li1:= li_external;
+   end;
    typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
            info.s.unitinfo^.llvmlists.constlist.addclassdef(
-                                   poclassdef,i1).listid,constlinkage);
+                                   poclassdef,i1).listid,li1);
+   if li1 = li_external then begin
+    inc(info.s.unitinfo^.nameid);
+    typ1^.infoclass.nameid:= info.s.unitinfo^.nameid;
+    info.s.unitinfo^.llvmlists.globlist.namelist.addname(
+               info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
+   end;
 inc(testvar);
    header1^.defsid:= typ1^.infoclass.defsid;
   {$ifdef mse_checkinternalerror}

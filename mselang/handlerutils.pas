@@ -2456,7 +2456,7 @@ begin
   if globid < 0 then begin
    with info.s.unitinfo^.llvmlists do begin
     result:= tgloballocdatalist1(globlist).addnoinit(
-                               typelist.void,li_external,true);
+                               typelist.classdef{void},li_external,true);
     globlist.namelist.addname(datatoele(atype)^.header.defunit,
                                          atype^.infoclass.nameid,result);
     globlist.linklist.addlink(atype,result);
