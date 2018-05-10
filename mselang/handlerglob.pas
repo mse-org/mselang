@@ -481,10 +481,16 @@ type
   end;
  end;
  psubdataty = ^subdataty;
- 
+
+ internalsubflagty = (isf_pointerpar);
+ internalsubflagsty = set of internalsubflagty;
+  
  internalsubdataty = record
   address: opaddressty;
+  globid: int32; //for llvm
+  nameid: int32; //for llvm
   calllinks: linkindexty;
+  flags: internalsubflagsty;
  end;
  pinternalsubdataty = ^internalsubdataty;
 

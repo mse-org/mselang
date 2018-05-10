@@ -147,16 +147,22 @@ function callinternalsub(const aunit: punitinfoty; const asubid: int32;
 }
 function callinternalsub(const aunit: punitinfoty; const asub: internalsubty;
                                    const stackindex: int32 = bigint): popinfoty;
-function callinternalsubpo(const asub: opaddressty;
+function callinternalsubpo(const asub: pinternalsubdataty{opaddressty};
                             const pointerparamssa: int32; 
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0
+function callinternalsubpo(const asub: psubdataty{opaddressty};
+                            const pointerparamssa: int32; 
+                                   const stackindex: int32 = bigint): popinfoty;
 procedure initsubstartinfo();
 procedure begintempvars();
 procedure endtempvars();
 procedure settempvars(var allocs: suballocllvmty);
 function startsimplesub(const aname: identty; const pointerparam: boolean; 
                                    const global: boolean = false): opaddressty;
+function startsimplesub(const asub: pinternalsubdataty; 
+                              const pointerparam: boolean; 
+                                const global: boolean = false): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
@@ -231,7 +237,7 @@ begin
  result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
  with result^.par.callinfo do begin
   if info.modularllvm then begin
-   ad.globid:= tracksimplesubaccess(aunit,aunit^.internalsubidsx[asub]);
+   ad.globid:= tracksimplesubaccessx(aunit,aunit^.internalsubidsx[asub]);
    if ad.globid < 0 then begin
     ad.globid:= aunit^.internalsubs[asub]; //local
    end;
@@ -242,14 +248,45 @@ begin
  end;
 end;
 
-function callinternalsubpo(const asub: opaddressty;
+function callinternalsubpo(const asub: pinternalsubdataty{opaddressty};
     const pointerparamssa: int32; const stackindex: int32 = bigint): popinfoty;
 begin
  result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
  with result^.par.callinfo do begin
-  if asub <> 0 then begin
-   ad.globid:= getoppo(asub)^.par.subbegin.globid;
-   ad.ad:= asub-1; //compensate inc(pc)
+  if info.modularllvm then begin
+   ad.globid:= trackaccess(asub);
+  end
+  else begin
+   if asub^.address <> 0 then begin
+    ad.globid:= getoppo(asub^.address)^.par.subbegin.globid;
+    ad.ad:= asub^.address-1; //compensate inc(pc)
+   end;
+  end;
+  flags:= [];
+  linkcount:= 0;
+  paramcount:= 1;
+  params:= getsegmenttopoffs(seg_localloc);
+  with pparallocinfoty(allocsegmentpo(seg_localloc,
+                                       sizeof(parallocinfoty)))^ do begin
+   ssaindex:= pointerparamssa;
+   size:= bitoptypes[das_pointer] //not used? 
+  end;
+ end;
+end;
+
+function callinternalsubpo(const asub: psubdataty;
+    const pointerparamssa: int32; const stackindex: int32 = bigint): popinfoty;
+begin
+ result:= insertitem(oc_call,stackindex-info.s.stackindex,-1);
+ with result^.par.callinfo do begin
+  if info.modularllvm then begin
+   ad.globid:= trackaccess(asub);
+  end
+  else begin
+   if asub^.address <> 0 then begin
+    ad.globid:= getoppo(asub^.address)^.par.subbegin.globid;
+    ad.ad:= asub^.address-1; //compensate inc(pc)
+   end;
   end;
   flags:= [];
   linkcount:= 0;
@@ -1256,13 +1293,15 @@ begin
  end;
 end;
 
-function startsimplesub(const aname: identty; const pointerparam: boolean;
-                                   const global: boolean = false): opaddressty;
+function startsimplesub1(const aname: identty; const pointerparam: boolean;
+               const global: boolean; out aglobid,anameid: int32): opaddressty;
 var
  m1: metavaluety;
  var1: vardataty;
  i1: int32;
 begin
+ aglobid:= -1;
+ anameid:= -1;
  with info do begin
   if do_proginfo in s.debugoptions then begin
    if pointerparam then begin
@@ -1276,7 +1315,7 @@ begin
               s.currentfilemeta,s.source.line,-1,m1,[],true));
   end;
   initsubstartinfo();
-  managedtemparrayid:= locallocid;  
+//  managedtemparrayid:= locallocid;  
   managedtemparrayid:= locallocid;  
   resetssa();
   result:= opcount;
@@ -1296,6 +1335,7 @@ begin
                                                                 noparams);
       end;
       inc(info.s.unitinfo^.nameid);
+      anameid:= info.s.unitinfo^.nameid;
       llvmlists.globlist.namelist.addname(info.s.unitinfo,
                                      info.s.unitinfo^.nameid,subbegin.globid);
      end
@@ -1307,6 +1347,7 @@ begin
        subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
       end;
      end;
+     aglobid:= subbegin.globid;
      if do_proginfo in s.debugoptions then begin
       with pdisubprogramty(llvmlists.metadatalist.getdata(
                                       s.currentscopemeta))^ do begin
@@ -1364,6 +1405,22 @@ begin
    s.trystacklevel:= 0;
   end;
  *)
+end;
+
+function startsimplesub(const aname: identty; const pointerparam: boolean;
+                                   const global: boolean = false): opaddressty;
+var
+ i1,i2: int32;
+begin
+ result:= startsimplesub1(aname,pointerparam,global,i1,i2);
+end;
+
+function startsimplesub(const asub: pinternalsubdataty; 
+                              const pointerparam: boolean; 
+                                const global: boolean = false): opaddressty;
+begin
+ result:= startsimplesub1(datatoele(asub)^.header.name,pointerparam,global,
+                                                   asub^.globid,asub^.nameid);
 end;
 
 procedure settempvars(var allocs: suballocllvmty);

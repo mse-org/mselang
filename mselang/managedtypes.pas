@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -333,7 +333,7 @@ begin
   else begin   
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op]);
    i1:= pushmanageaddr(aref);
-   op1:= callinternalsubpo(sub1^.address,i1,aref.contextindex);
+   op1:= callinternalsubpo(sub1{^.address},i1,aref.contextindex);
    if (sub1^.address = 0) and 
                  (not modularllvm or 
                   (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
@@ -527,7 +527,7 @@ begin
    end;
   {$endif}
    sub1:= ele.eledataabs(asub);
-   op1:= callinternalsubpo(sub1^.address,d.dat.fact.ssaindex,s.stacktop);
+   op1:= callinternalsubpo(sub1{^.address},d.dat.fact.ssaindex,s.stacktop);
    if (sub1^.address = 0) and 
                  (not modularllvm or 
                   (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
@@ -556,7 +556,7 @@ begin
    with addcontrolitem(oc_gotonil)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
    end; //skip call in case of nil instance
-   op1:= callinternalsubpo(sub1^.address,d.dat.fact.ssaindex,s.stacktop);
+   op1:= callinternalsubpo(sub1{^.address},d.dat.fact.ssaindex,s.stacktop);
    if (sub1^.address = 0) and 
                  (not modularllvm or 
                   (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 

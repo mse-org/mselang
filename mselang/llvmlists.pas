@@ -464,7 +464,7 @@ type
                               const externunit: boolean): int32; 
                                                             //returns listid
    function addexternalsimplesub(const aunit: pointer; //punitinfoty
-                                             const anameid: int32): int32;
+          const anameid: int32; const aflags: internalsubflagsty): int32;
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty;
                            const aname: identnamety): int32;  //returns listid
@@ -2671,14 +2671,19 @@ begin
 end;
 
 function tgloballocdatalist.addexternalsimplesub(const aunit: pointer;
-                                                const anameid: int32): int32;
+             const anameid: int32; const aflags: internalsubflagsty): int32;
 var
  dat1: globallocdataty;
 begin
  result:= fcount;
  dat1.flags:= [sf_proto];
  dat1.linkage:= li_external;
- dat1.typeindex:= ftypelist.simplesub;
+ if isf_pointerpar in aflags then begin
+  dat1.typeindex:= ftypelist.pointerproc;
+ end
+ else begin
+  dat1.typeindex:= ftypelist.simplesub;
+ end;
  fnamelist.addname(aunit,anameid,result);
  flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
  dat1.kind:= gak_sub;
