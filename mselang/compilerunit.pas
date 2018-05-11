@@ -175,8 +175,8 @@ const
   'rttity','enumitemrttity'
  );
 type
- compilerunitty = (cu_none,cu_personality,cu_internaltypes,cu_compilerunit,
-                   cu_memhandler);
+ compilerunitty = (cu_none,cu_personality,cu_internaltypes,
+                   cu_memhandler,cu_compilerunit);
  compilerunitdefty = record
   name: string;
   first,last: compilersubty;
@@ -192,8 +192,8 @@ const
                                           last: cs_personality),
   (name: internaltypesunitname; first: cs_none;
                                           last: cs_none),
-  (name: compilerunitname; first: cs_zeropointerar; last: high(compilersubty)),
-  (name: memhandlerunitname; first: cs_malloc; last: cs_free)
+  (name: memhandlerunitname; first: cs_malloc; last: cs_free),
+  (name: compilerunitname; first: cs_zeropointerar; last: high(compilersubty))
  );
 var
  compilerunits: array[compilerunitty] of compilerunitinfoty;
