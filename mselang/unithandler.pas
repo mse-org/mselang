@@ -76,7 +76,7 @@ function initunitfileinfo(const aunit: punitinfoty): boolean;
 function loadunitbyid(const aid: identty; 
                     const astackoffset: int32 = minint): punitinfoty;
 function loadunit(const aindex: integer): punitinfoty;
-function parsecompilerunit(const aname: filenamety;
+function parsecompilerunit(const aname: string;
                                         out aunit: punitinfoty): boolean;
 
 procedure handleprogramentry();
@@ -899,18 +899,19 @@ begin
  result:= getunitfile(aunit,stringtolstring(string(aname)));
 end;
          
-function parsecompilerunit(const aname: filenamety; 
+function parsecompilerunit(const aname: string; 
                                              out aunit: punitinfoty): boolean;
 var
  str1: string;
 begin
  result:= false;
- str1:= stringtoutf8(aname);
+// str1:= stringtoutf8(aname);
+ str1:= aname;
  aunit:= newunit(str1);
  with aunit^ do begin
 //  name:= str1;
   prev:= info.s.unitinfo;
-  if not getunitfile(aunit,aname) then begin
+  if not getunitfile(aunit,msestring(aname)) then begin
    errormessage(err_compilerunitnotfound,[aname]);
    exit;
   end;

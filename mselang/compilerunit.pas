@@ -26,7 +26,7 @@ const
  internaltypesunitname = '__mla__internaltypes';
  personalityunitname = '__mla__personality';
  compilerunitname = '__mla__compilerunit';
- rtlunitnames: array[rtlunitty] of msestring = 
+ rtlunitnames: array[rtlunitty] of string = 
             ('system','rtl_base','rtl_fpccompatibility');
  
 type

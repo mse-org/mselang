@@ -154,7 +154,8 @@ var
   po3: pelementinfoty;
   i1: int32;
  begin
-  if (ref >= elestart) and (ref < eleend) then begin
+  if false {(ref >= elestart) and (ref < eleend)} then begin
+   //todo
    ref:= ref - elestart;
   end
   else begin //not in streamed segment
@@ -460,10 +461,11 @@ begin
     stream1.destroy();
    end;
    if co_llvm in info.o.compileoptions then begin
+   {
     if info.modularllvm then begin
      for cu1:= succ(low(cu1)) to high(cu1) do begin
       with compilerunitdefs[cu1] do begin
-       if name <> filenamety(aunit^.namestring) then begin
+       if name <> aunit^.namestring then begin
         for sub1:= first to last do begin
          if compilersubs[sub1] <> 0 then begin
           ps1:= ele.eledataabs(compilersubs[sub1]);
@@ -483,6 +485,7 @@ begin
       end;
      end;
     end;
+   }
     fna1:= getbcunitfilename(aunit^.rtfilepath);
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;

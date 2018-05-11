@@ -1433,7 +1433,7 @@ begin
   allocs.tempvars:= 0; //init
   if tempvarcount > 0 then begin
    allocs.tempvars:=
-           allocsegmentoffset(seg_localloc,tempvarcount*sizeof(p1^),p1);
+           allocsegmentoffset(seg_localloc,tempvarcount*sizeof(int32),p1);
    pe:= p1 + tempvarcount;
    item1:= tempvarchain;
    p2:= getlistitem(tempvarlist,item1);

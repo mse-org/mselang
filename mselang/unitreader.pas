@@ -163,7 +163,7 @@ var
   po3: pelementinfoty;
  begin
   result:= false;
-  if ref >= 0 then begin
+  if ref >= 0 then begin //todo, does not work
    ref:= ref + baseoffset;
    path:= ele.eleinfoabs(ref)^.header.path;
   end
@@ -458,6 +458,9 @@ begin
        end;
        ek_field: begin
         with pfielddataty(po)^ do begin
+         if haselereloc then begin
+          reloc(elereloc1,targetadty(vf.typ)); //todo: 64 bit
+         end;
         end;
        end;
        ek_var: begin

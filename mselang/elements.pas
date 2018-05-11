@@ -1763,6 +1763,7 @@ begin
                ' befdest:'+inttostrmse(infoclass.subattach.beforedestruct)+
                ' incref:'+inttostrmse(infoclass.subattach.incref)+
                ' decref:'+inttostrmse(infoclass.subattach.decref);
+{
          po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
          for int6:= 0 to infoclass.virtualcount-1 do begin
           if int6 mod 5 = 0 then begin
@@ -1771,6 +1772,7 @@ begin
           mstr1:= mstr1+inttostrlenmse(po5^,4)+' ';
           inc(po5);
          end;
+}
         end
         else begin
          mstr1:= mstr1 + ' forward';
