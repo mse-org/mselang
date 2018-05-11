@@ -1,5 +1,5 @@
 //__mla__internaltypes
-{ MSEgui Copyright (c) 2014-2017 by Martin Schreiber
+{ MSEgui Copyright (c) 2014-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -227,48 +227,6 @@ type
  end;
  pintfdefinfoty = ^intfdefinfoty;
 
-const            //M S E   m l a
- mlaexceptionid = $4d5345006d6c6100;
-type
- _Unwind_Reason_Code = (
-  _URC_NO_REASON,// = 0,
-  _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
-  _URC_FATAL_PHASE2_ERROR,// = 2,
-  _URC_FATAL_PHASE1_ERROR,// = 3,
-  _URC_NORMAL_STOP,// = 4,
-  _URC_END_OF_STACK,// = 5,
-  _URC_HANDLER_FOUND,// = 6,
-  _URC_INSTALL_CONTEXT,// = 7,
-  _URC_CONTINUE_UNWIND);// = 8
-
- p_Unwind_Exception = ^_Unwind_Exception;
- _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
-                                                      exc: p_Unwind_Exception);
- _Unwind_Exception_Class = card64;
- _Unwind_Word = card32;
- _Unwind_Sword = int32;
- 
- _Unwind_Exception = packed record
-  exception_class: _Unwind_Exception_Class;
-  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
-  private_1: _Unwind_Word;
-  private_2: _Unwind_Word;
- end;
- exceptinfoty = packed record
-  header: _Unwind_Exception;
-  data: pointer;
- end;
- pexceptinfoty = ^exceptinfoty;
- _Unwind_Context = record
- end;
- p_Unwind_Context = ^_Unwind_Context;
- 
- _Unwind_Action = cint;
-const
- _UA_SEARCH_PHASE = 1;
- _UA_CLEANUP_PHASE = 2;
- _UA_HANDLER_FRAME = 4;
- _UA_FORCE_UNWIND = 8;
- exco_unhandledexception = 217;
 implementation
+
 end.

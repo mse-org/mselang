@@ -23,6 +23,8 @@ const
 // systemunitname = '__mla__system';
 // systemunitname = 'system';
  memhandlerunitname = '__mla__debugmemhandler';
+ internaltypesunitname = '__mla__internaltypes';
+ personalityunitname = '__mla__personality';
  compilerunitname = '__mla__compilerunit';
  rtlunitnames: array[rtlunitty] of msestring = 
             ('system','rtl_base','rtl_fpccompatibility');
@@ -30,6 +32,7 @@ const
 type
  compilersubty = (
   cs_none,
+  cs_personality,
   cs_malloc,
   cs_calloc,
   cs_free,
@@ -92,13 +95,13 @@ type
 //  cs_initclass,
 //  cs_finiclass,
   cs_raise,
-  cs_personality,
   cs_finiexception,
   cs_writeenum
  );
 const
  compilersubnames: array[compilersubty] of string = (
   '',
+  '__mla__personality',
   '__mla__malloc',
   '__mla__calloc',
   '__mla__free',
@@ -161,7 +164,6 @@ const
 //  '__mla__initclass',
 //  '__mla__finiclass',
   '__mla__raise',
-  '__mla__personality',
   '__mla__finiexception',
   '__mla__writeenum'
  );
@@ -173,9 +175,10 @@ const
   'rttity','enumitemrttity'
  );
 type
- compilerunitty = (cu_none,cu_memhandler,cu_compilerunit);
+ compilerunitty = (cu_none,cu_personality,cu_internaltypes,cu_compilerunit,
+                   cu_memhandler);
  compilerunitdefty = record
-  name: filenamety;
+  name: string;
   first,last: compilersubty;
  end;
  compilerunitinfoty = record
@@ -185,8 +188,12 @@ type
 const
  compilerunitdefs: array[compilerunitty] of compilerunitdefty = (
   (name: ''; first: cs_none; last: cs_none),
-  (name: memhandlerunitname; first: cs_malloc; last: cs_free),
-  (name: compilerunitname; first: cs_zeropointerar; last: high(compilersubty))
+  (name: personalityunitname; first: cs_personality;
+                                          last: cs_personality),
+  (name: internaltypesunitname; first: cs_none;
+                                          last: cs_none),
+  (name: compilerunitname; first: cs_zeropointerar; last: high(compilersubty)),
+  (name: memhandlerunitname; first: cs_malloc; last: cs_free)
  );
 var
  compilerunits: array[compilerunitty] of compilerunitinfoty;
@@ -206,11 +213,16 @@ procedure initcompilersubs(const aunit: punitinfoty);
 var
  s1,se: compilersubty;
  t1: internaltypety;
- cu1: compilerunitty; 
+ cu1,cu2: compilerunitty;
 begin
  cu1:= cu_none;
- if aunit^.namestring = compilerunitname then begin
-  cu1:= cu_compilerunit;
+ for cu2:= succ(cu1) to high(cu2) do begin
+  if aunit^.namestring = compilerunitdefs[cu2].name then begin
+   cu1:= cu2;
+   break;
+  end;
+ end;
+ if cu1 = cu_compilerunit then begin
  {$ifdef mse_checkinternalerror}
   if (high(aunit^.interfaceuses) <= 0) or 
      (aunit^.interfaceuses[1]^.namestring <> '__mla__internaltypes') then begin
@@ -225,29 +237,26 @@ begin
    end;
   end;
   ele.popelementparent();
- end
- else begin
-  if aunit^.namestring = memhandlerunitname then begin
-   cu1:= cu_memhandler;
-  end;
  end;
  if cu1 <> cu_none then begin
   with compilerunitdefs[cu1] do begin
    s1:= first;
    se:= last;
   end;
-  ele.pushelementparent(aunit^.interfaceelement);
-  for s1:= s1 to se do begin
-   if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
-                                               compilersubs[s1]) then begin
-    internalerror1(ie_parser,'20141031A');
-   end
-   else begin
-    compilersubids[s1]:= psubdataty(ele.eledataabs(
-        psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
+  if s1 <> cs_none then begin
+   ele.pushelementparent(aunit^.interfaceelement);
+   for s1:= s1 to se do begin
+    if not ele.findcurrent(getident(compilersubnames[s1]),[ek_sub],allvisi,
+                                                compilersubs[s1]) then begin
+     internalerror1(ie_parser,'20141031A');
+    end
+    else begin
+     compilersubids[s1]:= psubdataty(ele.eledataabs(
+         psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
+    end;
    end;
+   ele.popelementparent();
   end;
-  ele.popelementparent();
  end;
 end;
 

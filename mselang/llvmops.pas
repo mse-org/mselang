@@ -36,7 +36,8 @@ implementation
 uses
  globtypes,sysutils,msesys,handlerglob,elements,msestrings,
  compilerunit,bcunitglob,identutils,
- handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
+ handlerutils,llvmlists,errorhandler,__mla__internaltypes,__mla__personality,
+ opcode,msearrayutils,
  interfacehandler,rttihandler;
 
 type
@@ -5489,8 +5490,17 @@ procedure run(const atarget: tllvmbcwriter; const amain: boolean;
 var
  endpo: pointer;
  lab: shortstring;
+ s1: compilersubty;
 // opnum: int32;
 begin
+ if info.modularllvm then begin
+  for s1:= low(s1) to high(s1) do begin
+   if compilersubs[s1] > 0 then begin
+    compilersubids[s1]:= trackaccess(psubdataty(
+                                 ele.eledataabs(compilersubs[s1])));
+   end;
+  end;
+ end;
  bcstream:= atarget;
  codestarted:= false;
  stop:= false;

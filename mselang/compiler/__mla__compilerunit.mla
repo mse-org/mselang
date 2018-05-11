@@ -1,5 +1,5 @@
 //__mla__compilerunit
-{ MSEgui Copyright (c) 2014-2017 by Martin Schreiber
+{ MSEgui Copyright (c) 2014-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -15,7 +15,7 @@ interface
 //{$define mse_debugclass}
 
 uses
- __mla__internaltypes;
+ __mla__personality,__mla__internaltypes;
 
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: pointer);
@@ -107,27 +107,11 @@ procedure __mla__writeenum(const avalue: int32;
 //procedure __mla__finiclass(const instance: pointer);
 procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
-function __mla__personality(version: cint;
-             actions: _Unwind_Action;
-             exceptionclass: _Unwind_Exception_Class;
-             exceptionobject: p_Unwind_Exception;
-             context: p_Unwind_Context): _Unwind_Reason_Code;
-
-function _Unwind_RaiseException(
-           exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
-function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
-                                                                       external;
-function _Unwind_GetIP(context: p_Unwind_Context): pointer; external;
-procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer);
-                                                                  external;
-function _Unwind_GetGR(context: p_Unwind_Context; index: cint): ptrint;
-                                                                   external;
-procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint;
-                                                new_value: ptrint); external;
-
-function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 
 implementation
+//uses
+// __mla__personality;
+ 
 const
  temprefcount = 1;
 type
@@ -1827,89 +1811,5 @@ begin
  end;
 end;
 
-function __mla__personality(version: cint;
-             actions: _Unwind_Action;
-             exceptionclass: _Unwind_Exception_Class;
-             exceptionobject: p_Unwind_Exception;
-             context: p_Unwind_Context): _Unwind_Reason_Code;
-var
- po1: pointer;
- c1: ptrcard;
- typebaseoffset: ptrcard;
- tablelength: ptrcard;
- actionoffset: ptrcard;
- bo1: bool1;
- typestable: pointer;
- callsitetable: pointer;
- actiontable: pointer;
- ip,regionstart: pointer;
-begin
- result:= _URC_CONTINUE_UNWIND;
-// if actions and _UA_SEARCH_PHASE <> 0 then begin
- po1:= _Unwind_GetLanguageSpecificData(context);
- if po1 <> nil then begin
-  result:= _URC_CONTINUE_UNWIND;
-  bo1:= false;
-  if pcard8(po1)^ = $ff then begin
-   inc(po1);
-   if pcard8(po1)^ = 0 then begin
-    inc(po1);
-    c1:= readusleb128(po1);
-    typestable:= po1 + c1;
-//writeln(c1);
-    if pcard8(po1)^ = 3 then begin
-     inc(po1);
-     c1:= readusleb128(po1);
-//writeln(c1);
-     callsitetable:= po1;
-     actiontable:= po1 + c1;
-     ip:= _Unwind_GetIP(context){-1};
-     regionstart:= _Unwind_GetRegionStart(context);
-//writeln('IP            ',ip);
-//writeln('regionstart   ',regionstart);
-//writeln('typestable    ',typestable);
-//writeln('callsitetable ',callsitetable);
-//writeln('actiontable   ',actiontable);
-//writeln('----');
-     while callsitetable < actiontable do begin
-      po1:= regionstart + pptrint(callsitetable)^;    //blockstart
-//writeln(' blockstart   ',po1);
-      if po1 > ip then begin
-       break;                //no region found
-      end;
-      po1:= po1 + (pptrint(callsitetable)+1)^;          //blockend
-//writeln(' blockend   ',po1);
-      if po1 >= ip then begin //region found
-       po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
-//writeln(' landingpad   ',po1);
-       inc(callsitetable,3*sizeof(ptrint));
-       actionoffset:= readusleb128(callsitetable);
-       if actionoffset = 0 then begin
-        result:= installfinallycontext(actions,exceptionobject,context,po1);
-       end;
-       break;
-      end
-      else begin
-       inc(callsitetable,3*sizeof(ptrint));
-       readusleb128(callsitetable);
-      end;
-     end;
-     bo1:= true;
-    end;
-   end;
-  end;
-  if not bo1 then begin
-   fatalerror();
-  end;
- end
- else begin
- end;
-// end
-// else begin
-//  if actions and _UA_HANDLER_FRAME <> 0 then begin
-//   result:= _URC_INSTALL_CONTEXT;
-//  end;
-// end;
-end;
 
 end.
