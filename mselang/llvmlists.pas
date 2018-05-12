@@ -955,7 +955,7 @@ implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
  opcode,handlerutils,compilerunit,typehandler,rttihandler;
-var testvar: int32;
+
 procedure updatellvmclassdefs(const updatesubs: boolean);
 
 var
@@ -1036,7 +1036,6 @@ begin
     info.s.unitinfo^.llvmlists.globlist.namelist.addname(
                info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
    end;
-inc(testvar);
    header1^.defsid:= typ1^.infoclass.defsid;
   {$ifdef mse_checkinternalerror}
    if not (typ1^.h.kind in [dk_object,dk_class]) then begin

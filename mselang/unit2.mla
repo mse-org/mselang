@@ -1,13 +1,13 @@
 unit unit2;
 interface
 type
- tt = int32;
  unit2recty = record
   a,b: int32;
  end;
-var
+ tt = int32;
+var 
  unit2rec: unit2recty;
-{$dumpelements}
+//{$dumpelements}
 implementation
 {
 procedure test();

@@ -163,9 +163,11 @@ var
   po3: pelementinfoty;
  begin
   result:= false;
-  if ref >= 0 then begin //todo, does not work
+  if ref >= 0 then begin
    ref:= ref + baseoffset;
-   path:= ele.eleinfoabs(ref)^.header.path;
+   po3:= ele.eleinfoabs(ref);
+   path:= po3^.header.path+po3^.header.name;
+//   path:= ele.eleinfoabs(po3^.header.parent)^.header.path+po3^.header.name;
   end
   else begin
    po1:= linksstart - ref - 1;
@@ -449,6 +451,7 @@ begin
       if not updateref(header.parent,header.path) then begin
        goto errorlab;
       end;
+//      header.path:= header.path + header.name;
       ele.enterbufferitem(pele1); //enter in hash and data table
       po:= @data;
       case header.kind of

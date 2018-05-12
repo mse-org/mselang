@@ -2594,7 +2594,7 @@ begin
   end;
  end;
 end;
-var testvar5: popaddressty;
+
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -2679,7 +2679,6 @@ begin
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
-testvar5:= @(classdefinfopoty(getsegmentpo(infoclass.defs))^.virtualmethods);
      popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
                                      virtualmethods))[po2^.tableindex]:= ad1;
               //resolve virtual table entry

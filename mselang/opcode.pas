@@ -724,13 +724,12 @@ function getglobconstaddress(const asize: integer;
 begin
  result:= allocsegment(seg_globconst,asize,adata);
 end;
-var testvar1: int32;
+
 function getclassinfoaddress(const asize: int32;
                                    const ainterfacecount: int32): segaddressty;
 var
  p1: pclassdefconstheaderty;
 begin
-inc(testvar1);
  result:= allocsegment(seg_classdef,asize+sizeof(classdefconstheaderty));
  p1:= getsegmentpo(result);
  p1^.intfcount:= ainterfacecount;

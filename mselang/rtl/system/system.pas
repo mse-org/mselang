@@ -1,4 +1,4 @@
-//system
+//system 
 { MSEpas Copyright (c) 2014-2017 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
@@ -41,5 +41,6 @@ type
 
 var
  exitcode: int32;
+{$dumpelements}
 implementation
 end.

@@ -154,7 +154,7 @@ var
   po3: pelementinfoty;
   i1: int32;
  begin
-  if false {(ref >= elestart) and (ref < eleend)} then begin
+  if (ref >= elestart) and (ref < eleend) then begin
    //todo
    ref:= ref - elestart;
   end
@@ -176,7 +176,7 @@ var
    setsegmenttop(seg_unitlinks,po2);
    ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
   end;
- end;
+ end; //updateref()
 
  procedure puteledata(ps,pd: pelementinfoty; const s1: int32);
  var
@@ -257,7 +257,7 @@ var
     inc(pointer(pd),elesizes[header.kind]);
    end;
   end;
- end; //puteledata
+ end; //puteledata()
 {
 var
  unitkeybackup: identarty;

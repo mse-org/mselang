@@ -789,9 +789,9 @@ begin
   end;
  end;
 end;
-var testvar1: int32;
+
 procedure resolveforwardprop(var item) forward;
-var testvar4: pint32;
+
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -863,10 +863,8 @@ begin
                      //interfacetable start
     classdefs1:= getclassinfoaddress(
       int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
-inc(testvar1);
     infoclass.defs:= classdefs1;
     p2:= getsegmentpo(classdefs1);
-testvar4:= @(classdefinfopoty(p2)^.virtualmethods);
     with (pclassdefconstheaderty(p2)-1)^ do begin
      typedata:= d.typ.typedata;
     end;
