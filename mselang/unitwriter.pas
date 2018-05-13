@@ -202,6 +202,7 @@ var
     case header.kind of
      ek_type: begin
       with ptypedataty(po)^ do begin
+       updateref(h.base);
        case h.kind of
         dk_record,dk_class,dk_object: begin
          if tf_needsmanage in h.flags then begin
@@ -209,6 +210,7 @@ var
            updateref(recordmanagehandlers[mop1]);
           end;
          end;
+         updateref(fieldchain);
         end;
        end;
       end;

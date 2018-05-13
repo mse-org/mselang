@@ -481,6 +481,7 @@ begin
       case header.kind of
        ek_type: begin
         with ptypedataty(po)^ do begin
+        updateref(h.base,id1);
          case h.kind of
           dk_record,dk_class,dk_object: begin
            if tf_needsmanage in h.flags then begin
@@ -490,6 +491,7 @@ begin
              end;
             end;
            end;
+           updateref(fieldchain,id1);
           end;
          end;
         end;
