@@ -109,42 +109,31 @@ var
    end;
   end;
   result:= po1^.nameindex;
- end; //updateident
+ end; //updateident()
 
- procedure putdata(var po: pointer;{ var backup: pidentty;}
-                                         const adata: unitinfopoarty);
+ procedure putdata(var po: pointer; const adata: unitinfopoarty);
  var
   pd,pe: pusesitemty;
   ps: ppunitinfoty;
-//  pb: pidentty;
  begin
   pint32(po)^:= length(adata);
   pd:= pointer(pint32(po)+1);
   pe:= pd+length(adata);
   ps:= pointer(adata);
-//  pb:= backup;
   while pd < pe do begin
    with ps^^ do begin
-{
-    if not translatedkey then begin
-     translatedkey:= true;
-     pb^:= key; //backup
-     key:= updateident(key);
-    end;
-}
     pd^.id:= updateident(key);
     pd^.reloc:= reloc;
-//    pd^.interfaceglobstart:= interfaceglobstart;
-//    pd^.interfaceglobsize:= interfaceglobsize;
     pd^.filetimestamp:= filematch.timestamp;
    end;
    inc(ps);
    inc(pd);
-//   inc(pb);
   end;
   po:= pe;
-//  backup:= pb;
- end; //putdata
+ end; //putdata()
+
+var
+ mainparentref: elementoffsetty;
 
  procedure updateref(var ref: elementoffsetty);
           //>= 0 -> relative offset, -seg_unitlinks offset - 1 otherwise
@@ -155,26 +144,38 @@ var
   i1: int32;
  begin
   if (ref >= elestart) and (ref < eleend) then begin
-   //todo
    ref:= ref - elestart;
   end
   else begin //not in streamed segment
-   po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
-                            (maxidentvector+1)*sizeof(identty));
-//   po1^.dest:= @ref-deststart;
-   po2:= @po1^.ids;
-   po3:= ele.eleinfoabs(ref);
-   while true do begin
-    po2^:= updateident(po3^.header.name);
-    inc(po2);
-    if po3^.header.parentlevel <= 0 then begin
-     break;
+   if ref = mainparentref then begin
+    ref:= -1;
+   end
+   else begin
+    po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
+                             (maxidentvector+1)*sizeof(identty));
+    po2:= @po1^.ids;
+    po3:= ele.eleinfoabs(ref);
+    if mainparentref = -1 then begin
+     mainparentref:= ref;
+    {$ifdef mse_checkinternalerror}
+     if (po3^.header.kind <> ek_unit) or 
+                           (po3^.header.parentlevel <> 2) then begin
+      internalerror(ie_module,'20180513A');
+     end;
+    {$endif}
     end;
-    po3:= ele.eleinfoabs(po3^.header.parent);
+    while true do begin
+     po2^:= updateident(po3^.header.name);
+     inc(po2);
+     if po3^.header.parentlevel <= 0 then begin
+      break;
+     end;
+     po3:= ele.eleinfoabs(po3^.header.parent);
+    end;
+    po1^.len:= po2 - pidentty(@po1^.ids);
+    setsegmenttop(seg_unitlinks,po2);
+    ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
    end;
-   po1^.len:= po2 - pidentty(@po1^.ids);
-   setsegmenttop(seg_unitlinks,po2);
-   ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
   end;
  end; //updateref()
 
@@ -258,12 +259,7 @@ var
    end;
   end;
  end; //puteledata()
-{
-var
- unitkeybackup: identarty;
- pdi,pei: pidentty;
- psi: ppunitinfoty;
-} 
+
 begin
  result:= false;
  if info.modularllvm then begin
@@ -284,6 +280,7 @@ begin
  po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
  nameindex1:= 0;
  anonindex1:= -1;
+ mainparentref:= -1;
  identlist:= tidentlist.create;
  try
   updateident(idstart);
@@ -291,50 +288,11 @@ begin
    header.key:= updateident(aunit^.key);
    header.mainad:= aunit^.mainad; //todo: relocate
    header.reloc:= aunit^.reloc;
-//   header.interfaceglobstart:= aunit^.interfaceglobstart;
-//   header.interfaceglobsize:= aunit^.interfaceglobsize;
    header.implementationglobstart:= aunit^.implementationglobstart;
    header.implementationglobsize:= aunit^.implementationglobsize;
-{   
-                  //backup unit keys, update id
-   setlength(unitkeybackup,length(aunit^.interfaceuses)+
-                                     length(aunit^.implementationuses)+1);
-   pdi:= pointer(unitkeybackup);
-}
-{
-   pei:= pdi+length(aunit^.interfaceuses);
-   psi:= pointer(aunit^.interfaceuses);
-   while pdi < pei do begin
-    with psi^^ do begin
-     pdi^:= key;
-     key:= updateident(key);
-    end;
-    inc(pdi);
-    inc(psi);
-   end;
-   pei:= pdi+length(aunit^.implementationuses);
-   psi:= pointer(aunit^.implementationuses);
-   while pdi < pei do begin
-    with psi^^ do begin
-     pdi^:= key;
-     key:= updateident(key);
-    end;
-    inc(pdi);
-    inc(psi);
-   end;
-   pdi^:= aunit^.key;
-   aunit^.key:= header.key;
- }  
    po:= @interfaceuses;
    putdata(po,{pdi,}aunit^.interfaceuses);
    putdata(po,{pdi,}aunit^.implementationuses);
-{   
-   pdi^:= aunit^.key;
-   if not aunit^.translatedkey then begin
-    aunit^.key:= header.key;
-    aunit^.translatedkey:= true;
-   end;
-}
    pd:= po;
   end;
   ps:= ele.eleinfoabs(elestart);
@@ -354,45 +312,10 @@ begin
   end;
 {$endif}
  finally
-{
-               //restore unit keys
-  pdi:= pointer(unitkeybackup);
-  pei:= pdi+length(aunit^.interfaceuses);
-  psi:= pointer(aunit^.interfaceuses);
-  while pdi < pei do begin
-   with psi^^ do begin
-    if translatedkey then begin
-     translatedkey:= false;
-     key:= pdi^;
-    end;
-   end;
-   inc(pdi);
-   inc(psi);
-  end;
-  pei:= pdi+length(aunit^.implementationuses);
-  psi:= pointer(aunit^.implementationuses);
-  while pdi < pei do begin
-   with psi^^ do begin
-    if translatedkey then begin
-     translatedkey:= false;
-     key:= pdi^;
-    end;
-   end;
-   inc(pdi);
-   inc(psi);
-  end;
-  if aunit^.translatedkey then begin
-   aunit^.translatedkey:= false;
-   aunit^.key:= pdi^;
-  end;
-}
   identlist.destroy();
  end;
 end;
 
-//var
-// opsegstart: popinfoty;
- 
 function compileobjmodule(const aunit: punitinfoty): boolean; //true if ok
 //todo: use threads for multicore systems
 var

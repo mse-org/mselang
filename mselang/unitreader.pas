@@ -156,6 +156,10 @@ var
   result:= true;
  end; //getdata
 
+var
+ mainparent: elementoffsetty;
+ mainpath: identty;
+ 
  function updateref(var ref: elementoffsetty; out path: identty): boolean;
  var
   po1: punitlinkty;
@@ -167,29 +171,34 @@ var
    ref:= ref + baseoffset;
    po3:= ele.eleinfoabs(ref);
    path:= po3^.header.path+po3^.header.name;
-//   path:= ele.eleinfoabs(po3^.header.parent)^.header.path+po3^.header.name;
   end
   else begin
-   po1:= linksstart - ref - 1;
-   if po1 >= linksend then begin
-    exit;
-   end;
-   po2:= @po1^.ids;
-   pe:= po2+po1^.len;
-   if pe > linksend then begin
-    exit;
-   end;
-   path:= 0;
-   while po2 < pe do begin
-    if not updateident(int32(po2^)) then begin
+   if (ref = -1) and (mainparent >= 0) then begin
+    ref:= mainparent;
+    path:= mainpath;
+   end
+   else begin
+    po1:= linksstart - ref - 1;
+    if po1 >= linksend then begin
      exit;
     end;
-    path:= path + po2^;
-    inc(po2);
-   end;
-   po2:= @po1^.ids;
-   if not ele.findreverse(po1^.len,po2,ref) then begin
-    exit();
+    po2:= @po1^.ids;
+    pe:= po2+po1^.len;
+    if pe > linksend then begin
+     exit;
+    end;
+    path:= 0;
+    while po2 < pe do begin
+     if not updateident(int32(po2^)) then begin
+      exit;
+     end;
+     path:= path + po2^;
+     inc(po2);
+    end;
+    po2:= @po1^.ids;
+    if not ele.findreverse(po1^.len,po2,ref) then begin
+     exit();
+    end;
    end;
   end;
   result:= true;
@@ -262,10 +271,8 @@ var
  startref: markinfoty;
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
-// globpobefore: targetcardty;
  haselereloc: boolean;
  unit1: punitinfoty;
-// needsreloc: boolean;
  globvaroffset: elementoffsetty;
  opoffset1: targetoffsty;
  op1,ope: popinfoty;
@@ -284,7 +291,6 @@ begin
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin
   aunit^.rtfilepath:= fna1;
   try
-//   globpobefore:= info.globdatapo;
    resetunitsegments();
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filematch.timestamp) and
@@ -435,6 +441,7 @@ begin
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
     move(po3^,pele1^,i1); //todo: read segment data directly to ele buffer
+    mainparent:= -1;
     while pele1 < poend do begin
      with pele1^ do begin
       if not updateident(int32(header.name)) then begin
@@ -448,10 +455,22 @@ begin
                          (header.parentlevel < 0) then begin
        goto errorlab; //invalid
       end;
+
+      if mainparent < 0 then begin
+       if header.parent <> -1 then begin
+        goto errorlab;
+       end;
+       updateref(mainparent,mainpath);
+       with ele.eleinfoabs(mainparent)^ do begin
+        if (header.kind <> ek_unit) or (header.parentlevel <> 2) then begin
+         goto errorlab;
+        end;
+       end;
+      end;
+
       if not updateref(header.parent,header.path) then begin
        goto errorlab;
       end;
-//      header.path:= header.path + header.name;
       ele.enterbufferitem(pele1); //enter in hash and data table
       po:= @data;
       case header.kind of
@@ -560,9 +579,6 @@ begin
     if not dosort(globreloc1) or not dosort(opreloc1) then begin
      goto errorlab;
     end;
-//    if co_llvm in info.options then begin
-//     info.bcfilename:= 
-//    end;
     goto oklab;
 errorlab:
     ele.releaseelement(startref);
@@ -570,13 +586,6 @@ errorlab:
 oklab:
     with aunit^ do begin
      mainad:= intf^.header.mainad + opoffset1;
-{
-     for isub1:= low(internalsubs) to high(internalsubs) do begin
-      if internalsubs[isub1] <> 0 then begin
-       inc(internalsubs[isub1],opoffset1);
-      end;
-     end;
-}
     end;
     if co_llvm in info.o.compileoptions then begin
      result:= true;
