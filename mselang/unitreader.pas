@@ -519,11 +519,17 @@ begin
          if not updateref(vf.typ,id1) then begin
           goto errorlab;
          end;
+         if not updateref(vf.next,id1) then begin
+          goto errorlab;
+         end;
         end;
        end;
        ek_var: begin
         with pvardataty(po)^ do begin
          if not updateref(vf.typ,id1) then begin
+          goto errorlab;
+         end;
+         if not updateref(vf.next,id1) then begin
           goto errorlab;
          end;
         end;

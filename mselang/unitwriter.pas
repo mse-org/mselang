@@ -236,11 +236,13 @@ var
      ek_field: begin
       with pfielddataty(po)^ do begin
        updateref(vf.typ);
+       updateref(vf.next);
       end;
      end;
      ek_var: begin
       with pvardataty(po)^ do begin
        updateref(vf.typ);
+       updateref(vf.next);
       end;
      end;
      ek_const: begin
