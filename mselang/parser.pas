@@ -584,6 +584,7 @@ begin
   if o.compileoptions * [co_modular,co_build] = [co_modular] then begin
    if not (us_invalidunitfile in aunit^.state) and 
                                       readunitfile(aunit) then begin
+    initcompilersubs(aunit);
     result:= true;
     parseimplementations();
     s:= statebefore;

@@ -222,6 +222,17 @@ begin
    break;
   end;
  end;
+ if cu1 = cu_internaltypes then begin
+  ele.pushelementparent(aunit^.interfaceelement);
+  for t1:= low(internaltypety) to high(internaltypety) do begin
+   if not ele.findcurrent(getident(internaltypenames[t1]),[ek_type],
+                                          allvisi,internaltypes[t1]) then begin
+    internalerror(ie_parser,'20171106B');
+   end;
+  end;
+  ele.popelementparent();
+ end;
+(*
  if cu1 = cu_compilerunit then begin
  {$ifdef mse_checkinternalerror}
   if (high(aunit^.interfaceuses) <= 0) or 
@@ -238,6 +249,7 @@ begin
   end;
   ele.popelementparent();
  end;
+*)
  if cu1 <> cu_none then begin
   with compilerunitdefs[cu1] do begin
    s1:= first;
