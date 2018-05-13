@@ -1,4 +1,4 @@
-//__mla__compilerunit
+__mla__compilerunit
 { MSEgui Copyright (c) 2014-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
@@ -11,12 +11,12 @@
 {$mode pascal}
 unit __mla__compilerunit;
 interface
-//{$internaldebug on}
+{$internaldebug on}
 //{$define mse_debugclass}
 
 uses
  __mla__personality,__mla__internaltypes;
-
+{$dumpelements}
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: pointer);
 procedure __mla__decrefsizeref(const ref: ppointer);

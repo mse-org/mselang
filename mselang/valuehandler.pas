@@ -2224,8 +2224,6 @@ var
  ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
  si1: datasizety;
-// offs1: dataoffsty;
-// indilev1: indirectlevelty;
  stacksize1: datasizety;
  paramco1: integer;
  origparent: elementoffsetty;
@@ -2246,21 +2244,6 @@ begin
   pob:= poind-1;
   potop:= @contextstack[s.stacktop];
   with pob^ do begin
-//   if d.kind = ck_ref then begin
-//    if not checkdatatypeconversion(pob) then begin
-//     goto endlab;
-//    end;
-//    if not checkreftypeconversion(pob) then begin
-//     goto endlab;
-//    end;
-//   end
-//   else begin
-//    if d.kind in [ck_fact,ck_subres] then begin
-//     if not checkdatatypeconversion(pob) then begin
-//      goto endlab;
-//     end;
-//    end
-//   end;
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
@@ -2390,8 +2373,6 @@ begin
   if (idents.high = 0) and 
             not ((pob^.d.kind in factcontexts) or (pob^.d.kind = ck_ref)) and 
                                   (po1^.header.kind <> ek_var) then begin
-//      ((pob^.d.kind = ck_fact) and (pob^.d.dat.indirection < 0)) then begin
-                                             //correct?
    include(subflags,dsf_ownedmethod);
   end;
   po2:= @po1^.data;
@@ -2453,20 +2434,11 @@ begin
          internalerror(ie_value,'201400427B');
        {$endif}
         end;
-//        initfactcontext(0);
         initdatacontext(poind^.d,ck_ref);
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.flags:= vf.flags;
-        {
-        if af_objectfield in flags then begin
-         d.dat.indirection:= 0; //self has af_paramindirect
-         d.dat.datatyp.indirectlevel:= indirectlevel+1;
-        end
-        else begin
-        }
-         d.dat.indirection:= -1;
-         d.dat.datatyp.indirectlevel:= indirectlevel;
-//        end;
+        d.dat.indirection:= -1;
+        d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         if vik_classele in foundflags1 then begin
          include(d.dat.ref.c.address.flags,af_classele);
@@ -2511,7 +2483,6 @@ begin
          end;
          pocontext1:= pob;
         end;
-//        d:= contextstack[s.stackindex-1].d;
                   //todo: no double copy by handlefact
        end;
        donotfound(pocontext1,pocontext1^.d.dat.datatyp.typedata);
@@ -2529,7 +2500,6 @@ begin
          dec(d.dat.indirection); //pending dereference
         end;
         pocontext1:= poind - 1;
-//        poind^.d:= d; 
                   //todo: no double copy by handlefact
        end;
       end;
@@ -2537,24 +2507,6 @@ begin
        goto endlab; //todo: stop error earlier
       end;
       donotfound(pocontext1,pvardataty(po2)^.vf.typ);
-{
-                                  //todo: call of sub function results
-      if (stf_params in s.currentstatementflags) and
-                           (d.kind in datacontexts) then begin
-       if getvalue(poind,das_none) then begin
-        po3:= ele.eledataabs(d.dat.datatyp.typedata);
-        if (d.dat.datatyp.indirectlevel = 0) and 
-                              (po3^.h.kind in [dk_sub,dk_method]) then begin
-         include(subflags,dsf_indirect);
-         if po3^.h.kind = dk_method then begin
-          include(subflags,dsf_instanceonstack);
-         end;
-         dosub(s.stackindex,ele.eledataabs(po3^.infosub.sub),
-                                         paramstart,paramco,subflags);
-        end;
-       end;     
-      end;
-}
      end;
      if (stf_params in s.currentstatementflags) and
                           (pocontext1^.d.kind in datacontexts) then begin
@@ -2666,7 +2618,6 @@ begin
          end;
          if not bo1 then begin
           poind^.d:= potop^.d; //big copy!
-//          contextstack[s.stackindex].d.kind:= ck_space;
          end;
         end;
        end;
@@ -2682,12 +2633,6 @@ begin
     end;
     ek_condition: begin
      with pconditiondataty(po2)^ do begin
-{
-      if value.kind = dk_none then begin
-       errormessage(err_definehasnovalue,[]);
-       goto endlab;
-      end;
-}
       setconstcontext(poind,value)
      end;
     end;

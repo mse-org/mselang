@@ -204,6 +204,21 @@ var
       with ptypedataty(po)^ do begin
        updateref(h.base);
        case h.kind of
+        dk_enum: begin
+         updateref(infoenum.first);
+         updateref(infoenum.last);
+        end;
+        dk_enumitem: begin
+         updateref(infoenumitem.enum);
+         updateref(infoenumitem.next);
+        end;
+        dk_set: begin
+         updateref(infoset.itemtype);
+        end;
+        dk_array: begin
+         updateref(infoarray.i.itemtypedata);
+         updateref(infoarray.indextypedata);
+        end;
         dk_record,dk_class,dk_object: begin
          if tf_needsmanage in h.flags then begin
           for mop1:= low(mop1) to high(mop1) do begin
@@ -211,6 +226,9 @@ var
           end;
          end;
          updateref(fieldchain);
+        end;
+        dk_sub,dk_method: begin
+         updateref(infosub.sub);
         end;
        end;
       end;
@@ -231,6 +249,7 @@ var
      end;
      ek_ref: begin
       with prefdataty(po)^ do begin
+       updateref(ref);
       end;
      end;
      ek_sub: begin
