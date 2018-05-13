@@ -1904,13 +1904,11 @@ var
  firstnotfound: integer;
  po1: pelementinfoty;
  po2: pointer;
-// getfactflags: factflagsty;
  isinherited: boolean;
  isgetfact: boolean;
  subflags: dosubflagsty;
  poind,pob,potop: pcontextitemty;
   
-// procedure donotfound(const typeele: elementoffsetty);
  procedure donotfound(const adatacontext: pcontextitemty;
                            const atype: elementoffsetty);
 
@@ -1929,20 +1927,12 @@ var
      classdefstackops:= atyp^.infoclass.defs.address;
     end;
    end;
-{
-   with insertitem(oc_pushclassdef,adatacontext,-1,
-                           pushsegaddrssaar[seg_classdef])^ do begin
-    par.memop.segdataaddress.a:= atyp^.infoclass.defs;
-    par.memop.segdataaddress.offset:= 0;
-    par.memop.t:= bitoptypes[das_pointer];
-   end;
-}
    initfactcontext(adatacontext);
    adatacontext^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
    adatacontext^.d.dat.datatyp.typedata:= ele.eledatarel(atyp);
    adatacontext^.d.dat.datatyp.indirectlevel:= 1;
    include(subflags,dsf_instanceonstack);
-  end;//pushclassdef
+  end;//pushclassdef()
   
  var
   offs1: dataoffsty;
@@ -1954,13 +1944,12 @@ var
   typ1: ptypedataty;
   i2: int32;
   isclassof: boolean;
-//  pind: pcontextitemty;
- begin //donotfond
+
+ begin //donotfond()
   if firstnotfound <= idents.high then begin
    ele1:= basetype(atype);
    offs1:= 0;
    with info do begin
-//    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
      typ1:= ele.eledataabs(ele1);
      isclassof:= (typ1^.h.kind = dk_classof) and (typ1^.h.indirectlevel = 1);
@@ -1980,7 +1969,6 @@ var
         case d.kind of
          ck_ref: begin
           if (typ1^.h.kind = dk_class) then begin
-//          if af_classfield in flags then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end; //todo: handle indirection with existing offset
@@ -2194,7 +2182,7 @@ var
     end;
    end;
   end; 
- end;//donotfound
+ end;//donotfound()
  
  function checknoclassmethod(const aitem: pelementinfoty): boolean;
  var

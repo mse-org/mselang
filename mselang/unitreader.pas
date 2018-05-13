@@ -279,6 +279,9 @@ var
  isub1: internalsubty;
  bcheader1: bcunitheaderty;
  bo1: boolean;
+ pe1,pee: pelementoffsetty;
+ id1: identty;
+ mop1: managedopty;
 label
  errorlab,oklab,endlab;
 begin
@@ -476,6 +479,17 @@ begin
       case header.kind of
        ek_type: begin
         with ptypedataty(po)^ do begin
+         case h.kind of
+          dk_record,dk_class,dk_object: begin
+           if tf_needsmanage in h.flags then begin
+            for mop1:= low(mop1) to high(mop1) do begin
+             if not updateref(recordmanagehandlers[mop1],id1) then begin
+              goto errorlab;
+             end;
+            end;
+           end;
+          end;
+         end;
         end;
        end;
        ek_field: begin
@@ -505,6 +519,14 @@ begin
        end;
        ek_sub: begin
         with psubdataty(po)^ do begin
+         pe1:= @paramsrel;
+         pee:= pe1+paramcount;
+         while pointer(pe1) < pointer(pee) do begin
+          if not updateref(pe1^,id1) then begin
+           goto errorlab;
+          end;
+          inc(pe1);
+         end;
          inc(pointer(pele1),paramcount*sizeof(elementoffsetty));
         end;
        end;

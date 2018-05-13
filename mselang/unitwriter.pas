@@ -182,6 +182,8 @@ var
  procedure puteledata(ps,pd: pelementinfoty; const s1: int32);
  var
   pe: pelementinfoty;
+  pe1,pee: pelementoffsetty;
+  mop1: managedopty;
  begin
   move(ps^,pd^,s1);
   deststart:= pd;
@@ -198,6 +200,15 @@ var
     case header.kind of
      ek_type: begin
       with ptypedataty(po)^ do begin
+       case h.kind of
+        dk_record,dk_class,dk_object: begin
+         if tf_needsmanage in h.flags then begin
+          for mop1:= low(mop1) to high(mop1) do begin
+           updateref(recordmanagehandlers[mop1]);
+          end;
+         end;
+        end;
+       end;
       end;
      end;
      ek_field: begin
@@ -218,6 +229,12 @@ var
      end;
      ek_sub: begin
       with psubdataty(po)^ do begin
+       pe1:= @paramsrel;
+       pee:= pe1+paramcount;
+       while pointer(pe1) < pointer(pee) do begin
+        updateref(pe1^);
+        inc(pe1);
+       end;
        inc(pointer(pd),paramcount*sizeof(elementoffsetty));
       end;
      end;
