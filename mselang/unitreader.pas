@@ -167,37 +167,39 @@ var
   po3: pelementinfoty;
  begin
   result:= false;
-  if ref >= 0 then begin
-   ref:= ref + baseoffset;
+  if ref > 0 then begin
+   ref:= ref + baseoffset-1;
    po3:= ele.eleinfoabs(ref);
    path:= po3^.header.path+po3^.header.name;
   end
   else begin
-   if (ref = -1) and (mainparent >= 0) then begin
-    ref:= mainparent;
-    path:= mainpath;
-   end
-   else begin
-    po1:= linksstart - ref - 1;
-    if po1 >= linksend then begin
-     exit;
-    end;
-    po2:= @po1^.ids;
-    pe:= po2+po1^.len;
-    if pe > linksend then begin
-     exit;
-    end;
-    path:= 0;
-    while po2 < pe do begin
-     if not updateident(int32(po2^)) then begin
+   if ref < 0 then begin
+    if (ref = -1) and (mainparent >= 0) then begin
+     ref:= mainparent;
+     path:= mainpath;
+    end
+    else begin
+     po1:= linksstart - ref - 1;
+     if po1 >= linksend then begin
       exit;
      end;
-     path:= path + po2^;
-     inc(po2);
-    end;
-    po2:= @po1^.ids;
-    if not ele.findreverse(po1^.len,po2,ref) then begin
-     exit();
+     po2:= @po1^.ids;
+     pe:= po2+po1^.len;
+     if pe > linksend then begin
+      exit;
+     end;
+     path:= 0;
+     while po2 < pe do begin
+      if not updateident(int32(po2^)) then begin
+       exit;
+      end;
+      path:= path + po2^;
+      inc(po2);
+     end;
+     po2:= @po1^.ids;
+     if not ele.findreverse(po1^.len,po2,ref) then begin
+      exit();
+     end;
     end;
    end;
   end;
@@ -494,18 +496,15 @@ begin
        end;
        ek_field: begin
         with pfielddataty(po)^ do begin
-         if haselereloc then begin
-          reloc(elereloc1,targetadty(vf.typ)); //todo: 64 bit
+         if not updateref(vf.typ,id1) then begin
+          goto errorlab;
          end;
         end;
        end;
        ek_var: begin
         with pvardataty(po)^ do begin
-         if haselereloc then begin
-          reloc(elereloc1,targetadty(vf.typ)); //todo: 64 bit
-         end;
-         if af_segment in address.flags then begin
-          inc(address.segaddress.address,globvaroffset);
+         if not updateref(vf.typ,id1) then begin
+          goto errorlab;
          end;
         end;
        end;

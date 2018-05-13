@@ -143,38 +143,40 @@ var
   po3: pelementinfoty;
   i1: int32;
  begin
-  if (ref >= elestart) and (ref < eleend) then begin
-   ref:= ref - elestart;
-  end
-  else begin //not in streamed segment
-   if ref = mainparentref then begin
-    ref:= -1;
+  if ref <> 0 then begin
+   if (ref >= elestart) and (ref < eleend) then begin
+    ref:= ref - elestart+1;
    end
-   else begin
-    po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
-                             (maxidentvector+1)*sizeof(identty));
-    po2:= @po1^.ids;
-    po3:= ele.eleinfoabs(ref);
-    if mainparentref = -1 then begin
-     mainparentref:= ref;
-    {$ifdef mse_checkinternalerror}
-     if (po3^.header.kind <> ek_unit) or 
-                           (po3^.header.parentlevel <> 2) then begin
-      internalerror(ie_module,'20180513A');
+   else begin //not in streamed segment
+    if ref = mainparentref then begin
+     ref:= -1;
+    end
+    else begin
+     po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
+                              (maxidentvector+1)*sizeof(identty));
+     po2:= @po1^.ids;
+     po3:= ele.eleinfoabs(ref);
+     if mainparentref = -1 then begin
+      mainparentref:= ref;
+     {$ifdef mse_checkinternalerror}
+      if (po3^.header.kind <> ek_unit) or 
+                            (po3^.header.parentlevel <> 2) then begin
+       internalerror(ie_module,'20180513A');
+      end;
+     {$endif}
      end;
-    {$endif}
-    end;
-    while true do begin
-     po2^:= updateident(po3^.header.name);
-     inc(po2);
-     if po3^.header.parentlevel <= 0 then begin
-      break;
+     while true do begin
+      po2^:= updateident(po3^.header.name);
+      inc(po2);
+      if po3^.header.parentlevel <= 0 then begin
+       break;
+      end;
+      po3:= ele.eleinfoabs(po3^.header.parent);
      end;
-     po3:= ele.eleinfoabs(po3^.header.parent);
+     po1^.len:= po2 - pidentty(@po1^.ids);
+     setsegmenttop(seg_unitlinks,po2);
+     ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
     end;
-    po1^.len:= po2 - pidentty(@po1^.ids);
-    setsegmenttop(seg_unitlinks,po2);
-    ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
    end;
   end;
  end; //updateref()
@@ -213,10 +215,12 @@ var
      end;
      ek_field: begin
       with pfielddataty(po)^ do begin
+       updateref(vf.typ);
       end;
      end;
      ek_var: begin
       with pvardataty(po)^ do begin
+       updateref(vf.typ);
       end;
      end;
      ek_const: begin
