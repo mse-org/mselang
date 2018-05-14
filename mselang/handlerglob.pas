@@ -220,9 +220,6 @@ type
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedopty = (mo_ini,mo_inizeroed,mo_fini,mo_incref,mo_decref,mo_decrefindi,
-                mo_destroy);
- 
  addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_contextdata,
                      ark_local,ark_managedtemp,
                      ark_stack,ark_stackindi,ark_stackref,ark_tempvar);
@@ -249,10 +246,9 @@ type
     );
    );
  end;
-
- managedtypeprocty = procedure(const op: managedopty;{ const atype: ptypedataty;}
-                          const aadress: addressrefty{; const ssaindex: integer});
-
+ managedopty = (mo_ini,mo_inizeroed,mo_fini,mo_incref,mo_decref,mo_decrefindi,
+                mo_destroy);
+ 
  manageddataty = record
   managedele: elementoffsetty;
  end;
@@ -263,6 +259,13 @@ type
  end;
  prefdataty = ^refdataty;
 
+ managedtypeprocty = procedure(const op: managedopty; 
+                                          const aadress: addressrefty);
+ manageprockindty = (mpk_none,mpk_record,mpk_managearraydynar,
+                     mpk_managearraystring,mpk_managedynarraydynar,
+                     mpk_managedynarraystring,mpk_managedynarray,
+                     mpk_managestring);
+ 
  typedataheaderty = record
   ancestor: elementoffsetty; //first, 
             //valid for ancestordatakinds and ancestorchaindatakinds
@@ -271,7 +274,7 @@ type
                          //used for addressing record fields or typex = typey
   rtti: dataaddressty; //0 -> none
   llvmrtticonst: int32; //listid in constlist
-  manageproc: managedtypeprocty; //nil -> none
+  manageproc: manageprockindty;
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
@@ -607,7 +610,6 @@ const
 //das_sub,          das_meta
   targetpointersize,0);
  
- 
 function gettypesize(const typedata: typedataty): datasizety; inline;
 function basetype(const atype: ptypedataty): elementoffsetty;
 function basetype1(const atype: ptypedataty): ptypedataty;
@@ -630,10 +632,31 @@ procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 
+procedure callmanageproc(const akind: manageprockindty; const op: managedopty; 
+                                          const aadress: addressrefty);
+
 implementation
 uses
- elements,identutils;
- 
+ elements,identutils,managedtypes;
+
+const
+ manageprocs: array[manageprockindty] of managedtypeprocty = (
+  //mpk_none,mpk_record,  mpk_managearraydynar,mpk_managearraystring
+  nil,      @managerecord,@managearraydynar,   @managearraystring,
+  //mpk_managedynarraydynar,mpk_managedynarraystring,mpk_managedynarray
+  @managedynarraydynar,     @managedynarraystring,   @managedynarray,
+  //mpk_managestring
+  @managestring
+ );
+
+procedure callmanageproc(const akind: manageprockindty; const op: managedopty; 
+                                          const aadress: addressrefty);
+begin
+ if akind <> mpk_none then begin
+  manageprocs[akind](op,aadress);
+ end;
+end;
+  
 function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
  result:= typedata.h.bytesize;
@@ -679,7 +702,7 @@ begin
  atype.h.indirectlevel:= aindirectlevel;
  atype.h.ancestor:= aancestor;
  atype.h.kind:= akind;
- atype.h.manageproc:= nil;
+ atype.h.manageproc:= mpk_none;
  atype.h.signature:= getident();
 end;
 

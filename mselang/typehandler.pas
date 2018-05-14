@@ -754,7 +754,7 @@ var
    while ele1 <> 0 do begin
     field1:= ele.eledataabs(ele1);
     typ2:= ele.eledataabs(field1^.vf.typ);
-    if typ2^.h.manageproc <> nil then begin
+    if typ2^.h.manageproc <> mpk_none then begin
      if (op <> mo_inizeroed) or 
             (typ2^.h.flags * [tf_complexini,tf_hascomplexini] <> []) then begin
       fieldoffset:= field1^.offset - fieldoffset;
@@ -768,7 +768,7 @@ var
       ad1.typ:= typ2;
       ad1.ssaindex:= info.s.ssa.nextindex-1;
       ad1.contextindex:= info.s.stacktop;
-      typ2^.h.manageproc(op,{typ2,}ad1);
+      callmanageproc(typ2^.h.manageproc,op,{typ2,}ad1);
       fieldoffset:= field1^.offset; 
      end;
     end;
@@ -972,7 +972,7 @@ var
  typ1: ptypedataty;
 begin
  with info do begin
-  ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= @managerecord;
+  ptypedataty(ele.eledataabs(atyp))^.h.manageproc:= mpk_record;
   ele1:= ele.elementparent;
   ele.elementparent:= atyp;
   ele.checkcapacity(ek_internalsub,ord(high(op1))+1);
@@ -1178,8 +1178,7 @@ var
  range: ordrangety;
  flags1: typeflagsty;
  itemcount1: int32;
-// itemtype1: ptypedataty;
- manageproc1: managedtypeprocty;
+ manageproc1: manageprockindty;
  isopenarray: boolean;
  
 label
@@ -1199,7 +1198,6 @@ begin
     with ptypedataty(ele.eledataabs(itemtyoffs1))^ do begin
      flags1:= h.flags;
      indilev:= d.typ.indirectlevel;
-//     if indilev + h.indirectlevel > 0 then begin //??? why addition?
      if indilev > 0 then begin
       totsize:= targetpointersize;
       flags1:= flags1 - [tf_managed,tf_needsmanage];
@@ -1213,7 +1211,7 @@ begin
     end;
    end;  //todo: alignment
    if (int1 > 0) then begin  //static array
-    manageproc1:= nil;
+    manageproc1:= mpk_none;
     po1:= ele.eledataabs(itemtyoffs1);
     if tf_needsmanage in po1^.h.flags then begin
      while po1^.h.kind = dk_array do begin
@@ -1227,11 +1225,11 @@ begin
         notimplementederror('20160312C');
        end
        else begin
-        manageproc1:= @managearraydynar;
+        manageproc1:= mpk_managearraydynar;
        end;
       end;
       dk_string: begin
-       manageproc1:= @managearraystring;
+       manageproc1:= mpk_managearraystring;
       end;
       else begin
        notimplementederror('20160312D');
@@ -1305,16 +1303,13 @@ begin
        goto endlab;
       end;
       with arty^ do begin
-//       h.indirectlevel:= 0;
        h.bitsize:= totsize*8;
        h.bytesize:= totsize;
        infoarray.i.totitemcount:= itemcount1;
        h.datasize:= das_none;
-//       h.kind:= dk_array;
        h.manageproc:= manageproc1;
       end;
       itemtyoffs1:= ele.eledatarel(arty);
-//      indilev:= 0;
      end;
     end;
    end
@@ -1352,11 +1347,11 @@ begin
           notimplementederror('20160312A');
          end
          else begin
-          h.manageproc:= @managedynarraydynar;
+          h.manageproc:= mpk_managedynarraydynar;
          end;
         end;
         dk_string: begin
-         h.manageproc:= @managedynarraystring;
+         h.manageproc:= mpk_managedynarraystring;
         end;
         else begin
          notimplementederror('20160312B');
@@ -1364,7 +1359,7 @@ begin
        end;
       end
       else begin
-       h.manageproc:= @managedynarray;
+       h.manageproc:= mpk_managedynarray;
       end;
       itemsize:= totsize;
       infodynarray.i.itemtypedata:= itemtyoffs1;

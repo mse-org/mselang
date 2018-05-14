@@ -868,7 +868,7 @@ begin
    end;
   end;
  end;
- atype^.h.manageproc(op,aref);
+ callmanageproc(atype^.h.manageproc,op,aref);
 end;
 
 procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
