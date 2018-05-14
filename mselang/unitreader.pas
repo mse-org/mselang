@@ -545,6 +545,8 @@ begin
        end;
        ek_sub: begin
         with psubdataty(po)^ do begin
+         updateref(typ,id1);
+         updateref(resulttype.typeele,id1);
          pe1:= @paramsrel;
          pee:= pe1+paramcount;
          while pointer(pe1) < pointer(pee) do begin

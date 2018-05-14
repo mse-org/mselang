@@ -11,12 +11,11 @@
 {$mode pascal}
 unit __mla__compilerunit;
 interface
-{$internaldebug on}
+//{$internaldebug on}
 //{$define mse_debugclass}
 
 uses
  __mla__personality,__mla__internaltypes;
-{$dumpelements}
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: pointer);
 procedure __mla__decrefsizeref(const ref: ppointer);
@@ -111,7 +110,6 @@ procedure __mla__finiexception(const data: pointer);
 implementation
 //uses
 // __mla__personality;
- 
 const
  temprefcount = 1;
 type

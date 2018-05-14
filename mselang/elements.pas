@@ -2636,7 +2636,6 @@ begin
  reallocmem(fbuffer,fbufcapacity);
 end;
  
-                                                //!!codenavig
 function tstringbuffer.allocconst(const astring: stringvaluety): segaddressty;
 
 var
@@ -2740,8 +2739,6 @@ begin
      po1^.len:= len1;
     end;
     if co_llvm in info.o.compileoptions then begin
- //    result.address:= info.s.unitinfo^.llvmlists.constlist.
- //                                  adddataoffs(result.address).listid;
      i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(po1^,
                                          getbuffersize(bufferstart)).listid;
      p1^:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
@@ -2750,18 +2747,7 @@ begin
     end;
    end;
    result.segment:= seg_globconst;
-   result.address:= p1^{+sizeof(stringheaderty)};
-  {
-   if co_llvm in info.o.compileoptions then begin
-//    result.address:= info.s.unitinfo^.llvmlists.constlist.
-//                                  adddataoffs(result.address).listid;
-    i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(
-                              result,getbuffersize(bufferstart)).listid;
-    result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
-                                        gak_const,i1,info.s.globlinkage);
-    restoresegment(bufferstart);
-   end;
-  }
+   result.address:= p1^;
   end;
  end;
 end;

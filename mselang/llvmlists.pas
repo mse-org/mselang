@@ -736,11 +736,11 @@ type
 
  tmetadatalist = class(tindexbufferdatalist)
   private
-//   fvoidconst: metavaluety;
    femptynode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
    fgloblist: tgloballocdatalist;
+   funitlist: tpointerint32hashdatalist;
    ftypemetalist: ttypemetahashdatalist;
    fconstmetalist: tconstmetahashdatalist;
    fsyscontext: metavaluety;
@@ -749,15 +749,12 @@ type
    fcompileunit: metavaluety;
    fcompilefile: metavaluety;
    fdbgdeclare: int32;
-//   fnullintconst: metavaluety;
    femptystringconst: metavaluety;
-//   fwdstringconst: metavaluety;
    fhasmoduleflags: boolean;
    fdummyaddrexp: metavaluety;
    fderefaddrexp: metavaluety;
    fopenarrayaddrexp: metavaluety;
    fnoparams: metavaluety;
-//   fvoidtyp: metavaluety;
    fpointertyp: metavaluety;
    fbytetyp: metavaluety;
    fparams1po: metavaluety;
@@ -765,7 +762,6 @@ type
    fnoparamssubtyp: metavaluety;
    fdynarrayindex: metavaluety;
    function getparams1po: metavaluety;
-//   function getvoidtyp: metavaluety;
    function getpointertyp: metavaluety;
    function getbytetyp: metavaluety;
    function getparams1posubtyp: metavaluety;
@@ -775,7 +771,6 @@ type
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
-//   function dwarftag(const atag: int32): metavaluety;
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist;
@@ -1670,7 +1665,7 @@ begin
  inherited create();
 // inherited create(sizeof(constlisthashdataty)-sizeof(bufferhashdataty));
 // inherited create(sizeof(constallocdataty));
- clear(); //create default entries
+// clear(); //create default entries
 end;
 
 function tconsthashdatalist.getrecordsize(): int32;
@@ -3018,6 +3013,7 @@ begin
  fgloblist:= agloblist;
  ftypemetalist:= ttypemetahashdatalist.create();
  fconstmetalist:= tconstmetahashdatalist.create();
+ funitlist:= tpointerint32hashdatalist.create();
  inherited create();
 end;
 
@@ -3026,6 +3022,7 @@ begin
  inherited;
  ftypemetalist.free();
  fconstmetalist.free();
+ funitlist.free();
 end;
 
 procedure tmetadatalist.clear;
@@ -3033,14 +3030,6 @@ begin
  inherited;
  if not (bdls_destroying in fstate) then begin
   fhasmoduleflags:= false;
- {
-//  fvoidconst.value.typeid:= ftypelist.void;
-  fvoidconst.id:= 0;
-//  fvoidconst.flags:= [];
-//  fnullintconst.value.typeid:= ord(das_8);
-  fnullintconst.id:= ord(nc_i8);
-//  fnullintconst.flags:= [];
- }
   if info.o.debugoptions <> [] then begin
    femptystringconst:= addstring('');
    with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty),femptynode))^ do begin
@@ -3048,6 +3037,7 @@ begin
    end;
    ftypemetalist.clear();
    fconstmetalist.clear();
+   funitlist.clear();
    fsysfile:= adddifile('system');
    fsyscontext:= fsysfile;
    fsysname:= addstring('system');
@@ -3057,18 +3047,6 @@ begin
    fdummyaddrexp:= adddiexpression([]);
    fderefaddrexp:= adddiexpression([DW_OP_deref]);
    fopenarrayaddrexp:= adddiexpression([DW_OP_plus,sizeof(openarrayty.high)]);
-//   fopenarrayaddrexp:= adddiexpression([DW_OP_addr,DW_OP_plus,
-//                                        sizeof(openarrayty.high),DW_OP_deref]);
-               //llvm 3.7 can deref, plus and bit_piece only
-{
-   fnoparams:= addnode([dummymeta]);
-   with pdisubroutinetypety(
-    adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
-                                             fnoparamssubtyp))^ do begin
-    params:= noparams;
-   end;
-}
-//   fvoidtyp.id:= 0;         //initialized in getter func
    fpointertyp.id:= 0;      //initialized in getter func
    fbytetyp.id:= 0;         //initialized in getter func
    fnoparams.id:= 0;        //initialized in getter func
@@ -3803,27 +3781,27 @@ begin
   po1:= @ptypemetahashdataty(p0)^.data;
   offs1:= ftypemetalist.getdataoffs(po1); //relative backup
   with datatoele(po2)^.header do begin
-   if defunit = nil then begin
-//    file1:= dummymeta; //internal type
-//    context1:= dummymeta;
-    file1:= info.rtlunits[rtl_system]^.filepathmeta; //internal type
-//    context1:= info.systemunit^.compileunitmeta; 
+   if defunit = info.s.unitinfo then begin
+    file1:= defunit^.filepathmeta;
     context1:= file1;
    end
    else begin
-    file1:= defunit^.filepathmeta;
-//    context1:= defunit^.compileunitmeta; 
-                        //todo: use correct context for local defines
+    if not funitlist.find(defunit,file1.id) then begin
+     if defunit = nil then begin
+      file1:= adddifile('system');
+     end
+     else begin
+      file1:= adddifile(defunit^.filepath);
+     end;
+     funitlist.add(defunit,file1.id);
+    end;
     context1:= file1;
    end;
   end;
   if (aindirection > 0) then begin 
                                               //todo: set identname
    typekind1:= didk_pointertype;
-//   if aisreference then begin
-//    typekind1:= ditk_referencetype;
-//   end;
-   m2:= addtype(atype,aindirection-1{,false}); //next base type
+   m2:= addtype(atype,aindirection-1); //next base type
    m1:= adddiderivedtype(typekind1,file1,context1,
              emptylstring,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
   end
@@ -3839,8 +3817,6 @@ begin
     with pdiderivedtypety(getdata(m1))^ do begin
      basetype:= m2;
     end;
-//    m1:= adddiderivedtype(didk_pointertype,file1,context1,
-//                      lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
    end
    else begin
     case po2^.h.kind of
@@ -3882,11 +3858,6 @@ begin
        m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,
                                                      DW_ATE_unsigned);
                   //todo!
-     {
-      m2:= addtype(po2^.infoset.itemtype,0);
-      m1:= adddiderivedtype(didk_set,file1,context1,
-                      lstr1,0,po2^.h.bitsize,0,0,0,m2);
-     }
      end;
      dk_array: begin
       po4:= ele.eledataabs(po2^.infoarray.i.itemtypedata);
@@ -3906,19 +3877,6 @@ begin
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
                        //todo
-//      m1:= adddigenericdebug(DW_TAG_pointer_type,[m2]);
-{
-      m3:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
-                                   m2,po2^.h.bitsize,0,0,0,dynarrayindex);
-      m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m3);
-                       //todo
-}
-     {                 
-      m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);
-      m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
-                                   m2,po2^.h.bitsize,0,0,0,m3);
-     }                                  
      end;
      dk_openarray: begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
@@ -3941,7 +3899,6 @@ begin
       m2:= addtype(sysdatatypes[st1].typedata,0);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,targetpointerbitsize,targetpointerbitsize,0,0,m2);
-//      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
      end;
      dk_method: begin
       initmetabuffer();
@@ -3979,16 +3936,10 @@ begin
                                                    0,addtype(po3^.vf.typ,i1)));
        ele1:= po3^.vf.next;
       end;
-//      m2:= addbufferreverse();
       m2:= addbuffer();
       with pdicompositetypety(getdata(m1))^ do begin
        elements:= m2;
       end;
-      {
-      m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
-                                   dummymeta,po2^.h.bitsize,0,0,0,m2);
-                                        //todo: use correct alignment
-      }
      end;
      dk_interface: begin
       m2:= addtype(0,0);        //todo
@@ -4010,9 +3961,6 @@ begin
       end;
      {$endif}
       m1:= bytetyp;
-//      m1:= pointertyp;
-//      m1:= adddiderivedtype(didk_pointertype,file1,context1,
-//                     emptylstring,0,pointerbitsize,pointerbitsize,0,0,voidtyp);
      end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');

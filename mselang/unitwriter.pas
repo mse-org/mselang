@@ -256,6 +256,8 @@ var
      end;
      ek_sub: begin
       with psubdataty(po)^ do begin
+       updateref(typ);
+       updateref(resulttype.typeele);
        pe1:= @paramsrel;
        pee:= pe1+paramcount;
        while pointer(pe1) < pointer(pee) do begin
