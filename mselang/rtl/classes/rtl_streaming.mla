@@ -10,5 +10,12 @@
 }
 unit rtl_streaming;
 interface
+uses
+ rtl_fpccompatibility;
+{$internaldebug on} 
+type
+ tpersistent = class(tobject)
+ end;
+ 
 implementation
 end.

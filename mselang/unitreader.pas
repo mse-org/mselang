@@ -507,6 +507,11 @@ begin
             end;
            end;
            updateref(fieldchain,id1);
+           case h.kind of
+            dk_class,dk_object: begin
+             updateref(infoclass.subchain,id1);
+            end;
+           end;
           end;
           dk_sub,dk_method: begin
            updateref(infosub.sub,id1);
@@ -545,6 +550,7 @@ begin
        end;
        ek_sub: begin
         with psubdataty(po)^ do begin
+         updateref(next,id1);
          updateref(typ,id1);
          updateref(resulttype.typeele,id1);
          pe1:= @paramsrel;
