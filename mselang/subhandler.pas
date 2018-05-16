@@ -174,7 +174,7 @@ uses
  errorhandler,handlerutils,elements,opcode,unithandler,handler,interfacehandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser,
- valuehandler,elementcache,grammarglob;
+ valuehandler,elementcache,grammarglob,compilerunit;
 
 type
  tmetadatalist1 = class(tmetadatalist);
@@ -1653,7 +1653,7 @@ var
   paramsbuffer: array[0..maxparamcount-1] of paramupdateinfoty;
   p1: pparamupdatechainty;
   var1: pvardataty;
-  typ1: ptypedataty;
+  typ1,typ2: ptypedataty;
   ele1: elementoffsetty;
  begin
   result:= true;
@@ -1708,11 +1708,13 @@ var
          errormessage(err_varargmustbelast,[]);
         end;
         typ1:= ele.eledataabs(d.typ.typedata);
+        var1^.address.flags:= [af_param];
         if (typ1^.h.kind = dk_openarray) and 
            (tf_untyped in ptypedataty(ele.eledataabs(
                        typ1^.infodynarray.i.itemtypedata))^.h.flags) then begin
          if not (sf_external in sub1^.flags) then begin //todo: check "cdecl"
-          notimplementederror('20170521B');
+          typ1^.infodynarray.i.itemtypedata:= internaltypes[it_varrecty];
+          include(var1^.address.flags,af_untyped);
          end
          else begin
           include(sub1^.flags,sf_vararg);
@@ -1730,7 +1732,6 @@ var
          else begin
           si1:= typ1^.h.bytesize;
          end;
-         address.flags:= [af_param];
          if resultvar then begin
           include(var1^.address.flags,af_resultvar);
          end;
@@ -2987,7 +2988,7 @@ var
      context1^.d.dat.fact.ssaindex:= par.ssad;
     end;
    end;
-  end; //storetempgetaddress
+  end; //storetempgetaddress()
   
  var
   desttype: ptypedataty;
@@ -3036,14 +3037,12 @@ var
     end;
     if context1^.d.kind = ck_list then begin
      errormessage(err1,[i2,'list',
-                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                                                   destindilev1)],stackoffset);
+                  typename(desttype^,destindilev1)],stackoffset);
     end
     else begin
      errormessage(err1,[i2,
                typename(sourcetype^,i1),
-                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                                                   destindilev1)],stackoffset);
+                  typename(desttype^,destindilev1)],stackoffset);
     end;
     exit;
    end;
@@ -3141,8 +3140,15 @@ var
         result:= false; //skip
         exit;
        end;
-       if not listtoopenarray(context1,desttype,lastitem) then begin
-        exit;
+       if af_untyped in vardata1^.address.flags then begin
+        if not listtoarrayofconst(context1,lastitem) then begin
+         exit;
+        end;
+       end
+       else begin
+        if not listtoopenarray(context1,desttype,lastitem) then begin
+         exit;
+        end;
        end;
        conversioncost1:= 0;
       end;

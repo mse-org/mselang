@@ -570,6 +570,7 @@ var
  m1,m2,m3: metavaluety;
 label
  handlelab{,stophandlelab},parseend;
+
 begin
  result:= false;
  with info do begin
@@ -620,9 +621,6 @@ begin
   s.currentstatementflags:= [];
   s.currentopcodemarkchain:= 0;
   s.globlinkage:= li_internal;
-//  inc(unitlevel);
-  
-//  s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
   s.interfaceonly:= ainterfaceonly;
 
@@ -697,12 +695,9 @@ begin
    s.currentcompileunitmeta:= compileunitmeta;
    if do_proginfo in info.o.debugoptions then begin
     pushcurrentscope(compileunitmeta);
-//    pushcurrentscope(filepathmeta);
-//    setcurrentscope(filepathmeta);
    end
    else begin
     pushcurrentscope(dummymeta);
-//    setcurrentscope(dummymeta);
    end;
   end;
 

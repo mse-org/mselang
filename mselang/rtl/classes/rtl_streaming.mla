@@ -8,14 +8,53 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
+
 unit rtl_streaming;
 interface
 uses
  rtl_fpccompatibility;
 {$internaldebug on} 
 type
+ tfiler = class(tobject)
+ end;
+ 
  tpersistent = class(tobject)
+  protected
+   procedure assignerror(source: tpersistent);
+   procedure assignto(dest: tpersistent) [virtual];
+   procedure defineproperties(filer: tfiler) [virtual];
+   procedure getowner(): tpersistent [virtual];
+  public
+   procedure assign(source: tpersistent) [virtual];
+   procedure getnamepath(): string [virtual];
  end;
  
 implementation
+
+{ tpersistent }
+
+procedure tpersistent.assignerror(source: tpersistent);
+begin
+end;
+
+procedure tpersistent.assignto(dest: tpersistent);
+begin
+end;
+
+procedure tpersistent.defineproperties(filer: tfiler);
+begin
+end;
+
+procedure tpersistent.getowner(): tpersistent;
+begin
+end;
+
+procedure tpersistent.assign(source: tpersistent);
+begin
+end;
+
+procedure tpersistent.getnamepath(): string;
+begin
+end;
+
 end.

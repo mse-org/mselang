@@ -457,6 +457,8 @@
   (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: []), 
 //oc_listtoopenar
   (ssa: listtoopenarssa; proc: @listtoopenarop; flags: []), 
+//oc_listtoarrayofconst
+  (ssa: listtoarrayofconstssa; proc: @listtoarrayofconstop; flags: []), 
 
 //oc_combinemethod
   (ssa: combinemethodssa; proc: @combinemethodop; flags: []), 
@@ -1236,6 +1238,8 @@
   (ssa: pushsegaddrclassdefssa; proc: nil; flags: []),
 //ocssa_listtoopenaritem
   (ssa: listtoopenaritemssa; proc: nil; flags: []),
+//ocssa_listtoarrayofconstitem
+  (ssa: listtoarrayofconstitemssa; proc: nil; flags: []),
 //ocssa_concattermsitem
   (ssa: concattermsitemssa; proc: nil; flags: []) 
  );

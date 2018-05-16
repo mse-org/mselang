@@ -21,6 +21,78 @@ uses
  globtypes,msestrings,__mla__internaltypes;
  
 type
+ compilersubty = (
+  cs_none,
+  cs_personality,
+  cs_malloc,
+  cs_calloc,
+  cs_free,
+  cs_zeropointerar,
+  cs_increfsize,
+  cs_increfsizeref,
+  cs_decrefsize,
+  cs_decrefsizeref,
+  cs_finirefsize,
+  cs_finirefsizear,
+  cs_finirefsizedynar,
+  cs_storenildynar,
+  cs_setlengthdynarray,
+  cs_setlengthstring8,
+  cs_setlengthstring16,
+  cs_setlengthstring32,
+  cs_uniquedynarray,
+  cs_uniquestring8,
+  cs_uniquestring16,
+  cs_uniquestring32,
+  cs_string8to16,cs_string8to32,
+  cs_string16to8,cs_string16to32,
+  cs_string32to8,cs_string32to16,
+  cs_concatstring8,cs_concatstring16,cs_concatstring32,
+  cs_chartostring8,
+  cs_chartostring16,
+  cs_chartostring32,
+  cs_compstring8eq,
+  cs_compstring8ne,
+  cs_compstring8gt,
+  cs_compstring8lt,
+  cs_compstring8ge,
+  cs_compstring8le,
+  cs_compstring16eq,
+  cs_compstring16ne,
+  cs_compstring16gt,
+  cs_compstring16lt,
+  cs_compstring16ge,
+  cs_compstring16le,
+  cs_compstring32eq,
+  cs_compstring32ne,
+  cs_compstring32gt,
+  cs_compstring32lt,
+  cs_compstring32ge,
+  cs_compstring32le,
+  cs_arraytoopenar,
+  cs_dynarraytoopenar,
+  cs_lengthdynarray,
+  cs_lengthopenarray,
+  cs_lengthstring,
+  cs_highdynarray,
+  cs_highopenarray,
+  cs_highstring,
+  cs_initobject,
+//  cs_calliniobject,
+  cs_getclassdef,
+  cs_getallocsize,
+  cs_classis,
+  cs_checkclasstype,
+//  cs_initclass,
+//  cs_finiclass,
+
+  cs_int32tovarrecty,
+
+  cs_raise,
+  cs_finiexception,
+  cs_writeenum
+ );
+
  backendty = (bke_direct,bke_llvm);
 
  addressbasety = (ab_segment,ab_local{ab_frame},ab_localindi,
@@ -278,6 +350,7 @@ type
   oc_arraytoopenar,
   oc_dynarraytoopenar,
   oc_listtoopenar,
+  oc_listtoarrayofconst,
   
   oc_combinemethod,  //instance,subaddress -> methodty
   oc_getmethodcode,
@@ -717,6 +790,7 @@ type
   ocssa_pushsegaddrglobconst,
   ocssa_pushsegaddrclassdef,
   ocssa_listtoopenaritem, //per item
+  ocssa_listtoarrayofconstitem, //per item
   ocssa_concattermsitem  //per item
  );
  
@@ -1104,6 +1178,17 @@ type
   itemtype: typeallocinfoty;
   allochigh: int32; //llvm constid
  end;
+ arrayofconstitemallocinfoty = record
+  ssaoffs: int32;
+  valuefunc: compilersubty;
+ end;
+ parrayofconstitemallocinfoty = ^arrayofconstitemallocinfoty;
+ listtoarrayofconstty = record
+  arraytype: int32; //llvm type id
+//  itemtype: typeallocinfoty;
+  allochigh: int32; //llvm constid
+ end;
+
  concatstringty = record
   arraytype: int32; //llvm type id
   alloccount: int32; //llvm constid
@@ -1270,7 +1355,7 @@ const
   oc_classis,
   oc_checkclasstype
  ];
- listops = [oc_listtoopenar,
+ listops = [oc_listtoopenar,oc_listtoarrayofconst,
                   oc_concatstring8,oc_concatstring16,oc_concatstring32];  
                     //have listinfo record
  
@@ -1503,11 +1588,15 @@ type
    oc_tempalloc:(
     tempalloc: tempallocty;
    );
-   oc_listtoopenar,oc_concatstring8,oc_concatstring16,oc_concatstring32:(                                           //listops
+   oc_listtoopenar,oc_listtoarrayofconst,
+   oc_concatstring8,oc_concatstring16,oc_concatstring32:(                                           //listops
     listinfo: listinfoty;
     case opcodety of
      oc_listtoopenar:(
       listtoopenar: listtoopenarty;
+     );
+     oc_listtoarrayofconst:(
+      listtoarrayofconst: listtoarrayofconstty;
      );
      oc_concatstring8,oc_concatstring16,oc_concatstring32:(
       concatstring: concatstringty;

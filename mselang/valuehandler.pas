@@ -64,6 +64,8 @@ function listtoset(const acontext: pcontextitemty;
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
                                   out lastitem: pcontextitemty): boolean;
+function listtoarrayofconst(const acontext: pcontextitemty;
+                                  out lastitem: pcontextitemty): boolean;
 
 implementation
 uses
@@ -71,7 +73,7 @@ uses
  subhandler,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
- parser;
+ parser,compilerunit;
 
 function listtoset(const acontext: pcontextitemty;
                                out lastitem: pcontextitemty): boolean;
@@ -211,7 +213,7 @@ begin
  end;
 {$endif}
  result:= false;
- ele.checkcapacity(ek_type);
+ ele.checkcapacity(ek_type); //for anonymous type
  indilev1:= aitemtype^.h.indirectlevel;
  itemtype1:= ele.eledataabs(aitemtype^.infodynarray.i.itemtypedata);
  itemcount1:= acontext^.d.list.itemcount;
@@ -224,7 +226,7 @@ begin
  end;
 
  poe:= acontext + acontext^.d.list.contextcount;
- ele.checkcapacity(ek_type);
+// ele.checkcapacity(ek_type);
  poitem1:= acontext+1;
  while poitem1 < poe do begin
   with poitem1^ do begin
@@ -334,6 +336,101 @@ begin
   end;
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= ele.eledatarel(po1);
+  d.dat.datatyp.indirectlevel:= 0;
+ end;
+ result:= true;
+end;
+
+function listtoarrayofconst(const acontext: pcontextitemty;
+                                  out lastitem: pcontextitemty): boolean;
+var
+ poe: pointer;
+ poitem1,poparams: pcontextitemty;
+ typ1: ptypedataty;
+ alloc1: dataoffsty;
+ poalloc: parrayofconstitemallocinfoty;
+ itemcount1: int32;
+ i1: int32;
+ 
+begin
+{$ifdef mse_checkinternalerror}
+ if acontext^.d.kind <> ck_list then begin
+  internalerror(ie_handler,'20180516A');
+ end;
+{$endif}
+ result:= false;
+ if not (co_llvm in info.o.compileoptions) then begin
+  notimplementederror('20180516C');
+ end;
+ itemcount1:= acontext^.d.list.itemcount;
+ alloc1:= allocsegmentoffset(seg_localloc,
+                     itemcount1*sizeof(arrayofconstitemallocinfoty),poalloc);
+ poe:= acontext + acontext^.d.list.contextcount;
+ poitem1:= acontext+1;
+ while poitem1 < poe do begin
+  with poitem1^ do begin
+   if d.kind <> ck_space then begin
+   {$ifdef mse_checkinternalerror}
+    if not (d.kind in datacontexts) then begin
+     internalerror(ie_handler,'20180516B');
+    end;
+   {$endif}
+    if not getvalue(poitem1,das_none,false) then begin
+     exit;
+    end;
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_fact then begin
+     internalerror(ie_handler,'20160615A');
+    end;
+   {$endif}
+    if d.dat.datatyp.indirectlevel > 0 then begin
+    end
+    else begin
+     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+     case typ1^.h.kind of
+      dk_integer: begin
+       poalloc^.valuefunc:= cs_int32tovarrecty;
+      end;
+      else begin
+       errormessage(err_wrongarrayitemtype,[typename(typ1^)],poitem1);
+       exit;
+      end;
+     end;
+     poalloc^.ssaoffs:= d.dat.fact.ssaindex;
+    end;
+    inc(poalloc);
+   end;
+  end;
+  inc(poitem1);
+ end;
+ lastitem:= poitem1-1;
+ poe:= poalloc;
+ poalloc:= poalloc-acontext^.d.list.itemcount;
+ i1:= (parrayofconstitemallocinfoty(poe)-1)^.ssaoffs; //last item is base
+ while poalloc < poe do begin
+  poalloc^.ssaoffs:= poalloc^.ssaoffs-i1; //relative ssa
+  inc(poalloc);
+ end;
+
+ initfactcontext(acontext);
+ with acontext^,insertitem(oc_listtoarrayofconst,poitem1,0,
+             itemcount1*getssa(ocssa_listtoarrayofconstitem))^ do begin
+                                     //at start of next context
+  if target64 then begin
+   i1:= sizeof(varrecty64);
+  end
+  else begin
+   i1:= sizeof(varrecty32);
+  end;
+  par.listtoarrayofconst.arraytype:= info.s.unitinfo^.
+             llvmlists.typelist.addbytevalue(itemcount1*i1);
+  par.listinfo.alloccount:= itemcount1;
+  par.listinfo.allocs:= alloc1;
+  par.listinfo.itemsize:= info.s.unitinfo^.llvmlists.constlist.varrectysize;
+  setimmint32(itemcount1-1,par.listtoarrayofconst.allochigh);
+  d.dat.fact.ssaindex:= par.ssad;
+  d.dat.datatyp.flags:= [];
+  d.dat.datatyp.typedata:= internaltypes[it_varrecty];
   d.dat.datatyp.indirectlevel:= 0;
  end;
  result:= true;
@@ -1564,7 +1661,7 @@ const
  maxsizeconversioncost = ord(das_64)-ord(das_1);
 var
  source,dest: ptypedataty;
- sourceitem{,destitem}: ptypedataty;
+ sourceitem,destitem: ptypedataty;
  sourceindilev{,destindilev}: int32;
  pocont1,poe: pcontextitemty;
  i1,i2: int32;
@@ -1629,19 +1726,22 @@ begin
      exit;
     end;
     dk_openarray: begin
-     addr1.indirectlevel:= ptypedataty(ele.eledataabs(
-                        dest^.infodynarray.i.itemtypedata))^.h.indirectlevel;
-     while pocont1 < poe do begin
-      if pocont1^.d.kind <> ck_space then begin
-       if not checkcompatibledatatype(
-         pocont1,dest^.infodynarray.i.itemtypedata,addr1,[],i1,i2) then begin
-        exit;
+     destitem:= ele.eledataabs(dest^.infodynarray.i.itemtypedata);
+     addr1.indirectlevel:= destitem^.h.indirectlevel;
+     if not (af_untyped in destaddress.flags) or  //no array of const
+                                    (addr1.indirectlevel <> 0) then begin
+      while pocont1 < poe do begin
+       if pocont1^.d.kind <> ck_space then begin
+        if not checkcompatibledatatype(
+          pocont1,dest^.infodynarray.i.itemtypedata,addr1,[],i1,i2) then begin
+         exit;
+        end;
+        if i1 > conversioncost then begin
+         conversioncost:= i1;
+        end;
        end;
-       if i1 > conversioncost then begin
-        conversioncost:= i1;
-       end;
+       inc(pocont1);
       end;
-      inc(pocont1);
      end;
      inc(conversioncost); //at least 1
      result:= true;

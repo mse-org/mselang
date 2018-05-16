@@ -4254,6 +4254,11 @@ begin
  end;
 end;
 
+procedure listtoarrayofconstop();
+begin
+ notimplemented();
+end;
+
 procedure combinemethodop();
 var                            //classinstance,subaddress
  poa,pob: ppointer;
@@ -7174,6 +7179,7 @@ const
   arraytoopenarssa = 0;
   dynarraytoopenarssa = 0;
   listtoopenarssa = 0;
+  listtoarrayofconstssa = 0;
   
   combinemethodssa = 0;
   getmethodcodessa = 0;
@@ -7604,6 +7610,7 @@ const
   pushsegaddrglobconstssa = 0;
   pushsegaddrclassdefssa = 0;
   listtoopenaritemssa = 0;
+  listtoarrayofconstitemssa = 0;
   concattermsitemssa = 0;
     
 {$include optable.inc}

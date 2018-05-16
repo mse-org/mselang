@@ -125,7 +125,8 @@ type
                   af_classele, //found by class method
                   af_stack,af_segmentpo,af_aggregate,
                   af_startoffset, //for indirection
-                  af_arrayop //typeallocinfoty.size = count
+                  af_arrayop, //typeallocinfoty.size = count
+                  af_untyped  //for array of const
                   {af_getaddress}
                   );
  addressflagsty = set of addressflagty;

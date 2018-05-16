@@ -107,6 +107,8 @@ procedure __mla__writeenum(const avalue: int32;
 procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
 
+procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+
 implementation
 //uses
 // __mla__personality;
@@ -1809,5 +1811,10 @@ begin
  end;
 end;
 
+procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_int32;
+ res^.vint32:= value;
+end;
 
 end.

@@ -905,11 +905,9 @@ var
  str1: string;
 begin
  result:= false;
-// str1:= stringtoutf8(aname);
  str1:= aname;
  aunit:= newunit(str1);
  with aunit^ do begin
-//  name:= str1;
   prev:= info.s.unitinfo;
   if not getunitfile(aunit,msestring(aname)) then begin
    errormessage(err_compilerunitnotfound,[aname]);
@@ -917,9 +915,6 @@ begin
   end;
   inc(info.unitlevel);
   result:= parseusesunit(aunit);
-//  if result then begin
-//   initcompilersubs(aunit);
-//  end;
   dec(info.unitlevel);
  end;
 end;

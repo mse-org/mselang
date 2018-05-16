@@ -324,6 +324,7 @@ type
    ftypelist: ttypehashdatalist;
 //   fgloblist: tgloballocdatalist;
    fpointersize: int32;
+   fvarrectysize: int32;
   protected
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitem: phashdataty): boolean override;
@@ -375,6 +376,7 @@ type
    function nilpointer(): llvmvaluety;
    function gettype(const aindex: int32): int32;
    property pointersize: int32 read fpointersize; //type = pointerint
+   property varrectysize: int32 read fvarrectysize;
  end;
 
  unitnamety = record //same layout as identnamety, used in tglobnamelist
@@ -1716,8 +1718,10 @@ begin
   addi64(65);  //asco_i64
   if target64 then begin
    fpointersize:= addi64(globtypes.targetpointersize).listid;
+   fvarrectysize:= addi32(sizeof(varrecty64)).listid;
   end
   else begin
+   fvarrectysize:= addi32(sizeof(varrecty32)).listid;
    fpointersize:= addi32(globtypes.targetpointersize).listid;
   end;
  end;

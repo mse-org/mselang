@@ -2121,6 +2121,35 @@ begin
  end;
 end;
 
+procedure listtoarrayofconstop();
+var
+ po1,poe: parrayofconstitemallocinfoty;
+ ssabase: int32;
+begin
+ with pc^.par do begin
+  ssabase:= bcstream.ssaindex;
+  bcstream.emitalloca(bcstream.ptypeval(listtoarrayofconst.arraytype));  //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                                                    //1ssa
+  po1:= getsegmentpo(seg_localloc,listinfo.allocs);
+  poe:= po1 + listinfo.alloccount;
+  while po1 < poe do begin
+   callcompilersub(po1^.valuefunc,false,
+          [ssabase+po1^.ssaoffs-1,bcstream.relval(0)]);
+   bcstream.emitgetelementptr(bcstream.relval(0),
+                         bcstream.constval(listinfo.itemsize));     //2ssa
+   inc(po1);
+  end;
+  bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
+  bcstream.emitbitcast(bcstream.relval(0),
+                           bcstream.typeval(bcstream.pointertype)); //1ssa
+  callcompilersub(cs_arraytoopenar,false,
+         [bcstream.constval(listtoarrayofconst.allochigh),ssabase+2-1,
+                                              bcstream.relval(0)]); 
+  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
+ end;
+end;
+
 procedure concatstring(const asub: compilersubty);
 var
 // i1: int32;
@@ -5046,6 +5075,7 @@ const
   arraytoopenarssa = 3;
   dynarraytoopenarssa = 3;
   listtoopenarssa = 5;
+  listtoarrayofconstssa = 5;
   
   combinemethodssa = 6;
   getmethodcodessa = 3;
@@ -5476,6 +5506,7 @@ const
   pushsegaddrglobconstssa = 1;
   pushsegaddrclassdefssa = 1;
   listtoopenaritemssa = 3;
+  listtoarrayofconstitemssa = 2;
   concattermsitemssa = 3;
   
 {$include optable.inc}

@@ -33,6 +33,9 @@ type
  pptrint = ^ptrint;
  ptrcard = card32;
  
+ pint64 = ^int64;
+ pcard64 = ^card64;
+ 
  refcountty = int32;
  managedsizety = ptrint;
  stringsizety = managedsizety;
@@ -227,6 +230,37 @@ type
  end;
  pintfdefinfoty = ^intfdefinfoty;
 
+ valuetypety = (vt_boolean,vt_int32,vt_card32,vt_int64,vt_card64,
+                vt_char8,vt_char16,vt_char32,
+                vt_string8,vt_string16,vt_string32,
+                vt_flo64
+               );
+{$ifdef mse_compiler}
+ varrecty32 = record
+  vtype: valuetypety;
+  vpointer: card32;
+ end;
+ varrecty64 = record
+  vtype: valuetypety;
+  vpointer: card64;
+ end;
+{$else}
+ varrecty = record
+  vtype: valuetypety;
+  (vboolean: boolean);
+  (vint32: int32);
+  (vcard32: card32);
+  (vint64: pint64);
+  (vcard64: pcard64);
+  (vchar8: char8);
+  (vchar16: char16);
+  (vchar32: char32);
+  (vstring8: pointer);
+  (vstring16: pointer);
+  (vstring32: pointer);
+ end;
+ pvarrecty = ^varrecty;
+{$endif}
 implementation
 
 end.
