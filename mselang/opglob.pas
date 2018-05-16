@@ -87,6 +87,8 @@ type
 //  cs_finiclass,
 
   cs_int32tovarrecty,
+  cs_int64tovarrecty,
+  cs_pointertovarrecty,
 
   cs_raise,
   cs_finiexception,

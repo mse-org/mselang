@@ -351,6 +351,7 @@ var
  poalloc: parrayofconstitemallocinfoty;
  itemcount1: int32;
  i1: int32;
+ datasize1: databitsizety;
  
 begin
 {$ifdef mse_checkinternalerror}
@@ -372,10 +373,36 @@ begin
    if d.kind <> ck_space then begin
    {$ifdef mse_checkinternalerror}
     if not (d.kind in datacontexts) then begin
-     internalerror(ie_handler,'20180516B');
+     poalloc^.valuefunc:= cs_pointertovarrecty;
     end;
    {$endif}
-    if not getvalue(poitem1,das_none,false) then begin
+    datasize1:= das_none;
+    typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if d.dat.datatyp.indirectlevel > 0 then begin
+     poalloc^.valuefunc:= cs_pointertovarrecty;
+     datasize1:= das_pointer;
+    end
+    else begin
+     case typ1^.h.kind of
+      dk_integer: begin
+       if typ1^.h.datasize = das_64 then begin
+        poalloc^.valuefunc:= cs_int64tovarrecty;
+       end
+       else begin
+        if not tryconvert(poitem1,st_int32) then begin
+         exit;
+        end;
+        datasize1:= das_32;
+        poalloc^.valuefunc:= cs_int32tovarrecty;
+       end;
+      end;
+      else begin
+       errormessage(err_wrongarrayitemtype,[typename(typ1^)],poitem1);
+       exit;
+      end;
+     end;
+    end;
+    if not getvalue(poitem1,datasize1,false) then begin
      exit;
     end;
    {$ifdef mse_checkinternalerror}
@@ -383,21 +410,7 @@ begin
      internalerror(ie_handler,'20160615A');
     end;
    {$endif}
-    if d.dat.datatyp.indirectlevel > 0 then begin
-    end
-    else begin
-     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-     case typ1^.h.kind of
-      dk_integer: begin
-       poalloc^.valuefunc:= cs_int32tovarrecty;
-      end;
-      else begin
-       errormessage(err_wrongarrayitemtype,[typename(typ1^)],poitem1);
-       exit;
-      end;
-     end;
-     poalloc^.ssaoffs:= d.dat.fact.ssaindex;
-    end;
+    poalloc^.ssaoffs:= d.dat.fact.ssaindex;
     inc(poalloc);
    end;
   end;

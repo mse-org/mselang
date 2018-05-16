@@ -231,6 +231,7 @@ type
  pintfdefinfoty = ^intfdefinfoty;
 
  valuetypety = (vt_boolean,vt_int32,vt_card32,vt_int64,vt_card64,
+                vt_pointer,
                 vt_char8,vt_char16,vt_char32,
                 vt_string8,vt_string16,vt_string32,
                 vt_flo64
@@ -252,6 +253,7 @@ type
   (vcard32: card32);
   (vint64: pint64);
   (vcard64: pcard64);
+  (vpointer: pointer);
   (vchar8: char8);
   (vchar16: char16);
   (vchar32: char32);

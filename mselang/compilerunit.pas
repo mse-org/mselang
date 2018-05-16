@@ -94,7 +94,11 @@ const
   '__mla__checkclasstype',
 //  '__mla__initclass',
 //  '__mla__finiclass',
+
   '__mla__int32tovarrecty',
+  '__mla__int64tovarrecty',
+  '__mla__pointertovarrecty',
+
   '__mla__raise',
   '__mla__finiexception',
   '__mla__writeenum'

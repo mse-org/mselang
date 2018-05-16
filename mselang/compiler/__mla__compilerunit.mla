@@ -108,6 +108,8 @@ procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
 
 procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
 
 implementation
 //uses
@@ -1815,6 +1817,18 @@ procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
 begin
  res^.vtype:= vt_int32;
  res^.vint32:= value;
+end;
+
+procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_int64;
+ res^.vint64:= value;
+end;
+
+procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_pointer;
+ res^.vpointer:= value;
 end;
 
 end.
