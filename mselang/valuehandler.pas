@@ -384,6 +384,10 @@ begin
     end
     else begin
      case typ1^.h.kind of
+      dk_none: begin //nil constant
+       poalloc^.valuefunc:= cs_pointertovarrecty;
+       datasize1:= das_pointer;
+      end;
       dk_integer: begin
        if typ1^.h.datasize = das_64 then begin
         poalloc^.valuefunc:= cs_int64tovarrecty;

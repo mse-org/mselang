@@ -181,7 +181,7 @@ type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
                   das_sub,das_meta);
- systypety = (st_none,{st_nil,}st_forward,
+ systypety = (st_none,st_nil,st_forward,
               st_pointer,{st_method,}st_bool1,
               st_int8,st_int16,st_int32,st_int64,st_intpo,
               st_card8,st_card16,st_card32,st_card64,st_cardpo,

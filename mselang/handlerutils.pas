@@ -359,13 +359,11 @@ const
        manageproc: mpk_none; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
-{
    (name: '._nil'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst:0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
-}
    (name: '._forward'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst:0;
        manageproc: mpk_none; flags: [tf_forward]; indirectlevel: 0;
@@ -489,9 +487,9 @@ const
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
    (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
-//   (name: 'nil'; ctyp: st_nil; cval:(kind: dk_none; vdummy: ()))
-   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
-             vaddress: (flags: [af_nil]; indirectlevel: 1; poaddress: 0)))
+   (name: 'nil'; ctyp: st_nil; cval:(kind: dk_none; vdummy: ()))
+//   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
+//             vaddress: (flags: [af_nil]; indirectlevel: 1; poaddress: 0)))
   );
     
 function getcodepoint(var ps: pcard8; const pe: pcard8; 
@@ -1410,6 +1408,11 @@ begin
      par.ssas1:= i2;
      setimmint32(constval.vopenarray.high,par.imm);
     end;
+   end;
+   dk_none: begin //nil const
+    si1:= das_pointer;
+    insertitem(oc_pushnil,stackoffset,aopoffset);
+    contextstack[stackoffset+s.stackindex].d.dat.datatyp.indirectlevel:= 1;
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin
