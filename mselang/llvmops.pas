@@ -2134,9 +2134,22 @@ begin
   po1:= getsegmentpo(seg_localloc,listinfo.allocs);
   poe:= po1 + listinfo.alloccount;
   while po1 < poe do begin
-   callcompilersub(po1^.valuefunc,false,
-          [ssabase+po1^.ssaoffs-1,bcstream.relval(0)]);
-   bcstream.emitgetelementptr(bcstream.relval(0),
+   if po1^.typid <> 0 then begin
+    bcstream.emitalloca(bcstream.ptypeval(po1^.typid));         //1ssa
+    bcstream.emitstoreop(ssabase+po1^.ssaoffs-1,bcstream.relval(0));
+    bcstream.emitgetelementptr(bcstream.relval(0),
+                                     bcstream.constval(0));     //2ssa
+    callcompilersub(po1^.valuefunc,false,
+           [bcstream.relval(0),bcstream.relval(3)]);
+   end
+   else begin
+    callcompilersub(po1^.valuefunc,false,
+           [ssabase+po1^.ssaoffs-1,bcstream.relval(0)]);
+    bcstream.emitnopssa(); //1ssa
+    bcstream.emitnopssa(); //1ssa
+    bcstream.emitnopssa(); //1ssa
+   end;
+   bcstream.emitgetelementptr(bcstream.relval(3),
                          bcstream.constval(listinfo.itemsize));     //2ssa
    inc(po1);
   end;
@@ -5506,7 +5519,7 @@ const
   pushsegaddrglobconstssa = 1;
   pushsegaddrclassdefssa = 1;
   listtoopenaritemssa = 3;
-  listtoarrayofconstitemssa = 2;
+  listtoarrayofconstitemssa = 5;
   concattermsitemssa = 3;
   
 {$include optable.inc}

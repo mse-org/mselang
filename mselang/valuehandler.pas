@@ -378,6 +378,7 @@ begin
    {$endif}
     datasize1:= das_none;
     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+    poalloc^.typid:= ord(das_none); //direct value, use pointer otherwise
     if d.dat.datatyp.indirectlevel > 0 then begin
      poalloc^.valuefunc:= cs_pointertovarrecty;
      datasize1:= das_pointer;
@@ -391,6 +392,7 @@ begin
       dk_integer: begin
        if typ1^.h.datasize = das_64 then begin
         poalloc^.valuefunc:= cs_int64tovarrecty;
+        poalloc^.typid:= ord(das_64); //use pointer
        end
        else begin
         if not tryconvert(poitem1,st_int32) then begin

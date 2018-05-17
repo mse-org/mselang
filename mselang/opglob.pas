@@ -1182,6 +1182,7 @@ type
  end;
  arrayofconstitemallocinfoty = record
   ssaoffs: int32;
+  typid: int32;
   valuefunc: compilersubty;
  end;
  parrayofconstitemallocinfoty = ^arrayofconstitemallocinfoty;
