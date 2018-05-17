@@ -109,7 +109,14 @@ procedure __mla__finiexception(const data: pointer);
 
 procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
 procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty);
+procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty);
 procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty);
+procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty);
+procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 
 implementation
 //uses
@@ -1825,10 +1832,52 @@ begin
  res^.vint64:= value;
 end;
 
+procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_card32;
+ res^.vcard32:= value;
+end;
+
+procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_card64;
+ res^.vcard64:= value;
+end;
+
 procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
 begin
  res^.vtype:= vt_pointer;
  res^.vpointer:= value;
+end;
+
+procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_flo64;
+ res^.vflo64:= value;
+end;
+
+procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_char32;
+ res^.vchar32:= value;
+end;
+
+procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string8;
+ res^.vstring8:= value;
+end;
+
+procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string16;
+ res^.vstring16:= value;
+end;
+
+procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string32;
+ res^.vstring32:= value;
 end;
 
 end.

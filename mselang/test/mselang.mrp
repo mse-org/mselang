@@ -1712,7 +1712,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,array
+   a=0,664,4,array
    c=8
     (
     kind=2
@@ -1908,7 +1908,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,const
+   a=0,664,4,const
    c=4
     (
     kind=2
@@ -2016,7 +2016,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=35
     (
     kind=1
@@ -2936,7 +2936,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=20
     (
     kind=2
@@ -3396,7 +3396,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=14
     (
     kind=2
@@ -3852,7 +3852,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=13
     (
     kind=2
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B725695C
+    ao=An unhandled exception occured at $B7261888
     ae=
     aec=123
     ie=0
@@ -4662,7 +4662,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,IO
+   a=0,664,4,IO
    c=4
     (
     kind=2
@@ -6126,7 +6126,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=11
      (
      kind=2
@@ -6388,8 +6388,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,openarray
-    c=14
+    a=0,665,4,openarray
+    c=15
      (
      kind=2
      a=0,648,1,openarray1
@@ -6681,6 +6681,28 @@ c=3
      a=0,648,1,openarray7 llvm
      teststate=1
      path=openarray7.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,arrayofconst llvm
+     teststate=1
+     path=arrayofconst.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -13199,107 +13221,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=331
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=231
  0 0
  0 0
  0 0

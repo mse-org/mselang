@@ -26,6 +26,7 @@ type
  card64 = qword;
  targetpointerty = card32;
  ptargetpointerty = ^targetpointerty;
+ flo64 = double;
 {$endif}
  cint = int32;
  
@@ -35,6 +36,7 @@ type
  
  pint64 = ^int64;
  pcard64 = ^card64;
+ pflo64 = ^flo64;
  
  refcountty = int32;
  managedsizety = ptrint;
@@ -232,9 +234,9 @@ type
 
  valuetypety = (vt_boolean,vt_int32,vt_card32,vt_int64,vt_card64,
                 vt_pointer,
-                vt_char8,vt_char16,vt_char32,
-                vt_string8,vt_string16,vt_string32,
-                vt_flo64
+                vt_flo64,
+                {vt_char8,vt_char16,}vt_char32,
+                vt_string8,vt_string16,vt_string32
                );
 {$ifdef mse_compiler}
  varrecty32 = record
@@ -254,8 +256,9 @@ type
   (vint64: pint64);
   (vcard64: pcard64);
   (vpointer: pointer);
-  (vchar8: char8);
-  (vchar16: char16);
+  (vflo64: pflo64);
+//  (vchar8: char8);
+//  (vchar16: char16);
   (vchar32: char32);
   (vstring8: pointer);
   (vstring16: pointer);

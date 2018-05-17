@@ -97,7 +97,14 @@ const
 
   '__mla__int32tovarrecty',
   '__mla__int64tovarrecty',
+  '__mla__card32tovarrecty',
+  '__mla__card64tovarrecty',
   '__mla__pointertovarrecty',
+  '__mla__flo64tovarrecty',
+  '__mla__char32tovarrecty',
+  '__mla__string8tovarrecty',
+ '__mla__string16tovarrecty',
+ '__mla__string32tovarrecty',
 
   '__mla__raise',
   '__mla__finiexception',

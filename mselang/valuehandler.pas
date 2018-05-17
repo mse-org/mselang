@@ -22,7 +22,7 @@ uses
 
 type
  convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,coo_set,
-                    coo_notrunk);
+                    coo_notrunk,coo_errormessage);
  convertoptionsty = set of convertoptionty;
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
@@ -395,11 +395,55 @@ begin
         poalloc^.typid:= ord(das_64); //use pointer
        end
        else begin
-        if not tryconvert(poitem1,st_int32) then begin
+        if not tryconvert(poitem1,st_int32,[coo_errormessage]) then begin
          exit;
         end;
         datasize1:= das_32;
         poalloc^.valuefunc:= cs_int32tovarrecty;
+       end;
+      end;
+      dk_cardinal: begin
+       if typ1^.h.datasize = das_64 then begin
+        poalloc^.valuefunc:= cs_card64tovarrecty;
+        poalloc^.typid:= ord(das_64); //use pointer
+       end
+       else begin
+        if not tryconvert(poitem1,st_card32,[coo_errormessage]) then begin
+         exit;
+        end;
+        datasize1:= das_32;
+        poalloc^.valuefunc:= cs_card32tovarrecty;
+       end;
+      end;
+      dk_float: begin
+       if not tryconvert(poitem1,st_flo64,[coo_errormessage]) then begin
+        exit;
+       end;
+       datasize1:= das_f64;
+       poalloc^.valuefunc:= cs_flo64tovarrecty;
+       poalloc^.typid:= ord(das_f64); //use pointer
+      end;
+      dk_character: begin
+       if not tryconvert(poitem1,st_char32,[coo_errormessage]) then begin
+        exit;
+       end;
+       datasize1:= das_32;
+       poalloc^.valuefunc:= cs_char32tovarrecty;
+      end;
+      dk_string: begin
+       case typ1^.itemsize of
+        1: begin
+         poalloc^.valuefunc:= cs_string8tovarrecty;
+        end;
+        2: begin
+         poalloc^.valuefunc:= cs_string16tovarrecty;
+        end;
+        4: begin
+         poalloc^.valuefunc:= cs_string32tovarrecty;
+        end;
+        else begin
+         internalerror1(ie_handler,'20180517A');
+        end;
        end;
       end;
       else begin
@@ -1463,6 +1507,13 @@ begin
             end;
            end;
           end;
+          dk_character: begin
+           case source1^.h.kind of
+            dk_character: begin
+             convertsize(cardtocard);
+            end;
+           end;
+          end;
           dk_set: begin
            if (source1^.h.kind = dk_set) and 
                 (d.dat.datatyp.typedata = emptyset.typedata) then begin
@@ -1633,6 +1684,10 @@ begin
  with sysdatatypes[dest] do begin
   result:= tryconvert(acontext,
                               ele.eledataabs(typedata),indirectlevel,aoptions);
+  if not result and (coo_errormessage in aoptions) then begin
+   incompatibletypeserror(typedata,acontext^.d.dat.datatyp.typedata,
+                                                getstackoffset(acontext));
+  end;
  end;
 end;
 {

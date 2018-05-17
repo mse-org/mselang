@@ -88,7 +88,14 @@ type
 
   cs_int32tovarrecty,
   cs_int64tovarrecty,
+  cs_card32tovarrecty,
+  cs_card64tovarrecty,
   cs_pointertovarrecty,
+  cs_flo64tovarrecty,
+  cs_char32tovarrecty,
+  cs_string8tovarrecty,
+  cs_string16tovarrecty,
+  cs_string32tovarrecty,
 
   cs_raise,
   cs_finiexception,
