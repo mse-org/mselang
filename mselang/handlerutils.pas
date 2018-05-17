@@ -3017,6 +3017,7 @@ var
  po1: popinfoty;
  bo1,isstartoffset: boolean;
  ssabefore: int32;
+ fla1: addressflagsty;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
@@ -3033,6 +3034,7 @@ begin
    if isstartoffset then begin
     i3:= d.dat.ref.offset;
    end;
+   fla1:= d.dat.ref.c.address.flags;
    if address and not bo1 then begin
     i2:= 0;
     if d.dat.indirection = 0 then begin
@@ -3065,6 +3067,9 @@ begin
     end;
    end;
    initfactcontext(stackoffset);
+   if fla1 * [af_const,af_dereferenced,af_self] = [af_const] then begin
+    include(d.dat.fact.flags,faf_constref);
+   end;
    if (not address or bo1) and not isstartoffset then begin
     offsetad(stackoffset,d.dat.ref.offset);
    end;
@@ -3512,6 +3517,7 @@ var
  si1: databitsizety;
  stackoffset: int32;
  i1: int32;
+ fla1: addressflagsty;
 begin
  result:= false;
  stackoffset:= getstackoffset(acontext);
@@ -3544,11 +3550,15 @@ begin
     end;
     if d.dat.indirection = 1 then begin
      if endaddress then begin
+      fla1:= d.dat.ref.c.address.flags;
       pushinsert(stackoffset,-1,d.dat.datatyp,d.dat.ref.c.address,
                                                        d.dat.ref.offset);
                   //address pointer on stack
       initfactcontext(stackoffset);
       d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+      if fla1 * [af_const,af_dereferenced,af_self] = [af_const] then begin
+       include(d.dat.fact.flags,faf_constref);
+      end;
      end
      else begin
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);

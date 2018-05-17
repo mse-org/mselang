@@ -2574,6 +2574,7 @@ begin
        d.dat.datatyp.indirectlevel:= h.indirectlevel;
        d.dat.indirection:= -1;
        d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
+       include(d.dat.ref.c.address.flags,af_dereferenced);
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= 0;
       end;
@@ -2616,6 +2617,9 @@ begin
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         if vik_classele in foundflags1 then begin
          include(d.dat.ref.c.address.flags,af_classele);
+        end;
+        if af_classfield in flags then begin
+         include(d.dat.ref.c.address.flags,af_dereferenced);
         end;
         d.dat.ref.offset:= offset;
         d.dat.ref.c.varele:= 0;

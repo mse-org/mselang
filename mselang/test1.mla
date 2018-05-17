@@ -1,28 +1,16 @@
-program ini;
+program constpar;
 
-uses
- rtl_fpccompatibility;
- 
 type
- ccla = class(tobject)
-//  constructor create();
-//  destructor destroy();
+ ppointer = ^pointer;
+ recty = record
+  a,b: int32;
  end;
-{
-constructor ccla.create();
+
+procedure test(const a: ppointer);
 begin
+{$internaldebug on}
+ a^:= nil;
 end;
 
-destructor ccla.destroy();
 begin
-end;
-}
-// co = class(tobject)
-// end;
-//{$dumpelements}
-var
- co1: ccla;
-begin
- co1:= ccla.create();
- co1.destroy();
 end.

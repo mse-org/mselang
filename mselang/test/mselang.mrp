@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7261888
+    ao=An unhandled exception occured at $B72FF888
     ae=
     aec=123
     ie=0
@@ -6126,7 +6126,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,subvar
+    a=0,665,4,subvar
     c=11
      (
      kind=2
@@ -9749,7 +9749,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=34
    (
    kind=1
@@ -12063,7 +12063,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=2
    (
    kind=1
@@ -12475,12 +12475,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
    a=0,665,4,error check
-   c=3
+   c=4
     (
     kind=1
     a=0,665,4,conversions
@@ -12556,6 +12556,49 @@ c=3
      )
     teststate=1
     path=conversions/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,params
+    c=1
+     (
+     kind=2
+     a=0,648,1,constpar llvm
+     teststate=1
+     path=constpar.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=constpar.mla(10,2) Error: Can't assign values to const variable
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2017 by Martin Schreiber
+     ae=constpar.mla(10,2) Error: Can't assign values to const variable
+     aec=1
+     ie=0
+     )
+    teststate=1
+    path=params/
     comment=
     cc=
     cd=
@@ -12714,7 +12757,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,664,4,rtl
   c=3
    (
    kind=1
@@ -13221,7 +13264,20 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=231
+rowstate=244
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

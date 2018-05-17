@@ -27,6 +27,9 @@ type
  targetpointerty = card32;
  ptargetpointerty = ^targetpointerty;
  flo64 = double;
+ char8 = char;
+ char16 = unicodechar;
+ char32 = card32;
 {$endif}
  cint = int32;
  
@@ -37,6 +40,10 @@ type
  pint64 = ^int64;
  pcard64 = ^card64;
  pflo64 = ^flo64;
+
+ pchar8 = ^char8; 
+ pchar16 = ^char16; 
+ pchar32 = ^char32; 
  
  refcountty = int32;
  managedsizety = ptrint;

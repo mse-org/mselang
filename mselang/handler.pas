@@ -1514,6 +1514,7 @@ begin
       dec(d.dat.indirection);
       case d.kind of
        ck_ref: begin        //todo: make universal
+        include(d.dat.ref.c.address.flags,af_dereferenced);
         if not (stf_getaddress in s.currentstatementflags) then begin
          include(d.dat.ref.c.address.flags,af_startoffset);
         end;
@@ -3642,6 +3643,10 @@ begin
        typematch:= true;
       end;
       ck_fact,ck_subres: begin
+       if faf_constref in d.dat.fact.flags then begin
+        errormessage(err_cannotassigntoconst,[],dest);
+        goto endlab;
+       end;
        destvar.address.flags:= [];
        typematch:= true;
        indi:= true;

@@ -94,7 +94,8 @@ type
             err_singleexternalonly,err_cannotaddresscall,
             err_cannotaccessinclassmethod,err_cannotgetclass,
             err_doesnotinheritfromtype,err_doesnotinheritfromclass,
-            err_cannotgettypeinfo,err_wrongarrayitemtype);
+            err_cannotgettypeinfo,err_wrongarrayitemtype,
+            err_cannotassigntoconst);
             
  errorinfoty = record
   level: errorlevelty;
@@ -355,7 +356,8 @@ const
                'Initialization type does not inherit from instance type'),
   (level: erl_error; message: '"%s" does not inherit from "%s"'),
   (level: erl_error; message: 'Can not get typeinfo of this expression'),
-  (level: erl_error; message: 'Wrong type in array constructor "%s"')
+  (level: erl_error; message: 'Wrong type in array constructor "%s"'),
+  (level: erl_error; message: 'Can''t assign values to const variable')
  );
 
 procedure message1(const atext: string; const values: array of const); 
