@@ -359,7 +359,9 @@ var
  var1,varref: pvardataty;
  int1: integer;
  pa,pb: pvardataty;
-// start,stop: integer;
+ ta,tb: ptypedataty;
+ b1: boolean;
+
 begin
  result:= true;
  offs1:= ele.eledataoffset;
@@ -387,9 +389,26 @@ begin
  for int1:= int1 to ref^.paramcount-1 do begin
   pa:= pvardataty(par1^[int1]+offs1);
   pb:= pvardataty(parref^[int1]+offs1);
-  if (pa^.vf.typ <> pb^.vf.typ) or 
-         ((pa^.address.flags >< pb^.address.flags) *
-                                     compatibleparamflags <> []) then begin
+  b1:= ((pa^.address.flags >< pb^.address.flags) *
+                                     compatibleparamflags <> []) or
+                  (pa^.address.indirectlevel <> pb^.address.indirectlevel);
+  if not b1 then begin
+   b1:= pa^.vf.typ <> pb^.vf.typ;
+   if b1 then begin
+    ta:= ele.eledataabs(pa^.vf.typ);
+    tb:= ele.eledataabs(pb^.vf.typ);
+    if ta^.h.kind = tb^.h.kind then begin
+     if (ta^.h.kind = dk_openarray) and 
+      (ta^.infodynarray.i.itemindirectlevel = 
+               tb^.infodynarray.i.itemindirectlevel) and
+      (ta^.infodynarray.i.itemtypedata = 
+               tb^.infodynarray.i.itemtypedata) then begin
+      b1:= false;
+     end;
+    end;
+   end;
+  end;
+  if b1 then begin
    result:= false;
    exit;
   end;
