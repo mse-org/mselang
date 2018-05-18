@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1768,7 +1768,9 @@ var
           if tf_sizeinvalid in typ1^.h.flags then begin //size not known yet
            needssizeupdate:= true;
           end;
-          if si1 > targetpointersize then begin
+          if (si1 > targetpointersize) and 
+                            (typ1^.h.kind <> dk_openarray) then begin
+                                  //dk_openarray has special handling
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
            si1:= targetpointersize;
@@ -3070,7 +3072,7 @@ var
      internalerror1(ie_handler,'20171122C');
     end;
    end;
-   if af_paramindirect in vardata1^.address.flags then begin
+   if (af_paramindirect in vardata1^.address.flags) then begin
     case context1^.d.kind of
      ck_const,ck_list: begin
       if not (af_const in vardata1^.address.flags) then begin

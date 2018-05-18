@@ -1,0 +1,9 @@
+program constpar1;
+
+procedure test(const a: array of int32);
+begin
+ a[0]:= 123;
+end;
+
+begin
+end.

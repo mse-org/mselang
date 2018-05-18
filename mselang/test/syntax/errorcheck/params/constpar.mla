@@ -1,0 +1,14 @@
+program constpar;
+
+type
+ recty = record
+  a,b: int32;
+ end;
+
+procedure test(const a: recty);
+begin
+ a.a:= 123;
+end;
+
+begin
+end.

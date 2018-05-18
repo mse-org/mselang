@@ -12,7 +12,6 @@ type
 
 method objty.add(b: objty);
 begin
-{$internaldebug on}
  fa:= fa+b.fa;
  fb:= fb+b.fb;
 end;
