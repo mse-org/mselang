@@ -67,7 +67,8 @@ implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,handlerglob,elements,
  opcode,stackops,segmentutils,opglob,unithandler,handler,grammarglob,
- gramse,parser,listutils,classhandler,__mla__internaltypes,llvmlists;
+ gramse,parser,listutils,classhandler,__mla__internaltypes,llvmlists,
+ valuehandler;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -607,12 +608,9 @@ begin
  {$endif}
   poa:= @contextstack[s.stacktop];
   with poa^ do begin
-   if getvalue(poa,das_none{,true}) and (d.dat.datatyp.indirectlevel = 0) and 
+   if getvalue(poa,das_none) and (d.dat.datatyp.indirectlevel = 0) and 
           (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
-                                                  ordinaldatakinds) then begin
- //   if d.kind = ck_const then begin //todo: optimize const case switch
- //    getvalue(1,das_none);
- //   end;
+                                                  rangedatakinds) then begin
    end
    else begin
     errormessage(err_ordinalexpexpected,[]);
@@ -648,6 +646,7 @@ var
  poexp,polast,poitem: pcontextitemty;
  expssa: int32;
  si1: databitsizety;
+ b1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
@@ -671,8 +670,14 @@ begin
   
   for int1:= 0 to last do begin
    with poitem^ do begin
-    if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
-                          (d.dat.constval.kind in ordinaldatakinds) then begin
+    b1:= (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0);
+    if b1 then begin
+     b1:= d.dat.constval.kind in rangedatakinds;
+     if not b1 and (d.dat.constval.kind in stringdatakinds) then begin
+      b1:= tryconvert(poitem,st_char32,[]);
+     end;
+    end;
+    if b1 then begin
      si1:= ptypedataty(ele.eledataabs(
                               poexp^.d.dat.datatyp.typedata))^.h.datasize;
             //todo: signed/unsigned, use table
@@ -709,6 +714,10 @@ begin
              //todo: cardinal
       with po1^.par do begin
        case si1 of
+        das_1: begin
+         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi1(
+                                                      d.dat.constval.vboolean);
+        end;
         das_8: begin
          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi8(
                                                       d.dat.constval.vinteger);
@@ -734,6 +743,9 @@ begin
      end
      else begin
       case si1 of
+       das_1: begin
+        po1^.par.cmpjmpimm.imm.vboolean:= d.dat.constval.vboolean;
+       end;
        das_8: begin
         po1^.par.cmpjmpimm.imm.vint8:= d.dat.constval.vinteger;
        end;

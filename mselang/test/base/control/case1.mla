@@ -9,9 +9,47 @@ begin
   else result:= 123;
  end;
 end;
-
+var
+ b1: bool1;
+ c1: char16;
 begin
  if (p(1) = 11) and (p(2) = 20) and (p(3) = 30) and (p(4) = 44) then
   exitcode:= p(5);
+ end;
+ if exitcode = 123 then
+  b1:= false;
+  case b1 of
+   true: begin 
+    exitcode:= 10;
+   end;
+   false: begin 
+    exitcode:= 20;
+   end;
+  end;
+  if exitcode = 20 then
+   b1:= true;
+   case b1 of
+    true: begin 
+     exitcode:= 10;
+    end;
+    false: begin 
+     exitcode:= 20;
+    end;
+   end;
+   if exitcode = 10 then
+    c1:= '€';
+    case c1 of
+     'a': begin
+      exitcode:= 1;
+     end;
+     '€': begin
+      exitcode:= 123;
+     end;
+     'b': begin
+      exitcode:= 2;
+     end;
+    end;
+   end;
+  end;
  end;
 end.
