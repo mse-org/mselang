@@ -3033,6 +3033,8 @@ begin
    i3:= 0;
    if isstartoffset then begin
     i3:= d.dat.ref.offset;
+    d.dat.ref.offset:= 0;
+    exclude(d.dat.ref.c.address.flags,af_startoffset);
    end;
    fla1:= d.dat.ref.c.address.flags;
    if address and not bo1 then begin
@@ -3058,6 +3060,13 @@ begin
    else begin
     pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
                 i3,bitoptypes[das_pointer]);
+    if (af_stacktemp in d.dat.ref.c.address.flags) and isstartoffset then begin
+     ssabefore:= getcontextssa(stackoffset);
+     with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
+      par.ssas1:= ssabefore;
+      setimmint32(i3,par.imm);
+     end;
+    end;
     i2:= -1;
    end;
    for i1:= d.dat.indirection to i2 do begin
@@ -3543,7 +3552,7 @@ begin
   end;
   case d.kind of
    ck_ref: begin
-    if not (af_segment in d.dat.ref.c.address.flags) then begin
+    if d.dat.ref.c.address.flags * [af_segment,af_stacktemp] = [] then begin
      tracklocalaccess(d.dat.ref.c.address.locaddress,d.dat.ref.c.varele,
                            getopdatatype(d.dat.datatyp.typedata,
                                                 d.dat.datatyp.indirectlevel));
@@ -4536,7 +4545,13 @@ procedure outinfo(const text: string; const indent: boolean = true);
  procedure writeaddress(const aaddress: addressvaluety);
  begin
   with aaddress do begin
-   write('I:',inttostr(indirectlevel),' A:',inttostr(integer(poaddress)),' ');
+   write('I:',inttostr(indirectlevel));
+   if (af_stacktemp in flags) and (co_llvm in info.o.compileoptions) then begin
+    write(' AS:',inttostr(tempaddress.ssaindex),' ');
+   end
+   else begin
+    write(' A:',inttostr(integer(poaddress)),' ');
+   end;
    write(settostring(ptypeinfo(typeinfo(addressflagsty)),
                                                      integer(flags),true),' ');
    if af_stack in flags then begin

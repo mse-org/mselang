@@ -670,6 +670,7 @@ begin
   
   for int1:= 0 to last do begin
    with poitem^ do begin
+//todo: check correct datatype
     b1:= (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0);
     if b1 then begin
      b1:= d.dat.constval.kind in rangedatakinds;
