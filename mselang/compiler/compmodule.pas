@@ -10,7 +10,8 @@ const
  llvmbcextension = 'bc'; 
 type
  paramty = (pa_source,pa_llvm,pa_nocompilerunit,pa_nortlunits,
-            pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine); 
+            pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine,
+            pa_build,pa_makeobject); 
             //item number in sysenv
  
  tcompmo = class(tmsedatamodule)
@@ -45,6 +46,9 @@ const
 'MSElang Compiler version 0.0'+lineend+
 'Copyright (c) 2013-2017 by Martin Schreiber';
 
+ llvmbindir = 
+ '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+
 procedure tcompmo.createexe(const sender: TObject);
 begin
  sysenv.printmessage(startupmessage);
@@ -73,6 +77,16 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
+
+   parserparams.buildoptions.llvmlinkcommand:= 
+                                      tosysfilepath(llvmbindir+'llvm-link');
+   parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
+//   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
+   parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
+   parserparams.buildoptions.ascommand:= tosysfilepath('as');
+   parserparams.buildoptions.exefile:= tosysfilepath(
+                                          replacefileext(filename1,'bin'));
+
    parserparams.compileoptions:= mlaruntimecompileoptions;
    if sysenv.defined[ord(pa_llvm)] then begin
     parserparams.compileoptions:= llvmcompileoptions;
@@ -84,14 +98,22 @@ begin
      parserparams.compileoptions:= parserparams.compileoptions + [co_lineinfo];
     end;
    end;
+   if sysenv.defined[ord(pa_build)] then begin
+    include(parserparams.compileoptions,co_build);
+   end;
+   if sysenv.defined[ord(pa_makeobject)] then begin
+    parserparams.compileoptions:= parserparams.compileoptions +
+                                                  [co_buildexe,co_modular];
+   end;
    if sysenv.defined[ord(pa_nocompilerunit)] then begin
     include(parserparams.compileoptions,co_nocompilerunit);
    end;
    if sysenv.defined[ord(pa_nortlunits)] then begin
     include(parserparams.compileoptions,co_nortlunits);
    end;
+   info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
    if parse(str1,filename1,parserparams) then begin
-    if co_llvm in parserparams.compileoptions then begin
+    if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
      filename1:= replacefileext(filename1,llvmbcextension);
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
                           filename1,fm_create),
@@ -141,6 +163,10 @@ var
  ar1: msestringarty;
  i1: int32;
 begin
+{
+ if sysenv.defined[ord(pa_llvm)] then begin
+  include(info.o.compileoptions,co_llvm);
+ end;
  if sysenv.defined[ord(pa_debug)] then begin
   info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo,do_proginfo];
@@ -149,14 +175,17 @@ begin
   info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo];
  end;
- info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
-{
- ar1:= sysenv.values[ord(pa_define)];
- setlength(info.o.defines,length(ar1));
- for i1:= 0 to high(ar1) do begin
-  info.o.defines[i1].name:= ansistring(ar1[i1]);
+ if sysenv.defined[ord(pa_nocompilerunit)] then begin
+  include(parserparams.compileoptions,co_nocompilerunit);
  end;
-}
+ if sysenv.defined[ord(pa_nortlunits)] then begin
+  include(parserparams.compileoptions,co_nortlunits);
+ end;
+ info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
+ if sysenv.defined[ord(pa_build)] then begin
+  include(info.o.compileoptions,co_build);
+ end;
+ }
 end;
 
 procedure tcompmo.initparams(const aparams: msestringarty);

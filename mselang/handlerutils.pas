@@ -3061,6 +3061,7 @@ begin
     pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
                 i3,bitoptypes[das_pointer]);
     if (af_stacktemp in d.dat.ref.c.address.flags) and isstartoffset then begin
+                   //probably "with" statement
      ssabefore:= getcontextssa(stackoffset);
      with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
       par.ssas1:= ssabefore;
