@@ -15,7 +15,7 @@ lab1:
   end;
   2:
    exitcode:= 2;
-  else
+  else:
    exitcode:= 0;
  end;
 end.

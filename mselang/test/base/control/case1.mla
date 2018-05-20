@@ -6,7 +6,7 @@ begin
   1: result:= 11;
   2..3: result:= p1*10;
   4: result:= 44;
-  else result:= 123;
+  else: result:= 123;
  end;
 end;
 var

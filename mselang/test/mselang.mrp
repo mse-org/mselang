@@ -2020,7 +2020,7 @@ c=3
    c=35
     (
     kind=1
-    a=0,665,4,goto
+    a=0,664,4,goto
     c=6
      (
      kind=2
@@ -2112,7 +2112,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,goto3
+     a=0,648,2,goto3
      teststate=1
      path=goto3.mla
      comment=
@@ -2134,7 +2134,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,goto3 llvm
+     a=0,648,2,goto3 llvm
      teststate=1
      path=goto3.mla
      comment=
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B726C888
+    ao=An unhandled exception occured at $B728E888
     ae=
     aec=123
     ie=0
@@ -12520,15 +12520,13 @@ c=3
      in=
      eo=
      ao=1
-     ee=caseerror1.mla(15,3) Error: Ordinal constant expected
-     +caseerror1.mla(15,12) Fatal: Illegal expression
+     ee=caseerror1.mla(16,4) Fatal: Syntax error,":" expected
      ae=0
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2017 by Martin Schreiber
-     ae=caseerror1.mla(15,3) Error: Ordinal constant expected
-     +caseerror1.mla(15,12) Fatal: Illegal expression
+     ae=caseerror1.mla(16,4) Fatal: Syntax error,":" expected
      aec=1
      ie=0
      )
@@ -12847,11 +12845,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,rtl
+  a=0,665,4,rtl
   c=3
    (
    kind=1
-   a=0,664,4,variants
+   a=0,665,4,variants
    c=7
     (
     kind=2
@@ -13354,7 +13352,15 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=157
+rowstate=165
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

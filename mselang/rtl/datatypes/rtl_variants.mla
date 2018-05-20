@@ -341,7 +341,7 @@ begin
    result:= truncint32(vflo32);
   VT_R8:
    result:= truncint32(vflo64);
-  else
+  else:
    tovalueerror(VT_I1);
  end;
 end;
@@ -361,7 +361,7 @@ begin
    result:= truncint32(vflo32);
   VT_R8:
    result:= truncint32(vflo64);
-  else
+  else:
    tovalueerror(VT_I2);
  end;
 end;
@@ -381,7 +381,7 @@ begin
    result:= truncint32(vflo32);
   VT_R8:
    result:= truncint32(vflo64);
-  else
+  else:
    tovalueerror(VT_I4);
  end;
 end;
@@ -401,7 +401,7 @@ begin
    result:= truncint64(vflo32);
   VT_R8:
    result:= truncint64(vflo64);
-  else
+  else:
    tovalueerror(VT_I8);
  end;
 end;
@@ -421,7 +421,7 @@ begin
    result:= trunccard32(vflo32);
   VT_R8:
    result:= trunccard32(vflo64);
-  else
+  else:
    tovalueerror(VT_UI1);
  end;
 end;
@@ -441,7 +441,7 @@ begin
    result:= trunccard32(vflo32);
   VT_R8:
    result:= trunccard32(vflo64);
-  else
+  else:
    tovalueerror(VT_UI2);
  end;
 end;
@@ -461,7 +461,7 @@ begin
    result:= trunccard32(vflo32);
   VT_R8:
    result:= trunccard32(vflo64);
-  else
+  else:
    tovalueerror(VT_UI4);
  end;
 end;
@@ -481,7 +481,7 @@ begin
    result:= trunccard64(vflo32);
   VT_R8:
    result:= trunccard64(vflo64);
-  else
+  else:
    tovalueerror(VT_UI8);
  end;
 end;
@@ -501,7 +501,7 @@ begin
    result:= vflo32;
   VT_R8:
    result:= vflo64;
-  else
+  else:
    tovalueerror(VT_R4);
  end;
 end;
@@ -521,7 +521,7 @@ begin
    result:= vflo32;
   VT_R8:
    result:= vflo64;
-  else
+  else:
    tovalueerror(VT_R8);
  end;
 end;
@@ -535,7 +535,7 @@ begin
    result:= string16(vstring);
   vt_string32:
    result:= string32(vstring);
-  else
+  else:
    tovalueerror(vt_string8);
  end;
 end;
@@ -549,7 +549,7 @@ begin
    result:= string16(vstring);
   vt_string32:
    result:= string32(vstring);
-  else
+  else:
    tovalueerror(vt_string8);
  end;
 end;
@@ -563,7 +563,7 @@ begin
    result:= string16(vstring);
   vt_string32:
    result:= string32(vstring);
-  else
+  else:
    tovalueerror(vt_string8);
  end;
 end;
@@ -816,7 +816,7 @@ begin
    tovariant(-flo32(self));
   VT_R8:
    tovariant(-flo64(self));
-  else
+  else:
    operandtypeerror('-');
  end;
 end;
@@ -836,7 +836,7 @@ begin
    tovariant(flo32(self)+flo32(b));
   VT_R8:
    tovariant(flo64(self)+flo64(b));
-  else
+  else:
    operandtypeerror(b,'+');
  end;
 end;
@@ -856,7 +856,7 @@ begin
    tovariant(flo32(self)-flo32(b));
   VT_R8:
    tovariant(flo64(self)-flo64(b));
-  else
+  else:
    operandtypeerror(b,'-');
  end;
 end;

@@ -786,11 +786,11 @@ casebranch2,casebranch3,handlecasebranchentry,*
 //allow goto labels in case statements
 //casestatementgroup,,handlecasestatementgroupstart,handlecasestatementgroup^
 casestatementgroup,,handlecasestatementgroupstart,^
- '',statement^*
-// '',statement^*>
-// 'end'.,*
-// 'else'.,*
-// ';',->
+// '',statement^*
+ '',statement^*>
+ 'end'.,*
+ 'else'.,*
+ ';',->
 casebranch2,casebranch3,handlecasebranchentry,*
  '',casestatementgroup^*
 //casebranch2a,casebranch2,handlecasebranch2entry,
@@ -804,7 +804,15 @@ casebranch3,casebranch,handlecasebranch,
  ';',casebranch-
 // 'else'.,caseelse-*
 // 'end'.,caseend-
+{$gramse}
+caseelse,,,handlecolonexpected
+ ${whitespace}
+ ':',caseelse0-
+caseelse0,checkcaseend,,
+{$}
+{$grapas}
 caseelse,checkcaseend,,
+{$}
  'end'.,caseend-
  '',statementblock^*
 checkcaseend,caseend,,
