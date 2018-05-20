@@ -1058,11 +1058,6 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'forbody');
- casestatementgroupco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'casestatementgroup');
  caseco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -6119,29 +6114,6 @@ const
  bforbody: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#0..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bcasestatementgroup: array[0..4] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000022F{'end'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000025A{'else'}),
-   (flags: [bf_nt,bf_eat,bf_continue];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [';']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @statementco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -13969,8 +13941,6 @@ begin
  forbodyco.branch:= @bforbody;
  forbodyco.handleentry:= @handleforheader;
  forbodyco.handleexit:= @handleforend;
- casestatementgroupco.branch:= @bcasestatementgroup;
- casestatementgroupco.handleentry:= @handlecasestatementgroupstart;
  caseco.branch:= @bcase;
  caseco.next:= @caseofco;
  caseco.handleentry:= @handlecasestart;

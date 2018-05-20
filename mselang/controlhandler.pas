@@ -56,6 +56,7 @@ procedure handlecasebranch();
 procedure handlecasebranch2entry();
 procedure handlecase();
 procedure handlecasestatementgroupstart();
+//procedure handlecasestatementgroup();
 
 procedure handlelabeldef();
 procedure handlelabel();
@@ -801,7 +802,17 @@ begin
   contextstack[s.stackindex].d.kind:= ck_caseblock;
  end;
 end;
-
+(*
+procedure handlecasestatementgroup();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASESTATEMENTGROUP');
+{$endif}
+ with info do begin
+  dec(s.stackindex);
+ end;
+end;
+*)
 procedure handlecheckcaselabel();
 var
  p1: pcontextitemty;

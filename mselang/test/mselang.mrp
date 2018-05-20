@@ -2017,7 +2017,7 @@ c=3
    (
    kind=1
    a=0,665,4,control
-   c=34
+   c=35
     (
     kind=1
     a=0,665,4,goto
@@ -2879,6 +2879,28 @@ c=3
     a=0,648,1,exitmain llvm
     teststate=1
     path=exitmain.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,case2 llvm
+    teststate=1
+    path=case2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3849,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B723D888
+    ao=An unhandled exception occured at $B726C888
     ae=
     aec=123
     ie=0
@@ -12480,10 +12502,55 @@ c=3
    (
    kind=1
    a=0,665,4,error check
-   c=4
+   c=5
     (
     kind=1
-    a=0,665,4,conversions
+    a=0,665,4,control
+    c=1
+     (
+     kind=2
+     a=0,648,1,caserror1
+     teststate=1
+     path=caseerror1.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=caseerror1.mla(15,3) Error: Ordinal constant expected
+     +caseerror1.mla(15,12) Fatal: Illegal expression
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2017 by Martin Schreiber
+     ae=caseerror1.mla(15,3) Error: Ordinal constant expected
+     +caseerror1.mla(15,12) Fatal: Illegal expression
+     aec=1
+     ie=0
+     )
+    teststate=1
+    path=control/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,664,4,conversions
     c=3
      (
      kind=2
@@ -12572,7 +12639,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,params
+    a=0,664,4,params
     c=2
      (
      kind=2
@@ -13287,9 +13354,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=159
- 0 0
- 0 0
+rowstate=157
  0 0
  0 0
  0 0

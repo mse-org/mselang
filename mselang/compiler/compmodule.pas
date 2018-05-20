@@ -181,11 +181,11 @@ begin
  if sysenv.defined[ord(pa_nortlunits)] then begin
   include(parserparams.compileoptions,co_nortlunits);
  end;
- info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
  if sysenv.defined[ord(pa_build)] then begin
   include(info.o.compileoptions,co_build);
  end;
  }
+ info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
 end;
 
 procedure tcompmo.initparams(const aparams: msestringarty);

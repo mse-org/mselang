@@ -764,12 +764,6 @@ forbodya,,,handleendexpected
 forbodyb,,,handleforend*
 {$}
 
-casestatementgroup,,handlecasestatementgroupstart,^
- '',statement^*>
- 'end'.,*
- 'else'.,*
- ';',->
-
 case,caseof,handlecasestart,
  '',exp^*
 caseof,,handlecaseexpression,handlecase*
@@ -783,11 +777,20 @@ casebranch,casebranch1,handlecasebranch1entry,
 casebranch1,,,handlecolonexpected
  ${whitespace}
  ':',casebranch2-*
+
 {$grapas}
 casebranch2,casebranch3,handlecasebranchentry,*
  '',statementstack^*
 {$}
-{$gramse}
+{$gramse} 
+//allow goto labels in case statements
+//casestatementgroup,,handlecasestatementgroupstart,handlecasestatementgroup^
+casestatementgroup,,handlecasestatementgroupstart,^
+ '',statement^*
+// '',statement^*>
+// 'end'.,*
+// 'else'.,*
+// ';',->
 casebranch2,casebranch3,handlecasebranchentry,*
  '',casestatementgroup^*
 //casebranch2a,casebranch2,handlecasebranch2entry,
@@ -795,6 +798,7 @@ casebranch2,casebranch3,handlecasebranchentry,*
 // 'end'.,caseend-
 casebranchrestart,casebranch3,,
 {$}
+
 casebranch3,casebranch,handlecasebranch,
  ${whitespace}
  ';',casebranch-

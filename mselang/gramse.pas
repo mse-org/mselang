@@ -1133,11 +1133,6 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'forbodyb');
- casestatementgroupco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'casestatementgroup');
  caseco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1158,6 +1153,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'casebranch1');
+ casestatementgroupco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'casestatementgroup');
  casebranch2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -6384,29 +6384,6 @@ const
      keyword: $0000022F{'end'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcasestatementgroup: array[0..4] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000022F{'end'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000025A{'else'}),
-   (flags: [bf_nt,bf_eat,bf_continue];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [';']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @statementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#0..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
  bcase: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
@@ -6520,6 +6497,16 @@ const
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @casebranch2co); stack: nil; keys: (
     (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcasestatementgroup: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @statementco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -14261,8 +14248,6 @@ begin
  forbodyaco.handleexit:= @handleendexpected;
  forbodybco.branch:= nil;
  forbodybco.handleexit:= @handleforend;
- casestatementgroupco.branch:= @bcasestatementgroup;
- casestatementgroupco.handleentry:= @handlecasestatementgroupstart;
  caseco.branch:= @bcase;
  caseco.next:= @caseofco;
  caseco.handleentry:= @handlecasestart;
@@ -14274,6 +14259,8 @@ begin
  casebranchco.handleentry:= @handlecasebranch1entry;
  casebranch1co.branch:= @bcasebranch1;
  casebranch1co.handleexit:= @handlecolonexpected;
+ casestatementgroupco.branch:= @bcasestatementgroup;
+ casestatementgroupco.handleentry:= @handlecasestatementgroupstart;
  casebranch2co.branch:= @bcasebranch2;
  casebranch2co.next:= @casebranch3co;
  casebranch2co.handleentry:= @handlecasebranchentry;

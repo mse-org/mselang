@@ -7,11 +7,12 @@ begin
  i1:= 1;
  exitcode:= 3;
  case i1 of
-  1:
+  1: begin
    goto lab1;
    exitcode:= 1;
 lab1:
    exitcode:= exitcode + 120;
+  end;
   2:
    exitcode:= 2;
   else
