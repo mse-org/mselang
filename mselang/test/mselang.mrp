@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72B1888
+    ao=An unhandled exception occured at $B7248590
     ae=
     aec=123
     ie=0
@@ -5927,7 +5927,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=42
+   c=41
     (
     kind=1
     a=0,664,4,managed
@@ -6738,7 +6738,93 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,nested
+    a=0,665,4,param
+    c=3
+     (
+     kind=2
+     a=0,648,1,params
+     teststate=1
+     path=params.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,params llvm
+     teststate=1
+     path=params.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,varparpointer llvm
+     teststate=1
+     path=varparpointer.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=
+     cr=0
+     ao=
+     ae=
+     aec=0
+     ie=0
+     )
+    teststate=1
+    path=param/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,664,4,nested
     c=2
      (
      kind=2
@@ -7465,50 +7551,6 @@ c=3
     a=0,648,1,defaultpar2 llvm
     teststate=1
     path=defaultpar2.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,params
-    teststate=1
-    path=params.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,params llvm
-    teststate=1
-    path=params.mla
     comment=
     cc=${mlc_llvm}
     cd=
