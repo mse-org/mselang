@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72EA888
+    ao=An unhandled exception occured at $B72B1888
     ae=
     aec=123
     ie=0
@@ -6739,12 +6739,34 @@ c=3
     (
     kind=1
     a=0,665,4,nested
-    c=1
+    c=2
      (
      kind=2
      a=0,648,1,nestedaccess llvm
      teststate=1
      path=nestedacess.llvm
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=
+     cr=0
+     ao=
+     ae=
+     aec=0
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,nestedaccess1 llvm
+     teststate=1
+     path=nestedacess1.llvm
      comment=
      cc=
      cd=
@@ -13394,7 +13416,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=115
+rowstate=116
+ 0 0
  0 0
  0 0
  0 0

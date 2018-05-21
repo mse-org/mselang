@@ -1510,13 +1510,17 @@ begin
       errormessage(err_illegalqualifier,[]);
      end
      else begin
-      dec(d.dat.datatyp.indirectlevel);
-      dec(d.dat.indirection);
       case d.kind of
        ck_ref: begin        //todo: make universal
         include(d.dat.ref.c.address.flags,af_dereferenced);
         if not (stf_getaddress in s.currentstatementflags) then begin
-         include(d.dat.ref.c.address.flags,af_startoffset);
+         if af_nostartoffset in d.dat.ref.c.address.flags then begin
+          exclude(d.dat.ref.c.address.flags,af_nostartoffset);
+          getvalue(potop,das_none);
+         end
+         else begin
+          include(d.dat.ref.c.address.flags,af_startoffset);
+         end;
         end;
        end;
        ck_const: begin
@@ -1537,6 +1541,8 @@ begin
         internalerror1(ie_notimplemented,'20140402A'); //todo
        end;
       end;
+      dec(d.dat.datatyp.indirectlevel);
+      dec(d.dat.indirection);
      end;
     end;
    end;

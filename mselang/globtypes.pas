@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -125,6 +125,7 @@ type
                   af_classele, //found by class method
                   af_stack,af_segmentpo,af_aggregate,
                   af_startoffset, //for indirection
+                  af_nostartoffset, //was af_paramindirect,af_withindirect
                   af_dereferenced,
                   af_arrayop, //typeallocinfoty.size = count
                   af_untyped  //for array of const

@@ -1963,6 +1963,7 @@ begin
                                                           continued then begin
    d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
                                   [af_paramindirect,af_withindirect];
+   include(d.dat.ref.c.address.flags,af_nostartoffset);
    dec(d.dat.indirection);
    dec(d.dat.datatyp.indirectlevel);
   end;
