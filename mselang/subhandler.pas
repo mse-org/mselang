@@ -4058,17 +4058,21 @@ begin
      end
      else begin
       i1:= sublevel-asub^.nestinglevel;
+      i2:= i1;
+      b1:= sf_hasnestedaccess in asub^.flags;
+      if not b1 then begin
+       i2:= 0;
+      end;
       if sf_functioncall in asub^.flags then begin
        po1:= insertitem(oc_callfuncout,topoffset,-1,
-                                       getssa(ocssa_nestedcallout,i1));
+                                       getssa(ocssa_nestedcallout,i2));
       end
       else begin
        po1:= insertitem(oc_callout,topoffset,-1,
-                                       getssa(ocssa_nestedcallout,i1));
+                                       getssa(ocssa_nestedcallout,i2));
       end;
       po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
       po7:= ele.parentelement;
-      b1:= sf_hasnestedaccess in asub^.flags;
       if b1 then begin
        include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
       end;

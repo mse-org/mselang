@@ -457,6 +457,7 @@ begin
                         bcstream.constval(locdataaddress.offset)); //2ssa
      end;
      bcstream.emitbitcast(bcstream.relval(0),i1+1); //pointer //1ssa
+
      bcstream.emitloadop(bcstream.relval(0));                 //1ssa
     end
     else begin
