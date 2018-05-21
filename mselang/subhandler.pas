@@ -4068,12 +4068,17 @@ begin
       end;
       po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
       po7:= ele.parentelement;
-      include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+      b1:= sf_hasnestedaccess in asub^.flags;
+      if b1 then begin
+       include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+      end;
       for i1:= i1-1 downto 0 do begin
        po7:= ele.eleinfoabs(po7^.header.parent);
        include(psubdataty(@po7^.data)^.flags,sf_hasnestedref);
        if i1 <> 0 then begin
-        include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+        if b1 then begin
+         include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+        end;
         include(psubdataty(@po7^.data)^.flags,sf_hascallout);
        end;
       end;

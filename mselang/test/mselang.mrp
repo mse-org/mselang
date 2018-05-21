@@ -120,7 +120,7 @@ c=3
   c=25
    (
    kind=1
-   a=0,665,4,conditon
+   a=0,664,4,conditon
    c=2
     (
     kind=2
@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -2016,7 +2016,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=35
     (
     kind=1
@@ -2112,7 +2112,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,goto3
+     a=0,648,1,goto3
      teststate=1
      path=goto3.mla
      comment=
@@ -2134,7 +2134,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,goto3 llvm
+     a=0,648,1,goto3 llvm
      teststate=1
      path=goto3.mla
      comment=
@@ -3871,7 +3871,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B728E888
+    ao=An unhandled exception occured at $B72EA888
     ae=
     aec=123
     ie=0
@@ -5926,8 +5926,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
-   c=41
+   a=0,665,4,sub
+   c=42
     (
     kind=1
     a=0,664,4,managed
@@ -6126,7 +6126,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=11
      (
      kind=2
@@ -6388,7 +6388,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,openarray
+    a=0,664,4,openarray
     c=15
      (
      kind=2
@@ -6722,6 +6722,48 @@ c=3
      )
     teststate=1
     path=openarray/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,nested
+    c=1
+     (
+     kind=2
+     a=0,648,1,nestedaccess llvm
+     teststate=1
+     path=nestedacess.llvm
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=
+     cr=0
+     ao=
+     ae=
+     aec=0
+     ie=0
+     )
+    teststate=1
+    path=nested/
     comment=
     cc=
     cd=
@@ -13352,57 +13394,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=165
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=115
  0 0
  0 0
  0 0
