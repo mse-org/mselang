@@ -645,7 +645,7 @@ begin
       ck_ref: begin
        if (d.dat.indirection <> 0) or 
                 (af_local in d.dat.ref.c.address.flags) and 
-                    (d.dat.ref.c.address.locaddress.framelevel >= 0) then begin
+                    (d.dat.ref.c.address.locaddress.framelevel < sublevel) then begin
         getaddress(poa,true);
        end
        else begin
