@@ -125,7 +125,29 @@ object compmo: tcompmo
       )
       (
         ak_par
-        'O'
+        'Oo'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_par
+        'Ob'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_par
+        'Vc'
         (        )
         []
         ''

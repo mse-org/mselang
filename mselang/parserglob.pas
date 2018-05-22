@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ type
  //                   co_writeunits,     //write unitfiles //preliminary
 //                    co_readunits,      //read unitfiles  //preliminary
                     co_build,          //compile all unit files
-                    co_buildexe,
+                    co_buildexe,co_compilefileinfo,
                     co_lineinfo,co_proginfo,co_names //debug
                     );
  compileoptionsty = set of compileoptionty;

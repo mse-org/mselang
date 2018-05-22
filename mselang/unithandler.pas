@@ -477,6 +477,10 @@ begin
   end;
  }
   include(s.unitinfo^.state,us_interfaceparsed);
+  if (co_compilefileinfo in o.compileoptions) and s.interfaceonly then begin
+   writeln('impl '+quotefilename(s.unitinfo^.filepath));
+  end;
+
   if us_implementation in s.unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
   end

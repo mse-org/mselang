@@ -568,6 +568,7 @@ var
  eleparentbefore: elementoffsetty;
  i1: int32;
  m1,m2,m3: metavaluety;
+ s1: msestring;
 label
  handlelab{,stophandlelab},parseend;
 
@@ -601,6 +602,18 @@ begin
     finalizeunit(aunit);
     exit;
    end;
+  end;
+  if co_compilefileinfo in info.o.compileoptions then begin
+   s1:= 'comp ';
+   if ainterfaceonly then begin
+    s1:= 'intf ';
+   end
+   else begin
+    if us_interfaceparsed in aunit^.state then begin
+     s1:= 'impl ';
+    end;
+   end;
+   writeln(s1+quotefilename(aunit^.filepath));
   end;
   if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
    if co_modular in info.o.compileoptions then begin
@@ -1025,7 +1038,8 @@ parseend:
     end;
    end;
   end;
-  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
+  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0) and 
+                                                           not s.stopparser;
   with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin
    varchain:= s.unitinfo^.varchain;
   end;
@@ -1263,8 +1277,14 @@ begin
           for i1:= 0 to high(ar1) do begin
            writeln(' ',ar1[i1]);
           end;
+         {$else}
+          if co_compilefileinfo in o.compileoptions then begin
+           writeln('Linking bc modules (llvm-link)');
+           for i1:= 0 to high(ar1) do begin
+            writeln(' ',quotefilename(ar1[i1]));
+           end;
+          end;
          {$endif}
-          writeln('Linking bc modules (llvm-link)');
           result:= execwaitmse(llvmlinkcommand+
                            ' -o='+fna1+' '+quotefilename(ar1)) = 0;
           if result then begin

@@ -11,7 +11,8 @@ const
 type
  paramty = (pa_source,pa_llvm,pa_nocompilerunit,pa_nortlunits,
             pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine,
-            pa_build,pa_makeobject); 
+            pa_build,pa_makeobject,pa_makebc, //prduce no exe
+            pa_showcompilefile); 
             //item number in sysenv
  
  tcompmo = class(tmsedatamodule)
@@ -44,7 +45,7 @@ uses
 const
  startupmessage =
 'MSElang Compiler version 0.0'+lineend+
-'Copyright (c) 2013-2017 by Martin Schreiber';
+'Copyright (c) 2013-2018 by Martin Schreiber';
 
  llvmbindir = 
  '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
@@ -89,7 +90,7 @@ begin
 
    parserparams.compileoptions:= mlaruntimecompileoptions;
    if sysenv.defined[ord(pa_llvm)] then begin
-    parserparams.compileoptions:= llvmcompileoptions;
+    parserparams.compileoptions:= llvmcompileoptions+[co_modular,co_buildexe];
     if sysenv.defined[ord(pa_debug)] then begin
      parserparams.compileoptions:= 
                        parserparams.compileoptions + [co_lineinfo,co_proginfo];
@@ -103,7 +104,15 @@ begin
    end;
    if sysenv.defined[ord(pa_makeobject)] then begin
     parserparams.compileoptions:= parserparams.compileoptions +
-                                                  [co_buildexe,co_modular];
+                                        [co_buildexe,co_modular,co_objmodules];
+   end;
+   if sysenv.defined[ord(pa_makebc)] then begin
+    parserparams.compileoptions:= parserparams.compileoptions - 
+                                              [co_buildexe,co_modular];
+   end;
+   if sysenv.defined[ord(pa_showcompilefile)] then begin
+    parserparams.compileoptions:= parserparams.compileoptions +
+                                                          [co_compilefileinfo];
    end;
    if sysenv.defined[ord(pa_nocompilerunit)] then begin
     include(parserparams.compileoptions,co_nocompilerunit);
