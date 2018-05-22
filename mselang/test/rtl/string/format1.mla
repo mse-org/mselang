@@ -1,0 +1,10 @@
+program format1;
+uses
+ rtl_format;
+begin
+ writeln(format('abc%1:Ddefg',[11,123,33]));
+ writeln(format('abc%:Ddefg',[1234,123,33]));
+ writeln(format('abc%:.8Ddefg',[1234,123,33]));
+ writeln(format('abc%:10.8Ddefg',[1234,123,33]));
+ writeln(format('abc%:-10.8Ddefg',[1234,123,33]));
+end.
