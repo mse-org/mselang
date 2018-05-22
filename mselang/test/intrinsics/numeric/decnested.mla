@@ -1,0 +1,26 @@
+program decnested;
+uses
+ __mla__internaltypes;
+
+procedure format(): string8;
+var
+ p1: pchar8;
+ procedure pushbufferreverse();
+ begin
+  dec(p1);
+ end; //pushbufferreverse()
+var
+ p2: pointer;
+begin
+ p1:= nil;
+ pushbufferreverse();
+ p2:= nil;
+ dec(p2);
+ if p1 = p2 then
+  exitcode:= 123;
+ end;
+end;
+
+begin
+ format();
+end.
