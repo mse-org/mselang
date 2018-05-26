@@ -391,6 +391,7 @@ begin
       end;
       dk_integer: begin
        if typ1^.h.datasize = das_64 then begin
+        datasize1:= das_64;
         poalloc^.valuefunc:= cs_int64tovarrecty;
         poalloc^.typid:= ord(das_64); //use pointer
        end
@@ -404,6 +405,7 @@ begin
       end;
       dk_cardinal: begin
        if typ1^.h.datasize = das_64 then begin
+        datasize1:= das_64;
         poalloc^.valuefunc:= cs_card64tovarrecty;
         poalloc^.typid:= ord(das_64); //use pointer
        end
@@ -1348,6 +1350,25 @@ begin
                 p2:= p1 + lstr1.len;
                 if getcodepoint(p1,p2,vcharacter) and (p1 = p2) then begin
                  result:= true;
+                end;
+               end;
+              end;
+              dk_character: begin
+               case dest^.h.datasize of
+                das_8: begin
+                 if vcharacter <= $ff then begin
+                  result:= true;
+                 end;
+                end;
+                das_16: begin
+                 if vcharacter <= $ffff then begin
+                  result:= true;
+                 end;
+                end;
+                das_32: begin
+                 if vcharacter <= $ffffffff then begin
+                  result:= true;
+                 end;
                 end;
                end;
               end;

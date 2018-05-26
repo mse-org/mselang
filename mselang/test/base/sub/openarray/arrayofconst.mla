@@ -70,7 +70,15 @@ begin
  if (i32a = i32) and (i64a = i64) and (c32a = c32) and (c64a = c64) and
     (poa = po) and (f64a = f64) and (c8 = c8a) and
     (s8a = s8) and (s16a = s16) and (s32a = s32) then
-  exitcode:= 123;
+  i32:= 0; i64:= 0; c32:= 0; c64:= 0; po:= nil; f64:= 0;
+  c8:= #0; s8:= ''; s16:= ''; s32:= '';
+  test([11,int64(22),card32(33),card64(44),pointer(55),1.2345,char8('A'),
+                                 string8('abc'),string16('def'),string32('ghi')]);
+  if (i32a = i32) and (i64a = i64) and (c32a = c32) and (c64a = c64) and
+     (poa = po) and (f64a = f64) and (c8 = c8a) and
+     (s8a = s8) and (s16a = s16) and (s32a = s32) then
+   exitcode:= 123;
+  end;
  end;
 // writeln(i32,' ',i64,' ',c32,' ',c64,' ',po,' ',f64,' ',c8,' ',s8,' ',s16,' ',s32);
 
