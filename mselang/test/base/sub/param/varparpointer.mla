@@ -1,0 +1,24 @@
+program varparpointer;
+type
+ pint32 = ^int32;
+
+ recty = record
+  a: int32;
+  b: pint32;
+ end;
+
+procedure test(var a: recty);
+begin
+ a.b^:= 100 + a.b^;
+ exitcode:= a.b^;
+end;
+
+var
+ r: recty;
+ i: int32;
+begin
+ i:= 23;
+ r.a:= 100;
+ r.b:= @i;
+ test(r);
+end.

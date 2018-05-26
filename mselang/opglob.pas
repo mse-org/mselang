@@ -357,9 +357,13 @@ type
 
   oc_chartostring8,
   oc_arraytoopenar,
+  oc_arraytoopenarad,
   oc_dynarraytoopenar,
+  oc_dynarraytoopenarad,
   oc_listtoopenar,
+  oc_listtoopenarad,
   oc_listtoarrayofconst,
+  oc_listtoarrayofconstad,
   
   oc_combinemethod,  //instance,subaddress -> methodty
   oc_getmethodcode,

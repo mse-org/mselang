@@ -1,0 +1,37 @@
+program nestedaccess;
+
+procedure format(a: int32): string8;
+
+ procedure formaterror();
+ begin
+ end; //formaterror()
+
+ procedure getnum(): bool1;
+ begin
+  formaterror();
+ end; //getnum()
+
+begin
+ getnum();
+end;
+
+procedure format2(a: int32): string8;
+
+ procedure formaterror();
+ begin
+  exitcode:= a;
+ end; //formaterror()
+
+ procedure getnum(): bool1;
+ begin
+  formaterror();
+ end; //getnum()
+
+begin
+ getnum();
+end;
+
+begin
+ format(111);
+ format2(123);
+end.

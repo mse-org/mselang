@@ -453,12 +453,20 @@
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
 //oc_arraytoopenar
   (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: []), 
+//oc_arraytoopenarad
+  (ssa: arraytoopenaradssa; proc: @arraytoopenaradop; flags: []), 
 //oc_dynarraytoopenar
   (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: []), 
+//oc_dynarraytoopenarad
+  (ssa: dynarraytoopenaradssa; proc: @dynarraytoopenaradop; flags: []), 
 //oc_listtoopenar
   (ssa: listtoopenarssa; proc: @listtoopenarop; flags: []), 
+//oc_listtoopenarad
+  (ssa: listtoopenaradssa; proc: @listtoopenaradop; flags: []), 
 //oc_listtoarrayofconst
   (ssa: listtoarrayofconstssa; proc: @listtoarrayofconstop; flags: []), 
+//oc_listtoarrayofconstad
+  (ssa: listtoarrayofconstadssa; proc: @listtoarrayofconstadop; flags: []), 
 
 //oc_combinemethod
   (ssa: combinemethodssa; proc: @combinemethodop; flags: []), 

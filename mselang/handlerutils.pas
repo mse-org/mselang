@@ -213,9 +213,12 @@ procedure pushinsertstackaddress(const stackoffset: int32;
                                              const aopoffset: int32);
 
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
-                                              const adatasize: databitsizety);
+                                         const adatasize: databitsizety;
+                                         const paramindirect: boolean = false);
+                                                         //for dk_openarray
 procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
-                       const aopoffset: int32; const adatasize: databitsizety);
+                       const aopoffset: int32; const adatasize: databitsizety;
+                                         const paramindirect: boolean = false);
 
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 procedure offsetad(const acontext: pcontextitemty; const aoffset: dataoffsty);
@@ -1234,13 +1237,15 @@ end;
 procedure pushinsertconst(const stackoffset: int32;
                           const constval: dataty;
                           const aopoffset: int32;
-                                               const adatasize: databitsizety);
-var
+                          const adatasize: databitsizety;
+                          const paramindirect: boolean = false);
+var                                    //for dk_openarray
 // po1: pcontextitemty;
  isimm: boolean;
  segad1: segaddressty;
  si1: databitsizety;
  i1,i2: int32;
+ op1: opcodety;
 begin
  with info do begin
 //  po1:= @contextstack[s.stackindex+stackoffset];
@@ -1404,7 +1409,11 @@ begin
      par.memop.t:= bitoptypes[das_pointer];
      i2:= par.ssad;
     end;
-    with insertitem(oc_arraytoopenar,stackoffset,i1)^ do begin
+    op1:= oc_arraytoopenar;
+    if paramindirect then begin
+     op1:= oc_arraytoopenarad;
+    end;
+    with insertitem(op1,stackoffset,i1)^ do begin
      par.ssas1:= i2;
      setimmint32(constval.vopenarray.high,par.imm);
     end;
@@ -1426,6 +1435,9 @@ begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);
+   if paramindirect then begin
+    inc(d.dat.datatyp.indirectlevel);
+   end;
    d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp.typedata,
                                              d.dat.datatyp.indirectlevel);
   end;
@@ -1433,7 +1445,7 @@ begin
 end;
 
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
-                                               const adatasize: databitsizety);
+         const adatasize: databitsizety; const paramindirect: boolean = false);
 var
  typ1: ptypedataty;
 begin
@@ -1466,15 +1478,16 @@ begin
      internalerror(ie_handler,'20160521C');
     end;
    {$endif}
-    pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize);
+    pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize,
+                                                              paramindirect);
    end;
   end;
  end;
 end;
 
 //todo: optimize
-procedure pushinsertconst(const acontext: pcontextitemty; const aopoffset: int32;
-                                               const adatasize: databitsizety);
+procedure pushinsertconst(const acontext: pcontextitemty;
+                       const aopoffset: int32; const adatasize: databitsizety);
 begin
  pushinsertconst(getstackoffset(acontext),aopoffset,adatasize);
 end;

@@ -4185,6 +4185,11 @@ begin
  end;
 end;
 
+procedure arraytoopenaradop();
+begin
+ notimplemented();
+end;
+
 procedure dynarraytoopenarop();
 var
  po1: targetpointerty;
@@ -4194,6 +4199,11 @@ begin
   high:=  system.high(bytearty(po1));
   data:= po1;
  end;
+end;
+
+procedure dynarraytoopenaradop();
+begin
+ notimplemented();
 end;
 
 procedure listtoopenarop();
@@ -4254,7 +4264,17 @@ begin
  end;
 end;
 
+procedure listtoopenaradop();
+begin
+ notimplemented();
+end;
+
 procedure listtoarrayofconstop();
+begin
+ notimplemented();
+end;
+
+procedure listtoarrayofconstadop();
 begin
  notimplemented();
 end;
@@ -7177,9 +7197,13 @@ const
     
   chartostring8ssa = 0;
   arraytoopenarssa = 0;
+  arraytoopenaradssa = 0;
   dynarraytoopenarssa = 0;
+  dynarraytoopenaradssa = 0;
   listtoopenarssa = 0;
+  listtoopenaradssa = 0;
   listtoarrayofconstssa = 0;
+  listtoarrayofconstadssa = 0;
   
   combinemethodssa = 0;
   getmethodcodessa = 0;

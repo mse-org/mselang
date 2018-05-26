@@ -1,0 +1,85 @@
+program arrayofconst1;
+uses
+ __mla__internaltypes;
+
+var
+ i32,i32a: int32;
+ i64,i64a: int64;
+ c32,c32a: card32;
+ c64,c64a: card64;
+ po,poa: pointer;
+ f64,f64a: flo64;
+ c8,c8a: char8;
+ s8,s8a: string8;
+ s16,s16a: string16;
+ s32,s32a: string32;
+  
+
+procedure test(b: array of const);
+begin
+ if high(b) = 9 then
+  if b[0].vtype = vt_int32 then
+   i32:= b[0].vint32;
+  end;
+  if b[1].vtype = vt_int64 then
+   i64:= b[1].vint64^;
+  end;
+  if b[2].vtype = vt_card32 then
+   c32:= b[2].vcard32;
+  end;
+  if b[3].vtype = vt_card64 then
+   c64:= b[3].vcard64^;
+  end;
+  if b[4].vtype = vt_pointer then
+   po:= b[4].vpointer;
+  end;
+  if b[5].vtype = vt_flo64 then
+   f64:= b[5].vflo64^;
+  end;
+  if b[6].vtype = vt_char32 then
+   c8:= char8(card8(ord(b[6].vchar32)));
+  end;
+  if b[7].vtype = vt_string8 then
+   s8:= string8(b[7].vstring8);
+  end;
+  if b[8].vtype = vt_string16 then
+   s16:= string16(b[8].vstring16);
+  end;
+  if b[9].vtype = vt_string32 then
+   s32:= string32(b[9].vstring32);
+  end;
+
+ end;
+end;
+
+begin
+
+ i32a:= 11;
+ i64a:= 22;
+ c32a:= 33;
+ c64a:= 44;
+ f64a:= 1.2345;
+ c8a:= 'A';
+ poa:= pointer(55);
+ s8a:= 'abc';
+ s16a:= 'def';
+ s32a:= 'ghi';
+
+ test([i32a,i64a,c32a,c64a,poa,f64a,c8a,s8a,s16a,s32a]);
+
+ if (i32a = i32) and (i64a = i64) and (c32a = c32) and (c64a = c64) and
+    (poa = po) and (f64a = f64) and (c8 = c8a) and
+    (s8a = s8) and (s16a = s16) and (s32a = s32) then
+  i32:= 0; i64:= 0; c32:= 0; c64:= 0; po:= nil; f64:= 0;
+  c8:= #0; s8:= ''; s16:= ''; s32:= '';
+  test([11,int64(22),card32(33),card64(44),pointer(55),1.2345,char8('A'),
+                                 string8('abc'),string16('def'),string32('ghi')]);
+  if (i32a = i32) and (i64a = i64) and (c32a = c32) and (c64a = c64) and
+     (poa = po) and (f64a = f64) and (c8 = c8a) and
+     (s8a = s8) and (s16a = s16) and (s32a = s32) then
+   exitcode:= 123;
+  end;
+ end;
+// writeln(i32,' ',i64,' ',c32,' ',c64,' ',po,' ',f64,' ',c8,' ',s8,' ',s16,' ',s32);
+
+end.

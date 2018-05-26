@@ -1,0 +1,40 @@
+program nestedaccess1;
+
+procedure format(a: int32);
+
+ procedure formaterror();
+ begin
+//  exitcode:= a;
+ end; //formaterror()
+
+{$internaldebug on}
+ procedure getnum(v: int32);
+ begin
+  formaterror();
+  exitcode:= a;
+ end; //getnum()
+begin
+ getnum(1);
+end;
+
+procedure format1(a: int32);
+
+ procedure formaterror();
+ begin
+  exitcode:= a;
+ end; //formaterror()
+
+{$internaldebug on}
+ procedure getnum(v: int32);
+ begin
+  formaterror();
+  exitcode:= a;
+ end; //getnum()
+begin
+ getnum(1);
+end;
+
+begin
+ format(111);
+ format1(123);
+end.

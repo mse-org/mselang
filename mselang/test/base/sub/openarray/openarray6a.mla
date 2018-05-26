@@ -1,0 +1,12 @@
+program openarray6a;
+
+procedure test(p1: int32;p: array of int32;p2: int32; p3: array of int32): int32;
+begin
+ result:= p1 + high(p) + p[1] + high(p3) + p3[3] + p2;
+end;
+var
+ i1: int32;
+begin
+ i1:= 15;
+ exitcode:= test(11,[1,i1,3],22,[1,22,3,i1]) + 123 - 11 - 2 - 15 - 3 - 15 - 22;
+end.

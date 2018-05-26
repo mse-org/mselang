@@ -1768,8 +1768,8 @@ var
           if tf_sizeinvalid in typ1^.h.flags then begin //size not known yet
            needssizeupdate:= true;
           end;
-          if (si1 > targetpointersize) and 
-                            (typ1^.h.kind <> dk_openarray) then begin
+          if (si1 > targetpointersize){ and 
+                            (typ1^.h.kind <> dk_openarray)} then begin
                                   //dk_openarray has special handling
            inc(address.indirectlevel);
            include(address.flags,af_paramindirect);
@@ -3090,13 +3090,39 @@ var
         storetempgetaddress(); //get data pointer
        end
        else begin
-        errormessage(err_variableexpected,[],stackoffset);
+        if desttype^.h.kind = dk_openarray then begin
+         if af_untyped in vardata1^.address.flags then begin
+          if not listtoarrayofconst(context1,lastitem,true) then begin
+           exit;
+          end;
+         end
+         else begin
+          if not listtoopenarray(context1,desttype,lastitem,true) then begin
+           exit;
+          end;
+         end;
+         if context1^.d.kind = ck_const then begin
+          pushinsertconst(stackoffset,-1,si1,true);
+         end;
+        end
+        else begin
+         errormessage(err_variableexpected,[],stackoffset);
  //       notimplementederror('20140405B'); //todo
+        end;
        end;
       end;
      end;
      ck_ref: begin
-      pushinsertaddress(stackoffset,-1);
+      if desttype^.h.kind = dk_openarray then begin
+       if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+                        vardata1^.address.indirectlevel-1,
+                              [coo_paramindirect,coo_errormessage]) then begin
+        exit;
+       end;
+      end
+      else begin
+       pushinsertaddress(stackoffset,-1);
+      end;
      end;
      ck_fact,ck_subres: begin
       with context1^ do begin
@@ -3162,12 +3188,12 @@ var
         exit;
        end;
        if af_untyped in vardata1^.address.flags then begin
-        if not listtoarrayofconst(context1,lastitem) then begin
+        if not listtoarrayofconst(context1,lastitem,false) then begin
          exit;
         end;
        end
        else begin
-        if not listtoopenarray(context1,desttype,lastitem) then begin
+        if not listtoopenarray(context1,desttype,lastitem,false) then begin
          exit;
         end;
        end;

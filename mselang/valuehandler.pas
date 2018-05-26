@@ -22,7 +22,7 @@ uses
 
 type
  convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,coo_set,
-                    coo_notrunk,coo_errormessage);
+                    coo_notrunk,coo_errormessage,coo_paramindirect);
  convertoptionsty = set of convertoptionty;
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
@@ -63,9 +63,11 @@ function listtoset(const acontext: pcontextitemty;
                                out lastitem: pcontextitemty): boolean;
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
-                                  out lastitem: pcontextitemty): boolean;
+                                  out lastitem: pcontextitemty;
+                                  paramindirect: boolean): boolean;
 function listtoarrayofconst(const acontext: pcontextitemty;
-                                  out lastitem: pcontextitemty): boolean;
+                                  out lastitem: pcontextitemty;
+                                  const paramindirect: boolean): boolean;
 
 implementation
 uses
@@ -195,7 +197,8 @@ end;
 
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
-                                  out lastitem: pcontextitemty): boolean;
+                                  out lastitem: pcontextitemty;
+                                  paramindirect: boolean): boolean;
 var
  poe: pointer;
  poitem1,poparams: pcontextitemty;
@@ -206,6 +209,7 @@ var
  poalloc: plistitemallocinfoty;
  alloc1: dataoffsty;
  i1: int32;
+ op1: opcodety;
 begin
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
@@ -263,6 +267,7 @@ begin
  end;
  with acontext^ do begin
   if isallconst and not (tf_untyped in itemtype1^.h.flags) then begin
+   paramindirect:= false;
    initdatacontext(d,ck_const);
    podata1:= initopenarrayconst(d.dat.constval,itemcount1,
                                                 itemtype1^.h.bytesize);
@@ -304,7 +309,11 @@ begin
     end;
    end;
    initfactcontext(acontext);
-   with insertitem(oc_listtoopenar,poitem1,0,
+   op1:= oc_listtoopenar;
+   if paramindirect then begin
+    op1:= oc_listtoopenarad;
+   end;
+   with insertitem(op1,poitem1,0,
                itemcount1*getssa(ocssa_listtoopenaritem))^ do begin
                                        //at start of next context
     with info do begin
@@ -337,12 +346,17 @@ begin
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= ele.eledatarel(po1);
   d.dat.datatyp.indirectlevel:= 0;
+  if paramindirect then begin
+   d.dat.datatyp.indirectlevel:= 1;
+ //  d.dat.indirection:= -1;
+  end;
  end;
  result:= true;
 end;
 
 function listtoarrayofconst(const acontext: pcontextitemty;
-                                  out lastitem: pcontextitemty): boolean;
+                                  out lastitem: pcontextitemty;
+                                  const paramindirect: boolean): boolean;
 var
  poe: pointer;
  poitem1,poparams: pcontextitemty;
@@ -352,6 +366,7 @@ var
  itemcount1: int32;
  i1: int32;
  datasize1: databitsizety;
+ op1: opcodety;
  
 begin
 {$ifdef mse_checkinternalerror}
@@ -478,7 +493,11 @@ begin
  end;
 
  initfactcontext(acontext);
- with acontext^,insertitem(oc_listtoarrayofconst,poitem1,0,
+ op1:= oc_listtoarrayofconst;
+ if paramindirect then begin
+  op1:= oc_listtoarrayofconstad;
+ end;
+ with acontext^,insertitem(op1,poitem1,0,
              itemcount1*getssa(ocssa_listtoarrayofconstitem))^ do begin
                                      //at start of next context
   if target64 then begin
@@ -497,6 +516,10 @@ begin
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= internaltypes[it_varrecty];
   d.dat.datatyp.indirectlevel:= 0;
+  if paramindirect then begin
+   d.dat.datatyp.indirectlevel:= 1;
+//   d.dat.indirection:= -1;
+  end;
  end;
  result:= true;
 end;
@@ -1366,9 +1389,7 @@ begin
                  end;
                 end;
                 das_32: begin
-                 if vcharacter <= $ffffffff then begin
-                  result:= true;
-                 end;
+                 result:= true;
                 end;
                end;
               end;
@@ -1409,7 +1430,12 @@ begin
              if issametype(source1^.infodynarray.i.itemtypedata,
                                 dest^.infodynarray.i.itemtypedata) then begin
               if getvalue(acontext,das_pointer,false) then begin
-               with convert(oc_dynarraytoopenar)^ do begin
+               op1:= oc_dynarraytoopenar;
+               if coo_paramindirect in aoptions then begin
+                inc(destindirectlevel);
+                op1:= oc_dynarraytoopenarad;
+               end;
+               with convert(op1)^ do begin
                end;
                result:= true;
               end;
@@ -1419,7 +1445,12 @@ begin
              if issametype(source1^.infoarray.i.itemtypedata,
                                 dest^.infodynarray.i.itemtypedata) then begin
               if getaddress(acontext,true) then begin
-               with convert(oc_arraytoopenar)^ do begin
+               op1:= oc_arraytoopenar;
+               if coo_paramindirect in aoptions then begin
+                inc(destindirectlevel);
+                op1:= oc_arraytoopenarad;
+               end;
+               with convert(op1)^ do begin
                 setimmint32(source1^.infoarray.i.totitemcount-1,par.imm);
                end;
                result:= true;

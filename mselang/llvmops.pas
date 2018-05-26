@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2066,7 +2066,7 @@ begin
  end;
 end;
 
-procedure arraytoopenarop();
+procedure arraytoopenaradop();
 begin
  with pc^.par do begin
   bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
@@ -2074,11 +2074,16 @@ begin
                            bcstream.typeval(bcstream.pointertype)); //1ssa
   callcompilersub(cs_arraytoopenar,false,[bcstream.constval(imm.llvm.listid),
                                    bcstream.ssaval(ssas1),bcstream.relval(0)]);
-  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
-procedure dynarraytoopenarop();
+procedure arraytoopenarop();
+begin
+ arraytoopenaradop();                                              //2ssa
+ bcstream.emitloadop(bcstream.relval(1));                          //1ssa
+end;
+
+procedure dynarraytoopenaradop();
 begin
  with pc^.par do begin
   bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
@@ -2086,11 +2091,16 @@ begin
                            bcstream.typeval(bcstream.pointertype)); //1ssa
   callcompilersub(cs_dynarraytoopenar,false,[bcstream.ssaval(ssas1),
                                                   bcstream.relval(0)]);
-  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
-procedure listtoopenarop();
+procedure dynarraytoopenarop();
+begin
+ dynarraytoopenaradop();                                           //2ssa
+ bcstream.emitloadop(bcstream.relval(1));                          //1ssa
+end;
+
+procedure listtoopenaradop();
 var
  po1,poe: plistitemallocinfoty;
 // i1: int32;
@@ -2118,11 +2128,16 @@ begin
   callcompilersub(cs_arraytoopenar,false,
          [bcstream.constval(listtoopenar.allochigh),ssabase+2-1,
                                               bcstream.relval(0)]); 
-  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
 end;
 
-procedure listtoarrayofconstop();
+procedure listtoopenarop();
+begin
+ listtoopenaradop();                                               //4ssa
+ bcstream.emitloadop(bcstream.relval(1));                          //1ssa
+end;
+
+procedure listtoarrayofconstadop();
 var
  po1,poe: parrayofconstitemallocinfoty;
  ssabase: int32;
@@ -2160,8 +2175,13 @@ begin
   callcompilersub(cs_arraytoopenar,false,
          [bcstream.constval(listtoarrayofconst.allochigh),ssabase+2-1,
                                               bcstream.relval(0)]); 
-  bcstream.emitloadop(bcstream.relval(1));                          //1ssa
  end;
+end;
+
+procedure listtoarrayofconstop();
+begin
+ listtoarrayofconstadop();                                         //4ssa
+ bcstream.emitloadop(bcstream.relval(1));                          //1ssa
 end;
 
 procedure concatstring(const asub: compilersubty);
@@ -5087,9 +5107,13 @@ const
   
   chartostring8ssa = 1;
   arraytoopenarssa = 3;
+  arraytoopenaradssa = 2;
   dynarraytoopenarssa = 3;
+  dynarraytoopenaradssa = 2;
   listtoopenarssa = 5;
+  listtoopenaradssa = 4;
   listtoarrayofconstssa = 5;
+  listtoarrayofconstadssa = 4;
   
   combinemethodssa = 6;
   getmethodcodessa = 3;
