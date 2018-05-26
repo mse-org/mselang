@@ -1,0 +1,342 @@
+//rtl_format
+{ MSEgui Copyright (c) 2018 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+unit rtl_format;
+interface
+uses
+ __mla__internaltypes;
+ 
+procedure format(const fmt: string8; const args: array of const): string8;
+
+implementation
+
+const
+ lowerchars: array[char] of char = (
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,'a' ,'b' ,'c' ,'d' ,'e' ,'f' ,'g' ,'h' ,'i' ,'j' ,'k' ,'l' ,'m' ,'n' ,'o' ,
+  'p' ,'q' ,'r' ,'s' ,'t' ,'u' ,'v' ,'w' ,'x' ,'y' ,'z' ,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$60,#$61,#$62,#$63,#$64,#$65,#$66,#$67,#$68,#$69,#$6a,#$6b,#$6c,#$6d,#$6e,#$6f,
+  #$70,#$71,#$72,#$73,#$74,#$75,#$76,#$77,#$78,#$79,#$7a,#$7b,#$7c,#$7d,#$7e,#$7f,
+  #$80,#$81,#$82,#$83,#$84,#$85,#$86,#$87,#$88,#$89,#$8a,#$8b,#$8c,#$8d,#$8e,#$8f,
+  #$90,#$91,#$92,#$93,#$94,#$95,#$96,#$97,#$98,#$99,#$9a,#$9b,#$9c,#$9d,#$9e,#$9f,
+  #$a0,#$a1,#$a2,#$a3,#$a4,#$a5,#$a6,#$a7,#$a8,#$a9,#$aa,#$ab,#$ac,#$ad,#$ae,#$af,
+  #$b0,#$b1,#$b2,#$b3,#$b4,#$b5,#$b6,#$b7,#$b8,#$b9,#$ba,#$bb,#$bc,#$bd,#$be,#$bf,
+  #$c0,#$c1,#$c2,#$c3,#$c4,#$c5,#$c6,#$c7,#$c8,#$c9,#$ca,#$cb,#$cc,#$cd,#$ce,#$cf,
+  #$d0,#$d1,#$d2,#$d3,#$d4,#$d5,#$d6,#$d7,#$d8,#$d9,#$da,#$db,#$dc,#$dd,#$de,#$df,
+  #$e0,#$e1,#$e2,#$e3,#$e4,#$e5,#$e6,#$e7,#$e8,#$e9,#$ea,#$eb,#$ec,#$ed,#$ee,#$ef,
+  #$f0,#$f1,#$f2,#$f3,#$f4,#$f5,#$f6,#$f7,#$f8,#$f9,#$fa,#$fb,#$fc,#$fd,#$fe,#$ff);
+
+ upperchars: array[char] of char = (
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,#$41,#$42,#$43,#$44,#$45,#$46,#$47,#$48,#$49,#$4a,#$4b,#$4c,#$4d,#$4e,#$4f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$60,'A' ,'B' ,'C' ,'D' ,'E' ,'F' ,'G' ,'H' ,'I' ,'J' ,'K' ,'L' ,'M' ,'N' ,'O' ,
+  'P' ,'Q' ,'R' ,'S' ,'T' ,'U' ,'V' ,'W' ,'X' ,'Y' ,'Z' ,#$7b,#$7c,#$7d,#$7e,#$7f,
+  #$80,#$81,#$82,#$83,#$84,#$85,#$86,#$87,#$88,#$89,#$8a,#$8b,#$8c,#$8d,#$8e,#$8f,
+  #$90,#$91,#$92,#$93,#$94,#$95,#$96,#$97,#$98,#$99,#$9a,#$9b,#$9c,#$9d,#$9e,#$9f,
+  #$a0,#$a1,#$a2,#$a3,#$a4,#$a5,#$a6,#$a7,#$a8,#$a9,#$aa,#$ab,#$ac,#$ad,#$ae,#$af,
+  #$b0,#$b1,#$b2,#$b3,#$b4,#$b5,#$b6,#$b7,#$b8,#$b9,#$ba,#$bb,#$bc,#$bd,#$be,#$bf,
+  #$c0,#$c1,#$c2,#$c3,#$c4,#$c5,#$c6,#$c7,#$c8,#$c9,#$ca,#$cb,#$cc,#$cd,#$ce,#$cf,
+  #$d0,#$d1,#$d2,#$d3,#$d4,#$d5,#$d6,#$d7,#$d8,#$d9,#$da,#$db,#$dc,#$dd,#$de,#$df,
+  #$e0,#$e1,#$e2,#$e3,#$e4,#$e5,#$e6,#$e7,#$e8,#$e9,#$ea,#$eb,#$ec,#$ed,#$ee,#$ef,
+  #$f0,#$f1,#$f2,#$f3,#$f4,#$f5,#$f6,#$f7,#$f8,#$f9,#$fa,#$fb,#$fc,#$fd,#$fe,#$ff);
+ 
+procedure format(const fmt: string8; const args: array of const): string8;
+type
+ argsty = record
+  high: int32;
+  data: pvarrecty;
+ end;
+ pargsty = ^argsty;
+
+ convertinfoty = record
+  ps,pe,pd: pchar8;
+  pbuf: pchar8;
+  value: int32;
+  valindex: int32;
+  width,precision: int32;
+  minus: bool1;
+  pb: pchar8;
+  neg: bool1;
+  args: pargsty;
+ end;
+
+ procedure formaterror();
+ begin
+  writeln('***formaterror***');
+ end; //formaterror()
+
+ procedure converterror();
+ begin
+  writeln('***converterror***');
+ end; //converterror();
+
+ procedure rangeerror();
+ begin
+  writeln('***rangeerror***');
+ end; //rangeerror();
+ 
+ procedure getnum(var info: convertinfoty): bool1;
+ var
+  ps: pchar8;
+ begin
+  info.value:= 0;
+  ps:= info.ps;
+  result:= false;
+  if ps^ = '*' then
+   inc(ps);
+   if info.valindex > info.args^.high then
+    formaterror();
+   else
+    if (args[info.valindex].vtype = vt_int32) then
+     info.value:= args[info.valindex].vint32;
+     inc(info.valindex);
+     result:= true;
+    else
+     converterror();
+    end;
+   end;
+  else
+   if (ps^ >= '0') and (ps^ <= '9') then
+    result:= true;
+    while ps < info.pe do
+     if (ps^ >= '0') and (ps^ <= '9') then
+      info.value:= info.value*10 + ord(ps^)-ord('0');
+      inc(ps);
+     else
+      break;
+     end;
+    end;
+   end;
+  end;
+  info.ps:= ps;
+ end; //getnum()
+
+var
+ info: convertinfoty; 
+ buffer: array[0..255] of char8;
+
+ procedure pushbufferreverse(var info: convertinfoty);
+ var
+  i1,i2,i3: int32;
+  pd,ps,pe: pchar8;
+ begin
+  i2:= info.pd - pchar8(pointer(result)); //current length
+  i1:= info.pbuf - pchar8(@buffer);       //additional text
+  if i1 < info.width then
+   i3:= i2 + info.width;                  //new length
+  else
+   i3:= i2 + i1;                          //new length
+  end;
+  if i3 > length(result) then
+   setlength(result,i3 + i3 div 2);         //1.5 * new length
+  end;
+  ps:= info.pbuf - 1;
+  pd:= @pchar8(pointer(result))[i2];
+  if not info.minus then
+   pe:= pd + info.width - i1;
+   while pd < pe do
+    pd^:= ' ';
+    inc(pd);
+   end;
+  end;
+  pe:= pd + i1;
+  while pd < pe do
+   pd^:= ps^;
+   dec(ps);
+   inc(pd);
+  end;
+  if info.minus then
+   pe:= pd + info.width - i1;
+   while pd < pe do
+    pd^:= ' ';
+    inc(pd);
+   end;
+  end;
+  info.pd:= pd;
+ end; //pushbufferreverse()
+
+ procedure pushnum(var info: convertinfoty);
+ var
+  p1,pe1: pchar8;
+ begin
+  with info do
+   p1:= pb;
+   pe1:= p1 + precision - (p1 - pchar8(@buffer));
+   while p1 < pe1 do
+    p1^:= '0';
+    inc(p1);
+   end;
+   if neg then
+    p1^:= '-';
+    inc(p1);
+   end;
+   info.pbuf:= p1;
+   pushbufferreverse(info);
+  end;
+ end; //pushnum()
+
+var
+ p1,pe1: pchar8;
+ itemindex: int32;
+ i1: int32;
+ i641: int64;
+ c1: card32;
+ c641: card64;
+ b1: boolean;
+ 
+begin
+ setlength(result,length(fmt));
+ info.args:= @args;
+
+ with info do
+  ps:= pointer(fmt);
+  pe:= ps + length(fmt);
+  pd:= pointer(result);
+  valindex:= 0;
+  while ps < pe do
+   if ps^ = '%' then
+    inc(ps);
+    case ps^ of 
+     '%':
+      pd^:= ps^;
+      inc(pd);
+     else:
+      minus:= false;
+      width:= -1;
+      precision:= -1;
+      itemindex:= valindex;
+      b1:= getnum(info);
+      if ps^ = ':' then
+       valindex:= value; //default 0
+       itemindex:= value;
+       inc(ps);
+       b1:= false;       //consumed
+       inc(valindex);    //next value
+      end;
+      if ps^ = '-' then
+       minus:= true;
+       inc(ps);
+       if b1 then
+        formaterror();
+       end;
+      end;
+      if b1 or getnum(info) then
+       width:= value;
+      end;
+      if ps^ = '.' then
+       inc(ps);
+       if not getnum(info) then
+        formaterror();
+       end;
+       precision:= value;
+      end;
+      if itemindex > high(format.args) then
+       formaterror();
+      end;
+      p1:= @buffer;
+      with format.args[itemindex] do 
+       case lowerchars[ps^] of
+        'd':
+         case vtype of
+          vt_int32,vt_card32:
+           i1:= vint32;
+           if vtype = vt_card32 then
+            i1:= vcard32;
+            if i1 < 0 then
+             rangeerror();
+            end;
+           end;
+           neg:= i1 < 0;
+           if neg then
+            i1:= -i1;
+           end;
+           repeat
+            p1^:= char8(card8(i1 mod 10)+ord('0'));
+            i1:= i1 div 10;
+            inc(p1);
+           until i1 = 0;
+          vt_int64,vt_card64:
+           i641:= vint64^;
+           if vtype = vt_card64 then
+            i641:= vcard64^;
+            if i641 < 0 then
+             rangeerror();
+            end;
+           end;
+           neg:= i641 < 0;
+           if neg then
+            i641:= -i641;
+           end;
+           repeat
+            p1^:= char8(card8(i641 mod 10)+ord('0'));
+            i641:= i641 div 10;
+            inc(p1);
+           until i641 = 0;
+          else:
+           converterror();
+         end;
+         pb:= p1;
+         pushnum(info);
+        'u':
+         case vtype of
+          vt_int32,vt_card32:
+           c1:= vcard32;
+           if vtype = vt_card32 then
+            c1:= vint32;
+            if vint32 < 0 then
+             rangeerror();
+            end;
+           end;
+           neg:= false;
+           repeat
+            p1^:= char8(card8(c1 mod 10)+ord('0'));
+            c1:= c1 div 10;
+            inc(p1);
+           until c1 = 0;
+          vt_int64,vt_card64:
+           c641:= vcard64^;
+           if vtype = vt_int64 then
+            c641:= vint64^;
+            if vint64^ < 0 then
+             rangeerror();
+            end;
+           end;
+           neg:= false;
+           repeat
+            p1^:= char8(card8(c641 mod 10)+ord('0'));
+            c641:= c641 div 10;
+            inc(p1);
+           until c641 = 0;
+          else:
+           converterror();
+         end;
+         pb:= p1;
+         pushnum(info);
+       end;
+      end;
+    end;
+   else
+    pd^:= ps^;
+    inc(pd);
+   end;
+   inc(ps);
+  end;
+  setlength(result,pd-pchar8(pointer(result)));
+ end;
+end;
+
+end.
