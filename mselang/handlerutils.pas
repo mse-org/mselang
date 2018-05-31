@@ -3473,12 +3473,16 @@ procedure castdatatype(const acontext: pcontextitemty;
                                              var aflags: docastflagsty);
 var
  po1: ptypedataty;
+ datatypbefore: typeinfoty;
 begin
+ datatypbefore:= acontext^.d.dat.datatyp;
  po1:= ele.eledataabs(item.typedata);
- acontext^.d.dat.indirection:= item.indirection;
+// acontext^.d.dat.indirection:= item.indirection;
  acontext^.d.dat.ref.offset:= item.offset;
  if dcf_first in aflags then begin
+  acontext^.d.dat.indirection:= item.indirection;
   acontext^.d.dat.datatyp:= item.olddatatyp;
+  acontext^.d.dat.ref.c.address.flags:= item.oldflags;
  end;
 {
  if acontext^.d.kind = ck_ref then begin //first call
@@ -3494,6 +3498,8 @@ begin
   illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
          //todo: correct source pos
  end;
+ acontext^.d.dat.datatyp:= datatypbefore; 
+  //use original because of changed type because of record fields
 end;
 
 function checktypeconversion(const acontext: pcontextitemty;
@@ -3503,6 +3509,7 @@ var
  i1: int32;
  offsetbefore: int32;
  datatypbefore: typeinfoty;
+ flagsbefore: addressflagsty;
 begin
  result:= true;
  with acontext^ do begin
@@ -3510,6 +3517,7 @@ begin
                   //todo: optimize
    datatypbefore:= acontext^.d.dat.datatyp;
    offsetbefore:= acontext^.d.dat.ref.offset;
+   flagsbefore:= acontext^.d.dat.ref.c.address.flags;
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
    i1:= d.dat.indirection;

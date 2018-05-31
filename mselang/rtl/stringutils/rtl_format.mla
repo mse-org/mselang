@@ -53,7 +53,7 @@ const
   #$d0,#$d1,#$d2,#$d3,#$d4,#$d5,#$d6,#$d7,#$d8,#$d9,#$da,#$db,#$dc,#$dd,#$de,#$df,
   #$e0,#$e1,#$e2,#$e3,#$e4,#$e5,#$e6,#$e7,#$e8,#$e9,#$ea,#$eb,#$ec,#$ed,#$ee,#$ef,
   #$f0,#$f1,#$f2,#$f3,#$f4,#$f5,#$f6,#$f7,#$f8,#$f9,#$fa,#$fb,#$fc,#$fd,#$fe,#$ff);
- 
+
 procedure format(const fmt: string8; const args: array of const): string8;
 type
  argsty = record
@@ -69,6 +69,7 @@ type
   valindex: int32;
   width,precision: int32;
   minus: bool1;
+  s: pointer; //string8, string16 or string32
   pb: pchar8;
   neg: bool1;
   args: pargsty;
@@ -188,6 +189,68 @@ var
    pushbufferreverse(info);
   end;
  end; //pushnum()
+
+ procedure pushstring32(var info: convertinfoty);
+ var
+  s1: string8;
+  i1,i2,i4,i5: int32;
+  padding: int32;
+  pd,ps,pe: pchar8;
+ begin
+  i2:= info.pd - pchar8(pointer(result)); //current length
+  i1:= length(string32(info.s));
+  s1:= string8(string32(info.s));
+  padding:= info.width - i1; //padding
+  if padding < 0 then
+   padding:= 0;
+  end;
+  i4:= length(s1);
+  i5:= i2 + i4;
+  if i5 > length(result) then
+   setlength(result,i5+i5 div 2);
+  end;
+  ps:= pointer(s1);
+  pd:= @pchar8(pointer(result))[i2];
+  if not info.minus then
+   pe:= pd + padding;
+   while pd < pe do
+    pd^:= ' ';
+    inc(pd);
+   end;
+  end;
+  pe:= pd + length(s1);
+  while pd < pe do
+   pd^:= ps^;
+   inc(ps);
+   inc(pd);
+  end;
+  if info.minus then
+   pe:= pd + padding;
+   while pd < pe do
+    pd^:= ' ';
+    inc(pd);
+   end;
+  end;
+  info.pd:= pd;
+ end; //pushstring32()
+
+ procedure pushstring8(var info: convertinfoty);
+ var
+  s1: string32;
+ begin
+  s1:= string32(string8(info.s));
+  info.s:= pointer(s1);
+  pushstring32(info);
+ end; //pushstring8()
+
+ procedure pushstring16(var info: convertinfoty);
+ var
+  s1: string32;
+ begin
+  s1:= string32(string16(info.s));
+  info.s:= pointer(s1);
+  pushstring32(info);
+ end; //pushstring16()
 
 var
  p1,pe1: pchar8;
@@ -326,6 +389,20 @@ begin
          end;
          pb:= p1;
          pushnum(info);
+        's':
+         case vtype of
+          vt_string8:
+           info.s:= vstring8;
+           pushstring8(info);
+          vt_string16:
+           info.s:= vstring16;
+           pushstring16(info);
+          vt_string32:
+           info.s:= vstring32;
+           pushstring32(info);
+          else:
+           converterror();
+         end;
        end;
       end;
     end;

@@ -2168,7 +2168,7 @@ begin
     address.flags:= [af_param,af_const];
     if sf_classmethod in subflags then begin
      include(datatoele(var1)^.header.visibility,vik_classele);
-     include(address.flags,af_classele);
+//     include(address.flags,af_classele);
     end;
     with ptypedataty(
              ele.eledataabs(currentcontainer))^ do begin

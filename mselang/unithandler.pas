@@ -46,6 +46,7 @@ type
   olddatatyp: typeinfoty;
   indirection: int32;
   offset: int32;
+  oldflags: addressflagsty;
  end;
  pcastitemty = ^castitemty;
  docastflagty = (dcf_first,dcf_cancel);
@@ -1453,6 +1454,7 @@ begin
    cast.olddatatyp:= d.dat.datatyp;
    cast.indirection:= d.dat.indirection;
    cast.offset:= d.dat.ref.offset;
+   cast.oldflags:= d.dat.ref.c.address.flags;
   end;
   d.dat.indirection:= 0;
  end;
@@ -1479,7 +1481,7 @@ begin
     if next = 0 then begin
      break;
     end;
-    exclude(flags1,dcf_cancel);
+    flags1:= flags1 - [dcf_cancel,dcf_first];
     li1:= next;
    end;
   end;
