@@ -3481,9 +3481,10 @@ begin
  acontext^.d.dat.ref.offset:= item.offset;
  if dcf_first in aflags then begin
   acontext^.d.dat.indirection:= item.indirection;
-  acontext^.d.dat.datatyp:= item.olddatatyp;
+//  acontext^.d.dat.datatyp:= item.olddatatyp;
   acontext^.d.dat.ref.c.address.flags:= item.oldflags;
  end;
+ acontext^.d.dat.datatyp:= item.olddatatyp;
 {
  if acontext^.d.kind = ck_ref then begin //first call
   acontext^.d.dat.datatyp:= item.olddatatyp;

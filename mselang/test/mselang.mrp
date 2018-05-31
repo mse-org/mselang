@@ -2936,8 +2936,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
-   c=20
+   a=0,665,4,conversions
+   c=21
     (
     kind=2
     a=0,648,1,potoint32
@@ -3361,6 +3361,28 @@ c=3
     a=0,648,1,stringconv llvm
     teststate=1
     path=stringconv.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,convchain1 llvm
+    teststate=1
+    path=convchain1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3871,7 +3893,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7280590
+    ao=An unhandled exception occured at $B7339590
     ae=
     aec=123
     ie=0
@@ -5926,7 +5948,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=41
     (
     kind=1
@@ -13728,33 +13750,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=157
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=131
  0 0
  0 0
  0 0
