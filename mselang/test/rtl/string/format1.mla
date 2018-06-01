@@ -7,4 +7,5 @@ begin
  writeln(format('abc%:.8Ddefg',[1234,123,33]));
  writeln(format('abc%:10.8Ddefg',[1234,123,33]));
  writeln(format('abc%:-10.8Ddefg',[1234,123,33]));
+ writeln(format('abc%:-10.3sdef',['ÄBCDEFGHI']);
 end.

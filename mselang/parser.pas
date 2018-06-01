@@ -1038,8 +1038,8 @@ parseend:
     end;
    end;
   end;
-  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0) and 
-                                                           not s.stopparser;
+  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0){ and 
+                                                           not s.stopparser};
   with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin
    varchain:= s.unitinfo^.varchain;
   end;

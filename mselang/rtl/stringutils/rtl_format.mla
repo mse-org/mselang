@@ -12,11 +12,20 @@ unit rtl_format;
 interface
 uses
  __mla__internaltypes;
- 
+
+procedure string8to16(const source: pchar8; const len: int32): string16;
+procedure string8to32(const source: pchar8; const len: int32): string32;
+procedure string16to8(const source: pchar16; const len: int32): string8;
+procedure string16to32(const source: pchar16; const len: int32): string32;
+procedure string32to8(const source: pchar32; const len: int32): string8; 
+procedure string32to16(const source: pchar32; const len: int32): string16; 
+
 procedure format(const fmt: string8; const args: array of const): string8;
 
 implementation
-
+uses
+ __mla__compilerunit;
+ 
 const
  lowerchars: array[char] of char = (
   #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
@@ -53,6 +62,42 @@ const
   #$d0,#$d1,#$d2,#$d3,#$d4,#$d5,#$d6,#$d7,#$d8,#$d9,#$da,#$db,#$dc,#$dd,#$de,#$df,
   #$e0,#$e1,#$e2,#$e3,#$e4,#$e5,#$e6,#$e7,#$e8,#$e9,#$ea,#$eb,#$ec,#$ed,#$ee,#$ef,
   #$f0,#$f1,#$f2,#$f3,#$f4,#$f5,#$f6,#$f7,#$f8,#$f9,#$fa,#$fb,#$fc,#$fd,#$fe,#$ff);
+
+procedure string8to16(const source: pchar8; const len: int32): string16;
+begin
+ result:= '';
+ pointer(result):= __mla__string8to16a(pointer(source),len);
+end;
+
+procedure string8to32(const source: pchar8; const len: int32): string32;
+begin
+ result:= '';
+ pointer(result):= __mla__string8to32a(pointer(source),len);
+end;
+
+procedure string16to8(const source: pchar16; const len: int32): string8;
+begin
+ result:= '';
+ pointer(result):= __mla__string16to8a(pointer(source),len);
+end;
+
+procedure string16to32(const source: pchar16; const len: int32): string32;
+begin
+ result:= '';
+ pointer(result):= __mla__string16to32a(pointer(source),len);
+end;
+
+procedure string32to8(const source: pchar32; const len: int32): string8;
+begin
+ result:= '';
+ pointer(result):= __mla__string32to8a(pointer(source),len);
+end;
+
+procedure string32to16(const source: pchar32; const len: int32): string16;
+begin
+ result:= '';
+ pointer(result):= __mla__string32to16a(pointer(source),len);
+end;
 
 procedure format(const fmt: string8; const args: array of const): string8;
 type
@@ -199,7 +244,10 @@ var
  begin
   i2:= info.pd - pchar8(pointer(result)); //current length
   i1:= length(string32(info.s));
-  s1:= string8(string32(info.s));
+  if (info.precision >= 0) and (info.precision < i1) then
+   i1:= info.precision;
+  end;
+  s1:= string32to8(info.s,i1);
   padding:= info.width - i1; //padding
   if padding < 0 then
    padding:= 0;
