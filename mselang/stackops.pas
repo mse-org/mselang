@@ -6680,12 +6680,27 @@ begin
  stackpop(pointersize);
 end;
 
+procedure uniquestr8aop();
+begin
+ notimplemented();
+end;
+
 procedure uniquestr16op();
 begin
  notimplemented();
 end;
 
+procedure uniquestr16aop();
+begin
+ notimplemented();
+end;
+
 procedure uniquestr32op();
+begin
+ notimplemented();
+end;
+
+procedure uniquestr32aop();
 begin
  notimplemented();
 end;
@@ -6712,11 +6727,12 @@ begin
  end;
  stackpop(pointersize);
 end;
-{
-const
- stopop: opinfoty = (op: (op: oc_none); 
-                   par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
-}
+
+procedure uniquedynarrayaop();
+begin
+ notimplemented();
+end;
+
 procedure unhandledexception(const exceptobj: pointer);
 begin
  writeln('An unhandled exception occured at $'+hextostr(cpu.pc));
@@ -7588,9 +7604,13 @@ const
   setlengthdynarrayssa = 0;
 
   uniquestr8ssa = 0;
+  uniquestr8assa = 0;
   uniquestr16ssa = 0;
+  uniquestr16assa = 0;
   uniquestr32ssa = 0;
+  uniquestr32assa = 0;
   uniquedynarrayssa = 0;
+  uniquedynarrayassa = 0;
 
   raisessa = 0;
   pushcpucontextssa = 0;

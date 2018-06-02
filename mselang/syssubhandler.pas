@@ -53,6 +53,7 @@ procedure handletruncint32(const paramco: int32);
 procedure handletruncint64(const paramco: int32);
 procedure handletrunccard32(const paramco: int32);
 procedure handletrunccard64(const paramco: int32);
+procedure handlecopy(const paramco: int32);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -85,7 +86,9 @@ const
   //syf_trunccard32,syf_trunccard64,
   @handletrunccard32,@handletrunccard64,
   //syf_getexceptobj
-  @handlegetexceptobj
+  @handlegetexceptobj,
+  //syf_copy
+  @handlecopy
  );
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1684,6 +1687,73 @@ begin
  i64floatsysfunc(paramco,oc_trunccard64flo64);
 end;
 
+procedure handlecopy(const paramco: int32);
+var
+ ptop: pcontextitemty;
+ typ1: ptypedataty;
+ op1: opcodety;
+begin
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  case paramco of
+   1: begin    //full copy
+    if getvalue(ptop,das_none) then begin
+    {$ifdef mse_checkinternalerror}                             
+     if ptop^.d.kind <> ck_fact then begin
+      internalerror(ie_managed,'20170602A');
+     end;
+    {$endif}
+     typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+     with typ1^ do begin
+      op1:= oc_none;
+      case h.kind of
+       dk_string: begin
+        case itemsize of
+         1: begin
+          op1:= oc_uniquestr8a;
+         end;
+         2: begin
+          op1:= oc_uniquestr16a;
+         end;
+         4: begin
+          op1:= oc_uniquestr32a;
+         end;
+        {$ifdef mse_checkinternalerror}                             
+         else begin
+          internalerror(ie_managed,'20170602B');
+         end;
+        {$endif}
+        end;
+       end;
+       dk_dynarray: begin
+        op1:= oc_uniquedynarraya;
+       end;
+      end;
+      if op1 = oc_none then begin
+       errormessage(err_typemismatch,[]);
+      end
+      else begin
+       with additem(op1)^ do begin
+        if co_llvm in o.compileoptions then begin
+         par.ssas1:= ptop^.d.dat.fact.ssaindex; //result
+         par.setlength.itemsize:= 
+                info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+         ptop^.d.dat.fact.ssaindex:= par.ssad;
+        end
+        else begin
+         par.setlength.itemsize:= itemsize;
+        end;
+       end;
+      end;
+     end;
+    end;
+   end;
+   else begin
+    identerror(1,err_wrongnumberofparameters);
+   end;
+  end;
+ end;
+end;
 
 type
  sysfuncinfoty = record
@@ -1729,7 +1799,8 @@ const
    (name: 'truncint64'; data: (func: syf_truncint64)),
    (name: 'trunccard32'; data: (func: syf_trunccard32)),
    (name: 'trunccard64'; data: (func: syf_trunccard64)),
-   (name: 'getexceptobj'; data: (func: syf_getexceptobj))
+   (name: 'getexceptobj'; data: (func: syf_getexceptobj)),
+   (name: 'copy'; data: (func: syf_copy))
   );
 
 procedure init();

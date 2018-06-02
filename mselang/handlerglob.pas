@@ -510,7 +510,8 @@ type
               syf_sin,syf_cos,syf_sqrt,syf_floor,syf_round,syf_nearbyint,
               syf_truncint32,syf_truncint64,
               syf_trunccard32,syf_trunccard64,
-              syf_getexceptobj);
+              syf_getexceptobj,
+              syf_copy);
 
  sysfuncdataty = record
   func: sysfuncty;

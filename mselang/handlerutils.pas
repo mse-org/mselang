@@ -1512,7 +1512,7 @@ begin
        par.voffset:= -targetpointersize;
        par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
       end;
-      inc(i1);            //todo: item size !!!!!!!!!!!!!
+      inc(i1);
       case h.datasize of
        das_8: begin
         oc1:= oc_uniquestr8;

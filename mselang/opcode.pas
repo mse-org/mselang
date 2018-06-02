@@ -1074,46 +1074,48 @@ begin
    result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
                 //there is at least a subbegin op
    s.ssa.index:= s.ssa.nextindex;
-   inc(s.ssa.nextindex,ssadelta);
-   po1:= result+1;
-   poend:= po1+opcount-ad1;
-   inc(opcount);
-   int2:= (result-1)^.par.ssad; //original start ssa
-   while po1 < poend do begin           
-                        //todo: boolean expression shortcut addresses?
-    inc(po1^.par.ssad,ssadelta);
-    if po1^.par.ssas1 >= int2 then begin
-     inc(po1^.par.ssas1,ssadelta);
-    end;
-    if po1^.par.ssas2 >= int2 then begin
-     inc(po1^.par.ssas2,ssadelta);
-    end;
-    if po1^.op.op in subops then begin //adjust param ssa's
-     parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
-     endpo:= parpo + po1^.par.callinfo.paramcount;
-     while parpo < endpo do begin
-      if parpo^.ssaindex >= int2 then begin
-       inc(parpo^.ssaindex,ssadelta);
-      end;
-      inc(parpo);
+   if ssadelta > 0 then begin
+    inc(s.ssa.nextindex,ssadelta);
+    po1:= result+1;
+    poend:= po1+opcount-ad1;
+    int2:= (result-1)^.par.ssad; //original start ssa
+    while po1 < poend do begin           
+                         //todo: boolean expression shortcut addresses?
+     inc(po1^.par.ssad,ssadelta);
+     if po1^.par.ssas1 >{=} int2 then begin
+      inc(po1^.par.ssas1,ssadelta);
      end;
-    end
-    else begin
-    {
-     if po1^.op.op in listops then begin
-      listpo:= getsegmentpo(seg_localloc,po1^.par.listinfo.allocs);
-      endpo:= listpo + po1^.par.listinfo.alloccount;
-      while listpo < endpo do begin
-       if listpo^.ssaindex >= int2 then begin
-        inc(listpo^.ssaindex,ssadelta);
+     if po1^.par.ssas2 >= int2 then begin
+      inc(po1^.par.ssas2,ssadelta);
+     end;
+     if po1^.op.op in subops then begin //adjust param ssa's
+      parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
+      endpo:= parpo + po1^.par.callinfo.paramcount;
+      while parpo < endpo do begin
+       if parpo^.ssaindex >{=} int2 then begin
+        inc(parpo^.ssaindex,ssadelta);
        end;
-       inc(listpo);
+       inc(parpo);
       end;
+     end
+     else begin
+     {
+      if po1^.op.op in listops then begin
+       listpo:= getsegmentpo(seg_localloc,po1^.par.listinfo.allocs);
+       endpo:= listpo + po1^.par.listinfo.alloccount;
+       while listpo < endpo do begin
+        if listpo^.ssaindex >= int2 then begin
+         inc(listpo^.ssaindex,ssadelta);
+        end;
+        inc(listpo);
+       end;
+      end;
+     }
      end;
-    }
+     inc(po1);
     end;
-    inc(po1);
    end;
+   inc(opcount);
    with contextstack[int1] do begin
     if d.kind in factcontexts then begin
      inc(d.dat.fact.ssaindex,ssadelta);

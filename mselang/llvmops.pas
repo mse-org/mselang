@@ -4650,32 +4650,74 @@ end;
 procedure uniquestr8op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_uniquestring8,false,[bcstream.ssaval(ssas1)]);
-                                                   //dest
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                  bcstream.ptypeval(bcstream.pointertype));         //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                          //1ssa
+  callcompilersub(cs_uniquestring8,true,[bcstream.relval(0)]);      //1ssa
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure uniquestr8aop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring8,true,[bcstream.ssaval(ssas1)]); //1ssa
  end;
 end;
 
 procedure uniquestr16op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_uniquestring16,false,[bcstream.ssaval(ssas1)]);
-                                                   //dest
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                  bcstream.ptypeval(bcstream.pointertype));         //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                          //1ssa
+  callcompilersub(cs_uniquestring16,true,[bcstream.relval(0)]);     //1ssa
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure uniquestr16aop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring16,true,[bcstream.ssaval(ssas1)]); //1ssa
  end;
 end;
 
 procedure uniquestr32op();
 begin
  with pc^.par do begin
-  callcompilersub(cs_uniquestring32,false,[bcstream.ssaval(ssas1)]);
-                                                   //dest
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                  bcstream.ptypeval(bcstream.pointertype));         //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                          //1ssa
+  callcompilersub(cs_uniquestring32,true,[bcstream.relval(0)]);     //1ssa
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure uniquestr32aop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring32,true,[bcstream.ssaval(ssas1)]); //1ssa
  end;
 end;
 
 procedure uniquedynarrayop();
 begin                                         
  with pc^.par do begin
-  callcompilersub(cs_uniquedynarray,false,[bcstream.ssaval(ssas1),
-                                                    //dest                                                      
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                  bcstream.ptypeval(bcstream.pointertype));         //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                          //1ssa
+  callcompilersub(cs_uniquedynarray,true,[bcstream.relval(0),       //1ssa
+                                       bcstream.constval(setlength.itemsize)]);
+                                                    //itemsize
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure uniquedynarrayaop();
+begin                                         
+ with pc^.par do begin
+  callcompilersub(cs_uniquedynarray,true,[bcstream.ssaval(ssas1),       //1ssa
                                        bcstream.constval(setlength.itemsize)]);
                                                     //itemsize
  end;
@@ -5497,10 +5539,14 @@ const
   setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
 
-  uniquestr8ssa = 0;
-  uniquestr16ssa = 0;
-  uniquestr32ssa = 0;
-  uniquedynarrayssa = 0;
+  uniquestr8ssa = 3;
+  uniquestr8assa = 1;
+  uniquestr16ssa = 3;
+  uniquestr16assa = 1;
+  uniquestr32ssa = 3;
+  uniquestr32assa = 1;
+  uniquedynarrayssa = 3;
+  uniquedynarrayassa = 1;
 
   raisessa = 0;
   pushcpucontextssa = 0;

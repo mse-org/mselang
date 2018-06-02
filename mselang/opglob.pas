@@ -759,9 +759,13 @@ type
   oc_setlengthdynarray,
 
   oc_uniquestr8,
+  oc_uniquestr8a,
   oc_uniquestr16,
+  oc_uniquestr16a,
   oc_uniquestr32,
+  oc_uniquestr32a,
   oc_uniquedynarray,
+  oc_uniquedynarraya,
 
   oc_pushcpucontext,
   oc_popcpucontext,

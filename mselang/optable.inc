@@ -1169,12 +1169,20 @@
 
 //oc_uniquestr8
   (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: []), 
+//oc_uniquestr8a
+  (ssa: uniquestr8assa; proc: @uniquestr8aop; flags: []), 
 //oc_uniquestr16
   (ssa: uniquestr16ssa; proc: @uniquestr16op; flags: []), 
+//oc_uniquestr16a
+  (ssa: uniquestr16assa; proc: @uniquestr16aop; flags: []), 
 //oc_uniquestr32
   (ssa: uniquestr32ssa; proc: @uniquestr32op; flags: []), 
+//oc_uniquestr32a
+  (ssa: uniquestr32assa; proc: @uniquestr32aop; flags: []), 
 //oc_uniquedynarray
   (ssa: uniquedynarrayssa; proc: @uniquedynarrayop; flags: []), 
+//oc_uniquedynarraya
+  (ssa: uniquedynarrayassa; proc: @uniquedynarrayaop; flags: []), 
 
 //oc_pushcpucontext
   (ssa: pushcpucontextssa; proc: @pushcpucontextop; flags: []), 
