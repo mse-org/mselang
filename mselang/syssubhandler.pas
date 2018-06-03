@@ -1689,7 +1689,7 @@ end;
 
 procedure handlecopy(const paramco: int32);
 var
- ptop: pcontextitemty;
+ ptop,pind: pcontextitemty;
  typ1: ptypedataty;
  op1: opcodety;
 begin
@@ -1699,10 +1699,13 @@ begin
    1: begin    //full copy
     if getvalue(ptop,das_none) then begin
     {$ifdef mse_checkinternalerror}                             
-     if ptop^.d.kind <> ck_fact then begin
+     if not (ptop^.d.kind in factcontexts) then begin
       internalerror(ie_managed,'20170602A');
      end;
     {$endif}
+     with additem(oc_increfsizestack)^ do begin
+      par.ssas1:= ptop^.d.dat.fact.ssaindex;
+     end;
      typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
      with typ1^ do begin
       op1:= oc_none;
@@ -1752,6 +1755,13 @@ begin
     identerror(1,err_wrongnumberofparameters);
    end;
   end;
+  pind:= @contextstack[s.stackindex];
+  initdatacontext(pind^.d,ck_subres);
+  with pind^ do begin
+   d.dat.fact.ssaindex:= ptop^.d.dat.fact.ssaindex;
+   d.dat.datatyp:= ptop^.d.dat.datatyp;
+  end;
+  addmanagedtemp(ptop);
  end;
 end;
 

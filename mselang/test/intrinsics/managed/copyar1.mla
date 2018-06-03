@@ -1,0 +1,12 @@
+program copyar1;
+var
+ ar1,ar2: array of int32;
+begin
+ setlength(ar1,3);
+ ar2:= copy(ar1);
+ ar2[1]:= 11;
+ ar1[1]:= 123;
+ if ar2[1] = 11 then
+  exitcode:= ar1[1];
+ end;
+end.
