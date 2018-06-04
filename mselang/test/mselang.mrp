@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=25
    (
    kind=1
@@ -3418,7 +3418,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,5,dynarray
    c=14
     (
     kind=2
@@ -3444,8 +3444,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setlength llvm
-    teststate=1
+    a=0,648,2,setlength llvm
+    teststate=2
     path=setlength.mla
     comment=
     cc=${mlc_llvm}
@@ -3460,8 +3460,44 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength': free(): invalid next size (fast): 0x08eb7028 ***
+    +======= Backtrace: =========
+    +/lib/libc.so.6(+0x6cea3)[0xb7554ea3]
+    +/lib/libc.so.6(+0x72fea)[0xb755afea]
+    +/lib/libc.so.6(+0x73c4d)[0xb755bc4d]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x8049017]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x80492d1]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cecb]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cf88]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cf72]
+    +/lib/libc.so.6(__libc_start_main+0xf3)[0xb7501993]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x8048931]
+    +======= Memory map: ========
+    +08048000-08050000 r-xp 00000000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
+    +08050000-08051000 r--p 00007000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
+    +08051000-08052000 rw-p 00008000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
+    +08eb7000-08ed8000 rw-p 00000000 00:00 0          [heap]
+    +b74e6000-b74e8000 rw-p 00000000 00:00 0 
+    +b74e8000-b7690000 r-xp 00000000 08:09 4849873    /lib/libc-2.19.so
+    +b7690000-b7692000 r--p 001a8000 08:09 4849873    /lib/libc-2.19.so
+    +b7692000-b7693000 rw-p 001aa000 08:09 4849873    /lib/libc-2.19.so
+    +b7693000-b7696000 rw-p 00000000 00:00 0 
+    +b7696000-b76b1000 r-xp 00000000 08:09 4853926    /lib/libgcc_s.so.1
+    +b76b1000-b76b2000 r--p 0001a000 08:09 4853926    /lib/libgcc_s.so.1
+    +b76b2000-b76b3000 rw-p 0001b000 08:09 4853926    /lib/libgcc_s.so.1
+    +b76b3000-b76f7000 r-xp 00000000 08:09 4849855    /lib/libm-2.19.so
+    +b76f7000-b76f8000 r--p 00043000 08:09 4849855    /lib/libm-2.19.so
+    +b76f8000-b76f9000 rw-p 00044000 08:09 4849855    /lib/libm-2.19.so
+    +b7729000-b772a000 rw-p 00000000 00:00 0 
+    +b772a000-b772b000 r-xp 00000000 00:00 0          [vdso]
+    +b772b000-b772d000 r--p 00000000 00:00 0          [vvar]
+    +b772d000-b774d000 r-xp 00000000 08:09 4853907    /lib/ld-2.19.so
+    +b774d000-b774e000 rw-p 00000000 00:00 0 
+    +b774e000-b774f000 r--p 00020000 08:09 4853907    /lib/ld-2.19.so
+    +b774f000-b7750000 rw-p 00021000 08:09 4853907    /lib/ld-2.19.so
+    +bf992000-bf9b3000 rw-p 00000000 00:00 0          [stack]
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 5: 23661 Aborted                 $2
+    aec=134
     ie=0
     )
     (
@@ -3728,7 +3764,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=dynarray/
    comment=
    cc=
@@ -3893,7 +3929,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7305C30
+    ao=An unhandled exception occured at $B728D488
     ae=
     aec=123
     ie=0
@@ -8461,8 +8497,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
-   c=12
+   a=0,665,5,managed
+   c=13
     (
     kind=2
     a=0,648,1,globrecassign
@@ -8707,6 +8743,64 @@ c=3
     )
     (
     kind=2
+    a=0,648,2,arrayofstring2 llvm
+    teststate=2
+    path=arrayofstring2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2': free(): invalid next size (fast): 0x0837f050 ***
+    +======= Backtrace: =========
+    +/lib/libc.so.6(+0x6cea3)[0xb75d9ea3]
+    +/lib/libc.so.6(+0x72fea)[0xb75dffea]
+    +/lib/libc.so.6(+0x73c4d)[0xb75e0c4d]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x8049017]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x80493df]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804cebf]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804d0f8]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804d0e3]
+    +/lib/libc.so.6(__libc_start_main+0xf3)[0xb7586993]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x8048931]
+    +======= Memory map: ========
+    +08048000-08050000 r-xp 00000000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
+    +08050000-08051000 r--p 00007000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
+    +08051000-08052000 rw-p 00008000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
+    +0837f000-083a0000 rw-p 00000000 00:00 0          [heap]
+    +b756b000-b756d000 rw-p 00000000 00:00 0 
+    +b756d000-b7715000 r-xp 00000000 08:09 4849873    /lib/libc-2.19.so
+    +b7715000-b7717000 r--p 001a8000 08:09 4849873    /lib/libc-2.19.so
+    +b7717000-b7718000 rw-p 001aa000 08:09 4849873    /lib/libc-2.19.so
+    +b7718000-b771b000 rw-p 00000000 00:00 0 
+    +b771b000-b7736000 r-xp 00000000 08:09 4853926    /lib/libgcc_s.so.1
+    +b7736000-b7737000 r--p 0001a000 08:09 4853926    /lib/libgcc_s.so.1
+    +b7737000-b7738000 rw-p 0001b000 08:09 4853926    /lib/libgcc_s.so.1
+    +b7738000-b777c000 r-xp 00000000 08:09 4849855    /lib/libm-2.19.so
+    +b777c000-b777d000 r--p 00043000 08:09 4849855    /lib/libm-2.19.so
+    +b777d000-b777e000 rw-p 00044000 08:09 4849855    /lib/libm-2.19.so
+    +b77ae000-b77af000 rw-p 00000000 00:00 0 
+    +b77af000-b77b0000 r-xp 00000000 00:00 0          [vdso]
+    +b77b0000-b77b2000 r--p 00000000 00:00 0          [vvar]
+    +b77b2000-b77d2000 r-xp 00000000 08:09 4853907    /lib/ld-2.19.so
+    +b77d2000-b77d3000 rw-p 00000000 00:00 0 
+    +b77d3000-b77d4000 r--p 00020000 08:09 4853907    /lib/ld-2.19.so
+    +b77d4000-b77d5000 rw-p 00021000 08:09 4853907    /lib/ld-2.19.so
+    +bfe7a000-bfe9b000 rw-p 00000000 00:00 0          [stack]
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 5: 23827 Aborted                 $2
+    aec=134
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,arrayofarray1 llvm
     teststate=1
     path=arrayofarray1.mla
@@ -8727,7 +8821,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=managed/
    comment=
    cc=
@@ -8787,7 +8881,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -13279,7 +13373,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=3
    (
    kind=1
@@ -13543,7 +13637,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,665,5,string
    c=2
     (
     kind=2
@@ -13569,8 +13663,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,format1 llvm
-    teststate=1
+    a=0,648,2,format1 llvm
+    teststate=2
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13599,7 +13693,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=string/
    comment=
    cc=
@@ -13615,7 +13709,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -13633,12 +13727,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,benchmark
+  a=0,665,4,benchmark
   c=2
    (
    kind=2
-   a=0,648,1,mergesort
-   teststate=1
+   a=0,640,0,mergesort
+   teststate=2
    path=mergesort.mla
    comment=
    cc=${mlc}
@@ -13653,8 +13747,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=(1,1) Fatal: Internal error N Stackops OP not implemented
+   aec=1
    ie=0
    )
    (
@@ -13695,7 +13789,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -13818,7 +13912,24 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=67
+rowstate=84
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

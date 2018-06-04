@@ -4659,6 +4659,26 @@ begin
  end;
 end;
 
+procedure setlengthdecrefstringop();
+begin                           
+ with pc^.par do begin                            
+  callcompilersub(cs_setlengthdecrefdynarray,false,[bcstream.ssaval(ssas1),
+                                                     //dest
+                                                    bcstream.ssaval(ssas2)]);
+                                                     //count        
+ end;
+end;
+
+procedure setlengthdecrefdynarrayop();
+begin                           
+ with pc^.par do begin                            
+  callcompilersub(cs_setlengthdecrefdynarray,false,[bcstream.ssaval(ssas1),
+                                                     //dest
+                                                    bcstream.ssaval(ssas2)]);
+                                                     //count        
+ end;
+end;
+
 procedure uniquestr8op();
 begin
  with pc^.par do begin
@@ -5550,6 +5570,8 @@ const
   setlengthstr16ssa = 0;
   setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
+  setlengthdecrefstringssa = 0;
+  setlengthdecrefdynarrayssa = 0;
 
   uniquestr8ssa = 3;
   uniquestr8assa = 1;

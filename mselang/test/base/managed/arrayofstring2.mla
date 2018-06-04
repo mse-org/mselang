@@ -1,0 +1,20 @@
+program arrayofstring2;
+var
+ ar1,ar2: array of string; //array of int32;
+begin
+ setlength(ar1,3);
+ setlength(ar1[1],3);
+ ar1[1,1]:= 'a';
+ ar1[1,2]:= 'b';
+ ar1[1,3]:= 'c';
+ ar2:= ar1;
+ setlength(ar1,4);
+ ar2[1]:= 'ABC';
+ if (ar1[1] = 'abc') and (ar2[1] = 'ABC') then
+  ar1:= ar2;
+  if (ar1[1] = 'ABC') and (ar2[1] = 'ABC') then
+   exitcode:= 123;
+  end;
+  setlength(ar2,1);
+ end;
+end.

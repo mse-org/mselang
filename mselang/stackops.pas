@@ -6655,6 +6655,16 @@ begin
  stackpop(pointersize+sizeof(dynarraysizety));
 end;
 
+procedure setlengthdecrefstringop();
+begin
+ notimplemented();
+end;
+
+procedure setlengthdecrefdynarrayop();
+begin
+ notimplemented();
+end;
+
 procedure uniquestr8op(); //address
 var
  si1: stringsizety;
@@ -7602,6 +7612,8 @@ const
   setlengthstr16ssa = 0;
   setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
+  setlengthdecrefstringssa = 0;
+  setlengthdecrefdynarrayssa = 0;
 
   uniquestr8ssa = 0;
   uniquestr8assa = 0;

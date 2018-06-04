@@ -30,6 +30,8 @@ procedure __mla__storenildynar(const dest: pointer);
 
 procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
+procedure __mla__setlengthdecrefdynarray(const ref: ppointer; 
+                                                    const count: int32);
 procedure __mla__setlengthstring8(const ref: ppointer;
                                                     const count: int32);
 procedure __mla__setlengthstring16(const ref: ppointer;
@@ -356,10 +358,10 @@ begin
    end
    else begin
     d:= getmem(i1+dynarrayallocsize);
-    memcpy(@d^.data,@s^.data,i1);
     i2:= (s^.high+1) * itemsize;
+    memcpy(@d^.data,@s^.data,i2);
     if i1 > i2 then begin  //new bigger
-     setmem(@d^.data+i1,i2-i1,0);
+     setmem(@d^.data+i2,i1-i2,0);
     end;
    end;
    dec(s^.ref.count);
@@ -374,6 +376,39 @@ begin
    s^.ref.count:= 1;
    s^.high:= count-1;
    ref^:= @s^.data;
+  end;
+ end;
+end;
+
+procedure __mla__setlengthdecrefdynarray(const ref: ppointer; 
+                                                   const count: int32);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ d:= ref^;
+ p1:= pointer(d);
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count = 1 then begin
+   pe:= p1 + count;
+   p1:= p1 + d^.high;
+   while p1 >= pe do begin
+    __mla__decrefsize(p1^);
+    dec(p1);
+   end;
+  end
+  else begin
+   if d^.high >= count then begin //make smaller
+    pe:= p1 + count - 1;
+   end
+   else begin
+    pe:= p1 + d^.high;
+   end;
+   while p1 <= pe do begin
+    __mla__increfsize(p1^);
+    inc(p1);
+   end;
   end;
  end;
 end;

@@ -39,6 +39,7 @@ type
   cs_finirefsizedynar,
   cs_storenildynar,
   cs_setlengthdynarray,
+  cs_setlengthdecrefdynarray,
   cs_setlengthstring8,
   cs_setlengthstring16,
   cs_setlengthstring32,
@@ -759,6 +760,8 @@ type
   oc_setlengthstr16,
   oc_setlengthstr32,
   oc_setlengthdynarray,
+  oc_setlengthdecrefstring,
+  oc_setlengthdecrefdynarray,
 
   oc_uniquestr8,
   oc_uniquestr8a,

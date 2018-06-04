@@ -89,7 +89,8 @@ procedure callclassdefproc(const aitem: classdefprocty;
 implementation
 uses
  elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
- stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler;
+ stackops,unithandler,segmentutils,valuehandler,msetypes,classhandler,
+ typehandler;
 { 
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -347,7 +348,7 @@ end;
 procedure handlesetlength(const paramco: integer);
 var
  len: integer;
-// typ1: ptypedataty;
+ typ1: ptypedataty;
  po1,po2: pcontextitemty;
  op1: opcodety;
 begin
@@ -361,14 +362,6 @@ begin
      exit;
     end;
     with po2^ do begin
-{
-     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-     if (d.dat.datatyp.indirectlevel <> 0) or 
-                                     (typ1^.h.kind <> dk_integer) then begin
-      incompatibletypeserror(2,'dk_integer',d);
-     end
-     else begin
-     }
      if getaddress(po1,true) then begin
      {$ifdef mse_checkinternalerror}
       if not (po2^.d.kind in factcontexts) or 
@@ -382,6 +375,26 @@ begin
         op1:= oc_none;
         case h.kind of
          dk_dynarray: begin
+          typ1:= ele.eledataabs(infodynarray.i.itemtypedata);
+          if typ1^.h.manageproc <> mpk_none then begin
+           case typ1^.h.manageproc of
+            mpk_managedynarray: begin
+             op1:= oc_setlengthdecrefdynarray;
+            end;
+            mpk_managestring: begin
+             op1:= oc_setlengthdecrefstring;
+            end;
+            else begin
+             internalerror1(ie_handler,'20180604A');
+            end;
+           end;
+           with additem(op1)^ do begin
+            par.ssas1:= d.dat.fact.ssaindex; //result
+            par.ssas2:= po2^.d.dat.fact.ssaindex;
+            par.setlength.itemsize:= 
+                info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+           end;
+          end;
           op1:= oc_setlengthdynarray;
          end;
          dk_string: begin
@@ -415,7 +428,6 @@ begin
          end;
         end;
        end;
-//       end;
       end;
      end;
     end;  
