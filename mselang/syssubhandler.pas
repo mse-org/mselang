@@ -1695,14 +1695,14 @@ var
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
-  case paramco of
-   1: begin    //full copy
-    if getvalue(ptop,das_none) then begin
-    {$ifdef mse_checkinternalerror}                             
-     if not (ptop^.d.kind in factcontexts) then begin
-      internalerror(ie_managed,'20170602A');
-     end;
-    {$endif}
+  if getvalue(ptop,das_none) then begin
+  {$ifdef mse_checkinternalerror}                             
+   if not (ptop^.d.kind in factcontexts) then begin
+    internalerror(ie_managed,'20170602A');
+   end;
+  {$endif}
+   case paramco of
+    1: begin    //full copy
      with additem(oc_increfsizestack)^ do begin
       par.ssas1:= ptop^.d.dat.fact.ssaindex;
      end;
@@ -1750,9 +1750,9 @@ begin
       end;
      end;
     end;
-   end;
-   else begin
-    identerror(1,err_wrongnumberofparameters);
+    else begin
+     identerror(1,err_wrongnumberofparameters);
+    end;
    end;
   end;
   pind:= @contextstack[s.stackindex];

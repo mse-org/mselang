@@ -19,8 +19,10 @@ uses
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: pointer);
 procedure __mla__decrefsizeref(const ref: ppointer);
+procedure __mla__decrefsizedynar(const ref: pointer);
 procedure __mla__increfsize(ref: pointer);
 procedure __mla__increfsizeref(ref: ppointer);
+procedure __mla__increfsizedynar(const ref: pointer);
 procedure __mla__finirefsize(const ref: ppointer);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__finirefsizedynar(const ref: ppointer);
@@ -157,6 +159,22 @@ begin
  end;
 end;
 
+procedure __mla__increfsizedynar(const ref: pointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ p1:= ref;
+ if p1 <> nil then begin
+  d:= pdynarrayheaderty(p1)-1;
+  pe:= p1+d^.high;
+  while p1 <= pe do begin
+   __mla__increfsize(p1^);
+   inc(p1);
+  end;
+ end;
+end;
+
 procedure __mla__decrefsize(ref: pointer);
 var
  d: prefsizeinfoty;
@@ -169,6 +187,22 @@ begin
   end;
   if d^.ref.count = 0 then begin
    freemem(d);
+  end;
+ end;
+end;
+
+procedure __mla__decrefsizedynar(const ref: pointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ p1:= ref;
+ if p1 <> nil then begin
+  d:= pdynarrayheaderty(p1)-1;
+  pe:= p1+d^.high;
+  while p1 <= pe do begin
+   __mla__decrefsizeref(p1);
+   inc(p1);
   end;
  end;
 end;
@@ -198,8 +232,8 @@ begin
   end;
   if d^.ref.count = 0 then begin
    freemem(d);
+   ref^:= nil;
   end;
-//  ref^:= nil;
  end;
 end;
 

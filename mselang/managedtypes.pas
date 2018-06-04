@@ -355,7 +355,7 @@ begin
   if checkparamco(2,paramco) then begin
    po2:= @contextstack[s.stacktop];
    po1:= getpreviousnospace(po2-1);
-   if getvalue(po2,das_32) then begin
+   if getvalue(po2,das_32) then begin //length
     if not tryconvert(po2,st_int32,[]) then begin
      incompatibletypeserror(sysdatatypes[st_int32],s.stacktop-s.stackindex);
      exit;

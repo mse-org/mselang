@@ -2948,7 +2948,11 @@ end;
 
 procedure finirefsizesegdynarop();
 begin
- notimplemented();
+ with pc^.par.memop.segdataaddress do begin
+  bcstream.emitgetelementptr(bcstream.globval(a.address),
+                                  bcstream.constval(offset)); //2ssa
+ end;
+ callcompilersub(cs_finirefsizedynar,false,[bcstream.relval(0)]);
 end;
 
 procedure finirefsizelocdynarop();
@@ -3056,8 +3060,12 @@ end;
 
 procedure increfsizesegdynarop();
 begin
- notimplemented();
+ loadseg();
+ with pc^.par do begin
+  callcompilersub(cs_increfsizedynar,false,[bcstream.relval(0)]);
+ end;
 end;
+
 procedure increfsizelocdynarop();
 begin
  notimplemented();
@@ -3160,7 +3168,8 @@ end;
 
 procedure decrefsizesegdynarop();
 begin
- notimplemented();
+ loadseg(); //1ssa
+ callcompilersub(cs_decrefsizedynar,false,[bcstream.relval(0)]);
 end;
 procedure decrefsizelocdynarop();
 begin
@@ -5294,7 +5303,7 @@ const
   finirefsizestackrefarssa = 2;
   finirefsizetempvararssa = 2;
 
-  finirefsizesegdynarssa = 1;
+  finirefsizesegdynarssa = 2;
   finirefsizelocdynarssa = 1;
   finirefsizelocindidynarssa = 1;
   finirefsizestackdynarssa = 1;
