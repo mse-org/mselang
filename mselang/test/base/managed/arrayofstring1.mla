@@ -1,0 +1,15 @@
+program arrayofstring1;
+var
+ ar1,ar2: array of string8;
+begin
+ setlength(ar1,3);
+ setlength(ar1[1],3);
+ ar1[1][1]:= 'a';
+ ar1[1][2]:= 'b';
+ ar1[1][3]:= 'c';
+ ar2:= ar1;
+ ar1[1,2]:= 'B';
+ if (ar1[1] = 'aBc') and (ar2[1] = 'aBc') then
+  exitcode:= 123;
+ end;
+end.
