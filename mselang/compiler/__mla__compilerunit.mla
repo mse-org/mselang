@@ -265,6 +265,23 @@ begin
  end;
 end;
 
+procedure finirefsizenonil(const ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+//  ref^:= nil;
+ end;
+end;
+
 procedure __mla__finirefsizedynar(const ref: ppointer);
 var
  d: pdynarrayheaderty;

@@ -2818,6 +2818,7 @@ procedure storestackrefnilarop();
 begin
  notimplemented();
 end;
+
 procedure storetempvarnilarop();
 begin
  notimplemented();
@@ -2825,8 +2826,10 @@ end;
 
 procedure storesegnildynarop();
 begin
- notimplemented();
+ loadseg();
+ callcompilersub(cs_storenildynar,false,[bcstream.relval(0)]);
 end;
+
 procedure storelocnildynarop();
 begin
  loadloc(false);

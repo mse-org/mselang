@@ -3893,7 +3893,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7256218
+    ao=An unhandled exception occured at $B7305C30
     ae=
     aec=123
     ie=0
@@ -8462,7 +8462,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=11
+   c=12
     (
     kind=2
     a=0,648,1,globrecassign
@@ -8688,6 +8688,28 @@ c=3
     a=0,648,1,arrayofstring1 llvm
     teststate=1
     path=arrayofstring1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arrayofarray1 llvm
+    teststate=1
+    path=arrayofarray1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13796,7 +13818,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=66
+rowstate=67
+ 0 0
  0 0
  0 0
  0 0

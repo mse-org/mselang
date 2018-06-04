@@ -185,11 +185,11 @@ begin
    finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_dynamic,{atype,}aref{,ssaindex});
+//   increfsize(aro_dynamic,{atype,}aref{,ssaindex});
    increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
+//   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
    decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
@@ -210,7 +210,7 @@ begin
   end;
   mo_fini: begin
    finirefsize(aro_dynamic,{atype,}aref{,ssaindex});
-//   finirefsize(aro_none,{atype,}aref{,ssaindex});
+   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
 //   increfsize(aro_dynamic,{atype,}aref{,ssaindex});
