@@ -1,0 +1,18 @@
+program pointeradd1;
+type
+ dynarrayheaderty = record
+  a: int32;
+  data: record
+  end;
+ end;
+ pdynarrayheaderty = ^dynarrayheaderty;
+
+var
+ ar1{,ar2}: array of string; //array of int32;
+ p1: pdynarrayheaderty;
+ p2,p3: pointer;
+ i1: int32;
+begin
+ p3:= @p1^.data+123;
+ exitcode:= pointer(p3) - pointer(p1) - sizeof(p1^.a);
+end.

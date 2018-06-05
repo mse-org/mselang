@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -600,7 +600,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,float
+    a=0,664,4,float
     c=4
      (
      kind=2
@@ -708,8 +708,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
-    c=10
+    a=0,665,4,pointer
+    c=11
      (
      kind=2
      a=0,648,1,pointeradd
@@ -737,6 +737,28 @@ c=3
      a=0,648,1,pointeradd llvm
      teststate=1
      path=pointeradd.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointeradd1 llvm
+     teststate=1
+     path=pointeradd1.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -3460,43 +3482,43 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength': free(): invalid next size (fast): 0x08eb7028 ***
+    ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength': free(): invalid next size (fast): 0x09c32028 ***
     +======= Backtrace: =========
-    +/lib/libc.so.6(+0x6cea3)[0xb7554ea3]
-    +/lib/libc.so.6(+0x72fea)[0xb755afea]
-    +/lib/libc.so.6(+0x73c4d)[0xb755bc4d]
+    +/lib/libc.so.6(+0x6cea3)[0xb75efea3]
+    +/lib/libc.so.6(+0x72fea)[0xb75f5fea]
+    +/lib/libc.so.6(+0x73c4d)[0xb75f6c4d]
     +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x8049017]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x80492d1]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cecb]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cf88]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cf72]
-    +/lib/libc.so.6(__libc_start_main+0xf3)[0xb7501993]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x80492e1]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804ceeb]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cfa8]
+    +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x804cf92]
+    +/lib/libc.so.6(__libc_start_main+0xf3)[0xb759c993]
     +/home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength[0x8048931]
     +======= Memory map: ========
     +08048000-08050000 r-xp 00000000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
     +08050000-08051000 r--p 00007000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
     +08051000-08052000 rw-p 00008000 08:15 3539730    /home/mse/packs/standard/git/mselang/mselang/test/base/dynarray/setlength
-    +08eb7000-08ed8000 rw-p 00000000 00:00 0          [heap]
-    +b74e6000-b74e8000 rw-p 00000000 00:00 0 
-    +b74e8000-b7690000 r-xp 00000000 08:09 4849873    /lib/libc-2.19.so
-    +b7690000-b7692000 r--p 001a8000 08:09 4849873    /lib/libc-2.19.so
-    +b7692000-b7693000 rw-p 001aa000 08:09 4849873    /lib/libc-2.19.so
-    +b7693000-b7696000 rw-p 00000000 00:00 0 
-    +b7696000-b76b1000 r-xp 00000000 08:09 4853926    /lib/libgcc_s.so.1
-    +b76b1000-b76b2000 r--p 0001a000 08:09 4853926    /lib/libgcc_s.so.1
-    +b76b2000-b76b3000 rw-p 0001b000 08:09 4853926    /lib/libgcc_s.so.1
-    +b76b3000-b76f7000 r-xp 00000000 08:09 4849855    /lib/libm-2.19.so
-    +b76f7000-b76f8000 r--p 00043000 08:09 4849855    /lib/libm-2.19.so
-    +b76f8000-b76f9000 rw-p 00044000 08:09 4849855    /lib/libm-2.19.so
-    +b7729000-b772a000 rw-p 00000000 00:00 0 
-    +b772a000-b772b000 r-xp 00000000 00:00 0          [vdso]
-    +b772b000-b772d000 r--p 00000000 00:00 0          [vvar]
-    +b772d000-b774d000 r-xp 00000000 08:09 4853907    /lib/ld-2.19.so
-    +b774d000-b774e000 rw-p 00000000 00:00 0 
-    +b774e000-b774f000 r--p 00020000 08:09 4853907    /lib/ld-2.19.so
-    +b774f000-b7750000 rw-p 00021000 08:09 4853907    /lib/ld-2.19.so
-    +bf992000-bf9b3000 rw-p 00000000 00:00 0          [stack]
-    +/home/mse/packs/standard/git/mselang/mselang/run: line 5: 23661 Aborted                 $2
+    +09c32000-09c53000 rw-p 00000000 00:00 0          [heap]
+    +b7581000-b7583000 rw-p 00000000 00:00 0 
+    +b7583000-b772b000 r-xp 00000000 08:09 4849873    /lib/libc-2.19.so
+    +b772b000-b772d000 r--p 001a8000 08:09 4849873    /lib/libc-2.19.so
+    +b772d000-b772e000 rw-p 001aa000 08:09 4849873    /lib/libc-2.19.so
+    +b772e000-b7731000 rw-p 00000000 00:00 0 
+    +b7731000-b774c000 r-xp 00000000 08:09 4853926    /lib/libgcc_s.so.1
+    +b774c000-b774d000 r--p 0001a000 08:09 4853926    /lib/libgcc_s.so.1
+    +b774d000-b774e000 rw-p 0001b000 08:09 4853926    /lib/libgcc_s.so.1
+    +b774e000-b7792000 r-xp 00000000 08:09 4849855    /lib/libm-2.19.so
+    +b7792000-b7793000 r--p 00043000 08:09 4849855    /lib/libm-2.19.so
+    +b7793000-b7794000 rw-p 00044000 08:09 4849855    /lib/libm-2.19.so
+    +b77c4000-b77c5000 rw-p 00000000 00:00 0 
+    +b77c5000-b77c6000 r-xp 00000000 00:00 0          [vdso]
+    +b77c6000-b77c8000 r--p 00000000 00:00 0          [vvar]
+    +b77c8000-b77e8000 r-xp 00000000 08:09 4853907    /lib/ld-2.19.so
+    +b77e8000-b77e9000 rw-p 00000000 00:00 0 
+    +b77e9000-b77ea000 r--p 00020000 08:09 4853907    /lib/ld-2.19.so
+    +b77ea000-b77eb000 rw-p 00021000 08:09 4853907    /lib/ld-2.19.so
+    +bfbd5000-bfbf6000 rw-p 00000000 00:00 0          [stack]
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 5: 25177 Aborted                 $2
     aec=134
     ie=0
     )
@@ -3929,7 +3951,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B728D488
+    ao=An unhandled exception occured at $B72F9864
     ae=
     aec=123
     ie=0
@@ -8497,7 +8519,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,managed
+   a=0,665,4,managed
    c=13
     (
     kind=2
@@ -8743,8 +8765,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayofstring2 llvm
-    teststate=2
+    a=0,648,0,arrayofstring2 llvm
+    teststate=0
     path=arrayofstring2.mla
     comment=
     cc=${mlc_llvm}
@@ -8759,44 +8781,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2': free(): invalid next size (fast): 0x0837f050 ***
-    +======= Backtrace: =========
-    +/lib/libc.so.6(+0x6cea3)[0xb75d9ea3]
-    +/lib/libc.so.6(+0x72fea)[0xb75dffea]
-    +/lib/libc.so.6(+0x73c4d)[0xb75e0c4d]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x8049017]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x80493df]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804cebf]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804d0f8]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x804d0e3]
-    +/lib/libc.so.6(__libc_start_main+0xf3)[0xb7586993]
-    +/home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2[0x8048931]
-    +======= Memory map: ========
-    +08048000-08050000 r-xp 00000000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
-    +08050000-08051000 r--p 00007000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
-    +08051000-08052000 rw-p 00008000 08:15 3566091    /home/mse/packs/standard/git/mselang/mselang/test/base/managed/arrayofstring2
-    +0837f000-083a0000 rw-p 00000000 00:00 0          [heap]
-    +b756b000-b756d000 rw-p 00000000 00:00 0 
-    +b756d000-b7715000 r-xp 00000000 08:09 4849873    /lib/libc-2.19.so
-    +b7715000-b7717000 r--p 001a8000 08:09 4849873    /lib/libc-2.19.so
-    +b7717000-b7718000 rw-p 001aa000 08:09 4849873    /lib/libc-2.19.so
-    +b7718000-b771b000 rw-p 00000000 00:00 0 
-    +b771b000-b7736000 r-xp 00000000 08:09 4853926    /lib/libgcc_s.so.1
-    +b7736000-b7737000 r--p 0001a000 08:09 4853926    /lib/libgcc_s.so.1
-    +b7737000-b7738000 rw-p 0001b000 08:09 4853926    /lib/libgcc_s.so.1
-    +b7738000-b777c000 r-xp 00000000 08:09 4849855    /lib/libm-2.19.so
-    +b777c000-b777d000 r--p 00043000 08:09 4849855    /lib/libm-2.19.so
-    +b777d000-b777e000 rw-p 00044000 08:09 4849855    /lib/libm-2.19.so
-    +b77ae000-b77af000 rw-p 00000000 00:00 0 
-    +b77af000-b77b0000 r-xp 00000000 00:00 0          [vdso]
-    +b77b0000-b77b2000 r--p 00000000 00:00 0          [vvar]
-    +b77b2000-b77d2000 r-xp 00000000 08:09 4853907    /lib/ld-2.19.so
-    +b77d2000-b77d3000 rw-p 00000000 00:00 0 
-    +b77d3000-b77d4000 r--p 00020000 08:09 4853907    /lib/ld-2.19.so
-    +b77d4000-b77d5000 rw-p 00021000 08:09 4853907    /lib/ld-2.19.so
-    +bfe7a000-bfe9b000 rw-p 00000000 00:00 0          [stack]
-    +/home/mse/packs/standard/git/mselang/mselang/run: line 5: 23827 Aborted                 $2
-    aec=134
+    ae=
+    aec=-1
     ie=0
     )
     (
@@ -8816,12 +8802,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=managed/
    comment=
    cc=
@@ -8854,8 +8840,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -8876,8 +8862,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
@@ -8922,8 +8908,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -8944,8 +8930,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -8966,8 +8952,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -8988,8 +8974,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9010,8 +8996,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9032,8 +9018,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9054,8 +9040,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9076,8 +9062,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9098,8 +9084,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9120,8 +9106,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9142,8 +9128,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9164,8 +9150,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9206,8 +9192,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9228,8 +9214,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9250,8 +9236,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9272,8 +9258,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9294,8 +9280,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9316,8 +9302,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9338,8 +9324,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9360,8 +9346,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9382,8 +9368,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9404,8 +9390,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9426,8 +9412,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9448,8 +9434,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9470,8 +9456,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9492,8 +9478,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9514,8 +9500,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9536,8 +9522,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9558,8 +9544,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9580,8 +9566,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9602,8 +9588,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9624,8 +9610,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -9662,8 +9648,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9684,8 +9670,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9706,8 +9692,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9728,8 +9714,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9750,8 +9736,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abcdef
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9772,8 +9758,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abcdef
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9794,8 +9780,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abcabc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9816,8 +9802,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abcabc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9838,8 +9824,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9860,8 +9846,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9882,8 +9868,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9904,8 +9890,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9926,8 +9912,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9948,8 +9934,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9970,8 +9956,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -9992,8 +9978,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10014,8 +10000,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10036,8 +10022,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10058,8 +10044,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10080,8 +10066,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10102,8 +10088,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10124,8 +10110,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10146,8 +10132,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10168,8 +10154,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10190,8 +10176,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10212,8 +10198,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -10258,8 +10244,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10280,8 +10266,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10302,8 +10288,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10324,8 +10310,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10346,8 +10332,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10368,8 +10354,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10390,8 +10376,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10412,8 +10398,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10434,8 +10420,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10456,8 +10442,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10478,8 +10464,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10500,8 +10486,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10522,8 +10508,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10544,8 +10530,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10566,8 +10552,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10588,8 +10574,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10610,8 +10596,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10632,8 +10618,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10654,8 +10640,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10676,8 +10662,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10698,8 +10684,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10720,8 +10706,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10742,8 +10728,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10764,8 +10750,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10786,8 +10772,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10808,8 +10794,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10830,8 +10816,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10852,8 +10838,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10874,8 +10860,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10896,8 +10882,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10938,8 +10924,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10960,8 +10946,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -10982,8 +10968,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11004,8 +10990,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11046,8 +11032,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11068,8 +11054,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11090,8 +11076,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11112,8 +11098,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11134,8 +11120,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11176,8 +11162,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11198,8 +11184,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11220,8 +11206,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11242,8 +11228,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11264,8 +11250,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11286,8 +11272,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11308,8 +11294,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11330,8 +11316,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11352,8 +11338,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11374,8 +11360,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11396,8 +11382,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11418,8 +11404,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11440,8 +11426,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11462,8 +11448,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11484,8 +11470,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11526,8 +11512,8 @@ c=3
     ae=0
     eec=
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -11568,8 +11554,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11590,8 +11576,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11612,8 +11598,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11634,8 +11620,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11656,8 +11642,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11678,8 +11664,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11700,8 +11686,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11722,8 +11708,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11744,8 +11730,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11766,8 +11752,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -11804,8 +11790,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11826,8 +11812,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11848,8 +11834,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11870,8 +11856,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11892,8 +11878,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11914,8 +11900,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11936,8 +11922,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11958,8 +11944,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -11980,8 +11966,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12002,8 +11988,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12024,8 +12010,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12046,8 +12032,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12068,8 +12054,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12090,8 +12076,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12112,8 +12098,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12134,8 +12120,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12156,8 +12142,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12178,8 +12164,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12200,8 +12186,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12222,8 +12208,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
@@ -12244,8 +12230,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=abc
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
@@ -12266,8 +12252,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12288,8 +12274,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12310,8 +12296,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12332,8 +12318,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12354,8 +12340,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12376,8 +12362,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12398,8 +12384,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12444,8 +12430,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12466,8 +12452,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12488,8 +12474,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=b
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -12510,8 +12496,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=b
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -12572,8 +12558,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12614,8 +12600,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12636,8 +12622,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12658,8 +12644,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12680,8 +12666,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12702,8 +12688,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12724,8 +12710,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12746,8 +12732,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12768,8 +12754,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -12806,8 +12792,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12848,8 +12834,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12870,8 +12856,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12914,8 +12900,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12936,8 +12922,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12958,8 +12944,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -12980,8 +12966,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -13002,8 +12988,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -13052,9 +13038,8 @@ c=3
      ae=0
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=caseerror1.mla(16,4) Fatal: Syntax error,":" expected
+     ao=1
+     ae=0
      aec=1
      ie=0
      )
@@ -13095,9 +13080,8 @@ c=3
      ae=1
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=pointertostring1.mla(5,10) Error: Incompatible types: got "^pointer" expected "dk_string"
+     ao=1
+     ae=1
      aec=1
      ie=0
      )
@@ -13118,9 +13102,8 @@ c=3
      ae=1
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
+     ao=1
+     ae=1
      aec=1
      ie=0
      )
@@ -13141,9 +13124,8 @@ c=3
      ae=1
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
+     ao=1
+     ae=1
      aec=1
      ie=0
      )
@@ -13184,9 +13166,8 @@ c=3
      ae=0
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=constpar.mla(10,2) Error: Can't assign values to const variable
+     ao=1
+     ae=0
      aec=1
      ie=0
      )
@@ -13207,9 +13188,8 @@ c=3
      ae=0
      eec=1
      cr=0
-     ao=MSElang Compiler version 0.0
-     +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=constpar1.mla(5,2) Error: Can't assign values to const variable
+     ao=1
+     ae=0
      aec=1
      ie=0
      )
@@ -13246,9 +13226,8 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2018 by Martin Schreiber
-    ae=missingend.mla(6,4) Fatal: Illegal expression
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
@@ -13269,9 +13248,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2018 by Martin Schreiber
-    ae=
+    ao=1
+    ae=0
     aec=0
     ie=0
     )
@@ -13328,8 +13306,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -13350,8 +13328,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -13373,7 +13351,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=3
    (
    kind=1
@@ -13418,8 +13396,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13462,8 +13440,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13484,8 +13462,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13506,8 +13484,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abcabcabc
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -13528,8 +13506,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13570,8 +13548,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13592,8 +13570,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13614,8 +13592,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -13637,7 +13615,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=2
     (
     kind=2
@@ -13656,15 +13634,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,format1 llvm
-    teststate=2
+    a=0,648,1,format1 llvm
+    teststate=1
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13693,7 +13671,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -13709,7 +13687,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -13746,8 +13724,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=(1,1) Fatal: Internal error N Stackops OP not implemented
+   ao=0
+   ae=0
    aec=1
    ie=0
    )
@@ -13912,7 +13890,56 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=84
+rowstate=133
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

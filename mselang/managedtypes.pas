@@ -218,7 +218,7 @@ begin
    increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-//   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
+   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
    decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
@@ -246,6 +246,7 @@ begin
    increfsize(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
+   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
    decrefsize(aro_static,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             

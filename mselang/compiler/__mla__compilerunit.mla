@@ -17,7 +17,7 @@ interface
 uses
  __mla__personality,__mla__internaltypes;
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
-procedure __mla__decrefsize(ref: pointer);
+procedure __mla__decrefsize(const ref: pointer);
 procedure __mla__decrefsizeref(const ref: ppointer);
 procedure __mla__decrefsizedynar(const ref: pointer);
 procedure __mla__increfsize(ref: pointer);
@@ -177,7 +177,7 @@ begin
  end;
 end;
 
-procedure __mla__decrefsize(ref: pointer);
+procedure __mla__decrefsize(const ref: pointer);
 var
  d: prefsizeinfoty;
 begin
@@ -201,10 +201,12 @@ begin
  p1:= ref;
  if p1 <> nil then begin
   d:= pdynarrayheaderty(p1)-1;
-  pe:= p1+d^.high;
-  while p1 <= pe do begin
-   __mla__decrefsizeref(p1);
-   inc(p1);
+  if d^.ref.count = 1 then begin
+   pe:= p1+d^.high;
+   while p1 <= pe do begin
+    __mla__decrefsizeref(p1);
+    inc(p1);
+   end;
   end;
  end;
 end;
@@ -292,10 +294,12 @@ begin
  p1:= ref^;
  if p1 <> nil then begin
   d:= pdynarrayheaderty(p1)-1;
-  pe:= p1+d^.high;
-  while p1 <= pe do begin
-   __mla__finirefsize(p1);
-   inc(p1);
+  if d^.ref.count = 1 then begin
+   pe:= p1+d^.high;
+   while p1 <= pe do begin
+    __mla__decrefsize(p1^);
+    inc(p1);
+   end;
   end;
   if d^.ref.count > 0 then begin
    dec(d^.ref.count);
@@ -320,7 +324,7 @@ begin
   end;
  end;
 end;
-
+var testvar: pointer;
 procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
 var
@@ -338,12 +342,11 @@ begin
    end
    else begin
     i2:= s^.high+1;
-    if count <= i2 then begin
-     reallocmem(s,i1+dynarrayallocsize); //new size smaller or same
-    end
-    else begin
+    reallocmem(s,i1+dynarrayallocsize);
+    if count > i2 then begin
      i2:= i2 * itemsize;
-     reallocmem(s,i1+dynarrayallocsize); //bigger
+testvar:= @s^.data;
+testvar:= @s^.data+i2;
      setmem(@s^.data+i2,i1-i2,0);
     end;
     s^.ref.count:= 1;
