@@ -248,7 +248,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -708,7 +708,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,pointer
+    a=0,664,4,pointer
     c=11
      (
      kind=2
@@ -3441,7 +3441,7 @@ c=3
    (
    kind=1
    a=0,665,4,dynarray
-   c=14
+   c=15
     (
     kind=2
     a=0,648,1,setlength
@@ -3645,6 +3645,28 @@ c=3
     a=0,648,1,copy llvm
     teststate=1
     path=copy.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,copy2 llvm
+    teststate=1
+    path=copy2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3915,7 +3937,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B725C818
+    ao=An unhandled exception occured at $B7309818
     ae=
     aec=123
     ie=0
@@ -8483,7 +8505,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
+   a=0,664,4,managed
    c=13
     (
     kind=2
@@ -13849,7 +13871,7 @@ y=142
 cx=775
 cy=512
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=669
@@ -13862,68 +13884,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=133
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=72
  0 0
  0 0
  0 0

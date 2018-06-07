@@ -1166,11 +1166,12 @@
   (ssa: setlengthstr32ssa; proc: @setlengthstr32op; flags: []), 
 //oc_setlengthdynarray
   (ssa: setlengthdynarrayssa; proc: @setlengthdynarrayop; flags: []), 
-//oc_setlengthdecrefstring
-  (ssa: setlengthdecrefstringssa; proc: @setlengthdecrefstringop; flags: []), 
-//oc_setlengthdecrefdynarray
-  (ssa: setlengthdecrefdynarrayssa; 
-                     proc: @setlengthdecrefdynarrayop; flags: []), 
+//oc_setlengthincdecrefstring
+  (ssa: setlengthincdecrefstringssa; 
+                           proc: @setlengthincdecrefstringop; flags: []), 
+//oc_setlengthincdecrefdynarray
+  (ssa: setlengthincdecrefdynarrayssa; 
+                           proc: @setlengthincdecrefdynarrayop; flags: []), 
 
 //oc_uniquestr8
   (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: []), 

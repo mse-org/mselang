@@ -295,7 +295,7 @@ const
  //ab_stack,               ab_stackindi,               ab_stackref
    oc_decrefsizestackdynar,oc_decrefsizestackindidynar,oc_decrefsizestackrefdynar,
  //ab_tempvar
-   oc_decrefsizestackrefdynar)
+   oc_decrefsizetempvardynar)
  );
 
 procedure addmanagedop(const opsar: aropadsty; const arop: aropty;

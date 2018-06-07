@@ -63,6 +63,8 @@ function writemanagedtempvarop(const op: managedopty;
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 procedure handleunique(const paramco: integer);
+procedure handlecopy(const paramco: int32);
+
 procedure handleinitialize(const paramco: integer);
 procedure handlefinalize(const paramco: integer);
 procedure handleincref(const paramco: integer);
@@ -345,7 +347,39 @@ begin
   end;
  end;
 end;
- 
+
+function checkaddressparamsysfunc(const paramco: int32;
+                                        out atype: ptypedataty): boolean;
+var
+ ptop: pcontextitemty;
+begin
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  result:= checkparamco(1,paramco) and getaddress(ptop,true);
+  if result then begin
+   with ptop^ do begin
+    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
+   end;
+  end;
+ end;
+end;
+
+function checkvalueparamsysfunc(const paramco: int32;
+                                        out atype: ptypedataty): boolean;
+var
+ ptop: pcontextitemty;
+begin
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  result:= checkparamco(1,paramco) and getvalue(ptop,das_none);
+  if result then begin
+   with ptop^ do begin
+    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
+   end;
+  end;
+ end;
+end;
+
 procedure handlesetlength(const paramco: integer);
 var
  len: integer;
@@ -380,18 +414,18 @@ begin
           if typ1^.h.manageproc <> mpk_none then begin
            case typ1^.h.manageproc of
             mpk_managedynarray: begin
-             op1:= oc_setlengthdecrefdynarray;
+             op1:= oc_setlengthincdecrefdynarray;
             end;
             mpk_managestring: begin
-             op1:= oc_setlengthdecrefstring;
+             op1:= oc_setlengthincdecrefstring;
             end;
             else begin
              internalerror1(ie_handler,'20180604A');
             end;
            end;
            with additem(op1)^ do begin
-            par.ssas1:= d.dat.fact.ssaindex; //result
-            par.ssas2:= po2^.d.dat.fact.ssaindex;
+            par.ssas1:= d.dat.fact.ssaindex;         //result
+            par.ssas2:= po2^.d.dat.fact.ssaindex;    //len
             par.setlength.itemsize:= 
                 info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
            end;
@@ -432,38 +466,6 @@ begin
       end;
      end;
     end;  
-   end;
-  end;
- end;
-end;
-
-function checkaddressparamsysfunc(const paramco: int32;
-                                        out atype: ptypedataty): boolean;
-var
- ptop: pcontextitemty;
-begin
- with info do begin
-  ptop:= @contextstack[s.stacktop];
-  result:= checkparamco(1,paramco) and getaddress(ptop,true);
-  if result then begin
-   with ptop^ do begin
-    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
-   end;
-  end;
- end;
-end;
-
-function checkvalueparamsysfunc(const paramco: int32;
-                                        out atype: ptypedataty): boolean;
-var
- ptop: pcontextitemty;
-begin
- with info do begin
-  ptop:= @contextstack[s.stacktop];
-  result:= checkparamco(1,paramco) and getvalue(ptop,das_none);
-  if result then begin
-   with ptop^ do begin
-    atype:=  ele.eledataabs(d.dat.datatyp.typedata);
    end;
   end;
  end;
@@ -526,6 +528,100 @@ begin
   end;
  end;
 end;  
+
+procedure handlecopy(const paramco: int32);
+var
+ ptop,pind: pcontextitemty;
+ typ1: ptypedataty;
+ op1: opcodety;
+begin
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  if getvalue(ptop,das_none) then begin
+  {$ifdef mse_checkinternalerror}                             
+   if not (ptop^.d.kind in factcontexts) then begin
+    internalerror(ie_managed,'20170602A');
+   end;
+  {$endif}
+   case paramco of
+    1: begin    //full copy
+     typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+     with typ1^ do begin
+      if typ1^.h.manageproc <> mpk_none then begin
+       case typ1^.h.manageproc of
+        mpk_managedynarray: begin //nothing to do
+        end;
+        mpk_managedynarraydynar,mpk_managedynarraystring: begin
+         with additem(oc_increfsizestackdynar)^ do begin
+          par.ssas1:= ptop^.d.dat.fact.ssaindex;  //value
+         end;
+        end;
+        else begin
+         internalerror1(ie_handler,'20180604A');
+        end;
+       end;
+      end;
+
+      with additem(oc_increfsizestack)^ do begin
+       par.ssas1:= ptop^.d.dat.fact.ssaindex;
+      end;
+
+      op1:= oc_none;
+      case h.kind of
+       dk_string: begin
+        case itemsize of
+         1: begin
+          op1:= oc_uniquestr8a;
+         end;
+         2: begin
+          op1:= oc_uniquestr16a;
+         end;
+         4: begin
+          op1:= oc_uniquestr32a;
+         end;
+        {$ifdef mse_checkinternalerror}                             
+         else begin
+          internalerror(ie_managed,'20170602B');
+         end;
+        {$endif}
+        end;
+       end;
+       dk_dynarray: begin
+        op1:= oc_uniquedynarraya;
+       end;
+      end;
+      if op1 = oc_none then begin
+       errormessage(err_typemismatch,[]);
+      end
+      else begin
+       with additem(op1)^ do begin
+        if co_llvm in o.compileoptions then begin
+         par.ssas1:= ptop^.d.dat.fact.ssaindex; //result
+         par.setlength.itemsize:= 
+                info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+         ptop^.d.dat.fact.ssaindex:= par.ssad;
+        end
+        else begin
+         par.setlength.itemsize:= itemsize;
+        end;
+       end;
+      end;
+     end;
+    end;
+    else begin
+     identerror(1,err_wrongnumberofparameters);
+    end;
+   end;
+  end;
+  pind:= @contextstack[s.stackindex];
+  initdatacontext(pind^.d,ck_subres);
+  with pind^ do begin
+   d.dat.fact.ssaindex:= ptop^.d.dat.fact.ssaindex;
+   d.dat.datatyp:= ptop^.d.dat.datatyp;
+  end;
+  addmanagedtemp(ptop);
+ end;
+end;
 
 procedure callmanagesyssub(const asub: elementoffsetty);
 var

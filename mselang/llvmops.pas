@@ -2980,9 +2980,14 @@ procedure finirefsizestackrefdynarop();
 begin
  notimplemented();
 end;
+
 procedure finirefsizetempvardynarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.tempval(tempaddr.a.ssaindex),
+                                       bcstream.typeval(pointertype)); //1ssa
+  callcompilersub(cs_finirefsizedynar,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure increfsizesegop();
@@ -3077,10 +3082,14 @@ procedure increfsizelocindidynarop();
 begin
  notimplemented();
 end;
+
 procedure increfsizestackdynarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_increfsizedynar,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
+
 procedure increfsizestackindidynarop();
 begin
  notimplemented();
@@ -3126,6 +3135,7 @@ begin
   callcompilersub(cs_decrefsizeref,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
+
 procedure decrefsizetempvarop();
 begin
  with pc^.par do begin
@@ -3190,13 +3200,25 @@ procedure decrefsizestackindidynarop();
 begin
  notimplemented();
 end;
+
 procedure decrefsizestackrefdynarop();
 begin
  notimplemented();
+{
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.ssaval(ssas1)); //1ssa
+  callcompilersub(cs_decrefsizedynar,false,[bcstream.relval(0)]);
+ end;
+}
 end;
+
 procedure decrefsizetempvardynarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.tempval(tempaddr.a.ssaindex),
+                                     bcstream.typeval(pointertype)); //1ssa
+  callcompilersub(cs_decrefsizedynar,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure highstringop();
@@ -4659,20 +4681,20 @@ begin
  end;
 end;
 
-procedure setlengthdecrefstringop();
+procedure setlengthincdecrefstringop();
 begin                           
  with pc^.par do begin                            
-  callcompilersub(cs_setlengthdecrefdynarray,false,[bcstream.ssaval(ssas1),
+  callcompilersub(cs_setlengthincdecrefdynarray,false,[bcstream.ssaval(ssas1),
                                                      //dest
                                                     bcstream.ssaval(ssas2)]);
                                                      //count        
  end;
 end;
 
-procedure setlengthdecrefdynarrayop();
+procedure setlengthincdecrefdynarrayop();
 begin                           
  with pc^.par do begin                            
-  callcompilersub(cs_setlengthdecrefdynarray,false,[bcstream.ssaval(ssas1),
+  callcompilersub(cs_setlengthincdecrefdynarray,false,[bcstream.ssaval(ssas1),
                                                      //dest
                                                     bcstream.ssaval(ssas2)]);
                                                      //count        
@@ -5332,7 +5354,7 @@ const
   finirefsizestackdynarssa = 1;
   finirefsizestackindidynarssa = 1;
   finirefsizestackrefdynarssa = 2;
-  finirefsizetempvardynarssa = 2;
+  finirefsizetempvardynarssa = 1;
 
   increfsizesegssa = 1;
   increfsizelocssa = 1;
@@ -5353,7 +5375,7 @@ const
   increfsizesegdynarssa = 1;
   increfsizelocdynarssa = 1;
   increfsizelocindidynarssa = 1;
-  increfsizestackdynarssa = 1;
+  increfsizestackdynarssa = 0;
   increfsizestackindidynarssa = 1;
   increfsizestackrefdynarssa = 1;
   increfsizetempvardynarssa = 1;
@@ -5570,8 +5592,8 @@ const
   setlengthstr16ssa = 0;
   setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
-  setlengthdecrefstringssa = 0;
-  setlengthdecrefdynarrayssa = 0;
+  setlengthincdecrefstringssa = 0;
+  setlengthincdecrefdynarrayssa = 0;
 
   uniquestr8ssa = 3;
   uniquestr8assa = 1;

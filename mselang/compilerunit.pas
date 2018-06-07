@@ -48,7 +48,7 @@ const
   '__mla__finirefsizedynar',
   '__mla__storenildynar',
   '__mla__setlengthdynarray',
-  '__mla__setlengthdecrefdynarray',
+  '__mla__setlengthincdecrefdynarray',
   '__mla__setlengthstring8',
   '__mla__setlengthstring16',
   '__mla__setlengthstring32',

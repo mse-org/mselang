@@ -6655,12 +6655,12 @@ begin
  stackpop(pointersize+sizeof(dynarraysizety));
 end;
 
-procedure setlengthdecrefstringop();
+procedure setlengthincdecrefstringop();
 begin
  notimplemented();
 end;
 
-procedure setlengthdecrefdynarrayop();
+procedure setlengthincdecrefdynarrayop();
 begin
  notimplemented();
 end;
@@ -7612,8 +7612,8 @@ const
   setlengthstr16ssa = 0;
   setlengthstr32ssa = 0;
   setlengthdynarrayssa = 0;
-  setlengthdecrefstringssa = 0;
-  setlengthdecrefdynarrayssa = 0;
+  setlengthincdecrefstringssa = 0;
+  setlengthincdecrefdynarrayssa = 0;
 
   uniquestr8ssa = 0;
   uniquestr8assa = 0;

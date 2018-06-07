@@ -30,7 +30,7 @@ procedure __mla__storenildynar(const dest: pointer);
 
 procedure __mla__setlengthdynarray(const ref: ppointer;
                                     const count: int32; const itemsize: int32);
-procedure __mla__setlengthdecrefdynarray(const ref: ppointer; 
+procedure __mla__setlengthincdecrefdynarray(const ref: ppointer; 
                                                     const count: int32);
 procedure __mla__setlengthstring8(const ref: ppointer;
                                                     const count: int32);
@@ -379,7 +379,7 @@ begin
  end;
 end;
 
-procedure __mla__setlengthdecrefdynarray(const ref: ppointer; 
+procedure __mla__setlengthincdecrefdynarray(const ref: ppointer; 
                                                    const count: int32);
 var
  d: pdynarrayheaderty;
