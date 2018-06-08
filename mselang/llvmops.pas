@@ -4457,7 +4457,11 @@ end;
 
 procedure copystringop();
 begin
- notimplemented;
+ with pc^.par do begin
+  callcompilersub(cs_copystring,true,
+            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
+                     bcstream.ssaval(ssas3),bcstream.constval(copy.itemsize)]);
+ end;
 end;
 
 procedure copydynarop();

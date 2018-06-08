@@ -1,0 +1,13 @@
+program copystring1;
+var
+ s1,s2: string8;
+begin
+ setlength(s1,3);
+ s1[1]:= 'a';
+ s1[2]:= 'b';
+ s1[3]:= 'c';
+ s2:= copy(s1,2,1);
+ if s2 = 'b' then
+  exitcode:= 123;
+ end;
+end.

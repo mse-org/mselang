@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -3440,7 +3440,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=15
     (
     kind=2
@@ -3937,7 +3937,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7307818
+    ao=An unhandled exception occured at $B7330910
     ae=
     aec=123
     ie=0
@@ -8505,7 +8505,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,managed
+   a=0,665,4,managed
    c=13
     (
     kind=2
@@ -8641,8 +8641,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,finistringar
-    teststate=1
+    a=0,640,0,finistringar
+    teststate=2
     path=finistringar.mla
     comment=
     cc=${mlc}
@@ -8656,9 +8656,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
-    aec=123
+    ao=Access violation
+    ae=EXCEPTION: Access violation
+    aec=1
     ie=0
     )
     (
@@ -12568,7 +12568,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=8
+   c=10
     (
     kind=2
     a=0,648,1,initialize
@@ -12728,6 +12728,50 @@ c=3
     a=0,648,1,copyar1 llvm
     teststate=1
     path=copyar1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,copyar2 llvm
+    teststate=1
+    path=copyar2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,copystring1 llvm
+    teststate=1
+    path=copystring1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13345,7 +13389,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=3
    (
    kind=1
@@ -13609,7 +13653,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,665,5,string
    c=2
     (
     kind=2
@@ -13635,8 +13679,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,format1 llvm
-    teststate=1
+    a=0,648,2,format1 llvm
+    teststate=2
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13665,7 +13709,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=string/
    comment=
    cc=
@@ -13681,7 +13725,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -13761,7 +13805,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -13884,45 +13928,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=72
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

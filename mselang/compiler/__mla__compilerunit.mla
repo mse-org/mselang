@@ -649,8 +649,36 @@ end;
 
 procedure __mla__copystring(const val: pointer; const start: int32;
                           const size: int32; const itemsize: int32): pointer;
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
 begin
- 
+ result:= nil;
+ if val <> nil then
+  s:= pstringheaderty(val)-1;
+  i1:= s^.len * itemsize;
+  if start < i1 then
+   i2:= start + size;
+   if i2 > i1 then
+    size:= size - (i2-i1);
+   end;
+   if size > 0 then
+    d:= getmem(size+stringheadersize+itemsize); //terminating 0
+    d^.ref.count:= 1;
+    d^.len:= size div itemsize;
+    result:= @d^.data;
+    memcpy(result,val+start,size);
+    case itemsize of
+     1:
+      pcard8(result+start+size)^:= 0;
+     2:
+      pcard16(result+start+size)^:= 0;
+     3:
+      pcard32(result+start+size)^:= 0;
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure __mla__copydynarray(const val: pointer; const start: int32;
