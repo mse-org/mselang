@@ -2287,7 +2287,8 @@ begin
        str1:= str1+ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
        if not ftypelist.sametype(i1,i2) then begin
-        error('Not same type');
+        error('Not same type is:'+ftypelist.typename(i2)+
+                           ' wanted:'+ftypelist.typename(i1));
        end;
       end;
       FUNC_CODE_INST_LOAD: begin
@@ -2372,7 +2373,8 @@ begin
        for i1:= i4+1 to i3+3 do begin
         if not checktypeids(pointertypeid(rec1[i1]),
                                     ftypelist.fsubparams[i2]) then begin
-         error('Invalid param');
+         error('Invalid param is:'+ftypelist.typename(rec1[i1])+
+               ' wanted:'+ftypelist.typename(ftypelist.fsubparams[i2]));
         end;
         inc(i2);
        end;

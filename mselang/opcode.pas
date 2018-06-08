@@ -169,7 +169,7 @@ begin
  po1:= getsegmentpo(seg_op,0);
  for int1:= 0 to info.opcount-1 do begin
   with po1^.par do begin
-   writeln(int1,' ',ssad,' ',ssas1,' ',ssas2,' ',
+   writeln(int1,' ',ssad,' ',ssas1,' ',ssas2,' ',ssas3,' ',
             getenumname(typeinfo(opcodety),ord(po1^.op.op)));
   end;
   inc(po1);
@@ -1087,6 +1087,9 @@ begin
      end;
      if po1^.par.ssas2 >= int2 then begin
       inc(po1^.par.ssas2,ssadelta);
+     end;
+     if po1^.par.ssas3 >= int2 then begin
+      inc(po1^.par.ssas3,ssadelta);
      end;
      if po1^.op.op in subops then begin //adjust param ssa's
       parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);

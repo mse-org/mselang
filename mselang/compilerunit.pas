@@ -52,6 +52,8 @@ const
   '__mla__setlengthstring8',
   '__mla__setlengthstring16',
   '__mla__setlengthstring32',
+  '__mla__copystring',
+  '__mla__copydynarray',
   '__mla__uniquedynarray',
   '__mla__uniquestring8',
   '__mla__uniquestring16',

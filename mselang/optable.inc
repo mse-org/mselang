@@ -1158,6 +1158,11 @@
 //oc_externalsub
   (ssa: externalsubssa; proc: @externalsubop; flags: []), 
 
+//oc_copystring
+  (ssa: copystringssa; proc: @copystringop; flags: []), 
+//oc_copysdynar
+  (ssa: copydynarssa; proc: @copydynarop; flags: []), 
+
 //oc_setlengthstr8
   (ssa: setlengthstr8ssa; proc: @setlengthstr8op; flags: []), 
 //oc_setlengthstr16

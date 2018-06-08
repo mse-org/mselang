@@ -4455,6 +4455,20 @@ begin
  //dummy
 end;
 
+procedure copystringop();
+begin
+ notimplemented;
+end;
+
+procedure copydynarop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_copydynarray,true,
+            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
+                     bcstream.ssaval(ssas3),bcstream.constval(copy.itemsize)]);
+ end;
+end;
+
 procedure returnop();
 begin
  bcstream.emitretop();
@@ -5572,6 +5586,8 @@ const
   subbeginssa = 2; //1;
   subendssa = 0;
   externalsubssa = 0;
+  copystringssa = 1;
+  copydynarssa = 1;
   returnssa = 0;
   returnfuncssa = 1;
 

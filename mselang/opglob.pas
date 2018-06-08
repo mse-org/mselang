@@ -43,6 +43,8 @@ type
   cs_setlengthstring8,
   cs_setlengthstring16,
   cs_setlengthstring32,
+  cs_copystring,
+  cs_copydynarray,
   cs_uniquedynarray,
   cs_uniquestring8,
   cs_uniquestring16,
@@ -756,6 +758,9 @@ type
   oc_subend,
   oc_externalsub,
 
+  oc_copystring,
+  oc_copydynar,
+  
   oc_setlengthstr8,
   oc_setlengthstr16,
   oc_setlengthstr32,
@@ -1139,7 +1144,11 @@ type
  end;
   
  setlengthty = record
-  itemsize: integer;
+  itemsize: int32;
+ end;
+
+ copyty = record
+  itemsize: int32;
  end;
  
  suballocllvmty = record
@@ -1388,6 +1397,7 @@ type
   ssad: int32; //updated by op insertions
   ssas1: int32;//updated by op insertions
   ssas2: int32;//updated by op insertions
+  ssas3: int32;//updated by op insertions
   case opcodety of 
    oc_label,oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
    oc_gotonilindirect,
@@ -1406,9 +1416,11 @@ type
    oc_phi: (
     phi: phity;
    );
+{
    oc_setmem,oc_memcpy: (
     ssas3: int32;
    );
+}
    oc_beginparse: (
     beginparse: beginparseinfoty;
    );
@@ -1583,6 +1595,9 @@ type
    );
    oc_setlengthstr8,oc_setlengthdynarray:(
     setlength: setlengthty;
+   );
+   oc_copystring,oc_copydynar:(
+    copy: copyty;
    );
    oc_main: (
     main: mainty;

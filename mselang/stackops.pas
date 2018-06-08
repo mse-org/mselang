@@ -5668,6 +5668,16 @@ begin
  notimplemented();
 end;
 
+procedure copystringop();
+begin
+ notimplemented();
+end;
+
+procedure copydynarop();
+begin
+ notimplemented();
+end;
+
 procedure returnop();
 var
  i1: integer;
@@ -7592,6 +7602,8 @@ const
   subbeginssa = 0;
   subendssa = 0;
   externalsubssa = 0;
+  copystringssa = 0;
+  copydynarssa = 0;
   returnssa = 0;
   returnfuncssa = 0;
 

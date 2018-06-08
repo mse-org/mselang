@@ -531,21 +531,22 @@ end;
 
 procedure handlecopy(const paramco: int32);
 var
- ptop,pind: pcontextitemty;
+ ptop,pind,par1,par2,pval: pcontextitemty;
  typ1: ptypedataty;
  op1: opcodety;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
-  if getvalue(ptop,das_none) then begin
-  {$ifdef mse_checkinternalerror}                             
-   if not (ptop^.d.kind in factcontexts) then begin
-    internalerror(ie_managed,'20170602A');
-   end;
-  {$endif}
-   case paramco of
-    1: begin    //full copy
-     typ1:= ele.eledataabs(ptop^.d.dat.datatyp.typedata);
+  case paramco of
+   1: begin    //full copy
+    pval:= ptop;
+    if getvalue(pval,das_none) then begin
+    {$ifdef mse_checkinternalerror}                             
+     if not (pval^.d.kind in factcontexts) then begin
+      internalerror(ie_managed,'20170602A');
+     end;
+    {$endif}
+     typ1:= ele.eledataabs(pval^.d.dat.datatyp.typedata);
      with typ1^ do begin
       if typ1^.h.manageproc <> mpk_none then begin
        case typ1^.h.manageproc of
@@ -567,27 +568,29 @@ begin
       end;
 
       op1:= oc_none;
-      case h.kind of
-       dk_string: begin
-        case itemsize of
-         1: begin
-          op1:= oc_uniquestr8a;
+      if pval^.d.dat.datatyp.indirectlevel = 0 then begin
+       case h.kind of
+        dk_string: begin
+         case itemsize of
+          1: begin
+           op1:= oc_uniquestr8a;
+          end;
+          2: begin
+           op1:= oc_uniquestr16a;
+          end;
+          4: begin
+           op1:= oc_uniquestr32a;
+          end;
+         {$ifdef mse_checkinternalerror}                             
+          else begin
+           internalerror(ie_managed,'20170602B');
+          end;
+         {$endif}
          end;
-         2: begin
-          op1:= oc_uniquestr16a;
-         end;
-         4: begin
-          op1:= oc_uniquestr32a;
-         end;
-        {$ifdef mse_checkinternalerror}                             
-         else begin
-          internalerror(ie_managed,'20170602B');
-         end;
-        {$endif}
         end;
-       end;
-       dk_dynarray: begin
-        op1:= oc_uniquedynarraya;
+        dk_dynarray: begin
+         op1:= oc_uniquedynarraya;
+        end;
        end;
       end;
       if op1 = oc_none then begin
@@ -596,7 +599,7 @@ begin
       else begin
        with additem(op1)^ do begin
         if co_llvm in o.compileoptions then begin
-         par.ssas1:= ptop^.d.dat.fact.ssaindex; //result
+         par.ssas1:= pval^.d.dat.fact.ssaindex; //value
          par.setlength.itemsize:= 
                 info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
          ptop^.d.dat.fact.ssaindex:= par.ssad;
@@ -608,16 +611,68 @@ begin
       end;
      end;
     end;
-    else begin
-     identerror(1,err_wrongnumberofparameters);
+   end;
+   3: begin
+    par2:= getpreviousnospace(ptop-1);
+    par1:= getpreviousnospace(par2-1);
+    pval:= par1;
+    if getvalue(pval,das_none) and 
+                tryconvert(par2,st_int32,[coo_errormessage]) and 
+                   tryconvert(ptop,st_int32,[coo_errormessage]) then begin
+     typ1:= ele.eledataabs(par1^.d.dat.datatyp.typedata);
+     op1:= oc_none;
+     if par2^.d.dat.datatyp.indirectlevel = 0 then begin
+      with typ1^ do begin
+       if h.kind in [dk_string,dk_dynarray] then begin
+        op1:= oc_copydynar;
+        if par2^.d.kind = ck_const then begin //startindex
+         par2^.d.dat.constval.vinteger:= 
+                           par2^.d.dat.constval.vinteger * itemsize;
+         if h.kind = dk_string then begin
+         op1:= oc_copystring;
+          par2^.d.dat.constval.vinteger:= 
+                           par2^.d.dat.constval.vinteger - itemsize; //1-based
+         end;
+         getvalue(par2,das_32);
+        end
+        else begin
+        end;
+        if ptop^.d.kind = ck_const then begin //size
+         ptop^.d.dat.constval.vinteger:= 
+                           ptop^.d.dat.constval.vinteger * itemsize;
+         getvalue(ptop,das_32);
+        end
+        else begin
+        end;
+       end;
+      end;
+     end;
+     if op1 = oc_none then begin
+      errormessage(err_typemismatch,[]);
+     end
+     else begin
+      with additem(op1)^ do begin
+       par.ssas1:= pval^.d.dat.fact.ssaindex;      //value
+       par.ssas2:= par2^.d.dat.fact.ssaindex;      //start
+       par.ssas3:= ptop^.d.dat.fact.ssaindex;      //size
+       par.copy.itemsize:= 
+            info.s.unitinfo^.llvmlists.constlist.addi32(typ1^.itemsize).listid;
+       pval^.d.dat.fact.ssaindex:= par.ssad;
+       ptop^.d.dat.datatyp:= pval^.d.dat.datatyp;
+       ptop^.d.dat.fact.ssaindex:= par.ssad; //for addmanagedtemp()
+      end;
+     end;
     end;
+   end;    
+   else begin
+    identerror(1,err_wrongnumberofparameters);
    end;
   end;
   pind:= @contextstack[s.stackindex];
   initdatacontext(pind^.d,ck_subres);
   with pind^ do begin
-   d.dat.fact.ssaindex:= ptop^.d.dat.fact.ssaindex;
-   d.dat.datatyp:= ptop^.d.dat.datatyp;
+   d.dat.fact.ssaindex:= pval^.d.dat.fact.ssaindex;
+   d.dat.datatyp:= pval^.d.dat.datatyp;
   end;
   addmanagedtemp(ptop);
  end;

@@ -43,6 +43,10 @@ procedure __mla__uniquestring16(const val: pointer): pointer;
 procedure __mla__uniquestring32(const val: pointer): pointer;
 procedure __mla__uniquedynarray(const val: pointer;
                                            const itemsize: int32): pointer;
+procedure __mla__copystring(const val: pointer; const start: int32;
+                          const size: int32; const itemsize: int32): pointer;
+procedure __mla__copydynarray(const val: pointer; const start: int32;
+                          size: int32; const itemsize: int32): pointer;
 
 procedure __mla__string8to16(source: pointer): pointer;
 procedure __mla__string8to16a(const source: pcard8; const len: int32): pointer;
@@ -639,6 +643,38 @@ begin
    dec(s^.ref.count);
    d^.ref.count:= 1;
    result:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__copystring(const val: pointer; const start: int32;
+                          const size: int32; const itemsize: int32): pointer;
+begin
+ 
+end;
+
+procedure __mla__copydynarray(const val: pointer; const start: int32;
+                          size: int32; const itemsize: int32): pointer;
+var
+ s,d: pdynarrayheaderty;
+ i1,i2: int32;
+begin
+ result:= nil;
+ if val <> nil then
+  s:= pdynarrayheaderty(val)-1;
+  i1:= s^.high * itemsize + itemsize;
+  if start < i1 then
+   i2:= start + size;
+   if i2 > i1 then
+    size:= size - (i2-i1);
+   end;
+   if size > 0 then
+    d:= getmem(size+dynarrayallocsize);
+    d^.ref.count:= 1;
+    d^.high:= size div itemsize - 1;
+    result:= @d^.data;
+    memcpy(result,val+start,size);
+   end;
   end;
  end;
 end;
