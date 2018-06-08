@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit managedtypes;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  globtypes,parserglob,handlerglob,opglob,opcode,listutils,grammarglob,
@@ -534,6 +534,8 @@ var
  ptop,pind,par1,par2,pval: pcontextitemty;
  typ1: ptypedataty;
  op1: opcodety;
+label
+ errorlab;
 begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
@@ -629,20 +631,45 @@ begin
          par2^.d.dat.constval.vinteger:= 
                            par2^.d.dat.constval.vinteger * itemsize;
          if h.kind = dk_string then begin
-         op1:= oc_copystring;
+          op1:= oc_copystring;
           par2^.d.dat.constval.vinteger:= 
                            par2^.d.dat.constval.vinteger - itemsize; //1-based
          end;
          getvalue(par2,das_32);
         end
         else begin
+         if not getvalue(par2,das_32) then begin
+          goto errorlab;
+         end;
+         if h.kind = dk_string then begin
+          op1:= oc_copystring;
+          with additem(oc_addimmint)^ do begin
+           par.ssas1:= par2^.d.dat.fact.ssaindex;
+           setimmint32(-1,par.imm);
+           par2^.d.dat.fact.ssaindex:= par.ssad;
+          end;
+         end;
+         with additem(oc_mulimmint)^ do begin
+          par.ssas1:= par2^.d.dat.fact.ssaindex;
+          setimmint32(itemsize,par.imm);
+          par2^.d.dat.fact.ssaindex:= par.ssad;
+         end;
         end;
+        
         if ptop^.d.kind = ck_const then begin //size
          ptop^.d.dat.constval.vinteger:= 
                            ptop^.d.dat.constval.vinteger * itemsize;
          getvalue(ptop,das_32);
         end
         else begin
+         if not getvalue(ptop,das_32) then begin
+          goto errorlab;
+         end;
+         with additem(oc_mulimmint)^ do begin
+          par.ssas1:= ptop^.d.dat.fact.ssaindex;
+          setimmint32(itemsize,par.imm);
+          ptop^.d.dat.fact.ssaindex:= par.ssad;
+         end;
         end;
        end;
       end;
@@ -668,6 +695,7 @@ begin
     identerror(1,err_wrongnumberofparameters);
    end;
   end;
+errorlab:
   pind:= @contextstack[s.stackindex];
   initdatacontext(pind^.d,ck_subres);
   with pind^ do begin

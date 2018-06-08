@@ -1,0 +1,16 @@
+program copyar3;
+var
+ ar1,ar2: array of int32;
+ i1,i2: int32;
+begin
+ setlength(ar1,3);
+ ar1[0]:= 11;
+ ar1[1]:= 123;
+ ar1[2]:= 33;
+ i1:= 1;
+ i2:= 2;
+ ar2:= copy(ar1,i1,i2);
+ if (length(ar2) = 2) then
+  exitcode:= ar2[0];
+ end;
+end.

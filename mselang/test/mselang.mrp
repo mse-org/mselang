@@ -12568,7 +12568,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=10
+   c=12
     (
     kind=2
     a=0,648,1,initialize
@@ -12769,9 +12769,53 @@ c=3
     )
     (
     kind=2
+    a=0,648,1,copyar3 llvm
+    teststate=1
+    path=copyar3.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,copystring1 llvm
     teststate=1
     path=copystring1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,copystring3 llvm
+    teststate=1
+    path=copystring3.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13928,7 +13972,9 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=34
+rowstate=36
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

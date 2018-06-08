@@ -1,0 +1,16 @@
+program copystring3;
+var
+ s1,s2: string8;
+ i1,i2: int32;
+begin
+ setlength(s1,3);
+ s1[1]:= 'a';
+ s1[2]:= 'b';
+ s1[3]:= 'c';
+ i1:= 1;
+ i2:= 2;
+ s2:= copy(s1,i1,i2);
+ if s2 = 'ab' then
+  exitcode:= 123;
+ end;
+end.
