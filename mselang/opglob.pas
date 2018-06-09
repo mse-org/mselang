@@ -31,6 +31,7 @@ type
   cs_increfsize,
   cs_increfsizeref,
   cs_increfsizedynar,
+  cs_increfsizerefdynar,
   cs_decrefsize,
   cs_decrefsizeref,
   cs_decrefsizedynar,

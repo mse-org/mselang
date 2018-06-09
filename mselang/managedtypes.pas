@@ -473,18 +473,29 @@ end;
 
 procedure handleunique(const paramco: integer);
 var
-// ptop: pcontextitemty;
+ ptop: pcontextitemty;
  op1: opcodety;
  typ1: ptypedataty;
 begin
  with info do begin
-//  ptop:= @contextstack[s.stacktop];
-//  if checkparamco(1,paramco) and 
-//                       getaddress(ptop,true) then begin
-//   with ptop^ do begin
+  ptop:= @contextstack[s.stacktop];
   if checkaddressparamsysfunc(paramco,typ1) then begin
- //    with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
    with typ1^ do begin
+    if typ1^.h.manageproc <> mpk_none then begin
+     case typ1^.h.manageproc of
+      mpk_managedynarray,mpk_managestring: begin //nothing to do
+      end;
+      mpk_managedynarraydynar,mpk_managedynarraystring: begin
+       with additem(oc_increfsizestackrefdynar)^ do begin
+        par.ssas1:= ptop^.d.dat.fact.ssaindex;  //value
+       end;
+      end;
+      else begin
+       internalerror1(ie_handler,'20180609A');
+      end;
+     end;
+    end;
+
     op1:= oc_none;
     case h.kind of
      dk_string: begin
@@ -515,7 +526,7 @@ begin
     else begin
      with additem(op1)^ do begin
       if co_llvm in o.compileoptions then begin
-       par.ssas1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //result
+       par.ssas1:= ptop^.d.dat.fact.ssaindex; //result
        par.setlength.itemsize:= 
               info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
       end

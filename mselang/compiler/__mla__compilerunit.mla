@@ -23,6 +23,7 @@ procedure __mla__decrefsizedynar(const ref: pointer);
 procedure __mla__increfsize(ref: pointer);
 procedure __mla__increfsizeref(ref: ppointer);
 procedure __mla__increfsizedynar(const ref: pointer);
+procedure __mla__increfsizerefdynar(const ref: ppointer);
 procedure __mla__finirefsize(const ref: ppointer);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__finirefsizedynar(const ref: ppointer);
@@ -179,6 +180,11 @@ begin
    inc(p1);
   end;
  end;
+end;
+
+procedure __mla__increfsizerefdynar(const ref: ppointer);
+begin
+ __mla__increfsizedynar(ref^);
 end;
 
 procedure __mla__decrefsize(const ref: pointer);

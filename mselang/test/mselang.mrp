@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -3440,7 +3440,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,4,dynarray
    c=15
     (
     kind=2
@@ -3937,7 +3937,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7330910
+    ao=An unhandled exception occured at $B72C9CB0
     ae=
     aec=123
     ie=0
@@ -8656,8 +8656,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
-    ae=EXCEPTION: Access violation
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -12568,7 +12568,7 @@ c=3
    (
    kind=1
    a=0,665,4,managed
-   c=12
+   c=13
     (
     kind=2
     a=0,648,1,initialize
@@ -12816,6 +12816,28 @@ c=3
     a=0,648,1,copystring3 llvm
     teststate=1
     path=copystring3.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,unique3 llvm
+    teststate=1
+    path=unique3.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13972,7 +13994,61 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=36
+rowstate=90
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

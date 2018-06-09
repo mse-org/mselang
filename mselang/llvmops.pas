@@ -3094,10 +3094,14 @@ procedure increfsizestackindidynarop();
 begin
  notimplemented();
 end;
+
 procedure increfsizestackrefdynarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_increfsizerefdynar,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
+
 procedure increfsizetempvardynarop();
 begin
  notimplemented();
@@ -5395,7 +5399,7 @@ const
   increfsizelocindidynarssa = 1;
   increfsizestackdynarssa = 0;
   increfsizestackindidynarssa = 1;
-  increfsizestackrefdynarssa = 1;
+  increfsizestackrefdynarssa = 0;
   increfsizetempvardynarssa = 1;
 
   decrefsizesegssa = 1;

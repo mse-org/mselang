@@ -40,6 +40,7 @@ const
   '__mla__increfsize',
   '__mla__increfsizeref',
   '__mla__increfsizedynar',
+  '__mla__increfsizerefdynar',
   '__mla__decrefsize',
   '__mla__decrefsizeref',
   '__mla__decrefsizedynar',
