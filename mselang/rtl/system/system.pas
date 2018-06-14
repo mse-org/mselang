@@ -41,5 +41,14 @@ type
 
 var
  exitcode: int32;
+
+procedure frac(const value: flo64): flo64;
+
 implementation
+
+procedure frac(const value: flo64): flo64;
+begin
+ result:= value - floor(value);
+end;
+
 end.

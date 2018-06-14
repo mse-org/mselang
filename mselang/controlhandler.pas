@@ -584,6 +584,7 @@ begin
  end;
  with info do begin
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
