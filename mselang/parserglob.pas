@@ -442,6 +442,8 @@ type
   value: integer;
   enum: elementoffsetty;
   first: elementoffsetty;
+  min: elementoffsetty;
+  max: elementoffsetty;
   flags: enumflagsty;
  end;
  penuminfoty = ^enuminfoty;

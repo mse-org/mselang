@@ -1,0 +1,10 @@
+program enum3;
+type
+ enu = (a=21,b=5,c);
+ ar = array[enu] of int32;
+var
+ en1: enu;
+begin
+ exitcode:= ord(low(enu)) + ord(high(enu)) + 123 - 5 - 21;
+ writeln(low(enu),' ',high(enu));
+end.

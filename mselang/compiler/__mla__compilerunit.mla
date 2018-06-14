@@ -1744,13 +1744,15 @@ end;
 procedure getenumname(const enumvalue: int32; const rtti: penumrttity): string8;
 var
  p1,pe: ^enumitemrttity;
+ i1: int32;
 begin
  result:= '';
  p1:= pointer(@rtti^.items);
  if erf_contiguous in rtti^.flags then
-  if (enumvalue >= 0) and (enumvalue < rtti^.itemcount) then
+  i1:= enumvalue - rtti^.min;
+  if (i1 >= 0) and (i1 < rtti^.itemcount) then
    decref(result);
-   pointer(result):= pointer((p1 + enumvalue)^.name); //const string, no incref
+   pointer(result):= pointer((p1 + i1)^.name); //const string, no incref
   end;
  else
   pe:= p1+rtti^.itemcount;

@@ -2851,16 +2851,23 @@ begin
   case atype^.h.kind of
    dk_enum: begin
     with atype^.infoenum do begin
-     initmainagloc(2+itemcount*2,sizeof(enumrttity)+
+     initmainagloc(4+itemcount*2,sizeof(enumrttity)+
                                itemcount*sizeof(enumitemrttity),rtk_enum);
       //itemcount: integer;
-     putagitem(agloc1,addi32(itemcount));          //0
+     putagitem(agloc1,addi32(itemcount));                         //0
+     putagitem(agloc1,addi32(
+          ptypedataty(ele.eledataabs(min))^.infoenumitem.value)); //1
+     putagitem(agloc1,addi32(
+          ptypedataty(ele.eledataabs(max))^.infoenumitem.value)); //2
      enuflags1:= [];
      if enf_contiguous in flags then begin
       include(enuflags1,erf_contiguous);
      end;
+     if enf_ascending in flags then begin
+      include(enuflags1,erf_ascending);
+     end;
       //flags: enumrttiflagsty;
-     putagitem(agloc1,addi32(int32(enuflags1)));   //1
+     putagitem(agloc1,addi32(int32(enuflags1)));   //3
      ele1:= first;
       //items: record end; //array of enumitemrttity
      while ele1 <> 0 do begin

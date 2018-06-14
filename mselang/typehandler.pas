@@ -1252,11 +1252,13 @@ begin
        err(err_ordinaltypeexpected);
        goto endlab;
       end;
+      {
       if (po1^.h.kind = dk_enum) and 
                    not (enf_contiguous in po1^.infoenum.flags) then begin
        err(err_enumnotcontiguous);
        goto endlab;       
       end;
+      }
       if int1 = int2 then begin //first dimension
        with contextstack[s.stackindex-2] do begin
         if (d.kind = ck_ident) and 
@@ -1705,7 +1707,9 @@ begin
    d.enu.value:= 0;
    d.enu.enum:= ele1;
    d.enu.first:= 0;
-   d.enu.flags:= [enf_contiguous];
+   d.enu.min:= 0;
+   d.enu.max:= 0;
+   d.enu.flags:= [enf_contiguous,enf_ascending];
   end;
   with po1^ do begin
    h.kind:= dk_none; //incomplete
@@ -1744,6 +1748,8 @@ begin
     with contextstack[s.stackindex] do begin
      flags:= d.enu.flags;
      last:= d.enu.first;
+     min:= d.enu.min;
+     max:= d.enu.max;
     end;
     first:= ele3;
     itemcount:= int1;
@@ -1769,12 +1775,27 @@ begin
     infoenumitem.value:= avalue;
     with contextstack[parent] do begin
      infoenumitem.enum:= d.enu.enum;
-     if d.enu.value <> avalue then begin
-      exclude(d.enu.flags,enf_contiguous);
+     if d.enu.first <> 0 then begin
+      if d.enu.value <> avalue then begin
+       exclude(d.enu.flags,enf_contiguous);
+      end;
+      if d.enu.value > avalue then begin
+       exclude(d.enu.flags,enf_ascending);
+      end;
      end;
      d.enu.value:= avalue+1;
      infoenumitem.next:= d.enu.first;
      d.enu.first:= ele.eledatarel(po1);
+     if (d.enu.min = 0) or 
+          (ptypedataty(ele.eledataabs(d.enu.min))^.
+                                 infoenumitem.value >= avalue) then begin
+      d.enu.min:= d.enu.first;
+     end;
+     if (d.enu.max = 0) or 
+          (ptypedataty(ele.eledataabs(d.enu.max))^.
+                                 infoenumitem.value <= avalue) then begin
+      d.enu.max:= d.enu.first;
+     end;
     end;
    end;
    ele1:= ele.decelementparent();

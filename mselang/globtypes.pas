@@ -295,7 +295,7 @@ const
  stringdatakinds = [dk_string];
 // dynardatakinds = [dk_string8,dk_string16.dk_string32,dk_dynarray];
 type
- enumflagty = (enf_contiguous);
+ enumflagty = (enf_contiguous,enf_ascending);
  enumflagsty = set of enumflagty;
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty

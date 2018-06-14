@@ -121,9 +121,14 @@ begin
     po1:= allocrttibuffer(rtk_enum,int2);
     result:= getsegmentoffset(seg_rtti,po1);
     po1^.itemcount:= atype^.infoenum.itemcount;
+    po1^.min:= atype^.infoenum.min;
+    po1^.max:= atype^.infoenum.max;
     po1^.flags:= [];
     if enf_contiguous in atype^.infoenum.flags then begin
      include(po1^.flags,erf_contiguous);
+    end;
+    if enf_ascending in atype^.infoenum.flags then begin
+     include(po1^.flags,erf_ascending);
     end;
     po3:= @po1^.items;
     ele1:= atype^.infoenum.first;

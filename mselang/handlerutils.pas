@@ -4323,9 +4323,9 @@ begin
     range.max:= 1;
    end;
    dk_enum: begin
-    range.min:= ptypedataty(ele.eledataabs(typedata^.infoenum.first))^.
+    range.min:= ptypedataty(ele.eledataabs(typedata^.infoenum.min))^.
                                                          infoenumitem.value;
-    range.max:= ptypedataty(ele.eledataabs(typedata^.infoenum.last))^.
+    range.max:= ptypedataty(ele.eledataabs(typedata^.infoenum.max))^.
                                                          infoenumitem.value;
    end;
    dk_character: begin

@@ -1292,10 +1292,10 @@ procedure handlelowhigh(const paramco: int32; const ahigh: boolean);
     end;
     dk_enum: begin
      if ahigh then begin
-      po1:= ele.eledataabs(po1^.infoenum.last);
+      po1:= ele.eledataabs(po1^.infoenum.max);
      end
      else begin
-      po1:= ele.eledataabs(po1^.infoenum.first);
+      po1:= ele.eledataabs(po1^.infoenum.min);
      end;     
      setenumconst(po1^.infoenumitem,contextstack[s.stackindex]);
     end;

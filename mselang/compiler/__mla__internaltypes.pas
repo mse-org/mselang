@@ -145,7 +145,7 @@ const
  classrttidefindex = rttifieldcount + 0;
 
 type
- enumrttiflagty = (erf_contiguous);
+ enumrttiflagty = (erf_contiguous,erf_ascending);
  enumrttiflagsty = set of enumrttiflagty;
 
  enumitemrttity = record
@@ -164,8 +164,10 @@ type
 {$endif}
 
  enumrttity = object(rttity)
-  itemcount: integer;                 //0
-  flags: enumrttiflagsty;             //1
+  itemcount: int32;                   //0
+  min: int32;                         //1
+  max: int32;                         //2
+  flags: enumrttiflagsty;             //3
   items: record end; //array of enumitemrttity
  end;
 

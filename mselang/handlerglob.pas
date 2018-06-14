@@ -202,6 +202,8 @@ type
   itemcount: integer;
   first: elementoffsetty;
   last: elementoffsetty;
+  min: elementoffsetty;
+  max: elementoffsetty;
   flags: enumflagsty;
  end;
  
