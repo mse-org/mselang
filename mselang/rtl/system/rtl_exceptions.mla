@@ -20,6 +20,7 @@ type
   protected
    fmessage: string8;
  end;
+
 implementation
 
 constructor cexception.create(const message: string8);

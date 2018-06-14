@@ -250,6 +250,14 @@ var
        updateref(vf.next);
       end;
      end;
+     ek_property: begin
+      with ppropertydataty(po)^ do begin
+       updateref(typ);
+       updateref(readele);
+       updateref(writeele);
+//       updateref(defaultconst);
+      end;
+     end;
      ek_const: begin
       with pconstdataty(po)^ do begin
       end;

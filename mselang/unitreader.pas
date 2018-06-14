@@ -539,6 +539,22 @@ begin
          end;
         end;
        end;
+       ek_property: begin
+        with ppropertydataty(po)^ do begin
+         if not updateref(typ,id1) then begin
+          goto errorlab;
+         end;
+         if not updateref(readele,id1) then begin
+          goto errorlab;
+         end;
+         if not updateref(writeele,id1) then begin
+          goto errorlab;
+         end;
+  //      if not updateref(defaultconst) then begin
+  //       goto errorlab
+  //      end;
+        end;
+       end;
        ek_const: begin
         with pconstdataty(po)^ do begin
         end;
