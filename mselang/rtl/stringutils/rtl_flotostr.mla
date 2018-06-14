@@ -156,7 +156,8 @@ const
  halfexp = (1023-1) shl 4;    //value >= 0.5 for wo3
  exp2to10 = ln(2)/ln(10);
  exps: array[0..maxdigits] of flo64 =
- (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e10,1e11,1e12,1e13,1e14,1e15,1e16,1e17);
+ (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e10,
+                         1e11,1e12,1e13,1e14,1e15,1e16,1e17);
 
 var
  buffer: bufferty;
@@ -175,7 +176,7 @@ var
 begin
  msbcarry:= false;
  preci:= abs(precision);
- with flo64recty(value) do begin
+ with flo64recty(value) do
   neg:= by7 and $80 <> 0;
   by7:= by7 and $7f; //remove sign
   exp:= (wo3 and %0111111111110000) shr 4;
