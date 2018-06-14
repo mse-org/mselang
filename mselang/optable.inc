@@ -1222,6 +1222,10 @@
 //oc_memmove
   (ssa: memmovessa; proc: @memmoveop; flags: []), 
   
+//oc_ln64
+  (ssa: ln64ssa; proc: @ln64op; flags: []), 
+//oc_exp64
+  (ssa: exp64ssa; proc: @exp64op; flags: []), 
 //oc_sin64
   (ssa: sin64ssa; proc: @sin64op; flags: []), 
 //oc_cos64
@@ -1230,6 +1234,8 @@
   (ssa: sqrt64ssa; proc: @sqrt64op; flags: []), 
 //oc_floor64
   (ssa: floor64ssa; proc: @floor64op; flags: []), 
+//oc_frac64
+  (ssa: frac64ssa; proc: @frac64op; flags: []), 
 //oc_round64
   (ssa: round64ssa; proc: @round64op; flags: []), 
 //oc_nearbyint64

@@ -105,7 +105,9 @@ type
 
   cs_raise,
   cs_finiexception,
-  cs_writeenum
+  cs_writeenum,
+  
+  cs_frac64
  );
 
  backendty = (bke_direct,bke_llvm);
@@ -793,10 +795,13 @@ type
   oc_memcpy,
   oc_memmove,
   
+  oc_ln64,
+  oc_exp64,
   oc_sin64,
   oc_cos64,
   oc_sqrt64,
   oc_floor64,
+  oc_frac64,
   oc_round64,
   oc_nearbyint64,
 

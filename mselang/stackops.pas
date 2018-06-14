@@ -6940,6 +6940,16 @@ begin
  memcpyop();
 end;
 
+procedure ln64op();
+begin
+ notimplemented();
+end;
+
+procedure exp64op();
+begin
+ notimplemented();
+end;
+
 procedure sin64op();
 var
  po1: pflo64;
@@ -6975,6 +6985,11 @@ begin
  if f1 < 0 then begin
   po1^:= po1^-1;
  end;
+end;
+
+procedure frac64op();
+begin
+ notimplemented();
 end;
 
 procedure round64op();
@@ -7653,10 +7668,13 @@ const
   memcpyssa = 0;
   memmovessa = 0;
   
+  ln64ssa = 0;
+  exp64ssa = 0;
   sin64ssa = 0;
   cos64ssa = 0;
   sqrt64ssa = 0;
   floor64ssa = 0;
+  frac64ssa = 0;
   round64ssa = 0;
   nearbyint64ssa = 0;
   

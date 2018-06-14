@@ -134,6 +134,8 @@ procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 
+procedure __mla__frac64(value: flo64): flo64;
+
 implementation
 //uses
 // __mla__personality;
@@ -1985,6 +1987,15 @@ procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 begin
  res^.vtype:= vt_string32;
  res^.vstring32:= value;
+end;
+
+procedure __mla__frac64(value: flo64): flo64;
+begin                  //todo: optimize, more exact
+ if value < 0 then
+  result:= value - (floor(value)+1);
+ else
+  result:= value - floor(value);
+ end;
 end;
 
 end.

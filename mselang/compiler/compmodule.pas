@@ -152,6 +152,9 @@ begin
       end;      
      end;
     end;
+   end
+   else begin
+    exitcode:= 1;
    end;
   end;
  end;

@@ -43,10 +43,13 @@ procedure handlehalt(const paramco: int32);
 procedure handlelow(const paramco: int32);
 procedure handlehigh(const paramco: int32);
 procedure handlelength(const paramco: int32);
+procedure handleln(const paramco: int32);
+procedure handleexp(const paramco: int32);
 procedure handlesin(const paramco: int32);
 procedure handlecos(const paramco: int32);
 procedure handlesqrt(const paramco: int32);
 procedure handlefloor(const paramco: int32);
+procedure handlefrac(const paramco: int32);
 procedure handleround(const paramco: int32);
 procedure handlenearbyint(const paramco: int32);
 procedure handletruncint32(const paramco: int32);
@@ -76,10 +79,14 @@ const
   @handlereallocmem,
   //syf_setmem,  syf_memcpy,  syf_memmove,
   @handlesetmem,@handlememcpy,@handlememmove,
-  //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin, //syf_cos
-  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin,@handlecos,
-  //syf_sqrt, syf_floor,   syf_round,   syf_nearbyint,
-  @handlesqrt,@handlefloor,@handleround,@handlenearbyint,
+  //syf_halt, //syf_low, //syf_high, //syf_length, 
+  @handlehalt,@handlelow,@handlehigh,@handlelength,
+  //syf_ln, syf_exp,
+  @handleln,@handleexp,
+  //syf_sin, //syf_cos
+  @handlesin,@handlecos,
+  //syf_sqrt, syf_floor,   syf_frac    syf_round,   syf_nearbyint,
+  @handlesqrt,@handlefloor,@handlefrac,@handleround,@handlenearbyint,
   //syf_truncint32,syf_truncint64
   @handletruncint32,@handletruncint64,
   //syf_trunccard32,syf_trunccard64,
@@ -99,6 +106,7 @@ implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
  segmentutils,llvmlists,valuehandler,identutils,unithandler,msestrings,
+ math,
  __mla__internaltypes;
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -1636,29 +1644,141 @@ begin
  end;
 end;
 
+function isfloatconst(): boolean;
+begin
+ result:= false;
+ with info,contextstack[s.stacktop].d do begin
+  if kind = ck_const then begin
+   with dat.constval do begin
+    case kind of
+     dk_integer: begin
+      vfloat:= vinteger;
+     end;
+     dk_cardinal: begin
+      vfloat:= vcardinal;
+     end;
+     dk_float: begin
+     end;
+     else begin
+      exit;
+     end;
+    end;
+    kind:= dk_float;
+    result:= true;
+    with contextstack[s.stackindex] do begin
+     d.kind:= ck_const;
+     d.dat.constval:= dat.constval;
+     d.dat.datatyp:= sysdatatypes[st_flo64];
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handleln(const paramco: int32);
+begin
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   if vfloat = 0 then begin
+    vfloat:= ln(0);
+   end
+   else begin
+    if vfloat < 0 then begin
+     vfloat:= ln(-1);
+    end
+    else begin
+     vfloat:= ln(vfloat);
+    end;
+   end;
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_ln64);
+ end;
+end;
+
+procedure handleexp(const paramco: int32);
+begin
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= exp(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_exp64);
+ end;
+end;
+
 procedure handlesin(const paramco: int32);
 begin
- floatsysfunc(paramco,oc_sin64);
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= sin(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_sin64);
+ end;
 end;
 
 procedure handlecos(const paramco: int32);
 begin
- floatsysfunc(paramco,oc_cos64);
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= cos(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_cos64);
+ end;
 end;
 
 procedure handlesqrt(const paramco: int32);
 begin
- floatsysfunc(paramco,oc_sqrt64);
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= sqrt(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_sqrt64);
+ end;
 end;
 
 procedure handlefloor(const paramco: int32);
 begin
- floatsysfunc(paramco,oc_floor64);
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= floor(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_floor64);
+ end;
+end;
+
+procedure handlefrac(const paramco: int32);
+begin
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= frac(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_frac64);
+ end;
 end;
 
 procedure handleround(const paramco: int32);
 begin
- floatsysfunc(paramco,oc_round64);
+ if isfloatconst() then begin
+  with info,contextstack[s.stackindex].d.dat.constval do begin
+   vfloat:= round(vfloat);
+  end;
+ end
+ else begin
+  floatsysfunc(paramco,oc_round64);
+ end;
 end;
 
 procedure handlenearbyint(const paramco: int32);
@@ -1685,7 +1805,6 @@ procedure handletrunccard64(const paramco: int32);
 begin
  i64floatsysfunc(paramco,oc_trunccard64flo64);
 end;
-
 
 type
  sysfuncinfoty = record
@@ -1721,10 +1840,13 @@ const
    (name: 'low'; data: (func: syf_low)),
    (name: 'high'; data: (func: syf_high)),
    (name: 'length'; data: (func: syf_length)),
+   (name: 'ln'; data: (func: syf_ln)),
+   (name: 'exp'; data: (func: syf_exp)),
    (name: 'sin'; data: (func: syf_sin)),
    (name: 'cos'; data: (func: syf_cos)),
    (name: 'sqrt'; data: (func: syf_sqrt)),
    (name: 'floor'; data: (func: syf_floor)),
+   (name: 'frac'; data: (func: syf_frac)),
    (name: 'round'; data: (func: syf_round)),
    (name: 'nearbyint'; data: (func: syf_nearbyint)),
    (name: 'truncint32'; data: (func: syf_truncint32)),

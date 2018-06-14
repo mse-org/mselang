@@ -61,6 +61,7 @@ type
                    {if_malloc,if_free,if_calloc,}if_realloc,if_memset,
                    if_memcpy,if_memmove,
                    if__exit,
+                   if_log64,if_exp64,
                    if_sin64,if_cos64,if_fabs64,if_sqrt64,if_floor64,
                    if_round64,if_nearbyint64);
 
@@ -170,6 +171,10 @@ const
   (name: 'llvm.memmove.p0i8.p0i8.i32'; flags: [sf_proto];
                                                   params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
+  (name: 'llvm.log.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                       params: @ffunc64params),
+  (name: 'llvm.exp.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+                                                       params: @ffunc64params),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                        params: @ffunc64params),
   (name: 'llvm.cos.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
@@ -4970,6 +4975,22 @@ begin
  memtransfer(if_memmove);
 end;
 
+procedure ln64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_log64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure exp64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_exp64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure sin64op();
 begin
  with pc^.par do begin
@@ -4999,6 +5020,13 @@ begin
  with pc^.par do begin
   bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_floor64]),
                                                   [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure frac64op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_frac64,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -5645,10 +5673,13 @@ const
   memcpyssa = 0;
   memmovessa = 0;
   
+  ln64ssa = 1;
+  exp64ssa = 1;
   sin64ssa = 1;
   cos64ssa = 1;
   sqrt64ssa = 1;
   floor64ssa = 1;
+  frac64ssa = 1;
   round64ssa = 1;
   nearbyint64ssa = 1;
   
