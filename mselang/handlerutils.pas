@@ -3324,7 +3324,12 @@ begin                    //todo: optimize
      result:= true;
      exit;
     end;
-    pushinsertconst(stackoffset,-1,adatasize);
+    if adatasize = das_none then begin
+     pushinsertconst(stackoffset,-1,typ1^.h.datasize);
+    end
+    else begin
+     pushinsertconst(stackoffset,-1,adatasize);
+    end;
    end;
    ck_subres,ck_fact: begin
     if (co_llvm in o.compileoptions) and 

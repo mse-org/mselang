@@ -1,0 +1,32 @@
+program forto;
+
+var
+ start: card16;
+ i1: int32;
+ i2: int16;
+ i3: int8;
+ c1: card32;
+ c2: card16;
+ c3: card8;
+begin
+ start:= 3;
+ for i1:= start downto 1 do
+  exitcode:= exitcode + i1;
+ end;
+ for i2:= start downto 1 do
+  exitcode:= exitcode + i2;
+ end;
+ for i3:= start downto 1 do
+  exitcode:= exitcode + i3;
+ end;
+ for c1:= start downto 1 do
+  exitcode:= exitcode + c1;
+ end;
+ for c2:= start downto 1 do
+  exitcode:= exitcode + c2;
+ end;
+ for c3:= start downto 1 do
+  exitcode:= exitcode + c3;
+ end;
+ exitcode:= exitcode - 6*(3+2+1)+ 123;
+end.

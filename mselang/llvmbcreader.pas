@@ -1954,6 +1954,12 @@ var
 // currentconstlist: tgloblist;
  bbcount: int32;
 
+ procedure incompatibletypeerror(const atext: string; typea,typeb: int32);
+ begin
+  error(atext+' is:'+ftypelist.typename(typea)+
+               ' wanted:'+ftypelist.typename(typeb));
+ end; //incompatibletypeerror()
+
  procedure outoprecord(const aname: string; const values: array of const);
  begin
   if fbb = -1 then begin
@@ -2198,7 +2204,7 @@ begin
         outssarecord(i1,str1);
        end;
        if not checktypeids(i1,i2) then begin
-        error('Incompatible type');
+        incompatibletypeerror('Incompatible type',i1,i2);
        end;
       end;
       FUNC_CODE_INST_PHI: begin

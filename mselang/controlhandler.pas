@@ -462,7 +462,10 @@ var
  po2: popinfoty;
  step: int32;
  i1,i2: int32;
- {poa,pob,}poc: pcontextitemty;
+ poa,pob,poc: pcontextitemty;
+ typ1: ptypedataty;
+ indilev1: int32;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('FORHEADER');
@@ -474,15 +477,29 @@ begin
   end;
  {$endif}
   poc:= @contextstack[s.stacktop];
-//  pob:= getpreviousnospace(poc-1);
-//  poa:= getpreviousnospace(pob-1);
+  pob:= getpreviousnospace(poc-1);
+  poa:= getpreviousnospace(pob-1);
+ {$ifdef mse_checkinternalerror}
+  if not (poa^.d.kind in datacontexts) or not (pob^.d.kind in datacontexts) or
+          not (poc^.d.kind in datacontexts) then begin
+   internalerror(ie_handler,'20180615A');
+  end;
+ {$endif}
   flags1:= contextstack[s.stackindex].d.handlerflags;
   if not (hf_error in flags1) then begin
    with info,contextstack[s.stackindex],d.control.forinfo do begin
-    if getvalue(poc,alloc.kind) then begin
+    typ1:= ele.eledataabs(poa^.d.dat.datatyp.typedata);
+    indilev1:= poa^.d.dat.datatyp.indirectlevel-1;
+    if tryconvert(pob,typ1,indilev1,[coo_errormessage]) and
+       tryconvert(poc,typ1,indilev1,[coo_errormessage]) and
+       getvalue(pob,das_none) and getvalue(poc,das_none) then begin
+     start.tempaddress.ssaindex:= pob^.d.dat.fact.ssaindex;
      stop:= gettempaddress(alloc.kind);
-     pushtemp(start,alloc);
-     pushtemp(stop,alloc);
+     stop.tempaddress.ssaindex:= poc^.d.dat.fact.ssaindex;
+     if not (co_llvm in info.o.compileoptions) then begin
+      pushtemp(start,alloc);
+      pushtemp(stop,alloc);
+     end;
      if hf_down in flags1 then begin        //todo: different types
       cok1:= cok_ge;
       step:= -1;
