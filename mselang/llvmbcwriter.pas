@@ -1962,7 +1962,10 @@ begin
   end;
   fsuballocstart:= fsubparamstart+paramcount;
   fsubtempstart:= fsuballocstart+alloccount{+2}; //managedtemp
-  fsubopstart:= fsubtempstart+llvm.tempcount{-2};//managedtemp
+//  if nestedalloccount > 0 then begin
+//   inc(fsubtempstart,2); //alloc of nested pointer array + address on ssa -1
+//  end;
+//  fsubopstart:= fsubtempstart+llvm.tempcount{-2};//managedtemp
  {
   if nestedalloccount > 0 then begin
    inc(fsubopstart,2); //nested var array alloc + byte pointer

@@ -2379,7 +2379,8 @@ begin
        for i1:= i4+1 to i3+3 do begin
         if not checktypeids(pointertypeid(rec1[i1]),
                                     ftypelist.fsubparams[i2]) then begin
-         error('Invalid param is:'+ftypelist.typename(rec1[i1])+
+         error('Invalid param '+inttostr(i1-i4-1)+
+               ' is:'+ftypelist.typename(pointertypeid(rec1[i1]))+
                ' wanted:'+ftypelist.typename(ftypelist.fsubparams[i2]));
         end;
         inc(i2);

@@ -1,99 +1,1939 @@
-program params;
+//__mla__compilerunit
+{ MSEgui Copyright (c) 2014-2018 by Martin Schreiber
 
-type
- itest = interface
-  method test1(a,b: int32);
-  method test2(a,b: int32): int32;
- end;
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
 
- tobject = class [virtual]
-  method test1(a,b: int32); virtual;
-  method test2(a,b: int32): int32; virtual;
- end;
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+//{$mode pascal}
+unit __mla__compilerunitx;
+interface
+//{$internaldebug on}
+//{$define mse_debugclass}
 
- ttestcla = class(tobject,itest)
-  private
-   f1: int32;
-  public
-   constructor create();
-   destructor destroy();
-   method test1(a,b: int32); override;
-   method test2(a,b: int32): int32; override;
-   method test3(a,b: int32);
-   method test4(a,b: int32): int32;
- end;
+uses
+ __mla__personality,__mla__internaltypes;
+(*
+procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
+procedure __mla__decrefsize(const ref: pointer);
+procedure __mla__decrefsizeref(const ref: ppointer);
+procedure __mla__decrefsizedynar(const ref: pointer);
+procedure __mla__increfsize(ref: pointer);
+procedure __mla__increfsizeref(ref: ppointer);
+procedure __mla__increfsizedynar(const ref: pointer);
+procedure __mla__increfsizerefdynar(const ref: ppointer);
+procedure __mla__finirefsize(const ref: ppointer);
+procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+procedure __mla__finirefsizedynar(const ref: ppointer);
+procedure __mla__storenildynar(const dest: pointer);
 
-method tobject.test1(a,b: int32);
-begin
-end;
+procedure __mla__setlengthdynarray(const ref: ppointer;
+                                    const count: int32; const itemsize: int32);
+procedure __mla__setlengthincdecrefdynarray(const ref: ppointer; 
+                                                    const count: int32);
+procedure __mla__setlengthstring8(const ref: ppointer;
+                                                    const count: int32);
+procedure __mla__setlengthstring16(const ref: ppointer;
+                                                    const count: int32);
+procedure __mla__setlengthstring32(const ref: ppointer;
+                                                    const count: int32);
+procedure __mla__uniquestring8(const val: pointer): pointer;
+procedure __mla__uniquestring16(const val: pointer): pointer;
+procedure __mla__uniquestring32(const val: pointer): pointer;
+procedure __mla__uniquedynarray(const val: pointer;
+                                           const itemsize: int32): pointer;
+procedure __mla__copystring(const val: pointer; const start: int32;
+                          const size: int32; const itemsize: int32): pointer;
+procedure __mla__copydynarray(const val: pointer; const start: int32;
+                          size: int32; const itemsize: int32): pointer;
 
-method tobject.test2(a,b: int32): int32;
-begin
- result:= 0;
-end;
+procedure __mla__string8to16(source: pointer): pointer;
+procedure __mla__string8to16a(const source: pcard8; const len: int32): pointer;
+procedure __mla__string8to32(source: pointer): pointer;
+procedure __mla__string8to32a(const source: pcard8; const len: int32): pointer;
+procedure __mla__string16to8(source: pointer): pointer;
+procedure __mla__string16to8a(const source: pcard16; const len: int32): pointer;
+procedure __mla__string16to32(source: pointer): pointer;
+procedure __mla__string16to32a(const source: pcard16; const len: int32): pointer;
+procedure __mla__string32to8(source: pointer): pointer;
+procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer;
+procedure __mla__string32to16(source: pointer): pointer;
+procedure __mla__string32to16a(const source: pcard32; const len: int32): pointer;
 
-constructor ttestcla.create();
-begin
- f1:= 10;
-end;
+procedure __mla__concatstring8(count: int32;
+                                   strings: ppointer): pointer;
+procedure __mla__concatstring16(count: int32;
+                                   strings: ppointer): pointer;
+procedure __mla__concatstring32(count: int32;
+                                   strings: ppointer): pointer;
 
-destructor ttestcla.destroy();
-begin
-end;
+procedure __mla__compstring8eq(a,b: pointer): bool1;
+procedure __mla__compstring8ne(a,b: pointer): bool1;
+procedure __mla__compstring8gt(a,b: pointer): bool1;
+procedure __mla__compstring8lt(a,b: pointer): bool1;
+procedure __mla__compstring8ge(a,b: pointer): bool1;
+procedure __mla__compstring8le(a,b: pointer): bool1;
 
-method ttestcla.test1(a,b: int32);
-begin
- exitcode:= a + b + f1;
-end;
+procedure __mla__compstring16eq(a,b: pointer): bool1;
+procedure __mla__compstring16ne(a,b: pointer): bool1;
+procedure __mla__compstring16gt(a,b: pointer): bool1;
+procedure __mla__compstring16lt(a,b: pointer): bool1;
+procedure __mla__compstring16ge(a,b: pointer): bool1;
+procedure __mla__compstring16le(a,b: pointer): bool1;
 
-method ttestcla.test2(a,b: int32): int32;
-begin
- result:= a + b + f1;
-end;
 
-method ttestcla.test3(a,b: int32);
-begin
- exitcode:= a + b + f1;
-end;
+procedure __mla__compstring32eq(a,b: pointer): bool1;
+procedure __mla__compstring32ne(a,b: pointer): bool1;
+procedure __mla__compstring32gt(a,b: pointer): bool1;
+procedure __mla__compstring32lt(a,b: pointer): bool1;
+procedure __mla__compstring32ge(a,b: pointer): bool1;
+procedure __mla__compstring32le(a,b: pointer): bool1;
 
-method ttestcla.test4(a,b: int32): int32;
-begin
- result:= a + b + f1;
-end;
+procedure __mla__chartostring8(achar: card8): pointer;
+procedure __mla__chartostring16(achar: card16): pointer;
+procedure __mla__chartostring32(achar: card32): pointer;
+procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
+                                      out result: openarrayty);
+procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
+procedure __mla__lengthdynarray(ref: pointer): int32;
+procedure __mla__lengthopenarray(ref: popenarrayty): int32;
+procedure __mla__lengthstring(ref: pointer): int32;
+procedure __mla__highdynarray(ref: pointer): int32;
+procedure __mla__highopenarray(ref: popenarrayty): int32;
+procedure __mla__highstring(ref: pointer): int32;
 
-procedure test1(a,b: int32): int32;
-begin
- result:= a + b;
-end;
+procedure __mla__initobject(const instance: pointer;
+                                        const classinfo: classdefinfoty);
+//procedure __mla__calliniobject(const instance: pointer;
+//                                        const classinfo: classdefinfoty);
+procedure __mla__getclassdef(const instance: pointer; 
+                                const virttaboffset: int32): pointer;
+procedure __mla__getallocsize(const classdef: pclassdefinfoty): int32;
+procedure __mla__classis(const a,b: pclassdefinfoty): bool1;
+procedure __mla__checkclasstype(var instance: pointer; //nil if no match
+                              const classtype: pclassdefinfoty): bool1;
+                                                      //false if no match
+procedure __mla__writeenum(const avalue: int32;
+                              const artti: penumrttity);
+                              
+//procedure __mla__initclass(const classinfo: classdefinfoty): pointer;
+//procedure __mla__finiclass(const instance: pointer);
+procedure __mla__raise(const data: pointer);
+procedure __mla__finiexception(const data: pointer);
 
-procedure test(a,b: int32);
-begin
- exitcode:= a + b;
-end;
+procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty);
+procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty);
+procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty);
+procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty);
+procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 
+procedure __mla__frac64(value: flo64): flo64;
+*)
+implementation
+//uses
+// __mla__personality;
+const
+ temprefcount = 1;
+
+procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 var
- t1: ttestcla;
- i1: itest;
+ pe: ppointer;
 begin
- if test1(10,23) = 33 then
-  test(1,2);
-  if exitcode = 3 then
-   t1:= ttestcla.create();
-   t1.test1(5,9);
-   if exitcode = 24 then
-    exitcode:= t1.test2(13,3);
-    if exitcode = 26 then
-     i1:= itest(t1);
-     i1.test1(13,17);
-     if exitcode = 40 then
-      t1.test3(5,9);
-      if exitcode = 24 then
-       exitcode:= t1.test4(100,13);
+{
+ pe:= dest+count;
+ while dest < pe do
+  dest^:= nil;
+  inc(dest);
+ end;
+}
+end;
+
+(*
+//todo: thread safe managed types
+
+procedure __mla__decrefsize(const ref: pointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref;
+ if d <> nil then
+  dec(d);
+  if d^.ref.count > 0 then
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then
+   freemem(d);
+  end;
+ end;
+end;
+*)
+
+procedure __mla__decrefsizeref(const ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+
+ d:= ref^;
+
+ if d <> nil then
+  dec(d);
+  if d^.ref.count > 0 then
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then
+   freemem(d);
+   ref^:= nil;
+  end;
+ end;
+
+end;
+
+(*
+procedure __mla__increfsize(ref: pointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref;
+ if d <> nil then
+  dec(d);
+  if d^.ref.count >= 0 then
+   inc(d^.ref.count);
+  end;
+ end;
+end;
+
+procedure __mla__increfsizedynar(const ref: pointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ p1:= ref;
+ if p1 <> nil then
+  d:= pdynarrayheaderty(p1)-1;
+  pe:= p1+d^.high;
+  while p1 <= pe do
+   __mla__increfsize(p1^);
+   inc(p1);
+  end;
+ end;
+end;
+
+procedure __mla__increfsizerefdynar(const ref: ppointer);
+begin
+ __mla__increfsizedynar(ref^);
+end;
+*)
+
+procedure __mla__decrefsizedynar(const ref: pointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+{
+ p1:= ref;
+ if p1 <> nil then
+  d:= pdynarrayheaderty(p1)-1;
+  if d^.ref.count = 1 then
+   pe:= p1+d^.high;
+   while p1 <= pe do
+    __mla__decrefsizeref(p1);
+    inc(p1);
+   end;
+  end;
+ end;
+}
+end;
+
+(*
+procedure __mla__increfsizeref(ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then
+  dec(d);
+  if d^.ref.count >= 0 then
+   inc(d^.ref.count);
+  end;
+ end;
+end;
+
+procedure __mla__finirefsize(const ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then
+  dec(d);
+  if d^.ref.count > 0 then
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then
+   freemem(d);
+  end;
+  ref^:= nil;
+ end;
+end;
+
+procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+var
+ pe: ppointer;
+begin
+ pe:= ref+count;
+ while ref < pe do
+  __mla__finirefsize(pointer(ref));
+  inc(ref);
+ end;
+end;
+
+procedure finirefsizenonil(const ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then
+  dec(d);
+  if d^.ref.count > 0 then
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then
+   freemem(d);
+  end;
+//  ref^:= nil;
+ end;
+end;
+
+procedure __mla__finirefsizedynar(const ref: ppointer);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ p1:= ref^;
+ if p1 <> nil then
+  d:= pdynarrayheaderty(p1)-1;
+  if d^.ref.count = 1 then
+   pe:= p1+d^.high;
+   while p1 <= pe do
+    __mla__decrefsize(p1^);
+    inc(p1);
+   end;
+  end;
+  if d^.ref.count > 0 then
+   dec(d^.ref.count);
+  end;
+  if d^.ref.count = 0 then
+   freemem(d);
+  end;
+  ref^:= nil;
+ end;
+end;
+
+procedure __mla__storenildynar(const dest: pointer);
+var
+ p1,pe: ppointer;
+begin
+ p1:= dest;
+ if p1 <> nil then
+  pe:= p1+(pdynarrayheaderty(dest)-1)^.high;
+  while p1 <= pe do
+   p1^:= nil;
+   inc(p1);
+  end;
+ end;
+end;
+*)
+
+procedure __mla__setlengthdynarray(const ref: ppointer;
+                                    const count: int32; const itemsize: int32);
+var
+ s,d: pdynarrayheaderty;
+ i1,i2: int32;
+begin
+(*
+ i1:= count*itemsize;
+ s:= ref^;
+ if s <> nil then
+  dec(s);
+  if s^.ref.count = 1 then
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    i2:= s^.high+1;
+    reallocmem(s,i1+dynarrayallocsize);
+    if count > i2 then
+     i2:= i2 * itemsize;
+     setmem(@s^.data+i2,i1-i2,0);
+    end;
+    s^.ref.count:= 1;
+    s^.high:= count-1;
+    ref^:= @s^.data;
+   end;
+  else
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    d:= getmem(i1+dynarrayallocsize);
+    i2:= (s^.high+1) * itemsize;
+    if i1 > i2 then  //new bigger
+     memcpy(@d^.data,@s^.data,i2);
+     setmem(@d^.data+i2,i1-i2,0);
+    else
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.high:= count -1;
+   ref^:= @d^.data;
+  end;
+ else
+  if count > 0 then
+   s:= getzeromem(i1+dynarrayallocsize);
+   s^.ref.count:= 1;
+   s^.high:= count-1;
+   ref^:= @s^.data;
+  end;
+ end;
+*)
+end;
+
+(*
+procedure __mla__setlengthincdecrefdynarray(const ref: ppointer; 
+                                                   const count: int32);
+var
+ d: pdynarrayheaderty;
+ p1,pe: ppointer;
+begin
+ d:= ref^;
+ p1:= pointer(d);
+ if d <> nil then
+  dec(d);
+  if d^.ref.count = 1 then
+   pe:= p1 + count;
+   p1:= p1 + d^.high;
+   while p1 >= pe do
+    __mla__decrefsize(p1^);   //smaller items
+    dec(p1);
+   end;
+  else
+   if d^.high >= count then
+    pe:= p1 + count-1;
+   else
+    pe:= p1 + d^.high;
+   end;
+   while p1 <= pe do
+    __mla__increfsize(p1^);  //duplicated items
+    inc(p1);
+   end;
+  end;
+ end;
+end;
+
+procedure __mla__setlengthstring8(const ref: ppointer; const count: int32);
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ i1:= count * 1; //bytesize
+ s:= ref^;
+ if s <> nil then
+  dec(s);
+  if s^.ref.count = 1 then
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    reallocmem(s,i1+string8allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard8(pointer(s+1))+count)^:= 0; //terminator
+   end;
+  else
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    d:= getmem(i1+string8allocsize);
+    i2:= s^.len * 1; //old bytesize
+    if i2 <= i1 then
+     memcpy(@d^.data,@s^.data,i2);
+    else
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+    (pcard8(pointer(s+1))+count)^:= 0; //terminator
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+  end;
+ else
+  if count > 0 then
+   s:= getmem(i1+string8allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard8(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__setlengthstring16(const ref: ppointer; const count: int32);
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ i1:= count * 2; //bytesize
+ s:= ref^;
+ if s <> nil then
+  dec(s);
+  if s^.ref.count = 1 then
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    reallocmem(s,i1+string16allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard16(pointer(s+1))+count)^:= 0; //terminator
+   end;
+  else
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    d:= getmem(i1+string16allocsize);
+    i2:= s^.len * 2; //old bytesize
+    if i2 <= i1 then
+     memcpy(@d^.data,@s^.data,i2);
+    else
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+    (pcard16(pointer(s+1))+count)^:= 0; //terminator
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+  end;
+ else
+  if count > 0 then
+   s:= getmem(i1+string16allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard16(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__setlengthstring32(const ref: ppointer; const count: int32);
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ i1:= count * 4; //bytesize
+ s:= ref^;
+ if s <> nil then
+  dec(s);
+  if s^.ref.count = 1 then
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    reallocmem(s,i1+string32allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard32(pointer(s+1))+count)^:= 0; //terminator
+   end;
+  else 
+   if i1 = 0 then
+    freemem(s);
+    ref^:= nil;
+   else
+    d:= getmem(i1+string32allocsize);
+    i2:= s^.len * 4; //old bytesize
+    if i2 <= i1 then
+     memcpy(@d^.data,@s^.data,i2);
+    else
+     memcpy(@d^.data,@s^.data,i1);
+    end;
+    (pcard32(pointer(s+1))+count)^:= 0; //terminator
+   end;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+  end;
+ else
+  if count > 0 then
+   s:= getmem(i1+string32allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard32(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring8(const val: pointer): pointer;
+var
+ s,d: pstringheaderty;
+ i1: int32;
+begin
+ result:= val;
+ if val <> nil then
+  s:= pstringheaderty(val)-1;
+  if s^.ref.count <> 1 then
+   i1:= (s^.len)*1 + string8allocsize;
+   d:= getmem(i1);
+   memcpy(d,s,i1);
+   if s^.ref.count > 0 then
+    dec(s^.ref.count);
+   end;
+   d^.ref.count:= 1;
+   result:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring16(const val: pointer): pointer;
+var
+ s,d: pstringheaderty;
+ i1: int32;
+begin
+ result:= val;
+ if val <> nil then
+  s:= pstringheaderty(val)-1;
+  if s^.ref.count <> 1 then
+   i1:= (s^.len)*2 + string16allocsize;
+   d:= getmem(i1);
+   memcpy(d,s,i1);
+   if s^.ref.count > 0 then
+    dec(s^.ref.count);
+   end;
+   d^.ref.count:= 1;
+   result:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring32(const val: pointer): pointer;
+var
+ s,d: pstringheaderty;
+ i1: int32;
+begin
+ result:= val;
+ if val <> nil then
+  s:= pstringheaderty(val)-1;
+  if s^.ref.count <> 1 then
+   i1:= (s^.len)*4 + string32allocsize;
+   d:= getmem(i1);
+   memcpy(d,s,i1);
+   if s^.ref.count > 0 then
+    dec(s^.ref.count);
+   end;
+   d^.ref.count:= 1;
+   result:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__uniquedynarray(const val: pointer;
+                                  const itemsize: int32): pointer;
+var
+ s,d: pdynarrayheaderty;
+ i1: int32;
+begin
+ result:= val;
+ if val <> nil then
+  s:= pdynarrayheaderty(val)-1;
+  if s^.ref.count <> 1 then
+   i1:= (s^.high+1)*itemsize + dynarrayallocsize;
+   d:= getmem(i1);
+   memcpy(d,s,i1);
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   result:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__copystring(const val: pointer; const start: int32;
+                          const size: int32; const itemsize: int32): pointer;
+var
+ s,d: pstringheaderty;
+ i1,i2: int32;
+begin
+ result:= nil;
+ if val <> nil then
+  s:= pstringheaderty(val)-1;
+  i1:= s^.len * itemsize;
+  if start < i1 then
+   i2:= start + size;
+   if i2 > i1 then
+    size:= size - (i2-i1);
+   end;
+   if size > 0 then
+    d:= getmem(size+stringheadersize+itemsize); //terminating 0
+    d^.ref.count:= 1;
+    d^.len:= size div itemsize;
+    result:= @d^.data;
+    memcpy(result,val+start,size);
+    case itemsize of
+     1:
+      pcard8(result+start+size)^:= 0;
+     2:
+      pcard16(result+start+size)^:= 0;
+     3:
+      pcard32(result+start+size)^:= 0;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure __mla__copydynarray(const val: pointer; const start: int32;
+                          size: int32; const itemsize: int32): pointer;
+var
+ s,d: pdynarrayheaderty;
+ i1,i2: int32;
+begin
+ result:= nil;
+ if val <> nil then
+  s:= pdynarrayheaderty(val)-1;
+  i1:= s^.high * itemsize + itemsize;
+  if start < i1 then
+   i2:= start + size;
+   if i2 > i1 then
+    size:= size - (i2-i1);
+   end;
+   if size > 0 then
+    d:= getmem(size+dynarrayallocsize);
+    d^.ref.count:= 1;
+    d^.high:= size div itemsize - 1;
+    result:= @d^.data;
+    memcpy(result,val+start,size);
+   end;
+  end;
+ end;
+end;
+*)
+const
+ errorcodepoint = $3f; //?
+(*
+procedure getcodepoint(var ps: pcard8; const pe: pcard8;
+                                  out ares: card32);
+ procedure checkok(var acodepoint: card32): boolean; //inline;
+ var
+  c1: card8;
+ begin
+  result:= false;
+  inc(ps);
+  if ps >= pe then
+   acodepoint:= errorcodepoint;
+  else
+   c1:= ps^ - %10000000;
+   if c1 > %00111111 then
+    acodepoint:= errorcodepoint;
+   else
+    acodepoint:= (acodepoint shl 6) or c1;
+    result:= true;
+   end;
+  end;
+ end;
+
+begin
+ if ps^ < %10000000 then   //1 byte
+  ares:= ps^;
+ else
+  if ps^ <= %11100000 then //2 bytes
+   ares:= ps^ and %00011111;
+   if checkok(ares) then
+    if ares < %1000000 then
+     ares:= errorcodepoint; //overlong
+    end;
+   end;
+  else
+   if ps^ < %11110000 then //3 bytes
+    ares:= ps^ and %00001111;
+    if checkok(ares) and checkok(ares) then
+     if ares < %100000000000 then
+      ares:= errorcodepoint; //overlong
+     end;
+    end;
+   else
+    if ps^ < %11111000 then //4 bytes
+     ares:= ps^ and %00000111;
+     if checkok(ares) and checkok(ares) and checkok(ares) then
+      if ares < %10000000000000000 then
+       ares:= errorcodepoint; //overlong
+      end;
+     end;
+    else
+     ares:= errorcodepoint;
+    end;
+   end;
+  end;
+ end;
+ inc(ps);
+ if (ares >= $d800) and (ares <= $dfff) then
+  ares:= errorcodepoint; //surrogate
+ end;
+end;
+
+procedure getcodepoint(var ps: pcard16; const pe: pcard16;
+                                  out ares: card32): boolean;
+begin
+ result:= true;
+ ares:= ps^;
+ inc(ps);
+ if ares and $fc00 = $d800 then
+  ares:= (ares - $d800) shl 10;
+  if ps < pe then
+   ares:= ares + ps^ - $dc00 + $10000;
+   inc(ps);
+   if ares < $10000 then
+    ares:= errorcodepoint; //overlong
+   end;
+  else
+   ares:= errorcodepoint; //missing surrogate
+  end;
+ end;
+ if (ares >= $d800) and (ares <= $dfff) then
+  ares:= errorcodepoint; //surrogate pair
+ end;
+end;
+
+procedure setutf8(const codepoint: card32; var dest: pcard8);
+begin
+ if codepoint < $80 then
+  dest^:= codepoint;
+ else
+  if codepoint < $800 then //2 byte
+   dest^:= (codepoint shr 6) or %11000000;
+   inc(dest);
+   dest^:= codepoint and %00111111 or %10000000;
+  else
+   if codepoint < $10000 then //3 byte
+    dest^:= (codepoint shr 12) or %11100000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   else                       //4 byte
+    dest^:= (codepoint shr 18) or %11110000;
+    inc(dest);
+    dest^:= (codepoint shr 12) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= (codepoint shr 6) and %00111111 or %10000000;
+    inc(dest);
+    dest^:= codepoint and %00111111 or %10000000;
+   end;
+  end;
+ end;
+ inc(dest);
+end;
+
+procedure __mla__string8to16a(const source: pcard8; const len: int32): pointer;
+var
+ {pss,}pds: pstringheaderty;
+ by1: card8;
+ wo1: card16;
+ ps,pe: pcard8;
+ pd,pd0: pcard16;
+begin
+ if source <> nil then
+  ps:= source; //data
+  pe:= ps+len;
+  pds:= getmem(string16allocsize+len*2); //max
+  pd:= pointer(pds+1);//data
+  pd0:= pd;           //startref
+  while ps < pe do
+   by1:= ps^;
+   inc(ps);
+   if by1 < $80 then //1 byte
+    pd^:= by1;
+   else
+    if by1 < $e0 then //2 byte
+     if (ps < pe) and (ps^ and $c0 = $80) then
+      wo1:= (card16(by1 and $1f) shl 6) or (ps^ and $3f);
+      pd^:= wo1;
+      if pd^ < $80 then
+       pd^:= errorcodepoint;  //overlong
+      end;
+      inc(ps);
+     else
+      pd^:= errorcodepoint;
+     end;
+    else
+     if (by1 < $f0) then //3byte
+      if (pe - ps >= 1) and (ps^ and $c0 = $80) and 
+                                          ((ps+1)^ and $c0 = $80) then
+       pd^:= (card16(by1) shl 12) or 
+             (card16(ps^ and $3f) shl 6) or ((ps+1)^ and $3f);
+       if pd^ < $0800 then
+        pd^:= errorcodepoint; //overlong
+       end;
+       inc(ps,2);
+      else
+       pd^:= errorcodepoint;
+      end;
+     else
+      if (by1 < $f8) then //4byte
+       if (pe - ps >= 2) and (ps^ and $c0 = $80) and ((ps+1)^ and $c0 = $80) and 
+                               ((ps+2)^ and $c0 = $80) then
+        if ((by1 <= $e0) and (ps^ < $90)) then //overlong
+         pd^:= errorcodepoint; //overlong;
+        else
+         pd^:= ((card16(by1 and $07) shl 8) or 
+                (card16(ps^ and $3f) shl 2) or
+                (card16((ps+1)^ and $30) shr 4)) + 
+                          (card16($d800) - card16($10000 shr 10));
+         inc(pd);
+         pd^:= (card16((ps+1)^ and $0f) shl 6) or 
+                                          ((ps+2)^ and $3f) or word($dc00);
+        end;
+        inc(ps,3);
+       else
+        pd^:= errorcodepoint;
+       end;
+      else
+       pd^:= errorcodepoint;
       end;
      end;
     end;
    end;
-   t1.destroy;
+   inc(pd);
+  end;
+  pd^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= pd-pd0;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string8to16(source: pointer): pointer;
+begin
+ result:= __mla__string8to16a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+procedure __mla__string8to32a(const source: pcard8; const len: int32): pointer;
+
+//todo: maybe use string result (faf_varsubres)
+
+var
+ {pss,}pds: pstringheaderty;
+ p1,pe: pcard8;
+ p2,p3: pcard32;
+begin
+// pss:= source;
+ if source <> nil then
+  p1:= source;
+//  dec(pss); //header
+  pe:= p1+len;
+  pds:= getmem(string32allocsize+len*4); //max
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do
+   getcodepoint(p1,pe,p2^);
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string8to32(source: pointer): pointer;
+begin
+ result:= __mla__string8to32a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+procedure __mla__string16to8a(const source: pcard16; const len: int32): pointer;
+var
+ pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard8;
+ c1: card32;
+begin
+ if source <> nil then
+  p1:= source;
+  pe:= p1+len;
+  pds:= getmem(string8allocsize+len*3); //max
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do
+   getcodepoint(p1,pe,c1);
+   setutf8(c1,p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string16to8(source: pointer): pointer;
+begin
+ result:= __mla__string16to8a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+procedure __mla__string16to32a(const source: pcard16; const len: int32): pointer;
+var
+ pds: pstringheaderty;
+ p1,pe: pcard16;
+ p2,p3: pcard32;
+begin
+ if source <> nil then
+  p1:= source;
+  pe:= p1+len;
+  pds:= getmem(string32allocsize+len*4); //max
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do
+   getcodepoint(p1,pe,p2^);
+   inc(p2);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string16to32(source: pointer): pointer;
+begin
+ result:= __mla__string16to32a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer;
+var
+ {pss,}pds: pstringheaderty;
+ p1,pe: pcard32;
+ p2,p3: pcard8;
+ c1: card32;
+begin
+// pss:= source;
+ if source <> nil then
+  p1:= source;
+  pe:= p1+len;
+  pds:= getmem(string8allocsize+len*4); //max
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do
+   setutf8(p1^,p2);
+   inc(p1);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string32to8(source: pointer): pointer;
+begin
+ result:= __mla__string32to8a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+procedure __mla__string32to16a(const source: pcard32; const len: int32): pointer;
+var
+ pds: pstringheaderty;
+ p1,pe: pcard32;
+ p2,p3: pcard16;
+ c1: card32;
+begin
+ if source <> nil then
+  p1:= source;
+  pe:= p1+len;
+  pds:= getmem(string16allocsize+len*2*2); //max
+                                            //todo: use less memory
+  p2:= pointer(pds+1);
+  p3:= p2;
+  while p1 < pe do
+   c1:= p1^;
+   if c1 < $10000 then
+    p2^:= c1;
+   else
+    c1:= c1 - $10000;
+    p2^:= (c1 shr 10) and $3ff or $d800;
+    inc(p2);
+    p2^:= c1 and $3ff or $dc00;
+   end;
+   inc(p2);
+   inc(p1);
+  end;
+  p2^:= 0;
+  pds^.ref.count:= temprefcount;
+  pds^.len:= p2-p3;
+  inc(pds); //data
+ else
+  pds:= nil;
+ end;
+ result:= pds;
+end;
+
+procedure __mla__string32to16(source: pointer): pointer;
+begin
+ result:= __mla__string32to16a(source,(pstringheaderty(source)-1)^.len);
+end;
+
+
+procedure __mla__concatstring8(count: int32;
+                              strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
+begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do
+  ps:= p1^;
+  if ps <> nil then
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then
+  pd:= getmem(string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
+  inc(pd);
+  result:= pd;
+  (pcard8(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do
+   ps:= p1^;
+   if ps <> nil then
+    i1:= (ps-1)^.len*1;
+    memcpy(pd,ps,i1*1);
+    inc(pointer(pd),i1);
+   end;
+   inc(p1);
+  end;
+ else
+  result:= nil;
+ end;
+end;
+
+procedure __mla__concatstring16(count: int32;
+                                   strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
+begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do
+  ps:= p1^;
+  if ps <> nil then
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then
+  pd:= getmem(string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
+  inc(pd);
+  result:= pd;
+  (pcard16(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do
+   ps:= p1^;
+   if ps <> nil then
+    i1:= (ps-1)^.len*2;
+    memcpy(pd,ps,i1);
+    inc(pointer(pd),i1);
+   end;
+   inc(p1);
+  end;
+ else
+  result:= nil;
+ end;
+end;
+
+procedure __mla__concatstring32(count: int32;
+                                   strings: ppointer): pointer;
+var
+ p1,pe: ppstringheaderty;
+ ps,pd: pstringheaderty;
+ i1: int32;
+begin
+ p1:= strings;
+ pe:= p1+count;
+ i1:= 0;
+ while p1 < pe do
+  ps:= p1^;
+  if ps <> nil then
+   i1:= i1 + (ps-1)^.len;
+  end;
+  inc(p1);
+ end;
+ if i1 > 0 then
+  pd:= getmem(string8allocsize+i1*1);
+  pd^.ref.count:= temprefcount;
+  pd^.len:= i1;
+  inc(pd);
+  result:= pd;
+  (pcard16(pointer(pd))+i1)^:= 0; //terminator
+  p1:= strings;
+  while p1 < pe do
+   ps:= p1^;
+   if ps <> nil then
+    i1:= (ps-1)^.len*4;
+    memcpy(pd,ps,i1);
+    inc(pointer(pd),i1);
+   end;
+   inc(p1);
+  end;
+ else
+  result:= nil;
+ end;
+end;
+
+procedure compstring8(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard8;
+ la,lb: stringsizety;
+ i1: int8;
+begin
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then
+  poe:= poa + la;
+ else
+  poe:= poa + lb;
+ end;
+ while true do
+  i1:= poa^ - pob^;
+  if i1 <> 0 then
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+procedure compstring16(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard16;
+ la,lb: stringsizety;
+ i1: int16;
+begin
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then
+  poe:= poa + la;
+ else
+  poe:= poa + lb;
+ end;
+ while true do
+  i1:= poa^ - pob^;
+  if i1 <> 0 then
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+procedure compstring32(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard32;
+ la,lb: stringsizety;
+ i1: int32;
+begin
+ la:= (pstringheaderty(a)-1)^.len;
+ lb:= (pstringheaderty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then
+  poe:= poa + la;
+ else
+  poe:= poa + lb;
+ end;
+ while true do
+  i1:= poa^ - pob^;
+  if i1 <> 0 then
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+procedure __mla__compstring8eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) = 0;
+  else
+   result:= false;
   end;
  end;
+end;
+
+procedure __mla__compstring8ne(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) <> 0;
+  else
+   result:= true;
+  end;
+ end;
+end;
+
+procedure __mla__compstring8gt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) > 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring8lt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) < 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring8ge(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) >= 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring8le(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring8(a,b) <= 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) = 0;
+  else
+   result:= false;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16ne(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) <> 0;
+  else
+   result:= true;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16gt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) > 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16lt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) < 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16ge(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) >= 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring16le(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring16(a,b) <= 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) = 0;
+  else
+   result:= false;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32ne(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) <> 0;
+  else
+   result:= true;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32gt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) > 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32lt(a,b: pointer): bool1;
+begin
+ result:= a <> b;
+ if result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) < 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32ge(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) >= 0;
+  else
+   result:= b = nil;
+  end;
+ end;
+end;
+
+procedure __mla__compstring32le(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then
+  if (a <> nil) and (b <> nil) then
+   result:= compstring32(a,b) <= 0;
+  else
+   result:= a = nil;
+  end;
+ end;
+end;
+
+procedure __mla__chartostring8(achar: card8): pointer;
+var
+ po1: pstringheaderty;
+begin
+ po1:= getmem(1*1+string8allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard8(result)^:= achar;
+ (pcard8(result)+1)^:= 0; //terminator
+end;
+
+procedure __mla__chartostring16(achar: card16): pointer;
+var
+ po1: pstringheaderty;
+begin
+ po1:= getmem(1*2+string16allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard16(result)^:= achar;
+ (pcard16(result)+1)^:= 0; //terminator
+end;
+
+procedure __mla__chartostring32(achar: card32): pointer;
+var
+ po1: pstringheaderty;
+begin
+ po1:= getmem(1*4+string32allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard32(result)^:= achar;
+ (pcard32(result)+1)^:= 0; //terminator
+end;
+
+procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
+                                      out result: openarrayty);
+begin
+ result.high:= ahigh;
+ result.data:= adata;
+end;
+
+procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
+begin
+ if ref = nil then
+  result.high:= -1;
+ else
+  result.high:= (pdynarrayheaderty(ref)-1)^.high;
+ end;
+ result.data:= ref;
+end;
+
+procedure __mla__lengthdynarray(ref: pointer): int32;
+begin
+ if ref <> nil then
+  result:= (pdynarrayheaderty(ref)-1)^.high + 1;
+ else
+  result:= 0;
+ end;
+end;
+
+procedure __mla__lengthopenarray(ref: popenarrayty): int32;
+begin
+ result:= ref^.high+1;
+end;
+
+procedure __mla__lengthstring(ref: pointer): int32;
+begin
+ if ref <> nil then
+  result:= (pstringheaderty(ref)-1)^.len;
+ else
+  result:= 0;
+ end;
+end;
+
+procedure __mla__highdynarray(ref: pointer): int32;
+begin
+ if ref <> nil then
+  result:= (pdynarrayheaderty(ref)-1)^.high;
+ else
+  result:= -1;
+ end;
+end;
+
+procedure __mla__highopenarray(ref: popenarrayty): int32;
+begin
+ result:= ref^.high;
+end;
+
+
+procedure __mla__highstring(ref: pointer): int32;
+begin
+ if ref <> nil then
+  result:= (pstringheaderty(ref)-1)^.len;
+ else
+  result:= 0;
+ end;
+end;
+
+procedure __mla__initobject(const instance: pointer;
+                                           const classinfo: classdefinfoty);
+var
+ ps,pd,pe: ppointer;
+ po1: pclassdefinfoty;
+begin
+ po1:= @classinfo;
+// ppointer(instance+virttaboffset)^:= po1;//@classinfo;
+ ppointer(instance+classinfo.header.virttaboffset)^:= po1;//@classinfo;
+{$ifdef mse_debugclass}
+ writeln('***initobject ',result);
+{$endif}
+ repeat
+  pd:= instance + po1^.header.allocs.instanceinterfacestart;
+                                            //copy interface table
+  pe:= instance + po1^.header.allocs.size;
+  ps:= pointer(po1) + po1^.header.allocs.classdefinterfacestart;
+ {$ifdef mse_debugclass}
+  writeln(' *classdef:',po1);
+  writeln('  parentclass:',po1^.header.parentclass);
+  writeln('  interfaceparent:',po1^.header.interfaceparent);
+  writeln('  allocs.size:',po1^.header.allocs.size);
+  writeln('  interfacestart:',po1^.header.allocs.instanceinterfacestart);
+  writeln('  classdefinterfacestart:',po1^.header.allocs.classdefinterfacestart);
+ {$endif}
+  while pd < pe do
+   pd^:= ps^;
+  {$ifdef mse_debugclass}
+   writeln('  intf:',int32(pointer(pd)-instance),' ',pd,'^:',pd^,
+                 ' instanceoffset:',pintfdefinfoty(pd^)^.header.instanceoffset);
+  {$endif}
+   inc(pd);
+   inc(ps);
+  end;
+  po1:= po1^.header.interfaceparent;
+ until po1 = nil;
+end;
+{
+procedure __mla__calliniobject(const instance: pointer;
+                                          const classinfo: classdefinfoty);
+begin
+ classinfo.header.procs[cdp_ini](instance);
+end;
+}
+procedure __mla__getclassdef(const instance: pointer;
+                          const virttaboffset: int32): pointer;
+begin
+ result:= instance;
+ if instance <> nil then
+  result:= ppointer(instance+virttaboffset)^;
+ end;
+end;
+
+procedure __mla__getallocsize(const classdef: pclassdefinfoty): int32;
+begin
+ result:= classdef^.header.allocs.size;
+end;
+
+procedure __mla__classis(const a,b: pclassdefinfoty): bool1;
+var
+ p1: pclassdefinfoty;
+begin
+ result:= false;
+ if (a <> nil) and (b <> nil) then
+  p1:= a;
+  repeat
+   if p1 = b then
+    result:= true;
+    break;
+   end;
+   p1:= p1^.header.parentclass;
+  until p1 = nil;
+ end;
+end;
+
+procedure __mla__checkclasstype(var instance: pointer; 
+                              const classtype: pclassdefinfoty): bool1;
+begin
+ if (instance <> nil) and 
+         __mla__classis(ppointer(instance)^,classtype) then
+  result:= true;
+ else
+  result:= false;
+  instance:= nil;  
+ end;
+end;
+
+procedure getenumname(const enumvalue: int32; const rtti: penumrttity): string8;
+var
+ p1,pe: ^enumitemrttity;
+ i1: int32;
+begin
+ result:= '';
+ p1:= pointer(@rtti^.items);
+ if erf_contiguous in rtti^.flags then
+  i1:= enumvalue - rtti^.min;
+  if (i1 >= 0) and (i1 < rtti^.itemcount) then
+   decref(result);
+   pointer(result):= pointer((p1 + i1)^.name); //const string, no incref
+  end;
+ else
+  pe:= p1+rtti^.itemcount;
+  while p1 < pe do
+   if p1^.value = enumvalue then
+    decref(result);
+    pointer(result):= pointer(p1^.name);     //const string, no incref
+    break;
+   end;
+   inc(p1);
+  end;
+ end;
+end;
+
+procedure __mla__writeenum(const avalue: int32;
+                              const artti: penumrttity);
+begin
+ write(getenumname(avalue,artti));
+end;
+
+procedure finivirtclass(const instance: pointer);
+var
+ p1: pclassdefinfoty;
+begin
+ p1:= ppointer(instance)^;
+ if p1^.header.procs[cdp_destruct] <> nil then
+  p1^.header.procs[cdp_destruct](instance);
+ else
+  freemem(instance);
+ end;
+end;
+
+procedure exceptioncleanup(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+begin
+ freemem(exc);
+end;
+
+procedure __mla__raise(const data: pointer);
+var
+ po1: pexceptinfoty;
+begin  //todo: handle out of memory situation
+ po1:= getmem(sizeof(exceptinfoty));
+ with po1^.header do
+  exception_class:= mlaexceptionid;
+  exception_cleanup:= @exceptioncleanup;
+ end;
+ po1^.data:= data;
+ _Unwind_RaiseException(@po1^.header);
+ freemem(po1);
+ finivirtclass(data);
+ exitcode:= exco_unhandledexception; //no handler found
+ halt();
+end;
+
+procedure __mla__finiexception(const data: pointer);
+begin
+ with pexceptinfoty(data)^ do
+  if data <> nil then
+   finivirtclass(data);
+  end;
+ end;
+ freemem(data);
+end;
+
+procedure readusleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ adata:= po1+1;
+end;
+
+procedure readssleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ if po1^ and $40 <> 0 then   //sign
+  result:= result or ptrint(-1) shl shift; //negative
+ end;
+ adata:= po1+1;
+end;
+
+procedure fatalerror();
+begin
+ writeln('Fatal error');
+ halt();
+end;
+
+const
+{$ifdef target_x86_64}
+ exceptionregno = 0;
+ selectorregno = 1;
+{$else}
+ exceptionregno = 0;
+ selectorregno = 2;
+{$endif}
+
+procedure installfinallycontext(const actions: _Unwind_Action;
+             const exceptiondata: p_Unwind_Exception;
+             const context: p_Unwind_Context;
+             const landingpad: pointer): _Unwind_Reason_Code;
+begin
+ if actions and _UA_SEARCH_PHASE <> 0 then
+  result:= _URC_HANDLER_FOUND;
+ else
+  if actions and _UA_HANDLER_FRAME <> 0 then
+   _Unwind_SetGR(context,exceptionregno,ptrint(exceptiondata));
+   _Unwind_SetGR(context,selectorregno,0);
+   _Unwind_SetIP(context,landingpad);
+   result:= _URC_INSTALL_CONTEXT;
+  else
+   result:= _URC_CONTINUE_UNWIND;
+  end;
+ end;
+end;
+
+procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_int32;
+ res^.vint32:= value;
+end;
+
+procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_int64;
+ res^.vint64:= value;
+end;
+
+procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_card32;
+ res^.vcard32:= value;
+end;
+
+procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_card64;
+ res^.vcard64:= value;
+end;
+
+procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_pointer;
+ res^.vpointer:= value;
+end;
+
+procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty);
+begin
+ res^.vtype:= vt_flo64;
+ res^.vflo64:= value;
+end;
+
+procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty);
+begin
+ res^.vtype:= vt_char32;
+ res^.vchar32:= value;
+end;
+
+procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string8;
+ res^.vstring8:= value;
+end;
+
+procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string16;
+ res^.vstring16:= value;
+end;
+
+procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
+begin
+ res^.vtype:= vt_string32;
+ res^.vstring32:= value;
+end;
+
+procedure __mla__frac64(value: flo64): flo64;
+begin                  //todo: optimize, more exact
+ if value < 0 then
+  result:= value - (floor(value)+1);
+ else
+  result:= value - floor(value);
+ end;
+end;
+*)
 end.

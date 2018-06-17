@@ -721,6 +721,7 @@ begin
   allocs1.llvm.tempcount:= main.llvm.allocs.tempcount;
   bcstream.beginsub([]{false},allocs1,main.llvm.allocs.blockcount);
   alloctemps(main.llvm.allocs.tempcount,main.llvm.allocs.tempvars);
+  bcstream.resetssa();
   if main.llvm.allocs.managedtemptypeid <> 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(
                                 main.llvm.allocs.managedtemptypeid)); //1ssa
@@ -3858,12 +3859,11 @@ begin
 end;
 
 procedure indirectpoop();
-var
- dest1,dest2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
-  bcstream.emitloadop(bcstream.relval(0));
+                                                     //1ssa
+  bcstream.emitloadop(bcstream.relval(0));           //1ssa
  end;
 end;
 
@@ -4324,12 +4324,16 @@ begin
   for i1:= i2 to sub.allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
+
+  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
+
   if sub.allocs.nestedalloccount > 0 then begin
   {$ifdef mse_checkinternalerror}
    if sub.allocs.nestedallocstypeindex < 0 then begin
     internalerror(ie_llvm,'20151022A');
    end;
   {$endif}
+   bcstream.resetssa(); //access nestedallocsarray by ssaval(0)
    bcstream.emitalloca(bcstream.ptypeval(sub.allocs.nestedallocstypeindex));
    if sf_hascallout in sub.flags then begin
     bcstream.emitgetelementptr(bcstream.subval(0),
@@ -4367,10 +4371,11 @@ begin
    end;
    bcstream.emitbitcast(bcstream.allocval(sub.allocs.alloccount),
                                                bcstream.typeval(das_pointer));
-                                 //pointer to nestedallocs
-   bcstream.resetssa();
+                                 //ssa -1 = pointer to nestedallocs
+//   bcstream.resetssa();
   end;
-  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
+//  alloctemps(sub.allocs.llvm.tempcount,sub.allocs.llvm.tempvars);
+  bcstream.resetssa();
   if hasmanagedtemp then begin
    bcstream.emitalloca(bcstream.ptypeval(
                                   sub.allocs.llvm.managedtemptypeid)); //1ssa

@@ -1,16 +1,30 @@
-program constpar;
-
-type
- ppointer = ^pointer;
- recty = record
-  a,b: int32;
- end;
-
-procedure test(const a: ppointer);
-begin
+//test
+program test;
 {$internaldebug on}
- a^:= nil;
+
+procedure flo64tostring1( precision: integer): string16;
+
+ function getfixoverflowvalue: int32;
+ begin
+{
+   if precision < 0 then
+   end;
+}
+   result:= precision;
+
+//  result:= 123;
+ end;
+var
+ s1: string8;
+begin
+// exitcode:= getfixoverflowvalue();
+ s1:= result;
+// result:= 123;
+// result:= getfixoverflowvalue();
+// result:= '-'+result;
 end;
 
 begin
+ flo64tostring1(123);
+// exitcode:= flo64tostring1(123);
 end.

@@ -2616,7 +2616,7 @@ begin
   end;
  end;
 end;
-
+var testvar: ptypedataty;
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -2748,6 +2748,7 @@ begin
    lnr1:= start.line;
    while ele1 <> 0 do begin      //number params and vars
     po4:= ele.eledataabs(ele1);
+testvar:= ele.eledataabs(po4^.vf.typ);
     with plocallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
      address:= po4^.address.locaddress.address;
