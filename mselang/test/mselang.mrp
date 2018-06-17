@@ -248,12 +248,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
-    a=0,664,4,bool
-    c=8
+    a=0,665,4,bool
+    c=9
      (
      kind=2
      a=0,648,1,and1
@@ -281,6 +281,28 @@ c=3
      a=0,648,1,and1 llvm
      teststate=1
      path=and1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,and2 llvm
+     teststate=1
+     path=and2.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -4003,7 +4025,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7304860
+    ao=An unhandled exception occured at $B723EFF0
     ae=
     aec=123
     ie=0
@@ -13833,8 +13855,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,0,format1 llvm
-    teststate=0
+    a=0,648,1,format1 llvm
+    teststate=1
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13853,9 +13875,14 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
+    ao=abc123defg
+    +abc1234defg
+    +abc00001234defg
+    +abc  00001234defg
+    +abc00001234  defg
+    +abcÄBC       def
     ae=
-    aec=-1
+    aec=0
     ie=0
     )
    teststate=1
@@ -14077,7 +14104,54 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=107
+rowstate=154
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -1045,6 +1045,8 @@ var
  parpo: pparallocinfoty;
  listpo: plistitemallocinfoty;
  endpo: pointer;
+ pphi1: pphilistty;
+ pphii1,pphiie: pphilistitemty;
 begin
  with info do begin
   int1:= stackoffset+s.stackindex;
@@ -1074,7 +1076,17 @@ begin
    result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
                 //there is at least a subbegin op
    s.ssa.index:= s.ssa.nextindex;
+   po1:= result+1;
+   poend:= po1+opcount-ad1;
+   while po1 < poend do begin
+    if (po1^.op.op in controlops) and
+                  (po1^.par.opaddress.opaddress >= ad1) then begin
+     inc(po1^.par.opaddress.opaddress);
+    end;  
+    inc(po1);         //update controlops?
+   end;
    if ssadelta > 0 then begin
+    
     inc(s.ssa.nextindex,ssadelta);
     po1:= result+1;
     poend:= po1+opcount-ad1;
@@ -1102,18 +1114,17 @@ begin
       end;
      end
      else begin
-     {
-      if po1^.op.op in listops then begin
-       listpo:= getsegmentpo(seg_localloc,po1^.par.listinfo.allocs);
-       endpo:= listpo + po1^.par.listinfo.alloccount;
-       while listpo < endpo do begin
-        if listpo^.ssaindex >= int2 then begin
-         inc(listpo^.ssaindex,ssadelta);
+      if po1^.op.op = oc_phi then begin
+       pphi1:= getsegmentpo(seg_localloc,po1^.par.phi.philist);
+       pphii1:= @pphi1^.items;
+       pphiie:= pphii1 + pphi1^.count;
+       while pphii1 < pphiie do begin
+        if pphii1^.ssa > int2 then begin
+         inc(pphii1^.ssa,ssadelta);
         end;
-        inc(listpo);
+        inc(pphii1);
        end;
       end;
-     }
      end;
      inc(po1);
     end;
