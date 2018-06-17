@@ -1,0 +1,19 @@
+program and2;
+
+procedure tt(out msbcarry: boolean);
+var
+ b1,b2: boolean;
+begin
+ b1:= false;
+ b2:= true;
+ msbcarry:= b1 and b2;
+end;
+
+var
+ b1: boolean;
+begin
+ tt(b1);
+ if not b1 then
+  exitcode:= 123;
+ end;
+end.
