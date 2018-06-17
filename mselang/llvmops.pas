@@ -4369,8 +4369,8 @@ begin
     inc(po2);
     inc(i1);
    end;
-   bcstream.emitbitcast(bcstream.allocval(sub.allocs.alloccount),
-                                               bcstream.typeval(das_pointer));
+   bcstream.emitbitcast(bcstream.allocval(sub.allocs.alloccount+
+                   sub.allocs.llvm.tempcount),bcstream.typeval(das_pointer));
                                  //ssa -1 = pointer to nestedallocs
 //   bcstream.resetssa();
   end;
