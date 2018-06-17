@@ -839,76 +839,72 @@ var
  ps,pe: pcard8;
  pd,pd0: pcard16;
 begin
- if source <> nil then
-  ps:= source; //data
-  pe:= ps+len;
-  pds:= getmem(string16allocsize+len*2); //max
-  pd:= pointer(pds+1);//data
-  pd0:= pd;           //startref
-  while ps < pe do
-   by1:= ps^;
-   inc(ps);
-   if by1 < $80 then //1 byte
-    pd^:= by1;
+ ps:= source; //data
+ pe:= ps+len;
+ pds:= getmem(string16allocsize+len*2); //max
+ pd:= pointer(pds+1);//data
+ pd0:= pd;           //startref
+ while ps < pe do
+  by1:= ps^;
+  inc(ps);
+  if by1 < $80 then //1 byte
+   pd^:= by1;
+  else
+   if by1 < $e0 then //2 byte
+    if (ps < pe) and (ps^ and $c0 = $80) then
+     wo1:= (card16(by1 and $1f) shl 6) or (ps^ and $3f);
+     pd^:= wo1;
+     if pd^ < $80 then
+      pd^:= errorcodepoint;  //overlong
+     end;
+     inc(ps);
+    else
+     pd^:= errorcodepoint;
+    end;
    else
-    if by1 < $e0 then //2 byte
-     if (ps < pe) and (ps^ and $c0 = $80) then
-      wo1:= (card16(by1 and $1f) shl 6) or (ps^ and $3f);
-      pd^:= wo1;
-      if pd^ < $80 then
-       pd^:= errorcodepoint;  //overlong
+    if (by1 < $f0) then //3byte
+     if (pe - ps >= 1) and (ps^ and $c0 = $80) and 
+                                         ((ps+1)^ and $c0 = $80) then
+      pd^:= (card16(by1) shl 12) or 
+            (card16(ps^ and $3f) shl 6) or ((ps+1)^ and $3f);
+      if pd^ < $0800 then
+       pd^:= errorcodepoint; //overlong
       end;
-      inc(ps);
+      inc(ps,2);
      else
       pd^:= errorcodepoint;
      end;
     else
-     if (by1 < $f0) then //3byte
-      if (pe - ps >= 1) and (ps^ and $c0 = $80) and 
-                                          ((ps+1)^ and $c0 = $80) then
-       pd^:= (card16(by1) shl 12) or 
-             (card16(ps^ and $3f) shl 6) or ((ps+1)^ and $3f);
-       if pd^ < $0800 then
-        pd^:= errorcodepoint; //overlong
+     if (by1 < $f8) then //4byte
+      if (pe - ps >= 2) and (ps^ and $c0 = $80) and ((ps+1)^ and $c0 = $80) and 
+                              ((ps+2)^ and $c0 = $80) then
+       if ((by1 <= $e0) and (ps^ < $90)) then //overlong
+        pd^:= errorcodepoint; //overlong;
+       else
+        pd^:= ((card16(by1 and $07) shl 8) or 
+               (card16(ps^ and $3f) shl 2) or
+               (card16((ps+1)^ and $30) shr 4)) + 
+                         (card16($d800) - card16($10000 shr 10));
+        inc(pd);
+        pd^:= (card16((ps+1)^ and $0f) shl 6) or 
+                                         ((ps+2)^ and $3f) or word($dc00);
        end;
-       inc(ps,2);
+       inc(ps,3);
       else
        pd^:= errorcodepoint;
       end;
      else
-      if (by1 < $f8) then //4byte
-       if (pe - ps >= 2) and (ps^ and $c0 = $80) and ((ps+1)^ and $c0 = $80) and 
-                               ((ps+2)^ and $c0 = $80) then
-        if ((by1 <= $e0) and (ps^ < $90)) then //overlong
-         pd^:= errorcodepoint; //overlong;
-        else
-         pd^:= ((card16(by1 and $07) shl 8) or 
-                (card16(ps^ and $3f) shl 2) or
-                (card16((ps+1)^ and $30) shr 4)) + 
-                          (card16($d800) - card16($10000 shr 10));
-         inc(pd);
-         pd^:= (card16((ps+1)^ and $0f) shl 6) or 
-                                          ((ps+2)^ and $3f) or word($dc00);
-        end;
-        inc(ps,3);
-       else
-        pd^:= errorcodepoint;
-       end;
-      else
-       pd^:= errorcodepoint;
-      end;
+      pd^:= errorcodepoint;
      end;
     end;
    end;
-   inc(pd);
   end;
-  pd^:= 0;
-  pds^.ref.count:= temprefcount;
-  pds^.len:= pd-pd0;
-  inc(pds); //data
- else
-  pds:= nil;
+  inc(pd);
  end;
+ pd^:= 0;
+ pds^.ref.count:= temprefcount;
+ pds^.len:= pd-pd0;
+ inc(pds); //data
  result:= pds;
 end;
 
@@ -937,25 +933,19 @@ var
  p1,pe: pcard8;
  p2,p3: pcard32;
 begin
-// pss:= source;
- if source <> nil then
-  p1:= source;
-//  dec(pss); //header
-  pe:= p1+len;
-  pds:= getmem(string32allocsize+len*4); //max
-  p2:= pointer(pds+1);
-  p3:= p2;
-  while p1 < pe do
-   getcodepoint(p1,pe,p2^);
-   inc(p2);
-  end;
-  p2^:= 0;
-  pds^.ref.count:= temprefcount;
-  pds^.len:= p2-p3;
-  inc(pds); //data
- else
-  pds:= nil;
+ p1:= source;
+ pe:= p1+len;
+ pds:= getmem(string32allocsize+len*4); //max
+ p2:= pointer(pds+1);
+ p3:= p2;
+ while p1 < pe do
+  getcodepoint(p1,pe,p2^);
+  inc(p2);
  end;
+ p2^:= 0;
+ pds^.ref.count:= temprefcount;
+ pds^.len:= p2-p3;
+ inc(pds); //data
  result:= pds;
 end;
 
@@ -1083,7 +1073,7 @@ procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer;
 begin
  result:= nil;
  if source <> nil then
-  result:= string32to8(source,(pstringheaderty(source)-1)^.len);
+  result:= string32to8(source,len);
  end;
 end;
 
@@ -1099,33 +1089,29 @@ var
  p2,p3: pcard16;
  c1: card32;
 begin
- if source <> nil then
-  p1:= source;
-  pe:= p1+len;
-  pds:= getmem(string16allocsize+len*2*2); //max
-                                            //todo: use less memory
-  p2:= pointer(pds+1);
-  p3:= p2;
-  while p1 < pe do
-   c1:= p1^;
-   if c1 < $10000 then
-    p2^:= c1;
-   else
-    c1:= c1 - $10000;
-    p2^:= (c1 shr 10) and $3ff or $d800;
-    inc(p2);
-    p2^:= c1 and $3ff or $dc00;
-   end;
+ p1:= source;
+ pe:= p1+len;
+ pds:= getmem(string16allocsize+len*2*2); //max
+                                           //todo: use less memory
+ p2:= pointer(pds+1);
+ p3:= p2;
+ while p1 < pe do
+  c1:= p1^;
+  if c1 < $10000 then
+   p2^:= c1;
+  else
+   c1:= c1 - $10000;
+   p2^:= (c1 shr 10) and $3ff or $d800;
    inc(p2);
-   inc(p1);
+   p2^:= c1 and $3ff or $dc00;
   end;
-  p2^:= 0;
-  pds^.ref.count:= temprefcount;
-  pds^.len:= p2-p3;
-  inc(pds); //data
- else
-  pds:= nil;
+  inc(p2);
+  inc(p1);
  end;
+ p2^:= 0;
+ pds^.ref.count:= temprefcount;
+ pds^.len:= p2-p3;
+ inc(pds); //data
  result:= pds;
 end;
 
