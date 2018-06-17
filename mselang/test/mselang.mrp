@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=880
- y=634
+ x=928
+ y=495
  cx=879
  cy=396
 macros.sta=9
@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -4003,7 +4003,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7330750
+    ao=An unhandled exception occured at $B7304860
     ae=
     aec=123
     ie=0
@@ -5862,8 +5862,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
-   c=8
+   a=0,665,4,string
+   c=9
     (
     kind=2
     a=0,648,1,stringtest
@@ -6023,6 +6023,28 @@ c=3
     a=0,648,1,stringconcat1 llvm
     teststate=1
     path=stringconcat1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,string1 llvm
+    teststate=1
+    path=string1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -12587,7 +12609,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=3
    (
    kind=1
@@ -13521,7 +13543,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=3
    (
    kind=1
@@ -13785,7 +13807,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=2
     (
     kind=2
@@ -13811,8 +13833,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,format1 llvm
-    teststate=2
+    a=0,648,0,format1 llvm
+    teststate=0
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13831,17 +13853,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc123defg
-    +abc1234defg
-    +abc00001234defg
-    +abc  00001234defg
-    +abc00001234  defg
-    +abcÄBC       def
+    ao=
     ae=
-    aec=0
+    aec=-1
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -13857,7 +13874,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -13937,7 +13954,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -14060,15 +14077,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=115
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=107
  0 0
  0 0
  0 0

@@ -1,0 +1,13 @@
+program string1;
+
+procedure flo64tostring1( precision: integer): string16;
+var
+ s1: string8;
+begin
+ s1:= result;
+ exitcode:= 123;
+end;
+
+begin
+ flo64tostring1(123);
+end.
