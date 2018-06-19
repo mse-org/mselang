@@ -1703,6 +1703,17 @@ begin
    if not result and (coo_type in aoptions) then begin
     result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
                               (dest^.h.bytesize = source1^.h.bytesize);
+    if result then begin
+     include(d.dat.flags,df_typeconversion);
+     if d.kind = ck_ref then begin
+      if dest^.h.datasize = das_none then begin
+       include(d.dat.ref.c.address.flags,af_aggregate);
+      end
+      else begin
+       exclude(d.dat.ref.c.address.flags,af_aggregate);
+      end;
+     end;
+    end;
    end;
    if result then begin
     if not pointerconv and (d.kind = ck_const) then begin

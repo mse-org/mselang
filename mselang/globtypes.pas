@@ -109,6 +109,9 @@ const
  storedsegments = [seg_globconst,seg_reloc,seg_classdef,seg_op,seg_rtti,
                    seg_intf,{seg_classintfcount,}seg_intfitemcount];
 type
+ dataflagty = (df_typeconversion);
+ dataflagsty = set of dataflagty;
+ 
  addressflagty = (af_nil,af_segment,af_local,af_stacktemp,af_tempvar,
                   af_external,
                   af_ssas2, 

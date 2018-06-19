@@ -178,6 +178,7 @@ procedure push(const avalue: datakindty); overload;
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
+                   const aflags: dataflagsty;
                    const opdatatype: typeallocinfoty);
 function getaddreftype(const aref: addressrefty): ptypedataty;
 function pushmanageaddr(const aref: addressrefty{; const atype: ptypedataty;}
@@ -205,6 +206,7 @@ procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
+                  const aflags: dataflagsty;
                   const opdatatype: typeallocinfoty);
 procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
 procedure pushinserttempaddress(const aaddress: tempaddressty;
@@ -2529,7 +2531,9 @@ const
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const aopoffset: int32;
           const aaddress: addressvaluety; const avarele: elementoffsetty;
-          const offset: dataoffsty; const aopdatatype: typeallocinfoty);
+          const offset: dataoffsty;
+          const aflags: dataflagsty;
+          const aopdatatype: typeallocinfoty);
 //todo: optimize
 
 var
@@ -2637,18 +2641,20 @@ end;
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
+                   const aflags: dataflagsty;
                          const opdatatype: typeallocinfoty);
 begin
- pushd(false,0,-1,address,varele,offset,opdatatype);
+ pushd(false,0,-1,address,varele,offset,aflags,opdatatype);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
+                  const aflags: dataflagsty;
                   const opdatatype: typeallocinfoty);
 begin
- pushd(true,stackoffset,aopoffset,address,varele,offset,opdatatype);
+ pushd(true,stackoffset,aopoffset,address,varele,offset,aflags,opdatatype);
 end;
 
 function getstackindex(const acontext: pcontextitemty): int32;
@@ -2970,6 +2976,7 @@ begin
   termgroupstart:= 0;
   indirection:= 0;
   ref.castchain:= 0;
+  flags:= [];
   if akind in factcontexts then begin
    fact.flags:= [];
   end;
@@ -3031,6 +3038,7 @@ var
  bo1,isstartoffset: boolean;
  ssabefore: int32;
  fla1: addressflagsty;
+ fla2: dataflagsty;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
@@ -3044,9 +3052,12 @@ begin
                                  d.dat.ref.c.address.indirectlevel);
    isstartoffset:= af_startoffset in d.dat.ref.c.address.flags;
    i3:= 0;
+   fla1:= [];
    if isstartoffset then begin
     i3:= d.dat.ref.offset;
     d.dat.ref.offset:= 0;
+    fla2:= d.dat.flags;
+    exclude(d.dat.flags,df_typeconversion);
     exclude(d.dat.ref.c.address.flags,af_startoffset);
    end;
    fla1:= d.dat.ref.c.address.flags;
@@ -3054,7 +3065,7 @@ begin
     i2:= 0;
     if d.dat.indirection = 0 then begin
      pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
-                i3,bitoptypes[das_pointer]);
+                i3,fla2,bitoptypes[das_pointer]);
      if not isstartoffset and (d.dat.ref.offset <> 0) then begin
       ssabefore:= getcontextssa(stackoffset);
       with insertitem(oc_offsetpoimm,stackoffset,-1)^ do begin
@@ -3072,7 +3083,7 @@ begin
    end
    else begin
     pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
-                i3,bitoptypes[das_pointer]);
+                i3,fla2,bitoptypes[das_pointer]);
     if (af_stacktemp in d.dat.ref.c.address.flags) and isstartoffset then begin
                    //probably "with" statement
      ssabefore:= getcontextssa(stackoffset);
@@ -3199,7 +3210,8 @@ var
     opdata1:= getopdatatype(d.dat.datatyp.typedata,
                                            d.dat.datatyp.indirectlevel);
     pushinsertdata(stackoffset,-1,d.dat.ref.c.address,
-                             d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
+                             d.dat.ref.c.varele,d.dat.ref.offset,
+                             d.dat.flags,opdata1);
    end;
   end;
  end; //doref

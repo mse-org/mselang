@@ -523,6 +523,7 @@ type
  datacontextty = record
   termgroupstart: int32;
   indirection: int32; //pending
+  flags: dataflagsty;
   datatyp: typeinfoty;
   case contextkindty of
    ck_const:(
