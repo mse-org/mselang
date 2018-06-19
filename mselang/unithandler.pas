@@ -869,7 +869,7 @@ begin
 {$endif}
 //todo: use mmap(), problem: no terminating 0.
   result:= parseunit(readfiledatastring(filepath),defaultdialect(filepath),
-                                                                   aunit,false{true});
+                                                    aunit,{false}true);
 {$ifdef mse_debugparser}
   writeln('***************************************** usesend');
   writeln(filepath);
