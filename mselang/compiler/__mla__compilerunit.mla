@@ -1989,13 +1989,46 @@ begin
  res^.vstring32:= value;
 end;
 
+const          //b7b6b5b4b3b2b1b0
+ mantissamask = $000fffffffffffff;
+ msbmask = $08; //for b6
+ 
 procedure __mla__frac64(value: flo64): flo64;
-begin                  //todo: optimize, more exact
+var
+ exp: int16;
+begin
+ result:= 0;
+ with flo64recty(value) do
+  exp:= ((wo3 and %0111111111110000) shr 4) - 1023;
+  if exp < 0 then
+   if exp <> 1023 then
+    result:= value;
+   end;
+  else
+   if exp < 52 then
+    flo64recty(result).qwo0:= (qwo0 shl exp) and mantissamask;
+    if result <> 0 then
+     exp:= 1022;
+     while flo64recty(result).by6 and msbmask = 0 do
+      flo64recty(result).qwo0:= flo64recty(result).qwo0 shl 1;
+      dec(exp);
+     end;
+     flo64recty(result).qwo0:= flo64recty(result).qwo0 and mantissamask;
+     flo64recty(result).wo3:= flo64recty(result).wo3 or (exp shl 4);
+     if by7 and $80 <> 0 then
+      flo64recty(result).by7:= flo64recty(result).by7 or $80;
+     end;
+    end;
+   end; 
+  end;
+ end;
+{
  if value < 0 then
   result:= value - (floor(value)+1);
  else
   result:= value - floor(value);
  end;
+}
 end;
 
 end.

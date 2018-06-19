@@ -50,7 +50,26 @@ type
  pchar8 = ^char8; 
  pchar16 = ^char16; 
  pchar32 = ^char32; 
- 
+
+{$ifdef fpc}
+ flo64recty = packed record       //little endian
+  case integer of
+   0: (by0,by1,by2,by3,by4,by5,by6,by7: byte);
+   1: (wo0,wo1,wo2,wo3: word);
+   2: (lwo0,lwo1: longword);
+   3: (qwo0: qword);
+ end;
+{$else}
+//63,     62..52, 51..0
+//sign(1) exp(11) mant(52)
+ flo64recty = packed record       //little endian
+  (by0,by1,by2,by3,by4,by5,by6,by7: byte);
+  (wo0,wo1,wo2,wo3: word);
+  (lwo0,lwo1: longword);
+  (qwo0: qword);
+ end;
+{$endif}
+
  refcountty = int32;
  managedsizety = ptrint;
  stringsizety = managedsizety;
