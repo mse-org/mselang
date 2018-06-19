@@ -1616,8 +1616,9 @@ begin
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
+      c1:= d.number.value;
       initdatacontext(toppo^.d,ck_const);
-      setnumberconst(toppo,d.number.value);
+      setnumberconst(toppo,c1);
      end;
     end;
    end;

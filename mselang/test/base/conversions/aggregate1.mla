@@ -1,0 +1,16 @@
+program aggregate1;
+type
+ flo64recty = packed record       //little endian
+  (by0,by1,by2,by3,by4,by5,by6,by7: byte);
+  (wo0,wo1,wo2,wo3: word);
+  (lwo0,lwo1: longword);
+  (qwo0: qword);
+ end;
+
+var
+ b1: card8;
+ f1: flo64;
+begin
+ flo64recty(f1).by7:= 123;
+ exitcode:= flo64recty(f1).by7;
+end.
