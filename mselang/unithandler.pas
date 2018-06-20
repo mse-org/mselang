@@ -552,6 +552,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('AFTERIMPLUSES');
 {$endif}
+ if not parseimplementations() then begin
+  info.s.stopparser:= true;
+  exit;
+ end;
  markimplementationstart();
  checkpendingmanagehandlers();
  with info do begin

@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
@@ -2060,7 +2060,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=36
     (
     kind=1
@@ -3002,8 +3002,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
-   c=21
+   a=0,665,4,conversions
+   c=22
     (
     kind=2
     a=0,648,1,potoint32
@@ -3466,6 +3466,28 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,aggregate1 llvm
+    teststate=1
+    path=aggregate1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
    teststate=1
    path=conversions/
    comment=
@@ -3834,7 +3856,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,enum
+   a=0,664,4,enum
    c=4
     (
     kind=2
@@ -4025,7 +4047,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B723EFF0
+    ao=An unhandled exception occured at $B731B9E0
     ae=
     aec=123
     ie=0
@@ -5884,7 +5906,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=9
     (
     kind=2
@@ -13021,7 +13043,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,units
+  a=0,665,4,units
   c=8
    (
    kind=2
@@ -13069,8 +13091,8 @@ c=3
    )
    (
    kind=2
-   a=0,640,0,unituses2
-   teststate=2
+   a=0,648,1,unituses2
+   teststate=1
    path=unituses2.mla
    comment=
    cc=${mlc}
@@ -13084,9 +13106,9 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
-   aec=0
+   ao=
+   ae=
+   aec=123
    ie=0
    )
    (
@@ -13565,7 +13587,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=3
    (
    kind=1
@@ -13829,7 +13851,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,665,5,string
    c=2
     (
     kind=2
@@ -13855,8 +13877,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,format1 llvm
-    teststate=1
+    a=0,648,2,format1 llvm
+    teststate=2
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -13885,7 +13907,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=string/
    comment=
    cc=
@@ -13901,7 +13923,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -13981,7 +14003,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -14104,26 +14126,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=154
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=135
  0 0
  0 0
  0 0

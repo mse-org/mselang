@@ -7,7 +7,7 @@ procedure format(a: int32);
 //  exitcode:= a;
  end; //formaterror()
 
-{$internaldebug on}
+//{$internaldebug on}
  procedure getnum(v: int32);
  begin
   formaterror();
@@ -24,7 +24,7 @@ procedure format1(a: int32);
   exitcode:= a;
  end; //formaterror()
 
-{$internaldebug on}
+//{$internaldebug on}
  procedure getnum(v: int32);
  begin
   formaterror();

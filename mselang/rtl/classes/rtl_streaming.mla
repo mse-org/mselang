@@ -13,7 +13,7 @@ unit rtl_streaming;
 interface
 uses
  rtl_fpccompatibility;
-{$internaldebug on} 
+//{$internaldebug on} 
 type
  tfiler = class(tobject)
  end;

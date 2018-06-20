@@ -49,6 +49,7 @@ function parse(const input: string; const afilename: filenamety;
 function parseunit(const input: string; const adialect: dialectty;
                    const aunit: punitinfoty;
                    const ainterfaceonly: boolean): boolean;
+function parseimplementations(): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
 procedure pushdummycontext(const akind: contextkindty);
@@ -506,6 +507,30 @@ begin
  end;
 end;
 
+function parseimplementations(): boolean;
+var
+ p1: punitinfoty;
+begin
+ result:= true;
+ with info do begin
+  if (unitlevel = 1) then begin 
+                      //todo: parse implementations as soon as possible
+   while (intfparsedchain <> 0) and result do begin
+   {$ifdef mse_debugparser}
+     writeln();
+     writeln('***************************************** implementation');
+     writeln(punitlinkinfoty(
+            getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
+   {$endif}
+    p1:= punitlinkinfoty(
+               getlistitem(intfparsedlinklist,intfparsedchain))^.ref;
+    deletelistitem(intfparsedlinklist,intfparsedchain);
+    result:= parseunit('',dia_none,p1,false);
+   end;
+  end;
+ end;
+end; //parseimplementations
+
 function parseunit(const input: string; const adialect: dialectty; 
            const aunit: punitinfoty;
            const ainterfaceonly: boolean): boolean;
@@ -532,27 +557,6 @@ var
   {$endif}
   end;
  end;//popparent
-
- procedure parseimplementations();
- begin
-  with info do begin
-   if (unitlevel = 1) then begin 
-                       //todo: parse implementations as soon as possible
-    while (intfparsedchain <> 0) and result do begin
-    {$ifdef mse_debugparser}
-      writeln();
-      writeln('***************************************** implementation');
-      writeln(punitlinkinfoty(
-             getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
-    {$endif}
-     result:= parseunit('',dia_none,punitlinkinfoty(
-                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,
-                                                      false);
-     deletelistitem(intfparsedlinklist,intfparsedchain);
-    end;
-   end;
-  end;
- end; //parseimplementations
 
 var
  po1,po2: pchar;
@@ -591,7 +595,7 @@ begin
     parseimplementations();
     s:= statebefore;
     dec(unitlevel);
-    if unitlevel = 0 then begin
+    if (unitlevel = 0) and not (co_llvm in o.compileoptions) then begin
      with pstartupdataty(getoppo(0))^ do begin
       globdatasize:= globdatapo;
      end;
@@ -639,6 +643,8 @@ begin
 
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
                             //parse from start
+   s.debugoptions:= o.debugoptions;
+   s.compilerswitches:= o.compilerswitches;
    s.input:= input;
    s.sourcestart:= pchar(input); //todo: use filecache and include stack
    s.source.po:= s.sourcestart;
@@ -1053,8 +1059,10 @@ parseend:
    end;
    s.stacktop:= statebefore.stacktop;
    
-   parseimplementations();
-   if (unitlevel = 1) then begin 
+   if result then begin 
+    result:= parseimplementations();
+   end;
+   if (unitlevel = 1) and not (co_llvm in o.compileoptions) then begin 
     if result then begin
      with pstartupdataty(getoppo(0))^ do begin
       globdatasize:= globdatapo;
@@ -1203,8 +1211,13 @@ begin
     setlength(contextstack,stackdepth);
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
-    opcount:= startupoffsetnum;
-    allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
+    if co_llvm in o.compileoptions then begin
+     opcount:= 0;
+    end
+    else begin
+     opcount:= startupoffsetnum;
+     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
+    end;
     fillchar(compilersubs,sizeof(compilersubs),0);
     if co_llvm in o.compileoptions then begin
      beginparser(llvmops.getoptable());

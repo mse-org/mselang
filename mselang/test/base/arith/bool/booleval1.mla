@@ -5,7 +5,7 @@ begin
  result:= true;
  exitcode:= 123;
 end;
-{$internaldebug on}
+//{$internaldebug on}
 var
  bo1: bool1;
 begin

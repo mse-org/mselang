@@ -247,6 +247,7 @@ var
      ek_var: begin
       with pvardataty(po)^ do begin
        updateref(vf.typ);
+       updateref(vf.defaultconst);
        updateref(vf.next);
       end;
      end;
@@ -492,8 +493,12 @@ begin
    end;
 //   restoresubsegment(stat1);
    if info.modularllvm then begin
+    resetsegment(seg_op);
+    info.opcount:= 0;
+   {
     setsegmenttop(seg_op,aunit^.opseg.start);
     info.opcount:= aunit^.opstart;
+   }
     if result and (co_objmodules in info.o.compileoptions) then begin
      result:= compileobjmodule(aunit);
     {$ifdef mse_debugparser}

@@ -2006,18 +2006,18 @@ begin
    end;
   else
    if exp < 52 then
-    flo64recty(result).qwo0:= (qwo0 shl exp) and mantissamask;
+    flo64recty(result).qwo0:= (qwo0 shl (exp)) and mantissamask;
     if result <> 0 then
      exp:= 1022;
      while flo64recty(result).by6 and msbmask = 0 do
       flo64recty(result).qwo0:= flo64recty(result).qwo0 shl 1;
       dec(exp);
      end;
-     flo64recty(result).qwo0:= flo64recty(result).qwo0 and mantissamask;
-     flo64recty(result).wo3:= flo64recty(result).wo3 or (exp shl 4);
-     if by7 and $80 <> 0 then
-      flo64recty(result).by7:= flo64recty(result).by7 or $80;
-     end;
+     flo64recty(result).qwo0:= (flo64recty(result).qwo0 shl 1) and mantissamask;
+    end;
+    flo64recty(result).wo3:= flo64recty(result).wo3 or (exp shl 4);
+    if by7 and $80 <> 0 then
+     flo64recty(result).by7:= flo64recty(result).by7 or $80;
     end;
    end; 
   end;

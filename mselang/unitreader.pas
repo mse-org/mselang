@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2015 by Martin Schreiber
+{ MSElang Copyright (c) 2015-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -532,6 +532,9 @@ begin
        ek_var: begin
         with pvardataty(po)^ do begin
          if not updateref(vf.typ,id1) then begin
+          goto errorlab;
+         end;
+         if not updateref(vf.defaultconst,id1) then begin
           goto errorlab;
          end;
          if not updateref(vf.next,id1) then begin

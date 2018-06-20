@@ -198,7 +198,7 @@ begin
   end;
  end;
 end;
-
+var testvar: punitinfoty;
 procedure handleprogbegin();
 var
  ad1: listadty;
@@ -248,8 +248,10 @@ begin
   end;
 
   s.unitinfo^.mainad:= opcount;
-  with getoppo(startupoffsetnum)^ do begin
-   par.beginparse.mainad:= opcount;
+  if not (co_llvm in o.compileoptions) then begin
+   with getoppo(startupoffsetnum)^ do begin
+    par.beginparse.mainad:= opcount;
+   end;
   end;
   resetssa();
   with contextstack[s.stackindex] do begin
@@ -283,6 +285,7 @@ begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls
     with punitlinkinfoty(list+ad1)^ do begin
+testvar:= ref;
      with ref^ do begin
       if modularllvm then begin
        if internalsubnames[isub_ini] > 0 then begin

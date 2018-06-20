@@ -1645,6 +1645,8 @@ begin
 end;
 
 function isfloatconst(): boolean;
+var
+ p1: pcontextdataty;
 begin
  result:= false;
  with info,contextstack[s.stacktop].d do begin
@@ -1665,10 +1667,11 @@ begin
     end;
     kind:= dk_float;
     result:= true;
-    with contextstack[s.stackindex] do begin
-     d.kind:= ck_const;
-     d.dat.constval:= dat.constval;
-     d.dat.datatyp:= sysdatatypes[st_flo64];
+    p1:= @contextstack[s.stackindex].d;
+    initdatacontext(p1^,ck_const);
+    with p1^ do begin
+     dat.constval:= dat.constval;
+     dat.datatyp:= sysdatatypes[st_flo64];
     end;
    end;
   end;

@@ -53,7 +53,7 @@ const
        ('y','z','a','f','p','n','u','m',
         ' ',
         'k','M','G','T','P','E','Z','Y');
-        
+//{$internaldebug on}        
 procedure tryintexp10(aexp: integer; out value: flo64): boolean;
 var
  do1: flo64;

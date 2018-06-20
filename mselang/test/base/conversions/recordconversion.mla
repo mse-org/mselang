@@ -6,6 +6,6 @@ begin
  i1:= 2;
  po1:= @i1;
  inc(po1,i1);
-{$internaldebug on}
+//{$internaldebug on}
  exitcode:= (pointer(po1)-@i1)+123-8;
 end.

@@ -13,6 +13,6 @@ var
 begin
  c1:= 123;
  p1:= @c1;
-{$internaldebug on}
+//{$internaldebug on}
  test(p1^);
 end.

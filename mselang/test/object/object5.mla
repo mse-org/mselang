@@ -1,5 +1,5 @@
 program object5;
-{$internaldebug on}
+//{$internaldebug on}
 type
  objty = object [zeroinit]
   f1: int32;

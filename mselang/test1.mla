@@ -1,6 +1,6 @@
 //test
 program test;
-{$internaldebug on}
+//{$internaldebug on}
 
 procedure flo64tostring1( precision: integer): string16;
 

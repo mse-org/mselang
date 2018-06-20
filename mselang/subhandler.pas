@@ -485,7 +485,7 @@ begin
  with info,contextstack[s.stackindex].d do begin
   kind:= ck_paramdef;
   paramdef.kind:= pk_value;
-  paramdef.defaultconst:= -1;
+  paramdef.defaultconst:= 0;
  end;
 end;
 
@@ -837,7 +837,7 @@ begin
   else begin
    d.paramdef.kind:= pk_var;
   end;
-  d.paramdef.defaultconst:= -1;
+  d.paramdef.defaultconst:= 0;
  end;
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_ident;
