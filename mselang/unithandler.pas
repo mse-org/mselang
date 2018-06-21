@@ -478,11 +478,9 @@ begin
   end;
  }
   include(s.unitinfo^.state,us_interfaceparsed);
-{
   if (co_compilefileinfo in o.compileoptions) and s.interfaceonly then begin
    writeln('impl '+quotefilename(s.unitinfo^.filepath));
   end;
-}
   if us_implementation in s.unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
   end
@@ -1047,9 +1045,11 @@ begin
   end;
  end;
  po1^.data:= result;
+{
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;
+}
 end;
 
 procedure tunitlist.bcfilenameiterator(const aitem: phashdataty);
@@ -2031,6 +2031,10 @@ begin
   end;
   initcompilersubs(aunit);
   if modularllvm then begin
+   if not (us_program in aunit^.state) then begin
+    aunit^.mainfini:= 
+        aunit^.llvmlists.globlist.addexternalsimplesub(tks___mla__mainfini,[]);
+   end;
    result:= writeunitfile(aunit);
    freeandnil(aunit^.llvmlists);
   end;

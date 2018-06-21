@@ -281,6 +281,7 @@ begin
    end;
   end;
 *) 
+  invertlist(unitlinklist,unitchain); //init first unit first
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls
@@ -302,6 +303,11 @@ testvar:= ref;
     end;
    end;
   end;
+  with info.s.unitinfo^ do begin
+   if internalsubs[isub_ini] <> 0 then begin
+    callinternalsub(internalsubs[isub_ini]);
+   end;
+  end;
  end;
 end;
 
@@ -311,7 +317,7 @@ var
  ad2: opaddressty;
  hasfini: boolean;
  finicall: opaddressty;
- i1: int32;
+ i1,i2: int32;
  managedtempsize1: int32;
 begin
 {$ifdef mse_debugparser}
@@ -331,13 +337,14 @@ begin
   writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   handleunitend();
-  invertlist(unitlinklist,unitchain);
+  invertlist(unitlinklist,unitchain); //fini last unit first
   hasfini:= false;
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert fini calls
     with punitlinkinfoty(list+ad1)^,ref^ do begin
-     if internalsubs[isub_fini] <> 0 then begin
+testvar:= ref;
+     if internalsubnames[isub_fini] <> 0 then begin
       hasfini:= true;
       break;
      end;
@@ -347,7 +354,6 @@ begin
   end;
   if hasfini then begin
    finicall:= opcount;
-             //todo: what about precompiled units with halt()?
    with additem(oc_call)^.par.callinfo do begin
     flags:= [];
     linkcount:= -1;
@@ -392,37 +398,50 @@ begin
    end;  
   end;
   
+//  if hasfini then begin
+  i1:= startsimplesub(tks_fini,false,true,tks___mla__mainfini);
   if hasfini then begin
-   with getoppo(startupoffsetnum)^ do begin
-    par.beginparse.finisub:= opcount;
-   end;
-   i1:= startsimplesub(tks_fini,false);
-   with getoppo(finicall)^.par.callinfo do begin
-    ad.globid:= getoppo(i1)^.par.subbegin.globid;
-    ad.ad:= i1-1;
-   end;
-   with unitlinklist do begin
-    ad1:= unitchain;
-    while ad1 <> 0 do begin         //insert fini calls
-     with punitlinkinfoty(list+ad1)^ do begin
-      with ref^ do begin
-       if modularllvm then begin
-        if internalsubnames[isub_fini] > 0 then begin
-         callinternalsub(ref,isub_fini);
-        end;
-       end
-       else begin
-        if internalsubs[isub_fini] <> 0 then begin
-         callinternalsub(internalsubs[isub_fini]);
-        end;
-       end;
-      end;
-      ad1:= header.next;
-     end;
+   with info.s.unitinfo^ do begin
+    mainfini:= getoppo(i1)^.par.subbegin.globid;
+    if internalsubs[isub_fini] <> 0 then begin
+     callinternalsub(internalsubs[isub_fini]);
     end;
    end;
-   endsimplesub(false);
   end;
+  i2:= 0;
+  if not (co_llvm in info.o.compileoptions) then begin
+   i2:= startupoffsetnum;
+  end;
+  with getoppo(i2)^ do begin
+   par.beginparse.finisub:= i1;
+  end;
+  with getoppo(finicall)^.par.callinfo do begin
+   ad.globid:= getoppo(i1)^.par.subbegin.globid;
+   ad.ad:= i1-1;
+  end;
+  with unitlinklist do begin
+   ad1:= unitchain;
+   while ad1 <> 0 do begin         //insert fini calls
+    with punitlinkinfoty(list+ad1)^ do begin
+testvar:= ref;
+     with ref^ do begin
+      if modularllvm then begin
+       if internalsubnames[isub_fini] > 0 then begin
+        callinternalsub(ref,isub_fini);
+       end;
+      end
+      else begin
+       if internalsubs[isub_fini] <> 0 then begin
+        callinternalsub(internalsubs[isub_fini]);
+       end;
+      end;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  endsimplesub(false);
+//  end;
   dec(s.stackindex);
  end;
 end;

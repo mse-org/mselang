@@ -479,7 +479,7 @@ begin
     if result then begin
      aunit^.bcfilepath:= fna1;
      try
-      llvmops.run(llvmout1,info.unitlevel = 1,aunit^.opseg);
+      llvmops.run(llvmout1,info.unitlevel = 1,aunit^.mainfini,aunit^.opseg);
      finally
       llvmout1.free();
       if co_llvm in info.o.compileoptions then begin

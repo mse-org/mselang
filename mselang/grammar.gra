@@ -65,7 +65,7 @@
  '.self'
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.inizeroed','.fini','.incref','.decref','.decrefindi','.destroy'
- '.method','.operators','.operatorsright','.system'
+ '.method','.operators','.operatorsright','.system','.__mla__mainfini'
 @.tokens
  'mselang','pascal','system'
  'nil','result','exitcode','sizeof','defined','break','continue','self'

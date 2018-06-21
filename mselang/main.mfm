@@ -177,6 +177,7 @@ object mainfo: tmainfo
         '*.mla'
       )
     )
+    controller.options = [fdo_chdir, fdo_savelastdir]
     reffontheight = 14
   end
   object llvm: tbooleanedit

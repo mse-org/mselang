@@ -24,13 +24,13 @@ const
  mse_DWARF_VERSION = 2;
  
 //todo: handle shiftcount overflow
- 
+
 function getoptable: poptablety;
 //function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
 procedure run(const atarget: tllvmbcwriter; const amain: boolean;
-                                                const opseg: subsegmentty);
+                        const afinihandler: int32; const opseg: subsegmentty);
  
 implementation
 uses
@@ -663,12 +663,14 @@ begin
  startllvmcode(); 
  with pc^.par.beginparse do begin
 //  llvmops.exitcodeaddress:= exitcodeaddress;
+{
   if finisub = 0 then begin
    llvmops.finihandler:= 0;
   end
   else begin
    llvmops.finihandler:= getoppo(finisub)^.par.subbegin.globid;
   end;
+}
  end;
 end;
 
@@ -764,7 +766,7 @@ procedure haltop();
 begin
  if finihandler <> 0 then begin
   bcstream.emitcallop(false,bcstream.globval(finihandler),[]);
- end;  
+ end;
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
  end;
@@ -5717,6 +5719,7 @@ var
  target: tllvmbcwriter; //for debugging
 
 procedure run(const atarget: tllvmbcwriter; const amain: boolean;
+                             const afinihandler: int32;
                                  const opseg: subsegmentty);
 var
  endpo: pointer;
@@ -5735,7 +5738,7 @@ begin
  bcstream:= atarget;
  codestarted:= false;
  stop:= false;
- finihandler:= 0;
+ finihandler:= afinihandler;
  ismain:= amain;
  pc:= getsegmentbase(seg_op)+opseg.start;
  endpo:= pointer(pc)+opseg.size;

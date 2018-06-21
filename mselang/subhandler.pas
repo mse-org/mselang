@@ -159,10 +159,12 @@ procedure begintempvars();
 procedure endtempvars();
 procedure settempvars(var allocs: suballocllvmty);
 function startsimplesub(const aname: identty; const pointerparam: boolean; 
-                                   const global: boolean = false): opaddressty;
+                                   const global: boolean = false;
+                                   const aglobname: identty = 0): opaddressty;
 function startsimplesub(const asub: pinternalsubdataty; 
                               const pointerparam: boolean; 
-                                const global: boolean = false): opaddressty;
+                                const global: boolean = false;
+                                   const aglobname: identty = 0): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
@@ -1313,7 +1315,8 @@ begin
 end;
 
 function startsimplesub1(const aname: identty; const pointerparam: boolean;
-               const global: boolean; out aglobid,anameid: int32): opaddressty;
+               const global: boolean; const aglobname: identty;
+               out aglobid,anameid: int32): opaddressty;
 var
  m1: metavaluety;
  var1: vardataty;
@@ -1353,10 +1356,16 @@ begin
        subbegin.globid:= llvmlists.globlist.addsubvalue([],li_external,
                                                                 noparams);
       end;
-      inc(info.s.unitinfo^.nameid);
-      anameid:= info.s.unitinfo^.nameid;
-      llvmlists.globlist.namelist.addname(info.s.unitinfo,
+      if aglobname > 0 then begin
+       llvmlists.globlist.namelist.addname(getidentname2(aglobname),
+                                                             subbegin.globid);
+      end
+      else begin
+       inc(info.s.unitinfo^.nameid);
+       anameid:= info.s.unitinfo^.nameid;
+       llvmlists.globlist.namelist.addname(info.s.unitinfo,
                                      info.s.unitinfo^.nameid,subbegin.globid);
+      end;
      end
      else begin
       if pointerparam then begin
@@ -1427,19 +1436,21 @@ begin
 end;
 
 function startsimplesub(const aname: identty; const pointerparam: boolean;
-                                   const global: boolean = false): opaddressty;
+                                   const global: boolean = false;
+                                   const aglobname: identty = 0): opaddressty;
 var
  i1,i2: int32;
 begin
- result:= startsimplesub1(aname,pointerparam,global,i1,i2);
+ result:= startsimplesub1(aname,pointerparam,global,aglobname,i1,i2);
 end;
 
 function startsimplesub(const asub: pinternalsubdataty; 
                               const pointerparam: boolean; 
-                                const global: boolean = false): opaddressty;
+                                const global: boolean = false;
+                                const aglobname: identty = 0): opaddressty;
 begin
- result:= startsimplesub1(datatoele(asub)^.header.name,pointerparam,global,
-                                                   asub^.globid,asub^.nameid);
+ result:= startsimplesub1(datatoele(asub)^.header.name,pointerparam,
+                                global,aglobname,asub^.globid,asub^.nameid);
 end;
 
 procedure settempvars(var allocs: suballocllvmty);

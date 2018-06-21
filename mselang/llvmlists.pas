@@ -443,6 +443,9 @@ type
    procedure inccount();
    function addnoinit(const atyp: int32; const alinkage: linkagety;
                       const externunit: boolean): int32;
+   function addexternalsimplesub1({const aunit: pointer; //punitinfoty
+          const anameid: int32;} const aflags: internalsubflagsty): int32;
+                                                            //returns listid
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
@@ -467,6 +470,9 @@ type
                                                             //returns listid
    function addexternalsimplesub(const aunit: pointer; //punitinfoty
           const anameid: int32; const aflags: internalsubflagsty): int32;
+                                                            //returns listid
+   function addexternalsimplesub(const aname: identty;
+                               const aflags: internalsubflagsty): int32;
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty;
                            const aname: identnamety): int32;  //returns listid
@@ -2668,8 +2674,8 @@ begin
  flastitem^:= dat1;
 end;
 
-function tgloballocdatalist.addexternalsimplesub(const aunit: pointer;
-             const anameid: int32; const aflags: internalsubflagsty): int32;
+function tgloballocdatalist.addexternalsimplesub1({const aunit: pointer;
+             const anameid: int32;} const aflags: internalsubflagsty): int32;
 var
  dat1: globallocdataty;
 begin
@@ -2682,12 +2688,30 @@ begin
  else begin
   dat1.typeindex:= ftypelist.simplesub;
  end;
+{
  fnamelist.addname(aunit,anameid,result);
  flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
+}
  dat1.kind:= gak_sub;
  dat1.initconstindex:= -1;
  inccount();
  flastitem^:= dat1;
+end;
+
+function tgloballocdatalist.addexternalsimplesub(const aunit: pointer;
+             const anameid: int32; const aflags: internalsubflagsty): int32;
+begin
+ result:= addexternalsimplesub1(aflags);
+ fnamelist.addname(aunit,anameid,result);
+ flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
+end;
+
+function tgloballocdatalist.addexternalsimplesub(const aname: identty;
+               const aflags: internalsubflagsty): int32;
+begin
+ result:= addexternalsimplesub1(aflags);
+ fnamelist.addname(getidentname2(aname),result);
+// flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
 end;
 
 procedure tgloballocdatalist.updatesubtype(const avalue: psubdataty);

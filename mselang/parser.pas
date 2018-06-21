@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -590,6 +590,9 @@ begin
   if o.compileoptions * [co_modular,co_build] = [co_modular] then begin
    if not (us_invalidunitfile in aunit^.state) and 
                                       readunitfile(aunit) then begin
+    with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
+     ref:= aunit;
+    end;
     initcompilersubs(aunit);
     result:= true;
     parseimplementations();
@@ -1081,6 +1084,9 @@ parseend:
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;
  end;
+ with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
+  ref:= aunit;
+ end;
 {
  if result and (co_writertunits in info.compileoptions) then begin
   result:= writeunitfile(aunit);
@@ -1258,6 +1264,7 @@ begin
       end;
      end;
      if result then begin
+      include(unit1^.state,us_invalidunitfile); //force compilation of main unit
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
       if result and (o.compileoptions * [co_llvm,co_buildexe] = 
                                               [co_llvm,co_buildexe]) then begin

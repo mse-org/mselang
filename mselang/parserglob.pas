@@ -742,6 +742,7 @@ type
   segments: unitsegmentinfoty;
 //  classdefbuffer: bufferinfoty;
   mainad: int32;
+  mainfini: int32;
     
   state: unitstatesty;
   dialect: dialectty;

@@ -129,7 +129,7 @@ begin
                              err_cannotcreatetargetfile,[filename1]) then begin
       seg1:= getfullsegment(seg_op,startupoffset);
       try
-       llvmops.run(llvmstream,true,seg1);
+       llvmops.run(llvmstream,true,info.s.unitinfo^.mainfini,seg1);
       except
        on e: exception do begin
         errormessage1(e.message,[]);

@@ -199,7 +199,8 @@ begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
        end
        else begin
-        llvmops.run(targetstream,true,getfullsegment(seg_op,0{startupoffset}));
+        llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
+                           getfullsegment(seg_op,0{startupoffset}));
        {$ifdef mse_debugparser}
         writeln('***************** LLVM BC gen end ***********');
        {$endif}
