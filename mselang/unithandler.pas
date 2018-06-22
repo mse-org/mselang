@@ -427,7 +427,7 @@ begin
    dec(po1);
    po1^:= loadunit(int1);
    if po1^ = nil then begin
-    s.stopparser:= true;
+    include(s.state,ps_stop);
     break;
    end;
    if ar1[int2] <> 0 then begin
@@ -478,7 +478,8 @@ begin
   end;
  }
   include(s.unitinfo^.state,us_interfaceparsed);
-  if (co_compilefileinfo in o.compileoptions) and s.interfaceonly then begin
+  if (co_compilefileinfo in o.compileoptions) and 
+                            (ps_interfaceonly in s.state) then begin
    writeln('impl '+quotefilename(s.unitinfo^.filepath));
   end;
   if us_implementation in s.unitinfo^.state then begin
@@ -538,9 +539,9 @@ begin
   end;
  }
   s.unitinfo^.usescache.clear(); //override interface uses
-  if s.interfaceonly then begin
+  if ps_interfaceonly in s.state then begin
    saveparsercontext(s.unitinfo^.implstart,s.stacktop-s.unitinfo^.stackstart+1);
-   s.stopparser:= true;
+   include(s.state,ps_stop);
   end;
  end;
 end;
@@ -551,7 +552,7 @@ begin
  outhandle('AFTERIMPLUSES');
 {$endif}
  if not parseimplementations() then begin
-  info.s.stopparser:= true;
+  info.s.state:= info.s.state + [ps_abort,ps_stop];
   exit;
  end;
  markimplementationstart();

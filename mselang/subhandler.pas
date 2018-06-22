@@ -1726,7 +1726,7 @@ var
        identerror(curstackindex-s.stackindex,err_duplicateidentifier);
        err1:= true;
       end;
-      if s.stopparser then begin
+      if ps_stop in s.state then begin
        exit; //recursive ancestor
       end;
       paramsbuffer[i3].varele:= ele.eledatarel(var1);
@@ -2150,7 +2150,8 @@ begin
   if sf_functionx in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
    curparamend:= curparam + 1;
-   if not doparams(true) or s.stopparser then begin //increments curparam
+   if not doparams(true) or (ps_stop in s.state) then begin 
+                            //increments curparam
                             //recursive class or object parent
     exit;
    end;

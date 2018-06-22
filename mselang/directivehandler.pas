@@ -84,7 +84,7 @@ begin
  outhandle('ABORT');
 {$endif}
  with info do begin
-  s.stopparser:= true;
+  include(s.state,ps_stop);
   errormessage(err_abort,[]);
   dec(s.stackindex);
  end;

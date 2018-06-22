@@ -812,6 +812,9 @@ type
   gcccommand: msestring;
   exefile: filenamety;
  end;
+
+ parserstatety = (ps_stop,ps_stoponerror,ps_interfaceonly,ps_abort);
+ parserstatesty = set of parserstatety;
  
  savedparseinfoty = record
   filename: filenamety;
@@ -830,9 +833,7 @@ type
   unitinfo: punitinfoty;
   ssa: ssainfoty;
   pc: pcontextty;
-  stopparser: boolean;
-  stoponerror: boolean;
-  interfaceonly: boolean;
+  state: parserstatesty;
   currentstatementflags: statementflagsty;
   currentopcodemarkchain: linkindexty;
   trystack: listadty;

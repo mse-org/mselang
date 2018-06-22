@@ -617,12 +617,12 @@ begin
    writeln('<<<<<<< '+str1);
 {$endif}
    if level1 <= stoperrorlevel then begin
-    s.stopparser:= true;
+    include(s.state,ps_stop);
    end;
    if level1 <= errorerrorlevel then begin
     errorfla:= true;
     if (s.unitinfo <> nil) and s.unitinfo^.stoponerror then begin
-     s.stopparser:= true;
+     include(s.state,ps_stop);
     end;
    end;
   end;

@@ -374,7 +374,7 @@ begin
    pc1:= s.pc;
    if s.pc^.handleentry <> nil then begin
     s.pc^.handleentry(); //transition handler
-    if s.stopparser then begin
+    if ps_stop in s.state then begin
      result:= false;
      exit;
     end;
@@ -385,7 +385,7 @@ begin
    end;
    if s.pc^.handleexit <> nil then begin
     s.pc^.handleexit(); //transition handler
-    if s.stopparser then begin
+    if ps_stop in s.state then begin
      result:= false;
      exit;
     end;
@@ -442,7 +442,7 @@ begin
   pb:= s.pc^.branch;
   if not canceled and (s.pc^.handleentry <> nil) then begin
    s.pc^.handleentry();
-   if s.stopparser then begin
+   if ps_stop in s.state then begin
     result:= false;
    end;
   end;
@@ -642,7 +642,12 @@ begin
   s.currentopcodemarkchain:= 0;
   s.globlinkage:= li_internal;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
-  s.interfaceonly:= ainterfaceonly;
+  if ainterfaceonly then begin
+   include(s.state,ps_interfaceonly);
+  end
+  else begin
+   exclude(s.state,ps_interfaceonly);
+  end;
 
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
                             //parse from start
@@ -820,7 +825,7 @@ begin
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
          pb^.dest.handler();
-         if s.stopparser then begin
+         if ps_stop in s.state then begin
           goto parseend;
          end;
          s.pc:= contextstack[s.stackindex].context;
@@ -834,7 +839,7 @@ begin
         else begin                              //switch branch context
          repeat
           if not pushcont() then begin          //can not continue
-           if s.stopparser then begin
+           if ps_stop in s.state then begin
             goto parseend;
            end;
            goto handlelab;
@@ -889,7 +894,7 @@ handlelab:
      if s.stackindex < i1 then begin
       popped:= true;
      end;
-     if s.stopparser then begin
+     if ps_stop in s.state then begin
       goto parseend;
      end;
          //take context terminate actions
@@ -924,7 +929,8 @@ handlelab:
      internalerror(ie_parser,'20170710A');
     end;
    {$endif}
-    if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
+    if (s.stackindex <= statebefore.stacktop) or 
+                                   (ps_stop in s.state) then begin
      goto parseend;
     end;
     while true do begin                        //skip deleted contexts
@@ -943,7 +949,7 @@ handlelab:
                         contextstack[s.stackindex].transitionflags)) then begin
          //call context termination handler
       s.pc^.handleexit();
-      if s.stopparser then begin
+      if ps_stop in s.state then begin
        goto parseend;
       end;
      end;
@@ -1005,7 +1011,7 @@ handlelab:
 }
      if s.pc^.handleentry <> nil then begin
       s.pc^.handleentry();
-      if s.stopparser then begin
+      if ps_stop in s.state then begin
        goto parseend;
       end;
      end;
@@ -1017,7 +1023,7 @@ handlelab:
   end;
 parseend:
 {$ifdef mse_debugparser1}
-  if not s.stopparser then begin
+  if not (ps_stop in s.state) then begin
    writeinfoline('after2');
   end;
 {$endif}
@@ -1047,13 +1053,13 @@ parseend:
     end;
    end;
   end;
-  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0){ and 
-                                                           not s.stopparser};
+  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0) and 
+                                                     not (ps_abort in s.state);
   with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin
    varchain:= s.unitinfo^.varchain;
   end;
   if result then begin
-   if s.interfaceonly and 
+   if (ps_interfaceonly in s.state) and 
             not (us_implementationparsed in s.unitinfo^.state) then begin
     with punitlinkinfoty(addlistitem(
                                intfparsedlinklist,intfparsedchain))^ do begin
