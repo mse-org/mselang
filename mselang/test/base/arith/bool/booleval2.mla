@@ -1,0 +1,10 @@
+program booleval2;
+var
+ precision: int32;
+ defaultmode: boolean;
+begin
+ defaultmode:= true;
+ if (precision < 0) or defaultmode and (precision = 0) then
+  exitcode:= 123;
+ end;
+end.

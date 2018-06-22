@@ -198,7 +198,7 @@ begin
   end;
  end;
 end;
-var testvar: punitinfoty;
+
 procedure handleprogbegin();
 var
  ad1: listadty;
@@ -286,7 +286,6 @@ begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls
     with punitlinkinfoty(list+ad1)^ do begin
-testvar:= ref;
      with ref^ do begin
       if modularllvm then begin
        if internalsubnames[isub_ini] > 0 then begin
@@ -343,7 +342,6 @@ begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert fini calls
     with punitlinkinfoty(list+ad1)^,ref^ do begin
-testvar:= ref;
      if internalsubnames[isub_fini] <> 0 then begin
       hasfini:= true;
       break;
@@ -407,36 +405,35 @@ testvar:= ref;
      callinternalsub(internalsubs[isub_fini]);
     end;
    end;
-  end;
-  i2:= 0;
-  if not (co_llvm in info.o.compileoptions) then begin
-   i2:= startupoffsetnum;
-  end;
-  with getoppo(i2)^ do begin
-   par.beginparse.finisub:= i1;
-  end;
-  with getoppo(finicall)^.par.callinfo do begin
-   ad.globid:= getoppo(i1)^.par.subbegin.globid;
-   ad.ad:= i1-1;
-  end;
-  with unitlinklist do begin
-   ad1:= unitchain;
-   while ad1 <> 0 do begin         //insert fini calls
-    with punitlinkinfoty(list+ad1)^ do begin
-testvar:= ref;
-     with ref^ do begin
-      if modularllvm then begin
-       if internalsubnames[isub_fini] > 0 then begin
-        callinternalsub(ref,isub_fini);
-       end;
-      end
-      else begin
-       if internalsubs[isub_fini] <> 0 then begin
-        callinternalsub(internalsubs[isub_fini]);
+   i2:= 0;
+   if not (co_llvm in info.o.compileoptions) then begin
+    i2:= startupoffsetnum;
+   end;
+   with getoppo(i2)^ do begin
+    par.beginparse.finisub:= i1;
+   end;
+   with getoppo(finicall)^.par.callinfo do begin
+    ad.globid:= getoppo(i1)^.par.subbegin.globid;
+    ad.ad:= i1-1;
+   end;
+   with unitlinklist do begin
+    ad1:= unitchain;
+    while ad1 <> 0 do begin         //insert fini calls
+     with punitlinkinfoty(list+ad1)^ do begin
+      with ref^ do begin
+       if modularllvm then begin
+        if internalsubnames[isub_fini] > 0 then begin
+         callinternalsub(ref,isub_fini);
+        end;
+       end
+       else begin
+        if internalsubs[isub_fini] <> 0 then begin
+         callinternalsub(internalsubs[isub_fini]);
+        end;
        end;
       end;
+      ad1:= header.next;
      end;
-     ad1:= header.next;
     end;
    end;
   end;
@@ -1454,11 +1451,19 @@ begin
  addsubterm(true);
 end;
 
+procedure checkshortcutexp();
+begin
+ with info do begin
+  resolveshortcuts(@contextstack[s.stackindex],@contextstack[s.stacktop]);
+ end;
+end;
+
 procedure handleorterm(); //todo: optimize constants
 begin
 {$ifdef mse_debugparser}
  outhandle('ORTERM');
 {$endif}
+ checkshortcutexp();
  updateop(orops);
 end;
 
@@ -1467,6 +1472,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('XORTERM');
 {$endif}
+ checkshortcutexp();
  updateop(xorops);
 end;
 
@@ -2510,14 +2516,14 @@ begin
                                (toppo^.d.kind in datacontexts) then begin
    concatterms(nil,toppo);
   end;
+  resolveshortcuts(@contextstack[s.stackindex],toppo);
+ {
   with toppo^ do begin
    if not (hf_propindex in d.handlerflags) then begin
- //   resolveshortcuts(0,1); //todo: ck_space handling
     resolveshortcuts(@contextstack[s.stackindex],toppo);
- //   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
- //   s.stacktop:= s.stackindex;
    end;
   end;
+ }
   contextstack[s.stackindex].d.kind:= ck_space;
   dec(s.stackindex);
  {$ifdef mse_checkinternalerror}

@@ -253,7 +253,7 @@ c=3
     (
     kind=1
     a=0,665,4,bool
-    c=9
+    c=10
      (
      kind=2
      a=0,648,1,and1
@@ -435,6 +435,28 @@ c=3
      a=0,648,1,booleaval1 llvm
      teststate=1
      path=booleval1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,booleaval2 llvm
+     teststate=1
+     path=booleval2.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -4047,7 +4069,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72D1A80
+    ao=An unhandled exception occured at $B7285A80
     ae=
     aec=123
     ie=0
@@ -14126,7 +14148,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=171
+rowstate=172
+ 0 0
  0 0
  0 0
  0 0

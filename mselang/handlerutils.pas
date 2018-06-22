@@ -3874,26 +3874,28 @@ procedure resolveshortcuts(const posource,podest: pcontextitemty);
 var
  philist: dataoffsty;
 begin
- with info,posource^ do begin
-  if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
-  {$ifdef mse_checkinternalerror}
-   with podest^ do begin
-    if not (d.kind in factcontexts) then begin
-     internalerror(ie_handler,'20151017B');
+ if not (hf_propindex in podest^.d.handlerflags) then begin
+  with info,posource^ do begin
+   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
+   {$ifdef mse_checkinternalerror}
+    with podest^ do begin
+     if not (d.kind in factcontexts) then begin
+      internalerror(ie_handler,'20151017B');
+     end;
     end;
-   end;
-  {$endif}
-   addlabel();
-   linkresolvephi(d.shortcutexp.shortcuts,opcount-1,
-                                         podest^.d.dat.fact.ssaindex,philist);
-   with podest^ do begin
-    with additem(oc_phi)^ do begin
-     par.phi.t:= d.dat.fact.opdatatype;
-     par.phi.philist:= philist;
+   {$endif}
+    addlabel();
+    linkresolvephi(d.shortcutexp.shortcuts,opcount-1,
+                                          podest^.d.dat.fact.ssaindex,philist);
+    with podest^ do begin
+     with additem(oc_phi)^ do begin
+      par.phi.t:= d.dat.fact.opdatatype;
+      par.phi.philist:= philist;
+     end;
+     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
-    d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+    d.shortcutexp.shortcuts:= 0;
    end;
-   d.shortcutexp.shortcuts:= 0;
   end;
  end;
 end;
