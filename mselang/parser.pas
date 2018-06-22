@@ -463,7 +463,9 @@ end;
 procedure postlineinfo();
 begin
  if (do_lineinfo in info.s.debugoptions) and 
-             (co_llvm in info.o.compileoptions) then begin   //todo: columns
+             (co_llvm in info.o.compileoptions) and 
+              (us_implementationmarked in info.s.unitinfo^.state) then begin   
+                                                                //todo: columns
   include(info.s.currentstatementflags,stf_newlineposted);
   with additem(oc_lineinfo)^.par.lineinfo do begin
    loc.line:= info.s.source.line;
@@ -479,7 +481,8 @@ begin
  if do_lineinfo in info.s.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
-   if (co_llvm in info.o.compileoptions) then begin
+   if (co_llvm in info.o.compileoptions) and 
+                    (us_implementationmarked in info.s.unitinfo^.state) then begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;

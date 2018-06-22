@@ -693,7 +693,7 @@ type
  
  unitstatety = ({us_interface,}us_program,us_interfaceparsed,
                      us_implementation,us_implementationblock,
-                     us_implementationparsed,
+                     us_implementationparsed,us_implementationmarked,
                      us_end, //pendings resolved
                      us_invalidunitfile
                      );

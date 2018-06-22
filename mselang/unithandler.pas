@@ -300,6 +300,7 @@ end;
 procedure markimplementationstart();
 begin
  with info.s.unitinfo^ do begin
+  include(state,us_implementationmarked);
   ele.markelement(implementationstart);
   implementationglobstart:= info.globdatapo;
   reloc.opstart:= info.opcount;

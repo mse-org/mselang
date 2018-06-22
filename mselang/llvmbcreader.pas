@@ -1577,6 +1577,9 @@ var
  fncount: int32;
  i1: int32;
 begin
+ if ffunctionlevel > 0 then begin
+  inc(fopnum);
+ end;
  output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
  fncount:= 0;
@@ -1772,7 +1775,13 @@ begin
      end;
     end;
    end;
+   if ffunctionlevel > 0 then begin
+    inc(fopnum);
+   end;
   end;
+ end;
+ if ffunctionlevel > 0 then begin
+  inc(fopnum);
  end;
 end;
 
@@ -1812,6 +1821,9 @@ var
  i1: int32;
  rec1: valuearty;
 begin
+ if ffunctionlevel > 0 then begin
+  inc(fopnum);
+ end;
  output(ok_begin,blockidnames[METADATA_ATTACHMENT_ID]);
  blocklevelbefore:= fblocklevel;
  fncount:= 0;
@@ -1828,7 +1840,13 @@ begin
          metadataattachmentcodenames[metadataattachmentcodes(rec1[2])],
           [intvalueartostring(rec1,3)]);
    end;
+   if ffunctionlevel > 0 then begin
+    inc(fopnum);
+   end;
   end;
+ end;
+ if ffunctionlevel > 0 then begin
+  inc(fopnum);
  end;
 end;
 
@@ -1838,6 +1856,9 @@ var
  rec1: valuearty;
  str1: string;
 begin
+ if ffunctionlevel > 0 then begin
+  inc(fopnum);
+ end;
  output(ok_begin,blockidnames[VALUE_SYMTAB_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
  while not finished and (fblocklevel >= blocklevelbefore) do begin
@@ -1864,6 +1885,9 @@ begin
       unknownrec(rec1);
      end;
     end;
+   end;
+   if ffunctionlevel > 0 then begin
+    inc(fopnum);
    end;
   end;
  end;
@@ -2445,6 +2469,7 @@ begin
    inc(fopnum);
   end;
  end;
+ inc(fopnum);
  fmetalist.count:= metacountbefore;
  fbb:= 0;
  fbbbefore:= 0;
