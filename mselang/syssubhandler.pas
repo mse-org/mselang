@@ -1669,18 +1669,21 @@ begin
     result:= true;
     p1:= @contextstack[s.stackindex].d;
     initdatacontext(p1^,ck_const);
-    with p1^ do begin
-     dat.constval:= dat.constval;
-     dat.datatyp:= sysdatatypes[st_flo64];
-    end;
+    p1^.dat.constval:= dat.constval;
+    p1^.dat.datatyp:= sysdatatypes[st_flo64];
    end;
   end;
  end;
 end;
 
+function isfloatconst(const paramco: int32): boolean;
+begin
+ result:= isfloatconst() and checkparamco(1,paramco);
+end;
+
 procedure handleln(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    if vfloat = 0 then begin
     vfloat:= ln(0);
@@ -1702,7 +1705,7 @@ end;
 
 procedure handleexp(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= exp(vfloat);
   end;
@@ -1714,7 +1717,7 @@ end;
 
 procedure handlesin(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= sin(vfloat);
   end;
@@ -1726,7 +1729,7 @@ end;
 
 procedure handlecos(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= cos(vfloat);
   end;
@@ -1738,7 +1741,7 @@ end;
 
 procedure handlesqrt(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= sqrt(vfloat);
   end;
@@ -1750,7 +1753,7 @@ end;
 
 procedure handlefloor(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= floor(vfloat);
   end;
@@ -1762,7 +1765,7 @@ end;
 
 procedure handlefrac(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= frac(vfloat);
   end;
@@ -1774,7 +1777,7 @@ end;
 
 procedure handleround(const paramco: int32);
 begin
- if isfloatconst() then begin
+ if isfloatconst(paramco) then begin
   with info,contextstack[s.stackindex].d.dat.constval do begin
    vfloat:= round(vfloat);
   end;

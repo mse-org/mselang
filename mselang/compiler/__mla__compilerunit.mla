@@ -1991,8 +1991,10 @@ end;
 
 const          //b7b6b5b4b3b2b1b0
  mantissamask = $000fffffffffffff;
- msbmask = $08; //for b6
- 
+ mantissaonemask = $0010000000000000;
+ mantissafullmask = mantissaonemask or mantissamask;
+ msbmask = $10; //for b6
+
 procedure __mla__frac64(value: flo64): flo64;
 var
  exp: int16;
@@ -2006,19 +2008,23 @@ begin
    end;
   else
    if exp < 52 then
-    flo64recty(result).qwo0:= (qwo0 shl (exp)) and mantissamask;
-    if result <> 0 then
+    by6:= by6 or msbmask; //implicit leading bit
+    flo64recty(result).qwo0:= (qwo0 shl (exp+1)) and mantissafullmask;
+
+    if flo64recty(result).qwo0 <> 0 then
      exp:= 1022;
      while flo64recty(result).by6 and msbmask = 0 do
       flo64recty(result).qwo0:= flo64recty(result).qwo0 shl 1;
       dec(exp);
      end;
-     flo64recty(result).qwo0:= (flo64recty(result).qwo0 shl 1) and mantissamask;
+     flo64recty(result).by6:= flo64recty(result).by6 and 
+                                    not msbmask; //remove imlicit leading bit
+     flo64recty(result).wo3:= flo64recty(result).wo3 or (exp shl 4);
+     if by7 and $80 <> 0 then
+      flo64recty(result).by7:= flo64recty(result).by7 or $80;
+     end;
     end;
-    flo64recty(result).wo3:= flo64recty(result).wo3 or (exp shl 4);
-    if by7 and $80 <> 0 then
-     flo64recty(result).by7:= flo64recty(result).by7 or $80;
-    end;
+
    end; 
   end;
  end;
@@ -2027,7 +2033,7 @@ begin
   result:= value - (floor(value)+1);
  else
   result:= value - floor(value);
- end;
+ end; 
 }
 end;
 
