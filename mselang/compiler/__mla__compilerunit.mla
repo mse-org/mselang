@@ -120,6 +120,7 @@ procedure __mla__writeenum(const avalue: int32;
                               
 //procedure __mla__initclass(const classinfo: classdefinfoty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
+procedure __mla__halt(const aexitcode: int32);
 procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
 
@@ -1831,6 +1832,12 @@ procedure exceptioncleanup(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
 begin
  freemem(exc);
+end;
+
+procedure __mla__halt(const aexitcode: int32);
+begin
+ exitcode:= aexitcode;
+ halt();
 end;
 
 procedure __mla__raise(const data: pointer);

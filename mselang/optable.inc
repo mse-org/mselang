@@ -114,6 +114,8 @@
   (ssa: progend1ssa; proc: @progend1op; flags: []), 
 //oc_halt
   (ssa: haltssa; proc: @haltop; flags: []), 
+//oc_halt1
+  (ssa: halt1ssa; proc: @halt1op; flags: []), 
 
 //oc_movesegreg0
   (ssa: movesegreg0ssa; proc: @movesegreg0op; flags: []), 

@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -5477,6 +5477,11 @@ begin
  end;
 end;
 
+procedure halt1op();
+begin
+ notimplemented();
+end;
+
 procedure callop();
 begin
  with cpu.pc^.par do begin
@@ -7067,6 +7072,7 @@ const
   progendssa = 0;  
   progend1ssa = 0;  
   haltssa = 0;
+  halt1ssa = 0;
 
   movesegreg0ssa = 0;
   moveframereg0ssa = 0;

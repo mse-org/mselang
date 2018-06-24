@@ -103,6 +103,8 @@ type
   cs_string16tovarrecty,
   cs_string32tovarrecty,
 
+  cs_halt,
+  
   cs_raise,
   cs_finiexception,
   cs_writeenum,
@@ -232,6 +234,7 @@ type
   oc_progend,
   oc_progend1,
   oc_halt,
+  oc_halt1,
   
   oc_movesegreg0,
   oc_moveframereg0,
@@ -1359,6 +1362,7 @@ const
            oc_callindi,oc_callfuncindi];
                                     //have subinfo record
  callops = subops + [
+  oc_halt1,
   oc_raise,
   oc_writeln,
   oc_writeboolean,

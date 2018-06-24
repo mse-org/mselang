@@ -1,0 +1,4 @@
+program halt3;
+begin
+ halt(123);
+end.

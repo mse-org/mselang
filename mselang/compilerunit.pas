@@ -112,6 +112,8 @@ const
  '__mla__string16tovarrecty',
  '__mla__string32tovarrecty',
 
+  '__mla__halt',
+  
   '__mla__raise',
   '__mla__finiexception',
   '__mla__writeenum',

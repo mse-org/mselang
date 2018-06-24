@@ -774,6 +774,11 @@ begin
                                                         [bcstream.relval(0)]);
 end;
 
+procedure halt1op();
+begin
+ callcompilersub(cs_halt,false,[bcstream.ssaval(pc^.par.ssas1)]);
+end;
+
 procedure movesegreg0op();
 begin
  notimplemented();
@@ -5079,6 +5084,7 @@ const
   progendssa = 1;  
   progend1ssa = 0;  
   haltssa = 1;
+  halt1ssa = 0;
 
   movesegreg0ssa = 1;
   moveframereg0ssa = 1;

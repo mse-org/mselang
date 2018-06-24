@@ -1218,10 +1218,24 @@ begin
 end;
 
 procedure handlehalt(const paramco: int32);
+var
+ ptop: pcontextitemty;
 begin
  with info do begin
-  if checkparamco(0,paramco) then begin
-   updateprogend(additem(oc_halt))
+  if paramco = 1 then begin
+   ptop:= @contextstack[s.stacktop];
+   if tryconvert(ptop,st_int32,[coo_errormessage]) and 
+                                      getvalue(ptop,das_32) then begin
+    with additem(oc_halt1)^ do begin
+     par.ssas1:= ptop^.d.dat.fact.ssaindex;
+    end;
+    contextstack[s.stackindex].d.kind:= ck_subcall;
+   end;
+  end
+  else begin
+   if checkparamco(0,paramco) then begin
+    updateprogend(additem(oc_halt))
+   end;
   end;
  end;
 end;
