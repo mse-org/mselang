@@ -156,6 +156,7 @@ var
  internaltypes: array[internaltypety] of elementoffsetty;
   
 procedure initcompilersubs(const aunit: punitinfoty);
+procedure reset();
 
 implementation
 uses
@@ -222,6 +223,13 @@ begin
    ele.popelementparent();
   end;
  end;
+end;
+
+procedure reset();
+begin
+ fillchar(compilersubs,sizeof(compilersubs),0);
+ fillchar(compilersubids,sizeof(compilersubids),0);
+ fillchar(internaltypes,sizeof(internaltypes),0);
 end;
 
 end.

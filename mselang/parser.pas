@@ -41,6 +41,7 @@ type
  parserparamsty = record
   buildoptions: buildoptionsty;
   compileoptions: compileoptionsty;
+  unitdirs: filenamearty;
  end;
  
 function parse(const input: string; const afilename: filenamety;
@@ -620,10 +621,13 @@ begin
    end
    else begin
     if us_interfaceparsed in aunit^.state then begin
-     s1:= 'impl ';
+//     s1:= 'impl ';
+     s1:= '';
     end;
    end;
-   writeln(s1+quotefilename(aunit^.filepath));
+   if s1 <> '' then begin
+    writeln(s1+quotefilename(aunit^.filepath));
+   end;
   end;
   if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
    if co_modular in info.o.compileoptions then begin
@@ -1123,6 +1127,7 @@ begin
  fillchar(info,sizeof(info),0);
  info.o:= optbefore; 
  exitcode:= 0;
+ compilerunit.reset();
 end;
 
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
@@ -1168,6 +1173,7 @@ begin
   try
    try
     buildoptions:= aparams.buildoptions;
+    o.unitdirs:= reversearray(aparams.unitdirs);
     o.compileoptions:= aparams.compileoptions;
     o.debugoptions:= [];
     if co_llvm in o.compileoptions then begin

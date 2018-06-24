@@ -3,16 +3,25 @@ unit compmodule;
 interface
 uses
  msetypes,mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv,
- parserglob,msestream;
+ parserglob,msestream,parser;
 
 const
  mliextension = 'mli';
  llvmbcextension = 'bc'; 
 type
- paramty = (pa_source,pa_llvm,pa_nocompilerunit,pa_nortlunits,
-            pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine,
-            pa_build,pa_makeobject,pa_makebc, //prduce no exe
-            pa_showcompilefile); 
+ paramty = (pa_source,                  //0
+            pa_llvm,                    //1
+            pa_nocompilerunit,          //2
+            pa_nortlunits,              //3
+            pa_debug,                   //4
+            pa_debugline,               //5
+            pa_unitdirs,                //6
+            pa_define,                  //7
+            pa_undefine,                //8
+            pa_build,                   //9
+            pa_makeobject,              //10
+            pa_makebc,                  //11 produce no exe
+            pa_showcompilefile);        //12
             //item number in sysenv
  
  tcompmo = class(tmsedatamodule)
@@ -28,8 +37,9 @@ type
    foutputstream: ttextstream;
    ferrorstream: ttextstream;
   public
-   procedure initparams();
-   procedure initparams(const aparams: msestringarty);
+   procedure initparams(var parserparams: parserparamsty);
+   procedure initparams(const aparams: msestringarty;
+                                     var parserparams: parserparamsty);
  end;
 
 var
@@ -38,7 +48,7 @@ var
 implementation
 
 uses
- globtypes,compmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
+ globtypes,compmodule_mfm,msesysutils,errorhandler,msesys,msesystypes,
  msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler,
  msearrayutils,identutils,opglob;
  
@@ -67,7 +77,7 @@ var
  parserparams: parserparamsty;
  seg1: subsegmentty;
 begin
- initparams();
+ initparams(parserparams);
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
  initio(foutputstream,ferrorstream);
@@ -78,7 +88,9 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
-
+   initparams(parserparams);
+   
+(*
    parserparams.buildoptions.llvmlinkcommand:= 
                                       tosysfilepath(llvmbindir+'llvm-link');
    parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
@@ -121,6 +133,7 @@ begin
     include(parserparams.compileoptions,co_nortlunits);
    end;
    info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
+*)
    if parse(str1,filename1,parserparams) then begin
     if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
      filename1:= replacefileext(filename1,llvmbcextension);
@@ -170,22 +183,46 @@ begin
  ferrorstream.free();
 end;
 
-procedure tcompmo.initparams();
+procedure tcompmo.initparams(var parserparams: parserparamsty);
 var
  ar1: msestringarty;
  i1: int32;
 begin
-{
+
+ parserparams.buildoptions.llvmlinkcommand:= 
+                                    tosysfilepath(llvmbindir+'llvm-link');
+ parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
+//   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
+ parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
+ parserparams.buildoptions.ascommand:= tosysfilepath('as');
+ parserparams.buildoptions.exefile:= tosysfilepath(
+                       replacefileext(sysenv.value[ord(pa_source)],'bin'));
+
+ parserparams.compileoptions:= mlaruntimecompileoptions;
  if sysenv.defined[ord(pa_llvm)] then begin
-  include(info.o.compileoptions,co_llvm);
+  parserparams.compileoptions:= llvmcompileoptions+[co_modular,co_buildexe];
+  if sysenv.defined[ord(pa_debug)] then begin
+   parserparams.compileoptions:= 
+                     parserparams.compileoptions + [co_lineinfo,co_proginfo];
+  end;
+  if sysenv.defined[ord(pa_debugline)] then begin
+   parserparams.compileoptions:= parserparams.compileoptions + [co_lineinfo];
+  end;
  end;
- if sysenv.defined[ord(pa_debug)] then begin
-  info.o.debugoptions:= info.o.debugoptions + 
-                 [do_lineinfo,do_proginfo];
+ if sysenv.defined[ord(pa_build)] then begin
+  include(parserparams.compileoptions,co_build);
  end;
- if sysenv.defined[ord(pa_debugline)] then begin
-  info.o.debugoptions:= info.o.debugoptions + 
-                 [do_lineinfo];
+ if sysenv.defined[ord(pa_makeobject)] then begin
+  parserparams.compileoptions:= parserparams.compileoptions +
+                                      [co_buildexe,co_modular,co_objmodules];
+ end;
+ if sysenv.defined[ord(pa_makebc)] then begin
+  parserparams.compileoptions:= parserparams.compileoptions - 
+                                            [co_buildexe,co_modular];
+ end;
+ if sysenv.defined[ord(pa_showcompilefile)] then begin
+  parserparams.compileoptions:= parserparams.compileoptions +
+                                                        [co_compilefileinfo];
  end;
  if sysenv.defined[ord(pa_nocompilerunit)] then begin
   include(parserparams.compileoptions,co_nocompilerunit);
@@ -193,18 +230,15 @@ begin
  if sysenv.defined[ord(pa_nortlunits)] then begin
   include(parserparams.compileoptions,co_nortlunits);
  end;
- if sysenv.defined[ord(pa_build)] then begin
-  include(info.o.compileoptions,co_build);
- end;
- }
- info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
+ parserparams.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
 end;
 
-procedure tcompmo.initparams(const aparams: msestringarty);
+procedure tcompmo.initparams(const aparams: msestringarty;
+                                         var parserparams: parserparamsty);
 begin
  info.o.defines:= nil;
  sysenv.init(aparams);
- initparams();
+ initparams(parserparams);
 end;
 {
 procedure tcompmo.sysenvexe(sender: tsysenvmanager);

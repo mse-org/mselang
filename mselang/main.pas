@@ -26,7 +26,7 @@ uses
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
  msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode,mseact,
- msememodialog,msedropdownlist;
+ msememodialog,msedropdownlist,parser;
 
 const
  llvmbindir = 
@@ -86,7 +86,7 @@ type
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
   protected
-   procedure initparams();
+   procedure initparams(var parserparams: parserparamsty);
   public
    property compparams: msestringarty read fcompparams write setcompparams;
  end;
@@ -97,7 +97,7 @@ var
   
 implementation
 uses
- errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,msearrayutils,
+ errorhandler,main_mfm,stackops,llvmops,msedatalist,msearrayutils,
  msefileutils,patheditform,compmoduledebug,opglob,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
@@ -125,7 +125,10 @@ begin
  outstream:= ttextstream.create;
  resetinfo();
  initio(outstream,errstream);
- initparams();
+ system.finalize(parserparams);
+ fillchar(parserparams,sizeof(parserparams),0);
+
+ initparams(parserparams);
  parserparams.buildoptions.llvmlinkcommand:= 
                                     tosysfilepath(llvmbindir+'llvm-link');
  parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
@@ -138,9 +141,10 @@ begin
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
  parserparams.buildoptions.exefile:= tosysfilepath(
                                         replacefileext(filena.value,'bin'));
- parserparams.compileoptions:= [];
  if llvm.value then begin
-	  parserparams.compileoptions:= llvmcompileoptions + [co_buildexe];
+  parserparams.compileoptions:= (parserparams.compileoptions -
+                                     mlaruntimecompileoptions) + 
+                                llvmcompileoptions + [co_buildexe];
   if lineinfoed.value then begin
    include(parserparams.compileoptions,co_lineinfo);
   end;
@@ -410,9 +414,9 @@ begin
 // initparams();
 end;
 
-procedure tmainfo.initparams();
+procedure tmainfo.initparams(var parserparams: parserparamsty);
 begin
- compdebugmo.initparams(fcompparams);
+ compdebugmo.initparams(fcompparams,parserparams);
 // info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
 end;
 

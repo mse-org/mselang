@@ -558,7 +558,7 @@ procedure flo64tostring(const value: flo64; const precision: integer = 0;
 var
  bo1: boolean;
 begin
- result:= flo64tostring1(value,bo1,precision,mode,decimalsep,thousandsep); 
+ result:= flo64tostring1(value,bo1,precision,mode,decimalsep,thousandsep);
 end;
 
 end.

@@ -473,6 +473,7 @@ begin
     errormessage(err_exceptclassinstanceexpected,[]);
    end;
    dec(s.stackindex);
+   s.stacktop:= s.stackindex;
   end;
  end;
 end;
