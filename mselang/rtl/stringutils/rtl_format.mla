@@ -24,7 +24,7 @@ procedure format(const fmt: string8; const args: array of const): string8;
 
 implementation
 uses
- __mla__compilerunit;
+ __mla__compilerunit,rtl_flotostr;
  
 const
  lowerchars: array[char] of char = (
@@ -300,16 +300,54 @@ var
   pushstring32(info);
  end; //pushstring16()
 
+ procedure pushstring16(var info: convertinfoty; const avalue: string16);
+ var
+  s1: string32;
+ begin
+  s1:= string32(avalue);
+  info.s:= pointer(s1);
+  pushstring32(info);
+ end; //pushstring16()
+
+var
+ itemindex: int32;
+
+ procedure getflo(out avalue: flo64): boolean;
+ begin
+  result:= true;
+  with args[itemindex] do
+   case vtype of
+    vt_flo64:
+     avalue:= vflo64^;
+    vt_int32:
+     avalue:= vint32;
+    vt_card32:
+     avalue:= vcard32;
+    vt_int64:
+     avalue:= vint64^;
+    vt_card64:
+     avalue:= vcard64^;
+    else:
+     result:= false;
+     converterror();
+   end;
+  end;
+ end;
+ 
 var
  p1,pe1: pchar8;
- itemindex: int32;
  i1: int32;
  i641: int64;
  c1: card32;
  c641: card64;
  b1: boolean;
- 
+ f1: flo64;
+ decimalsep: char8;
+ thousandsep: char8;
+  
 begin
+ decimalsep:= '.'; //todo: use decimalsettings
+ thousandsep:= '''';
  setlength(result,length(fmt));
  info.args:= @args;
 
@@ -437,6 +475,45 @@ begin
          end;
          pb:= p1;
          pushnum(info);
+        'e':
+          if getflo(f1) then
+           i1:= info.precision;
+           if i1 < 0 then
+            i1:= 14;
+           else
+            i1:= i1-1
+           end;
+           info.precision:= -1;
+           pushstring16(info,flo64tostring16(f1,i1,fsm_sci,decimalsep));
+          end;
+        'f':
+          if getflo(f1) then
+           i1:= info.precision;
+           if i1 < 0 then
+            i1:= 0;
+           end;
+           info.precision:= -1;
+           pushstring16(info,flo64tostring16(f1,i1,fsm_fix,decimalsep));
+          end;
+        'n':
+          if getflo(f1) then
+           i1:= info.precision;
+           if i1 < 0 then
+            i1:= 0;
+           end;
+           info.precision:= -1;
+           pushstring16(info,flo64tostring16(f1,i1,fsm_fix,decimalsep,
+                                                                thousandsep));
+          end;
+        'g':
+          if getflo(f1) then
+           i1:= info.precision;
+           if i1 < 0 then
+            i1:= 0;
+           end;
+           info.precision:= -1;
+           pushstring16(info,flo64tostring16(f1,i1,fsm_fix,decimalsep));
+          end;
         's':
          case vtype of
           vt_string8:

@@ -20,7 +20,7 @@ type
  floatstringmodety = (fsm_default,fsm_fix,fsm_sci,fsm_engfix,fsm_engflo,
                       fsm_engsymfix,fsm_engsymflo);
 
-procedure flo64tostring(const value: flo64; const precision: integer = 0;
+procedure flo64tostring16(const value: flo64; const precision: integer = 0;
       const mode: floatstringmodety = fsm_default;
       const decimalsep: char16 = '.';
       const thousandsep: char16 = #0): string16;
@@ -123,7 +123,7 @@ type
 //  else begin
 //   int1:= precision;
 //  end;
-  result:= flo64tostring(value,int1,fsm_sci,decimalsep,thousandsep);
+  result:= flo64tostring16(value,int1,fsm_sci,decimalsep,thousandsep);
  end;
   
  procedure checkcarry(start: byte; var dest: bufferty);
@@ -140,16 +140,26 @@ type
  end;
 
 const
- lsbrounding = exp(51*ln(2));
+// lsbrounding = exp(51*ln(2));
+ lsbrounding = flo64($0008000000000000); //2^51
  expo0max = 1-1/lsbrounding;
  expo1max = 10-10/lsbrounding;
  expo3max = 1000-1000/lsbrounding;
  expmask = $7ff0;             //for wo3
  halfexp = (1023-1) shl 4;    //value >= 0.5 for wo3
  exp2to10 = ln(2)/ln(10);
+
  exps: array[0..maxdigits] of flo64 =
  (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e10,
-                         1e11,1e12,1e13,1e14,1e15,1e16,1e17);
+  1e11,1e12,1e13,1e14,1e15,1e16,1e17
+ );
+ lsbroundings: array[0..maxdigits] of flo64 =
+  (1e0/lsbrounding,1e1/lsbrounding,1e2/lsbrounding,1e3/lsbrounding,
+   1e4/lsbrounding,1e5/lsbrounding,1e6/lsbrounding,1e7/lsbrounding,
+   1e8/lsbrounding,1e9/lsbrounding,1e10/lsbrounding,1e11/lsbrounding,
+   1e12/lsbrounding,1e13/lsbrounding,1e14/lsbrounding,1e15/lsbrounding,
+   1e16/lsbrounding,1e17/lsbrounding
+  );
 
 var
  buffer: bufferty;
@@ -443,11 +453,13 @@ begin
      checkcarry(int1,buffer);
      do1:= frac(do1)*10;       
     end;
-    do1:= do1 - 5 + exps[lastindex] / lsbrounding; //round up lsb
     msbcarry:= buffer[0] = '0';
-    if (do1 > 0) then
-     inc(buffer[lastindex]);
-     checkcarry(lastindex,buffer);
+    if do1 > 0 then
+     do1:= do1 - 5 + lsbroundings[lastindex]; //round up lsb
+     if (do1 > 0) then
+      inc(buffer[lastindex]);
+      checkcarry(lastindex,buffer);
+     end;
     end;
     msbcarry:= msbcarry and (buffer[0] <> '0');
     if  (precision < 0) or (defaultmode and (precision = 0)) then
@@ -551,7 +563,7 @@ begin
  end;
 end;
 
-procedure flo64tostring(const value: flo64; const precision: integer = 0;
+procedure flo64tostring16(const value: flo64; const precision: integer = 0;
       const mode: floatstringmodety = fsm_default;
       const decimalsep: char16 = '.';
                                const thousandsep: char16 = #0): string16;

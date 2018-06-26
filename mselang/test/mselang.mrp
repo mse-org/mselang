@@ -2104,7 +2104,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=37
     (
     kind=1
@@ -4113,7 +4113,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7310DA0
+    ao=An unhandled exception occured at $B72C4110
     ae=
     aec=123
     ie=0
@@ -5972,8 +5972,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
-   c=9
+   a=0,665,4,string
+   c=10
     (
     kind=2
     a=0,648,1,stringtest
@@ -6155,6 +6155,28 @@ c=3
     a=0,648,1,string1 llvm
     teststate=1
     path=string1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringconsttochar llvm
+    teststate=1
+    path=stringconsttochar.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -8703,7 +8725,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
+   a=0,664,4,managed
    c=13
     (
     kind=2
@@ -13962,14 +13984,9 @@ c=3
     ee=
     ae=0
     eec=0
-    cr=0
-    ao=abc123defg
-    +abc1234defg
-    +abc00001234defg
-    +abc  00001234defg
-    +abc00001234  defg
-    +abcÄBC       def
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -14177,7 +14194,7 @@ stackedunder=
 x=1053
 y=142
 cx=775
-cy=512
+cy=660
 wsize=0
 active=1
 visible=1
@@ -14192,47 +14209,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=103
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=63
  0 0
  0 0
  0 0

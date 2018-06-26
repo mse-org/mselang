@@ -1718,7 +1718,10 @@ begin
    if result then begin
     if not pointerconv and (d.kind = ck_const) then begin
      d.dat.constval.kind:= dest^.h.kind;
-    end;    
+    end;
+    if coo_type in aoptions then begin
+     include(d.dat.flags,df_typeconversion);
+    end;
     d.dat.datatyp.indirectlevel:= destindirectlevel;
     d.dat.datatyp.typedata:= ele.eledatarel(dest);
     if needsmanagedtemp then begin
@@ -1951,6 +1954,12 @@ begin
                          (source^.h.kind = dk_array) and 
                          issametype(source^.infoarray.i.itemtypedata,
                           dest^.infodynarray.i.itemtypedata)) then begin
+     result:= true;
+     exit;
+    end;
+    if (source^.h.kind = dk_string) and (dest^.h.kind = dk_character) and
+       (d.kind = ck_const) and not (df_typeconversion in d.dat.flags) and
+       ischarstringconst(d.dat.constval.vstring,dest^.h.bytesize) then begin
      result:= true;
      exit;
     end;
@@ -2771,6 +2780,9 @@ begin
      if checknoparam then begin
       initdatacontext(poind^.d,ck_const);
       d.dat.datatyp:= pconstdataty(po2)^.val.typ;
+      if tf_typeconversion in d.dat.datatyp.flags then begin
+       include(d.dat.flags,df_typeconversion);
+      end;
       d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
     end;

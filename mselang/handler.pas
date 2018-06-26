@@ -2457,6 +2457,9 @@ begin
    else begin
     with contextstack[s.stacktop].d do begin
      po1^.val.typ:= dat.datatyp;
+     if df_typeconversion in dat.flags then begin
+      include(po1^.val.typ.flags,tf_typeconversion);
+     end;
      if dat.constval.kind = dk_string then begin
       trackstringref(dat.constval.vstring);
      end;

@@ -8,4 +8,8 @@ begin
  writeln(format('abc%:10.8Ddefg',[1234,123,33]));
  writeln(format('abc%:-10.8Ddefg',[1234,123,33]));
  writeln(format('abc%:-10.3sdef',['ÄBCDEFGHI']);
+ writeln(format('abc %.3f def',[8.25e13]));
+ writeln(format('abc %.3n def',[8.25e13]));
+ writeln(format('abc %.3e def',[8.255e13]));
+ writeln(format('abc %g def',[8.25e13]));
 end.

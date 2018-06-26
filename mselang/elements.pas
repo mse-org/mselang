@@ -381,6 +381,8 @@ function newstringconst(): stringvaluety; //save info.stringbuffer
 function newstringconst(const avalue: lstringty): stringvaluety;
 function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
+function ischarstringconst(const astring: stringvaluety;
+                                 const aitemsize: int32): boolean;
 procedure trackstringref(const astring: stringvaluety);
                     //can not been concatenated in place
 procedure concatstringconsts(var dest: stringvaluety; const b: stringvaluety);
@@ -507,6 +509,99 @@ end;
 function stringconstlen(const astring: stringvaluety): int32;
 begin
  result:= stringbuf.getlength(astring);
+end;
+
+const
+ errorcodepoint = $3f; //?
+
+procedure getcodepoint(var ps: pcard8; const pe: pcard8;
+                                  out ares: card32);
+ function checkok(var acodepoint: card32): boolean; //inline;
+ var
+  c1: card8;
+ begin
+  result:= false;
+  inc(ps);
+  if ps >= pe then begin
+   acodepoint:= errorcodepoint;
+  end
+  else begin
+   c1:= ps^ - %10000000;
+   if c1 > %00111111 then begin
+    acodepoint:= errorcodepoint;
+   end
+   else begin
+    acodepoint:= (acodepoint shl 6) or c1;
+    result:= true;
+   end;
+  end;
+ end;
+
+begin
+ if ps^ < %10000000 then begin  //1 byte
+  ares:= ps^;
+ end
+ else begin
+  if ps^ <= %11100000 then begin //2 bytes
+   ares:= ps^ and %00011111;
+   if checkok(ares) then begin
+    if ares < %1000000 then begin
+     ares:= errorcodepoint; //overlong
+    end;
+   end;
+  end
+  else begin
+   if ps^ < %11110000 then begin //3 bytes
+    ares:= ps^ and %00001111;
+    if checkok(ares) and checkok(ares) then begin
+     if ares < %100000000000 then begin
+      ares:= errorcodepoint; //overlong
+     end;
+    end;
+   end
+   else begin
+    if ps^ < %11111000 then begin //4 bytes
+     ares:= ps^ and %00000111;
+     if checkok(ares) and checkok(ares) and checkok(ares) then begin
+      if ares < %10000000000000000 then begin
+       ares:= errorcodepoint; //overlong
+      end;
+     end;
+    end
+    else begin
+     ares:= errorcodepoint;
+    end;
+   end;
+  end;
+ end;
+ inc(ps);
+ if (ares >= $d800) and (ares <= $dfff) then begin
+  ares:= errorcodepoint; //surrogate
+ end;
+end;
+
+function ischarstringconst(const astring: stringvaluety;
+                                 const aitemsize: int32): boolean;
+var
+ ls1: lstringty;
+ c1: card32;
+begin
+ result:= false;
+ ls1:= stringbuf.getstring(astring);
+ if ls1.len > 0 then begin
+  getcodepoint(pointer(ls1.po),pointer(ls1.po)+ls1.len,c1);
+  case aitemsize of
+   1: begin
+    result:= c1 < 128;
+   end;
+   2: begin
+    result:= c1 < $10000;
+   end;
+   4: begin
+    result:= true;
+   end;
+  end;
+ end;
 end;
 
 procedure trackstringref(const astring: stringvaluety);
