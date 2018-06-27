@@ -237,8 +237,8 @@ begin
        else begin
         size1:= targetpointersize;
        end;
-       nameid:= -1;
        if sublevel = 0 then begin //global variable
+        nameid:= -1;
         if address.indirectlevel > 0 then begin
          datasize1:= das_pointer;
          include(address.flags,af_segmentpo);

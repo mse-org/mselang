@@ -19,6 +19,7 @@
  'type'.,*
  'const'.,*
  'var'.,*
+ 'resourcestring'.,*
  'label'.,*
  'begin'.,*
  'procedure'.,*
@@ -132,6 +133,7 @@ start2,noimplementation,handleafterintfuses,
  'type'.,type-*
  'const'.,const-*
  'var'.,var-*
+ 'resourcestring'.,resourcestring-*
  'label'.,labeldef-*
  'class'.,start2class-
 {$grapas}
@@ -185,6 +187,7 @@ main1,,,handlemain
  'type'.,type-*>
  'const'.,const-*>
  'var'.,var-*>
+ 'resourcestring'.,resourcestring-*>
  'label'.,labeldef-*>
  'class'.,main1class-
 {$grapas}
@@ -996,7 +999,12 @@ labeldef1,,handlelabeldef,*
  ';',-*
  '',semicolonexpected
 
-const,,,*>
+resourcestring,,handleresourcestringentry,
+ '',consta
+
+const,,handleconstentry,
+ '',consta
+consta,,,*>
  ${whitespace}
  ${blockswitch}
  '',const0^*
@@ -1584,6 +1592,7 @@ ident,ident0,,
  'type'.,reservedword
  'const'.,reservedword
  'var'.,reservedword
+ 'resourcestring'.,reservedword
  'label'.,reservedword
  'begin'.,reservedword
  'class'.,reservedword

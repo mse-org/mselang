@@ -45,7 +45,7 @@ procedure __mla__uniquestring32(const val: pointer): pointer;
 procedure __mla__uniquedynarray(const val: pointer;
                                            const itemsize: int32): pointer;
 procedure __mla__copystring(const val: pointer; const start: int32;
-                          const size: int32; const itemsize: int32): pointer;
+                               size: int32; const itemsize: int32): pointer;
 procedure __mla__copydynarray(const val: pointer; const start: int32;
                           size: int32; const itemsize: int32): pointer;
 
@@ -657,7 +657,7 @@ begin
 end;
 
 procedure __mla__copystring(const val: pointer; const start: int32;
-                          const size: int32; const itemsize: int32): pointer;
+                                 size: int32; const itemsize: int32): pointer;
 var
  s,d: pstringheaderty;
  i1,i2: int32;

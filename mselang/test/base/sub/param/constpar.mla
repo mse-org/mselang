@@ -1,0 +1,10 @@
+program constpar;
+
+procedure test(const a: ^int32);
+begin
+ a^:= 123;
+end;
+
+begin
+ test(@exitcode);
+end.

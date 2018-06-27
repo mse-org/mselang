@@ -95,7 +95,7 @@ type
             err_cannotaccessinclassmethod,err_cannotgetclass,
             err_doesnotinheritfromtype,err_doesnotinheritfromclass,
             err_cannotgettypeinfo,err_wrongarrayitemtype,
-            err_cannotassigntoconst);
+            err_cannotassigntoconst,err_stringconstantexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -357,7 +357,8 @@ const
   (level: erl_error; message: '"%s" does not inherit from "%s"'),
   (level: erl_error; message: 'Can not get typeinfo of this expression'),
   (level: erl_error; message: 'Wrong type in array constructor "%s"'),
-  (level: erl_error; message: 'Can''t assign values to const variable')
+  (level: erl_error; message: 'Can''t assign values to const variable'),
+  (level: erl_error; message: 'String constant expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

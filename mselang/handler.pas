@@ -62,6 +62,8 @@ procedure handlestatementblock1();
 
 //procedure handleconst();
 //procedure handleconst0();
+procedure handleresourcestringentry();
+procedure handleconstentry();
 procedure handleconst3();
 
 procedure handlenumberentry();
@@ -2441,32 +2443,110 @@ begin
 end;
 *)
 
-procedure addsimpleconst();
+function addsimpleconst(): boolean;
 var
  po1: pconstdataty;
+ var1: pvardataty;
+ ident1: identty;
+ n1: identnamety;
 begin
- with info do begin
-  if contextstack[s.stacktop].d.kind <> ck_const then begin
+ result:= false;
+ with info,contextstack[s.stacktop] do begin
+  ident1:= contextstack[s.stackindex+1].d.ident.ident;
+  if d.kind <> ck_const then begin
    errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
   end
   else begin
-   if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
-                                            ek_const,allvisi,po1) then begin
-    identerror(1,err_duplicateidentifier);
+   if hf_resource in 
+      contextstack[contextstack[s.stackindex].parent].d.handlerflags then begin
+                           //resource string variable/const
+    if d.dat.constval.kind <> dk_string then begin
+     errormessage(err_stringconstantexpected,[]);
+     exit;
+    end;
+    if not addvar(ident1,allvisi,s.unitinfo^.varchain,var1) then begin
+     identerror(1,err_duplicateidentifier);
+     exit;
+    end;
+    with var1^ do begin
+     include(vf.flags,tf_resource);
+     vf.typ:= sysdatatypes[st_string8].typedata;
+     s.currentstatementflags:= s.currentstatementflags + 
+                                [stf_needsmanage,stf_needsini,stf_needsfini];
+     nameid:= -1;
+     address.flags:= [af_const];
+     address.indirectlevel:= 0;
+     address.segaddress:= getglobvaraddress(das_pointer,
+                                      targetpointersize,address.flags);
+     if not (us_implementation in s.unitinfo^.state) then begin
+      nameid:= s.unitinfo^.nameid; //for llvm
+     end;
+     if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
+                          (co_llvm in info.o.compileoptions) then begin
+      getidentname(ident1,n1);
+      if do_names in info.o.debugoptions then begin
+
+       s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                            n1,address.segaddress.address);
+      end;
+      if do_proginfo in info.o.debugoptions then begin
+       s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+                s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                     nametolstring(n1),start.line,0,var1^);
+      end;
+     end;
+    end;
+    if not ele.addelement(getident(),ek_const,
+                                allvisi,var1^.vf.defaultconst) then begin
+     internalerror1(ie_parser,'20170627A'); //there is a duplicate
+    end;
+    if tryconvert(@contextstack[s.stacktop],st_string8,
+                                       [coo_errormessage]) then begin
+     trackstringref(d.dat.constval.vstring);
+     with pconstdataty(ele.eledataabs(var1^.vf.defaultconst))^ do begin
+      val.typ:= d.dat.datatyp;
+      val.d:= d.dat.constval;
+     end;
+    end;
+    result:= true;
    end
    else begin
-    with contextstack[s.stacktop].d do begin
-     po1^.val.typ:= dat.datatyp;
-     if df_typeconversion in dat.flags then begin
+    if not ele.addelementdata(ident1,ek_const,allvisi,po1) then begin
+     identerror(1,err_duplicateidentifier);
+    end
+    else begin
+     po1^.val.typ:= d.dat.datatyp;
+     if df_typeconversion in d.dat.flags then begin
       include(po1^.val.typ.flags,tf_typeconversion);
      end;
-     if dat.constval.kind = dk_string then begin
-      trackstringref(dat.constval.vstring);
+     if d.dat.constval.kind = dk_string then begin
+      trackstringref(d.dat.constval.vstring);
      end;
-     po1^.val.d:= dat.constval;
+     po1^.val.d:= d.dat.constval;
+     result:= true;
     end;
    end;
   end;
+ end;
+end;
+
+procedure handleresourcestringentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RESOURCESTRINGENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  include(d.handlerflags,hf_resource);
+ end;
+end;
+
+procedure handleconstentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CONSTENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  exclude(d.handlerflags,hf_resource);
  end;
 end;
 

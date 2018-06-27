@@ -1,0 +1,9 @@
+program constpar2;
+
+procedure test(const a: int32);
+begin
+ a:= 123;
+end;
+
+begin
+end.

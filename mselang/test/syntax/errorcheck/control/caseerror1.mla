@@ -1,0 +1,18 @@
+program caseerror1;
+var
+ i1: int32;
+label
+ a;
+begin
+ i1:= 22;
+ case i1 of
+  22: begin
+   goto a;
+   exitcode:= 2;
+a:
+   exitcode:= 123;
+  end;
+  else
+   exitcode:= 3;
+ end;
+end.

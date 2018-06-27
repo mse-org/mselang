@@ -544,7 +544,7 @@ type
  end;
  pdatacontextty = ^datacontextty;
 
- handlerflagty = (hf_listitem,hf_error,hf_down,hf_default,
+ handlerflagty = (hf_listitem,hf_error,hf_down,hf_default,hf_resource,
                   hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
                   hf_propindex,hf_needsunique,hf_initvariant);
  handlerflagsty = set of handlerflagty;

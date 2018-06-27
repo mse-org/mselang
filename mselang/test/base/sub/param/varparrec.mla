@@ -1,0 +1,24 @@
+program varparrec;
+type
+ convertinfoty = record
+  width,precision: int32;
+  minus: bool1;
+  s: pointer; //string8, string16 or string32
+ end;
+
+procedure pushstring8(var info: convertinfoty);
+var
+ s1: string8;
+begin
+ s1:= string8(info.s);
+ if s1 = 'abc' then
+  exitcode:= 123;
+ end;
+end;
+
+var
+ inf1: convertinfoty;
+begin
+ inf1.s:= pointer('abc');
+ pushstring8(inf1);
+end.

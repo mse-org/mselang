@@ -877,7 +877,7 @@ end;
 
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
-var                                                     //!!codenavig
+var
  po1: pelementinfoty;
 begin
  result:= false;
@@ -3657,8 +3657,12 @@ begin
  with acontext^ do begin
   if (d.kind in datacontexts) and 
       not ((d.kind = ck_ref) and 
-           (af_segment in d.dat.ref.c.address.flags) and 
-           (d.dat.ref.c.address.segaddress.segment = seg_globconst)) then begin
+           ((af_segment in d.dat.ref.c.address.flags) and 
+                (d.dat.ref.c.address.segaddress.segment = seg_globconst) or
+             (af_const in d.dat.ref.c.address.flags) and
+                  (d.dat.indirection >= 0)
+           )
+          ) then begin
    result:= getaddress(acontext,endaddress);
   end
   else begin

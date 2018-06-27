@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=25
    (
    kind=1
@@ -4113,7 +4113,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C4110
+    ao=An unhandled exception occured at $B7248110
     ae=
     aec=123
     ie=0
@@ -5972,7 +5972,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=10
     (
     kind=2
@@ -7201,7 +7201,7 @@ c=3
     (
     kind=1
     a=0,665,4,param
-    c=4
+    c=5
      (
      kind=2
      a=0,648,1,params
@@ -7252,20 +7252,20 @@ c=3
      teststate=1
      path=varparpointer.mla
      comment=
-     cc=
+     cc=${mlc_llvm}
      cd=
-     rc=
+     rc=${lli}
      rd=
      in=
      eo=
      ao=0
      ee=
      ae=0
-     eec=
+     eec=123
      cr=0
      ao=
      ae=
-     aec=0
+     aec=123
      ie=0
      )
      (
@@ -7274,20 +7274,42 @@ c=3
      teststate=1
      path=varparrec.mla
      comment=
-     cc=
+     cc=${mlc_llvm}
      cd=
-     rc=
+     rc=${lli}
      rd=
      in=
      eo=
      ao=0
      ee=
      ae=0
-     eec=
+     eec=123
      cr=0
      ao=
      ae=
-     aec=0
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,constpar llvm
+     teststate=1
+     path=constpar.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
      ie=0
      )
     teststate=1
@@ -13131,7 +13153,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,units
+  a=0,664,4,units
   c=8
    (
    kind=2
@@ -13327,7 +13349,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
@@ -13467,8 +13489,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,params
-    c=2
+    a=0,665,4,params
+    c=3
      (
      kind=2
      a=0,648,1,constpar llvm
@@ -13504,7 +13526,7 @@ c=3
      rd=
      in=
      eo=
-     ao=1
+     ao=0
      ee=constpar1.mla(5,2) Error: Can't assign values to const variable
      ae=0
      eec=1
@@ -13512,6 +13534,29 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=constpar1.mla(5,2) Error: Can't assign values to const variable
+     aec=1
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,constpar2 llvm
+     teststate=1
+     path=constpar2.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=constpar2.mla(5,2) Error: Argument can't be assigned to
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=constpar2.mla(5,2) Error: Argument can't be assigned to
      aec=1
      ie=0
      )
@@ -14199,50 +14244,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=63
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=30
  0 0
  0 0
  0 0

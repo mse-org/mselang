@@ -307,7 +307,7 @@ type
                tf_lower,       //in range expression
                tf_upper,       //in range expression
                tf_subad,       //sub address
-               tf_subrange,tf_addressop,tf_typeconversion,
+               tf_subrange,tf_addressop,tf_typeconversion,tf_resource,
                tf_untyped,tf_forward,tf_sizeinvalid,tf_canforward,
                tf_classdef, //dk_class,dk_object acually is a classdef pointer
                tf_rtti
