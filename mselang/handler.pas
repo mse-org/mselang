@@ -2449,6 +2449,8 @@ var
  var1: pvardataty;
  ident1: identty;
  n1: identnamety;
+ segad1: segaddressty;
+ i1: int32;
 begin
  result:= false;
  with info,contextstack[s.stacktop] do begin
@@ -2460,52 +2462,66 @@ begin
    if hf_resource in 
       contextstack[contextstack[s.stackindex].parent].d.handlerflags then begin
                            //resource string variable/const
+    if not (co_llvm in o.compileoptions) then begin
+     notimplementederror('20180628A');
+    end;
     if d.dat.constval.kind <> dk_string then begin
      errormessage(err_stringconstantexpected,[]);
      exit;
     end;
-    if not addvar(ident1,allvisi,s.unitinfo^.varchain,var1) then begin
-     identerror(1,err_duplicateidentifier);
-     exit;
-    end;
-    with var1^ do begin
-     include(vf.flags,tf_resource);
-     vf.typ:= sysdatatypes[st_string8].typedata;
-     s.currentstatementflags:= s.currentstatementflags + 
-                                [stf_needsmanage,stf_needsini,stf_needsfini];
-     nameid:= -1;
-     address.flags:= [af_const];
-     address.indirectlevel:= 0;
-     address.segaddress:= getglobvaraddress(das_pointer,
-                                      targetpointersize,address.flags);
-     if not (us_implementation in s.unitinfo^.state) then begin
-      nameid:= s.unitinfo^.nameid; //for llvm
-     end;
-     if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
-                          (co_llvm in info.o.compileoptions) then begin
-      getidentname(ident1,n1);
-      if do_names in info.o.debugoptions then begin
-
-       s.unitinfo^.llvmlists.globlist.namelist.addname(
-                                            n1,address.segaddress.address);
-      end;
-      if do_proginfo in info.o.debugoptions then begin
-       s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
-                s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                     nametolstring(n1),start.line,0,var1^);
-      end;
-     end;
-    end;
-    if not ele.addelement(getident(),ek_const,
-                                allvisi,var1^.vf.defaultconst) then begin
-     internalerror1(ie_parser,'20170627A'); //there is a duplicate
-    end;
     if tryconvert(@contextstack[s.stacktop],st_string8,
-                                       [coo_errormessage]) then begin
-     trackstringref(d.dat.constval.vstring);
-     with pconstdataty(ele.eledataabs(var1^.vf.defaultconst))^ do begin
-      val.typ:= d.dat.datatyp;
-      val.d:= d.dat.constval;
+                                        [coo_errormessage]) then begin
+     segad1:= allocstringconst(d.dat.constval.vstring);
+     i1:= s.unitinfo^.llvmlists.constlist.addaddress(
+                                 segad1.address,stringheadersize).listid;
+     if not addvar(ident1,allvisi,s.unitinfo^.varchain,var1) then begin
+      identerror(1,err_duplicateidentifier);
+      exit;
+     end;
+     with var1^ do begin
+    {
+     if not ele.addelement(getident(),ek_const,
+                                 allvisi,vf.defaultconst) then begin
+      internalerror1(ie_parser,'20170627A'); //there is a duplicate
+     end;
+    }
+     {
+      trackstringref(d.dat.constval.vstring); //???
+      with pconstdataty(ele.eledataabs(vf.defaultconst))^ do begin
+       val.typ:= d.dat.datatyp;
+       val.d:= d.dat.constval;
+      end;
+     }
+      include(vf.flags,tf_resource);
+      with sysdatatypes[st_string8] do begin
+       vf.flags:= flags;
+       vf.typ:= typedata;
+      end;
+      s.currentstatementflags:= s.currentstatementflags + 
+                                 [stf_needsmanage,stf_needsini,stf_needsfini];
+      nameid:= -1;
+      address.flags:= [af_const,af_segment];
+      address.indirectlevel:= 0;
+//      address.segaddress:= allocstringconst(d.dat.constval.vstring);
+      address.segaddress:= getglobvaraddress(das_pointer,
+                                 targetpointersize,address.flags,i1,gak_var);
+      if not (us_implementation in s.unitinfo^.state) then begin
+       nameid:= s.unitinfo^.nameid; //for llvm
+      end;
+      if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
+                           (co_llvm in info.o.compileoptions) then begin
+       getidentname(ident1,n1);
+       if do_names in info.o.debugoptions then begin
+ 
+        s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                             n1,address.segaddress.address);
+       end;
+       if do_proginfo in info.o.debugoptions then begin
+        s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+                 s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                      nametolstring(n1),start.line,0,var1^);
+       end;
+      end;
      end;
     end;
     result:= true;

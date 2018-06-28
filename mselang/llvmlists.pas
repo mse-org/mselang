@@ -1957,7 +1957,7 @@ var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
 begin
- if aid <= 0 then begin
+ if aid < 0 then begin
   result:= addnullvalue(ord(das_pointer));
  end
  else begin

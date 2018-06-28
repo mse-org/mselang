@@ -1,0 +1,9 @@
+program addressassign;
+var
+ i1: int32;
+type
+ pint32 = ^int32;
+begin
+ pint32(@i1)^:= 123;
+ exitcode:= i1;
+end.

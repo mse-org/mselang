@@ -19,7 +19,7 @@ unit handlerutils;
 interface
 uses
  globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes,
- listutils,elementcache,__mla__internaltypes;
+ listutils,elementcache,__mla__internaltypes,llvmlists;
 
 type
  datasizetyxx = type integer;
@@ -279,7 +279,9 @@ function initopenarrayconst(var adata: dataty; const itemcount: int32;
                                          //returns pointer to data block
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                        var address: segaddressty; const aexternal: boolean);
+                        var address: segaddressty; const aexternal: boolean;
+                             const llvminitid: int32 = -1;
+                                   const allockind: globallockindty = gak_var);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 procedure tracklocalaccess(var aaddress: locaddressty; 
@@ -346,7 +348,7 @@ uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,segmentutils,valuehandler,unithandler,
  subhandler,classhandler,
- identutils,llvmbitcodes,llvmlists,grammarglob;
+ identutils,llvmbitcodes,grammarglob;
 
 type
  tgloballocdatalist1 = class(tgloballocdatalist);
@@ -3107,18 +3109,6 @@ begin
    if (not address or bo1) and not isstartoffset then begin
     offsetad(stackoffset,d.dat.ref.offset);
    end;
-    {
-    po1:= insertitem(oc_indirectpooffs,stackoffset,false);
-    with po1^ do begin
-     par.voffset:= d.dat.ref.offset;
-     if info.backend = bke_llvm then begin
-      par.voffset:= constlist.addi32(par.voffset).listid;
-     end;
-     par.ssas1:= par.ssad - getssa(oc_indirectpooffs);
-    end;
-    }
-//   end;
-//   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
   end
   else begin
    errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -3421,6 +3411,7 @@ procedure castreftype(const acontext: pcontextitemty;
 var
  sourcetyp,desttyp: ptypedataty;
  i1,i2,i3: int32;
+ b1: boolean;
 label
  errorlab;
 begin
@@ -3449,11 +3440,18 @@ begin
     d.dat.datatyp.typedata:= ele.eledatarel(sourcetyp); 
                                        //in case of tf_untyped
     d.dat.indirection:= item.indirection;
+    b1:= d.dat.indirection = 1;
+    if b1 then begin               //todo: check, use something more elegant
+     dec(d.dat.datatyp.indirectlevel);
+     dec(d.dat.indirection);
+    end;
     if not getaddress(acontext,true) then begin
      goto errorlab;
     end;
-    dec(d.dat.datatyp.indirectlevel);
-    dec(d.dat.indirection);
+    if not b1 then begin
+     dec(d.dat.datatyp.indirectlevel);
+     dec(d.dat.indirection);
+    end;
     d.dat.datatyp.typedata:= item.typedata;
     d.dat.datatyp.flags:= h.flags;
     d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
@@ -4458,7 +4456,9 @@ begin
 end;
 
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                         var address: segaddressty; const aexternal: boolean);
+                        var address: segaddressty; const aexternal: boolean;
+                        const llvminitid: int32 = -1; 
+                        const allockind: globallockindty = gak_var);
 var
  li1: linkagety;
 begin
@@ -4470,13 +4470,19 @@ begin
    else begin
     li1:= info.s.globlinkage;
    end;
-   if adatasize = das_none then begin
-    address.address:= info.s.unitinfo^.llvmlists.globlist.
-                              addbytevalue(asize,li1,aexternal);
+   if llvminitid >= 0 then begin
+    address.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                                     allockind,llvminitid,li1);
    end
    else begin
-    address.address:= info.s.unitinfo^.llvmlists.globlist.
-                           addbitvalue(adatasize,li1,aexternal);
+    if adatasize = das_none then begin
+     address.address:= info.s.unitinfo^.llvmlists.globlist.
+                               addbytevalue(asize,li1,aexternal);
+    end
+    else begin
+     address.address:= info.s.unitinfo^.llvmlists.globlist.
+                            addbitvalue(adatasize,li1,aexternal);
+    end;
    end;
   end;
  end;

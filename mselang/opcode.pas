@@ -18,7 +18,8 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,parserglob,globtypes,opglob,handlerglob,__mla__internaltypes;
+ msetypes,parserglob,globtypes,opglob,handlerglob,__mla__internaltypes,
+ llvmlists;
  
 type
  loopinfoty = record
@@ -40,7 +41,9 @@ var
  pushsegaddrssaar: array[segmentty] of int32;
   
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
-                                    var aflags: addressflagsty): segaddressty;
+                     var aflags: addressflagsty;
+                     const llvminitid: int32 = -1;
+                     const allockind: globallockindty = gak_var): segaddressty;
 procedure inclocvaraddress(const asize: integer);
 function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
             var aflags: addressflagsty; const shift: integer = 0): locaddressty;
@@ -568,7 +571,9 @@ begin
 end;
 
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
-                                    var aflags: addressflagsty): segaddressty;
+                      var aflags: addressflagsty;
+                      const llvminitid: int32 = -1;
+                      const allockind: globallockindty = gak_var): segaddressty;
 begin
  with info do begin
   result.address:= globdatapo;
@@ -578,7 +583,8 @@ begin
   if adatasize = das_none then begin
    include(aflags,af_aggregate);
   end;
-  trackalloc(adatasize,asize,result,af_external in aflags);
+  trackalloc(adatasize,asize,result,af_external in aflags,llvminitid,
+                                                                   allockind);
  end;
 end;
 
