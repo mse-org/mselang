@@ -2492,13 +2492,12 @@ begin
        val.d:= d.dat.constval;
       end;
      }
-      include(vf.flags,tf_resource);
       with sysdatatypes[st_string8] do begin
-       vf.flags:= flags;
+       vf.flags:= (flags - [tf_needsini]) + [tf_resource];
        vf.typ:= typedata;
       end;
       s.currentstatementflags:= s.currentstatementflags + 
-                                 [stf_needsmanage,stf_needsini,stf_needsfini];
+                                 [stf_needsmanage,stf_needsfini];
       nameid:= -1;
       address.flags:= [af_const,af_segment];
       address.indirectlevel:= 0;

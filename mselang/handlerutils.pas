@@ -472,21 +472,24 @@ const
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0;
        manageproc: mpk_managestring;
-       flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
+       flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed]; 
+       indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 1; infostring: (dummy2: 0))),
    (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0;
        manageproc: mpk_managestring;
-       flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
+       flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed];
+       indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 2; infostring: (dummy2: 0))),
    (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0;
        manageproc: mpk_managestring;
-       flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
+       flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed];
+       indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 4; infostring: (dummy2: 0)))

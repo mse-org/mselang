@@ -1,30 +1,17 @@
-//test
-program test;
-//{$internaldebug on}
+program managedparam;
+type
+ intarty = array of int32;
 
-procedure flo64tostring1( precision: integer): string16;
-
- function getfixoverflowvalue: int32;
- begin
-{
-   if precision < 0 then
-   end;
-}
-   result:= precision;
-
-//  result:= 123;
- end;
-var
- s1: string8;
+procedure test(par1: intarty);
 begin
-// exitcode:= getfixoverflowvalue();
- s1:= result;
-// result:= 123;
-// result:= getfixoverflowvalue();
-// result:= '-'+result;
+ exitcode:= par1[2];
 end;
 
+var
+ ar1: intarty;
+
 begin
- flo64tostring1(123);
-// exitcode:= flo64tostring1(123);
+ setlength(ar1,5);
+ ar1[2]:= 123;
+ test(ar1);
 end.

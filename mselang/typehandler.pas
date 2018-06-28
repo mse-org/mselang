@@ -465,6 +465,7 @@ var
 // ele1: elementoffsetty;
  size1: dataoffsty;
  i1,elecount: int32;
+ fla1: typeflagsty;
 begin 
  with info do begin
   if iscasekey then begin
@@ -503,10 +504,9 @@ begin
     po1^.indirectlevel:= d.typ.indirectlevel;
     po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
     if po1^.indirectlevel = 0 then begin      //todo: alignment
-     if tf_needsmanage in po2^.h.flags then begin
-      include(atypeflags,tf_needsmanage);
-      include(po1^.vf.flags,tf_needsmanage);
-     end;
+     fla1:= po2^.h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
+     atypeflags:= atypeflags + fla1;
+     po1^.vf.flags:= po1^.vf.flags + fla1;
      if [tf_hascomplexini,tf_complexini] * po2^.h.flags <> [] then begin
       include(atypeflags,tf_hascomplexini);
       include(po1^.vf.flags,tf_hascomplexini);
@@ -1336,7 +1336,7 @@ begin
      end
      else begin
       inittypedatasize(arty^,dk_dynarray,0,das_pointer,
-                                      [tf_managed,tf_needsmanage]);
+                    [tf_managed,tf_needsmanage,tf_needsini,tf_needsfini]);
       isopenarray:= false;
      end;
      with arty^ do begin

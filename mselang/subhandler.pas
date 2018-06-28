@@ -1812,9 +1812,11 @@ var
              end;
             end
             else begin 
-             if tf_needsmanage in typ1^.h.flags then begin
-              include(vf.flags,tf_needsmanage);
-             end;
+             vf.flags:= typ1^.h.flags * 
+                            [tf_needsmanage,tf_needsini,tf_needsfini];
+//             if tf_needsmanage in typ1^.h.flags then begin
+//              include(vf.flags,tf_needsmanage);
+//             end;
             end;
            end;
           end;

@@ -1093,17 +1093,19 @@ var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
+ b1: boolean;
 begin
  if chain <> 0 then begin
   ad1.contextindex:= acontextindex;
   ad1.kind:= ark_vardatanoaggregate;
   ad1.offset:= 0;
   ele1:= chain;
+  b1:= (op <> mo_ini) and (op <> mo_fini);
   repeat
    po1:= ele.eledataabs(ele1);
-   if (tf_needsmanage in po1^.vf.flags) or 
-                 (op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
-                 (op = mo_fini) and (tf_needsfini in po1^.vf.flags) then begin
+   if (op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
+      (op = mo_fini) and (tf_needsfini in po1^.vf.flags) or
+      b1 and (tf_needsmanage in po1^.vf.flags) then begin
     ad1.vardata:= po1;
     ad1.isclass:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.
                                                  h.kind in [dk_class]; 
