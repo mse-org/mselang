@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=928
- y=495
+ x=132
+ y=213
  cx=879
  cy=396
 macros.sta=9
@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=25
    (
    kind=1
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,address
+   a=0,665,4,address
    c=3
     (
     kind=2
@@ -232,8 +232,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,addressassign llvm
-    teststate=2
+    a=0,648,1,addressassign llvm
+    teststate=1
     path=addressassign.mla
     comment=
     cc=${mlc_llvm}
@@ -246,13 +246,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=0
     ae=0
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=address/
    comment=
    cc=
@@ -3594,7 +3594,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,4,dynarray
    c=15
     (
     kind=2
@@ -5994,8 +5994,50 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
-   c=10
+   a=0,665,4,string
+   c=11
+    (
+    kind=1
+    a=0,665,4,resourcestring
+    c=1
+     (
+     kind=2
+     a=0,648,1,resourcestr llvm
+     teststate=1
+     path=resourcestr.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=1
+    path=resourcestring/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
     (
     kind=2
     a=0,648,1,stringtest
@@ -9116,7 +9158,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -13542,12 +13584,12 @@ c=3
      rd=
      in=
      eo=
-     ao=0
+     ao=1
      ee=constpar1.mla(5,2) Error: Can't assign values to const variable
      ae=0
      eec=1
      cr=0
-     ao=0
+     ao=1
      ae=0
      aec=1
      ie=0
@@ -14266,7 +14308,34 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=58
+rowstate=85
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

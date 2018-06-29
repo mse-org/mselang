@@ -1046,6 +1046,7 @@ parseend:
    freelist(externallinklist);
   end;
 }
+{
   with s.unitinfo^ do begin
    if [stf_needsmanage,stf_needsini] * s.currentstatementflags <> [] then begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
@@ -1060,6 +1061,7 @@ parseend:
     end;
    end;
   end;
+}
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0) and 
                                                      not (ps_abort in s.state);
   with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin

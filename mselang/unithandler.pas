@@ -167,6 +167,8 @@ procedure handleinitialization();
 procedure handlefinalizationstart();
 procedure handlefinalization();
 
+procedure checkinifini();
+
 procedure beginunit(const aunit: punitinfoty);
 function endunit(const aunit: punitinfoty): boolean;
 procedure finalizeunit(const aunit: punitinfoty);
@@ -184,7 +186,7 @@ implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
- {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,
+ {stackops,}segmentutils,classhandler,managedtypes,llvmbitcodes,handler,
  unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler,
  elementcache,grammarglob,__mla__internaltypes;
  
@@ -566,12 +568,33 @@ begin
  include(info.s.unitinfo^.state,us_implementationblock);
 end;
 
+procedure checkinifini();
+var
+ ad2: opaddressty;
+begin
+ with info do begin
+  if s.currentstatementflags*[stf_needsmanage,stf_needsini] <> [] then begin
+   if getinternalsub(isub_ini,ad2) then begin //no initialization
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
+    endsimplesub(false);
+   end;
+  end;
+  if s.currentstatementflags*[stf_needsmanage,stf_needsfini] <> [] then begin
+   if getinternalsub(isub_fini,ad2) then begin  //no finalization
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,s.stacktop);
+    endsimplesub(false);
+   end;
+  end;
+ end;
+end;
+
 procedure handleimplementation();
 begin
 {$ifdef mse_debugparser}
  outhandle('IMPLEMENTATION');
 {$endif}
  checkforwardtypeerrors();
+ checkinifini();
  markunitend();
  with info do begin
   with s.unitinfo^ do begin

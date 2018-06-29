@@ -1031,13 +1031,13 @@ begin
    end;
    typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
-           info.s.unitinfo^.llvmlists.constlist.addclassdef(
-                                   poclassdef,i1).listid,li1);
+                          info.s.unitinfo^.llvmlists.constlist.addclassdef(
+                                                     poclassdef,i1).listid,li1);
    if li1 = li_external then begin
-    inc(info.s.unitinfo^.nameid);
+//    inc(info.s.unitinfo^.nameid);
     typ1^.infoclass.nameid:= info.s.unitinfo^.nameid;
-    info.s.unitinfo^.llvmlists.globlist.namelist.addname(
-               info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
+//    info.s.unitinfo^.llvmlists.globlist.namelist.addname(
+//               info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
    end;
    header1^.defsid:= typ1^.infoclass.defsid;
   {$ifdef mse_checkinternalerror}
@@ -2625,6 +2625,10 @@ begin
  result:= fcount;
  inccount();
  flastitem^:= dat1;
+ if alinkage = li_external then begin
+  inc(info.s.unitinfo^.nameid);
+  fnamelist.addname(info.s.unitinfo,info.s.unitinfo^.nameid,result);
+ end;
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;

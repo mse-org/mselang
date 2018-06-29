@@ -1,0 +1,10 @@
+program resourcestr;
+uses
+ unit1;
+resourcestring
+ a = 'AAAA';
+begin
+ if (a = 'AAAA') and (b = 'BBBB') then
+  exitcode:= 123;
+ end;
+end.

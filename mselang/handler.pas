@@ -204,7 +204,6 @@ end;
 procedure handleprogbegin();
 var
  ad1: listadty;
- ad2: opaddressty;
  i1: int32;
  n1: identnamety;
 begin
@@ -220,19 +219,7 @@ begin
   managedtempref:= 0;
   managedtemparrayid:= 0;
  }
-  if s.currentstatementflags*[stf_needsmanage,stf_needsini] <> [] then begin
-   if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
-    endsimplesub(false);
-   end;
-  end;
-  if s.currentstatementflags*[stf_needsmanage,stf_needsfini] <> [] then begin
-   if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,s.stacktop);
-    endsimplesub(false);
-   end;
-  end;
-
+  checkinifini();
   if co_llvm in o.compileoptions then begin
    n1:= getidentname2(getident('main'));
    i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
