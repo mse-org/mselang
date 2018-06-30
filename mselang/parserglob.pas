@@ -707,10 +707,10 @@ type
  unitrelocty = record
   interfaceelestart: elementoffsetty;
   interfaceelesize: elementsizety;
-  interfaceglobstart: targetadty;
-  interfaceglobsize: targetsizety;
-  opstart: targetadty;
-  opsize: targetsizety;
+//  interfaceglobstart: targetadty;
+//  interfaceglobsize: targetsizety;
+//  opstart: targetadty;
+//  opsize: targetsizety;
   globidcountx: int32;
  end;
 

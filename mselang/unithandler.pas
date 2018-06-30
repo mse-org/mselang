@@ -286,7 +286,7 @@ begin
   globlinkage:= li_external;
   ele.markelement(interfacestart); 
   reloc.interfaceelestart:= interfacestart.bufferref;
-  reloc.interfaceglobstart:= info.globdatapo;
+//  reloc.interfaceglobstart:= info.globdatapo;
                 //reloc.globidcount set in putunit()
  end;
 end;
@@ -297,7 +297,7 @@ begin
   globlinkage:= li_internal;
   ele.markelement(interfaceend);
   reloc.interfaceelesize:= interfaceend.bufferref- interfacestart.bufferref;
-  reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
+//  reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
  end;
 end;
 
@@ -307,7 +307,7 @@ begin
   include(state,us_implementationmarked);
   ele.markelement(implementationstart);
   implementationglobstart:= info.globdatapo;
-  reloc.opstart:= info.opcount;
+//  reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
   opstart:= info.opcount;
   globidbasex:= info.globidcountx;
@@ -338,7 +338,7 @@ begin
    info.globidcountx:= info.globidcountx+nameid;
   end;
   setsubsegmentsize(opseg);
-  reloc.opsize:= info.opcount-reloc.opstart;
+//  reloc.opsize:= info.opcount-reloc.opstart;
   implementationglobsize:= info.globdatapo - implementationglobstart;
  end;
 end;

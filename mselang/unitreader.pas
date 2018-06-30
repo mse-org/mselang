@@ -242,22 +242,24 @@ type
  end;
 
 var
- globreloc1: relocinfoarty;
- opreloc1: relocinfoarty;
+// globreloc1: relocinfoarty;
+// opreloc1: relocinfoarty;
  elereloc1: relocinfoarty;
  globvarreloccount: int32;
- opreloccount: int32;
+// opreloccount: int32;
  elereloccount: int32;
 
  procedure addrelocs(const aunit: punitinfoty; const auses: unitrelocty);
  begin
   with auses do begin
+{
    addrelocitem(interfaceglobstart,
         aunit^.reloc.interfaceglobstart,aunit^.reloc.interfaceglobsize,
         globreloc1,globvarreloccount);
    addrelocitem(opstart,
         aunit^.reloc.opstart,aunit^.reloc.opsize,
         opreloc1,opreloccount);
+}
   end;
  end;//addrelocs()
  
@@ -269,9 +271,9 @@ var
    with amatchinfo do begin
     if not comparemem(@aunit^.filematch.guid,@filematchx.guid,
                                             sizeof(filematchx.guid)) or
-       (aunit^.filematch.timestamp <> filematchx.timestamp) or
+       (aunit^.filematch.timestamp <> filematchx.timestamp){ or
        (aunit^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
-       (aunit^.reloc.opsize <> reloc.opsize) then begin
+       (aunit^.reloc.opsize <> reloc.opsize)} then begin
      result:= false;
     end;
    end;
@@ -292,8 +294,8 @@ var
  segstate1: segmentstatety;
  haselereloc: boolean;
  unit1: punitinfoty;
- globvaroffset: elementoffsetty;
- opoffset1: targetoffsty;
+// globvaroffset: elementoffsetty;
+// opoffset1: targetoffsty;
  op1,ope: popinfoty;
  isub1: internalsubty;
  bcheader1: bcunitheaderty;
@@ -390,13 +392,15 @@ begin
                               not getdata(po3,implementationuses1) then begin
      goto endlab;
     end;
-    setlength(globreloc1,length(interfaceuses1)+length(implementationuses1)+3);
+//    setlength(globreloc1,length(interfaceuses1)+length(implementationuses1)+3);
          //max, + own interface and implementation globvar block,
          //exitcode todo: remove this
-    setlength(opreloc1,length(globreloc1)); //max
-    setlength(elereloc1,length(globreloc1)); //max
+//    setlength(opreloc1,length(globreloc1)); //max
+//    setlength(elereloc1,length(globreloc1)); //max
+    setlength(elereloc1,length(interfaceuses1)+length(implementationuses1)+3);
+         //max, + own interface and implementation globvar block,
     globvarreloccount:= 0;
-    opreloccount:= 0;
+//    opreloccount:= 0;
     elereloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
@@ -420,7 +424,7 @@ begin
     end;
     restoreunitsegments(unitsegments1);
 
-    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
+//    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
     ele.markelement(startref);
     if not updateident(int32(ptrint(intf^.header.key))) then begin
@@ -431,13 +435,15 @@ begin
     baseoffset:= ele.eletopoffset;
 
     aunit^.reloc:= intf^.header.reloc;
-    aunit^.reloc.interfaceglobstart:= info.globdatapo;
+//    aunit^.reloc.interfaceglobstart:= info.globdatapo;
     aunit^.reloc.interfaceelestart:= baseoffset;
     with intf^.header.reloc do begin       
+{
      addrelocitem(interfaceglobstart,info.globdatapo,interfaceglobsize,
                                                  globreloc1,globvarreloccount);
                                                  //own interface globvars
      globvaroffset:= info.globdatapo-interfaceglobstart;
+}
      addrelocitem(interfaceelestart,aunit^.reloc.interfaceelestart,
                    interfaceelesize,elereloc1,elereloccount);
                                                  //own interface elements
@@ -648,23 +654,27 @@ begin
     restoreunitsegments(unitsegments1);
     aunit^.implementationglobstart:= info.globdatapo;
     with intf^.header do begin            
+{
      addrelocitem(implementationglobstart,info.globdatapo,
                           implementationglobsize,globreloc1,globvarreloccount);
                                       //own implementation globvars
-     addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
-                                                    opreloc1,opreloccount);
+}
+//     addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
+//                                                    opreloc1,opreloccount);
                                       //own op segment
-     opoffset1:= info.opcount-reloc.opstart;
+//     opoffset1:= info.opcount-reloc.opstart;
      aunit^.internalsubnames:= internalsubnames;
     end;
-    setlength(globreloc1,globvarreloccount);
-    setlength(opreloc1,opreloccount);
+//    setlength(globreloc1,globvarreloccount);
+//    setlength(opreloc1,opreloccount);
     aunit^.implementationglobsize:= intf^.header.implementationglobsize;
     inc(info.globdatapo,intf^.header.implementationglobsize);
-    if not dosort(globreloc1) or not dosort(opreloc1) then begin
+(*
+    if not dosort(globreloc1) {or not dosort(opreloc1)} then begin
      errormessage(err_invalidunitfile,[aunit^.filepath]);
      goto fatallab;
     end;
+*)
     goto oklab;
 fatallab:
     include(info.s.state,ps_abort);
@@ -673,7 +683,7 @@ errorlab:
     goto endlab;
 oklab:
     with aunit^ do begin
-     mainad:= intf^.header.mainad + opoffset1;
+//     mainad:= intf^.header.mainad + opoffset1;
     end;
     if co_llvm in info.o.compileoptions then begin
      result:= true;
@@ -683,6 +693,7 @@ oklab:
      segstate1:= savesegment(seg_op);
      op1:= getsegmenttop(seg_op);
      result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
+{
      if (globreloc1 <> nil) and result then begin
       pointer(op1):= pointer(op1)+(getsegmentbase(seg_op)-segstate1.data);
       ope:= getsegmenttop(seg_op);
@@ -695,8 +706,9 @@ oklab:
        inc(op1);
       end;
      end;
+}
      if result then begin
-      inc(info.opcount,intf^.header.reloc.opsize);
+//      inc(info.opcount,intf^.header.reloc.opsize);
      end
      else begin
       restoresegment(segstate1);

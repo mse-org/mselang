@@ -369,7 +369,7 @@ begin
 {$ifdef mse_debugparser}
   with po2^.header,reloc do begin
    writeln('** write unit '+aunit^.namestring,
-          ' intfb:',interfaceglobstart,' intfs:',interfaceglobsize,
+//          ' intfb:',interfaceglobstart,' intfs:',interfaceglobsize,
           ' implb:',implementationglobstart,' impls:',implementationglobsize);
   end;
 {$endif}
