@@ -396,7 +396,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mseformatstr,
- mselinklist,msesysutils,opcode,handlerutils,
+ mselinklist,msesysutils,opcode,handlerutils,unithandler,
  internaltypes,__mla__internaltypes,errorhandler,identutils,grammarglob;
 
 const
@@ -2496,10 +2496,12 @@ procedure telementhashdatalist.markelement(out ref: markinfoty);
 begin
  mark(ref.hashref);
  ref.bufferref:= fnextelement;
+// markunitstate(ref);
 end;
 
 procedure telementhashdatalist.releaseelement(const ref: markinfoty);
 begin
+// releaseunitstate(ref);
  release(ref.hashref);
  fnextelement:= ref.bufferref;
 end;

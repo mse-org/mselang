@@ -18,7 +18,7 @@ type
  
  filenamety = string16;
 
- cbase = class() [virtual]
+ tbase = class() [virtual]
   destructor destroy() [virtual];
  end;
   
@@ -94,9 +94,9 @@ begin
  end;
 end;
 
-{ cbase }
+{ tbase }
 
-destructor cbase.destroy();
+destructor tbase.destroy();
 begin
 end;
 

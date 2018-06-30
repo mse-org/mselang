@@ -13,8 +13,9 @@ interface
 uses
  rtl_base;
 type
- cexception = class(cbase)[except]
+ texception = class(tbase)[except]
   constructor create(const message: string8);
+  constructor createfmt(const msg: string8; const args : array of const);
   destructor destroy()[virtual,default];
   property message: string8 read fmessage write fmessage;
 
@@ -23,13 +24,21 @@ type
  end;
 
 implementation
-
-constructor cexception.create(const message: string8);
+uses
+ rtl_format;
+ 
+constructor texception.create(const message: string8);
 begin
  fmessage:= message;
 end;
 
-destructor cexception.destroy();
+constructor texception.createfmt(const msg: string8;
+                                           const args : array of const);
+begin
+// create(format(msg,args));
+end;
+
+destructor texception.destroy();
 begin
  //dummy
 end;

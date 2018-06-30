@@ -124,7 +124,7 @@ var
    with ps^^ do begin
     pd^.id:= updateident(key);
     pd^.reloc:= reloc;
-    pd^.filetimestamp:= filematch.timestamp;
+    pd^.filematchx:= filematch;
    end;
    inc(ps);
    inc(pd);
@@ -203,6 +203,7 @@ var
      ek_type: begin
       with ptypedataty(po)^ do begin
        updateref(h.base);
+       updateref(h.ancestor);
        case h.kind of
         dk_enum: begin
          updateref(infoenum.first);

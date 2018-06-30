@@ -89,85 +89,44 @@ begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
    initparams(parserparams);
-   
-(*
-   parserparams.buildoptions.llvmlinkcommand:= 
-                                      tosysfilepath(llvmbindir+'llvm-link');
-   parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
-//   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
-   parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
-   parserparams.buildoptions.ascommand:= tosysfilepath('as');
-   parserparams.buildoptions.exefile:= tosysfilepath(
-                                          replacefileext(filename1,'bin'));
-
-   parserparams.compileoptions:= mlaruntimecompileoptions;
-   if sysenv.defined[ord(pa_llvm)] then begin
-    parserparams.compileoptions:= llvmcompileoptions+[co_modular,co_buildexe];
-    if sysenv.defined[ord(pa_debug)] then begin
-     parserparams.compileoptions:= 
-                       parserparams.compileoptions + [co_lineinfo,co_proginfo];
-    end;
-    if sysenv.defined[ord(pa_debugline)] then begin
-     parserparams.compileoptions:= parserparams.compileoptions + [co_lineinfo];
-    end;
-   end;
-   if sysenv.defined[ord(pa_build)] then begin
-    include(parserparams.compileoptions,co_build);
-   end;
-   if sysenv.defined[ord(pa_makeobject)] then begin
-    parserparams.compileoptions:= parserparams.compileoptions +
-                                        [co_buildexe,co_modular,co_objmodules];
-   end;
-   if sysenv.defined[ord(pa_makebc)] then begin
-    parserparams.compileoptions:= parserparams.compileoptions - 
-                                              [co_buildexe,co_modular];
-   end;
-   if sysenv.defined[ord(pa_showcompilefile)] then begin
-    parserparams.compileoptions:= parserparams.compileoptions +
-                                                          [co_compilefileinfo];
-   end;
-   if sysenv.defined[ord(pa_nocompilerunit)] then begin
-    include(parserparams.compileoptions,co_nocompilerunit);
-   end;
-   if sysenv.defined[ord(pa_nortlunits)] then begin
-    include(parserparams.compileoptions,co_nortlunits);
-   end;
-   info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
-*)
-   if parse(str1,filename1,parserparams) then begin
-    if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
-     filename1:= replacefileext(filename1,llvmbcextension);
-     if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
-                          filename1,fm_create),
-                             err_cannotcreatetargetfile,[filename1]) then begin
-      seg1:= getfullsegment(seg_op,startupoffset);
-      try
-       llvmops.run(llvmstream,true,info.s.unitinfo^.mainfini,seg1);
-      except
-       on e: exception do begin
-        errormessage1(e.message,[]);
-        exitcode:= 1;
+   try   
+    if parse(str1,filename1,parserparams) then begin
+     if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
+      filename1:= replacefileext(filename1,llvmbcextension);
+      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
+                           filename1,fm_create),
+                              err_cannotcreatetargetfile,[filename1]) then begin
+       seg1:= getfullsegment(seg_op,startupoffset);
+       try
+        llvmops.run(llvmstream,true,info.s.unitinfo^.mainfini,seg1);
+       except
+        on e: exception do begin
+         errormessage1(e.message,[]);
+         exitcode:= 1;
+        end;
        end;
+       unithandler.deinit(true); //destroy unitlist
+       llvmstream.destroy();
       end;
-      unithandler.deinit(true); //destroy unitlist
-      llvmstream.destroy();
+     end
+     else begin
+      filename1:= replacefileext(filename1,mliextension);
+      if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
+                              err_cannotcreatetargetfile,[filename1]) then begin
+       try
+        writesegmentdata(targetstream,getfilekind(mlafk_rtprogram),
+                                                            storedsegments,now);
+       finally
+        targetstream.destroy();
+       end;      
+      end;
      end;
     end
     else begin
-     filename1:= replacefileext(filename1,mliextension);
-     if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
-                             err_cannotcreatetargetfile,[filename1]) then begin
-      try
-       writesegmentdata(targetstream,getfilekind(mlafk_rtprogram),
-                                                           storedsegments,now);
-      finally
-       targetstream.destroy();
-      end;      
-     end;
+     exitcode:= 1;
     end;
-   end
-   else begin
-    exitcode:= 1;
+   finally
+    unithandler.deinit(true);
    end;
   end;
  end;

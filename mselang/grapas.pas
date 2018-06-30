@@ -1608,6 +1608,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdef0');
+ classdef0cco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdef0c');
  classdef0bco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -8991,6 +8996,16 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bclassdef0: array[0..1] of branchty = (
+   (flags: [bf_nt];
+     dest: (context: @classdef0cco); stack: nil; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bclassdef0b: array[0..19] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
@@ -14230,9 +14245,11 @@ begin
  classofco.handleexit:= @handleclassoftyp;
  classdef0aco.branch:= @bclassdef0a;
  classdef0aco.next:= @classdef0co;
- classdef0co.branch:= nil;
+ classdef0co.branch:= @bclassdef0;
  classdef0co.next:= @classdef0bco;
  classdef0co.handleexit:= @handleclassdef0;
+ classdef0cco.branch:= nil;
+ classdef0cco.handleexit:= @handleclassdef0c;
  classdef0bco.branch:= @bclassdef0b;
  classdef0bco.next:= @classdeferrorco;
  classmethodco.branch:= @bclassmethod;

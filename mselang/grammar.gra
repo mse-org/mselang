@@ -1116,6 +1116,10 @@ classdef0a,classdef0,,
  ${whitespace}
  '[',classdefattach-*
 classdef0,classdef0b,,handleclassdef0
+{$grapas}
+ ';',classdef0c
+classdef0c,,,handleclassdef0c
+{$}
 classdef0b,classdeferror,,
  ${whitespace}
  'private'.,!handleclassprivate-

@@ -322,6 +322,7 @@ begin
    if not (co_mlaruntime in parserparams.compileoptions) then begin
     elements.clear();
    end;
+   unithandler.deinit(true); //free unitlist
 //   freeandnil(mainmetadatalist);
   end;
  finally

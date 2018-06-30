@@ -3,8 +3,15 @@ uses
  unit1;
 resourcestring
  a = 'AAAA';
+type
+ pstring8 = ^string8;
 begin
  if (a = 'AAAA') and (b = 'BBBB') then
   exitcode:= 123;
+ end;
+ pstring8(@a)^:= 'abc';
+ pstring8(@b)^:= 'def';
+ if (a <> 'abc') or (b <> 'def') then
+  exitcode:= 1;
  end;
 end.

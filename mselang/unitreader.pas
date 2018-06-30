@@ -259,7 +259,24 @@ var
         aunit^.reloc.opstart,aunit^.reloc.opsize,
         opreloc1,opreloccount);
   end;
- end;
+ end;//addrelocs()
+ 
+ function checkfilematch(const aunit: punitinfoty;
+                           const amatchinfo: usesitemty): boolean;
+ begin
+  result:= aunit <> nil;
+  if result then begin
+   with amatchinfo do begin
+    if not comparemem(@aunit^.filematch.guid,@filematchx.guid,
+                                            sizeof(filematchx.guid)) or
+       (aunit^.filematch.timestamp <> filematchx.timestamp) or
+       (aunit^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
+       (aunit^.reloc.opsize <> reloc.opsize) then begin
+     result:= false;
+    end;
+   end;
+  end;
+ end;//checkfilematch()
  
 var
  stream1,stream2: tmsefilestream;
@@ -285,7 +302,7 @@ var
  id1: identty;
  mop1: managedopty;
 label
- errorlab,oklab,endlab;
+ errorlab,fatallab,oklab,endlab;
 begin
  result:= false;
  fna1:= getrtunitfile(aunit);
@@ -388,19 +405,15 @@ begin
     for i1:= 0 to high(interfaceuses1) do begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
      interfaceunits1[i1]:= unit1;
-     with interfaceuses1[i1] do begin
-      if (unit1 = nil) or (unit1^.filematch.timestamp <> filetimestamp) or
-       (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
-       (unit1^.reloc.opsize <> reloc.opsize) then begin
-       restoreunitsegments(unitsegments1);
-       goto endlab;
-      end;
+     if not checkfilematch(unit1,interfaceuses1[i1]) then begin
+      restoreunitsegments(unitsegments1);
+      goto endlab;
      end;
      addrelocs(unit1,interfaceuses1[i1].reloc);
     end;
     for i1:= 0 to high(implementationuses1) do begin
      with implementationuses1[i1] do begin
-      if getunittimestamp(id) <> filetimestamp then begin
+      if getunittimestamp(id) <> filematchx.timestamp then begin
        goto endlab; //needs recompilation
       end;
      end;
@@ -481,7 +494,8 @@ begin
       case header.kind of
        ek_type: begin
         with ptypedataty(po)^ do begin
-        updateref(h.base,id1);
+         updateref(h.base,id1);
+         updateref(h.ancestor,id1);
          case h.kind of
           dk_enum: begin
            updateref(infoenum.first,id1);
@@ -617,21 +631,17 @@ begin
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(implementationuses1) do begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
-     with implementationuses1[i1] do begin
-      if (unit1 = nil) or (unit1^.filematch.timestamp <> filetimestamp) or
-         (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or
-                          (unit1^.reloc.opsize <> reloc.opsize) then begin
-       restoreunitsegments(unitsegments1);
-                   //todo: try restart instead of fatal error
-       if unit1 <> nil then begin
-        errormessage(err_invalidunitfile,[unit1^.filepath]);
-       end
-       else begin
-        errormessage(err_invalidunitfile,
-                                    [getidentname(implementationuses1[i1].id)]);
-       end;
-       goto errorlab;
+     if not checkfilematch(unit1,implementationuses1[i1]) then begin
+      restoreunitsegments(unitsegments1);
+                  //todo: try restart instead of fatal error
+      if unit1 <> nil then begin
+       errormessage(err_invalidunitfile,[unit1^.filepath]);
+      end
+      else begin
+       errormessage(err_invalidunitfile,
+                                   [getidentname(implementationuses1[i1].id)]);
       end;
+      goto errorlab;
      end;
      addrelocs(unit1,implementationuses1[i1].reloc);
     end;
@@ -652,9 +662,12 @@ begin
     aunit^.implementationglobsize:= intf^.header.implementationglobsize;
     inc(info.globdatapo,intf^.header.implementationglobsize);
     if not dosort(globreloc1) or not dosort(opreloc1) then begin
-     goto errorlab;
+     errormessage(err_invalidunitfile,[aunit^.filepath]);
+     goto fatallab;
     end;
     goto oklab;
+fatallab:
+    include(info.s.state,ps_abort);
 errorlab:
     ele.releaseelement(startref);
     goto endlab;

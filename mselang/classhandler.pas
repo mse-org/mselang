@@ -78,6 +78,7 @@ procedure handleclassdefstart();
 procedure handleclassdefforward();
 procedure handleclassdeferror();
 procedure handleclassdef0();
+procedure handleclassdef0c();
 procedure handleclassdefreturn();
 procedure handleclassdefparam2();
 procedure handleclassdefparam3a();
@@ -504,6 +505,19 @@ begin
     errormessage(err_missingobjectattachment,['virtual']);
    end;
   end;
+ end;
+end;
+
+procedure handleclassdef0c();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEF0c');
+{$endif}
+ handleclassdef0();
+ handleclassdefreturn();
+ with info do begin
+  s.stackindex:= contextstack[s.stackindex].parent;
+  s.stacktop:= s.stackindex;
  end;
 end;
 

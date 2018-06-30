@@ -92,7 +92,7 @@ end;
 procedure intexp10(aexp: integer): flo64;
 begin
  if not tryintexp10(aexp,result) then
-  raise cexception.create('Exponent overflow');
+  raise texception.create('Exponent overflow');
  end;
 end;
 

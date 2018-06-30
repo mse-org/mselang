@@ -67,6 +67,8 @@ var
  intfparsedchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
+//procedure markunitstate(var ref: markinfoty);
+//procedure releaseunitstate(const ref: markinfoty);
 function defaultdialect(const afilename: filenamety): dialectty;
 
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
@@ -430,7 +432,7 @@ begin
    dec(po1);
    po1^:= loadunit(int1);
    if po1^ = nil then begin
-    include(s.state,ps_stop);
+    s.state:= s.state + [ps_stop,ps_abort];
     break;
    end;
    if ar1[int2] <> 0 then begin
@@ -824,7 +826,21 @@ begin
   result^.dwarflangid:= DW_LANG_Pascal83;
  end;
 end;
+{
+procedure markunitstate(var ref: markinfoty);
+begin
+ ref.unitcount:= unitlist.count;
+end;
 
+procedure releaseunitstate(const ref: markinfoty);
+var
+ i1: int32;
+begin
+ while unitlist.count > ref.unitcount do begin
+  unitlist.internaldeleteitem(unitlist.internallastx());
+ end;
+end;
+}
 function getunitname(const id: identty): string;
 var
  po1: punitinfoty;
@@ -1027,14 +1043,12 @@ end;
 
 procedure tunitlist.finalizeitem(const aitem: phashdataty);
 begin
-{
- with punitinfoty(aitemdata)^ do begin
-  clearlist(externallinklist,sizeof(externallinkinfoty),0);
- end;
-}
  with punithashdataty(aitem)^ do begin
+  finalizeunit(data);
   system.finalize(data^);
   freesegments(data^.segments);
+//  data^.usescache.free;
+//  data^.llvmlists.free;
 //  metadatalist.free();
   freeparsercontext(data^.implstart);
   freemem(data);
@@ -1054,15 +1068,8 @@ begin
  po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty)); //todo: memory fragmentation?
  fillchar(result^,sizeof(result^),0);
-// result^.nameid:= 1;
  result^.key:= aname;
  result^.usescache:= telementcache.create();
-{
- if info.systemunit <> nil then begin
-  setlength(result^.interfaceuses,1);
-  result^.interfaceuses[0]:= info.systemunit;
- end;
-}
  for rtlunit1:= low(info.rtlunits) to high(info.rtlunits) do begin
   if info.rtlunits[rtlunit1] <> nil then begin
    msearrayutils.additem(pointerarty(result^.interfaceuses),
@@ -1070,11 +1077,6 @@ begin
   end;
  end;
  po1^.data:= result;
-{
- with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
-  ref:= result;
- end;
-}
 end;
 
 procedure tunitlist.bcfilenameiterator(const aitem: phashdataty);
@@ -2072,7 +2074,7 @@ begin
   if llvmlists <> globllvmlists then begin
    freeandnil(llvmlists);
   end;
-  usescache.free();
+  freeandnil(usescache);
  end;
 end;
 
@@ -2095,6 +2097,9 @@ end;
 
 procedure clear;
 begin
+ if unitlist <> nil then begin
+  unitlist.clear();
+ end;
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);
  clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
  clearlist(intfparsedlinklist,sizeof(unitlinkinfoty),256);
@@ -2126,7 +2131,7 @@ procedure deinit(const freeunitlist: boolean);
 begin
  clear;
  if freeunitlist then begin
-  unitlist.free;
+  freeandnil(unitlist);
  end;
 end;
 

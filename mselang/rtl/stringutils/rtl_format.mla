@@ -24,7 +24,7 @@ procedure format(const fmt: string8; const args: array of const): string8;
 
 implementation
 uses
- __mla__compilerunit,rtl_flotostr;
+ __mla__compilerunit,rtl_flotostr,rtl_sysexceptions,rtl_sysconsts;
  
 const
  lowerchars: array[char] of char = (
@@ -122,7 +122,7 @@ type
 
  procedure formaterror();
  begin
-  writeln('***formaterror***');
+  raise econverterror.createfmt(sinvalidformat,[fmt]);
  end; //formaterror()
 
  procedure converterror();

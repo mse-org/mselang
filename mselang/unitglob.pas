@@ -37,7 +37,8 @@ type
 
  usesitemty = record
   id: identty;
-  filetimestamp: tdatetime;
+//  filetimestamp: tdatetime;
+  filematchx: filematchinfoty;
   reloc: unitrelocty;
  end;
  pusesitemty = ^usesitemty;

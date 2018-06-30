@@ -224,6 +224,7 @@ type
  markinfoty = record
   hashref: hashoffsetty;
   bufferref: ptruint;
+//  unitcount: int32;
  end;
 
 
