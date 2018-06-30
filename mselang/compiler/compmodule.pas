@@ -89,7 +89,8 @@ begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
    initparams(parserparams);
-   try   
+   try
+    include(parserparams.compileoptions,co_nodeinit);
     if parse(str1,filename1,parserparams) then begin
      if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
       filename1:= replacefileext(filename1,llvmbcextension);
@@ -126,7 +127,7 @@ begin
      exitcode:= 1;
     end;
    finally
-    unithandler.deinit(true);
+    parser.deinit(true);
    end;
   end;
  end;

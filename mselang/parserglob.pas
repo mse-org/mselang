@@ -203,7 +203,8 @@ type
 //                    co_readunits,      //read unitfiles  //preliminary
                     co_build,          //compile all unit files
                     co_buildexe,co_compilefileinfo,
-                    co_lineinfo,co_proginfo,co_names //debug
+                    co_lineinfo,co_proginfo,co_names, //debug
+                    co_nodeinit
                     );
  compileoptionsty = set of compileoptionty;
 const

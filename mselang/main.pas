@@ -188,6 +188,7 @@ begin
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
+  include(parserparams.compileoptions,co_nodeinit);
   bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
   try
    errstream.position:= 0;
@@ -322,7 +323,7 @@ begin
    if not (co_mlaruntime in parserparams.compileoptions) then begin
     elements.clear();
    end;
-   unithandler.deinit(true); //free unitlist
+   {unithandler.}parser.deinit(true); //free unitlist
 //   freeandnil(mainmetadatalist);
   end;
  finally

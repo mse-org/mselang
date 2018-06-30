@@ -118,7 +118,7 @@ type
    method sub(const b: variantty) [operator='-'];
  end;
 
- evariant = class(cexception)
+ evariant = class(texception)
   constructor create(const message: string8; const atype: card16);
   property varianttype: card16 read ftype;
 

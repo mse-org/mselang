@@ -66,6 +66,8 @@ procedure postlineinfo();
 //procedure init;
 //procedure deinit;
 
+procedure deinit(const freeunitlist: boolean);
+
 implementation
 uses
  typinfo,handler,elements,sysutils,handlerglob,mseprocutils,
@@ -1092,7 +1094,8 @@ parseend:
    end;
   end;
   popcurrentscope();
-  if (result = false) or (us_implementationparsed in aunit^.state) then begin
+  if (result = false) or 
+          (us_implementationparsed in aunit^.state) and modularllvm then begin
    finalizeunit(aunit);
   end;
   s:= statebefore;  
@@ -1355,7 +1358,9 @@ begin
 //    unit1^.metadatalist:= nil;
    finally
 //    system.finalize(info);
-    deinit(not result or not (co_llvm in o.compileoptions));
+    if not (co_nodeinit in aparams.compileoptions) then begin
+     deinit(not result or not (co_llvm in o.compileoptions));
+    end;
    end;
   except
    result:= false;
