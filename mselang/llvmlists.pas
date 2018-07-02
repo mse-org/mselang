@@ -404,19 +404,22 @@ type
  end;
  plinkdataty = ^linkdataty;
  linkhashdataty = record
-  header: integerhashdataty;
+  header: doubleintegerhashdataty;
   data: linkdataty;
  end;
  plinkhashdataty = ^linkhashdataty;
  
- tlinklist = class(tintegerhashdatalist)
+ tlinklist = class(tdoubleintegerhashdatalist)
   protected
    function getrecordsize(): int32 override;
   public
 //   constructor create();
    procedure addlink(const adata: pointer; const aglobid: int32);
-   procedure addlink(const extglobid: int32; const locglobid: int32);
-   function find(const akey: integer): plinkhashdataty;
+                         //element data
+   procedure addlink(const extunit: pointer; //punitinfoty
+                             const extglobid: int32; const locglobid: int32);
+   function find(const aunit: pointer; //punitinfoty, nil -> element data
+                 const akey: integer): plinkhashdataty;
  end;
  
  globallockindty = (gak_var,gak_const,gak_sub,gak_alias);
@@ -2728,7 +2731,7 @@ function tgloballocdatalist.addexternalsimplesub(const aunit: pointer;
 begin
  result:= addexternalsimplesub1(aflags);
  fnamelist.addname(aunit,anameid,result);
- flinklist.addlink(anameid+punitinfoty(aunit)^.globidbasex,result);
+ flinklist.addlink(aunit,anameid{+punitinfoty(aunit)^.globidbasex},result);
 end;
 
 function tgloballocdatalist.addexternalsimplesub(const aname: identty;
@@ -4175,21 +4178,29 @@ end;
 
 procedure tlinklist.addlink(const adata: pointer; const aglobid: int32);
 begin
- with plinkhashdataty(add(ele.eledatarel(adata)))^ do begin
+ with plinkhashdataty(add(0,ele.eledatarel(adata)))^ do begin
   data.globid:= aglobid;
  end;
 end;
 
-procedure tlinklist.addlink(const extglobid: int32; const locglobid: int32);
+procedure tlinklist.addlink(const extunit: pointer; //punitinfoty
+                               const extglobid: int32; const locglobid: int32);
 begin
- with plinkhashdataty(add(-extglobid))^ do begin
+ with plinkhashdataty(add(punitinfoty(extunit)^.key,-extglobid))^ do begin
   data.globid:= locglobid;
  end;
 end;
 
-function tlinklist.find(const akey: integer): plinkhashdataty;
+function tlinklist.find(const aunit: pointer; //punitinfoty, nil -> element data
+                        const akey: integer): plinkhashdataty;
+var
+ i1: int32;
 begin
- result:= pointer(inherited find(akey));
+ i1:= 0;
+ if aunit <> nil then begin
+  i1:= punitinfoty(aunit)^.key;
+ end;
+ result:= pointer(inherited find(i1,akey));
 end;
 
 { tint32bufferhashdatalist }
