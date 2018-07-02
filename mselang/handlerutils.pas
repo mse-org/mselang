@@ -2399,7 +2399,7 @@ begin
    result:= aunit^.key <> s.unitinfo^.key;
    if result then begin
     po2:= info.s.unitinfo^.llvmlists.globlist.linklist.find(aunit,
-                                       -(extglobid+aunit^.globidbasex));
+                                       -(extglobid{+aunit^.globidbasex}));
     if po2 <> nil then begin
      locglobid:= po2^.data.globid;
     end

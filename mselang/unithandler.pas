@@ -310,7 +310,7 @@ begin
 //  reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
   opstart:= info.opcount;
-  globidbasex:= info.globidcountx;
+//  globidbasex:= info.globidcountx;
   with info do begin
    if modularllvm and (unitlevel = 1) then begin //main
     with additem(oc_beginparse)^ do begin
@@ -335,7 +335,7 @@ begin
   if info.modularllvm then begin
    with additem(oc_endparse)^ do begin
    end;
-   info.globidcountx:= info.globidcountx+nameid;
+//   info.globidcountx:= info.globidcountx+nameid;
   end;
   setsubsegmentsize(opseg);
 //  reloc.opsize:= info.opcount-reloc.opstart;
