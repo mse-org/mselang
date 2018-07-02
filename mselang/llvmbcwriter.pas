@@ -1988,10 +1988,10 @@ end;
 
 procedure tllvmbcwriter.endsub();
 begin
+ endblock();
 {$ifdef mse_debugparser}
  finsub:= false;
 {$endif}
- endblock();
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean;

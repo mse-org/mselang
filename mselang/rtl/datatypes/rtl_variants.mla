@@ -13,7 +13,7 @@
 unit rtl_variants;
 interface
 uses
- rtl_exceptions;//,rtl_base;
+ rtl_sysexceptions;//,rtl_base;
  
 const
  VT_EMPTY = $0000;
@@ -118,7 +118,7 @@ type
    method sub(const b: variantty) [operator='-'];
  end;
 
- evariant = class(texception)
+ evariant = class(exception)
   constructor create(const message: string8; const atype: card16);
   property varianttype: card16 read ftype;
 

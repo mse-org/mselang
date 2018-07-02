@@ -1961,6 +1961,11 @@ begin
   result:= addnullvalue(ord(das_pointer));
  end
  else begin
+ {$ifdef mse_checkinternalerror}
+  if aid >= info.s.unitinfo^.llvmlists.globlist.count then begin
+   internalerror(ie_llvmlist,'20180702A');
+  end;
+ {$endif}
   alloc1.header.size:= -1;
   alloc1.header.data:= pointer(ptrint(aid));
   alloc1.typeid:= -ord(ct_pointercast);
@@ -2326,10 +2331,25 @@ begin
  i2:= 4;
  for proc1:= low(proc1) to high(proc1) do begin
   types1[i2]:= pointertype;
-  if aclassdef^.header.procs[proc1] <= 0 then begin
-   classdef1.items[i2]:= nullpointer;
+//  if aclassdef^.header.procs[proc1] <= 0 then begin
+//   classdef1.items[i2]:= nullpointer;
+//  end
+//  else begin
+  i1:= aclassdef^.header.procs[proc1];
+  if i1 > 0 then begin //opcode in current module, globid otherwise
+   pop1:= getoppo(i1);
+  {$ifdef mse_checkinternalerror}
+   if pop1^.op.op <> oc_subbegin then begin
+    internalerror(ie_llvmlist,'20170721A');
+   end;
+  {$endif}
+   i1:= pop1^.par.subbegin.globid;
   end
-  else begin
+  else begin //globid or nil
+   i1:= -i1 - 1;
+  end;
+  classdef1.items[i2]:= addpointercast(i1).listid;
+(*
    pop1:= getoppo(aclassdef^.header.procs[proc1]);
   {$ifdef mse_checkinternalerror}
    if pop1^.op.op <> oc_subbegin then begin
@@ -2337,7 +2357,8 @@ begin
    end;
   {$endif}
    classdef1.items[i2]:= addpointercast(pop1^.par.subbegin.globid).listid;
-  end;
+*)
+//  end;
   inc(i2);
  end;
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));

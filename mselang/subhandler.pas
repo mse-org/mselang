@@ -59,6 +59,10 @@ type
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
+ simplesuboptionty = (sso_pointerparam,sso_global,sso_globheader);
+ simplesuboptionsty = set of simplesuboptionty;
+
+
  tempvaritemty = record
   header: linkheaderty;
   address: addressvaluety;
@@ -158,13 +162,11 @@ procedure initsubstartinfo();
 procedure begintempvars();
 procedure endtempvars();
 procedure settempvars(var allocs: suballocllvmty);
-function startsimplesub(const aname: identty; const pointerparam: boolean; 
-                                   const global: boolean = false;
+function startsimplesub(const aname: identty; const options: simplesuboptionsty;
                                    const aglobname: identty = 0): opaddressty;
 function startsimplesub(const asub: pinternalsubdataty; 
-                              const pointerparam: boolean; 
-                                const global: boolean = false;
-                                   const aglobname: identty = 0): opaddressty;
+                               const options: simplesuboptionsty;
+                                     const aglobname: identty = 0): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
 procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
                                                      const atyp: ptypedataty);
@@ -199,7 +201,7 @@ begin
   aaddress:=  internalsubs[asub];
   result:= aaddress = 0;
   if result then begin
-   aaddress:= startsimplesub(internalsubidents[asub],false,true);
+   aaddress:= startsimplesub(internalsubidents[asub],[sso_global]);
    internalsubs[asub]:= aaddress;
    internalsubnames[asub]:= nameid{-1};
   end;
@@ -1314,9 +1316,9 @@ begin
  end;
 end;
 
-function startsimplesub1(const aname: identty; const pointerparam: boolean;
-               const global: boolean; const aglobname: identty;
-               out aglobid,anameid: int32): opaddressty;
+function startsimplesub1(const aname: identty;
+               const options: simplesuboptionsty; const aglobname: identty;
+                                          out aglobid,anameid: int32): opaddressty;
 var
  m1: metavaluety;
  var1: vardataty;
@@ -1326,7 +1328,7 @@ begin
  anameid:= -1;
  with info do begin
   if do_proginfo in s.debugoptions then begin
-   if pointerparam then begin
+   if sso_pointerparam in options then begin
     m1:= s.unitinfo^.llvmlists.metadatalist.params1posubtyp;
    end
    else begin
@@ -1347,8 +1349,8 @@ begin
    
    if co_llvm in o.compileoptions then begin
     with s.unitinfo^ do begin
-     if global then begin
-      if pointerparam then begin
+     if sso_global in options then begin
+      if sso_pointerparam in options then begin
        subbegin.globid:= llvmlists.globlist.addsubvalue([],li_external,
                                                                 params1po);
       end
@@ -1356,19 +1358,26 @@ begin
        subbegin.globid:= llvmlists.globlist.addsubvalue([],li_external,
                                                                 noparams);
       end;
-      if aglobname > 0 then begin
-       llvmlists.globlist.namelist.addname(getidentname2(aglobname),
+      if not (sso_globheader in options) then begin
+       if aglobname > 0 then begin
+        llvmlists.globlist.namelist.addname(getidentname2(aglobname),
                                                              subbegin.globid);
+       end
+       else begin
+        inc(info.s.unitinfo^.nameid);
+        anameid:= info.s.unitinfo^.nameid;
+        llvmlists.globlist.namelist.addname(info.s.unitinfo,
+                                                   anameid,subbegin.globid);
+       end;
       end
       else begin
-       inc(info.s.unitinfo^.nameid);
-       anameid:= info.s.unitinfo^.nameid;
+       anameid:= aglobname;
        llvmlists.globlist.namelist.addname(info.s.unitinfo,
-                                     info.s.unitinfo^.nameid,subbegin.globid);
+                                                   anameid,subbegin.globid);
       end;
      end
      else begin
-      if pointerparam then begin
+      if sso_pointerparam in options then begin
        subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
       end
       else begin
@@ -1394,7 +1403,7 @@ begin
    end;
    subbegin.sub.flags:= [];
  //  sub.flags:= [sf_nolineinfo];
-   if pointerparam then begin
+   if sso_pointerparam in options then begin
     subbegin.sub.allocs:= param1poallocs;
     with subbegin.sub.allocs do begin 
      allocs:= getsegmenttopoffs(seg_localloc);
@@ -1435,22 +1444,27 @@ begin
  *)
 end;
 
-function startsimplesub(const aname: identty; const pointerparam: boolean;
-                                   const global: boolean = false;
+function startsimplesub(const aname: identty; const options: simplesuboptionsty;
                                    const aglobname: identty = 0): opaddressty;
 var
  i1,i2: int32;
 begin
- result:= startsimplesub1(aname,pointerparam,global,aglobname,i1,i2);
+ result:= startsimplesub1(aname,options,aglobname,i1,i2);
 end;
 
 function startsimplesub(const asub: pinternalsubdataty; 
-                              const pointerparam: boolean; 
-                                const global: boolean = false;
-                                const aglobname: identty = 0): opaddressty;
+                                const options: simplesuboptionsty;
+                                   const aglobname: identty = 0): opaddressty;
 begin
- result:= startsimplesub1(datatoele(asub)^.header.name,pointerparam,
-                                global,aglobname,asub^.globid,asub^.nameid);
+ if isf_globalheader in asub^.flags then begin
+  result:= startsimplesub1(datatoele(asub)^.header.name,options +
+                                               [sso_global,sso_globheader],
+                                        asub^.nameid,asub^.globid,asub^.nameid);
+ end
+ else begin
+  result:= startsimplesub1(datatoele(asub)^.header.name,options,
+                                          aglobname,asub^.globid,asub^.nameid);
+ end;
 end;
 
 procedure settempvars(var allocs: suballocllvmty);
@@ -2436,7 +2450,7 @@ begin
             (ptypedataty(ele.eledataabs(resulttype1.typeele))^.h.kind =
                                                         dk_pointer) then begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.new:= ele.eledatarel(sub1);
+      infoclass.subattach[osa_new]:= ele.eledatarel(sub1);
      end;
     end
     else begin
@@ -2445,40 +2459,40 @@ begin
    end;
    if checksysobjectmethod(sf1_dispose) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.dispose:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_dispose]:= ele.eledatarel(sub1);
     end;
    end;
    if checksysobjectmethod(sf1_afterconstruct) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.afterconstruct:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_afterconstruct]:= ele.eledatarel(sub1);
     end;
    end;
    if checksysobjectmethod(sf1_beforedestruct) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.beforedestruct:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_beforedestruct]:= ele.eledatarel(sub1);
     end;
    end;
    if checksysobjectmethod(sf1_ini) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.ini:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_ini]:= ele.eledatarel(sub1);
      include(h.flags,tf_needsini);
     end;
    end;
    if checksysobjectmethod(sf1_fini) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.fini:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_fini]:= ele.eledatarel(sub1);
      include(h.flags,tf_needsfini);
     end;
    end;
    if checksysobjectmethod(sf1_incref) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.incref:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_incref]:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
    if checksysobjectmethod(sf1_decref) then begin
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     infoclass.subattach.decref:= ele.eledatarel(sub1);
+     infoclass.subattach[osa_decref]:= ele.eledatarel(sub1);
      h.flags:= h.flags+[tf_managed,tf_needsmanage];
     end;
    end;
@@ -2488,7 +2502,7 @@ begin
     end
     else begin
      with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-      infoclass.subattach.destroy:= ele.eledatarel(sub1);
+      infoclass.subattach[osa_destroy]:= ele.eledatarel(sub1);
      end;
     end;
    end;
@@ -2524,7 +2538,7 @@ begin
         errormessage(err_invalidassignop,[]);
        end
        else begin
-        ptypedataty(ele.parentdata)^.infoclass.subattach.assign:= 
+        ptypedataty(ele.parentdata)^.infoclass.subattach[osa_assign]:= 
                                                          ele.eledatarel(sub1);
        end;
       end;
@@ -3390,7 +3404,7 @@ var
     end;
    end;
    if (sf_destructor in asub^.flags) then begin
-    callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+    callclasssubattach(instancetype1^.infoclass.subattach[osa_beforedestruct]);
    end;
   end;
  end;
@@ -3612,7 +3626,8 @@ begin
       end;
       instancetype1:= ele.eledataabs(vardata1^.vf.typ);
       if (sf_destructor in asub^.flags) then begin
-       callclasssubattach(instancetype1^.infoclass.subattach.beforedestruct);
+       callclasssubattach(instancetype1^.infoclass.
+                                         subattach[osa_beforedestruct]);
       end;
      end
      else begin
@@ -3778,7 +3793,7 @@ begin
       end;
       instancetype1:= resulttype1;
       with resulttype1^.infoclass do begin
-       if subattach.new <> 0 then begin
+       if subattach[osa_new] <> 0 then begin
         if dsf_classdefonstack in aflags then begin
         end
         else begin
@@ -3792,7 +3807,7 @@ begin
           instancessa:= ssad;
          end;
         end;
-        callsub(adestindex,ele.eledataabs(subattach.new),paramstart,0,
+        callsub(adestindex,ele.eledataabs(subattach[osa_new]),paramstart,0,
            [dsf_instanceonstack,dsf_classdefonstack,dsf_useobjssa,dsf_noparams,
                   dsf_useinstancetype],instancessa,0,resulttype1);
         instancessa:= d.dat.fact.ssaindex; //for sf_constructor
@@ -4167,8 +4182,8 @@ begin
        par.imm.vsize:= targetpointersize; //compensate missing instance copy
       end;
      end;
-     if instancetype1^.infoclass.subattach.dispose <> 0 then begin
-      callclasssubattach(instancetype1^.infoclass.subattach.dispose);
+     if instancetype1^.infoclass.subattach[osa_dispose] <> 0 then begin
+      callclasssubattach(instancetype1^.infoclass.subattach[osa_dispose]);
      end
      else begin
       if (icf_virtual in instancetype1^.infoclass.flags) and 
@@ -4243,7 +4258,7 @@ begin
     }
     end;
     if (sf_constructor in asub^.flags) then begin
-     callclasssubattach(instancetype1^.infoclass.subattach.afterconstruct);
+     callclasssubattach(instancetype1^.infoclass.subattach[osa_afterconstruct]);
     end;
    end;
   end;

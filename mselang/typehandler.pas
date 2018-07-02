@@ -69,6 +69,8 @@ procedure checkrecordfield(const avisibility: visikindsty;
 procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
 procedure checkpendingmanagehandlers();
+function getinternalsubglobidoropad(const asub: elementoffsetty): int32;
+
 procedure reversefieldchain(const atyp: ptypedataty);
 procedure reversesubchain(const atyp: ptypedataty);
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
@@ -732,7 +734,7 @@ begin
   s.stacktop:= s.stackindex;
  end;
 end;
-
+var testvar: pinternalsubdataty; testvar1: pelementinfoty;
 procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
 
 var
@@ -786,6 +788,8 @@ var
  i1: int32;
  startssa: int32;
  b1: boolean;
+ sso1: simplesuboptionsty;
+ 
 begin
  with info do begin
   with locad1 do begin
@@ -810,8 +814,12 @@ begin
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
    typ1:= ele.eledataabs(atyp); //can be changed because of added items
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
-   sub1^.address:= startsimplesub(sub1,true,
-             modularllvm and not (us_implementationblock in s.unitinfo^.state));
+   sso1:= [sso_pointerparam];
+   if modularllvm and 
+          not (us_implementationblock in s.unitinfo^.state) then begin
+    include(sso1,sso_global);
+   end;
+   sub1^.address:= startsimplesub(sub1,sso1);
    if sub1^.calllinks <> 0 then begin
     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
                                 //fetch globid from subbegin op
@@ -877,41 +885,41 @@ begin
        handlefields(op1,atyp,i1); //does not touch vitual table address
        b1:= false;
       end;
-      with typ1^.infoclass.subattach do begin
-       if ini <> 0 then begin
+      with typ1^.infoclass do begin
+       if subattach[osa_ini] <> 0 then begin
         if (i1 > 0) and (co_mlaruntime in o.compileoptions) then begin
          with additem(oc_offsetpoimm)^ do begin
           setimmint32(-i1,par.imm);
          end;
         end;
-        callsub(s.stacktop,ele.eledataabs(ini),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(subattach[osa_ini]),s.stacktop,0,
                                   [dsf_objini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
      mo_fini: begin
-      with typ1^.infoclass.subattach do begin
-       if fini <> 0 then begin
-        callsub(s.stacktop,ele.eledataabs(fini),s.stacktop,0,
+      with typ1^.infoclass do begin
+       if subattach[osa_fini] <> 0 then begin
+        callsub(s.stacktop,ele.eledataabs(subattach[osa_fini]),s.stacktop,0,
                                  [dsf_objfini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
 //     {          //for classes only
      mo_incref: begin
-      with typ1^.infoclass.subattach do begin
-       if incref <> 0 then begin
-        callsub(s.stacktop,ele.eledataabs(incref),s.stacktop,0,
+      with typ1^.infoclass do begin
+       if subattach[osa_incref] <> 0 then begin
+        callsub(s.stacktop,ele.eledataabs(subattach[osa_incref]),s.stacktop,0,
                                   [dsf_objini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
      end;
      mo_decref: begin
-      with typ1^.infoclass.subattach do begin
-       if decref <> 0 then begin
+      with typ1^.infoclass do begin
+       if subattach[osa_decref] <> 0 then begin
         handlefields(op1,atyp,i1);
         b1:= false;
-        callsub(s.stacktop,ele.eledataabs(decref),s.stacktop,0,
+        callsub(s.stacktop,ele.eledataabs(subattach[osa_decref]),s.stacktop,0,
                                  [dsf_objfini,dsf_noparams],baseadssa,0,typ1);
        end;
       end;
@@ -927,18 +935,19 @@ begin
   end;
   typ1:= ele.eledataabs(atyp); //can be changed because of added items
   if (typ1^.h.kind in [dk_object,dk_class]) and
-     (typ1^.infoclass.subattach.destroy <> 0) then begin
+     (typ1^.infoclass.subattach[osa_destroy] <> 0) then begin
    typ2:= nil;
    if typ1^.h.ancestor <> 0 then begin
     typ2:= ele.eledataabs(typ1^.h.ancestor);
-    if typ2^.infoclass.subattach.destroy <> 
-                       typ1^.infoclass.subattach.destroy then begin
+    if typ2^.infoclass.subattach[osa_destroy] <> 
+                       typ1^.infoclass.subattach[osa_destroy] then begin
      typ2:= nil;
     end;
    end;
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]);
+testvar1:= datatoele(sub1);
    if typ2 = nil then begin
-    sub1^.address:= startsimplesub(sub1,true);
+    sub1^.address:= startsimplesub(sub1,[sso_pointerparam]);
     if sub1^.calllinks <> 0 then begin
      linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
                                  //fetch globid from subbegin op
@@ -947,7 +956,7 @@ begin
      memop:= locad1;
      i1:= ssad;
     end;                    //??? invalid stackindex
-    callsub(s.stacktop,ele.eledataabs(typ1^.infoclass.subattach.destroy),
+    callsub(s.stacktop,ele.eledataabs(typ1^.infoclass.subattach[osa_destroy]),
              s.stacktop,0,[dsf_instanceonstack,dsf_noparams,
                dsf_useobjssa,dsf_usedestinstance,dsf_useinstancetype,
                dsf_attach,dsf_destroy,dsf_noinstancecopy],i1,0,typ1);
@@ -957,8 +966,16 @@ begin
     endsimplesub(true);
    end
    else begin
-    sub1^.address:= pinternalsubdataty(ele.eledataabs(
+    if modularllvm then begin
+testvar:= ele.eledataabs(typ2^.recordmanagehandlers[mo_destroy]);
+testvar1:= datatoele(testvar);
+     include(sub1^.flags,isf_ancestor);
+     sub1^.address:= -typ2^.recordmanagehandlers[mo_destroy];
+    end
+    else begin
+     sub1^.address:= pinternalsubdataty(ele.eledataabs(
                           typ2^.recordmanagehandlers[mo_destroy]))^.address;
+    end;
    end;
   end;
  end;
@@ -983,6 +1000,11 @@ begin
    sub1^.calllinks:= 0;
    sub1^.flags:= [isf_pointerpar];
    typ1^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
+   if not (stf_implementation in s.currentstatementflags) then begin
+    inc(s.unitinfo^.nameid);
+    sub1^.nameid:= s.unitinfo^.nameid;
+    include(sub1^.flags,isf_globalheader);
+   end;
   end;
   ele.elementparent:= ele1;
   if (sublevel = 0) and
@@ -993,6 +1015,27 @@ begin
    typ1^.h.next:= s.unitinfo^.pendingmanagechain;
    s.unitinfo^.pendingmanagechain:= atyp;
                            //add to pending list
+  end;
+ end;
+end;
+
+function getinternalsubglobidoropad(const asub: elementoffsetty): int32;
+var
+ e1: pelementinfoty;
+ s1: pinternalsubdataty;
+begin
+ with info do begin
+  e1:= ele.eleinfoabs(asub);
+  s1:= pinternalsubdataty(@e1^.data);
+  if isf_ancestor in s1^.flags then begin
+   s1:= ele.eledataabs(-s1^.address);
+   e1:= datatoele(s1);
+  end;
+  if modularllvm and (e1^.header.defunit <> s.unitinfo) then begin
+   result:= -(trackaccess(s1)+1)
+  end
+  else begin
+   result:= s1^.address;
   end;
  end;
 end;
@@ -1015,13 +1058,19 @@ begin
      typ1:= ele.eledataabs(ele2); //can be moved
      if typ1^.h.kind in [dk_object,dk_class] then begin
       p1:= getsegmentpo(typ1^.infoclass.defs);
-      p1^.header.procs[cdp_ini]:= pinternalsubdataty(
-              ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
-      p1^.header.procs[cdp_fini]:= pinternalsubdataty(
-              ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
-      if typ1^.infoclass.subattach.destroy <> 0 then begin
-       p1^.header.procs[cdp_destruct]:= pinternalsubdataty(
-               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
+      p1^.header.procs[cdp_ini]:= getinternalsubglobidoropad(
+                                 typ1^.recordmanagehandlers[mo_ini]);
+//      p1^.header.procs[cdp_ini]:= pinternalsubdataty(
+//              ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
+      p1^.header.procs[cdp_fini]:= getinternalsubglobidoropad(
+                                 typ1^.recordmanagehandlers[mo_fini]);
+//      p1^.header.procs[cdp_fini]:= pinternalsubdataty(
+//              ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
+      if typ1^.infoclass.subattach[osa_destroy] <> 0 then begin
+       p1^.header.procs[cdp_destruct]:= getinternalsubglobidoropad(
+                                  typ1^.recordmanagehandlers[mo_destroy]);
+//       p1^.header.procs[cdp_destruct]:= pinternalsubdataty(
+//               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
       end;
 
      end;

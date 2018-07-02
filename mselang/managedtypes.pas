@@ -309,11 +309,11 @@ begin
      end;
     end;
     mo_incref: begin
-     ele1:= typ1^.infoclass.subattach.incref;
+     ele1:= typ1^.infoclass.subattach[osa_incref];
      sf1:= [dsf_objini];
     end;
     mo_decref,mo_fini: begin
-     ele1:= typ1^.infoclass.subattach.decref;
+     ele1:= typ1^.infoclass.subattach[osa_decref];
      sf1:= [dsf_objfini];
     end;
    end;
@@ -1007,7 +1007,7 @@ begin
    dk_class: begin
     if checkvalueparamsysfunc(paramco,typ1) and
                        (d.dat.datatyp.indirectlevel = 1) then begin
-     callmanagesyssubifnotnil(typ1^.infoclass.subattach.incref);
+     callmanagesyssubifnotnil(typ1^.infoclass.subattach[osa_incref]);
     end;
    end;
   end;
@@ -1048,7 +1048,7 @@ begin
    dk_class: begin
     if checkvalueparamsysfunc(paramco,typ1) and
                        (d.dat.datatyp.indirectlevel = 1) then begin
-     callmanagesyssubifnotnil(typ1^.infoclass.subattach.decref);
+     callmanagesyssubifnotnil(typ1^.infoclass.subattach[osa_decref]);
     end;
    end;
   end;

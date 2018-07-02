@@ -108,12 +108,16 @@ type
  infodynarrayty = record
   i: arrayiteminfoty;
  end;
-
+ objsubattachty = (osa_new,osa_dispose,osa_ini,osa_fini,osa_afterconstruct,
+                   osa_beforedestruct,osa_incref,osa_decref,osa_destroy,
+                   osa_assign);
+ subattachty = array[objsubattachty] of elementoffsetty;
+{
  subattachty = record
   new,dispose,ini,fini,afterconstruct,beforedestruct,incref,decref,destroy,
   assign: elementoffsetty;
  end;
-
+}
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,
                     icf_forward,
                     icf_zeroinit,icf_nozeroinit,icf_virtual,icf_except);
@@ -487,7 +491,9 @@ type
  end;
  psubdataty = ^subdataty;
 
- internalsubflagty = (isf_pointerpar);
+ internalsubflagty = (isf_pointerpar,
+                      isf_ancestor,       //address is ancestor ele
+                      isf_globalheader);  //use existing nameid
  internalsubflagsty = set of internalsubflagty;
   
  internalsubdataty = record

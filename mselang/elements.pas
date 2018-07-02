@@ -1852,12 +1852,14 @@ begin
                ' intf:'+inttostrmse(infoclass.interfacecount)+
                ' isub:'+inttostrmse(infoclass.interfacesubcount)+
                ' defs:'+inttostrmse(infoclass.defs.address)+lineend+
-               ' ini:'+inttostrmse(infoclass.subattach.ini)+
-               ' fini:'+inttostrmse(infoclass.subattach.fini)+
-               ' aftconst:'+inttostrmse(infoclass.subattach.afterconstruct)+
-               ' befdest:'+inttostrmse(infoclass.subattach.beforedestruct)+
-               ' incref:'+inttostrmse(infoclass.subattach.incref)+
-               ' decref:'+inttostrmse(infoclass.subattach.decref);
+               ' ini:'+inttostrmse(infoclass.subattach[osa_ini])+
+               ' fini:'+inttostrmse(infoclass.subattach[osa_fini])+
+               ' aftconst:'+inttostrmse(infoclass.subattach[osa_afterconstruct])+
+               ' befdest:'+inttostrmse(infoclass.subattach[osa_beforedestruct])+
+               ' incref:'+inttostrmse(infoclass.subattach[osa_incref])+
+               ' decref:'+inttostrmse(infoclass.subattach[osa_decref])+
+               ' destroy:'+inttostrmse(infoclass.subattach[osa_destroy])+
+               ' assign:'+inttostrmse(infoclass.subattach[osa_assign]);
 {
          po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
          for int6:= 0 to infoclass.virtualcount-1 do begin
@@ -1903,6 +1905,11 @@ begin
       mstr1:= mstr1+lineend+' lib:'+getidentstring(libname)+
                             ' func:'+getidentstring(funcname);
      end;
+    end;
+   end;
+   ek_internalsub: begin
+    with pinternalsubdataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' N:'+inttostr(nameid);
     end;
    end;
    ek_operator: begin

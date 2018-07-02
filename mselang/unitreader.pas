@@ -303,6 +303,7 @@ var
  pe1,pee: pelementoffsetty;
  id1: identty;
  mop1: managedopty;
+ sa1: objsubattachty;
 label
  errorlab,fatallab,oklab,endlab;
 begin
@@ -519,7 +520,8 @@ begin
            updateref(infoarray.indextypedata,id1);
           end;
           dk_record,dk_class,dk_object: begin
-           if tf_needsmanage in h.flags then begin
+           if (tf_needsmanage in h.flags){ or 
+                               (h.manageproc = mpk_record)} then begin
             for mop1:= low(mop1) to high(mop1) do begin
              if not updateref(recordmanagehandlers[mop1],id1) then begin
               goto errorlab;
@@ -530,6 +532,10 @@ begin
            case h.kind of
             dk_class,dk_object: begin
              updateref(infoclass.subchain,id1);
+             for sa1:= low(infoclass.subattach) to 
+                            high(infoclass.subattach) do begin
+              updateref(infoclass.subattach[sa1],id1);
+             end;
             end;
            end;
           end;

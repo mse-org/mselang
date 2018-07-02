@@ -298,7 +298,7 @@ begin
   end;
  end;
 end;
-
+var testvar: punitinfoty;
 procedure handleprogblock();
 var
  ad1: listadty;
@@ -386,7 +386,7 @@ begin
   end;
   
 //  if hasfini then begin
-  i1:= startsimplesub(tks_fini,false,true,tks___mla__mainfini);
+  i1:= startsimplesub(tks_fini,[sso_global],tks___mla__mainfini);
   if hasfini then begin
    with info.s.unitinfo^ do begin
     mainfini:= getoppo(i1)^.par.subbegin.globid;
@@ -409,6 +409,7 @@ begin
     ad1:= unitchain;
     while ad1 <> 0 do begin         //insert fini calls
      with punitlinkinfoty(list+ad1)^ do begin
+testvar:= ref;
       with ref^ do begin
        if modularllvm then begin
         if internalsubnames[isub_fini] > 0 then begin
@@ -3815,7 +3816,7 @@ begin
       i1:= basetype(destvar.typ);
       if (i1 = basetype(source^.d.dat.datatyp.typedata)) and
          (source^.d.dat.datatyp.indirectlevel = 0) and
-              (sourcetyp^.infoclass.subattach.assign <> 0) and
+              (sourcetyp^.infoclass.subattach[osa_assign] <> 0) and
           ((currentobject = 0) or (basetype(currentobject) <> i1)) then begin
        if not (dest^.d.kind in factcontexts) and 
                             not getaddress(dest,true) then begin
@@ -3852,7 +3853,8 @@ begin
         end;
         flags1:= flags1 + [dsf_noparams];
        end;
-       callsub(s.stacktop,ele.eledataabs(sourcetyp^.infoclass.subattach.assign),
+       callsub(s.stacktop,ele.eledataabs(sourcetyp^.infoclass.
+                                            subattach[osa_assign]),
                                               getstackindex(dest),1,flags1,i2);
        if co_mlaruntime in o.compileoptions then begin
         with additem(oc_pop)^ do begin

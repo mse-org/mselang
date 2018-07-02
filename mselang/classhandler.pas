@@ -835,7 +835,7 @@ begin
 //                               //always called because of iniproc
    typ1^.infoclass.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
    if obf_except in contextstack[s.stackindex].d.cla.flags then begin
-    if typ1^.infoclass.subattach.destroy = 0 then begin
+    if typ1^.infoclass.subattach[osa_destroy] = 0 then begin
      errormessage(err_exceptmusthavedefaultdestruct,[]);
     end;
     typ2:= typ1;
@@ -858,7 +858,7 @@ begin
                                 (classinfo1^.rec.fieldoffsetmax > 0) then begin
      include(h.flags,tf_needsini);
     end;
-    if infoclass.subattach.ini <> 0 then begin
+    if infoclass.subattach[osa_ini] <> 0 then begin
      include(h.flags,tf_complexini);
     end;
 
@@ -932,13 +932,13 @@ begin
      typ1:= ptypedataty(ele.eledataabs(d.typ.typedata)); 
                      //could be relocated by createrecordmanagehandler
      with typ1^ do begin
-      header.procs[cdp_ini]:= pinternalsubdataty(
-              ele.eledataabs(typ1^.recordmanagehandlers[mo_ini]))^.address;
-      header.procs[cdp_fini]:= pinternalsubdataty(
-              ele.eledataabs(typ1^.recordmanagehandlers[mo_fini]))^.address;
-      if infoclass.subattach.destroy <> 0 then begin
-       header.procs[cdp_destruct]:= pinternalsubdataty(
-               ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]))^.address;
+      header.procs[cdp_ini]:= 
+            getinternalsubglobidoropad(typ1^.recordmanagehandlers[mo_ini]);
+      header.procs[cdp_fini]:= 
+            getinternalsubglobidoropad(typ1^.recordmanagehandlers[mo_fini]);
+      if infoclass.subattach[osa_destroy] <> 0 then begin
+       header.procs[cdp_destruct]:= 
+            getinternalsubglobidoropad(typ1^.recordmanagehandlers[mo_destroy]);
       end
       else begin
        header.procs[cdp_destruct]:= 0;

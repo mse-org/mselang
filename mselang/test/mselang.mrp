@@ -270,7 +270,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7246110
+    ao=An unhandled exception occured at $B728E110
     ae=
     aec=123
     ie=0
@@ -13788,7 +13788,7 @@ c=3
   c=3
    (
    kind=1
-   a=0,664,4,variants
+   a=0,665,4,variants
    c=7
     (
     kind=2
@@ -14093,9 +14093,18 @@ c=3
     ee=
     ae=0
     eec=0
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=abc123defg
+    +abc1234defg
+    +abc00001234defg
+    +abc  00001234defg
+    +abc00001234  defg
+    +abcÄBC       def
+    +abc 82500000000000.000 def
+    +abc 82'500'000'000'000.000 def
+    +abc 8.26E+013 def
+    +abc 82500000000000 def
+    ae=
     aec=0
     ie=0
     )
@@ -14255,7 +14264,7 @@ macrovalues=23
  /home/mse/packs/standard/git/mselang/mselang/
  /home/mse/packs/standard/git/llvm/build_release/bin/
  /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/
- -Fu/home/mse/packs/standard/git/mselang/mselang/compiler -Fu/home/mse/packs/standard/git/mselang/mselang/rtl/*
+ -Fu/home/mse/packs/standard/git/mselang/mselang/compiler -Fu/home/mse/packs/standard/git/mselang/mselang/rtl -Fu/home/mse/packs/standard/git/mselang/mselang/rtl/*
  
  ${mselangdir}compiler/mlc ${msecflags} ${FILE}
  ${mlc}
@@ -14318,7 +14327,57 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=85
+rowstate=135
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

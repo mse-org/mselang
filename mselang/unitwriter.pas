@@ -75,7 +75,7 @@ function tidentlist.getrecordsize(): int32;
 begin
  result:= sizeof(identbufferhashdataty);
 end;
-
+var testvar: int32;
 function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var
@@ -186,6 +186,7 @@ var
   pe: pelementinfoty;
   pe1,pee: pelementoffsetty;
   mop1: managedopty;
+  sa1: objsubattachty;
  begin
   move(ps^,pd^,s1);
   deststart:= pd;
@@ -229,6 +230,10 @@ var
          updateref(fieldchain);
          case h.kind of
           dk_class,dk_object: begin
+           for sa1:= low(infoclass.subattach) to 
+                          high(infoclass.subattach) do begin
+            updateref(infoclass.subattach[sa1]);
+           end;
            updateref(infoclass.subchain);
           end;
          end;
@@ -305,6 +310,9 @@ var
      end;
      ek_internalsub: begin
       with pinternalsubdataty(po)^ do begin
+if nameid < 0 then begin
+testvar:= 0;
+end;
       end;
      end;
      ek_alias: begin
