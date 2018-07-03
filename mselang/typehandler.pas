@@ -734,7 +734,7 @@ begin
   s.stacktop:= s.stackindex;
  end;
 end;
-var testvar: pinternalsubdataty; testvar1: pelementinfoty;
+
 procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
 
 var
@@ -945,7 +945,6 @@ begin
     end;
    end;
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]);
-testvar1:= datatoele(sub1);
    if typ2 = nil then begin
     sub1^.address:= startsimplesub(sub1,[sso_pointerparam]);
     if sub1^.calllinks <> 0 then begin
@@ -967,8 +966,6 @@ testvar1:= datatoele(sub1);
    end
    else begin
     if modularllvm then begin
-testvar:= ele.eledataabs(typ2^.recordmanagehandlers[mo_destroy]);
-testvar1:= datatoele(testvar);
      include(sub1^.flags,isf_ancestor);
      sub1^.address:= -typ2^.recordmanagehandlers[mo_destroy];
     end

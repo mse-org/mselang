@@ -139,6 +139,8 @@ end;
 
 procedure tcompmo.terminatedexe(const sender: TObject);
 begin
+ foutputstream.releasehandle();
+ ferrorstream.releasehandle();
  foutputstream.free();
  ferrorstream.free();
 end;

@@ -299,7 +299,7 @@ type
 //  case integer of
 //   0: (items: array [segmentty] of segmentitemty);
  end;
-var testvar: punitintfinfoty;
+
 procedure writesegmentdata(const adest: tstream; const akind: int32;
                            const astoredsegments: segmentsty;
                            const atimestamp: tdatetime);
@@ -344,7 +344,6 @@ begin
   for seg1:= low(segmentsty) to high(segmentsty) do begin
    if seg1 in astoredsegments then begin
     with getsegbuffer(seg1)^ do begin
-testvar:= data;
      if not writedata(data^,toppo-data) then begin
       break;
      end;

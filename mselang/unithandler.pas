@@ -232,7 +232,7 @@ begin
   end;  
  end;
 end;
-var testvar: pelementinfoty;
+
 procedure beginunit(const aname: identty; const nopush: boolean);
 var
  po1: punitdataty;
@@ -243,7 +243,6 @@ begin
  {$ifdef mse_checkinternalerror}
   if not ele.adduniquechilddata(unitsele,[aname],ek_unit,
                                            [vik_units],po1) then begin
-testvar:= datatoele(po1);
    internalerror(ie_unit,'150710A');
   end;
  {$else}

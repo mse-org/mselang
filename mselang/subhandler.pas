@@ -2080,6 +2080,7 @@ begin
                                      paramco*sizeof(pvardataty))^.data);
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
+  sub1^.globid:= -1;
 {
   if (ele1 >= 0) and (sf_method in subflags) then begin
    element1:= ele.eleinfoabs(ele1);

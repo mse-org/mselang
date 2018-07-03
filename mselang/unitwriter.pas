@@ -75,7 +75,7 @@ function tidentlist.getrecordsize(): int32;
 begin
  result:= sizeof(identbufferhashdataty);
 end;
-var testvar: int32;
+
 function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var
@@ -310,9 +310,6 @@ var
      end;
      ek_internalsub: begin
       with pinternalsubdataty(po)^ do begin
-if nameid < 0 then begin
-testvar:= 0;
-end;
       end;
      end;
      ek_alias: begin

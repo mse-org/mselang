@@ -298,7 +298,7 @@ begin
   end;
  end;
 end;
-var testvar: punitinfoty;
+
 procedure handleprogblock();
 var
  ad1: listadty;
@@ -409,7 +409,6 @@ begin
     ad1:= unitchain;
     while ad1 <> 0 do begin         //insert fini calls
      with punitlinkinfoty(list+ad1)^ do begin
-testvar:= ref;
       with ref^ do begin
        if modularllvm then begin
         if internalsubnames[isub_fini] > 0 then begin
