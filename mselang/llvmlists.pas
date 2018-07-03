@@ -986,8 +986,14 @@ var
      internalerror(ie_llvmlist,'20180506A');
     end;
    {$endif}
+    i1:= trackaccess(sub1);
+   {$ifdef mse_checkinternalerror}
+    if i1 < 0 then begin
+     internalerror(ie_llvmlist,'20190703A');
+    end;
+   {$endif}
     with info.s.unitinfo^.llvmlists.constlist do begin
-     v1:= addpointercast(sub1^.globid);
+     v1:= addpointercast(i1);
      pint32(absdata(offs))^:= v1.listid;
     end;
     inc(offs,sizeof(int32));

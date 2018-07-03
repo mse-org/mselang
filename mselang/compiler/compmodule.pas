@@ -139,8 +139,12 @@ end;
 
 procedure tcompmo.terminatedexe(const sender: TObject);
 begin
- foutputstream.releasehandle();
- ferrorstream.releasehandle();
+ if foutputstream <> nil then begin
+  foutputstream.releasehandle();
+ end;
+ if ferrorstream <> nil then begin
+  ferrorstream.releasehandle();
+ end;
  foutputstream.free();
  ferrorstream.free();
 end;
