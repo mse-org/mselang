@@ -1,4 +1,4 @@
-program setlength1;
+program setlength;
 type
  intarty = array of int32;
 var

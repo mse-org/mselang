@@ -1,4 +1,4 @@
-program test;
+program classstringfield;
 type
  ttest = class
   public

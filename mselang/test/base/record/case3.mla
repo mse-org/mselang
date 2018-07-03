@@ -1,4 +1,4 @@
-program reccase3;
+program case3;
 type
  recty = record
   a: int32;

@@ -1,4 +1,4 @@
-program forto;
+program forto3;
 
 var
  start: card16;

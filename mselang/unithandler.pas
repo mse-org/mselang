@@ -232,7 +232,7 @@ begin
   end;  
  end;
 end;
-
+var testvar: pelementinfoty;
 procedure beginunit(const aname: identty; const nopush: boolean);
 var
  po1: punitdataty;
@@ -243,6 +243,7 @@ begin
  {$ifdef mse_checkinternalerror}
   if not ele.adduniquechilddata(unitsele,[aname],ek_unit,
                                            [vik_units],po1) then begin
+testvar:= datatoele(po1);
    internalerror(ie_unit,'150710A');
   end;
  {$else}
@@ -353,11 +354,11 @@ begin
 {$endif}
  with info do begin
   id1:= contextstack[s.stacktop].d.ident.ident;
-  if (s.unitinfo^.key <> id1) and (s.unitinfo^.prev <> nil) then begin
+  if (s.unitinfo^.key <> id1){ and (s.unitinfo^.prev <> nil)} then begin
    identerror(1,err_illegalunitname);
   end
   else begin
-   s.unitinfo^.key:= id1; //overwrite "program"
+//   s.unitinfo^.key:= id1; //overwrite "program"
    beginunit(id1,false);
    markinterfacestart();
 //   ele.markelement(s.unitinfo^.interfacestart);
@@ -956,6 +957,9 @@ begin
  result:= false;
  str1:= aname;
  aunit:= newunit(str1);
+ if aunit = info.mainunit then begin
+  circularerror(info.s.stacktop-info.s.stackindex,info.mainunit);
+ end;
  with aunit^ do begin
   prev:= info.s.unitinfo;
   if not getunitfile(aunit,msestring(aname)) then begin

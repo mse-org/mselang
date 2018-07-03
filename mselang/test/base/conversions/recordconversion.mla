@@ -1,4 +1,4 @@
-program incvalpo1;
+program recordconversion;
 var
  i1: int32;
  po1: ^int32;

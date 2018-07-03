@@ -919,6 +919,7 @@ type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;
 //  systemunit: punitinfoty;
+  mainunit: punitinfoty;
   rtlunits: array[rtlunitty] of punitinfoty;
  end;
 

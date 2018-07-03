@@ -1224,7 +1224,14 @@ begin
       pcond^.deleted:= deleted;
      end;
     end;
-    unit1:= newunit('program');
+//    unit1:= newunit('program');
+    if afilename <> '' then begin
+     unit1:= newunit(ansistring(filenamebase(afilename)));
+    end
+    else begin
+     unit1:= newunit('program');
+    end;
+    mainunit:= unit1;
     unit1^.filepath:= afilename; //todo: file reading
     if not initunitfileinfo(unit1) then begin
      //todo: error message
@@ -1288,7 +1295,8 @@ begin
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
       if result and (o.compileoptions * [co_llvm,co_buildexe] = 
                                               [co_llvm,co_buildexe]) then begin
-       if co_modular in o.compileoptions then begin
+       if (co_modular in o.compileoptions) and 
+                                (us_program in unit1^.state) then begin
         with info.buildoptions do begin
          fna2:= removefileext(exefile);
          if co_objmodules in o.compileoptions then begin

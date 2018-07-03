@@ -1,4 +1,4 @@
-program classname;
+program classtype;
 uses
  rtl_fpccompatibility,__mla__internaltypes;
 type

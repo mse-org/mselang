@@ -1,4 +1,4 @@
-program missingend;
+program missingendok;
 begin
  if exitcode = 1 then
  end;

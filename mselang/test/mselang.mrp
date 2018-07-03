@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -270,7 +270,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -514,7 +514,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,665,4,cmp
     c=6
      (
      kind=2
@@ -3594,7 +3594,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
+   a=0,664,4,dynarray
    c=15
     (
     kind=2
@@ -4052,7 +4052,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,empty
+   a=0,665,4,empty
    c=2
     (
     kind=2
@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B728E110
+    ao=An unhandled exception occured at $B72F0110
     ae=
     aec=123
     ie=0
@@ -6280,7 +6280,7 @@ c=3
    c=41
     (
     kind=1
-    a=0,665,4,managed
+    a=0,664,4,managed
     c=8
      (
      kind=2
@@ -8441,7 +8441,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,var
+   a=0,665,4,var
    c=2
     (
     kind=2
@@ -9139,8 +9139,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,compilerunit
-   teststate=1
+   a=0,640,0,compilerunit
+   teststate=2
    path=/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
    comment=
    cc=${mlc}
@@ -9153,9 +9153,9 @@ c=3
    ee=
    ae=0
    eec=0
-   cr=0
-   ao=
-   ae=
+   cr=1
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
@@ -9185,9 +9185,9 @@ c=3
    c=12
     (
     kind=2
-    a=0,648,1,method
+    a=0,648,1,method1
     teststate=1
-    path=method.mla
+    path=method1.mla
     comment=
     cc=${mlc}
     cd=
@@ -9207,9 +9207,9 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,method llvm
+    a=0,648,1,method1 llvm
     teststate=1
-    path=method.mla
+    path=method1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -10513,12 +10513,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,665,4,class
   c=34
    (
    kind=1
    a=0,664,4,properties
-   c=30
+   c=28
     (
     kind=2
     a=0,648,1,classprop1
@@ -11049,50 +11049,6 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,arrayparamsetind2
-    teststate=1
-    path=arrayparamsetind2.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,arrayparamsetind2 llvm
-    teststate=1
-    path=arrayparamsetind2.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
     a=0,648,1,selftest
     teststate=1
     path=selftest.mla
@@ -11305,7 +11261,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,classof
+   a=0,664,4,classof
    c=5
     (
     kind=2
@@ -11435,7 +11391,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=15
     (
     kind=2
@@ -13784,7 +13740,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=3
    (
    kind=1
@@ -13962,7 +13918,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,tobject
+   a=0,665,4,tobject
    c=3
     (
     kind=2
@@ -14048,7 +14004,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=2
     (
     kind=2
@@ -14074,8 +14030,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,format1 llvm
-    teststate=2
+    a=0,648,1,format1 llvm
+    teststate=1
     path=format1.mla
     comment=
     cc=${mlc_llvm}
@@ -14089,6 +14045,10 @@ c=3
     +abc  00001234defg
     +abc00001234  defg
     +abcÄBC       def
+    +abc 82500000000000.000 def
+    +abc 82'500'000'000'000.000 def
+    +abc 8.26E+013 def
+    +abc 82500000000000 def
     ao=0
     ee=
     ae=0
@@ -14108,7 +14068,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -14124,7 +14084,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -14204,7 +14164,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -14327,24 +14287,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=135
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=118
  0 0
  0 0
  0 0

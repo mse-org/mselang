@@ -1,4 +1,4 @@
-program objmethod;
+program method1;
 
 type
  methty = method (a: int32): int32;

@@ -1,4 +1,4 @@
-program ini2;
+program initclass2;
 type
  ttest = class()[virtual]
   f1,f2: int32;

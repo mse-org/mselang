@@ -1,4 +1,4 @@
-program recifinidi;
+program recifindi;
 type
  recty = record
   a: int32;

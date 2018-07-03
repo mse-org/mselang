@@ -1,4 +1,4 @@
-program openarray1;
+program openarray1a;
 
 type
  arty = array[0..2] of int32;

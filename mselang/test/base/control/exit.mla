@@ -1,4 +1,4 @@
-program exittest;
+program exit;
 
 procedure test();
 begin

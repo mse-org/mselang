@@ -1,4 +1,4 @@
-program openar;
+program openarray7;
 
 procedure test1(p: array of int32): int32;
 begin

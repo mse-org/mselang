@@ -1,4 +1,4 @@
-program leftsizecast;
+program leftsidecast;
 
 procedure test(const p: pointer);
 begin

@@ -428,7 +428,7 @@ begin
 //    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
     ele.markelement(startref);
-    if not updateident(int32(ptrint(intf^.header.key))) then begin
+    if not updateident(int32({ptrint(}intf^.header.key{)})) then begin
      goto errorlab;
     end;
     beginunit(intf^.header.key,true);
