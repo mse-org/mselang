@@ -519,6 +519,9 @@ begin
            updateref(infoarray.i.itemtypedata,id1);
            updateref(infoarray.indextypedata,id1);
           end;
+          dk_dynarray,dk_openarray: begin
+           updateref(infodynarray.i.itemtypedata,id1);
+          end;
           dk_record,dk_class,dk_object: begin
            if (tf_needsmanage in h.flags){ or 
                                (h.manageproc = mpk_record)} then begin

@@ -2455,8 +2455,9 @@ var
 begin
  if llvmlink(asub,unitid,globid) then begin
   if globid < 0 then begin
-   result:= info.s.unitinfo^.llvmlists.globlist.addexternalsimplesub(
-                  datatoele(asub)^.header.defunit,asub^.nameid,asub^.flags);
+   result:= info.s.unitinfo^.llvmlists.globlist.addexternalsimplesub(asub);
+//   result:= info.s.unitinfo^.llvmlists.globlist.addexternalsimplesub(
+//                  datatoele(asub)^.header.defunit,asub^.nameid,asub^.flags);
   end
   else begin
    result:= globid;

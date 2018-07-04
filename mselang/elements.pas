@@ -1909,7 +1909,7 @@ begin
    end;
    ek_internalsub: begin
     with pinternalsubdataty(@po1^.data)^ do begin
-     mstr1:= mstr1 + ' N:'+inttostr(nameid);
+     mstr1:= mstr1 + ' N:'+inttostrmse(nameid);
     end;
    end;
    ek_operator: begin

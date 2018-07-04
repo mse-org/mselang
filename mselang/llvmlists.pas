@@ -471,6 +471,8 @@ type
    function addsubvalue(const avalue: psubdataty; //nil -> main sub
                               const externunit: boolean): int32; 
                                                             //returns listid
+   function addexternalsimplesub(const asub: pinternalsubdataty): int32;
+                                                            //returns listid
    function addexternalsimplesub(const aunit: pointer; //punitinfoty
           const anameid: int32; const aflags: internalsubflagsty): int32;
                                                             //returns listid
@@ -2738,6 +2740,14 @@ begin
  result:= addexternalsimplesub1(aflags);
  fnamelist.addname(aunit,anameid,result);
  flinklist.addlink(aunit,anameid{+punitinfoty(aunit)^.globidbasex},result);
+end;
+
+function tgloballocdatalist.addexternalsimplesub(
+                                const asub: pinternalsubdataty): int32;
+begin
+ result:= addexternalsimplesub1(asub^.flags);
+ fnamelist.addname(datatoele(asub)^.header.defunit,asub^.nameid,result);
+ flinklist.addlink(asub,result);
 end;
 
 function tgloballocdatalist.addexternalsimplesub(const aname: identty;

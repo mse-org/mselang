@@ -221,6 +221,9 @@ var
          updateref(infoarray.i.itemtypedata);
          updateref(infoarray.indextypedata);
         end;
+        dk_dynarray,dk_openarray: begin
+         updateref(infodynarray.i.itemtypedata);
+        end;
         dk_record,dk_class,dk_object: begin
          if tf_needsmanage in h.flags then begin
           for mop1:= low(mop1) to high(mop1) do begin

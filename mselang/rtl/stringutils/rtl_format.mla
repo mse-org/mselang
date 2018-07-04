@@ -125,14 +125,14 @@ type
   raise econverterror.createfmt(sinvalidformat,[fmt]);
  end; //formaterror()
 
- procedure converterror();
+ procedure converterror(const itemindex: int32; const wantedtype: string8);
  begin
-  writeln('***converterror***');
+  raise econverterror.createfmt(stypeexpected,[itemindex,wantedtype]);
  end; //converterror();
 
- procedure rangeerror();
+ procedure rangeerror(const itemindex: int32);
  begin
-  writeln('***rangeerror***');
+  raise econverterror.createfmt(srangeerror,[itemindex]);
  end; //rangeerror();
  
  procedure getnum(var info: convertinfoty): bool1;
@@ -152,7 +152,7 @@ type
      inc(info.valindex);
      result:= true;
     else
-     converterror();
+     converterror(info.valindex,'integer');
     end;
    end;
   else
@@ -329,7 +329,7 @@ var
      avalue:= vcard64^;
     else:
      result:= false;
-     converterror();
+     converterror(itemindex,'float');
    end;
   end;
  end;
@@ -406,7 +406,7 @@ begin
            if vtype = vt_card32 then
             i1:= vcard32;
             if i1 < 0 then
-             rangeerror();
+             rangeerror(itemindex);
             end;
            end;
            neg:= i1 < 0;
@@ -423,7 +423,7 @@ begin
            if vtype = vt_card64 then
             i641:= vcard64^;
             if i641 < 0 then
-             rangeerror();
+             rangeerror(itemindex);
             end;
            end;
            neg:= i641 < 0;
@@ -436,7 +436,7 @@ begin
             inc(p1);
            until i641 = 0;
           else:
-           converterror();
+           converterror(itemindex,'integer');
          end;
          pb:= p1;
          pushnum(info);
@@ -447,7 +447,7 @@ begin
            if vtype = vt_card32 then
             c1:= vint32;
             if vint32 < 0 then
-             rangeerror();
+             rangeerror(itemindex);
             end;
            end;
            neg:= false;
@@ -461,7 +461,7 @@ begin
            if vtype = vt_int64 then
             c641:= vint64^;
             if vint64^ < 0 then
-             rangeerror();
+             rangeerror(itemindex);
             end;
            end;
            neg:= false;
@@ -471,7 +471,7 @@ begin
             inc(p1);
            until c641 = 0;
           else:
-           converterror();
+           converterror(itemindex,'cardinal');
          end;
          pb:= p1;
          pushnum(info);
@@ -526,7 +526,7 @@ begin
            info.s:= vstring32;
            pushstring32(info);
           else:
-           converterror();
+           converterror(itemindex,'string');
          end;
        end;
       end;
