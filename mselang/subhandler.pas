@@ -1766,7 +1766,7 @@ var
         end;
         with var1^ do begin
          vf.defaultconst:= defaultconst1;
-         if defaultconst1 >= 0 then begin
+         if defaultconst1 > 0 then begin
           inc(defaultparamcount1);
          end;
          address.indirectlevel:= d.typ.indirectlevel;

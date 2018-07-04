@@ -1,0 +1,12 @@
+program missingpar;
+
+procedure tt(const s: string8);
+begin
+ writeln(s);
+end;
+
+var
+ s1: string8;
+begin
+ tt();
+end.
