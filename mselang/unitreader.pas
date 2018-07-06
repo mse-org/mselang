@@ -523,7 +523,7 @@ begin
            updateref(infodynarray.i.itemtypedata,id1);
           end;
           dk_record,dk_class,dk_object: begin
-           if (tf_needsmanage in h.flags){ or 
+           if (tf_needsmanage in h.flags) or (h.kind <> dk_record){ or 
                                (h.manageproc = mpk_record)} then begin
             for mop1:= low(mop1) to high(mop1) do begin
              if not updateref(recordmanagehandlers[mop1],id1) then begin

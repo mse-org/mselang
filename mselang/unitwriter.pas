@@ -225,7 +225,7 @@ var
          updateref(infodynarray.i.itemtypedata);
         end;
         dk_record,dk_class,dk_object: begin
-         if tf_needsmanage in h.flags then begin
+         if (tf_needsmanage in h.flags) or (h.kind <> dk_record) then begin
           for mop1:= low(mop1) to high(mop1) do begin
            updateref(recordmanagehandlers[mop1]);
           end;

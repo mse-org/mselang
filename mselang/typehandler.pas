@@ -967,7 +967,7 @@ begin
    else begin
     if modularllvm then begin
      include(sub1^.flags,isf_ancestor);
-     sub1^.address:= -typ2^.recordmanagehandlers[mo_destroy];
+     sub1^.address:= typ2^.recordmanagehandlers[mo_destroy];
     end
     else begin
      sub1^.address:= pinternalsubdataty(ele.eledataabs(
@@ -1025,7 +1025,7 @@ begin
   e1:= ele.eleinfoabs(asub);
   s1:= pinternalsubdataty(@e1^.data);
   if isf_ancestor in s1^.flags then begin
-   s1:= ele.eledataabs(-s1^.address);
+   s1:= ele.eledataabs(s1^.address);
    e1:= datatoele(s1);
   end;
   if modularllvm and (e1^.header.defunit <> s.unitinfo) then begin

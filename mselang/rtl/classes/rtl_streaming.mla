@@ -26,15 +26,16 @@ type
    procedure getowner(): tpersistent [virtual];
   public
    procedure assign(source: tpersistent) [virtual];
-   procedure getnamepath(): string [virtual];
+   procedure getnamepath(): string8 [virtual];
  end;
  
 implementation
-
+{$dumpelements}
 { tpersistent }
 
 procedure tpersistent.assignerror(source: tpersistent);
 begin
+ raise econverterror.createfmt(sassignerror,[getclassname(source),classname]);
 end;
 
 procedure tpersistent.assignto(dest: tpersistent);
@@ -53,7 +54,7 @@ procedure tpersistent.assign(source: tpersistent);
 begin
 end;
 
-procedure tpersistent.getnamepath(): string;
+procedure tpersistent.getnamepath(): string8;
 begin
 end;
 
