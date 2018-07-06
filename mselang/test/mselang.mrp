@@ -270,7 +270,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B727C110
+    ao=An unhandled exception occured at $B72EA110
     ae=
     aec=123
     ie=0
@@ -13369,11 +13369,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
-   a=0,665,5,error check
+   a=0,665,4,error check
    c=5
     (
     kind=1
@@ -13509,7 +13509,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,params
+    a=0,665,4,params
     c=4
      (
      kind=2
@@ -13559,8 +13559,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,constpar2 llvm
-     teststate=2
+     a=0,648,1,constpar2 llvm
+     teststate=1
      path=constpar2.mla
      comment=
      cc=
@@ -13569,7 +13569,7 @@ c=3
      rd=
      in=
      eo=
-     ao=0
+     ao=1
      ee=constpar2.mla(5,2) Error: Argument can't be assigned to
      ae=0
      eec=1
@@ -13605,7 +13605,7 @@ c=3
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=params/
     comment=
     cc=
@@ -13667,7 +13667,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=errorcheck/
    comment=
    cc=
@@ -13683,7 +13683,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=syntax/
   comment=
   cc=
@@ -14312,7 +14312,56 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=73
+rowstate=122
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
