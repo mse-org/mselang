@@ -514,7 +514,7 @@ begin
   setimmint32(itemcount1-1,par.listtoarrayofconst.allochigh);
   d.dat.fact.ssaindex:= par.ssad;
   d.dat.datatyp.flags:= [];
-  d.dat.datatyp.typedata:= internaltypes[it_varrecty];
+  d.dat.datatyp.typedata:= internaltypes[it_varrec];
   d.dat.datatyp.indirectlevel:= 0;
   if paramindirect then begin
    d.dat.datatyp.indirectlevel:= 1;

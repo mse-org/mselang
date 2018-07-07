@@ -18,7 +18,7 @@ class method objty.test(a: int32);
 begin
  p1:= pointer(self);
  test1();
- exitcode:= exitcode + i1+a+pclassdefinfoty(self)^.header.allocs.size;
+ exitcode:= exitcode + i1+a+pclassdefty(self)^.header.allocs.size;
 end;
 
 class method objty.test1();

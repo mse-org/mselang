@@ -873,7 +873,7 @@ begin
     reversefieldchain(typ1);
     infoclass.subchain:= currentsubchain;
     reversesubchain(typ1);
-    int1:= sizeof(classdefinfoty)+ targetpointersize*infoclass.virtualcount;
+    int1:= sizeof(classdefty)+ targetpointersize*infoclass.virtualcount;
                      //interfacetable start
     classdefs1:= getclassinfoaddress(
       int1+infoclass.interfacecount*targetpointersize,infoclass.interfacecount);
@@ -882,7 +882,7 @@ begin
     with (pclassdefconstheaderty(p2)-1)^ do begin
      typedata:= d.typ.typedata;
     end;
-    with classdefinfopoty(p2)^ do begin
+    with classdefpoty(p2)^ do begin
      header.virttaboffset:= infoclass.virttaboffset;
      header.allocs.size:= infoclass.allocsize;
      header.allocs.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;

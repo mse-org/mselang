@@ -121,10 +121,11 @@ const
  );
 
 type
- internaltypety = (it_rtti,it_enumitemrtti,it_varrecty);
+ internaltypety = (it_rtti,it_prtti,it_enumitemrtti,it_varrec,
+                   it_pclassdefinfo);
 const
  internaltypenames : array[internaltypety] of string =  (
-  'rttity','enumitemrttity','varrecty'
+  'rttity','prttity','enumitemrttity','varrecty','pclassdefty'
  );
 type
  compilerunitty = (cu_none,cu_personality,cu_internaltypes,

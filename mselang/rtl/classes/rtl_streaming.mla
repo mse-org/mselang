@@ -13,7 +13,7 @@ unit rtl_streaming;
 interface
 uses
  rtl_fpccompatibility;
-//{$internaldebug on} 
+//{$internaldebug on}
 type
  tfiler = class(tobject)
  end;
@@ -30,7 +30,9 @@ type
  end;
  
 implementation
-{$dumpelements}
+uses
+ rtl_rtlconsts,rtl_classutils;
+ 
 { tpersistent }
 
 procedure tpersistent.assignerror(source: tpersistent);

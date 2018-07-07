@@ -140,7 +140,7 @@ type
  string8 = targetptrintty;
 {$endif}
 
- rttikindty = (rtk_none,rtk_enum,rtk_enumitem,rtk_object,
+ rttikindty = (rtk_none,rtk_int,rtk_card,rtk_enum,rtk_enumitem,rtk_object,
                rtk_property);
 
  rttity = object
@@ -149,7 +149,9 @@ type
  {$ifdef mse_compiler}
   typename: string8;      //2
  {$else}
-  typename: pointer;      //2  
+  typename: pointer;      //2
+  data: record     //*rttity
+  end;
  {$endif}
  end;
 {$ifdef mse_compiler}
@@ -164,6 +166,22 @@ const
  classrttidefindex = rttifieldcount + 0;
 
 type
+ intrttity = record              //rtk_int
+  bytesize: int32;   //0
+  bitsize: int32;    //1
+  min: int64;        //2
+  max: int64;        //3
+ end;
+ pintrttity = ^intrttity;
+
+ cardrttity = record             //rtk_card
+  bytesize: int32;   //0
+  bitsize: int32;    //1
+  min: card64;       //2
+  max: card64;       //3
+ end;
+ pcardrttity = ^cardrttity;
+ 
  enumrttiflagty = (erf_contiguous,erf_ascending);
  enumrttiflagsty = set of enumrttiflagty;
 
@@ -199,12 +217,12 @@ type
 {$endif}
 
 {$ifdef mse_compiler}
- pclassdefinfoty = targetptrintty;
- classdefinfopoty = ^classdefinfoty;
+ pclassdefty = targetptrintty;
+ classdefpoty = ^classdefty;
  classprocty = targetptrintty;
 {$else}
- pclassdefinfoty = ^classdefinfoty;
- ppclassdefinfoty = ^pclassdefinfoty;
+ pclassdefty = ^classdefty;
+ ppclassdefty = ^pclassdefty;
  procpoty = pointer;
  classprocty = procedure(instance: pointer);
 {$endif}
@@ -220,7 +238,7 @@ type
  end;
    
  objectrttity = object(rttity)
-  classdef: pclassdefinfoty; //0 -> classrttidefindex
+  classdef: pclassdefty; //0 -> classrttidefindex
   properties: rttilistty;
  end;
  pobjectrttity = ^objectrttity;
@@ -234,8 +252,8 @@ type
 
  classdefheaderty = record 
    //layout fix, used in compiler llvmlists.tconsthashdatalist.addclassdef()
-  parentclass: pclassdefinfoty;                                          //0
-  interfaceparent: pclassdefinfoty; //last parent class with interfaces  //1
+  parentclass: pclassdefty;                                              //0
+  interfaceparent: pclassdefty;     //last parent class with interfaces  //1
   virttaboffset: int32;             //field offset in instance           //2
   rtti: prttity;                                                         //3
   procs: array[classdefprocty] of classprocty;  //4             
@@ -243,7 +261,7 @@ type
  end;
  pclassdefheaderty = ^classdefheaderty;
  
- classdefinfoty = record
+ classdefty = record
   header: classdefheaderty;                                //0
   virtualmethods: record //array of targetpointer to sub   //4+high(procs)+2
   end;
@@ -251,6 +269,7 @@ type
                          //copied to instance
   end;  
  end;
+ 
 const
  classvirttabindex = 4+ord(high(classdefprocty))+2;
 type 

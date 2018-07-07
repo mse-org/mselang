@@ -1,0 +1,32 @@
+//rtl_classutils
+{ MSEgui Copyright (c) 2018 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+unit rtl_classutils;
+interface
+uses
+ rtl_base;
+
+procedure getclassname(const ainstance: tbase): string8;
+
+implementation
+uses
+ 
+procedure getclassname(const ainstance: tbase): string8;
+begin
+ if ainstance = nil then
+  result:= 'NIL';
+ else
+  decref(result);
+  pointer(result):= pointer(prttity(typeinfo(ainstance)^.typename); 
+                                          //const, no incref needed
+ end;
+end;
+
+end.

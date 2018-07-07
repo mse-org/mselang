@@ -1041,7 +1041,7 @@ procedure checkpendingmanagehandlers();
 var
  ele1,ele2: elementoffsetty;
  typ1: ptypedataty;
- p1: classdefinfopoty;
+ p1: classdefpoty;
 begin
  with info do begin
   ele1:= s.unitinfo^.pendingmanagechain;

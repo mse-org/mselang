@@ -105,20 +105,20 @@ procedure __mla__highopenarray(ref: popenarrayty): int32;
 procedure __mla__highstring(ref: pointer): int32;
 
 procedure __mla__initobject(const instance: pointer;
-                                        const classinfo: classdefinfoty);
+                                        const classinfo: classdefty);
 //procedure __mla__calliniobject(const instance: pointer;
-//                                        const classinfo: classdefinfoty);
+//                                        const classinfo: classdefty);
 procedure __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
-procedure __mla__getallocsize(const classdef: pclassdefinfoty): int32;
-procedure __mla__classis(const a,b: pclassdefinfoty): bool1;
+procedure __mla__getallocsize(const classdef: pclassdefty): int32;
+procedure __mla__classis(const a,b: pclassdefty): bool1;
 procedure __mla__checkclasstype(var instance: pointer; //nil if no match
-                              const classtype: pclassdefinfoty): bool1;
+                              const classtype: pclassdefty): bool1;
                                                       //false if no match
 procedure __mla__writeenum(const avalue: int32;
                               const artti: penumrttity);
                               
-//procedure __mla__initclass(const classinfo: classdefinfoty): pointer;
+//procedure __mla__initclass(const classinfo: classdefty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
 procedure __mla__halt(const aexitcode: int32);
 procedure __mla__raise(const data: pointer);
@@ -1658,10 +1658,10 @@ begin
 end;
 
 procedure __mla__initobject(const instance: pointer;
-                                           const classinfo: classdefinfoty);
+                                           const classinfo: classdefty);
 var
  ps,pd,pe: ppointer;
- po1: pclassdefinfoty;
+ po1: pclassdefty;
 begin
  po1:= @classinfo;
 // ppointer(instance+virttaboffset)^:= po1;//@classinfo;
@@ -1696,7 +1696,7 @@ begin
 end;
 {
 procedure __mla__calliniobject(const instance: pointer;
-                                          const classinfo: classdefinfoty);
+                                          const classinfo: classdefty);
 begin
  classinfo.header.procs[cdp_ini](instance);
 end;
@@ -1710,14 +1710,14 @@ begin
  end;
 end;
 
-procedure __mla__getallocsize(const classdef: pclassdefinfoty): int32;
+procedure __mla__getallocsize(const classdef: pclassdefty): int32;
 begin
  result:= classdef^.header.allocs.size;
 end;
 
-procedure __mla__classis(const a,b: pclassdefinfoty): bool1;
+procedure __mla__classis(const a,b: pclassdefty): bool1;
 var
- p1: pclassdefinfoty;
+ p1: pclassdefty;
 begin
  result:= false;
  if (a <> nil) and (b <> nil) then
@@ -1733,7 +1733,7 @@ begin
 end;
 
 procedure __mla__checkclasstype(var instance: pointer; 
-                              const classtype: pclassdefinfoty): bool1;
+                              const classtype: pclassdefty): bool1;
 begin
  if (instance <> nil) and 
          __mla__classis(ppointer(instance)^,classtype) then
@@ -1778,10 +1778,10 @@ end;
 
 (*
 //todo: use simplified version if there are no interfaces
-procedure __mla__initclass(const classinfo: classdefinfoty): pointer;
+procedure __mla__initclass(const classinfo: classdefty): pointer;
 var
  ps,pd,pe: ppointer;
- po1: pclassdefinfoty;
+ po1: pclassdefty;
 begin
  getzeromem(result,classinfo.header.allocs.size);
  po1:= @classinfo;
@@ -1818,7 +1818,7 @@ end;
 
 procedure finivirtclass(const instance: pointer);
 var
- p1: pclassdefinfoty;
+ p1: pclassdefty;
 begin
  p1:= ppointer(instance)^;
  if p1^.header.procs[cdp_destruct] <> nil then

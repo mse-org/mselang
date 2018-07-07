@@ -778,7 +778,7 @@ procedure callclassdefproc(const aitem: classdefprocty;
                         const atype: ptypedataty; const ainstancessa: int32;
                                            const astackindex: int32);
 var
- dummy1: classdefinfoty;
+ dummy1: classdefty;
 begin
  with info do begin
  {$ifdef mse_checkinternalerror}
@@ -799,7 +799,7 @@ procedure callclassdefproc2(const aitem: classdefprocty;
                         const aclassdefcontext: pcontextitemty;
                         const ainstancessa: int32);
 var
- dummy1: classdefinfoty;
+ dummy1: classdefty;
  i1: int32;
 begin
  with info,aclassdefcontext^ do begin

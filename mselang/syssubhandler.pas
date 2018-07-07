@@ -106,7 +106,7 @@ implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
  segmentutils,llvmlists,valuehandler,identutils,unithandler,msestrings,
- math,
+ math,compilerunit,
  __mla__internaltypes;
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -380,6 +380,8 @@ begin
     end;
     initfactcontext(indpo);
     indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+    indpo^.d.dat.datatyp.typedata:= internaltypes[it_prtti];
+                            //;
     indpo^.d.dat.fact.ssaindex:= i1;
     indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
     exit;

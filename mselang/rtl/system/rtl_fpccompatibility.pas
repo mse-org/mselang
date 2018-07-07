@@ -160,12 +160,12 @@ end;
 
 class function tobject.classparent(): tclass;
 begin
- result:= tclass(pclassdefinfoty(classof(self))^.header.parentclass);
+ result:= tclass(pclassdefty(classof(self))^.header.parentclass);
 end;
    
 class function tobject.classinfo(): pointer; //returns pobjectrttity
 begin
- result:= pclassdefinfoty(self)^.header.rtti;
+ result:= pclassdefty(self)^.header.rtti;
 end;
 
 class function tobject.classname(): string8;
@@ -178,7 +178,7 @@ end;
 class function tobject.classnameis(const name: string8): boolean;
 begin
  result:= stringicomp(name,
-            string8(prttity(pclassdefinfoty(self)^.header.rtti)^.typename)) = 0;
+            string8(prttity(pclassdefty(self)^.header.rtti)^.typename)) = 0;
 end;
 
 class function tobject.instancesize(): int32;

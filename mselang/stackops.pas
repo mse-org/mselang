@@ -3073,7 +3073,7 @@ begin
      result:= true;
      break;
     end;
-    i1:= classdefinfopoty(po1)^.header.parentclass;
+    i1:= classdefpoty(po1)^.header.parentclass;
     if i1 < 0 then begin
      break;
     end;
@@ -5754,13 +5754,13 @@ end;
 procedure iniobjectop();
 var
  po1: pointer;
- po2: classdefinfopoty;
+ po2: classdefpoty;
  ps: popaddressty;
  pd: ppointer;
  pe: pointer;
 begin
  with cpu.pc^.par do begin
-  po2:= classdefinfopoty(segments[seg_classdef].basepo+
+  po2:= classdefpoty(segments[seg_classdef].basepo+
                                      initclass.classdef);
   po1:= ppointer(cpu.stack-pointersize)^; //object instance
 //  ppointer(po1+initclass.virttaboffset)^:= po2;

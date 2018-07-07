@@ -1757,7 +1757,7 @@ var
            (tf_untyped in ptypedataty(ele.eledataabs(
                        typ1^.infodynarray.i.itemtypedata))^.h.flags) then begin
          if not (sf_external in sub1^.flags) then begin //todo: check "cdecl"
-          typ1^.infodynarray.i.itemtypedata:= internaltypes[it_varrecty];
+          typ1^.infodynarray.i.itemtypedata:= internaltypes[it_varrec];
           include(var1^.address.flags,af_untyped);
          end
          else begin
@@ -2730,7 +2730,7 @@ begin
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
-     popaddressty(@(classdefinfopoty(getsegmentpo(infoclass.defs))^.
+     popaddressty(@(classdefpoty(getsegmentpo(infoclass.defs))^.
                                      virtualmethods))[po2^.tableindex]:= ad1;
               //resolve virtual table entry
     end;

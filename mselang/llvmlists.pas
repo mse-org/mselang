@@ -358,7 +358,7 @@ type
                                      var adata: pointer): llvmvaluety;
                                    //increments adata to next item
 //   function addrtti(const artti: pcrttity): llvmvaluety;
-   function addclassdef(const aclassdef: classdefinfopoty; 
+   function addclassdef(const aclassdef: classdefpoty; 
                                         const aintfcount: int32): llvmvaluety;
                         //virtualsubconsts[virtualcount] used for typeid
    function addintfdef(const aintf: pintfdefinfoty;
@@ -1017,7 +1017,7 @@ var
  end; //setvirtsubs()
 
 var
- poclassdef,peclassdef: ^classdefinfoty;
+ poclassdef,peclassdef: ^classdefty;
  header1: pclassdefconstheaderty;
  i1,i2: int32;
  typ1: ptypedataty;
@@ -2267,7 +2267,7 @@ begin
 end;
 *)
 
-function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
+function tconsthashdatalist.addclassdef(const aclassdef: classdefpoty;
                                           const aintfcount: int32): llvmvaluety;
 
  function getclassid(const asegoffset: int32): int32;
@@ -2890,6 +2890,8 @@ begin
  end;
 end;
 
+//todo: use single rtti instances in program
+
 function tgloballocdatalist.addrtticonst(const atype: ptypedataty): llvmvaluety;
 var
  agloc1: aglocty;
@@ -2914,9 +2916,43 @@ var
  ele1: elementoffsetty;
  i1: int32;
  m1: llvmvaluety;
+ intmin1,intmax1: int64;
 begin
  with fconstlist do begin
   case atype^.h.kind of
+   dk_integer: begin
+    case atype^.h.datasize of
+     das_1,das_2_7,das_8: begin
+      with atype^.infoint8 do begin
+       intmin1:= min;
+       intmax1:= max;
+      end;
+     end;
+     das_9_15,das_16: begin
+      with atype^.infoint16 do begin
+       intmin1:= min;
+       intmax1:= max;
+      end;
+     end;
+     das_17_31,das_32: begin
+      with atype^.infoint32 do begin
+       intmin1:= min;
+       intmax1:= max;
+      end;
+     end;
+     das_33_63,das_64: begin
+      with atype^.infoint64 do begin
+       intmin1:= min;
+       intmax1:= max;
+      end;
+     end;
+    end;
+    initmainagloc(4,sizeof(intrttity),rtk_int);
+    putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
+    putagitem(agloc1,addi32(atype^.h.bitsize));                   //1
+    putagitem(agloc1,addi64(intmin1));                            //2
+    putagitem(agloc1,addi64(intmax1));                            //3
+   end;
    dk_enum: begin
     with atype^.infoenum do begin
      initmainagloc(4+itemcount*2,sizeof(enumrttity)+
