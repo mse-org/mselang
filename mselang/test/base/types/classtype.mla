@@ -1,0 +1,15 @@
+program classtype;
+type
+ ttest = class
+ end;
+ ctest = class of ttest;
+var
+ cc1: ctest;
+ cc2: class of ttest;
+begin
+ cc1:= ttest;
+ cc2:= ttest;
+ if cc1 = cc2 then
+  exitcode:= 123;
+ end;
+end.

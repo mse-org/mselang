@@ -2917,6 +2917,7 @@ var
  i1: int32;
  m1: llvmvaluety;
  intmin1,intmax1: int64;
+ cardmin1,cardmax1: card64;
 begin
  with fconstlist do begin
   case atype^.h.kind of
@@ -2952,6 +2953,39 @@ begin
     putagitem(agloc1,addi32(atype^.h.bitsize));                   //1
     putagitem(agloc1,addi64(intmin1));                            //2
     putagitem(agloc1,addi64(intmax1));                            //3
+   end;
+   dk_cardinal: begin
+    case atype^.h.datasize of
+     das_1,das_2_7,das_8: begin
+      with atype^.infocard8 do begin
+       cardmin1:= min;
+       cardmax1:= max;
+      end;
+     end;
+     das_9_15,das_16: begin
+      with atype^.infocard16 do begin
+       cardmin1:= min;
+       cardmax1:= max;
+      end;
+     end;
+     das_17_31,das_32: begin
+      with atype^.infocard32 do begin
+       cardmin1:= min;
+       cardmax1:= max;
+      end;
+     end;
+     das_33_63,das_64: begin
+      with atype^.infocard64 do begin
+       cardmin1:= min;
+       cardmax1:= max;
+      end;
+     end;
+    end;
+    initmainagloc(4,sizeof(intrttity),rtk_card);
+    putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
+    putagitem(agloc1,addi32(atype^.h.bitsize));                   //1
+    putagitem(agloc1,addi64(cardmin1));                            //2
+    putagitem(agloc1,addi64(cardmax1));                            //3
    end;
    dk_enum: begin
     with atype^.infoenum do begin

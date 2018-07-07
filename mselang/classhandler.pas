@@ -605,7 +605,7 @@ var
  typ1,typ2: ptypedataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('CLASSOF');
+ outhandle('CLASSOFTYP');
 {$endif}
  with info do begin
   typecont:= @contextstack[s.stackindex-1];
@@ -634,7 +634,8 @@ begin
     end
     else begin
      currenttypedef:= ele.eledatarel(typ2);
-     inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel+1,
+     inc(typecont^.d.typ.indirectlevel);
+     inittypedatasize(typ2^,dk_classof,typecont^.d.typ.indirectlevel,
                                                                 das_pointer);
      with typ2^.infoclassof do begin
       classtyp:= d.typ.typedata;
@@ -643,6 +644,7 @@ begin
       end;
      end;
      resolveforwardtype(typ2);
+     typecont^.d.typ.typedata:= ele.eledatarel(typ2);
     end;
    end;
   end;
