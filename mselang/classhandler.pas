@@ -588,6 +588,14 @@ begin
     tk_except: begin
      include(d.cla.flags,obf_except);
     end;
+    tk_rtti: begin
+     include(d.cla.flags,obf_rtti);
+     exclude(d.cla.flags,obf_nortti);
+    end;
+    tk_nortti: begin
+     include(d.cla.flags,obf_nortti);
+     exclude(d.cla.flags,obf_rtti);
+    end;
     else begin
      identerror(i1-s.stackindex,contextstack[i1].d.ident.ident,
                                                 err_invalidattachment);
@@ -836,19 +844,27 @@ begin
 //   createrecordmanagehandler(d.typ.typedata); 
 //                               //always called because of iniproc
    typ1^.infoclass.instanceinterfacestart:= classinfo1^.rec.fieldoffsetmax;
-   if obf_except in contextstack[s.stackindex].d.cla.flags then begin
-    if typ1^.infoclass.subattach[osa_destroy] = 0 then begin
-     errormessage(err_exceptmusthavedefaultdestruct,[]);
+   with contextstack[s.stackindex] do begin
+    if obf_except in d.cla.flags then begin
+     if typ1^.infoclass.subattach[osa_destroy] = 0 then begin
+      errormessage(err_exceptmusthavedefaultdestruct,[]);
+     end;
+     typ2:= typ1;
+     while typ2^.h.ancestor > 0 do begin
+      typ2:= ele.eledataabs(typ2^.h.ancestor);
+     end;
+     if icf_virtual in typ2^.infoclass.flags then begin
+      include(typ1^.infoclass.flags,icf_except);
+     end
+     else begin
+      errormessage(err_exceptmusthavevirtual,[]);
+     end;
     end;
-    typ2:= typ1;
-    while typ2^.h.ancestor > 0 do begin
-     typ2:= ele.eledataabs(typ2^.h.ancestor);
+    if obf_rtti in d.cla.flags then begin
+     include(typ1^.infoclass.flags,icf_rtti);
     end;
-    if icf_virtual in typ2^.infoclass.flags then begin
-     include(typ1^.infoclass.flags,icf_except);
-    end
-    else begin
-     errormessage(err_exceptmusthavevirtual,[]);
+    if obf_nortti in d.cla.flags then begin
+     exclude(typ1^.infoclass.flags,icf_rtti);
     end;
    end;
    s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
@@ -892,8 +908,8 @@ begin
      header.parentclass:= -1;
      header.interfaceparent:= -1;
      header.rtti:= -1;
-     if (co_llvm in o.compileoptions) and 
-                        (stf_rtti in s.currentstatementflags) then begin
+     if (co_llvm in o.compileoptions) and (icf_rtti in infoclass.flags)
+                        {(stf_rtti in s.currentstatementflags)} then begin
       header.rtti:= s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
      end;
      if h.ancestor <> 0 then begin 

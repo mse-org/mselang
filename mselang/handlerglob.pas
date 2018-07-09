@@ -120,7 +120,8 @@ type
 }
  infoclassflagty = (icf_class,icf_virtualtablevalid,icf_allocvalid,icf_defvalid,
                     icf_forward,
-                    icf_zeroinit,icf_nozeroinit,icf_virtual,icf_except);
+                    icf_zeroinit,icf_nozeroinit,icf_virtual,icf_except,
+                    icf_rtti);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   intfnamenode: elementoffsetty;

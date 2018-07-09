@@ -404,7 +404,8 @@ type
   case contextkindty of
    ck_recordcase: (fieldoffsetmax: dataoffsty);
  end;
- objflagty = (obf_class,obf_zeroinit,obf_nozeroinit,obf_virtual,obf_except);
+ objflagty = (obf_class,obf_zeroinit,obf_nozeroinit,obf_virtual,obf_except,
+              obf_rtti,obf_nortti);
  objflagsty = set of objflagty;
  
  classinfoty = record
