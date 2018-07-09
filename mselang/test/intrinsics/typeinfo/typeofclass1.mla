@@ -2,12 +2,11 @@ program typeofclass1;
 uses
  __mla__internaltypes;
 type
-{$rtti on}
  ttest = class[virtual]
   constructor create();
   destructor destroy();
  end;
- ttest1 = class(ttest)
+ ttest1 = class(ttest)[rtti]
  end;
 
 constructor ttest.create();

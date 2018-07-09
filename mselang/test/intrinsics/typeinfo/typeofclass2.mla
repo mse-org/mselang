@@ -1,0 +1,27 @@
+program typeofclass2;
+uses
+ __mla__internaltypes;
+type
+ ttest = class[rtti]
+ end;
+ ttest1 = class(ttest)[nortti]
+ end;
+ ttest2 = class(ttest1)[rtti]
+ end;
+var
+ p1,p3: prttity;
+ p2: pclassdefty;
+ c1: class of ttest;
+ i1: int32;
+ h1: classdefheaderty;
+begin
+ p1:= typeinfo(ttest);
+ c1:= classof(ttest);
+ p2:= pclassdefty(c1);
+ p3:= p2^.header.rtti;
+ if (string8(p1^.typename) = 'ttest') and (p1 = p3) and 
+           (pclassdefty(classof(ttest1))^.header.rtti = nil) and
+           (string8(pclassdefty(classof(ttest2))^.header.rtti^.typename) = 'ttest2') then
+  exitcode:= 123;
+ end;
+end.

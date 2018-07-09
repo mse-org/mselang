@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7311110
+    ao=An unhandled exception occured at $B7259110
     ae=
     aec=123
     ie=0
@@ -12852,7 +12852,7 @@ c=3
    (
    kind=1
    a=0,665,4,typeinfo
-   c=3
+   c=4
     (
     kind=2
     a=0,648,1,typeinfo1 llvm
@@ -12902,6 +12902,28 @@ c=3
     a=0,648,1,typeinfoclass1 llvm
     teststate=1
     path=typeofclass1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typeinfoclass2 llvm
+    teststate=1
+    path=typeofclass2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -14420,7 +14442,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=61
+rowstate=62
+ 0 0
  0 0
  0 0
  0 0

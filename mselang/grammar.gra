@@ -71,7 +71,7 @@
  'mselang','pascal','system'
  'nil','result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
- 'nozeroinit','zeroinit','virtual','except','end'
+ 'nozeroinit','zeroinit','rtti','nortti','virtual','except','end'
  'new','dispose','afterconstruct','beforedestruct'
  'ini','fini','incref','decref'
  'operator','operatorright'

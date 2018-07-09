@@ -2,9 +2,8 @@ program classtype;
 uses
  rtl_fpccompatibility,__mla__internaltypes;
 type
-{$rtti on}
 
- ctest = class(tobject)
+ ctest = class(tobject)[rtti]
   f1: int32;
   constructor create();
   destructor destroy();
