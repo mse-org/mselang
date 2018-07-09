@@ -1701,7 +1701,7 @@ var
  attachitemsnoitemerrorco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'attachitemsnoitemerror');
  attachco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -14284,7 +14284,6 @@ begin
  stringvalueco.branch:= @bstringvalue;
  attachitems2aco.branch:= @battachitems2a;
  attachitemsnoitemerrorco.branch:= nil;
- attachitemsnoitemerrorco.handleexit:= @handlenoattachitemerror;
  attachco.branch:= @battach;
  attachco.next:= @attach1co;
  attach1co.branch:= @battach1;

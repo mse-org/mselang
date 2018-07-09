@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=132
- y=213
+ x=981
+ y=245
  cx=879
  cy=396
 macros.sta=9
@@ -83,8 +83,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
@@ -105,8 +105,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7B2E110
+    ao=An unhandled exception occured at $B7311110
     ae=
     aec=123
     ie=0
@@ -12852,12 +12852,56 @@ c=3
    (
    kind=1
    a=0,665,4,typeinfo
-   c=1
+   c=3
     (
     kind=2
     a=0,648,1,typeinfo1 llvm
     teststate=1
     path=typeinfo1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typeinfoclass llvm
+    teststate=1
+    path=typeofclass.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,typeinfoclass1 llvm
+    teststate=1
+    path=typeofclass1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -14376,7 +14420,9 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=59
+rowstate=61
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

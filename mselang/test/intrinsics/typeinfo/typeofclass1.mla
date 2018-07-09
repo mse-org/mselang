@@ -1,0 +1,38 @@
+program typeofclass1;
+uses
+ __mla__internaltypes;
+type
+{$rtti on}
+ ttest = class[virtual]
+  constructor create();
+  destructor destroy();
+ end;
+ ttest1 = class(ttest)
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+var
+ p1,p3: prttity;
+ p2: pclassdefty;
+ c1: class of ttest;
+ i1: int32;
+ h1: classdefheaderty;
+ t1: ttest;
+begin
+ p1:= typeinfo(ttest1);
+ c1:= classof(ttest);
+ t1:= ttest1.create();
+ p2:= pclassdefty(classof(t1));
+ p3:= p2^.header.rtti;
+ if (string8(p1^.typename) = 'ttest1') and (p1 = p3) then
+  exitcode:= 123;
+ end;
+ t1.destroy();
+end.

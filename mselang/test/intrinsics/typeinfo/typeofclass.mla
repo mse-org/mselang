@@ -2,16 +2,21 @@ program typeofclass;
 uses
  __mla__internaltypes;
 type
- ttest = class
+{$rtti on}
+ ttest = class[]
  end;
 var
- p1: prttity;
+ p1,p3: prttity;
+ p2: pclassdefty;
  c1: class of ttest;
  i1: int32;
+ h1: classdefheaderty;
 begin
-// p1:= typeinfo(ttest);
-// c1:= ttest;
-{$internaldebug on}
- p1:= typeinfo(i1);
- writeln(string8(p1^.typename));
+ p1:= typeinfo(ttest);
+ c1:= classof(ttest);
+ p2:= pclassdefty(c1);
+ p3:= p2^.header.rtti;
+ if (string8(p1^.typename) = 'ttest') and (p1 = p3) then
+  exitcode:= 123;
+ end;
 end.

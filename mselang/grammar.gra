@@ -1201,7 +1201,8 @@ stringvalue,,,^
  
 attachitems2a,,,^
  ',',attachitems-
-attachitemsnoitemerror,,,handlenoattachitemerror
+//attachitemsnoitemerror,,,handlenoattachitemerror
+attachitemsnoitemerror,,,^
 
 attach,attach1,,
  '',attachitems^*
