@@ -1,0 +1,13 @@
+program typeinfo1;
+uses
+ __mla__internaltypes;
+var
+ p1,p2: prttity;
+ i1: int32;
+begin
+ p1:= typeinfo(i1);
+ p2:= typeinfo(int32);
+ if (string8(p1^.typename) = 'int32') and (p1 = p2) then
+  exitcode:= 123;
+ end;
+end.

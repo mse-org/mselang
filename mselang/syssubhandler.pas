@@ -349,10 +349,36 @@ errorlab:
 end;
 
 procedure handletypeinfo(const paramco: int32);
+
+ function dortti(const atyp: typeinfoty; out assa: int32): boolean;
+ var
+  ad1: dataaddressty;
+  typ1: ptypedataty;
+ begin
+  result:= false;
+  typ1:= ele.eledataabs(atyp.typedata);
+  if typ1^.h.indirectlevel <> atyp.indirectlevel then begin
+   exit;
+  end
+  else begin
+   ad1:= getrtti(typ1);
+   with insertitem(oc_pushrtti,
+                    info.s.stacktop-info.s.stackindex,-1)^.par do begin
+    if co_llvm in info.o.compileoptions then begin
+     rttiid:= ad1;
+    end
+    else begin
+     rttistackops:= ad1;
+    end;
+    assa:= ssad;
+    result:= true;
+   end;
+  end;
+ end; //dortti()
+
 var
  indpo,toppo: pcontextitemty;
  i1: int32;
- ad1: dataaddressty;
 label
  errorlab;
 begin
@@ -363,15 +389,13 @@ begin
    with toppo^ do begin
     case d.kind of
      ck_typearg: begin
-      ad1:= getrtti(ele.eledataabs(d.typ.typedata));
-      with insertitem(oc_pushrtti,toppo,-1)^.par do begin
-       if co_llvm in o.compileoptions then begin
-        rttiid:= ad1;
-       end
-       else begin
-        rttistackops:= ad1;
-       end;
-       i1:= ssad;
+      if not dortti(d.typ,i1) then begin
+       goto errorlab;
+      end;
+     end;
+     ck_ref,ck_fact,ck_subres: begin
+      if not dortti(d.dat.datatyp,i1) then begin
+       goto errorlab;
       end;
      end;
      else begin
