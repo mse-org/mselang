@@ -298,7 +298,7 @@ begin
    with contextstack[atypetypecontext] do begin
 //    inc(d.typ.indirectlevel);
     if sf_ofobject in psubdataty(ele.eledataabs(asub))^.flags then begin
-     inittypedatasize(po1^,dk_method,d.typ.indirectlevel,das_none);
+     inittypedatasize(po1^,dk_method,d.typ.indirectlevel,das_none,[tf_method]);
     end
     else begin
      inittypedatasize(po1^,dk_sub,d.typ.indirectlevel,das_pointer);

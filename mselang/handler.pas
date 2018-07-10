@@ -1679,6 +1679,11 @@ begin
         else begin
          errormessage(err_cannotaddressexp,[],1);
         end;
+        if (stf_addressop in s.currentstatementflags)
+                    {not (ff_addressfact in fl1)} and
+                    (d.dat.datatyp.flags*[tf_subad,tf_method] = []) then begin
+         d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+        end;
        end;
        ck_typearg: begin
         errormessage(err_cannotaddresstype,[],1);

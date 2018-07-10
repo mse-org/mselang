@@ -3596,7 +3596,7 @@ begin
       end;
      end;
      methodtype1:= ele.addelementdata(getident(),ek_type,nonevisi); //anonymous
-     inittypedatabyte(methodtype1^,dk_method,0,2*targetpointersize);
+     inittypedatabyte(methodtype1^,dk_method,0,2*targetpointersize,[tf_method]);
      methodtype1^.infosub.sub:= ele.eledatarel(asub);
      d.dat.datatyp:= methoddatatype; //sub type undefined
      d.dat.datatyp.typedata:= ele.eledatarel(methodtype1);

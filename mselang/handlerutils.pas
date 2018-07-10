@@ -3776,10 +3776,10 @@ begin
   internalerror(ie_handler,'20160809A');
  end;
 {$endif}
- inittypedatabyte(po2^,dk_method,0,2*targetpointersize);
+ inittypedatabyte(po2^,dk_method,0,2*targetpointersize,[tf_method]);
  po2^.infosub.sub:= 0; //undefined
  with methoddatatype do begin
-  flags:= [];
+  flags:= [tf_method];
   indirectlevel:= 0;
   typedata:= ele.eledatarel(po2);
  end;
