@@ -136,6 +136,8 @@ type
   pendingdescends: listadty;
 //  fieldsize: dataoffsty;
   allocsize: dataoffsty;
+  propertycount: int32;
+  propertychain: elementoffsetty; //0 -> none
   subchain: elementoffsetty; //0 ->none
   virttaboffset: int32;
   virtualcount: int32;
@@ -428,6 +430,7 @@ type
   writeele: elementoffsetty;
   writeoffset: int32;
   defaultconst: datainfoty;
+  next: elementoffsetty;
  end;
  ppropertydataty = ^propertydataty;
  

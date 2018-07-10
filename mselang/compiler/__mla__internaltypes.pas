@@ -164,6 +164,7 @@ type
 const
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
+ listfieldcount = 1;
 
 type
  intrttity = record              //rtk_int
@@ -227,21 +228,29 @@ type
  classprocty = procedure(instance: pointer);
 {$endif}
 
- propertyrttity = object(rttity)
-  
+ propertyrttity = record
+  test: int32;
  end;
+ ppropertyrttity = ^propertyrttity;
 
  rttilistty = record
-  count: int32;
+  size: int32;                      //0
   items: record //array of rttity
+  end;
+ end;
+
+ itemlistty = record
+  size: int32;
+  items: record //array of record
   end;
  end;
    
  objectrttity = object(rttity)
   classdef: pclassdefty; //0 -> classrttidefindex
-  properties: rttilistty;
+  properties: itemlistty;
  end;
  pobjectrttity = ^objectrttity;
+ 
  allocsinfoty = record
   size: int32;
   instanceinterfacestart: int32; //offset in instance record

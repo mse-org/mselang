@@ -411,6 +411,7 @@ type
  classinfoty = record
   rec: recordinfoty; //first!
   temps: dataoffsty; //in seg_temp, for properties and pending self params
+  propertychain: elementoffsetty;
 //  temps: segmentstatety;
   flags: objflagsty;
   visibility: visikindsty;

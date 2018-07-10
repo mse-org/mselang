@@ -2890,6 +2890,16 @@ begin
  end;
 end;
 
+procedure initlistagloc(const constlist: tconsthashdatalist;
+                   var agloc: aglocty; const count: int32; const asize: int32);
+begin
+ initagloc(agloc,count+listfieldcount);
+ with constlist do begin
+   //size: int32;            //0
+  putagitem(agloc,addi32(asize));
+ end;
+end;
+
 //todo: use single rtti instances in program
 
 function tgloballocdatalist.addrtticonst(const atype: ptypedataty): llvmvaluety;
@@ -2914,10 +2924,12 @@ var
  p1,pe: pointer;
  enuflags1: enumrttiflagsty;
  ele1: elementoffsetty;
- i1: int32;
+ i1,i2: int32;
  m1: llvmvaluety;
  intmin1,intmax1: int64;
  cardmin1,cardmax1: card64;
+ agloc2: aglocty;
+ 
 begin
  with fconstlist do begin
   case atype^.h.kind of
@@ -2983,7 +2995,7 @@ begin
     end;
     initmainagloc(4,sizeof(intrttity),rtk_card);
     putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
-    putagitem(agloc1,addi32(atype^.h.bitsize));                   //1
+    putagitem(agloc1,addi32(atype^.h.bitsize));                    //1
     putagitem(agloc1,addi64(cardmin1));                            //2
     putagitem(agloc1,addi64(cardmax1));                            //3
    end;
@@ -3019,9 +3031,28 @@ begin
     end;
    end;
    dk_class,dk_object: begin
-    initmainagloc(1,sizeof(objectrttity),rtk_object);
+    i1:= 0;
+    i2:= 1; //objectrttity fieldcount
+    with atype^.infoclass do begin
+     if propertycount > 0 then begin
+      inc(i2);
+      i1:= propertycount * sizeof(propertyrttity);
+      initlistagloc(fconstlist,agloc2,propertycount,i1);
+      ele1:= propertychain;
+      while ele1 > 0 do begin
+       with ppropertydataty(ele.eledataabs(ele1))^ do begin
+        putagitem(agloc2,addi32(ele1));
+        ele1:= next;
+       end;
+      end;
+     end;
+    end;
+    initmainagloc(i2,sizeof(objectrttity)+i1,rtk_object);
      //classdef: pclassdefinfoty;
     putagitem(agloc1,nilpointer); //dummy          //0
+    if i1 > 0 then begin
+     putagitem(agloc1,addagloc(agloc2));           //1
+    end;
    end;
    else begin
     internalerror1(ie_llvm,'20171107A');

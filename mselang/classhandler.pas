@@ -214,6 +214,7 @@ begin
    d.cla.temps:= getsegmenttopoffs(seg_temp);
    d.cla.rec.fieldoffset:= 0;
    d.cla.rec.fieldoffsetmax:= 0;
+   d.cla.propertychain:= 0;
    include(d.handlerflags,hf_initvariant);
    d.cla.intfindex:= 0;
    if isclass then begin
@@ -284,6 +285,7 @@ begin
      infoclass.intftypenode:= ele2;
      infoclass.implnode:= ele3;
      infoclass.defs.address:= 0;
+     infoclass.propertychain:= 0;
      infoclass.subchain:= 0;
      infoclass.virttaboffset:= 0;
      infoclass.pendingdescends:= 0;
@@ -869,6 +871,8 @@ begin
    end;
    s.currentstatementflags:= s.currentstatementflags - [stf_objdef,stf_class];
    with typ1^ do begin
+    infoclass.propertychain:= classinfo1^.propertychain;
+    infoclass.propertycount:= reversepropertychain(typ1);
     exclude(h.flags,tf_sizeinvalid);
     include(infoclass.flags,icf_defvalid);
     if (icf_zeroinit in infoclass.flags) or 
@@ -1785,6 +1789,9 @@ begin
    if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
     internalerror(ie_handler,'20151202C');
    end;
+   if contextstack[s.stackindex-1].d.kind <> ck_classdef then begin
+    internalerror(ie_handler,'20180710A');
+   end;
   {$endif}
    if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
                            ek_property,[vik_ancestor],po1) then begin
@@ -1793,6 +1800,10 @@ begin
    else begin
     with po1^ do begin
      flags:= resinfo^.propflags;
+     with contextstack[s.stackindex-1] do begin
+      next:= d.cla.propertychain;
+      d.cla.propertychain:= ele.eledatarel(po1);
+     end;
      if pof_default in flags then begin
      {$ifdef mse_checkinternalerror}
       if potop^.d.kind <> ck_const then begin

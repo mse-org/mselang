@@ -72,6 +72,7 @@ procedure checkpendingmanagehandlers();
 function getinternalsubglobidoropad(const asub: elementoffsetty): int32;
 
 procedure reversefieldchain(const atyp: ptypedataty);
+function reversepropertychain(const atyp: ptypedataty): int32;
 procedure reversesubchain(const atyp: ptypedataty);
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
 function gettypeident(): identty;
@@ -1096,6 +1097,25 @@ begin
   offs1:= offs2;
  end;
  atyp^.fieldchain:= offs3;
+end;
+
+function reversepropertychain(const atyp: ptypedataty): int32;
+var
+ offs1,offs2,offs3: elementoffsetty;
+begin
+ result:= 0;
+ offs1:= atyp^.infoclass.propertychain;
+ offs3:= 0;
+ while offs1 <> 0 do begin      //reverse order
+  inc(result);
+  with ppropertydataty(ele.eledataabs(offs1))^ do begin
+   offs2:= next;
+   next:= offs3;
+  end;
+  offs3:= offs1;
+  offs1:= offs2;
+ end;
+ atyp^.infoclass.propertychain:= offs3;
 end;
 
 procedure reversesubchain(const atyp: ptypedataty);
