@@ -37,7 +37,6 @@ end;
 
 procedure tt(): procty;
 begin
-{$internaldebug on}
  result:= @ttest.test;
 end;
 

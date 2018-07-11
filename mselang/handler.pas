@@ -1667,8 +1667,9 @@ begin
         end;
         if (stf_addressop in s.currentstatementflags)
                     {not (ff_addressfact in fl1)} and
-                    not (tf_subad in d.dat.datatyp.flags) then begin
+                    (d.dat.datatyp.flags*[tf_subad,tf_method] = []) then begin
          d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+         d.dat.datatyp.flags:= d.dat.datatyp.flags - [tf_subad,tf_method];
         end;
        end;
        ck_fact: begin
@@ -1683,6 +1684,7 @@ begin
                     {not (ff_addressfact in fl1)} and
                     (d.dat.datatyp.flags*[tf_subad,tf_method] = []) then begin
          d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+         d.dat.datatyp.flags:= d.dat.datatyp.flags - [tf_subad,tf_method];
         end;
        end;
        ck_typearg: begin
