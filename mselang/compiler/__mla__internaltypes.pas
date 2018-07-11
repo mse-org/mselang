@@ -140,8 +140,12 @@ type
  string8 = targetptrintty;
 {$endif}
 
- rttikindty = (rtk_none,rtk_int,rtk_card,rtk_enum,rtk_enumitem,rtk_object,
+ rttikindty = (rtk_none,rtk_boolean,rtk_integer,rtk_cardinal,rtk_float,
+               rtk_pointer,rtk_string,rtk_character,
+               rtk_enum,rtk_enumitem,rtk_set,
+               rtk_object,
                rtk_property);
+ bitsizety = (bs_none,bs_1,bs_8,bs_16,bs_32,bs_64,bs_po);
 
  rttity = object
   size: int32;            //0
@@ -164,7 +168,8 @@ type
 const
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
- listfieldcount = 1;
+ listrttifieldcount = 1;
+ propertyrttifieldcount = 2;
 
 type
  intrttity = record              //rtk_int
@@ -229,7 +234,8 @@ type
 {$endif}
 
  propertyrttity = record
-  test: int32;
+  kind: rttikindty;                //0
+  size: bitsizety;                 //1
  end;
  ppropertyrttity = ^propertyrttity;
 
@@ -240,7 +246,7 @@ type
  end;
 
  itemlistty = record
-  size: int32;
+  size: int32;                     //0
   items: record //array of record
   end;
  end;

@@ -2893,15 +2893,45 @@ end;
 procedure initlistagloc(const constlist: tconsthashdatalist;
                    var agloc: aglocty; const count: int32; const asize: int32);
 begin
- initagloc(agloc,count+listfieldcount);
+ initagloc(agloc,count+listrttifieldcount);
  with constlist do begin
    //size: int32;            //0
   putagitem(agloc,addi32(asize));
  end;
 end;
 
-//todo: use single rtti instances in program
+const
+ datakindtorttikind: array[datakindty] of rttikindty = (
+//dk_none,  dk_pointer, dk_boolean, dk_cardinal, dk_integer, dk_float,
+  rtk_none,rtk_pointer,rtk_boolean,rtk_cardinal,rtk_integer,rtk_float,
+// dk_kind,
+  rtk_none,   
+// dk_address,dk_record,dk_string,
+  rtk_none,  rtk_none, rtk_string,
+// dk_dynarray,dk_openarray,dk_array,
+  rtk_none,  rtk_none,    rtk_none,
+// dk_object,dk_objectpo,dk_class,dk_interface,
+  rtk_none, rtk_none,   rtk_none,rtk_none,
+// dk_classof,
+  rtk_none,
+// dk_sub, dk_method,
+  rtk_none,rtk_none,
+// dk_enum, dk_enumitem, dk_set, dk_character,
+  rtk_enum,rtk_enumitem,rtk_set,rtk_character,
+// dk_data
+  rtk_none
+ );
 
+ datasizetorttisize: array[databitsizety] of bitsizety = (
+//das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+   bs_none, bs_1, bs_8,   bs_8,   bs_16, bs_16,    bs_32, bs_32,
+//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
+      bs_64, bs_64, bs_po,      bs_16,   bs_32, bs_64,
+//das_sub,das_meta 
+   bs_none,bs_none
+ );
+ 
+//todo: use single rtti instances in program
 function tgloballocdatalist.addrtticonst(const atype: ptypedataty): llvmvaluety;
 var
  agloc1: aglocty;
@@ -2929,6 +2959,7 @@ var
  intmin1,intmax1: int64;
  cardmin1,cardmax1: card64;
  agloc2: aglocty;
+ typ1: ptypedataty;
  
 begin
  with fconstlist do begin
@@ -2960,7 +2991,7 @@ begin
       end;
      end;
     end;
-    initmainagloc(4,sizeof(intrttity),rtk_int);
+    initmainagloc(4,sizeof(intrttity),rtk_integer);
     putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
     putagitem(agloc1,addi32(atype^.h.bitsize));                   //1
     putagitem(agloc1,addi64(intmin1));                            //2
@@ -2993,7 +3024,7 @@ begin
       end;
      end;
     end;
-    initmainagloc(4,sizeof(intrttity),rtk_card);
+    initmainagloc(4,sizeof(intrttity),rtk_cardinal);
     putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
     putagitem(agloc1,addi32(atype^.h.bitsize));                    //1
     putagitem(agloc1,addi64(cardmin1));                            //2
@@ -3037,11 +3068,21 @@ begin
      if propertycount > 0 then begin
       inc(i2);
       i1:= propertycount * sizeof(propertyrttity);
-      initlistagloc(fconstlist,agloc2,propertycount,i1);
+      initlistagloc(fconstlist,agloc2,propertycount*propertyrttifieldcount,i1);
       ele1:= propertychain;
       while ele1 > 0 do begin
        with ppropertydataty(ele.eledataabs(ele1))^ do begin
-        putagitem(agloc2,addi32(ele1));
+        typ1:= ele.eledataabs(typ);
+       {$ifdef mse_checkinternalerror}
+        if datakindtorttikind[typ1^.h.kind] = rtk_none then begin
+         internalerror(ie_llvmlist,'20180711A');
+        end;
+        if datasizetorttisize[typ1^.h.datasize] = bs_none then begin
+         internalerror(ie_llvmlist,'20180711B');
+        end;
+       {$endif}
+        putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
+        putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
         ele1:= next;
        end;
       end;
