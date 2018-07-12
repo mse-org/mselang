@@ -1019,7 +1019,7 @@ var
 var
  poclassdef,peclassdef: ^classdefty;
  header1: pclassdefconstheaderty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  typ1: ptypedataty;
  globdat1: pgloballocdataty;
  bufdat1: paggregateconstty;
@@ -1056,32 +1056,48 @@ begin
     internalerror(ie_llvmlist,'20171118A');
    end;
   {$endif}
+{
    if typ1^.h.llvmrtticonst > 0 then begin
+    i3:= getrtti(typ1);
     with info.s.unitinfo^.llvmlists.constlist do begin
      bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
-     pint32(@bufdat1^.items)[classrttidefindex]:= getrtti(typ1);
+     pint32(@bufdat1^.items)[classrttidefindex]:= i3;
 //     pint32(@bufdat1^.items)[classrttidefindex]:= 
 //                            addpointercast(pint32(poclassdef)^).listid;
               //todo: hide for search because hash is wrong
     end;
    end;
+}
   end;
-  if updatesubs and (typ1^.infoclass.virtualcount > 0) then begin
-   with info.s.unitinfo^.llvmlists do begin
-    bufdat1:= constlist.getitemdata(
-                      globlist.getinitconst(typ1^.infoclass.defsid));
-    i2:= constlist.getitemdata(pint32(@bufdat1^.items)[classvirttabindex]) -
-                                                              constlist.buffer;
-//    pd:= @bufdat2.
+  if updatesubs then begin
+   if typ1^.h.llvmrtticonst > 0 then begin
+ //   i3:= getrtti(typ1);
+    with info.s.unitinfo^.llvmlists,constlist do begin
+     i3:= addpointercast(typ1^.infoclass.defsid).listid;
+     bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
+     pint32(@bufdat1^.items)[classrttidefindex]:= i3;
+ //     pint32(@bufdat1^.items)[classrttidefindex]:= 
+ //                            addpointercast(pint32(poclassdef)^).listid;
+              //todo: hide for search because hash is wrong
+    end;
    end;
-   offss:= i2;
-   offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
-   setvirtsubs(typ1,i2);
-  {$ifdef mse_checkinternalerror}
-   if i2 <> offse then begin
-    internalerror(ie_llvmlist,'20180506B');
+   if (typ1^.infoclass.virtualcount > 0) then begin
+    with info.s.unitinfo^.llvmlists do begin
+     bufdat1:= constlist.getitemdata(
+                       globlist.getinitconst(typ1^.infoclass.defsid));
+     i2:= constlist.getitemdata(pint32(@bufdat1^.items)[classvirttabindex]) -
+                                                               constlist.buffer;
+ //    pd:= @bufdat2.
+    end;
+    offss:= i2;
+    offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
+    setvirtsubs(typ1,i2);
+   {$ifdef mse_checkinternalerror}
+    if i2 <> offse then begin
+     internalerror(ie_llvmlist,'20180506B');
+    end;
+   {$endif}
    end;
-  {$endif}
   end;
   
   poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
@@ -3065,35 +3081,31 @@ begin
     i1:= 0;
     i2:= 1; //objectrttity fieldcount
     with atype^.infoclass do begin
-     if propertycount > 0 then begin
-      inc(i2);
-      i1:= propertycount * sizeof(propertyrttity);
-      initlistagloc(fconstlist,agloc2,propertycount*propertyrttifieldcount,i1);
-      ele1:= propertychain;
-      while ele1 > 0 do begin
-       with ppropertydataty(ele.eledataabs(ele1))^ do begin
-        typ1:= ele.eledataabs(typ);
-       {$ifdef mse_checkinternalerror}
-        if datakindtorttikind[typ1^.h.kind] = rtk_none then begin
-         internalerror(ie_llvmlist,'20180711A');
-        end;
-        if datasizetorttisize[typ1^.h.datasize] = bs_none then begin
-         internalerror(ie_llvmlist,'20180711B');
-        end;
-       {$endif}
-        putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
-        putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
-        ele1:= next;
+     inc(i2);
+     i1:= propertycount * sizeof(propertyrttity);
+     initlistagloc(fconstlist,agloc2,propertycount*propertyrttifieldcount,i1);
+     ele1:= propertychain;
+     while ele1 > 0 do begin
+      with ppropertydataty(ele.eledataabs(ele1))^ do begin
+       typ1:= ele.eledataabs(typ);
+      {$ifdef mse_checkinternalerror}
+       if datakindtorttikind[typ1^.h.kind] = rtk_none then begin
+        internalerror(ie_llvmlist,'20180711A');
        end;
+       if datasizetorttisize[typ1^.h.datasize] = bs_none then begin
+        internalerror(ie_llvmlist,'20180711B');
+       end;
+      {$endif}
+       putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
+       putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
+       ele1:= next;
       end;
      end;
     end;
     initmainagloc(i2,sizeof(objectrttity)+i1,rtk_object);
      //classdef: pclassdefinfoty;
     putagitem(agloc1,nilpointer); //dummy          //0
-    if i1 > 0 then begin
-     putagitem(agloc1,addagloc(agloc2));           //1
-    end;
+    putagitem(agloc1,addagloc(agloc2));            //1
    end;
    else begin
     internalerror1(ie_llvm,'20171107A');

@@ -1,0 +1,30 @@
+program classrtti;
+uses
+ __mla__internaltypes;
+
+type
+ ttest = class[rtti]
+  f1: int32;
+  f2: int16;
+  property p1: int32 read f1;
+  property p2: int16 read f2;
+ end;
+var
+ p1,p1a: pobjectrttity;
+ p2,pe: ppropertyrttity;
+ p3,p4: pclassdefty;
+begin
+ p1:= pointer(typeinfo(ttest));
+ p3:= pclassdefty(classof(ttest));
+ p1a:= pointer(p3^.header.rtti);
+ p4:= p1a^.classdef;
+ if (p1 = p1a) and (p3 = p4) and (string8(p1a^.typename) = 'ttest') then
+  p2:= (@p1^.properties.items);
+  pe:= pointer(p2) + p1^.properties.size;
+  while p2 < pe do
+   writeln(p2^.kind,' ',p2^.size);
+   inc(p2);
+  end;
+  exitcode:= 123;
+ end;
+end.

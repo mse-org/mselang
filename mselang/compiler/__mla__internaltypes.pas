@@ -252,8 +252,8 @@ type
  end;
    
  objectrttity = object(rttity)
-  classdef: pclassdefty; //0 -> classrttidefindex
-  properties: itemlistty;
+  classdef: pclassdefty;           //0 -> classrttidefindex
+  properties: itemlistty;          //list of propertyrttity
  end;
  pobjectrttity = ^objectrttity;
  
