@@ -10,8 +10,40 @@
 }
 unit rtl_rttiutils;
 interface
+uses
+ rtl_base,__mla__internaltypes;
 
-procedure getordprop(const instance: tbase; const propinfo: ): int64;
+procedure getordprop(const instance: tbase;
+                                 const propinfo: ppropertyrttity): int64;
 
 implementation
+uses
+ rtl_sysexceptions;
+ 
+type
+ propertyaccessty = (pa_field,pa_proc);
+
+procedure notimplemented(const atext: string8);
+begin
+ raise enotimplemented.create(atext);
+end;
+
+procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
+                   out po: pointer): propertyaccessty;
+begin
+end;
+
+procedure getordprop(const instance: tbase;
+                                 const propinfo: ppropertyrttity): int64;
+var
+ p1: pointer;
+begin
+ case getpropreadad(instance,propinfo,p1) of
+  pa_field:
+   result:= pint64(p1)^;
+  else:
+   notimplemented('getordprop()');
+ end;
+end;
+
 end.

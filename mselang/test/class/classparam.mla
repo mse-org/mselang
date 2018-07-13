@@ -1,0 +1,30 @@
+program classparam;
+
+type
+ tbase = class() [virtual]
+  constructor create();
+  destructor destroy() [virtual];
+  f1: int32;
+ end;
+
+constructor tbase.create();
+begin
+ f1:= 123;
+end;
+
+destructor tbase.destroy();
+begin
+end;
+
+procedure getpropreadad(instance: tbase);
+begin
+ exitcode:= instance.f1;
+end;
+
+var
+ c1: tbase;
+begin
+ c1:= tbase.create();
+ getpropreadad(c1);
+ c1.destroy();
+end.
