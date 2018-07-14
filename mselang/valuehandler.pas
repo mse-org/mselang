@@ -1925,12 +1925,22 @@ begin
 //  end;
   result:= destindirectlevel = sourceindilev;
   if result then begin
-   result:= (source = dest);
+   result:= issametype(source,dest);
    if not result then begin
     if (source^.h.kind in [dk_sub,dk_method]) and 
                         (dest^.h.kind in [dk_sub,dk_method]) then begin
      result:= checkparamsbase(ele.eledataabs(source^.infosub.sub),
                               ele.eledataabs(dest^.infosub.sub));
+     if result then begin
+      exit;
+     end;
+    end;
+    if (source^.h.kind = dk_openarray) and 
+                   (dest^.h.kind = dk_openarray) then begin
+     result:= (source^.infodynarray.i.itemindirectlevel = 
+                          dest^.infodynarray.i.itemindirectlevel) and
+        issametype(source^.infodynarray.i.itemtypedata,
+                              source^.infodynarray.i.itemtypedata);
      if result then begin
       exit;
      end;
@@ -2130,7 +2140,7 @@ begin
  result:= ele.findcurrent(tks_self,[],allvisi,aele);
                        //todo: what about variables with name "self"?
 end;
-
+var testvar: pelementinfoty; testvar1: ptypedataty;
 //todo: simplify
 procedure handlevalueident();
 var
@@ -2479,6 +2489,7 @@ var
  i1,i2: int32;
  bo1: boolean;
  vis1,foundflags1: visikindsty;
+ pe1: pelementinfoty;
  
 label
  endlab;
@@ -2618,9 +2629,16 @@ begin
    include(subflags,dsf_isinherited);
   end;
   if (idents.high = 0) and 
-            not ((pob^.d.kind in factcontexts) or (pob^.d.kind = ck_ref)) and 
-                                  (po1^.header.kind <> ek_var) then begin
-   include(subflags,dsf_ownedmethod);
+      not ((pob^.d.kind in factcontexts) or (pob^.d.kind = ck_ref)) and 
+        (po1^.header.kind <> ek_var) then begin
+testvar:= ele.eleinfoabs(po1^.header.parent);
+testvar1:= eletodata(testvar);
+   pe1:= ele.eleinfoabs(po1^.header.parent);
+   if (pe1^.header.kind = ek_classimpnode) or 
+    (pe1^.header.kind = ek_type) and 
+      (ptypedataty(eletodata(pe1))^.h.kind in [dk_class,dk_object]) then begin
+    include(subflags,dsf_ownedmethod);
+   end;
   end;
   po2:= @po1^.data;
   if po1^.header.kind = ek_ref then begin
@@ -2792,6 +2810,10 @@ begin
      end;
      if not isgetfact then begin
       dec(s.stackindex);
+     end;
+     if (dsf_ownedmethod in subflags) and 
+              (stf_constructor in s.currentstatementflags) then begin
+      subflags:= subflags + [dsf_noconstructor,dsf_isinherited];
      end;
      callsub(s.stackindex,psubdataty(po2),paramstart,paramco,subflags);
     end;

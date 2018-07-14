@@ -616,6 +616,11 @@ begin
        end;
        ek_alias: begin
        end;
+       ek_operator: begin
+        with poperatordataty(po)^ do begin
+         updateref(methodele,id1);
+        end;
+       end;
        ek_unit: begin
        end;
        ek_implementation: begin

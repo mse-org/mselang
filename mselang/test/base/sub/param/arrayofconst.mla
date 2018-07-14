@@ -1,0 +1,26 @@
+program arrayofconst;
+
+procedure tt1(const p: array of const);
+begin
+ exitcode:= exitcode + p[0].vint32;
+end;
+
+procedure tt(const p: array of const);
+begin
+ tt1(p);
+end;
+
+procedure tt1a(p: array of const);
+begin
+ exitcode:= exitcode + p[0].vint32;
+end;
+
+procedure tta(p: array of const);
+begin
+ tt1(p);
+end;
+
+begin
+ tt([100]);
+ tta([23]);
+end.

@@ -238,6 +238,8 @@ type
   stf_objimp,        //in method implementation
   stf_classmethod,   //current method implementation 
                      //is class method
+  stf_constructor,   //current method implementation
+                     //is constructor
   stf_interfacedef,
   stf_implementation,
   stf_getaddress,stf_addressop,

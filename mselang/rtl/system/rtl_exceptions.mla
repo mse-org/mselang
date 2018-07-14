@@ -35,7 +35,9 @@ end;
 constructor texception.createfmt(const msg: string8;
                                            const args : array of const);
 begin
- create(format(msg,args));
+{$internaldebug on}
+ create(
+ format(msg,args));
 end;
 
 destructor texception.destroy();

@@ -55,6 +55,7 @@ type
                 dsf_readsub,dsf_writesub,
                 dsf_attach, //afterconstruct or beforedestruct
                 dsf_destroy,
+                dsf_noconstructor, //constructor called from constructor
                 dsf_objassign,
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
@@ -81,7 +82,7 @@ var
 procedure callsub(const adestindex: int32; asub: psubdataty;
                  const paramstart,paramco: int32; aflags: dosubflagsty;
                           const aobjssa: int32 = 0; const aobjsize: int32 = 0;
-                                        const ainstancetype: ptypedataty = nil);
+                                              ainstancetype: ptypedataty = nil);
 procedure handleparamsdefentry();
 procedure handleparamsdef();
 procedure handleparamdef0entry();
@@ -902,6 +903,9 @@ begin
       include(s.currentstatementflags,stf_objimp);
       if sf_classmethod in d.subdef.flags then begin
        include(s.currentstatementflags,stf_classmethod);
+      end;
+      if sf_constructor in d.subdef.flags then begin
+       include(s.currentstatementflags,stf_constructor);
       end;
       currentcontainer:= ele1;
       contextstack[s.stackindex+1].d.ident:= 
@@ -2966,7 +2970,7 @@ end;
 procedure callsub(const adestindex: int32; asub: psubdataty;
               const paramstart,paramco: int32; aflags: dosubflagsty;
                        const aobjssa: int32 = 0; const aobjsize: int32 = 0;
-                                       const ainstancetype: ptypedataty = nil);
+                                       ainstancetype: ptypedataty = nil);
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -3051,7 +3055,8 @@ var
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
- begin
+  
+ begin //doparam()
   result:= true; //not skipped
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -3145,7 +3150,9 @@ var
       if desttype^.h.kind = dk_openarray then begin
        if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
                         vardata1^.address.indirectlevel-1,
-                              [coo_paramindirect,coo_errormessage]) then begin
+                              [coo_paramindirect,coo_errormessage]) or
+               (context1^.d.kind = ck_ref) and
+                         not getaddress(context1,true) then begin //????
         exit;
        end;
       end
@@ -3273,7 +3280,7 @@ var
     inc(paramsize1,alignsize(getbytesize(size)));
    end;
   end;
- end; //doparam
+ end; //doparam()
 
 var
  po1: popinfoty;
@@ -3441,7 +3448,7 @@ begin
  with info do begin
 //  indpo:= @contextstack[s.stackindex];
 //  pe:= @contextstack[s.stacktop];
-  ele.checkcapacity(ek_type,1,asub); //for anonymus method def
+  ele.checkcapacity(ek_type,1,asub,ainstancetype); //for anonymus method def
   destoffset:= adestindex-s.stackindex;
   topoffset:= s.stacktop-s.stackindex;
   with contextstack[adestindex] do begin //classinstance, result,
@@ -3775,7 +3782,8 @@ begin
       d.dat.fact.ssaindex:= instancessa; 
                  //revert modification by varresulttemp
      end;
-     if sf_constructor in asub^.flags then begin //needs memory
+     if (sf_constructor in asub^.flags) and 
+                 not (dsf_noconstructor in aflags) then begin //needs memory
                //todo: catch exception and call destroy
       include(d.dat.fact.flags,faf_create);
       isconstructor:= true;

@@ -184,6 +184,8 @@ type
                                         const acount: integer = 1);
    procedure checkcapacity(const akind: elementkindty;
                                const acount: integer; var reloc: pointer);
+   procedure checkcapacity(const akind: elementkindty;
+                           const acount: integer; var reloc1,reloc2: pointer);
    function addbuffer(const asize: int32): pointer;
    procedure enterbufferitem(const adata: pelementinfoty);
 
@@ -2055,7 +2057,24 @@ var
 begin
  p1:= pointer(felementdata);
  checkcapacity(akind,acount);
- reloc:= reloc + (pointer(felementdata)-p1);
+ if reloc <> nil then begin
+  reloc:= reloc + (pointer(felementdata)-p1);
+ end;
+end;
+
+procedure telementhashdatalist.checkcapacity(const akind: elementkindty;
+               const acount: integer; var reloc1,reloc2: pointer);
+var
+ p1: pointer;
+begin
+ p1:= pointer(felementdata);
+ checkcapacity(akind,acount);
+ if reloc1 <> nil then begin
+  reloc1:= reloc1 + (pointer(felementdata)-p1);
+ end;
+ if reloc2 <> nil then begin
+  reloc2:= reloc2 + (pointer(felementdata)-p1);
+ end;
 end;
 
 function telementhashdatalist.addbuffer(const asize: int32): pointer;

@@ -319,6 +319,11 @@ var
       with paliasdataty(po)^ do begin
       end;
      end;
+     ek_operator: begin
+      with poperatordataty(po)^ do begin
+       updateref(methodele);
+      end;
+     end;
      ek_none: begin
      end;
      else begin

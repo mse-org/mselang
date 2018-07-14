@@ -1,0 +1,25 @@
+program addresstype;
+type
+ recty = record
+  a,b: int32;
+ end;
+ precty = ^recty;
+
+ rec1ty = record
+  a1,a2: int32;
+  r: recty;
+ end;
+ prec1ty = ^rec1ty;
+
+ pint32 = ^int32;
+
+var
+ r1: rec1ty;
+ p1: pint32;
+ p2: prec1ty;
+begin
+ p2:= @r1;
+ p1:= @p2^.r;
+ p1^:= 123;
+ exitcode:= r1.r.a;
+end.
