@@ -2140,7 +2140,7 @@ begin
  result:= ele.findcurrent(tks_self,[],allvisi,aele);
                        //todo: what about variables with name "self"?
 end;
-var testvar: pelementinfoty; testvar1: ptypedataty;
+
 //todo: simplify
 procedure handlevalueident();
 var
@@ -2631,8 +2631,6 @@ begin
   if (idents.high = 0) and 
       not ((pob^.d.kind in factcontexts) or (pob^.d.kind = ck_ref)) and 
         (po1^.header.kind <> ek_var) then begin
-testvar:= ele.eleinfoabs(po1^.header.parent);
-testvar1:= eletodata(testvar);
    pe1:= ele.eleinfoabs(po1^.header.parent);
    if (pe1^.header.kind = ek_classimpnode) or 
     (pe1^.header.kind = ek_type) and 

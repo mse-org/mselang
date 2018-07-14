@@ -14,7 +14,7 @@ uses
  rtl_base;
 type
  texception = class(tbase)[except]
-  constructor create(const message: string8);
+  constructor create(const amessage: string8);
   constructor createfmt(const msg: string8; const args : array of const);
   destructor destroy()[virtual,default];
   property message: string8 read fmessage write fmessage;
@@ -27,17 +27,15 @@ implementation
 uses
  rtl_format;
  
-constructor texception.create(const message: string8);
+constructor texception.create(const amessage: string8);
 begin
- fmessage:= message;
+ fmessage:= amessage;
 end;
 
 constructor texception.createfmt(const msg: string8;
                                            const args : array of const);
 begin
-{$internaldebug on}
- create(
- format(msg,args));
+ create(format(msg,args));
 end;
 
 destructor texception.destroy();

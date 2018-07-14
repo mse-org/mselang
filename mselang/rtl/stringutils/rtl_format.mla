@@ -187,6 +187,7 @@ var
   else
    i3:= i2 + i1;                          //new length
   end;
+  i3:= i3 + (info.pe - info.ps);          //new max length
   if i3 > length(result) then
    setlength(result,i3 + i3 div 2);         //1.5 * new length
   end;
@@ -253,9 +254,11 @@ var
    padding:= 0;
   end;
   i4:= length(s1);
-  i5:= i2 + i4;
+  i5:= i2 + i4 + (info.pe - info.ps); //new max length
   if i5 > length(result) then
+   pd:= pointer(result);
    setlength(result,i5+i5 div 2);
+   info.pd:= info.pd + (pchar8(pointer(result)) - pd);
   end;
   ps:= pointer(s1);
   pd:= @pchar8(pointer(result))[i2];

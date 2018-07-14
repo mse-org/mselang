@@ -12,7 +12,7 @@ unit rtl_sysconsts;
 interface
 resourcestring
  sinvalidformat = 'Invalid format specifier : "%s"';
- snotimplementederror = '""s": not implemented error';
+ snotimplementederror = '"%s": not implemented error';
  stypeexpected = 'Invalid type argument Nr. %d %s expected';
  srangeerror = 'Range error argument Nr. %d';
  

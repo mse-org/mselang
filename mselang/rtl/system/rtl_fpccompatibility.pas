@@ -70,7 +70,7 @@ function fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
 function fpclose(fd: cint): cint;
 
 implementation
-{$internaldebug on}
+
 procedure move(const source; var dest; count: sizeint);
 begin
  memmove(@dest,@source,count);
