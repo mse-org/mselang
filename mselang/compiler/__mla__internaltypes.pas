@@ -166,6 +166,7 @@ type
 {$endif}
 
 const
+ classparentindex = 0;
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
  listrttifieldcount = 1;

@@ -1072,6 +1072,9 @@ parseend:
   if result then begin
    if (ps_interfaceonly in s.state) and 
             not (us_implementationparsed in s.unitinfo^.state) then begin
+    if co_llvm in o.compileoptions then begin
+     updatellvmclassdefs(false);
+    end;
     with punitlinkinfoty(addlistitem(
                                intfparsedlinklist,intfparsedchain))^ do begin
      ref:= s.unitinfo;

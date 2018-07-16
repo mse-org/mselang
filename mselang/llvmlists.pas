@@ -964,6 +964,34 @@ uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
  opcode,handlerutils,compilerunit,typehandler,rttihandler;
 
+function getclassid(var asegoffset: int32): int32;
+var
+ typ1: ptypedataty;
+begin
+ if asegoffset < 0 then begin
+  typ1:= ele.eledataabs(-asegoffset);
+ {$ifdef mse_checkinternalerror}
+  if (datatoele(typ1)^.header.kind <> ek_type) or 
+           not (typ1^.h.kind in [dk_object,dk_class]) then begin
+   internalerror(ie_llvmlist,'201810716A');
+  end;
+ {$endif}
+ {$ifdef mse_checkinternalerror}
+  if typ1^.infoclass.defsid < 0 then begin
+   internalerror(ie_llvmlist,'20180716B');
+//   result:= -1; //not ready;
+  end;
+ {$endif}
+  result:= trackaccess(typ1);
+  asegoffset:= -1;
+ end
+ else begin
+  result:= (pclassdefconstheaderty(getsegmentpo(seg_classdef,asegoffset))-1)^.
+                                                                        defsid;
+                                             //header in negative offset
+ end;
+end;
+
 procedure updatellvmclassdefs(const updatesubs: boolean);
 
 var
@@ -1027,7 +1055,7 @@ var
  li1: linkagety;
 
 begin
- checkpendingmanagehandlers();
+//  checkpendingmanagehandlers();
  poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
  peclassdef:= getsegmenttop(seg_classdef);
 // countpo:= getsegmentbase(seg_classintfcount);
@@ -1070,6 +1098,22 @@ begin
 }
   end;
   if updatesubs then begin
+  (*
+   if poclassdef^.header.parentclass < -1 then begin
+    i1:= getclassid(poclassdef^.header.parentclass);
+   {$ifdef mse_checkinternalerror}
+    if i1 < 0 then begin
+     internalerror(ie_llvmlist,'20180716B');
+    end;
+   {$endif}
+    with info.s.unitinfo^.llvmlists do begin
+     i3:= constlist.addpointercast(i1).listid;
+     bufdat1:= constlist.getitemdata(
+               globlist.getinitconst(typ1^.infoclass.defsid));
+     pint32(@bufdat1^.items)[classparentindex]:= i3;
+    end;
+   end;
+  *)
    if typ1^.h.llvmrtticonst > 0 then begin
  //   i3:= getrtti(typ1);
     with info.s.unitinfo^.llvmlists,constlist do begin
@@ -2286,13 +2330,6 @@ end;
 function tconsthashdatalist.addclassdef(const aclassdef: classdefpoty;
                                           const aintfcount: int32): llvmvaluety;
 
- function getclassid(const asegoffset: int32): int32;
- begin
-  result:= (pclassdefconstheaderty(getsegmentpo(seg_classdef,asegoffset))-1)^.
-                                                                         defsid;
-                                              //header in negative offset
- end; //getclassid()
-
  function getrttiid(const asegoffset: int32): int32;
  begin
   result:= pint32(getsegmentpo(seg_rtti,asegoffset))^;
@@ -2330,14 +2367,14 @@ begin
  typ1:= ele.eledataabs((pclassdefconstheaderty(aclassdef)-1)^.typedata);
  types1[0]:= pointertype;
  types1[1]:= pointertype;
- if aclassdef^.header.parentclass < 0 then begin
+ if aclassdef^.header.parentclass = -1 then begin
   classdef1.items[0]:= nullpointer;
   classdef1.items[1]:= nullpointer;
  end
- else begin                 
+ else begin
   classdef1.items[0]:= addpointercast(
                           getclassid(aclassdef^.header.parentclass)).listid;
-  if aclassdef^.header.interfaceparent < 0 then begin
+  if aclassdef^.header.interfaceparent = -1 then begin
    classdef1.items[1]:= nullpointer;
   end
   else begin
@@ -3332,24 +3369,30 @@ begin
 end;
 
 function tmetadatalist.getnoparamssubtyp: metavaluety;
+var
+ m1: metavaluety;
 begin
  if fnoparamssubtyp.id = 0 then begin
+  m1:= noparams;
   with pdisubroutinetypety(
    adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
                                             fnoparamssubtyp))^ do begin
-   params:= noparams;
+   params:= m1;
   end;
  end;
  result:= fnoparamssubtyp;
 end;
 
 function tmetadatalist.getparams1posubtyp: metavaluety;
+var
+ m1: metavaluety;
 begin
  if fparams1posubtyp.id = 0 then begin
+  m1:= params1po;
   with pdisubroutinetypety(
    adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
                                             fparams1posubtyp))^ do begin
-   params:= params1po;
+   params:= m1;
   end;
  end;
  result:= fparams1posubtyp;

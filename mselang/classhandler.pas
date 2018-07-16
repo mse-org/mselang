@@ -833,6 +833,7 @@ var
  typ1,typ2: ptypedataty;
  p1: pparamupdatechainty;
  p2: pointer;
+ e1: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -917,8 +918,16 @@ begin
       header.rtti:= s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
      end;
      if h.ancestor <> 0 then begin 
-      parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
-      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
+      e1:= ele.eleinfoabs(h.ancestor);
+      parentinfoclass1:= @ptypedataty(eletodata(e1))^.infoclass;
+      if modularllvm and (e1^.header.defunit <> s.unitinfo) then begin
+       header.parentclass:= -h.ancestor; //must be relecated ->
+                                         //-eleoffset of classypedef
+      end
+      else begin
+       header.parentclass:= parentinfoclass1^.defs.address; 
+                                              //offset in seg_classdef
+      end;
       if parentinfoclass1^.virtualcount > 0 then begin
        fillchar(virtualmethods,
                     parentinfoclass1^.virtualcount*targetpointersize,0);
