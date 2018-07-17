@@ -15,6 +15,10 @@ uses
 
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
+procedure getpropinfo(const typeinfo: prttity;
+                           const propname: string8): ppropertyrttity;
+procedure getpropinfo(const instance: tbase;
+                           const propname: string8): ppropertyrttity;
 
 implementation
 uses
@@ -45,6 +49,18 @@ begin
   else:
    notimplemented('getordprop()');
  end;
+end;
+
+procedure getpropinfo(const typeinfo: prttity;
+                           const propname: string8): ppropertyrttity;
+begin
+ result:= nil;
+end;
+
+procedure getpropinfo(const instance: tbase;
+                           const propname: string8): ppropertyrttity;
+begin
+ result:= getpropinfo(typeinfo(instance),propname);
 end;
 
 end.

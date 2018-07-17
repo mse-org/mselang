@@ -170,7 +170,7 @@ const
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
  listrttifieldcount = 1;
- propertyrttifieldcount = 2;
+ propertyrttifieldcount = 3;
 
 type
  intrttity = record              //rtk_int
@@ -237,7 +237,8 @@ type
  propertyrttity = record
   kind: rttikindty;                //0
   size: bitsizety;                 //1
- end;
+  name: pointer;                   //2 const string8
+ end;                              //propertyrttifieldcount
  ppropertyrttity = ^propertyrttity;
 
  rttilistty = record

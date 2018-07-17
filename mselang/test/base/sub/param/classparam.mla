@@ -1,0 +1,27 @@
+program classparam;
+uses
+ rtl_base;
+type
+ t1 = class (tbase)
+  f1: int32;
+  constructor create();
+ end;
+
+constructor t1.create();
+begin
+ f1:= 123;
+end;
+
+procedure getpropinfox(const instance: tbase): int32;
+begin
+ result:= t1(instance).f1;
+// result:= getpropinfo(typeinfo(instance),propname);
+end;
+
+var
+ c1: t1;
+begin
+ c1:= t1.create();
+ exitcode:= getpropinfox(c1);
+ c1.destroy();
+end.

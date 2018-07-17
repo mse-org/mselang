@@ -3135,6 +3135,7 @@ begin
       {$endif}
        putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
        putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
+       putagitem(agloc2,addidentconst(ele.eleinfoabs(ele1)^.header.name)); //2      //2
        ele1:= next;
       end;
      end;

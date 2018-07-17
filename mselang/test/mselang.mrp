@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73252B0
+    ao=An unhandled exception occured at $B72992B0
     ae=
     aec=123
     ie=0
@@ -7265,7 +7265,7 @@ c=3
     (
     kind=1
     a=0,665,4,param
-    c=6
+    c=7
      (
      kind=2
      a=0,648,1,params
@@ -7381,6 +7381,28 @@ c=3
      a=0,648,1,arrayofconst llvm
      teststate=1
      path=arrayofconst.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,classparam llvm
+     teststate=1
+     path=classparam.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -12913,7 +12935,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -13631,7 +13653,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syntax
+  a=0,664,4,syntax
   c=1
    (
    kind=1
@@ -14027,7 +14049,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,664,4,rtl
   c=3
    (
    kind=1
@@ -14389,7 +14411,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,benchmark
+  a=0,664,4,benchmark
   c=2
    (
    kind=2
@@ -14574,56 +14596,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=138
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=89
  0 0
  0 0
  0 0

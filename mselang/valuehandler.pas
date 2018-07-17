@@ -1927,22 +1927,28 @@ begin
   if result then begin
    result:= issametype(source,dest);
    if not result then begin
-    if (source^.h.kind in [dk_sub,dk_method]) and 
-                        (dest^.h.kind in [dk_sub,dk_method]) then begin
-     result:= checkparamsbase(ele.eledataabs(source^.infosub.sub),
-                              ele.eledataabs(dest^.infosub.sub));
-     if result then begin
-      exit;
+    if source^.h.kind = dest^.h.kind then begin
+     if (source^.h.kind in [dk_sub,dk_method]) then begin
+      result:= checkparamsbase(ele.eledataabs(source^.infosub.sub),
+                               ele.eledataabs(dest^.infosub.sub));
+      if result then begin
+       exit;
+      end;
      end;
-    end;
-    if (source^.h.kind = dk_openarray) and 
-                   (dest^.h.kind = dk_openarray) then begin
-     result:= (source^.infodynarray.i.itemindirectlevel = 
-                          dest^.infodynarray.i.itemindirectlevel) and
-        issametype(source^.infodynarray.i.itemtypedata,
-                              source^.infodynarray.i.itemtypedata);
-     if result then begin
-      exit;
+     if (source^.h.kind in [dk_object,dk_class]) then begin
+      result:= checkclassis(dest,source);
+      if result then begin
+       exit;
+      end;
+     end;
+     if (source^.h.kind = dk_openarray) then begin
+      result:= (source^.infodynarray.i.itemindirectlevel = 
+                           dest^.infodynarray.i.itemindirectlevel) and
+         issametype(source^.infodynarray.i.itemtypedata,
+                               source^.infodynarray.i.itemtypedata);
+      if result then begin
+       exit;
+      end;
      end;
     end;
     if (cco_novarconversion in options) and 
