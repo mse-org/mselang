@@ -599,6 +599,7 @@ begin
        ek_sub: begin
         with psubdataty(po)^ do begin
          updateref(next,id1);
+         updateref(nextoverload,id1);
          updateref(typ,id1);
          updateref(resulttype.typeele,id1);
          pe1:= @paramsrel;

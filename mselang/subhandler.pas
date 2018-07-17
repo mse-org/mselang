@@ -3465,7 +3465,8 @@ begin
     cost1:= bigint;
     while true do begin
     {$ifdef mse_checkinternalerror}
-     if datatoele(subdata1)^.header.kind <> ek_sub then begin
+     if datatoele(subdata1)^.header.kind <> ek_sub
+                            {datatoele(asub)^.header.kind} then begin
       internalerror(ie_handler,'20160517A');
      end;
     {$endif}

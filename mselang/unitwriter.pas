@@ -280,6 +280,7 @@ var
      ek_sub: begin
       with psubdataty(po)^ do begin
        updateref(next);
+       updateref(nextoverload);
        updateref(typ);
        updateref(resulttype.typeele);
        pe1:= @paramsrel;
