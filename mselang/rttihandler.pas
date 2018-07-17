@@ -28,7 +28,7 @@ procedure deinit();
 implementation
 uses
  errorhandler,elements,msestrings,{msertti,}opcode,segmentutils,identutils,
- __mla__internaltypes;
+ __mla__internaltypes,handlerutils;
 
 //var
 // rttibuffer: pointer;
@@ -155,6 +155,8 @@ begin
 end;
 
 function getrtti(const atype: ptypedataty): dataaddressty;
+var
+ i1: int32;
 begin
  result:= atype^.h.rtti;
  if result = 0 then begin
@@ -165,6 +167,12 @@ begin
    result:= getrttistackops(atype);
   end;
   atype^.h.rtti:= result;
+ end;
+ if llvmlink(datatoele(atype)^.header.defunit,result,i1) then begin
+  if i1 < 0 then begin
+   info.s.unitinfo^.llvmlists.globlist.addvalue(avar,li_external,true);
+  end;
+  result:= i1;  
  end;
 end;
 

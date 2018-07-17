@@ -17,8 +17,8 @@ procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
 procedure getpropinfo(const typeinfo: prttity;
                            const propname: string8): ppropertyrttity;
-procedure getpropinfo(const instance: tbase;
-                           const propname: string8): ppropertyrttity;
+//procedure getpropinfo(const instance: tbase;
+//                           const propname: string8): ppropertyrttity;
 
 implementation
 uses

@@ -332,6 +332,10 @@ procedure popcurrentscope();
 function getcodepoint(var ps: pcard8; const pe: pcard8;
                                out ares: card32): boolean; //true if ok
 
+function llvmlink(const aunit: punitinfoty; const extglobid: int32;
+                                              out locglobid: int32): boolean;
+                                              // -1 -> new
+
 procedure initsubdef(const aflags: subflagsty);
 
 procedure init();

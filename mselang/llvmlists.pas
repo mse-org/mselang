@@ -457,6 +457,9 @@ type
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
                                     const externunit: boolean): int32;
                                                             //returns listid
+   function addexternvalue(const avalue: pelementinfoty;
+                                    const atypeid: int32): int32;
+                                                            //returns listid
    function addalias(const aliasee: int32; const name: identty): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
@@ -2633,6 +2636,15 @@ begin
   fnamelist.addname(datatoele(avalue)^.header.defunit,avalue^.nameid,result);
   flinklist.addlink(avalue,result);
  end;
+end;
+
+function tgloballocdatalist.addexternvalue(const avalue: pelementinfoty;
+                                const anameid: int32; const atypeid: int32;
+                                             const alinkage: linkagety): int32;
+begin
+ result:= addnoinit(atypeid,alinkage,true);
+ fnamelist.addname(avalue^.header.defunit,anameid,result);
+ flinklist.addlink(avalue^.header.defunit,anameid,result);
 end;
 
 function tgloballocdatalist.addalias(const aliasee: int32;
