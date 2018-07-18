@@ -283,6 +283,8 @@ type
                          //used for addressing record fields or typex = typey
   rtti: dataaddressty; //0 -> none
   llvmrtticonst: int32; //listid in constlist
+  llvmrttivar: int32; //listid in globlist
+  rttinameid: int32;    //for external link
   manageproc: manageprockindty;
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
@@ -456,7 +458,7 @@ type
  end;
  subdataty = record
   next: elementoffsetty; //for subchain
-  nextoverload: elementoffsetty; //-1 = none
+  nextoverload: elementoffsetty; //0 = none
   impl: elementoffsetty; //pfuncdataty
   typ: elementoffsetty;  //typedataty dk_sub or dk_method for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 
@@ -632,19 +634,19 @@ function basetype(const atype: elementoffsetty): elementoffsetty;
 
 procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
-            artti: dataaddressty; aancestor: elementoffsetty); inline;
+            {artti: dataaddressty;} aancestor: elementoffsetty); inline;
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; abitsize: integer;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; abytesize: integer;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; adatasize: databitsizety;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 procedure updatetypedatabyte(var atype: typedataty; abytesize: integer); inline;
 
 procedure callmanageproc(const akind: manageprockindty; const op: managedopty; 
@@ -708,11 +710,13 @@ end;
 
 procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
-            artti: dataaddressty; aancestor: elementoffsetty); inline;
+            {artti: dataaddressty;} aancestor: elementoffsetty); inline;
 begin
  atype.h.base:= 0;
- atype.h.rtti:= artti;
+ atype.h.rtti:= 0;//artti;
  atype.h.llvmrtticonst:= -1;
+ atype.h.llvmrttivar:= -1;
+ atype.h.rttinameid:= -1;
  atype.h.flags:= aflags;
  atype.h.indirectlevel:= aindirectlevel;
  atype.h.ancestor:= aancestor;
@@ -724,9 +728,9 @@ end;
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; abitsize: integer;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 begin
- inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ inittypedata(atype,akind,aindirectlevel,aflags,{artti,}aancestor);
  atype.h.bitsize:= abitsize;
  atype.h.bytesize:= (abitsize+7) div 8;
  if atype.h.bitsize >= 64 then begin
@@ -740,9 +744,9 @@ end;
 procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; abytesize: integer;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 begin
- inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ inittypedata(atype,akind,aindirectlevel,aflags,{artti,}aancestor);
  atype.h.bytesize:= abytesize;
  atype.h.bitsize:= abytesize*8;
  if abytesize >= targetpointersize then begin
@@ -769,9 +773,9 @@ end;
 procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; adatasize: databitsizety;
             aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+            {artti: dataaddressty = 0;} aancestor: elementoffsetty = 0); inline;
 begin
- inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ inittypedata(atype,akind,aindirectlevel,aflags,{artti,}aancestor);
  atype.h.datasize:= adatasize;
  if akind = dk_method then begin
   atype.h.bytesize:= 2*targetpointersize;

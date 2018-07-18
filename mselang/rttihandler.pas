@@ -28,7 +28,7 @@ procedure deinit();
 implementation
 uses
  errorhandler,elements,msestrings,{msertti,}opcode,segmentutils,identutils,
- __mla__internaltypes,handlerutils;
+ __mla__internaltypes,handlerutils,unithandler,llvmbitcodes;
 
 //var
 // rttibuffer: pointer;
@@ -157,22 +157,30 @@ end;
 function getrtti(const atype: ptypedataty): dataaddressty;
 var
  i1: int32;
+ p1: pelementinfoty;
 begin
  result:= atype^.h.rtti;
  if result = 0 then begin
   if co_llvm in info.o.compileoptions then begin
    result:= info.s.unitinfo^.llvmlists.globlist.addrtticonst(atype).listid;
+//   atype^.h.rttinameid:= getunitnameid();
   end
   else begin
    result:= getrttistackops(atype);
   end;
   atype^.h.rtti:= result;
- end;
- if llvmlink(datatoele(atype)^.header.defunit,result,i1) then begin
-  if i1 < 0 then begin
-   info.s.unitinfo^.llvmlists.globlist.addvalue(avar,li_external,true);
+ end
+ else begin
+  p1:= datatoele(atype);
+  if llvmlink(p1^.header.defunit,atype^.h.llvmrttivar,i1) then begin
+   with info.s.unitinfo^.llvmlists do begin
+    if i1 < 0 then begin
+     i1:= globlist.addexternalvalue(
+                  p1,atype^.h.rttinameid,ord(das_pointer),li_external);
+    end;
+    result:= constlist.addpointercast(i1).listid;
+   end;
   end;
-  result:= i1;  
  end;
 end;
 

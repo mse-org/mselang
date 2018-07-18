@@ -174,7 +174,9 @@ type
                const achild: pidentty; const ahigh: int32; 
                const akind: elementkindty;const avislevel: visikindsty;
                                             out aelementdata: pointer): boolean;
-
+   procedure inieleheader(var aheader: elementheaderty;
+                       const aname: identty; const akind: elementkindty;
+                       const avislevel: visikindsty);
   public
 //todo: use faster calling, less parameters
    constructor create();
@@ -2087,6 +2089,28 @@ begin
  result:= pointer(felementdata)+ele1;
 end;
 
+procedure telementhashdatalist.inieleheader(var aheader: elementheaderty;
+                       const aname: identty; const akind: elementkindty;
+                       const avislevel: visikindsty);
+begin
+ with aheader do begin
+ {$ifdef mse_debugparser}
+  next:= fnextelement; //for debugging
+ {$endif}
+  parent:= felementparent;
+  parentlevel:= fparentlevel;
+  path:= felementpath;
+  name:= aname;
+  visibility:= avislevel;
+  defunit:= info.s.unitinfo;
+  if (defunit <> nil) and 
+               not (us_implementation in info.s.unitinfo^.state) then begin
+   include(visibility,vik_interfacedef);
+  end;
+  kind:= akind;
+ end;
+end;
+
 function telementhashdatalist.pushelementduplicate(const aname: identty;
                   const akind: elementkindty;
                   const avislevel: visikindsty;
@@ -2098,23 +2122,7 @@ begin
  fnextelement:= fnextelement+(elesizes[akind])+alignsize(sizeextend);
  checkbuffersize;
  result:= pointer(felementdata)+ele1;
- with result^.header do begin
- {$ifdef mse_debugparser}
-  next:= fnextelement; //for debugging
- {$endif}
-  parent:= felementparent;
-  parentlevel:= fparentlevel;
-  path:= felementpath;
-  name:= aname;
-  visibility:= avislevel;
-//  if info.s.unitinfo <> nil then begin
-   defunit:= info.s.unitinfo;
-//  end
-//  else begin
-//   defunit:= nil;
-//  end;
-  kind:= akind;
- end;
+ inieleheader(result^.header,aname,akind,avislevel);
  felementparent:= ele1;
  inc(fparentlevel);
  if fparentlevel >= maxidentvector then begin
@@ -2201,23 +2209,7 @@ begin
  fnextelement:= fnextelement+elesizes[akind];
  checkbuffersize;
 // result:= pointer(felementdata)+ele1;
- with eleinfoabs(result)^.header do begin
- {$ifdef mse_debugparser}
-  next:= fnextelement;
- {$endif}
-  parent:= felementparent;
-  parentlevel:= fparentlevel;
-  path:= felementpath;
-  name:= aname;
-  visibility:= avislevel;
-//  if info.s.unitinfo <> nil then begin
-  defunit:= info.s.unitinfo;
-//  end
-//  else begin
-//   defunit:= 0;
-//  end;
-  kind:= akind;
- end; 
+ inieleheader(eleinfoabs(result)^.header,aname,akind,avislevel);
  addelement(felementpath+aname,avislevel,result);
 end;
 

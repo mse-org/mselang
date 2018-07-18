@@ -88,6 +88,7 @@ procedure setunitname(); //unitname on top of stack
 function getunitname(const id: identty): string;
 function getunittimestamp(const id: identty): tdatetime;
 //procedure setunitsubname(aindex: int32); //sets namebuffer
+function getunitnameid(): int32;
 
 //procedure interfacestop();
 
@@ -877,6 +878,12 @@ begin
    result:= getfilemodtime(fna1);
   end;
  end;
+end;
+
+function getunitnameid(): int32;
+begin
+ inc(info.s.unitinfo^.nameid);
+ result:= info.s.unitinfo^.nameid;
 end;
 {
 procedure setunitsubname(aindex: int32); //sets namebuffer

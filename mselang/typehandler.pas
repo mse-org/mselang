@@ -1346,7 +1346,7 @@ begin
       end;
       currenttypedef:= ele.eledatarel(arty);
       exclude(flags1,tf_managed); //only item type can be managed
-      inittypedata(arty^,dk_array,0,flags1,0,0);
+      inittypedata(arty^,dk_array,0,flags1,{0,}0);
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs1;
        i.itemindirectlevel:= indilev;

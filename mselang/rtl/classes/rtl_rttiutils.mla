@@ -60,7 +60,7 @@ end;
 procedure getpropinfo(const instance: tbase;
                            const propname: string8): ppropertyrttity;
 begin
- result:= getpropinfo(typeinfo(instance),propname);
+// result:= getpropinfo(typeinfo(instance),propname);
 end;
 
 end.

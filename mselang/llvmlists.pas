@@ -457,9 +457,6 @@ type
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
                                     const externunit: boolean): int32;
                                                             //returns listid
-   function addexternvalue(const avalue: pelementinfoty;
-                                    const atypeid: int32): int32;
-                                                            //returns listid
    function addalias(const aliasee: int32; const name: identty): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
@@ -468,6 +465,11 @@ type
    function addbytevalue(const asize: integer;
                                const alinkage: linkagety; 
                                      const externunit: boolean): int32;
+                                                            //returns listid
+   function addexternalvalue(const avalue: pointer{pelementinfoty};
+                                         //todo: fix circular unit reference
+                                  const anameid: int32; const atype: int32;
+                                         const alinkage: linkagety): int32;
                                                             //returns listid
    function addexternalvalue(const aname: identty; const atype: int32): int32;
                                                             //returns listid
@@ -965,7 +967,7 @@ function getclassdefid(const atype: ptypedataty): int32;
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode,handlerutils,compilerunit,typehandler,rttihandler;
+ opcode,handlerutils,compilerunit,typehandler,rttihandler,unithandler;
 
 function getclassid(var asegoffset: int32): int32;
 var
@@ -2638,13 +2640,14 @@ begin
  end;
 end;
 
-function tgloballocdatalist.addexternvalue(const avalue: pelementinfoty;
-                                const anameid: int32; const atypeid: int32;
+function tgloballocdatalist.addexternalvalue(
+                     const avalue: pointer{pelementinfoty};
+                                const anameid: int32; const atype: int32;
                                              const alinkage: linkagety): int32;
 begin
- result:= addnoinit(atypeid,alinkage,true);
- fnamelist.addname(avalue^.header.defunit,anameid,result);
- flinklist.addlink(avalue^.header.defunit,anameid,result);
+ result:= addnoinit(atype,alinkage,true);
+ fnamelist.addname(pelementinfoty(avalue)^.header.defunit,anameid,result);
+ flinklist.addlink(pelementinfoty(avalue)^.header.defunit,anameid,result);
 end;
 
 function tgloballocdatalist.addalias(const aliasee: int32;
@@ -3025,6 +3028,8 @@ var
  cardmin1,cardmax1: card64;
  agloc2: aglocty;
  typ1: ptypedataty;
+ b1: boolean;
+ link1: linkagety;
  
 begin
  with fconstlist do begin
@@ -3163,9 +3168,21 @@ begin
   end;
   m1:= addagloc(agloc1);
   atype^.h.llvmrtticonst:= m1.listid;
-  i1:= self.addinitvalue(gak_const,m1.listid,info.s.globlinkage);
+  b1:= vik_interfacedef in datatoele(atype)^.header.visibility;
+  if b1 then begin
+   link1:= li_external;
+  end
+  else begin
+   link1:= li_internal;
+  end;
+  i1:= self.addinitvalue(gak_const,m1.listid,link1);
+  atype^.h.llvmrttivar:= i1;
   result:= addpointercast(i1); //prtti
   atype^.h.rtti:= result.listid;
+  if b1 then begin
+   atype^.h.rttinameid:= getunitnameid();
+   namelist.addname(info.s.unitinfo,atype^.h.rttinameid,atype^.h.llvmrttivar);
+  end;
  end;
 end;
 (*

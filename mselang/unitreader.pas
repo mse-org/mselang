@@ -160,13 +160,18 @@ var
  mainparent: elementoffsetty;
  mainpath: identty;
  
- function updateref(var ref: elementoffsetty; out path: identty): boolean;
+ procedure updateref(var ref: elementoffsetty; out path: identty);
+  
+  procedure doexcept();
+  begin
+   raise exception.create('');
+  end; //doexcept()
+  
  var
   po1: punitlinkty;
   po2,pe: pidentty;
   po3: pelementinfoty;
  begin
-  result:= false;
   if ref > 0 then begin
    ref:= ref + baseoffset-1;
    po3:= ele.eleinfoabs(ref);
@@ -181,29 +186,28 @@ var
     else begin
      po1:= linksstart - ref - 1;
      if po1 >= linksend then begin
-      exit;
+      doexcept();
      end;
      po2:= @po1^.ids;
      pe:= po2+po1^.len;
      if pe > linksend then begin
-      exit;
+      doexcept();
      end;
      path:= 0;
      while po2 < pe do begin
       if not updateident(int32(po2^)) then begin
-       exit;
+       doexcept();
       end;
       path:= path + po2^;
       inc(po2);
      end;
      po2:= @po1^.ids;
      if not ele.findreverse(po1^.len,po2,ref) then begin
-      exit();
+      doexcept();
      end;
     end;
    end;
   end;
-  result:= true;
  end;
 
 type
@@ -279,6 +283,22 @@ var
    end;
   end;
  end;//checkfilematch()
+
+var
+ unitsegments1: unitsegmentsstatety;
+ segmentssaved: boolean;
+
+ procedure savesegs();
+ begin
+  saveunitsegments(unitsegments1);
+  segmentssaved:= true;
+ end; //savesegs
+
+ procedure restoresegs();
+ begin
+  restoreunitsegments(unitsegments1);
+  segmentssaved:= false;
+ end; //restoresegs
  
 var
  stream1,stream2: tmsefilestream;
@@ -290,7 +310,6 @@ var
  po: pointer;
  i1,i2: int32;
  startref: markinfoty;
- unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
  haselereloc: boolean;
  unit1: punitinfoty;
@@ -308,6 +327,7 @@ label
  errorlab,fatallab,oklab,endlab;
 begin
  result:= false;
+ segmentssaved:= false;
  fna1:= getrtunitfile(aunit);
 {$ifdef mse_debugparser}
  writeln('***** reading unit '+fna1);
@@ -317,6 +337,7 @@ begin
   aunit^.rtfilepath:= fna1;
   try
    resetunitsegments();
+   ele.markelement(startref);
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filematch.timestamp) and
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
@@ -405,13 +426,13 @@ begin
     elereloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
-    saveunitsegments(unitsegments1);
+    savesegs();
     setlength(interfaceunits1,length(interfaceuses1));
     for i1:= 0 to high(interfaceuses1) do begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
      interfaceunits1[i1]:= unit1;
      if not checkfilematch(unit1,interfaceuses1[i1]) then begin
-      restoreunitsegments(unitsegments1);
+      restoresegs();
       goto endlab;
      end;
      addrelocs(unit1,interfaceuses1[i1].reloc);
@@ -423,11 +444,11 @@ begin
       end;
      end;
     end;
-    restoreunitsegments(unitsegments1);
+    restoresegs();
 
 //    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
-    ele.markelement(startref);
+//    ele.markelement(startref);
     if not updateident(int32({ptrint(}intf^.header.key{)})) then begin
      goto errorlab;
     end;
@@ -493,9 +514,7 @@ begin
        end;
       end;
 
-      if not updateref(header.parent,header.path) then begin
-       goto errorlab;
-      end;
+      updateref(header.parent,header.path);
       ele.enterbufferitem(pele1); //enter in hash and data table
       po:= @data;
       case header.kind of
@@ -526,9 +545,7 @@ begin
            if (tf_needsmanage in h.flags) or (h.kind <> dk_record){ or 
                                (h.manageproc = mpk_record)} then begin
             for mop1:= low(mop1) to high(mop1) do begin
-             if not updateref(recordmanagehandlers[mop1],id1) then begin
-              goto errorlab;
-             end;
+             updateref(recordmanagehandlers[mop1],id1);
             end;
            end;
            updateref(fieldchain,id1);
@@ -550,38 +567,22 @@ begin
        end;
        ek_field: begin
         with pfielddataty(po)^ do begin
-         if not updateref(vf.typ,id1) then begin
-          goto errorlab;
-         end;
-         if not updateref(vf.next,id1) then begin
-          goto errorlab;
-         end;
+         updateref(vf.typ,id1);
+         updateref(vf.next,id1);
         end;
        end;
        ek_var: begin
         with pvardataty(po)^ do begin
-         if not updateref(vf.typ,id1) then begin
-          goto errorlab;
-         end;
-         if not updateref(vf.defaultconst,id1) then begin
-          goto errorlab;
-         end;
-         if not updateref(vf.next,id1) then begin
-          goto errorlab;
-         end;
+         updateref(vf.typ,id1);
+         updateref(vf.defaultconst,id1);
+         updateref(vf.next,id1);
         end;
        end;
        ek_property: begin
         with ppropertydataty(po)^ do begin
-         if not updateref(typ,id1) then begin
-          goto errorlab;
-         end;
-         if not updateref(readele,id1) then begin
-          goto errorlab;
-         end;
-         if not updateref(writeele,id1) then begin
-          goto errorlab;
-         end;
+         updateref(typ,id1);
+         updateref(readele,id1);
+         updateref(writeele,id1);
   //      if not updateref(defaultconst) then begin
   //       goto errorlab
   //      end;
@@ -605,9 +606,7 @@ begin
          pe1:= @paramsrel;
          pee:= pe1+paramcount;
          while pointer(pe1) < pointer(pee) do begin
-          if not updateref(pe1^,id1) then begin
-           goto errorlab;
-          end;
+          updateref(pe1^,id1);
           inc(pe1);
          end;
          inc(pointer(pele1),paramcount*sizeof(elementoffsetty));
@@ -649,11 +648,11 @@ begin
      goto errorlab;
     end;
 
-    saveunitsegments(unitsegments1);
+    savesegs();
     for i1:= 0 to high(implementationuses1) do begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
      if not checkfilematch(unit1,implementationuses1[i1]) then begin
-      restoreunitsegments(unitsegments1);
+      restoresegs();
                   //todo: try restart instead of fatal error
       if unit1 <> nil then begin
        errormessage(err_invalidunitfile,[unit1^.filepath]);
@@ -666,7 +665,7 @@ begin
      end;
      addrelocs(unit1,implementationuses1[i1].reloc);
     end;
-    restoreunitsegments(unitsegments1);
+    restoresegs();
     aunit^.implementationglobstart:= info.globdatapo;
     with intf^.header do begin            
 {
@@ -732,6 +731,10 @@ oklab:
 endlab:
    end;
   except //catch all exceptions of an invalid unit file
+   result:= false;
+   if segmentssaved then begin
+    restoresegs();
+   end;
   end;
   stream1.destroy();
   resetunitsegments();
@@ -750,5 +753,4 @@ endlab:
  end;
 {$endif}
  end;
-
 end.

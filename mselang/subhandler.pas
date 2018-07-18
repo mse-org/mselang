@@ -2070,13 +2070,16 @@ begin
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
                    (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
-   ele1:= -1;
+   ele1:= 0;
   end;
+if ele1 < 0 then begin
+ele1:= 0;
+end;
 // {
-  if (ele1 >= 0) and (sf_method in subflags) then begin
+  if (ele1 > 0) and (sf_method in subflags) then begin
    element1:= ele.eleinfoabs(ele1);
    if element1^.header.parent <> ele.elementparent then begin
-    ele1:= -1;    //todo: use correct class overload handling
+    ele1:= 0;    //todo: use correct class overload handling
    end;
   end;
 // }
@@ -3522,7 +3525,7 @@ begin
       end;
      end;
  paramloopend:
-     if subdata1^.nextoverload < 0 then begin
+     if subdata1^.nextoverload <= 0 then begin
       break;
      end;
      subdata1:= ele.eledataabs(subdata1^.nextoverload);
