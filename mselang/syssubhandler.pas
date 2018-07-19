@@ -405,8 +405,9 @@ begin
      end;
      ck_ref,ck_fact,ck_subres: begin
       if (d.dat.datatyp.indirectlevel = 1) and 
+                          ((tf_classdef in d.dat.datatyp.flags) {or
                issametype(d.dat.datatyp.typedata,
-                                internaltypes[it_pclassdefinfo]) then begin
+                                internaltypes[it_pclassdefinfo])}) then begin
        if (d.kind = ck_ref) and not getvalue(toppo,das_none) then begin
         goto errorlab;
        end;

@@ -55,13 +55,12 @@ begin
    notimplemented('getordprop()');
  end;
 end;
-var testvar: pobjectrttity;
+
 procedure getpropinfo(const atypeinfo: prttity;
                            const propname: string8): ppropertyrttity;
 var
  p1,pe: ppropertyrttity;
 begin
-testvar:= pointer(atypeinfo);
  result:= nil;
  if atypeinfo^.kind <> rtk_object then
   rttierror(stypemustbeobjectorclass);
@@ -80,7 +79,7 @@ end;
 procedure getpropinfo(const instance: tbase;
                            const propname: string8): ppropertyrttity;
 begin
- result:= getpropinfo(typeinfo(instance),propname);
+ result:= getpropinfo(typeinfo(pclassdefty(classof(instance))),propname);
 end;
 
 end.
