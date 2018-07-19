@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72FF390
+    ao=An unhandled exception occured at $B7259390
     ae=
     aec=123
     ie=0
@@ -12935,7 +12935,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -14071,8 +14071,8 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,rtl
-  c=3
+  a=0,665,4,rtl
+  c=4
    (
    kind=1
    a=0,665,4,variants
@@ -14415,6 +14415,48 @@ c=3
    cdef=
    pdef=
    )
+   (
+   kind=1
+   a=0,665,4,typeinfo
+   c=1
+    (
+    kind=2
+    a=0,648,1,property1 llvm
+    teststate=1
+    path=property1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=typeinfo/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
   teststate=1
   path=rtl/
   comment=
@@ -14618,13 +14660,7 @@ sortdescend2=0
 width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=36
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=30
  0 0
  0 0
  0 0

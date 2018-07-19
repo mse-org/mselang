@@ -1,0 +1,38 @@
+program property1;
+uses
+ __mla__internaltypes,rtl_base,rtl_rttiutils;
+
+type
+ t1 = class (tbase)[rtti]
+  f1: int32;
+  constructor create();
+  destructor destroy();
+  property p1: int32 read f1 write f1;
+  property p2: int32 read f1 write f1;
+ end;
+
+ t2 = class(t1)[]
+  f3: int32;
+  property p3: int32 read f3 write f3;
+ end;
+ 
+constructor t1.create();
+begin
+end;
+
+destructor t1.destroy();
+begin
+end;
+
+var
+ c1: t1;
+ p1,p2: ppropertyrttity;
+begin
+ c1:= t2.create();
+ p1:= getpropinfo(c1,'p3');
+ p2:= getpropinfo(c1,'P2');
+ if (string8(p1^.name) = 'p3') and (string8(p2^.name) = 'p2') then
+  exitcode:= 123;
+ end;
+ c1.destroy();
+end.
