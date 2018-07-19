@@ -1368,8 +1368,8 @@ begin
                                                              subbegin.globid);
        end
        else begin
-        inc(info.s.unitinfo^.nameid);
-        anameid:= info.s.unitinfo^.nameid;
+//        inc(info.s.unitinfo^.nameid);
+        anameid:= getunitnameid();
         llvmlists.globlist.namelist.addname(info.s.unitinfo,
                                                    anameid,subbegin.globid);
        end;
@@ -2139,8 +2139,8 @@ end;
   end;
   sub1^.flags1:= subflags1;
   sub1^.linkage:= s.globlinkage;
-  inc(s.unitinfo^.nameid);
-  sub1^.nameid:= s.unitinfo^.nameid;
+//  inc(s.unitinfo^.nameid);
+  sub1^.nameid:= getunitnameid();
   sub1^.resulttype:= resulttype1;
   sub1^.varchain:= 0;
   sub1^.paramfinichain:= 0;

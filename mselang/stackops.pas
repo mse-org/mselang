@@ -3058,6 +3058,11 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= po1;
 end;
 
+procedure getclassrttiop();
+begin
+ notimplemented();
+end;
+
 function classis(): boolean;
 var
  po1,po2: pointer;
@@ -7355,6 +7360,7 @@ const
   setcontainsssa = 0;
   setinssa = 0;
   getclassdefssa = 0;
+  getclassrttissa = 0;
   classisssa = 0;
   checkclasstypessa = 0;
 

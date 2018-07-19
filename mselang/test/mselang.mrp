@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -270,7 +270,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -4135,7 +4135,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B729DF80
+    ao=An unhandled exception occured at $B72FF390
     ae=
     aec=123
     ie=0
@@ -9285,7 +9285,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=28
    (
    kind=1
@@ -9856,8 +9856,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=163
     ie=0
     )
@@ -12935,7 +12935,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,intrinsics
+  a=0,665,4,intrinsics
   c=4
    (
    kind=1
@@ -12982,7 +12982,7 @@ c=3
    (
    kind=1
    a=0,665,4,typeinfo
-   c=5
+   c=6
     (
     kind=2
     a=0,648,1,typeinfo1 llvm
@@ -13091,6 +13091,28 @@ c=3
     cr=0
     ao=rtk_integer bs_32
     +rtk_integer bs_16
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classrtti1 llvm
+    teststate=1
+    path=classrtti1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
     ae=
     aec=123
     ie=0
@@ -14586,200 +14608,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=219
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=36
  0 0
  0 0
  0 0

@@ -86,6 +86,7 @@ type
   cs_initobject,
 //  cs_calliniobject,
   cs_getclassdef,
+  cs_getclassrtti,
   cs_getallocsize,
   cs_classis,
   cs_checkclasstype,
@@ -222,6 +223,7 @@ type
   oc_callclassdefproc2,
   oc_destroyclass,
   oc_getclassdef, //from instance
+  oc_getclassrtti,//from classdef
   oc_classis,
   oc_checkclasstype,
   oc_cmpstring,
@@ -1394,6 +1396,7 @@ const
   oc_callclassdefproc2,
   oc_destroyclass,
   oc_getclassdef,
+  oc_getclassrtti,
   oc_classis,
   oc_checkclasstype
  ];

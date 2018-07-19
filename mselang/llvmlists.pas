@@ -1080,6 +1080,7 @@ begin
    if li1 = li_external then begin
 //    inc(info.s.unitinfo^.nameid);
     typ1^.infoclass.nameid:= info.s.unitinfo^.nameid;
+//    typ1^.infoclass.nameid:= getunitnameid();
 //    info.s.unitinfo^.llvmlists.globlist.namelist.addname(
 //               info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
    end;
@@ -2621,8 +2622,8 @@ begin
  else begin
   dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
   if alinkage = li_external then begin
-   inc(info.s.unitinfo^.nameid);
-   fnamelist.addname(info.s.unitinfo,info.s.unitinfo^.nameid,result);
+//   inc(info.s.unitinfo^.nameid);
+   fnamelist.addname(info.s.unitinfo,getunitnameid(),result);
   end;
  end;
  inccount();
@@ -2726,8 +2727,8 @@ begin
  inccount();
  flastitem^:= dat1;
  if alinkage = li_external then begin
-  inc(info.s.unitinfo^.nameid);
-  fnamelist.addname(info.s.unitinfo,info.s.unitinfo^.nameid,result);
+//  inc(info.s.unitinfo^.nameid);
+  fnamelist.addname(info.s.unitinfo,getunitnameid(),result);
  end;
 end;
 

@@ -2693,7 +2693,8 @@ begin
  with pc^.par do begin
   bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
   bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
-  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),bcstream.constval(ord(nco_i32)));
+  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),
+                                         bcstream.constval(ord(nco_i32)));
  end;
 end;
 
@@ -2703,7 +2704,8 @@ begin
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
                                                       bcstream.ssaval(ssas1));
   bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));
-  bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),bcstream.constval(ord(nco_i32)));
+  bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),
+                                             bcstream.constval(ord(nco_i32)));
  end;
 end;
 
@@ -2711,7 +2713,14 @@ procedure getclassdefop();
 begin
  with pc^.par do begin
   callcompilersub(cs_getclassdef,true,[bcstream.ssaval(ssas1),
-                                             bcstream.constval(imm.llvm.listid)]);
+                                          bcstream.constval(imm.llvm.listid)]);
+ end;
+end;
+
+procedure getclassrttiop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_getclassrtti,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -5367,6 +5376,7 @@ const
   setcontainsssa = 3;
   setinssa = 3;
   getclassdefssa = 1;
+  getclassrttissa = 1;
   classisssa = 1;
   checkclasstypessa = 1;
 

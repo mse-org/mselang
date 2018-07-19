@@ -249,10 +249,25 @@ pushalloclab:
 end;
 
 procedure handleclassof(const paramco: int32);
+
 var
  i1: integer;
  indpo,toppo: pcontextitemty;
  typ1: ptypedataty;
+
+ procedure setupresult(const atypedata: elementoffsetty);
+ begin
+  initfactcontext(indpo);
+  indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
+  with indpo^.d.dat.datatyp do begin
+   flags:= typ1^.h.flags + [tf_classdef];
+   typedata:= atypedata;// sysdatatypes[st_pointer];
+   indirectlevel:= 1;
+   forwardident:= 0;
+  end;
+  indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
+ end; //setupresult()
+
 label
  errorlab;
 begin
@@ -274,17 +289,8 @@ begin
         end;
         i1:= ssad;
        end;
-       initfactcontext(indpo);
-//       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
-       with indpo^.d.dat.datatyp do begin
-        flags:= typ1^.h.flags + [tf_classdef];
-        typedata:= d.typ.typedata;// sysdatatypes[st_pointer];
-        indirectlevel:= 1;
-        forwardident:= 0;
-       end;
-       include(indpo^.d.dat.datatyp.flags,tf_classdef);
+       setupresult(d.typ.typedata);
        indpo^.d.dat.fact.ssaindex:= i1;
-       indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
        exit;
       end;
      end;
@@ -326,18 +332,22 @@ begin
          end;
          i1:= ssad;
         end;
-       end; 
-       initfactcontext(indpo);
-       indpo^.d.dat.datatyp:= sysdatatypes[st_pointer];
-       with indpo^.d.dat.datatyp do begin
-        flags:= typ1^.h.flags + [tf_classdef];
-        typedata:= d.dat.datatyp.typedata;// sysdatatypes[st_pointer];
-        indirectlevel:= 1;
-        forwardident:= 0;
        end;
+       setupresult(d.dat.datatyp.typedata);
        indpo^.d.dat.fact.ssaindex:= i1;
-       indpo^.d.dat.fact.opdatatype:= bitoptypes[das_pointer];
        exit;
+      end
+      else begin
+       if (d.dat.datatyp.indirectlevel = 1) and 
+                issametype(typ1,
+                   ele.eledataabs(internaltypes[it_pclassdefinfo])) then begin
+        if (d.kind = ck_ref) and not getvalue(toppo,das_none) then begin
+         exit;
+        end;
+        setupresult(d.dat.datatyp.typedata);
+        indpo^.d.dat.fact.ssaindex:= toppo^.d.dat.fact.ssaindex;
+        exit;
+       end;
       end;
      end;
     end;
@@ -394,8 +404,22 @@ begin
       end;
      end;
      ck_ref,ck_fact,ck_subres: begin
-      if not dortti(d.dat.datatyp,i1) then begin
-       goto errorlab;
+      if (d.dat.datatyp.indirectlevel = 1) and 
+               issametype(d.dat.datatyp.typedata,
+                                internaltypes[it_pclassdefinfo]) then begin
+       if (d.kind = ck_ref) and not getvalue(toppo,das_none) then begin
+        goto errorlab;
+       end;
+       i1:= d.dat.fact.ssaindex;
+       with insertitem(oc_getclassrtti,toppo,-1)^.par do begin
+        ssas1:= i1;
+        i1:= ssad;
+       end;
+      end
+      else begin
+       if not dortti(d.dat.datatyp,i1) then begin
+        goto errorlab;
+       end;
       end;
      end;
      else begin

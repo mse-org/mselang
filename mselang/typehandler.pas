@@ -999,8 +999,8 @@ begin
    sub1^.flags:= [isf_pointerpar];
    typ1^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
    if not (stf_implementation in s.currentstatementflags) then begin
-    inc(s.unitinfo^.nameid);
-    sub1^.nameid:= s.unitinfo^.nameid;
+//    inc(s.unitinfo^.nameid);
+    sub1^.nameid:= getunitnameid;
     include(sub1^.flags,isf_globalheader);
    end;
   end;

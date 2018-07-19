@@ -15,14 +15,14 @@ uses
 
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
-procedure getpropinfo(const typeinfo: prttity;
+procedure getpropinfo(const atypeinfo: prttity;
                            const propname: string8): ppropertyrttity;
-//procedure getpropinfo(const instance: tbase;
-//                           const propname: string8): ppropertyrttity;
+procedure getpropinfo(const instance: tbase;
+                           const propname: string8): ppropertyrttity;
 
 implementation
 uses
- rtl_sysexceptions;
+ rtl_sysexceptions,rtl_sysconsts;
  
 type
  propertyaccessty = (pa_field,pa_proc);
@@ -30,6 +30,11 @@ type
 procedure notimplemented(const atext: string8);
 begin
  raise enotimplemented.create(atext);
+end;
+
+procedure rttierror(const atext: string8);
+begin
+ raise ertti.create(atext);
 end;
 
 procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
@@ -50,17 +55,32 @@ begin
    notimplemented('getordprop()');
  end;
 end;
-
-procedure getpropinfo(const typeinfo: prttity;
+var testvar: pobjectrttity;
+procedure getpropinfo(const atypeinfo: prttity;
                            const propname: string8): ppropertyrttity;
+var
+ p1,pe: ppropertyrttity;
 begin
+testvar:= pointer(atypeinfo);
  result:= nil;
+ if atypeinfo^.kind <> rtk_object then
+  rttierror(stypemustbeobjectorclass);
+ end; 
+ p1:= @pobjectrttity(atypeinfo)^.properties.items;
+ pe:= pointer(p1)+pobjectrttity(atypeinfo)^.properties.size;
+ while p1 < pe do
+  if string8(p1^.name) = propname then
+   result:= p1;
+   break;
+  end;
+  inc(p1);
+ end;
 end;
 
 procedure getpropinfo(const instance: tbase;
                            const propname: string8): ppropertyrttity;
 begin
-// result:= getpropinfo(typeinfo(instance),propname);
+ result:= getpropinfo(typeinfo(instance),propname);
 end;
 
 end.

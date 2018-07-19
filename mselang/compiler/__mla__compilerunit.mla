@@ -110,6 +110,7 @@ procedure __mla__initobject(const instance: pointer;
 //                                        const classinfo: classdefty);
 procedure __mla__getclassdef(const instance: pointer; 
                                 const virttaboffset: int32): pointer;
+procedure __mla__getclassrtti(const classdef: pclassdefty): pointer;
 procedure __mla__getallocsize(const classdef: pclassdefty): int32;
 procedure __mla__classis(const a,b: pclassdefty): bool1;
 procedure __mla__checkclasstype(var instance: pointer; //nil if no match
@@ -1708,6 +1709,11 @@ begin
  if instance <> nil then
   result:= ppointer(instance+virttaboffset)^;
  end;
+end;
+
+procedure __mla__getclassrtti(const classdef: pclassdefty): pointer;
+begin
+ result:= classdef^.header.rtti;
 end;
 
 procedure __mla__getallocsize(const classdef: pclassdefty): int32;

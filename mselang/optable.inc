@@ -91,6 +91,8 @@
   (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
 //oc_getclassdef,
   (ssa: getclassdefssa; proc: @getclassdefop; flags: []), 
+//oc_getclassrtti,
+  (ssa: getclassrttissa; proc: @getclassrttiop; flags: []), 
 //oc_classis,
   (ssa: classisssa; proc: @classisop; flags: []), 
 //oc_checkclasstype,

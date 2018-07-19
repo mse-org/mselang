@@ -27,14 +27,13 @@ function random(const limit: int32): int32;
 function random(const limit: int64): int64;
 
 implementation
-var testvar: pointer;
+
 function inttostr(const value: integer): string;
 var
  buffer: array[0..22] of char;
  int1,int2: integer;
  lwo1,lwo2: longword;
 begin
-testvar:= typeinfo(tbase);
  lwo1:= abs(value);
  if lwo1 = 0 then begin
   result:= '0';

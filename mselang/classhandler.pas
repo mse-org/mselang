@@ -434,7 +434,7 @@ begin
            tf_hascomplexini,tf_complexini];
      po1^.infoclass.flags:= po1^.infoclass.flags + 
               po2^.infoclass.flags * [icf_zeroinit,icf_nozeroinit,icf_virtual,
-                                      icf_except];
+                                      icf_except,icf_rtti];
      po1^.infoclass.virttaboffset:= po2^.infoclass.virttaboffset;
      po1^.infoclass.subattach:= po2^.infoclass.subattach;
      po1^.fieldcount:= po2^.fieldcount;

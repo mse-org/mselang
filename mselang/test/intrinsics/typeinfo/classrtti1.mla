@@ -1,0 +1,46 @@
+program classrtti1;
+uses
+ __mla__internaltypes;
+// rtl_base,rtl_rttiutils,__mla__internaltypes;
+
+type
+ t1 = class ()[virtual,rtti]
+  f1: int32;
+  constructor create();
+  destructor destroy();
+  property p1: int32 read f1 write f1;
+  property p2: int32 read f1 write f1;
+ end;
+
+ t2 = class(t1)[]
+  f3: int32;
+  property p3: int32 read f3 write f3;
+ end;
+ 
+constructor t1.create();
+begin
+end;
+
+destructor t1.destroy();
+begin
+end;
+
+var
+ c1: t1;
+ p1,p2,p3: prttity;
+ p4,p5,p6: pclassdefty;
+begin
+
+ c1:= t2.create();
+ p4:= pclassdefty(classof(t1));
+ p5:= pclassdefty(classof(t2));
+ p6:= pclassdefty(classof(c1));
+ if p5 = p6 then
+  p1:= typeinfo(p6);
+  if (pobjectrttity(p1)^.classdef = p6) and (p6^.header.parentclass = p4) and
+       (typeinfo(classof(c1)) = typeinfo(t1)) and (string8(p1^.typename) = 't2') then
+   exitcode:= 123;
+  end;
+ end;
+ c1.destroy();
+end.

@@ -13,8 +13,10 @@ interface
 resourcestring
  sinvalidformat = 'Invalid format specifier : "%s"';
  snotimplementederror = '"%s": not implemented error';
+ srttierror = '"%s": RTTI error';
  stypeexpected = 'Invalid type argument Nr. %d %s expected';
  srangeerror = 'Range error argument Nr. %d';
+ stypemustbeobjectorclass = 'Type must be object or class';
  
 implementation
 end.

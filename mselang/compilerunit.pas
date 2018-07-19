@@ -95,6 +95,7 @@ const
   '__mla__initobject',
 //  '__mla__calliniobject',
   '__mla__getclassdef',
+  '__mla__getclassrtti',
   '__mla__getallocsize',
   '__mla__classis',
   '__mla__checkclasstype',
