@@ -1,7 +1,7 @@
 program method6;
 
 type
- meth1ty = function (a,b: int32): int32 of object;
+ meth1ty = method (a,b: int32): int32;
 
  tcla = class[virtual]
   private

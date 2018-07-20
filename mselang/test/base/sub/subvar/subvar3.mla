@@ -2,7 +2,7 @@ program subvar3;
 
 type
  ppointer = ^pointer;
- arraysortcomparety = function (const l,r: ppointer): int32;
+ arraysortcomparety = procedure (const l,r: ppointer): int32;
  ppint32 = ^^int32;
 procedure comparestring(const l,r: ppointer): int32;
 begin

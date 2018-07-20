@@ -19,7 +19,7 @@ type
  pcard8 = ^card8;
  ppointer = ^pointer;
  pointerarty = array of pointer;
- arraysortcomparety = function (const l,r): int32;
+ arraysortcomparety = procedure (const l,r): int32;
 
 procedure comparestring(const l,r): int32;
 var

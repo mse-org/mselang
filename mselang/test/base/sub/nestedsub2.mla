@@ -4,7 +4,7 @@ procedure test();
 
 var
  i1: int32;
- function test1(): int32;
+ procedure test1(): int32;
  begin
   i1:= i1+13;
   result:= 10;
