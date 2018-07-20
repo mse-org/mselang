@@ -12,13 +12,17 @@ unit rtl_rttiutils;
 interface
 uses
  rtl_base,__mla__internaltypes;
-
+type
+ propertyrttiarty = array of ppropertyrttity;
+ 
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
-procedure getpropinfo(const atypeinfo: prttity;
+procedure getpropinfo(const atypeinfo: pobjectrttity;
                            const propname: string8): ppropertyrttity;
 procedure getpropinfo(const instance: tbase;
                            const propname: string8): ppropertyrttity;
+procedure getproperties(const instance: tbase): propertyrttiarty;
+procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 
 implementation
 uses
@@ -56,7 +60,7 @@ begin
  end;
 end;
 
-procedure getpropinfo(const atypeinfo: prttity;
+procedure getpropinfo(const atypeinfo: pobjectrttity;
                            const propname: string8): ppropertyrttity;
 var
  cla: pclassdefty;
@@ -89,7 +93,54 @@ end;
 procedure getpropinfo(const instance: tbase;
                            const propname: string8): ppropertyrttity;
 begin
- result:= getpropinfo(typeinfo(classof(instance)),propname);
+ result:= getpropinfo(instance.rtti,propname);
+end;
+
+procedure addprops(const rtti: pobjectrttity;
+                            var props: propertyrttiarty; var count: int32);
+var
+ p1: pobjectrttity;
+ p2,pe: ppropertyrttity;
+ p3: ppointer;
+ classdef1: pclassdefty;
+ i1: int32;
+begin
+ classdef1:= rtti^.classdef^.header.parentclass;
+ if classdef1 <> nil then
+  p1:= classdef1^.header.rtti;
+  if p1 <> nil then
+   addprops(p1,props,count);
+  end;
+ end;
+ i1:= count;
+ count:= count + rtti^.properties.size div sizeof(propertyrttity);
+ if count > length(props) then
+  setlength(props,2*count);
+ end;
+ p3:= @props[i1];
+ p2:= @rtti^.properties.items;
+ pe:= pointer(p2) + rtti^.properties.size;
+ while p2 < pe do
+writeln(string8(p2^.name));
+  p3^:= p2;
+  inc(p3);
+  inc(p2);
+ end;
+end;
+
+procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
+var
+ i1: int32;
+begin
+ setlength(result,1);
+ i1:= 0;
+ addprops(atypeinfo,result,i1);
+ setlength(result,i1);
+end;
+
+procedure getproperties(const instance: tbase): propertyrttiarty;
+begin
+ result:= getproperties(instance.rtti);
 end;
 
 end.

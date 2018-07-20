@@ -160,9 +160,11 @@ type
  end;
 {$ifdef mse_compiler}
  prttity = targetptrintty;
+ pobjectrttity = targetptrintty;
  pcrttity = ^rttity; 
 {$else}
  prttity = ^rttity;
+ pobjectrttity = ^objectrttity;
 {$endif}
 
 const
@@ -257,7 +259,6 @@ type
   classdef: pclassdefty;           //0 -> classrttidefindex
   properties: itemlistty;          //list of propertyrttity
  end;
- pobjectrttity = ^objectrttity;
  
  allocsinfoty = record
   size: int32;
@@ -272,7 +273,7 @@ type
   parentclass: pclassdefty;                                              //0
   interfaceparent: pclassdefty;     //last parent class with interfaces  //1
   virttaboffset: int32;             //field offset in instance           //2
-  rtti: prttity;                                                         //3
+  rtti: pobjectrttity;                                                         //3
   procs: array[classdefprocty] of classprocty;  //4             
   allocs: allocsinfoty;                         //4+high(procs)+1
  end;

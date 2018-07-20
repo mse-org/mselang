@@ -1,0 +1,24 @@
+program arrayitemaddress;
+
+type
+ pointerarty = array of pointer;
+ recarty = array of record a,b: int32 end;
+var
+ ar1: pointerarty;
+ p0,p1,p2: pointer;
+ ar2: recarty;
+begin
+ setlength(ar1,3);
+ p0:= pointer(ar1);
+ p1:= @ar1[0];
+ p2:= @ar1[1];
+ if (p2-p1 = sizeof(ar1[0])) and (sizeof(ar1[0]) = sizeof(pointer)) then
+  setlength(ar2,3);
+  p0:= pointer(ar2);
+  p1:= @ar2[0];
+  p2:= @ar2[1];
+  if (p2-p1 = sizeof(ar2[0])) and (sizeof(ar2[0]) = 2 * 4) then
+   exitcode:= 123;
+  end;
+ end;
+end.

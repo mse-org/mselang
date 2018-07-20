@@ -23,7 +23,9 @@
  'label'.,*
  'begin'.,*
  'procedure'.,*
+{$grapas}
  'function'.,*
+{$}
  'sub'.,*
  'class'.,*
  'method'.,*
@@ -148,7 +150,9 @@ start2,noimplementation,handleafterintfuses,
 start2class,start2,,
  ${whitespace}
  'procedure'.,subclassprocedureheader-*^
+{$grapas}
  'function'.,subclassfunctionheader-*^
+{$}
  'method'.,subclassmethodheader-*^
 noimplementation,implementation,handlenoimplementationerror,
 
@@ -205,7 +209,9 @@ main1,,,handlemain
 main1class,main1,,
  ${whitespace}
  'procedure'.,classprocedure-^*
+{$grapas}
  'function'.,classfunction-^*
+{$}
  'method'.,classclamethod-^*
 curlycomment0,,,handlecommentend^>
  '}',-*
@@ -503,7 +509,7 @@ external1,subheader3,,
  'name'.,external2-
 external2,subheader3,,handleexternal2
  '',exp^*
- 
+
 external,subheader3,handleexternal, 
 forward,subheader3,handleforward, 
 
@@ -523,7 +529,9 @@ subbody4,,,handlebeginexpected*
  'var'.,var-*>
  'label'.,labeldef-*>
  'procedure'.,procedure-^*>
+{$grapas}
  'function'.,function-^*>
+{$}
  'sub'.,subsub-^*>
  'begin'.,subbody5a-
 subbody5a,subbody5,handlesubbody5a, //set procstartaddress
@@ -963,7 +971,9 @@ gettype,,,*^
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
  'procedure'.,proceduretypedef-^*
+{$grapas}
  'function'.,functiontypedef-^*
+{$}
  'sub'.,subtypedef-^*
  'method'.,methodtypedef-^*
  '',simpletype^*
@@ -1129,7 +1139,9 @@ classdef0b,classdeferror,,
  'class'.,classmethod-
  'method'.,methmethodheader-*^>
  'procedure'.,methprocedureheader-*^>
+{$grapas}
  'function'.,methfunctionheader-*^>
+{$}
  'constructor'.,methconstructorheader-*^>
  'destructor'.,methdestructorheader-*^>
  'property'.,classproperty-*^>
@@ -1141,7 +1153,9 @@ classmethod,classdef0b,,
  ${whitespace}
  'method'.,classmethmethodheader-*^
  'procedure'.,classmethprocedureheader-*^
+{$grapas}
  'function'.,classmethfunctionheader-*^
+{$}
 classdeferror,,handleclassdeferror,
 classdefreturn,,handleclassdefreturn,*^
 //classvariant,,handleclassvariantentry,handlecloseroundbracketexpected*
@@ -1279,7 +1293,9 @@ interfacedef0,interfacedeferror,,
  ${whitespace}
  'method'.,methmethodheader-*^>
  'procedure'.,methprocedureheader-*^>
+{$grapas}
  'function'.,methfunctionheader-*^>
+{$}
  'end'.,interfacedefreturn-
 
 interfacedeferror,,handleinterfacedeferror,^
@@ -1605,7 +1621,9 @@ ident,ident0,,
  'method'.,reservedword
  'sub'.,reservedword
  'procedure'.,reservedword
+{$grapas}
  'function'.,reservedword
+{$}
  'constructor'.,reservedword
  'destructor'.,reservedword
  'end'.,reservedword

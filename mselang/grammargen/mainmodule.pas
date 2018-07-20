@@ -490,12 +490,13 @@ begin
    repeat
     readline(str1);
     if (str1 <> '') then begin
-     if str1[1] = '{' then begin //macrodef
+     if (str1[1] = '{') and (str1[2] <> '$') then begin //macrodef
       int1:= findchar(str1,'}');
       if int1 = 0 then begin
        error('Invalid macrodef');
        exit;
       end;
+(*
       if str1[2] = '$' then begin
        if str1[3] = '}' then begin
         dec(conditionlevel);
@@ -524,6 +525,7 @@ begin
        end;
       end
       else begin
+*)
        if disabled then begin
         continue;
        end;
@@ -580,12 +582,14 @@ begin
        end;
        macrolist1.add([utf8tostringansi(macroname)],
                                           [utf8tostringansi(macrotext)],[]);
-      end; //macrodef
+//      end; //macrodef
      end
      else begin //no macrodef
+{
       if disabled then begin
        continue;
       end;
+}
       mstr1:= utf8tostringansi(str1);
       macrolist1.expandmacros1(mstr1);
       if (mstr1 <> '') then begin //no comment
@@ -593,6 +597,41 @@ begin
        for lnr:= 0 to high(expandedtext) do begin
         str1:= expandedtext[lnr];
         if str1 <> '' then begin
+
+
+         if (str1[1] = '{') and (str1[2] = '$') then begin
+          if str1[3] = '}' then begin
+           dec(conditionlevel);
+           if conditionlevel < 0 then begin
+            error('Invalid condition level');
+            exit;
+           end;
+           if conditionlevel < disablelevel then begin
+            disabled:= false;
+           end;
+          end
+          else begin
+           inc(conditionlevel);
+           ar1:= splitstring(copy(str1,3,length(str1)-3),',',true);
+           bo1:= false;
+           for i1:= 0 to high(ar1) do begin
+            if ar1[i1] = dialect then begin
+             bo1:= true;
+             break;
+            end;
+           end;
+           if not bo1 and not disabled then begin
+            disablelevel:= conditionlevel;
+            disabled:= true;
+           end;
+          end;
+          continue;
+         end;
+
+         if disabled then begin
+          continue;
+         end;
+
          if str1[1] = '@' then begin
           setlength(tokendefs,high(tokendefs)+2);
           with tokendefs[high(tokendefs)] do begin

@@ -110,7 +110,7 @@ const
 type
  bufferty =  array[0..30] of char16;
 
- function getfixoverflowvalue: string16;
+ procedure getfixoverflowvalue: string16;
  var
   int1: integer;
  begin

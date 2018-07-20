@@ -11,7 +11,9 @@
 unit rtl_base;
 //base functions, preliminary ad-hoc implementation
 interface
-
+uses
+ __mla__internaltypes;
+ 
 type
  pcard8 = ^card8;
  pchar8 = ^char8;
@@ -20,33 +22,34 @@ type
 
  tbase = class() [virtual]
   destructor destroy() [virtual];
+  method rtti(): pobjectrttity;
  end;
   
-function inttostr(const value: integer): string;
-function random(const limit: int32): int32;
-function random(const limit: int64): int64;
+procedure inttostr(const value: integer): string;
+procedure random(const limit: int32): int32;
+procedure random(const limit: int64): int64;
 
 implementation
 
-function inttostr(const value: integer): string;
+procedure inttostr(const value: integer): string;
 var
  buffer: array[0..22] of char;
  int1,int2: integer;
  lwo1,lwo2: longword;
 begin
  lwo1:= abs(value);
- if lwo1 = 0 then begin
+ if lwo1 = 0 then
   result:= '0';
   exit;
  end;
  int1:= high(buffer);
- while lwo1 > 0 do begin
+ while lwo1 > 0 do
   lwo2:= lwo1 div 10;
   buffer[int1]:= char(card8(lwo1 - lwo2 * 10 + ord('0')));
   lwo1:= lwo2;
   dec(int1);
  end;
- if value < 0 then begin
+ if value < 0 then
   buffer[int1]:= char('-');
   dec(int1);
  end;
@@ -63,7 +66,7 @@ var
  fw: card32;
  fz: card32;
 
-function mwcnoise: card32;
+procedure mwcnoise: card32;
 begin
  fz:= 36969 * (fz and $ffff) + (fz shr 16);
  fw:= 18000 * (fw and $ffff) + (fw shr 16);
@@ -72,24 +75,22 @@ end;
 
 //todo: use mersenne twister
 
-function random(const limit: int32): int32;
+procedure random(const limit: int32): int32;
 begin
  result:= mwcnoise();
- if limit > 0 then begin
+ if limit > 0 then
   result:= card32(result) mod card32(limit);
- end
- else begin
+ else
   result:= 0;
  end;
 end;
 
-function random(const limit: int64): int64;
+procedure random(const limit: int64): int64;
 begin
  result:= (int64(mwcnoise()) shl 32) or mwcnoise();
- if limit > 0 then begin
+ if limit > 0 then
   result:= card64(result) mod card64(limit);
- end
- else begin
+ else
   result:= 0;
  end;
 end;
@@ -98,6 +99,11 @@ end;
 
 destructor tbase.destroy();
 begin
+end;
+
+method tbase.rtti(): pobjectrttity;
+begin
+ result:= pointer(typeinfo(classof(self)));
 end;
 
 initialization

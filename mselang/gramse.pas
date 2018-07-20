@@ -3054,13 +3054,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstart2class: array[0..8] of branchty = (
+ bstart2class: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassprocedureheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
-     dest: (context: @subclassfunctionheaderco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
@@ -3405,13 +3402,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bmain1class: array[0..8] of branchty = (
+ bmain1class: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classprocedureco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @classfunctionco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classclamethodco); stack: nil; 
      keyword: $0000024C{'method'}),
@@ -5241,7 +5235,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubbody4: array[0..13] of branchty = (
+ bsubbody4: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @typeco); stack: nil; 
      keyword: $00000244{'type'}),
@@ -5257,9 +5251,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @functionco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -7718,7 +7709,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..19] of branchty = (
+ bgettype: array[0..18] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @setdefco); stack: nil; 
      keyword: $0000027D{'set'}),
@@ -7743,9 +7734,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @proceduretypedefco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @functiontypedefco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @subtypedefco); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -7810,7 +7798,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype: array[0..23] of branchty = (
+ btype: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000242{ 'implementation'}),
@@ -7835,9 +7823,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -8023,7 +8008,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blabeldef: array[0..23] of branchty = (
+ blabeldef: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000242{ 'implementation'}),
@@ -8048,9 +8033,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -8208,7 +8190,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bconsta: array[0..23] of branchty = (
+ bconsta: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000242{ 'implementation'}),
@@ -8233,9 +8215,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -8679,7 +8658,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bvar: array[0..23] of branchty = (
+ bvar: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000242{ 'implementation'}),
@@ -8704,9 +8683,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_push];
-     dest: (context: nil); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026E{'sub'}),
@@ -9327,7 +9303,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef0b: array[0..19] of branchty = (
+ bclassdef0b: array[0..18] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $00000281{'private'}),
@@ -9349,9 +9325,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methprocedureheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @methfunctionheaderco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methconstructorheaderco); stack: nil; 
      keyword: $0000024F{'constructor'}),
@@ -9415,16 +9388,13 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassmethod: array[0..8] of branchty = (
+ bclassmethod: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethprocedureheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
-     dest: (context: @classmethfunctionheaderco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -10377,16 +10347,13 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedef0: array[0..9] of branchty = (
+ binterfacedef0: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methprocedureheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @methfunctionheaderco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @interfacedefreturnco); stack: nil; 
      keyword: $00000232{'end'}),
@@ -13293,7 +13260,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bident: array[0..21] of branchty = (
+ bident: array[0..20] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $00000242{'implementation'}),
@@ -13330,9 +13297,6 @@ const
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000024A{'procedure'}),
-   (flags: [bf_nt,bf_keyword];
-     dest: (context: @reservedwordco); stack: nil; 
-     keyword: $0000024B{'function'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000024F{'constructor'}),

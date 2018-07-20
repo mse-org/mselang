@@ -1579,6 +1579,7 @@ var
  li1: int64;
  ptop: pcontextitemty;
  topoffset: int32;
+ i1: int32;
 label
  errorlab;
 begin
@@ -1693,7 +1694,13 @@ begin
     lastssa:= d.dat.fact.ssaindex;
     with insertitem(oc_mulimmint,topoffset,-1)^ do begin
      par.ssas1:= lastssa;
-     setimmint32(itemtype^.h.bytesize,par.imm);
+     if itemtype^.h.indirectlevel > 0 then begin
+      i1:= targetpointersize;
+     end
+     else begin
+      i1:= itemtype^.h.bytesize;
+     end;
+     setimmint32(i1,par.imm);
     end;
    end;
                                                         //next dimension
