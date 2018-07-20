@@ -337,6 +337,8 @@ type
  end;
  pvarrecty = ^varrecty;
 {$endif}
+//{$dumpelements}
+//{$abort}
 implementation
 
 end.

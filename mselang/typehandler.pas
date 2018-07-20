@@ -1694,7 +1694,11 @@ begin
     lastssa:= d.dat.fact.ssaindex;
     with insertitem(oc_mulimmint,topoffset,-1)^ do begin
      par.ssas1:= lastssa;
-     if itemtype^.h.indirectlevel > 0 then begin
+     i1:= itemtype^.h.indirectlevel;
+     if ispointer then begin
+      dec(i1);
+     end;
+     if i1 > 0 then begin
       i1:= targetpointersize;
      end
      else begin

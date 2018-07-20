@@ -2070,11 +2070,11 @@ begin
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
                    (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
+//   ele1:= 0;
+  end;
+  if ele1 < 0 then begin
    ele1:= 0;
   end;
-if ele1 < 0 then begin
-ele1:= 0;
-end;
 // {
   if (ele1 > 0) and (sf_method in subflags) then begin
    element1:= ele.eleinfoabs(ele1);

@@ -70,7 +70,7 @@ const
  _UA_HANDLER_FRAME = 4;
  _UA_FORCE_UNWIND = 8;
  exco_unhandledexception = 217;
-{$ifndef mse_compiler} 
+{$ifndef mse_compiler}
 function __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionclass: _Unwind_Exception_Class;

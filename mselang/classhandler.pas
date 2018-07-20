@@ -252,7 +252,7 @@ begin
     dk1:= dk_class;
     inc(d.typ.indirectlevel);
    end;
-   resolveforwardtype(po1);
+//   resolveforwardtype(po1);
    if not bo1 then begin
     if icf_defvalid in po1^.infoclass.flags then begin
      identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
@@ -322,6 +322,7 @@ begin
      po2^.infoclassof.classtyp:= d.typ.typedata;
     end;
    end;
+   resolveforwardtype(po1);
   end;
  end;
 end;
