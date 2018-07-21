@@ -7,8 +7,8 @@ type
  end;
 
  tobject = class [virtual]
-  method test1(a,b: int32); virtual;
-  method test2(a,b: int32): int32; virtual;
+  method test1(a,b: int32)[virtual];
+  method test2(a,b: int32): int32[virtual];
  end;
 
  ttestcla = class(tobject,itest)
@@ -17,8 +17,8 @@ type
   public
    constructor create();
    destructor destroy();
-   method test1(a,b: int32); override;
-   method test2(a,b: int32): int32; override;
+   method test1(a,b: int32)[override];
+   method test2(a,b: int32): int32[override];
    method test3(a,b: int32);
    method test4(a,b: int32): int32;
  end;

@@ -425,9 +425,11 @@ clasubheader3,,,
  '',semicolonexpected
 clasubheader4,,,*
  ${whitespace}
+{$grapas}
  'virtual'.,virtual-
  'override'.,override-
  'overload'.,overload-
+{$}
  '',!handlesubheader*
 virtual,clasubheader3,handlevirtual,
 override,clasubheader3,handleoverride,

@@ -16,10 +16,10 @@ type
  private
   constructor create();
   destructor destroy();
-  method test0(); virtual;
-  method test00(): int32; virtual;
-  method test1(a,b: int32); virtual;
-  method test2(a,b: int32): int32; virtual;
+  method test0()[virtual];
+  method test00(): int32[virtual];
+  method test1(a,b: int32)[virtual];
+  method test2(a,b: int32): int32[virtual];
 
  end;
 
@@ -29,8 +29,8 @@ type
   public
    constructor create();
    destructor destroy();
-   method test1(a,b: int32); override;
-   method test2(a,b: int32): int32; override;
+   method test1(a,b: int32)[override];
+   method test2(a,b: int32): int32[override];
    method test3(a,b: int32);
    method test4(a,b: int32): int32;
  end;

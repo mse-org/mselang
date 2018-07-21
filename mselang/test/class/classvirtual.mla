@@ -4,12 +4,12 @@ type
   public
    constructor create();
    destructor destroy();
-   method test(); virtual;
+   method test()[virtual];
  end;
 
  tc2 = class(tc1)
   public
-   method test(); override;
+   method test()[override];
  end;
 
 constructor tc1.create();

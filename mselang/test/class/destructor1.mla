@@ -6,12 +6,12 @@ type
    ffield: int32;
   public
    constructor create();
-   destructor destroy(); virtual;
+   destructor destroy()[virtual];
  end;
 
  ttest1 = class(ttest)
   public
-   destructor destroy(); override;
+   destructor destroy()[override];
  end;
 
 { ttest }

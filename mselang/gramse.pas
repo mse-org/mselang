@@ -4552,16 +4552,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclasubheader4: array[0..9] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @virtualco); stack: nil; 
-     keyword: $00000230{'virtual'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @overrideco); stack: nil; 
-     keyword: $00000267{'override'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @overloadco); stack: nil; 
-     keyword: $00000268{'overload'}),
+ bclasubheader4: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),

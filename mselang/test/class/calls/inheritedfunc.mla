@@ -7,12 +7,12 @@ type
   public
    constructor create();
    destructor destroy();
-   method test1(a,b: int32): int32; virtual;
+   method test1(a,b: int32): int32[virtual];
  end;
 
  tcla2 = class(tcla)
   public
-   method test1(a,b: int32): int32; override;
+   method test1(a,b: int32): int32[override];
  end;
 
 constructor tcla.create();

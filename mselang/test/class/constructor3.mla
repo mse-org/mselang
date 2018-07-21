@@ -5,13 +5,13 @@ type
   private
    ffield: int32;
   public
-   constructor create(); virtual;
+   constructor create()[virtual];
    destructor destroy();
  end;
 
  ttest1 = class(ttest)
   public
-   constructor create(); override;
+   constructor create()[override];
  end;
 
 { ttest }
