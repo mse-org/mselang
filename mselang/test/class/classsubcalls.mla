@@ -3,10 +3,10 @@ program classsubcalls;
 type
 
  itest = interface
-  procedure test1(a,b: int32);
-  procedure test2(a,b: int32): int32;
-  procedure test0();
-  procedure test00(): int32;
+  method test1(a,b: int32);
+  method test2(a,b: int32): int32;
+  method test0();
+  method test00(): int32;
  end;
 
  tobject = class
@@ -16,10 +16,10 @@ type
  private
   constructor create();
   destructor destroy();
-  procedure test0(); virtual;
-  procedure test00(): int32; virtual;
-  procedure test1(a,b: int32); virtual;
-  procedure test2(a,b: int32): int32; virtual;
+  method test0(); virtual;
+  method test00(): int32; virtual;
+  method test1(a,b: int32); virtual;
+  method test2(a,b: int32): int32; virtual;
 
  end;
 

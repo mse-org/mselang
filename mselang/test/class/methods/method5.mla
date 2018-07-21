@@ -1,7 +1,7 @@
 program method5;
 
 type
- meth1ty = procedure (a,b: int32) of object;
+ meth1ty = method (a,b: int32);
 
  tcla = class[virtual]
   private
@@ -9,12 +9,12 @@ type
   public
    constructor create();
    destructor destroy();
-   procedure test(a,b: int32) virtual;
+   method test(a,b: int32) virtual;
  end;
 
  tcla2 = class(tcla)
   public
-   procedure test(a,b: int32) override;
+   method test(a,b: int32) override;
  end;
 
 constructor tcla.create();
@@ -26,12 +26,12 @@ destructor tcla.destroy();
 begin
 end;
 
-procedure tcla.test(a,b: int32);
+method tcla.test(a,b: int32);
 begin
  exitcode:= 11;
 end;
 
-procedure tcla2.test(a,b: int32);
+method tcla2.test(a,b: int32);
 begin
  exitcode:= a+b+f;//inherited test(a,b);
 end;

@@ -3,19 +3,19 @@ program object8;
 type
  objty = object [nozeroinit,virtual]
   f1: int32;
-  procedure test(p: int32) virtual;
+  method test(p: int32) virtual;
  end;
  obj1ty = object(objty) [zeroinit]
   f2: int32;
   s1: string8;
-  procedure test(p: int32) override;
+  method test(p: int32) override;
  end;
 
-procedure objty.test(p: int32);
+method objty.test(p: int32);
 begin
 end;
 
-procedure obj1ty.test(p: int32);
+method obj1ty.test(p: int32);
 begin
  exitcode:= f1+f2+p;
 end;

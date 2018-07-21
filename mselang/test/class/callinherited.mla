@@ -4,12 +4,12 @@ type
   public
    constructor create();
    destructor destroy();
-   procedure test(); virtual;
+   method test(); virtual;
  end;
 
  tc2 = class(tc1)
   public
-   procedure test(); override;
+   method test(); override;
  end;
 
 constructor tc1.create();
@@ -20,12 +20,12 @@ destructor tc1.destroy();
 begin
 end;
 
-procedure tc1.test();
+method tc1.test();
 begin
  exitcode:= 112;
 end;
 
-procedure tc2.test();
+method tc2.test();
 begin
  inherited test();
  exitcode:= exitcode+11;

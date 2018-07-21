@@ -43,7 +43,7 @@ begin
  result:= ffield-a-b;
 end;
 
-procedure ttest.setfield2(avalue: pint32; a: int32; b: int32);
+method ttest.setfield2(avalue: pint32; a: int32; b: int32);
 begin
  ffield:= avalue+a+b;
 end;

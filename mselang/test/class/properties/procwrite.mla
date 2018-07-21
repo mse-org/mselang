@@ -4,7 +4,7 @@ type
  ttest = class
   private
    ffield: int32;
-   procedure setfield(avalue: int32);
+   method setfield(avalue: int32);
   public
    constructor create();
    destructor destroy();
@@ -23,7 +23,7 @@ begin
  exitcode:= ffield;
 end;
 
-procedure ttest.setfield(avalue: int32);
+method ttest.setfield(avalue: int32);
 begin
  ffield:= avalue+field;
 end;

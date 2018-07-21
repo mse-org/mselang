@@ -10,7 +10,7 @@ type
    constructor create();
    destructor destroy();
    property field: int32 read getfield write setfield;
-   procedure test();
+   method test();
  end;
 
 { ttest }

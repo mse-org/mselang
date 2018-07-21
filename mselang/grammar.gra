@@ -138,13 +138,13 @@ start2,noimplementation,handleafterintfuses,
  'resourcestring'.,resourcestring-*
  'label'.,labeldef-*
  'class'.,start2class-
-{$grapas}
  'procedure'.,subprocedureheader-*^>
+{$grapas}
  'function'.,subfunctionheader-*^>
 {$}
 {$gramse}
  'method'.,submethodheader-*^>
- 'sub'.,subsubheader-*^>
+// 'sub'.,subsubheader-*^>
  'procedure'.,subsubheader-*^>
 {$}
 start2class,start2,,
@@ -486,10 +486,14 @@ subheader2,subheader2a,,
  ${whitespace}
  ':',functiontype-^*
 subheader2a,subheader3,,
+{$grapas}
  'of'.,subof-
+{$}
 subof,,subofentry,handleofobjectexpected*
  ${whitespace}
+{$grapas}
  'object'.,subheader3-
+{$}
 subheader3,,,
  ${whitespace}
  'external'.,external0-
@@ -1138,8 +1142,8 @@ classdef0b,classdeferror,,
  'published'.,!handleclasspublished-
  'class'.,classmethod-
  'method'.,methmethodheader-*^>
- 'procedure'.,methprocedureheader-*^>
 {$grapas}
+ 'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
 {$}
  'constructor'.,methconstructorheader-*^>
@@ -1152,8 +1156,8 @@ classdef0b,classdeferror,,
 classmethod,classdef0b,,
  ${whitespace}
  'method'.,classmethmethodheader-*^
- 'procedure'.,classmethprocedureheader-*^
 {$grapas}
+ 'procedure'.,classmethprocedureheader-*^
  'function'.,classmethfunctionheader-*^
 {$}
 classdeferror,,handleclassdeferror,
@@ -1292,8 +1296,8 @@ interfacedef,interfacedef0,handleinterfacedefstart,
 interfacedef0,interfacedeferror,,
  ${whitespace}
  'method'.,methmethodheader-*^>
- 'procedure'.,methprocedureheader-*^>
 {$grapas}
+ 'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
 {$}
  'end'.,interfacedefreturn-

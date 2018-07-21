@@ -5,7 +5,7 @@ type
   f1: int32;
   constructor create(a: int32);
   destructor destroy();
-  procedure test(const a: int32);
+  method test(const a: int32);
  end;
 
 constructor objty.create(a: int32);
@@ -18,7 +18,7 @@ begin
  write('abc');
 end;
 
-procedure objty.test(const a: int32);
+method objty.test(const a: int32);
 begin
  f1:= f1 * a;
 end;

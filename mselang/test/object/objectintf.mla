@@ -2,17 +2,17 @@ program objectintf;
 
 type
  itest = interface
-  procedure test();
+  method test();
  end;
 
  objaty = object
   a: int32;
  end;
  objty = object(objaty,itest) [virtual]
-  procedure test();
+  method test();
  end;
 
-procedure objty.test();
+method objty.test();
 begin
  exitcode:= a;
 end;

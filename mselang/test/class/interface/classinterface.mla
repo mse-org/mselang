@@ -1,11 +1,11 @@
 program classinterface;
 type
  itest = interface
-  procedure test();
-  procedure test1();
+  method test();
+  method test1();
  end;
  itest1 = interface
-  procedure test();
+  method test();
  end;
 
  tc1 = class[virtual]
@@ -18,8 +18,8 @@ type
 
  tc2 = class(tc1,itest,itest1)
   public
-   procedure test();
-   procedure test1();
+   method test();
+   method test1();
  end;
 
 constructor tc1.create();
@@ -31,12 +31,12 @@ begin
  exitcode:= f+11;
 end;
 
-procedure tc2.test();
+method tc2.test();
 begin
  f:= 112;
 end;
 
-procedure tc2.test1();
+method tc2.test1();
 begin
  exitcode:= 100;
 end;

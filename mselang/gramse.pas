@@ -3009,11 +3009,11 @@ const
      dest: (context: @start2classco); stack: nil; 
      keyword: $00000249{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @subprocedureheaderco); stack: nil; 
+     keyword: $0000024A{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @submethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @subsubheaderco); stack: nil; 
-     keyword: $0000026E{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subsubheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
@@ -4922,16 +4922,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubheader2a: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @subofco); stack: nil; 
-     keyword: $00000269{'of'}),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bsubof: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @subheader3co); stack: nil; 
-     keyword: $0000026A{'object'}),
+ bsubof: array[0..5] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -9303,7 +9294,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef0b: array[0..18] of branchty = (
+ bclassdef0b: array[0..17] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $00000281{'private'}),
@@ -9322,9 +9313,6 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @methprocedureheaderco); stack: nil; 
-     keyword: $0000024A{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methconstructorheaderco); stack: nil; 
      keyword: $0000024F{'constructor'}),
@@ -9388,13 +9376,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassmethod: array[0..7] of branchty = (
+ bclassmethod: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @classmethmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
-     dest: (context: @classmethprocedureheaderco); stack: nil; 
-     keyword: $0000024A{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -10347,13 +10332,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedef0: array[0..8] of branchty = (
+ binterfacedef0: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @methprocedureheaderco); stack: nil; 
-     keyword: $0000024A{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @interfacedefreturnco); stack: nil; 
      keyword: $00000232{'end'}),
@@ -14146,7 +14128,7 @@ begin
  subheader1co.handleentry:= @handlesub1entry;
  subheader2co.branch:= @bsubheader2;
  subheader2co.next:= @subheader2aco;
- subheader2aco.branch:= @bsubheader2a;
+ subheader2aco.branch:= nil;
  subheader2aco.next:= @subheader3co;
  subofco.branch:= @bsubof;
  subofco.handleentry:= @subofentry;

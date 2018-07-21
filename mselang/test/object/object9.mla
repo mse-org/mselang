@@ -3,7 +3,7 @@ program object9;
 type
  objty = object [nozeroinit,virtual]
   f1: int32;
-  procedure test(p: int32) [virtual];
+  method test(p: int32) [virtual];
  end;
 
  obj1ty = object(objty) [zeroinit]
@@ -11,11 +11,11 @@ type
   s1: string8;
   constructor create();
   destructor destroy();
-  procedure test(p: int32) [override];
-  procedure afterconstruction() [afterconstruct];
-  procedure beforedestruction() [beforedestruct];
-  procedure ini() [ini];
-  procedure fini() [fini];
+  method test(p: int32) [override];
+  method afterconstruction() [afterconstruct];
+  method beforedestruction() [beforedestruct];
+  method ini() [ini];
+  method fini() [fini];
  end;
 
 var
@@ -33,38 +33,38 @@ begin
 // writeln(f1,'destroy');
 end;
 
-procedure objty.test(p: int32);
+method objty.test(p: int32);
 begin
  i1:= 100;
 end;
 
-procedure obj1ty.test(p: int32);
+method obj1ty.test(p: int32);
 begin
  i1:= i1+3;
 // writeln(f1,'test');
  exitcode:= f1+f2+p;
 end;
 
-procedure obj1ty.afterconstruction();
+method obj1ty.afterconstruction();
 begin
  i1:= i1+4;
 // writeln(f1,'aftconstruct');
 end;
 
-procedure obj1ty.beforedestruction();
+method obj1ty.beforedestruction();
 begin
  i1:= i1+5;
 // writeln(f1,'befdestruct');
 end;
 
-procedure obj1ty.ini();
+method obj1ty.ini();
 begin
  i1:= i1+6;
  f1:= 2;
 // writeln(f1,'ini');
 end;
 
-procedure obj1ty.fini();
+method obj1ty.fini();
 begin
  i1:= i1+7;
 // writeln(f1,'fini');

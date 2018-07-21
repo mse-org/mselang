@@ -1,11 +1,11 @@
 program classinhinterface1;
 type
  itest = interface
-  procedure test();
-  procedure test1();
+  method test();
+  method test1();
  end;
  itest1 = interface
-  procedure test();
+  method test();
  end;
 
  tc1 = class
@@ -20,15 +20,15 @@ type
   private
   public
    f2: int32;
-   procedure test();
+   method test();
  end;
 
  tc3 = class(tc2,itest)
   private
   public
    f3: int32;
-   procedure test();
-   procedure test1();
+   method test();
+   method test1();
  end;
 
 constructor tc1.create();
@@ -41,17 +41,17 @@ begin
  exitcode:= exitcode+f1;
 end;
 
-procedure tc2.test();
+method tc2.test();
 begin
  f2:= 111;
 end;
 
-procedure tc3.test();
+method tc3.test();
 begin
  f3:= 11;
 end;
 
-procedure tc3.test1();
+method tc3.test1();
 begin
  f3:= 13;
 end;

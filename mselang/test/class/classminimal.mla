@@ -11,7 +11,7 @@ type
    ff: recty;
    constructor create();
    destructor destroy();
-   procedure test();
+   method test();
 
  end;
 
@@ -30,7 +30,7 @@ begin
  exitcode:= ff.a+ff.b;
 end;
 
-procedure ttest.test();
+method ttest.test();
 begin
  ff.b:= ff.a+ff.b;
 end;

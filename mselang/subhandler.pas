@@ -2003,6 +2003,12 @@ begin
   isclass:= isobject and (stf_class in s.currentstatementflags);
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isobject or isinterface or (sf_ofobject in subflags);
+  if ismethod and (subflags * [sf_constructor,sf_destructor] = []) and 
+                                     not (sf_methodtoken in subflags) and 
+                                              (s.dialect = dia_mse) then begin
+   errormessage(err_tokenexpected,['method'],poind-1);
+   exit;
+  end;
   if sf_functionx in subflags then begin
    with contextstack[s.stacktop].d.typ do begin
     resulttype1.typeele:= typedata;
@@ -2365,13 +2371,13 @@ begin
                                   allvisi,@checkequalparam,paramdata);
       ele.popelementparent();
       if not bo1 then begin
-       errormessage(err_methodexpected,[],1);
+       errormessage(err_methodidentexpected,[],1);
       end
       else begin
        if sf_classmethod in (paramdata.match^.flags >< sub1^.flags) then begin
         bo1:= false;
         if sf_classmethod in sub1^.flags then begin
-         errormessage(err_methodexpected,[],1);
+         errormessage(err_methodidentexpected,[],1);
         end
         else begin
          errormessage(err_classmethodexpected,[],1);

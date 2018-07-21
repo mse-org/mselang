@@ -3,13 +3,13 @@ uses
  __mla__internaltypes;
 type
 
- meth1ty = procedure (a,b: int32) of object;
+ meth1ty = method (a,b: int32);
 
  tcla = class
   public
    constructor create();
    destructor destroy();
-   procedure test(a,b: int32);
+   method test(a,b: int32);
  end;
 
 constructor tcla.create();
@@ -20,7 +20,7 @@ destructor tcla.destroy();
 begin
 end;
 
-procedure tcla.test(a,b: int32);
+method tcla.test(a,b: int32);
 begin
  exitcode:= a+b;
 end;
