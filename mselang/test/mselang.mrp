@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,address
+   a=0,664,4,address
    c=4
     (
     kind=2
@@ -292,7 +292,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -2148,7 +2148,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=37
     (
     kind=1
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7285390
+    ao=An unhandled exception occured at $B7284390
     ae=
     aec=123
     ie=0
@@ -6299,7 +6299,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=41
+   c=42
     (
     kind=1
     a=0,664,4,managed
@@ -6498,7 +6498,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=11
      (
      kind=2
@@ -7286,7 +7286,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,param
+    a=0,664,4,param
     c=7
      (
      kind=2
@@ -7460,7 +7460,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,nested
+    a=0,664,4,nested
     c=2
      (
      kind=2
@@ -8297,6 +8297,28 @@ c=3
     a=0,648,1,objectfieldresult llvm
     teststate=1
     path=objectfieldresult.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,forward1 llvm
+    teststate=1
+    path=forward1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -9307,11 +9329,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,object
+  a=0,665,4,object
   c=28
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=12
     (
     kind=2
@@ -9595,7 +9617,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,operators
+   a=0,664,4,operators
    c=20
     (
     kind=2
@@ -10188,7 +10210,7 @@ c=3
    (
    kind=2
    a=0,648,1,object4
-   teststate=2
+   teststate=1
    path=object4.mla
    comment=
    cc=${mlc}
@@ -10201,7 +10223,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=abcabc
    ae=
    aec=123
@@ -10210,7 +10232,7 @@ c=3
    (
    kind=2
    a=0,648,1,object4 llvm
-   teststate=2
+   teststate=1
    path=object4.mla
    comment=
    cc=${mlc_llvm}
@@ -10223,7 +10245,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=abcabc
    ae=
    aec=123
@@ -10364,7 +10386,7 @@ c=3
    (
    kind=2
    a=0,648,1,object8
-   teststate=2
+   teststate=1
    path=object8.mla
    comment=
    cc=${mlc}
@@ -10377,7 +10399,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10386,7 +10408,7 @@ c=3
    (
    kind=2
    a=0,648,1,object8 llvm
-   teststate=2
+   teststate=1
    path=object8.mla
    comment=
    cc=${mlc_llvm}
@@ -10399,7 +10421,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10408,7 +10430,7 @@ c=3
    (
    kind=2
    a=0,648,1,object9
-   teststate=2
+   teststate=1
    path=object9.mla
    comment=
    cc=${mlc}
@@ -10421,7 +10443,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10430,7 +10452,7 @@ c=3
    (
    kind=2
    a=0,648,1,object9 llvm
-   teststate=2
+   teststate=1
    path=object9.mla
    comment=
    cc=${mlc_llvm}
@@ -10443,7 +10465,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10452,7 +10474,7 @@ c=3
    (
    kind=2
    a=0,648,1,objectintf
-   teststate=2
+   teststate=1
    path=objectintf.mla
    comment=
    cc=${mlc}
@@ -10465,7 +10487,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10474,7 +10496,7 @@ c=3
    (
    kind=2
    a=0,648,1,objectintf llvm
-   teststate=2
+   teststate=1
    path=objectintf.mla
    comment=
    cc=${mlc_llvm}
@@ -10487,7 +10509,7 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
+   cr=0
    ao=
    ae=
    aec=123
@@ -10625,7 +10647,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=object/
   comment=
   cc=
@@ -14559,7 +14581,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -14682,109 +14704,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=346
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=244
  0 0
  0 0
  0 0

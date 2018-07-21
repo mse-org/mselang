@@ -1,0 +1,19 @@
+program forward1;
+
+procedure test2() forward;
+
+procedure tt();
+begin
+ test2();
+end;
+
+procedure test2();
+begin
+ exitcode:= exitcode + 10;
+end;
+
+begin
+ exitcode:= 103;
+ tt();
+ test2();
+end.

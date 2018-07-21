@@ -2082,10 +2082,17 @@ begin
    ele1:= 0;
   end;
 // {
-  if (ele1 > 0) and (sf_method in subflags) then begin
-   element1:= ele.eleinfoabs(ele1);
-   if element1^.header.parent <> ele.elementparent then begin
-    ele1:= 0;    //todo: use correct class overload handling
+  if (ele1 > 0) then begin
+   if (sf_method in subflags) then begin
+    element1:= ele.eleinfoabs(ele1);
+    if element1^.header.parent <> ele.elementparent then begin
+     ele1:= 0;    //todo: use correct class overload handling
+    end;
+   end
+   else begin
+    if sf_forward in psubdataty(ele.eledataabs(ele1))^.flags then begin
+     ele1:= 0;
+    end;
    end;
   end;
 // }
