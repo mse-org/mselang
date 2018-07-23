@@ -1121,14 +1121,15 @@ begin
  end;
 end;
 
+const
+ allsubattachflags = [sf_forward,sf_external];
+
 procedure handlesubheaderattach();
 var
 // i1: int32;
  o1: objectoperatorty;
  subdefindex: int32;
  p1,pe: pcontextitemty;
-const
- allattachflags = [sf_forward,sf_external];
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADERATTACH');
@@ -1152,7 +1153,7 @@ begin
       ck_ident: begin
        case p1^.d.ident.ident of
         tk_forward: begin
-         if d.subdef.flags * allattachflags <> [] then begin
+         if d.subdef.flags * allsubattachflags <> [] then begin
           errormessage(err_invaliddirective,['forward']);
          end
          else begin
@@ -1163,7 +1164,7 @@ begin
          if sublevel > 0 then begin
           errormessage(err_cannotdeclarelocalexternal,[]);
          end;
-         if d.subdef.flags * allattachflags <> [] then begin
+         if d.subdef.flags * allsubattachflags <> [] then begin
           errormessage(err_invaliddirective,['external']);
          end
          else begin
@@ -2060,6 +2061,7 @@ begin
    tokenexpectederror(':');
    exit; //fatal
   end;
+
   if sf_functiontype in subflags then begin
    subflags:= subflags+[sf_functionx,sf_functioncall];
   end;

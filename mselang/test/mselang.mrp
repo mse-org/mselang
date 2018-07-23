@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72E3390
+    ao=An unhandled exception occured at $B72DC390
     ae=
     aec=123
     ie=0
@@ -9329,7 +9329,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=28
    (
    kind=1
@@ -10665,7 +10665,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=36
    (
    kind=1
@@ -12979,7 +12979,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -13719,15 +13719,15 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
    a=0,665,4,error check
-   c=5
+   c=6
     (
     kind=1
-    a=0,665,4,control
+    a=0,664,4,control
     c=1
      (
      kind=2
@@ -13859,7 +13859,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,params
+    a=0,664,4,params
     c=4
      (
      kind=2
@@ -13957,6 +13957,51 @@ c=3
      )
     teststate=1
     path=params/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,procedure
+    c=1
+     (
+     kind=2
+     a=0,648,1,bodyattachment
+     teststate=1
+     path=bodyattachment.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=bodyattachment.mla(4,24) Error: Forward declaration not solved "t"
+     +bodyattachment.mla(6,4) Fatal: Syntax error, "." expected
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=bodyattachment.mla(4,24) Error: Forward declaration not solved "t"
+     +bodyattachment.mla(6,4) Fatal: Syntax error, "." expected
+     aec=1
+     ie=0
+     )
+    teststate=1
+    path=procedure/
     comment=
     cc=
     cd=
@@ -14115,7 +14160,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,664,4,rtl
   c=4
    (
    kind=1
@@ -14694,238 +14739,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=244
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=23
  0 0
  0 0
  0 0
