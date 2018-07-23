@@ -748,6 +748,11 @@ var
                continue: false; restoresource: true; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'subheader4');
+ subheaderattachco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subheaderattach');
  external0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -4484,16 +4489,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclasubheader3: array[0..11] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
-     dest: (handler: @handlevirtual); stack: nil; 
-     keyword: $00000230{'virtual'}),
-   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
-     dest: (handler: @handleoverride); stack: nil; 
-     keyword: $00000267{'override'}),
-   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
-     dest: (handler: @handleoverload); stack: nil; 
-     keyword: $00000268{'overload'}),
+ bclasubheader3: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4951,13 +4947,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubheader3: array[0..8] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @external0co); stack: nil; 
-     keyword: $0000026B{'external'}),
-   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
-     dest: (handler: @handleforward); stack: nil; 
-     keyword: $0000026C{'forward'}),
+ bsubheader3: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4989,6 +4979,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
+     dest: (context: @subheaderattachco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5002,44 +4999,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubheader4: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @external0co); stack: nil; 
-     keyword: $0000026B{'external'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @forwardco); stack: nil; 
-     keyword: $0000026C{'forward'}),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @bracecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['(']),
-    (kind: bkk_char; chars: ['*']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @curlycomment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
+ bsubheaderattach: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @attachco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -14125,8 +14088,10 @@ begin
  subofco.handleentry:= @subofentry;
  subofco.handleexit:= @handleofobjectexpected;
  subheader3co.branch:= @bsubheader3;
- subheader4co.branch:= @bsubheader4;
+ subheader4co.branch:= nil;
  subheader4co.handleexit:= @handlesubheader;
+ subheaderattachco.branch:= @bsubheaderattach;
+ subheaderattachco.handleexit:= @handlesubheaderattach;
  external0co.branch:= @bexternal0;
  external0co.next:= @external1co;
  external0co.handleentry:= @handleexternal0entry;

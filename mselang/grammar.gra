@@ -418,9 +418,11 @@ clasubheader2,clasubheader3,,
 clasubheader3,,,
  ${whitespace}
  '[',clasubheaderattach-*>
+{$grapas}
  'virtual'.,!handlevirtual-
  'override'.,!handleoverride-
  'overload'.,!handleoverload-
+{$}
  ';',clasubheader4-
  '',semicolonexpected
 clasubheader4,,,*
@@ -496,6 +498,7 @@ subof,,subofentry,handleofobjectexpected*
 {$grapas}
  'object'.,subheader3-
 {$}
+{$grapas}
 subheader3,,,
  ${whitespace}
  'external'.,external0-
@@ -505,6 +508,16 @@ subheader4,,,handlesubheader*+
  ${whitespace}
  'external'.,external0-
  'forward'.,forward-
+{$}
+{$gramse}
+subheader3,,,
+ ${whitespace}
+ '[',subheaderattach-^*>
+ ';',subheader4-+
+subheader4,,,handlesubheader*+
+subheaderattach,,,handlesubheaderattach*
+ '',attach^*
+{$}
 external0,external1,handleexternal0entry,handleexternal0
  ${whitespace}
  ';',subheader3

@@ -119,6 +119,7 @@ procedure handlesub1entry();
 procedure handlevirtual();
 procedure handleoverride();
 procedure handleclasubheaderattach();
+procedure handlesubheaderattach();
 procedure handleoverload();
 procedure handleexternal();
 procedure handleexternal0entry();
@@ -1113,6 +1114,73 @@ begin
      end;
     end;
     inc(p1);
+   end;
+  end;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handlesubheaderattach();
+var
+// i1: int32;
+ o1: objectoperatorty;
+ subdefindex: int32;
+ p1,pe: pcontextitemty;
+const
+ allattachflags = [sf_forward,sf_external];
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBHEADERATTACH');
+{$endif}
+ with info do begin
+  subdefindex:= contextstack[s.stackindex].parent-1;
+  with contextstack[subdefindex] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_subdef then begin
+    internalerror(ie_handler,'20170504A');
+   end;
+  {$endif}
+   if sf_method in d.subdef.flags then begin
+    errormessage(err_attachnotallowed,[]);
+   end
+   else begin
+    p1:= @contextstack[s.stackindex+3];
+    pe:= @contextstack[s.stacktop];
+    while p1 <= pe do begin
+     case p1^.d.kind of
+      ck_ident: begin
+       case p1^.d.ident.ident of
+        tk_forward: begin
+         if d.subdef.flags * allattachflags <> [] then begin
+          errormessage(err_invaliddirective,['forward']);
+         end
+         else begin
+          d.subdef.flags:= d.subdef.flags + [sf_forward,sf_header];
+         end;
+        end;
+        tk_external: begin
+         if sublevel > 0 then begin
+          errormessage(err_cannotdeclarelocalexternal,[]);
+         end;
+         if d.subdef.flags * allattachflags <> [] then begin
+          errormessage(err_invaliddirective,['external']);
+         end
+         else begin
+          d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+         end;
+        end;
+        else begin
+         identerror(p1,p1^.d.ident.ident,err_invalidattachment);
+        end;
+       end;
+      end;
+      else begin
+       internalerror1(ie_handler,'20180723A');
+      end;
+     end;
+     inc(p1);
+    end;
    end;
   end;
   dec(s.stackindex);

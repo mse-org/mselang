@@ -9,12 +9,12 @@ type
   public
    constructor create();
    destructor destroy();
-   method test(a,b: int32) virtual;
+   method test(a,b: int32) [virtual];
  end;
 
  tcla2 = class(tcla)
   public
-   method test(a,b: int32) override;
+   method test(a,b: int32) [override];
  end;
 
 constructor tcla.create();

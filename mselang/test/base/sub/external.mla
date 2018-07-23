@@ -4,7 +4,7 @@ interface
 uses
  __mla__compilerunit;
 
-procedure sin(x: flo64): flo64 external;
+procedure sin(x: flo64): flo64 [external];
 
 implementation
 

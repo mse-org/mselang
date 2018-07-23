@@ -9,7 +9,7 @@ type
   public
    constructor create();
    destructor destroy();
-   method test(a,b: int32): int32 virtual;
+   method test(a,b: int32): int32 [virtual];
  end;
 
 constructor tcla.create();

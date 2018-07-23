@@ -1,6 +1,6 @@
 program forward1;
 
-procedure test2() forward;
+procedure test2() [forward];
 
 procedure tt();
 begin
