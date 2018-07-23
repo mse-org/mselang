@@ -1,0 +1,11 @@
+program external1;
+const
+ funcname = 'sin';
+
+procedure abc(a: flo64): flo64 [external='llll',name=funcname];
+
+begin
+ if abc(0) = 0 then
+  exitcode:= 123;
+ end;
+end.

@@ -9398,7 +9398,7 @@ const
    );
  battachitems3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @stringvalueco); stack: nil; keys: (
+     dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),

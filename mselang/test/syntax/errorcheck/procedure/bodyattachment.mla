@@ -1,5 +1,4 @@
 program bodyattachment;
-{$internaldebug on}
 
 procedure t() [forward];
 begin

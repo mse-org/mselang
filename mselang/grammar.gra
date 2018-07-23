@@ -1219,14 +1219,8 @@ attachitems2,,,^
  ',',attachitems-
  '=',attachitems3-
 attachitems3,attachitems2a,,handleattachvalue
- '',stringvalue^*
-// ${whitespace}
-// '''',attachstring-
-// '#',attachchar-
-//attachstring,attachitems2a,,
-// '',string*
-//attachchar,attachitems2a,,
-// '',char*
+ '',exp^*
+// '',stringvalue^*
 stringvalue,,,^
  ${whitespace}
  '''',string-*

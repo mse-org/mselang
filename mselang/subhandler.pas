@@ -1169,12 +1169,29 @@ begin
          end
          else begin
           d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+          if (p1+1)^.d.kind = ck_stringident then begin
+           inc(p1);
+           d.subdef.libname:= p1^.d.ident.ident;
+          end;
+         end;
+        end;
+        tk_name: begin
+         d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+         if (p1+1)^.d.kind = ck_stringident then begin
+          inc(p1);
+          d.subdef.funcname:= p1^.d.ident.ident;
+         end
+         else begin
+          errormessage(err_invalidattachmentvalue,[],p1);
          end;
         end;
         else begin
          identerror(p1,p1^.d.ident.ident,err_invalidattachment);
         end;
        end;
+      end;
+      ck_stringident: begin
+       errormessage(err_invalidattachmentvalue,[],p1);
       end;
       else begin
        internalerror1(ie_handler,'20180723A');

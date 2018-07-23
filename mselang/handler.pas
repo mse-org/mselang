@@ -2360,18 +2360,32 @@ begin
 end;
 
 procedure handleattachvalue();
+var
+ id1: identty;
+ pa,ptop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('ATTACHVALUE');
 {$endif}
  with info do begin
-  if contextstack[s.stacktop].d.kind = ck_str then begin
-   with contextstack[s.stacktop-1] do begin
-    d.kind:= ck_stringident;
-    d.ident.ident:= getident(info.stringbuffer); 
+  ptop:= @contextstack[s.stacktop];
+  with ptop^ do begin
+   if (d.kind = ck_const) and (d.dat.constval.kind = dk_string) then begin
+    pa:= getpreviousnospace(ptop-1)+1;
+    id1:= getident(d.dat.constval.vstring);
+    with pa^ do begin
+     d.kind:= ck_stringident;
+     d.ident.ident:= id1;
+    end;
+    s.stacktop:= getstackindex(pa);
+    exit;
+   end
+   else begin
+    errormessage(err_stringconstantexpected,[]);
    end;
   end;
-  s.stacktop:= s.stacktop-1;
+  s.stacktop:= s.stackindex+1;
+//  s.stacktop:= s.stacktop-1;
  end;
 end;
 
