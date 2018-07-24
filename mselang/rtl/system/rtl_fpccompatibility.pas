@@ -13,7 +13,7 @@ unit rtl_fpccompatibility;
 interface
 //FPC compatibility
 uses
- rtl_system,rtl_string,rtl_libc,__mla__internaltypes;
+ rtl_system,rtl_string,rtl_libc,__mla__internaltypes,rtl_base;
  
 type
 //{$internaldebug on}
@@ -23,7 +23,7 @@ type
  tclass  = class of tobject;
  pclass  = ^tclass;
 
- tobject = class()[virtual]
+ tobject = class(tbase)[virtual]
   private
    class function newinst(): pointer [new];
   protected

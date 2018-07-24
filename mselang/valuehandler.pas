@@ -473,7 +473,7 @@ begin
      exit;
     end;
    {$ifdef mse_checkinternalerror}
-    if d.kind <> ck_fact then begin
+    if not (d.kind in factcontexts) then begin
      internalerror(ie_handler,'20160615A');
     end;
    {$endif}

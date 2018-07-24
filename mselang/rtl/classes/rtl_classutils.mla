@@ -11,12 +11,11 @@
 unit rtl_classutils;
 interface
 uses
- rtl_base;
+ rtl_base,__mla__internaltypes;
 
 procedure getclassname(const ainstance: tbase): string8;
 
 implementation
-uses
  
 procedure getclassname(const ainstance: tbase): string8;
 begin

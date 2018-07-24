@@ -1176,7 +1176,7 @@ begin
          end;
         end;
         tk_name: begin
-         d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+         d.subdef.flags:= d.subdef.flags + [{sf_external,}sf_header];
          if (p1+1)^.d.kind = ck_stringident then begin
           inc(p1);
           d.subdef.funcname:= p1^.d.ident.ident;
