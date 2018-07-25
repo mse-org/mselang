@@ -322,7 +322,9 @@ begin
      po2^.infoclassof.classtyp:= d.typ.typedata;
     end;
    end;
+   ele1:= po1^.h.base;
    resolveforwardtype(po1);
+   po1^.h.base:= ele1; //normally 0
   end;
  end;
 end;

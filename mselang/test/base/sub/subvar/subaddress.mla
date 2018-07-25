@@ -1,0 +1,20 @@
+program subaddress;
+
+procedure tt();
+begin
+ exitcode:= 123;
+end;
+
+type
+ procty = procedure();
+ arty = array[0..2] of procty;
+var
+ ar1: arty;
+ p1: pointer;
+begin
+ ar1[1]:= @tt;
+ p1:= pointer(ar1[1]);
+ if ar1[1] = p1 then
+  ar1[1]();
+ end;
+end.

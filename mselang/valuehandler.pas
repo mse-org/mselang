@@ -1634,7 +1634,13 @@ begin
       else begin
        if getvalue(acontext,pointerintsize) then begin //any to pointer
         i1:= d.dat.fact.ssaindex; //todo: no int source
-        with insertitem(oc_inttopo,stackoffset,-1)^ do begin
+        if source1^.h.kind = dk_sub then begin
+         op1:= oc_potopo;
+        end
+        else begin
+         op1:= oc_inttopo;
+        end;
+        with insertitem(op1,stackoffset,-1)^ do begin
          par.ssas1:= i1;
         end;
         d.dat.datatyp.typedata:= ele.eledatarel(dest);

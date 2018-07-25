@@ -273,7 +273,7 @@ type
   parentclass: pclassdefty;                                              //0
   interfaceparent: pclassdefty;     //last parent class with interfaces  //1
   virttaboffset: int32;             //field offset in instance           //2
-  rtti: pobjectrttity;                                                         //3
+  rtti: pobjectrttity;                                                   //3
   procs: array[classdefprocty] of classprocty;  //4             
   allocs: allocsinfoty;                         //4+high(procs)+1
  end;

@@ -15,7 +15,7 @@ uses
  rtl_fpccompatibility;
 //{$internaldebug on}
 type
- tfiler = class(tobject)
+ tfiler = class(tobject)[rtti]
   class method iswriter(): boolean [virtual];
  end;
  
@@ -37,11 +37,10 @@ type
    method getnamepath(): string8 [virtual];
  end;
  
- 
 implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions;
- 
+
 { tpersistent }
 
 method tpersistent.assignerror(const source: tpersistent);

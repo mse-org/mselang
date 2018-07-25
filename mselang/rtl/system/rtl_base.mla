@@ -22,6 +22,7 @@ type
 
  tbase = class() [virtual]
   destructor destroy() [virtual];
+  constructor create();
   method rtti(): pobjectrttity;
  end;
   
@@ -96,6 +97,10 @@ begin
 end;
 
 { tbase }
+
+constructor tbase.create();
+begin
+end;
 
 destructor tbase.destroy();
 begin

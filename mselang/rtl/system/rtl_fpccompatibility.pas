@@ -122,10 +122,14 @@ class function tobject.newinst(): pointer;
 begin
  result:= newinstance();
 end;
-
+var testvar: pclassdefty; testvar1: prttity;
 class function tobject.newinstance(): tobject;
 begin
  result:= getmem(sizeof(self^));
+testvar:= pclassdefty(self);
+testvar1:= testvar^.header.rtti;
+writeln(testvar,' ',self,' ',classof(self),' ',string8(testvar1^.typename));
+writeln(pointer(@testvar^.header.procs[cdp_ini]),' *');
  initialize(result,classof(self));
 end;
 
