@@ -125,7 +125,7 @@ object compmo: tcompmo
       )
       (
         ak_par
-        'Oo'
+        'Xo'
         (        )
         []
         ''
@@ -136,7 +136,7 @@ object compmo: tcompmo
       )
       (
         ak_par
-        'Ob'
+        'Xb'
         (        )
         []
         ''
@@ -148,6 +148,17 @@ object compmo: tcompmo
       (
         ak_par
         'Vc'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        'O'
         (        )
         []
         ''

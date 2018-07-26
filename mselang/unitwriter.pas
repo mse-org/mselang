@@ -408,7 +408,13 @@ begin
  fna1:= tosysfilepath(aunit^.bcfilepath);
  fna1no:= fna1;
  with info.buildoptions do begin
+  if co_compilefileinfo in info.o.compileoptions then begin
+   write(fna1+' ');
+  end;
   if llvmoptcommand <> '' then begin
+   if co_compilefileinfo in info.o.compileoptions then begin
+    write('llvm-opt ');
+   end;
    fna1:= fna1 + '.opt';
    result:= execwaitmse(llvmoptcommand+' -o '+fna1+' '+fna1no) = 0;
    deletetempfile(fna1no);
@@ -418,11 +424,22 @@ begin
   end;
   fna2:= tosysfilepath(replacefileext(aunit^.bcfilepath,'s'));
   aunit^.objfilepath:= getobjunitfilename(aunit^.filepath);
-  result:= (execwaitmse(llccommand+' -o '+fna2+' '+fna1) = 0) and
-           (execwaitmse(ascommand+' -o '+
-                    tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0);
+  if co_compilefileinfo in info.o.compileoptions then begin
+   write('llc ');
+  end;
+  result:= execwaitmse(llccommand+' -o '+fna2+' '+fna1) = 0;
+  if result then begin
+   if co_compilefileinfo in info.o.compileoptions then begin
+    write('as');
+   end;
+   result:= execwaitmse(ascommand+' -o '+
+                    tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0;
+  end;
   deletetempfile(fna2); 
 errlab1:
+  if co_compilefileinfo in info.o.compileoptions then begin
+   writeln;
+  end;
   deletetempfile(fna1); 
  end;
 end;

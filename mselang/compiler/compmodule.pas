@@ -21,7 +21,9 @@ type
             pa_build,                   //9
             pa_makeobject,              //10
             pa_makebc,                  //11 produce no exe
-            pa_showcompilefile);        //12
+            pa_showcompilefile,         //12
+            pa_optimizeparams           //13
+           );
             //item number in sysenv
  
  tcompmo = class(tmsedatamodule)
@@ -92,22 +94,24 @@ begin
    try
     include(parserparams.compileoptions,co_nodeinit);
     if parse(str1,filename1,parserparams) then begin
-     if parserparams.compileoptions * [co_llvm,co_modular] = [co_llvm] then begin
-      filename1:= replacefileext(filename1,llvmbcextension);
-      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
-                           filename1,fm_create),
-                              err_cannotcreatetargetfile,[filename1]) then begin
-       seg1:= getfullsegment(seg_op,startupoffset);
-       try
-        llvmops.run(llvmstream,true,info.s.unitinfo^.mainfini,seg1);
-       except
-        on e: exception do begin
-         errormessage1(e.message,[]);
-         exitcode:= 1;
+     if co_llvm in parserparams.compileoptions then begin
+      if not (co_modular in parserparams.compileoptions) then begin
+       filename1:= replacefileext(filename1,llvmbcextension);
+       if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
+                            filename1,fm_create),
+                               err_cannotcreatetargetfile,[filename1]) then begin
+        seg1:= getfullsegment(seg_op,startupoffset);
+        try
+         llvmops.run(llvmstream,true,info.s.unitinfo^.mainfini,seg1);
+        except
+         on e: exception do begin
+          errormessage1(e.message,[]);
+          exitcode:= 1;
+         end;
         end;
+        unithandler.deinit(true); //destroy unitlist
+        llvmstream.destroy();
        end;
-       unithandler.deinit(true); //destroy unitlist
-       llvmstream.destroy();
       end;
      end
      else begin
@@ -158,6 +162,13 @@ begin
  parserparams.buildoptions.llvmlinkcommand:= 
                                     tosysfilepath(llvmbindir+'llvm-link');
  parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
+ if sysenv.defined[ord(pa_optimizeparams)] then begin
+  parserparams.buildoptions.llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +
+          ' '+sysenv.value[ord(pa_optimizeparams)];
+ end
+ else begin
+  parserparams.buildoptions.llvmoptcommand:= '';
+ end;
 //   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
  parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
