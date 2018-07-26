@@ -70,7 +70,7 @@ procedure deinit(const freeunitlist: boolean);
 
 implementation
 uses
- typinfo,handler,elements,sysutils,handlerglob,mseprocutils,
+ typinfo,handler,elements,sysutils,handlerglob,mseprocutils,typehandler,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
@@ -1073,6 +1073,9 @@ parseend:
    if (ps_interfaceonly in s.state) and 
             not (us_implementationparsed in s.unitinfo^.state) then begin
     if co_llvm in o.compileoptions then begin
+     if not modularllvm then begin
+      checkpendingmanagehandlers();
+     end;
      updatellvmclassdefs(false);
     end;
     with punitlinkinfoty(addlistitem(

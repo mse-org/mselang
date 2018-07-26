@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -6298,7 +6298,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=43
     (
     kind=1
@@ -6759,8 +6759,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
@@ -13761,7 +13761,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syntax
+  a=0,664,4,syntax
   c=1
    (
    kind=1
@@ -14189,8 +14189,8 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,rtl
-  c=4
+  a=0,665,4,rtl
+  c=5
    (
    kind=1
    a=0,665,4,variants
@@ -14386,8 +14386,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -14408,8 +14408,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -14430,8 +14430,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -14552,6 +14552,48 @@ c=3
     )
    teststate=1
    path=typeinfo/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,665,4,streaming
+   c=1
+    (
+    kind=2
+    a=0,648,1,streaming1 llvm
+    teststate=1
+    path=streaming1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=streaming/
    comment=
    cc=
    cd=
@@ -14759,87 +14801,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=104
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

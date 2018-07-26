@@ -924,7 +924,7 @@ begin
       e1:= ele.eleinfoabs(h.ancestor);
       parentinfoclass1:= @ptypedataty(eletodata(e1))^.infoclass;
       if modularllvm and (e1^.header.defunit <> s.unitinfo) then begin
-       header.parentclass:= -h.ancestor; //must be relecated ->
+       header.parentclass:= -h.ancestor; //must be relocated ->
                                          //-eleoffset of classypedef
       end
       else begin

@@ -541,7 +541,7 @@ begin
  with info do begin
  {
   if co_llvm in o.compileoptions then begin
-   updatellvmclassdefs();
+   updatellvmclassdefs(false);
   end;
  }
   s.unitinfo^.usescache.clear(); //override interface uses
@@ -564,11 +564,11 @@ begin
  markimplementationstart();
  checkpendingmanagehandlers();
  with info do begin
+  include(s.unitinfo^.state,us_implementationblock);
   if co_llvm in o.compileoptions then begin
    updatellvmclassdefs(false);
   end;
  end;
- include(info.s.unitinfo^.state,us_implementationblock);
 end;
 
 procedure checkinifini();

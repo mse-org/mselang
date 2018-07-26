@@ -15,7 +15,7 @@ uses
  rtl_fpccompatibility;
 //{$internaldebug on}
 type
- tfiler = class(tobject)[rtti]
+ tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
  end;
  

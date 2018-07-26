@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit llvmlists;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  msetypes,msehash,globtypes,handlerglob,mselist,msestrings,llvmbitcodes,
@@ -503,8 +503,9 @@ type
 
    procedure updatesubtype(const avalue: psubdataty); 
    function addinitvalue(const akind: globallockindty;
-              const aconstlistindex: integer; const alinkage: linkagety): int32;
-                                                            //returns listid
+              const aconstlistindex: integer;
+                const alinkage: linkagety; const nameid: int32 = -1): int32;
+                                           //-1 -> unitnameid, returns listid
    function addidentconst(const aident: identty): llvmvaluety;
                                                     //string8 pointer
    function addrtticonst(const atype: ptypedataty): llvmvaluety; //prtti
@@ -982,7 +983,7 @@ begin
   end;
  {$endif}
  {$ifdef mse_checkinternalerror}
-  if typ1^.infoclass.defsid < 0 then begin
+  if (typ1^.infoclass.defsid < 0) and (typ1^.infoclass.nameid < 0) then begin
    internalerror(ie_llvmlist,'20180716B');
 //   result:= -1; //not ready;
   end;
@@ -1058,7 +1059,8 @@ var
  bufdat1: paggregateconstty;
  p1: pointer;
  li1: linkagety;
-
+label
+ loopend;
 begin
 //  checkpendingmanagehandlers();
  poclassdef:= getsegmentbase(seg_classdef) + sizeof(classdefconstheaderty);
@@ -1069,20 +1071,23 @@ begin
   typ1:= ele.eledataabs(header1^.typedata);
   i1:= header1^.intfcount;
   if typ1^.infoclass.defsid < 0 then begin
+   if not updatesubs and 
+           not (us_implementationblock in info.s.unitinfo^.state) and 
+                                                  info.modularllvm then begin
+    typ1^.infoclass.nameid:= getunitnameid(); //in interface part
+    goto loopend;
+   end;
    li1:= constlinkage;
    if vik_global in datatoele(typ1)^.header.visibility then begin
     li1:= li_external;
    end;
    typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
-                          info.s.unitinfo^.llvmlists.constlist.addclassdef(
-                                                     poclassdef,i1).listid,li1);
-   if li1 = li_external then begin
-//    inc(info.s.unitinfo^.nameid);
+              info.s.unitinfo^.llvmlists.constlist.addclassdef(
+                                              poclassdef,i1).listid,
+                                                 li1,typ1^.infoclass.nameid);
+   if (li1 = li_external) and (typ1^.infoclass.nameid < 0) then begin
     typ1^.infoclass.nameid:= info.s.unitinfo^.nameid;
-//    typ1^.infoclass.nameid:= getunitnameid();
-//    info.s.unitinfo^.llvmlists.globlist.namelist.addname(
-//               info.s.unitinfo,info.s.unitinfo^.nameid,typ1^.infoclass.defsid);
    end;
    header1^.defsid:= typ1^.infoclass.defsid;
   {$ifdef mse_checkinternalerror}
@@ -1149,7 +1154,7 @@ begin
    {$endif}
    end;
   end;
-  
+loopend:
   poclassdef:= pointer(poclassdef) + sizeof(classdefconstheaderty) +
                        poclassdef^.header.allocs.classdefinterfacestart +
                                                           i1*targetpointersize;
@@ -2687,11 +2692,13 @@ begin
 end;
 
 function tgloballocdatalist.addinitvalue(const akind: globallockindty;
-              const aconstlistindex: integer; const alinkage: linkagety): int32;
+              const aconstlistindex: integer; const alinkage: linkagety;
+                               const nameid: int32 = -1): int32;
 var
  dat1: globallocdataty;
  po1: pconstlisthashdataty;
  po2: pint32;
+ i1: int32;
 begin
  fillchar(dat1,sizeof(dat1),0);
  po1:= pconstlisthashdataty(fconstlist.fdata)+aconstlistindex+1;
@@ -2727,8 +2734,13 @@ begin
  inccount();
  flastitem^:= dat1;
  if alinkage = li_external then begin
-//  inc(info.s.unitinfo^.nameid);
-  fnamelist.addname(info.s.unitinfo,getunitnameid(),result);
+  if nameid >= 0 then begin
+   i1:= nameid;
+  end
+  else begin
+   i1:= getunitnameid();
+  end;
+  fnamelist.addname(info.s.unitinfo,i1,result);
  end;
 end;
 
