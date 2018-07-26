@@ -783,7 +783,7 @@ var
 var
  op1: managedopty;
  ele1,typele1: elementoffsetty;
- typ1,typ2: ptypedataty;
+ typ1,typ2,typ3: ptypedataty;
  sub1: pinternalsubdataty;
  locad1: memopty;
  i1: int32;
@@ -937,16 +937,18 @@ begin
   typ1:= ele.eledataabs(atyp); //can be changed because of added items
   if (typ1^.h.kind in [dk_object,dk_class]) and
      (typ1^.infoclass.subattach[osa_destroy] <> 0) then begin
-   typ2:= nil;
-   if typ1^.h.ancestor <> 0 then begin
-    typ2:= ele.eledataabs(typ1^.h.ancestor);
-    if typ2^.infoclass.subattach[osa_destroy] <> 
-                       typ1^.infoclass.subattach[osa_destroy] then begin
-     typ2:= nil;
+   typ2:= typ1;
+   typ3:= typ1;
+   i1:= typ1^.infoclass.subattach[osa_destroy];
+   while typ3^.h.ancestor <> 0 do begin
+    typ2:= typ3;
+    typ3:= ele.eledataabs(typ3^.h.ancestor);
+    if (typ3^.infoclass.subattach[osa_destroy] <> i1) then begin
+     break;
     end;
    end;
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[mo_destroy]);
-   if typ2 = nil then begin
+   if typ2 = typ1 then begin
     sub1^.address:= startsimplesub(sub1,[sso_pointerparam]);
     if sub1^.calllinks <> 0 then begin
      linkresolvecall(sub1^.calllinks,sub1^.address,-1); 

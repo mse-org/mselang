@@ -24,6 +24,8 @@ procedure getpropinfo(const instance: tbase;
 procedure getproperties(const instance: tbase): propertyrttiarty;
 procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 
+procedure isstoredprop(const instance: tbase; 
+                           const propinfo: ppropertyrttity): boolean;
 implementation
 uses
  rtl_sysexceptions,rtl_sysconsts,rtl_string;
@@ -132,15 +134,25 @@ procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 var
  i1: int32;
 begin
- setlength(result,1);
- i1:= 0;
- addprops(atypeinfo,result,i1);
- setlength(result,i1);
+ if atypeinfo = nil then
+  result:= nil;
+ else
+  setlength(result,1);
+  i1:= 0;
+  addprops(atypeinfo,result,i1);
+  setlength(result,i1);
+ end;
 end;
 
 procedure getproperties(const instance: tbase): propertyrttiarty;
 begin
  result:= getproperties(instance.rtti);
+end;
+
+procedure isstoredprop(const instance: tbase; 
+                           const propinfo: ppropertyrttity): boolean;
+begin
+ result:= true;
 end;
 
 end.

@@ -15,6 +15,8 @@ uses
  rtl_fpccompatibility;
 //{$internaldebug on}
 type
+ tpersistent = class;
+
  tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
  end;
@@ -24,22 +26,23 @@ type
  
  twriter = class(tfiler)
   class method iswriter(): boolean [override];
+  method writeproperties(const instance: tpersistent);
+  protected
  end;
  
  tpersistent = class(tobject)
+  method assign(source: tpersistent) [virtual];
+  method getnamepath(): string8 [virtual];
   protected
    method assignerror(const source: tpersistent);
    method assignto(dest: tpersistent) [virtual];
    method defineproperties(filer: tfiler) [virtual];
    method getowner(): tpersistent [virtual];
-  public
-   method assign(source: tpersistent) [virtual];
-   method getnamepath(): string8 [virtual];
  end;
  
 implementation
 uses
- rtl_rtlconsts,rtl_classutils,rtl_sysexceptions;
+ rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils;
 
 { tpersistent }
 
@@ -76,6 +79,19 @@ begin
 end;
 
 { twriter }
+
+method twriter.writeproperties(const instance: tpersistent);
+var
+ ar1: propertyrttiarty;
+ i1: int32;
+begin
+ ar1:= getproperties(instance);
+ for i1:= 0 to high(ar1) do
+  if isstoredprop(instance,ar1[i1]) then
+   writeln('- ',string8(ar1[i1]^.name));
+  end;
+ end;
+end;
 
 class method twriter.iswriter(): boolean;
 begin
