@@ -23,6 +23,7 @@ type
  tbase = class() [virtual]
   destructor destroy() [virtual];
   constructor create();
+  method free();
   method rtti(): pobjectrttity;
  end;
   
@@ -100,10 +101,19 @@ end;
 
 constructor tbase.create();
 begin
+ //dummy
 end;
 
 destructor tbase.destroy();
 begin
+ //dummy
+end;
+
+method tbase.free();
+begin
+ if self <> nil then
+  destroy();
+ end;
 end;
 
 method tbase.rtti(): pobjectrttity;

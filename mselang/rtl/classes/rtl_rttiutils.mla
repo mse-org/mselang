@@ -13,6 +13,7 @@ interface
 uses
  rtl_base,__mla__internaltypes;
 type
+ pppropertyrttity = ^ppropertyrttity;
  propertyrttiarty = array of ppropertyrttity;
  
 procedure getordprop(const instance: tbase;
@@ -26,6 +27,7 @@ procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 
 procedure isstoredprop(const instance: tbase; 
                            const propinfo: ppropertyrttity): boolean;
+                           
 implementation
 uses
  rtl_sysexceptions,rtl_sysconsts,rtl_string;
@@ -152,7 +154,7 @@ end;
 procedure isstoredprop(const instance: tbase; 
                            const propinfo: ppropertyrttity): boolean;
 begin
- result:= true;
+ result:= propinfo^.name <> nil;
 end;
 
 end.

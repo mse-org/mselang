@@ -30,7 +30,6 @@ type
   public
    constructor create();
    destructor destroy() [virtual,default];
-   procedure free();
    class function newinstance(): tobject [virtual];
    procedure freeinstance [dispose,virtual];
    class function initinstance(instance : pointer): tobject;
@@ -144,13 +143,6 @@ end;
 procedure tobject.cleanupinstance();
 begin
  finalize(self^);
-end;
-
-procedure tobject.free();
-begin
- if self <> nil then begin
-  destroy();
- end;
 end;
 
 class function tobject.classtype(): tclass;

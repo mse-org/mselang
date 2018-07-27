@@ -12,7 +12,7 @@
 unit rtl_streaming;
 interface
 uses
- rtl_fpccompatibility;
+ rtl_fpccompatibility,__mla__internaltypes;
 //{$internaldebug on}
 type
  tpersistent = class;
@@ -27,6 +27,8 @@ type
  twriter = class(tfiler)
   class method iswriter(): boolean [override];
   method writeproperties(const instance: tpersistent);
+  method writeproperty(const instance: tpersistent;
+                                     const propinfo: ppropertyrttity);
   protected
  end;
  
@@ -80,16 +82,23 @@ end;
 
 { twriter }
 
+method twriter.writeproperty(const instance: tpersistent;
+               const propinfo: ppropertyrttity);
+begin
+ writeln('* ',string8(propinfo^.name));
+end;
+
 method twriter.writeproperties(const instance: tpersistent);
 var
  ar1: propertyrttiarty;
- i1: int32;
+ p1,pe: pppropertyrttity;
 begin
  ar1:= getproperties(instance);
- for i1:= 0 to high(ar1) do
-  if isstoredprop(instance,ar1[i1]) then
-   writeln('- ',string8(ar1[i1]^.name));
-  end;
+ p1:= pointer(ar1);
+ pe:= p1 + length(ar1);
+ while p1 < pe do
+  writeproperty(instance,p1^);
+  inc(p1);
  end;
 end;
 
