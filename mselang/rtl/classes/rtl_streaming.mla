@@ -12,7 +12,7 @@
 unit rtl_streaming;
 interface
 uses
- rtl_fpccompatibility,__mla__internaltypes;
+ rtl_fpccompatibility,__mla__internaltypes,rtl_streams;
 //{$internaldebug on}
 type
  tpersistent = class;
