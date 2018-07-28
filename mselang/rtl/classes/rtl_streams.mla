@@ -14,12 +14,11 @@ uses
  rtl_base,rtl_system;
  
 type
- seekoriginty = (so_beginning, so_current, so_end);
 
  tstream = class(tbase)
   method read(var buffer; count: int32): int32 [virtual];
   method write(const buffer; count: int32): int32 [virtual];
-  method seek(const offset: int64; origin: seekoriginty): int64 [virtual];
+  method seek(const offset: int64; const origin: seekoriginty): int64 [virtual];
   method readbuffer(var buffer; count: int32);
   method writebuffer(const buffer; count: int32);
  end;
@@ -28,8 +27,10 @@ type
   constructor create(const ahandle: filehandlety);
   method read(var buffer; count: int32): int32 [override];
   method write(const buffer; count: int32): int32 [override];
-  method seek(const offset: int64; origin: seekoriginty): int64 [override];
+  method seek(const offset: int64; 
+                      const origin: seekoriginty): int64 [override];
   property handle: filehandlety read fhandle;
+
   private
   protected
    fhandle: filehandlety;
@@ -53,7 +54,7 @@ begin
  raise estreamerror.createfmt(sstreamnowriting,[classname]);
 end;
 
-method tstream.seek(const offset: int64; origin: seekoriginty): int64;
+method tstream.seek(const offset: int64; const origin: seekoriginty): int64;
 begin
  raise estreamerror.createfmt(sstreamnoseeking,[classname]);
 end;
@@ -105,11 +106,14 @@ end;
 
 method thandlestream.write(const buffer; count: int32): int32;
 begin
+writeln(@buffer);
  result:= sys_filewrite(fhandle,@buffer,count);
 end;
 
-method thandlestream.seek(const offset: int64; origin: seekoriginty): int64;
+method thandlestream.seek(const offset: int64; 
+                                    const origin: seekoriginty): int64;
 begin
+ result:= sys_fileseek(fhandle,offset,origin);
 end;
 
 end.

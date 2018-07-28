@@ -40,6 +40,7 @@ type
  fileattributesty = set of fileattributety;
  accessmodety = (am_read,am_write,am_execute,am_exist);
  accessmodesty = set of accessmodety;
+ seekoriginty = (so_beginning, so_current, so_end);
 
  syserrorty = (sye_ok,sye_lasterror,sye_extendederror,sye_busy,sye_dirstream,
                 sye_network,sye_write,sye_read,
@@ -48,17 +49,21 @@ type
                 sye_sockaddr,sye_socket,sye_isdir
                );
 
-function nowutc(): datetimety;
+procedure nowutc(): datetimety;
 
-function sys_fileopen(const path: string8{filenamety};
+procedure sys_fileopen(const path: string8{filenamety};
            const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
                   const rights: filerightsty; out fd: filehandlety): syserrorty;
-function sys_fileclose(const fd: filehandlety): syserrorty;
-function sys_filewrite(const fd: filehandlety; const buf: pointer; 
+procedure sys_fileclose(const fd: filehandlety): syserrorty;
+procedure sys_filewrite(const fd: filehandlety; const buf: pointer; 
                                                  nbytes: int32): int32;
-function sys_fileread(const fd: filehandlety; const buf: pointer; 
+procedure sys_fileread(const fd: filehandlety; const buf: pointer; 
                                                  nbytes: int32): int32;
-//function sys_stdin(): hilehandlety;
+procedure sys_fileseek(const fd: filehandlety; const offset: int64;
+                                         const origin: seekoriginty): int64;
+procedure sys_stdin(): filehandlety;
+procedure sys_stdout(): filehandlety;
+procedure sys_stderr(): filehandlety;
 
 implementation
 //{$internaldebug on}
@@ -69,12 +74,12 @@ implementation
 const
  unidatetimeoffset = -25569;
 
-function syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
+procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
 begin
  result:= sye_lasterror; //todo
 end;
 
-function nowutc(): datetimety;
+procedure nowutc(): datetimety;
 var
  ti: timeval;
  f1,f2: flo64;
@@ -91,29 +96,24 @@ const
 //    fm_append
       o_rdwr or o_creat {or o_trunc});
 *)
-function getopenmodes(amode: fileopenmodety): card32; //todo: use array
+procedure getopenmodes(amode: fileopenmodety): card32; //todo: use array
 begin
  result:= 0;
  case amode of 
-  fm_read: begin
+  fm_read:
    result:= o_rdonly;
-  end;
-  fm_write: begin
+  fm_write:
    result:= o_wronly;
-  end;
-  fm_readwrite: begin
+  fm_readwrite:
    result:= o_rdwr;
-  end;
-  fm_create: begin
+  fm_create:
    result:= o_rdwr or o_creat or o_trunc;
-  end;
-  fm_append: begin
+  fm_append:
    result:= o_rdwr or o_creat;
-  end;
  end;
 end;
 
-function sys_fileopen(const path: string8{filenamety};
+procedure sys_fileopen(const path: string8{filenamety};
           const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
                   const rights: filerightsty; out fd: filehandlety): syserrorty;
 var
@@ -132,7 +132,7 @@ begin
  fd:= rtl_libc.open(pcchar(path), getopenmodes(openmode) or defaultopenflags);
 // handle:= open(pcchar(str1), openmodes[openmode] or 
 //                            defaultopenflags,[getfilerights(rights)]);
- if fd >= 0 then begin
+ if fd >= 0 then
  {
   if fstat(handle,@stat1) = 0 then begin  
    if s_isdir(stat1.st_mode) then begin
@@ -152,19 +152,18 @@ begin
   end;
  }
   result:= sye_ok;
- end
- else begin
+ else
   result:= syelasterror;
  end;
 end;
 
-function sys_fileclose(const fd: filehandlety): syserrorty;
+procedure sys_fileclose(const fd: filehandlety): syserrorty;
 var
  i1: cint;
 begin
  result:= sye_ok;
- if (fd <> invalidfilehandle) then begin
-  if rtl_libc.close(fd) <> 0 then begin
+ if (fd <> invalidfilehandle) then
+  if rtl_libc.close(fd) <> 0 then
    result:= sye_lasterror;
   end;
  end;
@@ -179,7 +178,7 @@ begin
 }
 end;
 
-function sys_filewrite(const fd: filehandlety; const buf: pointer; 
+procedure sys_filewrite(const fd: filehandlety; const buf: pointer; 
                                                   nbytes: int32): int32;
 var
  i1: int32;
@@ -202,7 +201,7 @@ begin
 }
 end;
 
-function sys_fileread(const fd: filehandlety; const buf: pointer; 
+procedure sys_fileread(const fd: filehandlety; const buf: pointer; 
                                                  nbytes: int32): int32;
 begin
  result:= rtl_libc.read(fd,buf,nbytes);
@@ -216,5 +215,25 @@ begin
 }
 end;
 
+procedure sys_fileseek(const fd: filehandlety; const offset: int64;
+                                         const origin: seekoriginty): int64;
+begin
+ result:= rtl_libc.lseek64(fd,offset,ord(origin));
+end;
+
+procedure sys_stdin(): filehandlety;
+begin
+ result:= 0;
+end;
+
+procedure sys_stdout(): filehandlety;
+begin
+ result:= 1;
+end;
+
+procedure sys_stderr(): filehandlety;
+begin
+ result:= 2;
+end;
 
 end.

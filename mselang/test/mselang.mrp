@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B733B390
+    ao=An unhandled exception occured at $B72EB390
     ae=
     aec=123
     ie=0
@@ -6298,7 +6298,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
+   a=0,665,4,sub
    c=43
     (
     kind=1
@@ -6498,7 +6498,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=12
      (
      kind=2
@@ -7308,8 +7308,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,param
-    c=7
+    a=0,665,4,param
+    c=8
      (
      kind=2
      a=0,648,1,params
@@ -7403,6 +7403,28 @@ c=3
      a=0,648,1,constpar llvm
      teststate=1
      path=constpar.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,constpar1 llvm
+     teststate=1
+     path=constpar1.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -14204,7 +14226,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,665,5,rtl
   c=5
    (
    kind=1
@@ -14382,7 +14404,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,tobject
+   a=0,665,5,tobject
    c=3
     (
     kind=2
@@ -14430,8 +14452,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,free llvm
-    teststate=1
+    a=0,648,2,free llvm
+    teststate=2
     path=free.mla
     comment=
     cc=${mlc_llvm}
@@ -14447,10 +14469,10 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=90
     ie=0
     )
-   teststate=1
+   teststate=2
    path=tobject/
    comment=
    cc=
@@ -14632,7 +14654,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=rtl/
   comment=
   cc=
@@ -14712,7 +14734,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -14778,7 +14800,7 @@ macrovalues=23
  ${mlc}
  ${mselangdir}interpreter/mli ${mseiflags} ${FILE_NOEXT(${FILE})}.mli
  ${mselangdir}test/
- ${mselangdir}compiler/mlc ${msecflags} --llvm -Ob ${FILE}
+ ${mselangdir}compiler/mlc ${msecflags} --llvm -Xb ${FILE}
  ${llvmbindir}llvm-as ${FILE_NOEXT(${FILE})}.ll
  ${llvmbindir}lli ${FILE_NOEXT(${FILE})}.bc
  ${mselangdir}run ${llvmbindir} ${FILE_NOEXT(${FILE})}
@@ -14825,17 +14847,94 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=684
+propcolwidthref=669
 width0=50
 sortdescend0=0
-width1=233
+width1=228
 sortdescend1=0
-width2=258
+width2=252
 sortdescend2=0
-width3=177
+width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=34
+rowstate=111
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

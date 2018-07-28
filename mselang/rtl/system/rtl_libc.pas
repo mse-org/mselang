@@ -35,6 +35,7 @@ type
  
  size_t = card32;
  ssize_t = int32;
+ off64_t = int64;
   
 const
 {$ifdef linux}   
@@ -105,6 +106,8 @@ function close(fd: cint): cint external;
 
 function write(fd: cint; buffer: pointer; count: size_t): ssize_t external;
 function read(fd: cint; buffer: pointer; count: size_t): ssize_t external;
+
+function lseek64(fd: cint; offset: off64_t; whence: cint): off64_t external; 
 
 implementation
 end.

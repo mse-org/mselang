@@ -3260,7 +3260,8 @@ var
        end;
       end
       else begin
-       pushinsertaddress(stackoffset,-1);
+       getaddress(context1,true);
+//       pushinsertaddress(stackoffset,-1);
       end;
      end;
      ck_fact,ck_subres: begin

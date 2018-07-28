@@ -1313,7 +1313,7 @@ begin
       else begin
        with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
         if (h.datasize = das_pointer) or 
-                           (tf_addressop in d.dat.datatyp.flags) then begin
+                           (tf_derefop in d.dat.datatyp.flags) then begin
          i2:= 1;
         end
         else begin
@@ -1559,7 +1559,7 @@ begin
         internalerror1(ie_notimplemented,'20140402A'); //todo
        end;
       end;
-      include(d.dat.datatyp.flags,tf_addressop); 
+      include(d.dat.datatyp.flags,tf_derefop); 
                                       //todo: typed address operator
       dec(d.dat.datatyp.indirectlevel);
       dec(d.dat.indirection);

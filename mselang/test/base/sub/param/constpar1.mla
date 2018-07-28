@@ -1,0 +1,18 @@
+program constpar1;
+
+var
+ s1: string8;
+ p1: pointer;
+
+procedure tt(const p);
+begin
+ if @p = p1 then
+  exitcode:= 123;
+ end;
+end;
+
+begin
+ s1:= 'ABC';
+ p1:= pointer(s1);
+ tt(p1^);
+end.
