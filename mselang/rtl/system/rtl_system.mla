@@ -18,6 +18,7 @@ const
  invalidfilehandle = -1;
  
 type
+ filehandlety = int32;
  fileopenmodety = (fm_none,fm_read,fm_write,fm_readwrite,fm_create,fm_append);
  fileaccessmodety = (fa_denywrite,fa_denyread);
  fileaccessmodesty = set of fileaccessmodety;
@@ -49,11 +50,16 @@ type
 
 function nowutc(): datetimety;
 
-function fileopen(const path: string8{filenamety}; const openmode: fileopenmodety;
-          const accessmode: fileaccessmodesty;
-          const rights: filerightsty; out fd: int32): syserrorty;
-function fileclose(const fd: int32): syserrorty;
-function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
+function sys_fileopen(const path: string8{filenamety};
+           const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
+                  const rights: filerightsty; out fd: filehandlety): syserrorty;
+function sys_fileclose(const fd: filehandlety): syserrorty;
+function sys_filewrite(const fd: filehandlety; const buf: pointer; 
+                                                 nbytes: int32): int32;
+function sys_fileread(const fd: filehandlety; const buf: pointer; 
+                                                 nbytes: int32): int32;
+//function sys_stdin(): hilehandlety;
+
 implementation
 //{$internaldebug on}
 //uses                           //todo: error with llvm debuginfo:
@@ -107,9 +113,9 @@ begin
  end;
 end;
 
-function fileopen(const path: string8{filenamety}; const openmode: fileopenmodety;
-          const accessmode: fileaccessmodesty;
-          const rights: filerightsty; out fd: int32): syserrorty;
+function sys_fileopen(const path: string8{filenamety};
+          const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
+                  const rights: filerightsty; out fd: filehandlety): syserrorty;
 var
 // str1: string;
 // str2: string16;
@@ -123,7 +129,7 @@ begin
  str1:= tosys(str2);
 }
 // str1:= path;
- fd:= open(pcchar(path), getopenmodes(openmode) or defaultopenflags);
+ fd:= rtl_libc.open(pcchar(path), getopenmodes(openmode) or defaultopenflags);
 // handle:= open(pcchar(str1), openmodes[openmode] or 
 //                            defaultopenflags,[getfilerights(rights)]);
  if fd >= 0 then begin
@@ -152,13 +158,13 @@ begin
  end;
 end;
 
-function fileclose(const fd: int32): syserrorty;
+function sys_fileclose(const fd: filehandlety): syserrorty;
 var
  i1: cint;
 begin
  result:= sye_ok;
  if (fd <> invalidfilehandle) then begin
-  if close(fd) <> 0 then begin
+  if rtl_libc.close(fd) <> 0 then begin
    result:= sye_lasterror;
   end;
  end;
@@ -173,11 +179,12 @@ begin
 }
 end;
 
-function filewrite(const fd: int32; const buf: pointer; nbytes: card32): int32;
+function sys_filewrite(const fd: filehandlety; const buf: pointer; 
+                                                  nbytes: int32): int32;
 var
  i1: int32;
 begin
- result:= write(fd,buf,nbytes);
+ result:= rtl_libc.write(fd,buf,nbytes);
 {
  result:= nbytes;
  repeat
@@ -194,5 +201,20 @@ begin
  until integer(nbytes) <= 0;
 }
 end;
+
+function sys_fileread(const fd: filehandlety; const buf: pointer; 
+                                                 nbytes: int32): int32;
+begin
+ result:= rtl_libc.read(fd,buf,nbytes);
+{
+ repeat
+  result:= mselibc.__read(fd,buf^,nbytes);
+ until (result >= 0) or (sys_getlasterror <> eintr);
+ if (result < 0) and (sys_getlasterror = EAGAIN) then begin
+  result:= 0; //nonblock
+ end;
+}
+end;
+
 
 end.

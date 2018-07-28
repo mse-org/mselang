@@ -335,9 +335,9 @@ begin
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin
   aunit^.rtfilepath:= fna1;
+  resetunitsegments();
+  ele.markelement(startref);
   try
-   resetunitsegments();
-   ele.markelement(startref);
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filematch.timestamp) and
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
@@ -732,6 +732,7 @@ endlab:
    end;
   except //catch all exceptions of an invalid unit file
    result:= false;
+   ele.releaseelement(startref);
    if segmentssaved then begin
     restoresegs();
    end;

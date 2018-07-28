@@ -11,10 +11,105 @@
 unit rtl_streams;
 interface
 uses
- rtl_base;
+ rtl_base,rtl_system;
  
 type
+ seekoriginty = (so_beginning, so_current, so_end);
+
  tstream = class(tbase)
+  method read(var buffer; count: int32): int32 [virtual];
+  method write(const buffer; count: int32): int32 [virtual];
+  method seek(const offset: int64; origin: seekoriginty): int64 [virtual];
+  method readbuffer(var buffer; count: int32);
+  method writebuffer(const buffer; count: int32);
  end;
+ 
+ thandlestream = class(tstream)
+  constructor create(const ahandle: filehandlety);
+  method read(var buffer; count: int32): int32 [override];
+  method write(const buffer; count: int32): int32 [override];
+  method seek(const offset: int64; origin: seekoriginty): int64 [override];
+  property handle: filehandlety read fhandle;
+  private
+  protected
+   fhandle: filehandlety;
+//   procedure SetSize(const NewSize: Int64); override;
+  public
+ end;
+ 
 implementation
+uses
+ rtl_sysexceptions,rtl_rtlconsts;
+ 
+{ tstream }
+
+method tstream.read(var buffer; count: int32): int32;
+begin
+ raise estreamerror.createfmt(sstreamnoreading,[classname]);
+end;
+
+method tstream.write(const buffer; count: int32): int32;
+begin
+ raise estreamerror.createfmt(sstreamnowriting,[classname]);
+end;
+
+method tstream.seek(const offset: int64; origin: seekoriginty): int64;
+begin
+ raise estreamerror.createfmt(sstreamnoseeking,[classname]);
+end;
+
+method tstream.readbuffer(var buffer; count: int32);
+var
+ p1: pointer;
+ i1: int32;
+begin
+ p1:= @buffer;
+ while count > 0 do
+  i1:= read(p1^,count);
+  if i1 < 0 then
+   raise ereaderror.create(sreaderror);
+  end;
+  inc(p1,count);
+  dec(count,i1);
+ end;
+end;
+
+method tstream.writebuffer(const buffer; count: int32);
+var
+ p1: pointer;
+ i1: int32;
+begin
+ p1:= @buffer;
+ while count > 0 do
+  i1:= write(p1^,count);
+  if i1 < 0 then
+   raise ewriteerror.create(swriteerror);
+  end;
+  inc(p1,count);
+  dec(count,i1);
+ end;
+end;
+
+{ thandlestream }
+
+constructor thandlestream.create(const ahandle: filehandlety);
+begin
+ fhandle:= ahandle;
+ inherited create();
+end;
+
+method thandlestream.read(var buffer; count: int32): int32;
+begin
+ result:= sys_fileread(fhandle,@buffer,count);
+end;
+
+method thandlestream.write(const buffer; count: int32): int32;
+begin
+ result:= sys_filewrite(fhandle,@buffer,count);
+end;
+
+method thandlestream.seek(const offset: int64; origin: seekoriginty): int64;
+begin
+end;
+
 end.

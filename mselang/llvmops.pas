@@ -2552,7 +2552,7 @@ end;
 
 procedure decparintop();
 begin
- notimplemented();
+ declocintop();
 end;
 
 procedure decparpoop();

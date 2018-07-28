@@ -12,6 +12,11 @@ unit rtl_rtlconsts;
 interface
 resourcestring
  sassignerror = 'Cannot assign a %s to a %s.';
+ sstreamnoreading = 'Reading from %s is not supported';
+ sstreamnowriting = 'Writing to %s is not supported';
+ sstreamnoseeking = '%s.Seek not supported';
+ sreaderror = 'Stream read error';
+ swriteerror = 'Stream write error';
  
 implementation
 end.

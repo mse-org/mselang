@@ -25,6 +25,7 @@ type
   constructor create();
   method free();
   method rtti(): pobjectrttity;
+  method classname(): string8;
  end;
   
 procedure inttostr(const value: integer): string;
@@ -103,7 +104,6 @@ constructor tbase.create();
 begin
  //dummy
 end;
-
 destructor tbase.destroy();
 begin
  //dummy
@@ -119,6 +119,17 @@ end;
 method tbase.rtti(): pobjectrttity;
 begin
  result:= pointer(typeinfo(classof(self)));
+end;
+
+method tbase.classname(): string8;
+var
+ p1: pobjectrttity;
+begin
+ result:= '';
+ p1:= rtti;
+ if p1 <> nil then
+  result:= string8(p1^.typename);
+ end;
 end;
 
 initialization

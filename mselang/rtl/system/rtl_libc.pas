@@ -104,6 +104,7 @@ function open(__file:  pcchar; __oflag: cint;
 function close(fd: cint): cint external;
 
 function write(fd: cint; buffer: pointer; count: size_t): ssize_t external;
+function read(fd: cint; buffer: pointer; count: size_t): ssize_t external;
 
 implementation
 end.

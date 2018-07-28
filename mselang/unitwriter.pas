@@ -187,6 +187,7 @@ var
   pe1,pee: pelementoffsetty;
   mop1: managedopty;
   sa1: objsubattachty;
+  po: pointer;
  begin
   move(ps^,pd^,s1);
   deststart:= pd;
