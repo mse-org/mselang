@@ -29,7 +29,8 @@ type
   protected
   public
    constructor create();
-   destructor destroy() [virtual,default];
+   destructor destroy() [override,default];
+   procedure free();
    class function newinstance(): tobject [virtual];
    procedure freeinstance [dispose,virtual];
    class function initinstance(instance : pointer): tobject;
@@ -115,6 +116,13 @@ end;
 destructor tobject.destroy();
 begin
  //dummy
+end;
+
+procedure tobject.free();
+begin
+ if self <> nil then begin
+  destroy();
+ end;
 end;
 
 class function tobject.newinst(): pointer;

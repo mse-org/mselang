@@ -3738,7 +3738,8 @@ begin
        instancessa:= par.ssad;
       end;
       instancetype1:= ele.eledataabs(vardata1^.vf.typ);
-      if (sf_destructor in asub^.flags) then begin
+      if (sf_destructor in asub^.flags) and 
+                         not (dsf_isinherited in aflags) then begin
        callclasssubattach(instancetype1^.infoclass.
                                          subattach[osa_beforedestruct]);
       end;
