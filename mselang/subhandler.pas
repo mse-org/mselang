@@ -4372,7 +4372,8 @@ begin
      end;
     }
     end;
-    if (sf_constructor in asub^.flags) then begin
+    if (sf_constructor in asub^.flags) and 
+                            not (dsf_isinherited in aflags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach[osa_afterconstruct]);
     end;
    end;
