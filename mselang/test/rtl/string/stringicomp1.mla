@@ -1,6 +1,6 @@
 program stringicomp1;
 uses
- rtl_string;
+ rtl_strings;
 const
  s1 = 'abc';
  s2 = 'aBc';

@@ -16,7 +16,7 @@ type
  pppropertyrttity = ^ppropertyrttity;
  propertyrttiarty = array of ppropertyrttity;
 
-procedure getenumname(const typ: penumrttity; const value: int32): string8;
+procedure getenumname(const typ: prttity; const value: int32): string8;
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
 procedure getpropinfo(const atypeinfo: pobjectrttity;
@@ -33,7 +33,7 @@ implementation
 uses
  rtl_sysexceptions,rtl_sysconsts,rtl_strings;
 
-procedure getenumname(const typ: penumrttity; const value: int32): string8;
+procedure getenumname(const typ: prttity; const value: int32): string8;
 begin
  result:= 'abc';
 end;

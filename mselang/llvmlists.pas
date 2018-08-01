@@ -2955,7 +2955,7 @@ var
  i1: int32;
 begin
  with fconstlist do begin
-  ls1:= getidentname1(aident);
+  getidentname(aident,ls1);
   if ls1.len = 0 then begin
    result:= nilpointer();
   end
