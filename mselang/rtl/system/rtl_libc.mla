@@ -99,15 +99,15 @@ const
 
 {$endif}
 
-function gettimeofday(__tv: ptimeval; __tz: ptimezone): cint external;
-function open(__file:  pcchar; __oflag: cint;
-                                 args:array of const): cint external;
-function close(fd: cint): cint external;
+procedure gettimeofday(__tv: ptimeval; __tz: ptimezone): cint [external];
+procedure open(__file:  pcchar; __oflag: cint;
+                                 args:array of const): cint [external];
+procedure close(fd: cint): cint [external];
 
-function write(fd: cint; buffer: pointer; count: size_t): ssize_t external;
-function read(fd: cint; buffer: pointer; count: size_t): ssize_t external;
+procedure write(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
+procedure read(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
 
-function lseek64(fd: cint; offset: off64_t; whence: cint): off64_t external; 
+procedure lseek64(fd: cint; offset: off64_t; whence: cint): off64_t [external]; 
 
 implementation
 end.
