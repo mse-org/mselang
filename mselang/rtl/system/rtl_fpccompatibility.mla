@@ -8,7 +8,6 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-{$mode pascal}
 unit rtl_fpccompatibility;
 interface
 //FPC compatibility
@@ -25,33 +24,33 @@ type
 
  tobject = class(tbase)[virtual]
   private
-   class function newinst(): pointer [new];
+   class method newinst(): pointer [new];
   protected
   public
    constructor create();
    destructor destroy() [override,default];
-   procedure free();
-   class function newinstance(): tobject [virtual];
-   procedure freeinstance [dispose,virtual];
-   class function initinstance(instance : pointer): tobject;
-   procedure cleanupinstance();
-   class function classtype(): tclass;
-   class function classinfo(): pointer; //returns pobjectrttity
-   class function classname(): string8;
-   class function classnameis(const name: string8): boolean;
-   class function classparent(): tclass;
-   class function instancesize(): int32;
-   class function inheritsfrom(aclass: tclass): boolean;
-   //class function stringmessagetable : pstringmessagetable;
+   method free();
+   class method newinstance(): tobject [virtual];
+   method freeinstance [dispose,virtual];
+   class method initinstance(instance : pointer): tobject;
+   method cleanupinstance();
+   class method classtype(): tclass;
+   class method classinfo(): pointer; //returns pobjectrttity
+   class method classname(): string8;
+   class method classnameis(const name: string8): boolean;
+   class method classparent(): tclass;
+   class method instancesize(): int32;
+   class method inheritsfrom(aclass: tclass): boolean;
+   //class method stringmessagetable : pstringmessagetable;
                          //not implemented
 
         //todo
-   //class function MethodAddress(const name : shortstring) : codepointer;         
-   //class function MethodName(address : codepointer) : shortstring;
-   //function FieldAddress(const name : shortstring) : pointer;
+   //class method MethodAddress(const name : shortstring) : codepointer;         
+   //class method MethodName(address : codepointer) : shortstring;
+   //method FieldAddress(const name : shortstring) : pointer;
 
-   procedure afterconstruction() [afterconstruct,virtual];
-   procedure beforedestruction() [beforedestruct,virtual];
+   method afterconstruction() [afterconstruct,virtual];
+   method beforedestruction() [beforedestruct,virtual];
    
  end; 
  
@@ -62,12 +61,12 @@ type
  tssize = ssize_t;
  
 procedure move(const source; var dest; count: sizeint);
-function now(): tdatetime;
-function trunc(d: flo64): int64;
-function round(d: flo64): int64;
-function fpopen(path: pchar; flags: cint):cint;
-function fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
-function fpclose(fd: cint): cint;
+procedure now(): tdatetime;
+procedure trunc(d: flo64): int64;
+procedure round(d: flo64): int64;
+procedure fpopen(path: pchar; flags: cint):cint;
+procedure fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
+procedure fpclose(fd: cint): cint;
 
 implementation
 
@@ -76,32 +75,32 @@ begin
  memmove(@dest,@source,count);
 end;
 
-function now(): tdatetime;
+procedure now(): tdatetime;
 begin
  result:= nowutc();
 end;
 
-function trunc(d: flo64): int64;
+procedure trunc(d: flo64): int64;
 begin
  result:= truncint64(d);
 end;
 
-function round(d: flo64): int64;
+procedure round(d: flo64): int64;
 begin
  result:= truncint64(nearbyint(d));
 end;
 
-function fpopen (path : pchar; flags : cint):cint;
+procedure fpopen (path : pchar; flags : cint):cint;
 begin
  result:= open(path,flags,[]);
 end;
 
-function fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
+procedure fpwrite(fd: cint; buf: pchar; nbytes: tsize): tssize;
 begin
  result:= write(fd,buf,nbytes);
 end;
 
-function fpclose(fd: cint): cint;
+procedure fpclose(fd: cint): cint;
 begin
  result:= close(fd);
 end;
@@ -118,85 +117,85 @@ begin
  //dummy
 end;
 
-procedure tobject.free();
+method tobject.free();
 begin
- if self <> nil then begin
+ if self <> nil then
   destroy();
  end;
 end;
 
-class function tobject.newinst(): pointer;
+class method tobject.newinst(): pointer;
 begin
  result:= newinstance();
 end;
 
-class function tobject.newinstance(): tobject;
+class method tobject.newinstance(): tobject;
 begin
  result:= getmem(sizeof(self^));
  initialize(result,classof(self));
 end;
 
-procedure tobject.freeinstance();
+method tobject.freeinstance();
 begin
  finalize(self^);
  freemem(self);
 end;
 
-class function tobject.initinstance(instance: pointer): tobject;
+class method tobject.initinstance(instance: pointer): tobject;
 begin
  result:= instance;
  initialize(result,classof(self));
 end;
 
-procedure tobject.cleanupinstance();
+method tobject.cleanupinstance();
 begin
  finalize(self^);
 end;
 
-class function tobject.classtype(): tclass;
+class method tobject.classtype(): tclass;
 begin
  result:= tclass(self);
 end;
 
-class function tobject.classparent(): tclass;
+class method tobject.classparent(): tclass;
 begin
  result:= tclass(pclassdefty(classof(self))^.header.parentclass);
 end;
    
-class function tobject.classinfo(): pointer; //returns pobjectrttity
+class method tobject.classinfo(): pointer; //returns pobjectrttity
 begin
  result:= pclassdefty(self)^.header.rtti;
 end;
 
-class function tobject.classname(): string8;
+class method tobject.classname(): string8;
 begin
  decref(result);
  pointer(result):= pointer(prttity(classinfo)^.typename); 
                                           //const, no incref needed
 end;
 
-class function tobject.classnameis(const name: string8): boolean;
+class method tobject.classnameis(const name: string8): boolean;
 begin
  result:= stringicomp(name,
             string8(prttity(pclassdefty(self)^.header.rtti)^.typename)) = 0;
 end;
 
-class function tobject.instancesize(): int32;
+class method tobject.instancesize(): int32;
 begin
  result:= sizeof(self^);
 end;
 
-class function tobject.inheritsfrom(aclass: tclass): boolean;
+class method tobject.inheritsfrom(aclass: tclass): boolean;
 begin
  result:= self is aclass;
 end;
 
-procedure tobject.afterconstruction();
+method tobject.afterconstruction();
 begin
  //dummy
 end;
 
-procedure tobject.beforedestruction();
+method tobject.beforedestruction();
 begin
  //dummy
 end;
