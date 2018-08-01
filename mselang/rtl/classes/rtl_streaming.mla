@@ -12,11 +12,15 @@
 unit rtl_streaming;
 interface
 uses
- rtl_fpccompatibility,__mla__internaltypes,rtl_streams;
+ rtl_fpccompatibility,__mla__internaltypes,rtl_streams,rtl_sysexceptions;
 //{$internaldebug on}
 type
  tpersistent = class;
 
+ efilererror = class(exception) end;
+ ereadererror = class(efilererror) end;
+ ewritererror = class(ereadererror) end;
+ 
  tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
  end;
@@ -44,7 +48,12 @@ type
  
 implementation
 uses
- rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils;
+ rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format;
+
+procedure writererror(const amessage: string8);
+begin
+ raise ewritererror.create(amessage);
+end;
 
 { tpersistent }
 
@@ -85,7 +94,8 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
- writeln('* ',string8(propinfo^.name));
+ writererror(format(scannotwritepropertykind,[propinfo^.name,
+               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]);
 end;
 
 method twriter.writeproperties(const instance: tpersistent);

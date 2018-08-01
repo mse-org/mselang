@@ -8,7 +8,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 {$mode mselang}
-unit rtl_string;
+unit rtl_strings;
 interface
 uses
  rtl_base;

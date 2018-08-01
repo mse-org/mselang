@@ -18,5 +18,7 @@ resourcestring
  sreaderror = 'Stream read error';
  swriteerror = 'Stream write error';
  
+ scannotwritepropertykind = 'Can not stream property "%0s" of kind "%1s"';
+ 
 implementation
 end.

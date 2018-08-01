@@ -1,0 +1,38 @@
+program lowhigh1;
+type
+ i = 1..5;
+ e = (a,b,c);
+ f = (aa,bb,cc);
+ s = set of e;
+ t = set of f;
+ u = set of 7..9;
+ v = set of i;
+
+var
+
+ a1: array[i] of int32;
+ i1: int32;
+ i2: i;
+
+ e1,e2: e;
+
+ a2: array[e] of int32;
+ a3: array[5..10] of int32;
+
+begin
+
+ if (low(i) = 1) and (low(e) = a) and (low(f) = aa) and (low(s) = a) and 
+                           (low(t) = aa) and (low(u) = 7) and (low(v) = 1) then
+  
+  if (high(i) = 5) and (high(e) = c) and (high(f) = cc) and (high(s) = c) and 
+                           (high(t) = cc) and (high(u) = 9) and (high(v) = 5) then
+   if (low(a1) = 1) and (low(i1) = -$80000000) and (low(i2) = 1) and (low(e1) = a)
+           and (low(a2) = a) and (low(a3) = 5) then
+    if (high(a1) = 5) and (high(i1) = $7fffffff) and (high(i2) = 5) and (high(e1) = c)
+            and (high(a2) = c) and (high(a3) = 10) then
+     exitcode:= 123;
+    end;
+   end;
+  end;
+ end;
+end.

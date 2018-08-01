@@ -1,0 +1,15 @@
+program anonenum;
+{$internaldebug on}
+type
+ enuty = (e_0,e_1,e2);
+var
+ enu0: enuty;
+ enu1: (en_0,en_1,en_2);
+
+begin
+ enu0:= e_1;
+ enu1:= en_1;
+ if (ord(enu0) = 1) and (ord(enu1) = 1) then
+  exitcode:= 123;
+ end;
+end.

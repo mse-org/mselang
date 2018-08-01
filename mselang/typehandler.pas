@@ -1756,21 +1756,28 @@ procedure handleenumdefentry();
 var
  po1: ptypedataty;
  ele1: elementoffsetty;
+ ident1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('ENUMDEFENTRY');
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if contextstack[s.stackindex-2].d.kind <> ck_ident then begin
+  if (contextstack[s.stackindex-2].d.kind <> ck_ident) and
+     (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
    internalerror(ie_type,'20140603A');
   end;
-  if contextstack[s.stackindex-1].d.kind <> ck_typetype then begin
+  if not (contextstack[s.stackindex-1].d.kind in typecontexts) then begin
    internalerror(ie_type,'20140603B');
   end;
  {$endif}
-  if not ele.pushelementduplicatedata(contextstack[s.stackindex-2].d.ident.ident,
-                                               ek_type,allvisi,po1) then begin
+  if contextstack[s.stackindex-1].d.kind = ck_typetype then begin
+   ident1:= contextstack[s.stackindex-2].d.ident.ident;
+  end
+  else begin
+   ident1:= getident(); //anonymous
+  end;
+  if not ele.pushelementduplicatedata(ident1,ek_type,allvisi,po1) then begin
    currenttypedef:= 0;
    identerror(-2,err_duplicateidentifier);
   end
