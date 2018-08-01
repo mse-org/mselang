@@ -24,7 +24,7 @@ uses
 
 const
  compunitextension = 'mcu';
- rtunitextension = 'mru';
+// rtunitextension = 'mru';
  bcunitextension = 'bc';
  objunitextension = 'o';
  mlaextension = 'mla';
@@ -34,9 +34,9 @@ function getsourceunitfile(const aname: filenamety): filenamety;
 function getsourceunitfile(const aunitname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
 
-function getrtunitfile(const aunit: punitinfoty): filenamety;
-function getrtunitfile(const aunitname: lstringty): filenamety;
-function getrtunitfilename(const aname: filenamety): filenamety;
+function getcompunitfile(const aunit: punitinfoty): filenamety;
+function getcompunitfile(const aunitname: lstringty): filenamety;
+function getcompunitfilename(const aname: filenamety): filenamety;
 function getbcunitfilename(const aname: filenamety): filenamety;
 function getbcunitfile(const aunit: punitinfoty): filenamety;
 function getobjunitfilename(const aname: filenamety): filenamety;
@@ -109,9 +109,9 @@ begin
  getsourcefile(result);
 end;
 
-function getrtunitfilename(const aname: filenamety): filenamety;
+function getcompunitfilename(const aname: filenamety): filenamety;
 begin
- result:= replacefileext(aname,rtunitextension);
+ result:= replacefileext(aname,compunitextension);
 end;
 
 function getbcunitfilename(const aname: filenamety): filenamety;
@@ -146,18 +146,18 @@ begin
  end;
 end;
 
-function getrtunitfile(const aunit: punitinfoty): filenamety;
+function getcompunitfile(const aunit: punitinfoty): filenamety;
 begin
- result:= replacefileext(aunit^.filepath,rtunitextension);
+ result:= replacefileext(aunit^.filepath,compunitextension);
  if not findfile(result) then begin
-  result:= utf8tostring(aunit^.name)+'.'+rtunitextension;
+  result:= utf8tostring(aunit^.name)+'.'+compunitextension;
   getrtfile(result);
  end;
 end;
 
-function getrtunitfile(const aunitname: lstringty): filenamety;
+function getcompunitfile(const aunitname: lstringty): filenamety;
 begin
- result:= utf8tostring(aunitname)+'.'+rtunitextension;
+ result:= utf8tostring(aunitname)+'.'+compunitextension;
  getrtfile(result);
 end;
 

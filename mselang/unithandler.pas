@@ -869,7 +869,7 @@ begin
   getidentname(id,lstr1);
   fna1:= getsourceunitfile(lstr1);
   if fna1 = '' then begin
-   fna1:= getrtunitfile(lstr1);
+   fna1:= getcompunitfile(lstr1);
   end;
   if fna1 = '' then begin
    result:= emptydatetime;

@@ -23,7 +23,7 @@ type
  tbase = class() [virtual]
   destructor destroy() [virtual];
   constructor create();
-//  method free();
+  method free();
   method rtti(): pobjectrttity;
   method classname(): string8;
  end;
@@ -108,14 +108,14 @@ destructor tbase.destroy();
 begin
  //dummy
 end;
-{
+
 method tbase.free();
 begin
  if self <> nil then
   destroy();
  end;
 end;
-}
+
 method tbase.rtti(): pobjectrttity;
 begin
  result:= pointer(typeinfo(classof(self)));

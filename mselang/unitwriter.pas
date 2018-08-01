@@ -459,7 +459,7 @@ var
 begin
  result:= putunit(aunit);
  if result then begin
-  fna1:= getrtunitfilename(aunit^.filepath);
+  fna1:= getcompunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    try
     aunit^.rtfilepath:= fna1;

@@ -328,7 +328,7 @@ label
 begin
  result:= false;
  segmentssaved:= false;
- fna1:= getrtunitfile(aunit);
+ fna1:= getcompunitfile(aunit);
 {$ifdef mse_debugparser}
  writeln('***** reading unit '+fna1);
 {$endif}

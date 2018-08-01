@@ -12,3 +12,6 @@
 *.mli
 *.bin
 *.s
+*.opt
+*.mru
+*.mcu
