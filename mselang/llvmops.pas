@@ -1123,7 +1123,7 @@ begin
   bcstream.emitbitcast(bcstream.constval(voffsaddress),
                                            bcstream.pointertype); //1ssa
   callcompilersub(cs_writeenum,false,
-                                 [bcstream.ssaval(ssas1),bcstream.relval(0)]);
+                                 [bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 

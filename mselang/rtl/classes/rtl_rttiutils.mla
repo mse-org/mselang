@@ -31,11 +31,19 @@ procedure isstoredprop(const instance: tbase;
                            
 implementation
 uses
- rtl_sysexceptions,rtl_sysconsts,rtl_strings;
+ rtl_sysexceptions,rtl_sysconsts,rtl_strings,__mla__compilerunit;
+
+procedure rttierror(const amessage: string8);
+begin
+ raise erttierror.create(amessage);
+end;
 
 procedure getenumname(const typ: prttity; const value: int32): string8;
 begin
- result:= 'abc';
+ if typ^.kind <> rtk_enum then
+  rttierror(senumtypeexpected);
+ end;
+ result:= __mla__getenumname(pointer(typ),value);
 end;
  
 type
@@ -44,11 +52,6 @@ type
 procedure notimplemented(const atext: string8);
 begin
  raise enotimplemented.create(atext);
-end;
-
-procedure rttierror(const atext: string8);
-begin
- raise ertti.create(atext);
 end;
 
 procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;

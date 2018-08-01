@@ -116,8 +116,9 @@ procedure __mla__classis(const a,b: pclassdefty): bool1;
 procedure __mla__checkclasstype(var instance: pointer; //nil if no match
                               const classtype: pclassdefty): bool1;
                                                       //false if no match
-procedure __mla__writeenum(const avalue: int32;
-                              const artti: penumrttity);
+procedure __mla__getenumname(const rtti: penumrttity; 
+                                       const enumvalue: int32): string8;
+procedure __mla__writeenum(const artti: penumrttity; const avalue: int32);
                               
 //procedure __mla__initclass(const classinfo: classdefty): pointer;
 //procedure __mla__finiclass(const instance: pointer);
@@ -1750,7 +1751,8 @@ begin
  end;
 end;
 
-procedure getenumname(const enumvalue: int32; const rtti: penumrttity): string8;
+procedure __mla__getenumname(const rtti: penumrttity; 
+                                       const enumvalue: int32): string8;
 var
  p1,pe: ^enumitemrttity;
  i1: int32;
@@ -1776,10 +1778,9 @@ begin
  end;
 end;
 
-procedure __mla__writeenum(const avalue: int32;
-                              const artti: penumrttity);
+procedure __mla__writeenum(const artti: penumrttity;const avalue: int32);
 begin
- write(getenumname(avalue,artti));
+ write(__mla__getenumname(artti,avalue));
 end;
 
 (*

@@ -17,6 +17,7 @@ resourcestring
  stypeexpected = 'Invalid type argument Nr. %d %s expected';
  srangeerror = 'Range error argument Nr. %d';
  stypemustbeobjectorclass = 'Type must be object or class';
+ senumtypeexpected = 'Enum type expected';
  
 implementation
 end.
