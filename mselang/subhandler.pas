@@ -643,38 +643,43 @@ begin
   end;
  {$endif}
   paramtype:= @poa^.d.typ;
-  if potop^.d.kind <> ck_const then begin
-   errormessage(err_constexpressionexpected,[]);
+  if not tryconvert(potop,ele.eledataabs(paramtype^.typedata),
+                                  paramtype^.indirectlevel,[]) then begin
+                                           //constref?
+   incompatibletypeserror(poa^.d,potop^.d);
   end
   else begin
-   with contextstack[s.stackindex] do begin
-    if d.paramdef.kind in [pk_var,pk_out] then begin
-     errormessage(err_defaultvaluescanonly,[]);
-    end
-    else begin
-     ad1.flags:= paramkinds[d.paramdef.kind];
-     ad1.indirectlevel:= paramtype^.indirectlevel;
-//     if not checkcompatibledatatype(s.stacktop-s.stackindex,
-//                                  paramtype^.typedata,ad1,[],i1) then begin
-     if not tryconvert(potop,ele.eledataabs(paramtype^.typedata),
-                                     paramtype^.indirectlevel,[]) then begin
-                                              //constref?
-      incompatibletypeserror(poa^.d,potop^.d);
+   if potop^.d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[]);
+   end
+   else begin
+    with contextstack[s.stackindex] do begin
+     if d.paramdef.kind in [pk_var,pk_out] then begin
+      errormessage(err_defaultvaluescanonly,[]);
      end
      else begin
-     {$ifdef mse_checkinternalerror}
-      if potop^.d.kind <> ck_const then begin
-       internalerror(ie_parser,'20160521A');
-      end;
-     {$endif}
-      if not ele.addelement(getident(),ek_const,
-                                  allvisi,d.paramdef.defaultconst) then begin
-       internalerror1(ie_parser,'20160520C'); //there is a duplicate
-      end;
-      with pconstdataty(ele.eledataabs(d.paramdef.defaultconst))^ do begin
-       with potop^.d do begin
-        val.typ:= dat.datatyp;
-        val.d:= dat.constval;
+      ad1.flags:= paramkinds[d.paramdef.kind];
+      ad1.indirectlevel:= paramtype^.indirectlevel;
+      if not tryconvert(potop,ele.eledataabs(paramtype^.typedata),
+                                      paramtype^.indirectlevel,[]) then begin
+                                               //constref?
+       incompatibletypeserror(poa^.d,potop^.d);
+      end
+      else begin
+      {$ifdef mse_checkinternalerror}
+       if potop^.d.kind <> ck_const then begin
+        internalerror(ie_parser,'20160521A');
+       end;
+      {$endif}
+       if not ele.addelement(getident(),ek_const,
+                                   allvisi,d.paramdef.defaultconst) then begin
+        internalerror1(ie_parser,'20160520C'); //there is a duplicate
+       end;
+       with pconstdataty(ele.eledataabs(d.paramdef.defaultconst))^ do begin
+        with potop^.d do begin
+         val.typ:= dat.datatyp;
+         val.d:= dat.constval;
+        end;
        end;
       end;
      end;
@@ -682,7 +687,6 @@ begin
    end;
   end;
   s.stacktop:= getstackindex(poa); //remove const  
-//  dec(s.stacktop); //remove const
  end;
 end;
 

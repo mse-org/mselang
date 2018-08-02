@@ -99,6 +99,7 @@ begin
   with acontext^ do begin
    d.dat.datatyp:= emptyset;
    d.dat.constval.kind:= dk_set;
+   d.dat.constval.vset.value:= 0;
   end;
  end
  else begin

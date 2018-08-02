@@ -1,0 +1,16 @@
+program defaultemptyset;
+type
+ enu1ty = (en_0,en_1,en2);
+ set1ty = set of enu1ty;
+
+procedure tt(p1: int32; p2: set1ty = []; p3: int32 = 100);
+begin
+{$internaldebug on}
+ if p2 = [] then
+  exitcode:= p1+p3;
+ end;
+end;
+
+begin
+ tt(23);
+end.

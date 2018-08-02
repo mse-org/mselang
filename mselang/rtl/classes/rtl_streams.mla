@@ -37,7 +37,14 @@ type
 //   procedure SetSize(const NewSize: Int64); override;
   public
  end;
- 
+
+ tfilestream = class(thandlestream)
+  constructor create(const afilename: filenamety; 
+                     const aopenmode: fileopenmodety = fm_read;
+                     const accessmode: fileaccessmodesty = [];
+                     const rights: filerightsty = defaultfilerights);
+ end;
+  
 implementation
 uses
  rtl_sysexceptions,rtl_rtlconsts;
