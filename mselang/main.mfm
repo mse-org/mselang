@@ -26,7 +26,7 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     state = [as_localcaption, as_localonexecute]
-    caption = 'parse'
+    caption = '&parse'
     onexecute = parseev
   end
   object grid: tstringgrid
@@ -141,7 +141,7 @@ object mainfo: tmainfo
     bounds_cy = 20
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
-    caption = 'save'
+    caption = '&save'
     onexecute = saveexe
   end
   object tbutton2: tbutton
@@ -152,7 +152,7 @@ object mainfo: tmainfo
     bounds_cy = 20
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
-    caption = 'load'
+    caption = '&load'
     onexecute = loadexe
   end
   object filena: tfilenameedit

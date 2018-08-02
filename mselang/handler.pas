@@ -1236,6 +1236,15 @@ begin
      end;
      sdk_string: begin
       concatstringconsts(d.dat.constval.vstring,pob^.d.dat.constval.vstring);
+      if poa^.d.dat.termgroupstart = 0 then begin
+       poa^.d.dat.termgroupstart:= poa-pcontextitemty(pointer(contextstack));
+                                        //init
+      end;
+      pob^.d.dat.termgroupstart:= poa^.d.dat.termgroupstart;
+      contextstack[s.stackindex].d.kind:= ck_space;
+      s.stacktop:= s.stackindex-1;
+      s.stackindex:= getpreviousnospace(poa^.d.dat.termgroupstart)-2;
+      goto endlab; //for concatmulti
      end;
      else begin
       opnotsupported();

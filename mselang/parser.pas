@@ -198,13 +198,19 @@ end;
 procedure pushdummycontext(const akind: contextkindty);
 var
  poind: pcontextitemty;
+ i1: int32;
 begin
  with info do begin
+  i1:= s.stackindex;
+  incstack();
+  s.stackindex:= i1;
+  {
   inc(s.stacktop);
   if s.stacktop >= stackdepth then begin
    stackdepth:= 2*stackdepth;
    setlength(contextstack,stackdepth+contextstackreserve);
   end;
+  }
   poind:= @contextstack[s.stackindex];
   with contextstack[s.stacktop] do begin
    d.kind:= akind;

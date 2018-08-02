@@ -35,7 +35,7 @@ uses
 
 procedure rttierror(const amessage: string8);
 begin
- raise erttierror.create(amessage);
+ raise erttierror.create(srttierror+':'+lineend+amessage);
 end;
 
 procedure getenumname(const typ: prttity; const value: int32): string8;

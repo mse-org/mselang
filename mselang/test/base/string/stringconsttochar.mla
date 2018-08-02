@@ -1,0 +1,24 @@
+program stringconsttochar;
+//uses
+// rtl_format;
+type
+ floatstringmodety = (fsm_default,fsm_fix,fsm_sci,fsm_engfix,fsm_engflo,
+                      fsm_engsymfix,fsm_engsymflo);
+
+procedure flo64tostring16(const value: flo64; const precision: integer = 0;
+      const mode: floatstringmodety = fsm_default;
+      const decimalsep: char16 = '.';
+      const thousandsep: char16 = #0): string16;
+begin
+ if decimalsep = 'ä' then
+  exitcode:= 123;
+ end;
+end;
+
+const
+ decimalsep = 'ä';
+var
+ f1: flo64;
+begin
+ flo64tostring16(f1,0,fsm_sci,decimalsep);
+end.
