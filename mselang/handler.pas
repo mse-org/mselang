@@ -2468,94 +2468,107 @@ var
  n1: identnamety;
  segad1: segaddressty;
  i1: int32;
+ poa,p1: pcontextitemty;
 begin
  result:= false;
- with info,contextstack[s.stacktop] do begin
-  ident1:= contextstack[s.stackindex+1].d.ident.ident;
-  if d.kind <> ck_const then begin
-   errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
-  end
-  else begin
-   if hf_resource in 
-      contextstack[contextstack[s.stackindex].parent].d.handlerflags then begin
-                           //resource string variable/const
-    if not (co_llvm in o.compileoptions) then begin
-     notimplementederror('20180628A');
-    end;
-    if d.dat.constval.kind <> dk_string then begin
-     errormessage(err_stringconstantexpected,[]);
-     exit;
-    end;
-    if tryconvert(@contextstack[s.stacktop],st_string8,
-                                        [coo_errormessage]) then begin
-     segad1:= allocstringconst(d.dat.constval.vstring);
-     i1:= s.unitinfo^.llvmlists.constlist.addaddress(
-                                 segad1.address,stringheadersize).listid;
-     if not addvar(ident1,allvisi,s.unitinfo^.varchain,var1) then begin
-      identerror(1,err_duplicateidentifier);
-      exit;
-     end;
-     with var1^ do begin
-    {
-     if not ele.addelement(getident(),ek_const,
-                                 allvisi,vf.defaultconst) then begin
-      internalerror1(ie_parser,'20170627A'); //there is a duplicate
-     end;
-    }
-     {
-      trackstringref(d.dat.constval.vstring); //???
-      with pconstdataty(ele.eledataabs(vf.defaultconst))^ do begin
-       val.typ:= d.dat.datatyp;
-       val.d:= d.dat.constval;
-      end;
-     }
-      with sysdatatypes[st_string8] do begin
-       vf.flags:= (flags - [tf_needsini]) + [tf_resource];
-       vf.typ:= typedata;
-      end;
-      s.currentstatementflags:= s.currentstatementflags + 
-                                 [stf_needsmanage,stf_needsfini];
-      nameid:= -1;
-      address.flags:= [af_const,af_segment];
-      address.indirectlevel:= 0;
-//      address.segaddress:= allocstringconst(d.dat.constval.vstring);
-      address.segaddress:= getglobvaraddress(das_pointer,
-                                 targetpointersize,address.flags,i1,gak_var);
-      if not (us_implementation in s.unitinfo^.state) then begin
-       nameid:= s.unitinfo^.nameid; //for llvm
-      end;
-      if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
-                           (co_llvm in info.o.compileoptions) then begin
-       getidentname(ident1,n1);
-       if do_names in info.o.debugoptions then begin
- 
-        s.unitinfo^.llvmlists.globlist.namelist.addname(
-                                             n1,address.segaddress.address);
-       end;
-       if do_proginfo in info.o.debugoptions then begin
-        s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
-                 s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                      nametolstring(n1),start.line,0,var1^);
-       end;
-      end;
-     end;
-    end;
-    result:= true;
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20140326C');
+  end;
+ {$endif}
+  poa:= getnextnospace(@contextstack[s.stackindex+2]);
+  if poa^.d.kind = ck_list then begin
+   listtoset(poa,p1);
+   s.stacktop:= getstackindex(poa);
+  end;
+  with contextstack[s.stacktop] do begin
+   ident1:= contextstack[s.stackindex+1].d.ident.ident;
+   if d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
    end
    else begin
-    if not ele.addelementdata(ident1,ek_const,allvisi,po1) then begin
-     identerror(1,err_duplicateidentifier);
+    if hf_resource in 
+       contextstack[contextstack[s.stackindex].parent].d.handlerflags then begin
+                            //resource string variable/const
+     if not (co_llvm in o.compileoptions) then begin
+      notimplementederror('20180628A');
+     end;
+     if d.dat.constval.kind <> dk_string then begin
+      errormessage(err_stringconstantexpected,[]);
+      exit;
+     end;
+     if tryconvert(@contextstack[s.stacktop],st_string8,
+                                         [coo_errormessage]) then begin
+      segad1:= allocstringconst(d.dat.constval.vstring);
+      i1:= s.unitinfo^.llvmlists.constlist.addaddress(
+                                  segad1.address,stringheadersize).listid;
+      if not addvar(ident1,allvisi,s.unitinfo^.varchain,var1) then begin
+       identerror(1,err_duplicateidentifier);
+       exit;
+      end;
+      with var1^ do begin
+     {
+      if not ele.addelement(getident(),ek_const,
+                                  allvisi,vf.defaultconst) then begin
+       internalerror1(ie_parser,'20170627A'); //there is a duplicate
+      end;
+     }
+      {
+       trackstringref(d.dat.constval.vstring); //???
+       with pconstdataty(ele.eledataabs(vf.defaultconst))^ do begin
+        val.typ:= d.dat.datatyp;
+        val.d:= d.dat.constval;
+       end;
+      }
+       with sysdatatypes[st_string8] do begin
+        vf.flags:= (flags - [tf_needsini]) + [tf_resource];
+        vf.typ:= typedata;
+       end;
+       s.currentstatementflags:= s.currentstatementflags + 
+                                  [stf_needsmanage,stf_needsfini];
+       nameid:= -1;
+       address.flags:= [af_const,af_segment];
+       address.indirectlevel:= 0;
+ //      address.segaddress:= allocstringconst(d.dat.constval.vstring);
+       address.segaddress:= getglobvaraddress(das_pointer,
+                                  targetpointersize,address.flags,i1,gak_var);
+       if not (us_implementation in s.unitinfo^.state) then begin
+        nameid:= s.unitinfo^.nameid; //for llvm
+       end;
+       if (info.o.debugoptions*[do_proginfo,do_names] <> []) and 
+                            (co_llvm in info.o.compileoptions) then begin
+        getidentname(ident1,n1);
+        if do_names in info.o.debugoptions then begin
+  
+         s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                              n1,address.segaddress.address);
+        end;
+        if do_proginfo in info.o.debugoptions then begin
+         s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+                  s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                       nametolstring(n1),start.line,0,var1^);
+        end;
+       end;
+      end;
+     end;
+     result:= true;
     end
     else begin
-     po1^.val.typ:= d.dat.datatyp;
-     if df_typeconversion in d.dat.flags then begin
-      include(po1^.val.typ.flags,tf_typeconversion);
+     if not ele.addelementdata(ident1,ek_const,allvisi,po1) then begin
+      identerror(1,err_duplicateidentifier);
+     end
+     else begin
+      po1^.val.typ:= d.dat.datatyp;
+      if df_typeconversion in d.dat.flags then begin
+       include(po1^.val.typ.flags,tf_typeconversion);
+      end;
+      if d.dat.constval.kind = dk_string then begin
+       trackstringref(d.dat.constval.vstring);
+      end;
+      po1^.val.d:= d.dat.constval;
+      result:= true;
      end;
-     if d.dat.constval.kind = dk_string then begin
-      trackstringref(d.dat.constval.vstring);
-     end;
-     po1^.val.d:= d.dat.constval;
-     result:= true;
     end;
    end;
   end;
@@ -2588,12 +2601,6 @@ begin
  outhandle('CONST3');
 {$endif}
  with info do begin
- {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex - getspacecount(s.stackindex+2) <> 2) or 
-            (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
-   internalerror(ie_handler,'20140326C');
-  end;
- {$endif}
   addsimpleconst();
   s.stacktop:= s.stackindex;
  end;

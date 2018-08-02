@@ -1,0 +1,14 @@
+program set1;
+type
+ enuty = (en_0,en_1,en2);
+ setty = set of enuty;
+var
+ se1: setty;
+const
+ setconst = [en_0,en_1];
+begin
+ se1:= setconst;
+ if (se1 = [en_0,en_1]) and (se1 = setconst) then
+  exitcode:= 123;
+ end;
+end.
