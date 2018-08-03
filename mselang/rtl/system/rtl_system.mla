@@ -51,6 +51,7 @@ type
 
 procedure nowutc(): datetimety;
 
+
 procedure sys_fileopen(const path: string8{filenamety};
            const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
                   const rights: filerightsty; out fd: filehandlety): syserrorty;
@@ -65,6 +66,8 @@ procedure sys_stdin(): filehandlety;
 procedure sys_stdout(): filehandlety;
 procedure sys_stderr(): filehandlety;
 
+procedure syserror(const aerror: syserrorty);
+
 implementation
 //{$internaldebug on}
 //uses                           //todo: error with llvm debuginfo:
@@ -77,6 +80,15 @@ const
 procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
 begin
  result:= sye_lasterror; //todo
+end;
+
+procedure syserror(const aerror: syserrorty);
+begin
+ if aerror <> sye_ok then
+  if aerror = sye_lasterror then
+  else
+  end;
+ end;
 end;
 
 procedure nowutc(): datetimety;

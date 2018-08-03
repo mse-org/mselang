@@ -44,10 +44,10 @@ type
  end;
 
  tfilestream = class(thandlestream)
-  constructor create(const afilename: filenamety; 
+  constructor create(const afilename: string8; 
                      const aopenmode: fileopenmodety = fm_read;
-                     const accessmode: fileaccessmodesty = [];
-                     const rights: filerightsty = defaultfilerights);
+                     const aaccessmode: fileaccessmodesty = [];
+                     const arights: filerightsty = defaultfilerights);
  end;
   
 implementation
@@ -126,6 +126,18 @@ method thandlestream.seek(const offset: int64;
                                     const origin: seekoriginty): int64;
 begin
  result:= sys_fileseek(fhandle,offset,origin);
+end;
+
+{ tfilestream }
+
+constructor tfilestream.create(const afilename: string8;
+               const aopenmode: fileopenmodety = fm_read;
+               const aaccessmode: fileaccessmodesty = [];
+               const arights: filerightsty = defaultfilerights);
+var
+ fh: filehandlety;
+begin
+ syserror(sys_fileopen(afilename,aopenmode,aaccessmode,arights,fh);
 end;
 
 end.
