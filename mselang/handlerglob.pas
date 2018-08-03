@@ -295,8 +295,11 @@ type
   signature: identty;    //for operator overload
  end;
 
+ stringflagty = (strf_bytes);
+ stringflagsty = set of stringflagty;
+ 
  infostringty = record
-  dummy2: byte; //for systypeinfos list 
+  flags: stringflagsty;
  end;
 
  infooperatorty = record

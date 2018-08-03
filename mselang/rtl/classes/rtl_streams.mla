@@ -12,7 +12,6 @@ unit rtl_streams;
 interface
 uses
  rtl_base,rtl_system;
-{$internaldebug on}
  
 const
  defaultfilerights = [s_irusr,s_iwusr,s_irgrp,s_iwgrp,s_iroth,s_iwoth];
@@ -52,7 +51,7 @@ type
   
 implementation
 uses
- rtl_sysexceptions,rtl_rtlconsts;
+ rtl_sysexceptions,rtl_rtlconsts,__mla__sysintf;
  
 { tstream }
 

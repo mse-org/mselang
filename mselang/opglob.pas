@@ -53,6 +53,7 @@ type
   cs_string8to16,cs_string8to32,
   cs_string16to8,cs_string16to32,
   cs_string32to8,cs_string32to16,
+  cs_bytestostring,cs_stringtobytes,
   cs_concatstring8,cs_concatstring16,cs_concatstring32,
   cs_chartostring8,
   cs_chartostring16,
@@ -365,6 +366,7 @@ type
   oc_string8to16,oc_string8to32,
   oc_string16to8,oc_string16to32,
   oc_string32to8,oc_string32to16,
+  oc_bytestostring,oc_stringtobytes,
   
   oc_concatstring8,oc_concatstring16,oc_concatstring32,
 
@@ -1383,6 +1385,13 @@ const
   oc_writepointer,
   oc_writeclass,
   oc_writeenum,
+
+  oc_string8to16,oc_string8to32,
+  oc_string16to8,oc_string16to32,
+  oc_string32to8,oc_string32to16,
+  oc_bytestostring,oc_stringtobytes,
+  
+  oc_concatstring8,oc_concatstring16,oc_concatstring32,
   
   oc_cmpstring,
   oc_virttrampoline,
@@ -1538,6 +1547,7 @@ type
    oc_string8to16,oc_string8to32,
    oc_string16to8,oc_string16to32,
    oc_string32to8,oc_string32to16,
+   oc_bytestostring,oc_stringtobytes,
    
    oc_chartostring8,
    

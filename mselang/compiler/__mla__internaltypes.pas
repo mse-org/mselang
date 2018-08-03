@@ -139,6 +139,7 @@ type
 {$ifdef mse_compiler}
  string8 = targetptrintty;
 {$endif}
+ filenamety = string16;
 
  rttikindty = (rtk_none,rtk_boolean,rtk_integer,rtk_cardinal,rtk_float,
                rtk_pointer,rtk_string,rtk_character,

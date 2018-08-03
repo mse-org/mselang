@@ -4030,6 +4030,16 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= pds;
 end;
 
+procedure bytestostringop();
+begin
+ notimplemented();
+end;
+
+procedure stringtobytesop();
+begin
+ notimplemented();
+end;
+
 procedure concatstring8op();
 var
  p1,ps,pe: ppstringheaderty;
@@ -7252,6 +7262,8 @@ const
   string16to32ssa = 0;
   string32to8ssa = 0;
   string32to16ssa = 0;
+  bytestostringssa = 0;
+  stringtobytesssa = 0;
 
   concatstring8ssa = 0;
   concatstring16ssa = 0;

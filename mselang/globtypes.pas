@@ -192,7 +192,7 @@ type
               st_card8,st_card16,st_card32,st_card64,st_cardpo,
               st_flo32,st_flo64,
               st_char8,st_char16,st_char32,
-              st_string8,st_string16,st_string32);
+              st_bytestring,st_string8,st_string16,st_string32);
 const
  firstrealsystype = st_pointer;
  simpledatasizes = [das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,

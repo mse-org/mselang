@@ -473,6 +473,14 @@ const
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
        infochar32:(min: int32($00000000); max: $ffffffff))),
+   (name: 'bytestring'; data: (h: (ancestor: 0; kind: dk_string;
+       base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
+       manageproc: mpk_managestring;
+       flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed]; 
+       indirectlevel: 0;
+       bitsize: targetpointerbitsize; bytesize: targetpointersize;
+                            datasize: das_pointer; next: 0; signature: 0);
+       itemsize: 1; infostring: (flags: [strf_bytes]))),
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
@@ -480,7 +488,7 @@ const
        indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
-       itemsize: 1; infostring: (dummy2: 0))),
+       itemsize: 1; infostring: (flags: []))),
    (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
@@ -488,7 +496,7 @@ const
        indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
-       itemsize: 2; infostring: (dummy2: 0))),
+       itemsize: 2; infostring: (flags: []))),
    (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
@@ -496,7 +504,7 @@ const
        indirectlevel: 0;
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
-       itemsize: 4; infostring: (dummy2: 0)))
+       itemsize: 4; infostring: (flags: [])))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),

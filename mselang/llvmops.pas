@@ -2072,6 +2072,20 @@ begin
  end;
 end;
 
+procedure bytestostringop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_bytestostring,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure stringtobytesop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_stringtobytes,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure chartostring8op();
 begin
  with pc^.par do begin
@@ -5268,6 +5282,8 @@ const
   string16to32ssa = 1;
   string32to8ssa = 1;
   string32to16ssa = 1;
+  bytestostringssa = 1;
+  stringtobytesssa = 1;
   
   concatstring8ssa = 3;
   concatstring16ssa = 3;

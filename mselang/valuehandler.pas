@@ -912,6 +912,8 @@ var
  ad1: addressrefty;
  var1: pvardataty;
  lastitem: pcontextitemty;
+ fl1: stringflagsty;
+ 
 begin
  result:= false;
  with info do begin
@@ -1580,7 +1582,30 @@ begin
              result:= true;
             end;
             dk_string: begin
-             convert(getconvstringop(source1^.itemsize,dest^.itemsize));
+             fl1:= source1^.infostring.flags >< dest^.infostring.flags;
+             if strf_bytes in fl1 then begin
+              if strf_bytes in source1^.infostring.flags then begin
+              {$ifdef mse_checkinternalerror}
+               if source1^.itemsize <> 1 then begin
+                internalerror(ie_handler,'20180803A');
+               end;
+              {$endif}
+               convert(oc_bytestostring);
+               convert(getconvstringop(source1^.itemsize,dest^.itemsize));
+              end
+              else begin
+              {$ifdef mse_checkinternalerror}
+               if dest^.itemsize <> 1 then begin
+                internalerror(ie_handler,'20180803A');
+               end;
+              {$endif}
+               convert(getconvstringop(source1^.itemsize,dest^.itemsize));
+               convert(oc_stringtobytes);
+              end;
+             end
+             else begin
+              convert(getconvstringop(source1^.itemsize,dest^.itemsize));
+             end;
              result:= true;
             end;
            end;

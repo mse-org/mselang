@@ -56,11 +56,15 @@ procedure __mla__string8to32a(const source: pcard8; const len: int32): pointer;
 procedure __mla__string16to8(source: pointer): pointer;
 procedure __mla__string16to8a(const source: pcard16; const len: int32): pointer;
 procedure __mla__string16to32(source: pointer): pointer;
-procedure __mla__string16to32a(const source: pcard16; const len: int32): pointer;
+procedure __mla__string16to32a(const source: pcard16; 
+                                             const len: int32): pointer;
 procedure __mla__string32to8(source: pointer): pointer;
 procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer;
 procedure __mla__string32to16(source: pointer): pointer;
-procedure __mla__string32to16a(const source: pcard32; const len: int32): pointer;
+procedure __mla__string32to16a(const source: pcard32; 
+                                             const len: int32): pointer;
+procedure __mla__bytestostring(source: pointer): pointer;
+procedure __mla__stringtobytes(source: pointer): pointer;
 
 procedure __mla__concatstring8(count: int32;
                                    strings: ppointer): pointer;
@@ -140,7 +144,8 @@ procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__frac64(value: flo64): flo64;
 
 implementation
-//uses
+uses
+ __mla__sysintf;
 // __mla__personality;
 const
  temprefcount = 1;
@@ -1135,6 +1140,15 @@ begin
  end;
 end;
 
+procedure __mla__bytestostring(source: pointer): pointer;
+begin
+ result:= pointer(sys_bytestostring8(bytestring(source)));
+end;
+
+procedure __mla__stringtobytes(source: pointer): pointer;
+begin
+ result:= pointer(sys_string8tobytes(string8(source)));
+end;
 
 procedure __mla__concatstring8(count: int32;
                               strings: ppointer): pointer;

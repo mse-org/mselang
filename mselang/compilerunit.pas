@@ -63,6 +63,7 @@ const
   '__mla__string8to16','__mla__string8to32',
   '__mla__string16to8','__mla__string16to32',
   '__mla__string32to8','__mla__string32to16',
+  '__mla__bytestostring','__mla__stringtobytes',
   '__mla__concatstring8','__mla__concatstring16','__mla__concatstring32',
   '__mla__chartostring8',
   '__mla__chartostring16',

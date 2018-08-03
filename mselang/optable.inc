@@ -445,6 +445,10 @@
   (ssa: string32to8ssa; proc: @string32to8op; flags: []), 
 //oc_string32to16
   (ssa: string32to16ssa; proc: @string32to16op; flags: []), 
+//oc_bytestostring
+  (ssa: bytestostringssa; proc: @bytestostringop; flags: []), 
+//oc_stringtobytes
+  (ssa: stringtobytesssa; proc: @stringtobytesop; flags: []), 
 
 //oc_concatstring8
   (ssa: concatstring8ssa; proc: @concatstring8op; flags: []), 

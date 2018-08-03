@@ -49,22 +49,11 @@ type
                 sye_sockaddr,sye_socket,sye_isdir
                );
 
+procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
+
 procedure nowutc(): datetimety;
 
 
-procedure sys_fileopen(const path: string8{filenamety};
-           const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
-                  const rights: filerightsty; out fd: filehandlety): syserrorty;
-procedure sys_fileclose(const fd: filehandlety): syserrorty;
-procedure sys_filewrite(const fd: filehandlety; const buf: pointer; 
-                                                 nbytes: int32): int32;
-procedure sys_fileread(const fd: filehandlety; const buf: pointer; 
-                                                 nbytes: int32): int32;
-procedure sys_fileseek(const fd: filehandlety; const offset: int64;
-                                         const origin: seekoriginty): int64;
-procedure sys_stdin(): filehandlety;
-procedure sys_stdout(): filehandlety;
-procedure sys_stderr(): filehandlety;
 
 procedure syserror(const aerror: syserrorty);
 
@@ -108,144 +97,4 @@ const
 //    fm_append
       o_rdwr or o_creat {or o_trunc});
 *)
-procedure getopenmodes(amode: fileopenmodety): card32; //todo: use array
-begin
- result:= 0;
- case amode of 
-  fm_read:
-   result:= o_rdonly;
-  fm_write:
-   result:= o_wronly;
-  fm_readwrite:
-   result:= o_rdwr;
-  fm_create:
-   result:= o_rdwr or o_creat or o_trunc;
-  fm_append:
-   result:= o_rdwr or o_creat;
- end;
-end;
-
-procedure sys_fileopen(const path: string8{filenamety};
-          const openmode: fileopenmodety; const accessmode: fileaccessmodesty;
-                  const rights: filerightsty; out fd: filehandlety): syserrorty;
-var
-// str1: string;
-// str2: string16;
-// stat1: _stat;
-const
- defaultopenflags = o_cloexec; 
-begin
-{
- str2:= path;
- sys_tosysfilepath(str2);
- str1:= tosys(str2);
-}
-// str1:= path;
- fd:= rtl_libc.open(pcchar(path), getopenmodes(openmode) or defaultopenflags);
-// handle:= open(pcchar(str1), openmodes[openmode] or 
-//                            defaultopenflags,[getfilerights(rights)]);
- if fd >= 0 then
- {
-  if fstat(handle,@stat1) = 0 then begin  
-   if s_isdir(stat1.st_mode) then begin
-    mselibc.__close(handle);
-    handle:= -1;
-    result:= sye_isdir;
-   end
-   else begin
-    setcloexec(handle);
-    result:= sye_ok;
-   end;    
-  end
-  else begin
-   mselibc.__close(handle);
-   handle:= -1;
-   result:= syelasterror;
-  end;
- }
-  result:= sye_ok;
- else
-  result:= syelasterror;
- end;
-end;
-
-procedure sys_fileclose(const fd: filehandlety): syserrorty;
-var
- i1: cint;
-begin
- result:= sye_ok;
- if (fd <> invalidfilehandle) then
-  if rtl_libc.close(fd) <> 0 then
-   result:= sye_lasterror;
-  end;
- end;
-{
-  repeat
-   int1:= mselibc.__close(handle);
-  until (int1 = 0) or (sys_getlasterror <> EINTR);
-  if int1 <> 0 then begin
-   result:= syelasterror;
-  end;
- end;
-}
-end;
-
-procedure sys_filewrite(const fd: filehandlety; const buf: pointer; 
-                                                  nbytes: int32): int32;
-var
- i1: int32;
-begin
- result:= rtl_libc.write(fd,buf,nbytes);
-{
- result:= nbytes;
- repeat
-  i1:= mselibc.__write(fd,buf^,nbytes);
-  if int1 = -1 then begin
-   if sys_getlasterror <> eintr then begin
-    result:= int1;
-    break;
-   end;
-   continue;
-  end;
-  inc(pchar(buf),int1);
-  dec(nbytes,int1);
- until integer(nbytes) <= 0;
-}
-end;
-
-procedure sys_fileread(const fd: filehandlety; const buf: pointer; 
-                                                 nbytes: int32): int32;
-begin
- result:= rtl_libc.read(fd,buf,nbytes);
-{
- repeat
-  result:= mselibc.__read(fd,buf^,nbytes);
- until (result >= 0) or (sys_getlasterror <> eintr);
- if (result < 0) and (sys_getlasterror = EAGAIN) then begin
-  result:= 0; //nonblock
- end;
-}
-end;
-
-procedure sys_fileseek(const fd: filehandlety; const offset: int64;
-                                         const origin: seekoriginty): int64;
-begin
- result:= rtl_libc.lseek64(fd,offset,ord(origin));
-end;
-
-procedure sys_stdin(): filehandlety;
-begin
- result:= 0;
-end;
-
-procedure sys_stdout(): filehandlety;
-begin
- result:= 1;
-end;
-
-procedure sys_stderr(): filehandlety;
-begin
- result:= 2;
-end;
-
 end.
