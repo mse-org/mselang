@@ -143,9 +143,12 @@ procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 
 procedure __mla__frac64(value: flo64): flo64;
 
+type
+ conversionfuncty = procedure(source: pointer): pointer;
+var
+ bytestostring8: conversionfuncty;
+ string8tobytes: conversionfuncty;
 implementation
-uses
- __mla__sysintf;
 // __mla__personality;
 const
  temprefcount = 1;
@@ -1142,12 +1145,14 @@ end;
 
 procedure __mla__bytestostring(source: pointer): pointer;
 begin
- result:= pointer(sys_bytestostring8(bytestring(source)));
+ result:= bytestostring8(source);
+// result:= pointer(sys_bytestostring8(bytestring(source)));
 end;
 
 procedure __mla__stringtobytes(source: pointer): pointer;
 begin
- result:= pointer(sys_string8tobytes(string8(source)));
+ result:= string8tobytes(source);
+// result:= pointer(sys_string8tobytes(string8(source)));
 end;
 
 procedure __mla__concatstring8(count: int32;
@@ -2065,4 +2070,14 @@ begin
 }
 end;
 
+procedure stringcopy(source: pointer): pointer;
+begin
+// __mla__increfsizeref(@source);
+// __mla__decrefsizeref(@result);
+ result:= source;
+end;
+
+initialization
+ bytestostring8:= @stringcopy;
+ string8tobytes:= @stringcopy;
 end.

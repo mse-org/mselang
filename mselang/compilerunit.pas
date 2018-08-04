@@ -27,7 +27,7 @@ const
  internaltypesunitname = '__mla__internaltypes';
  personalityunitname = '__mla__personality';
  compilerunitname = '__mla__compilerunit';
- sysintfunitname = '__mla__sysintf';
+// sysintfunitname = '__mla__sysintf';
  rtlunitnames: array[rtlunitty] of string = 
             ('system','rtl_base','rtl_fpccompatibility');
  
@@ -132,7 +132,7 @@ const
  );
 type
  compilerunitty = (cu_none,cu_personality,cu_internaltypes,
-                   cu_memhandler,cu_compilerunit,cu_sysintf);
+                   cu_memhandler,cu_compilerunit{,cu_sysintf});
  compilerunitdefty = record
   name: string;
   firstsub,lastsub: compilersubty;
@@ -151,8 +151,8 @@ const
                                           lastsub: cs_none),
   (name: memhandlerunitname; firstsub: cs_malloc; lastsub: cs_free),
   (name: compilerunitname; firstsub: cs_zeropointerar;
-                                          lastsub: high(compilersubty)),
-  (name: sysintfunitname; firstsub: cs_none; lastsub: cs_none) //no subs
+                                          lastsub: high(compilersubty))
+//  (name: sysintfunitname; firstsub: cs_none; lastsub: cs_none) //no subs
  );
 var
  compilerunits: array[compilerunitty] of compilerunitinfoty;
