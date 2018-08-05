@@ -2262,7 +2262,7 @@ var
         ele1:= vf.typ;
         typ1:= ele.eledataabs(ele2);
         case d.kind of
-         ck_ref: begin
+         ck_ref,ck_prop: begin
           if (typ1^.h.kind = dk_class) then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -2302,6 +2302,7 @@ var
           d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
           d.dat.prop.propele:= ele.eledatarel(po4);
+          ele1:= typ;
          end;
          else begin
           errormessage(err_illegalexpression,[],adatacontext); 
@@ -2732,6 +2733,7 @@ begin
        end;
       end;
      end;
+     donotfound(pob,pob^.d.dat.datatyp.typedata);
     end;
     ek_var,ek_field: begin
      if po1^.header.kind in [ek_field] then begin
