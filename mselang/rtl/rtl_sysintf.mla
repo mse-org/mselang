@@ -8,11 +8,11 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-unit __mla__sysintf;
+unit rtl_sysintf;
 
 interface
 uses
- rtl_system,__mla__internaltypes{,rtl_base};
+ rtl_system,__mla__internaltypes,__mla__system{,rtl_base};
 
 procedure sys_bytestostring8(const source: bytestring): string8; 
 procedure sys_string8tobytes(const source: string8): bytestring;

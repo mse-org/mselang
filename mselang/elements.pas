@@ -2274,12 +2274,18 @@ function telementhashdatalist.addelementdata(const aname: identty;
 var
  scopebefore: pscopeinfoty;
  ele1: elementoffsetty;
+ vk1: visikindsty;
 begin
  scopebefore:= fscopespo;
  fscopespo:= nil;
- result:= not findcurrent(aname,[],{avislevel}allvisi{ffindvislevel},ele1);
+ vk1:= avislevel;
+ if vik_noancestor in vk1 then begin
+  exclude(vk1,vik_ancestor);
+ end;
+ result:= not findcurrent(aname,[],{avislevel}vk1{allvisi}{ffindvislevel},ele1);
  if result then begin
-  aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
+  aelementdata:= eledataabs(addelementduplicate1(
+                                aname,akind,avislevel-[vik_noancestor]));
  end
  else begin
   aelementdata:= eledataabs(ele1);

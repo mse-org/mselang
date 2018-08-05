@@ -1,0 +1,13 @@
+program bytes;
+var
+ s1: bytestring;
+ s2: string16;
+
+begin
+ s1:= 'abc'#130;
+ s2:= s1;
+ s1:= s2;
+ if s1 = 'abc'#130 then
+  exitcode:= 123;
+ end;
+end.

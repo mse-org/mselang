@@ -79,7 +79,9 @@ type
                vik_published,vik_ancestor,vik_units,vik_implementation,
                vik_found,vik_stoponstarttype,
                vik_interfacedef, //element defined in interface
-               vik_classele); //used by handlevalueidentifier,
+               vik_classele,  //used by handlevalueidentifier,
+               vik_noancestor //do not check ancestor for dupplicate
+              );
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);

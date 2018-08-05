@@ -2707,9 +2707,30 @@ begin
       end;
      end
      else begin
-    {$ifdef mse_checkinternalerror}
-      internalerror(ie_handler,'20151214B');
-    {$endif}
+      case pob^.d.kind of
+       ck_ref: begin
+        with pob^,ptypedataty(ele.eledataabs(
+                             ppropertydataty(po2)^.typ))^ do begin
+         d.kind:= ck_prop;
+         {
+         if pof_class in flags then begin
+          dec(d.dat.indirection);
+          dec(d.dat.datatyp.indirectlevel);
+         end;
+         }
+         d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
+         d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                       ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^.
+                                                             h.indirectlevel;
+         d.dat.prop.propele:= ele.eledatarel(po2);
+        end;
+       end;
+       else begin
+      {$ifdef mse_checkinternalerror}
+        internalerror(ie_handler,'20151214B');
+      {$endif}
+       end;
+      end;
      end;
     end;
     ek_var,ek_field: begin

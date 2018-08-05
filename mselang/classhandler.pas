@@ -1806,7 +1806,7 @@ begin
    end;
   {$endif}
    if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
-                           ek_property,[vik_ancestor],po1) then begin
+                  ek_property,[vik_ancestor,vik_noancestor],po1) then begin
     identerror(1,err_duplicateidentifier);
    end
    else begin

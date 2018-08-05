@@ -51,7 +51,7 @@ type
   
 implementation
 uses
- rtl_sysexceptions,rtl_rtlconsts,__mla__sysintf;
+ rtl_sysexceptions,rtl_rtlconsts,rtl_sysintf;
  
 { tstream }
 
@@ -117,7 +117,6 @@ end;
 
 method thandlestream.write(const buffer; count: int32): int32;
 begin
-writeln(@buffer);
  result:= sys_filewrite(fhandle,@buffer,count);
 end;
 

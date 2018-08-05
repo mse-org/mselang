@@ -12,7 +12,7 @@ unit rtl_system;
 //system functions, preliminary ad-hoc implementation
 interface
 uses
- rtl_base,rtl_libc;
+ rtl_base,rtl_libc,rtl_sysexceptions;
 
 const
  invalidfilehandle = -1;
@@ -49,14 +49,24 @@ type
                 sye_sockaddr,sye_socket,sye_isdir
                );
 
+ esys = class(eerror)
+  constructor create(aerror: syserrorty; atext: string);
+  property error: syserrorty read geterror;
+  private
+   procedure geterror(): syserrorty;
+ end;
+
 procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
 
 procedure nowutc(): datetimety;
 
 
 
-procedure syserror(const aerror: syserrorty);
+procedure syserror(const aerror: syserrorty; const message: string8);
 
+var //todo: threadvar
+ mselasterror: int32;
+ 
 implementation
 //{$internaldebug on}
 //uses                           //todo: error with llvm debuginfo:
@@ -68,15 +78,14 @@ const
 
 procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
 begin
- result:= sye_lasterror; //todo
+ result:= sye_lasterror;
+ mselasterror:= sys_getlasterror();
 end;
 
-procedure syserror(const aerror: syserrorty);
+procedure syserror(const aerror: syserrorty; const message: string8);
 begin
  if aerror <> sye_ok then
-  if aerror = sye_lasterror then
-  else
-  end;
+  raise esys.create(error,buildsyserrormessage(error,text));
  end;
 end;
 
@@ -97,4 +106,17 @@ const
 //    fm_append
       o_rdwr or o_creat {or o_trunc});
 *)
+
+{ esys }
+
+constructor esys.create(aerror: syserrorty;  atext: string);
+begin
+ inherited create(integer(aerror),atext,errortexts);
+end;
+
+function esys.geterror: syserrorty;
+begin
+ result:= syserrorty(ferror);
+end;
+
 end.

@@ -11,6 +11,8 @@
 unit __mla__system;
 //{$internaldebug on}
 interface
+type
+ filenamety = string16;
 var
  exitcode: int32;
 
