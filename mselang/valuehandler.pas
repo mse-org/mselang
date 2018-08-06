@@ -2201,6 +2201,7 @@ var
  po2: pointer;
  isinherited: boolean;
  isgetfact: boolean;
+ firstcall: boolean;
  subflags: dosubflagsty;
  poind,pob,potop: pcontextitemty;
   
@@ -2294,7 +2295,7 @@ var
         case d.kind of
          ck_ref: begin
           d.kind:= ck_prop;
-          if pof_class in flags then begin
+          if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end;
@@ -2476,6 +2477,7 @@ var
     if offs1 <> 0 then begin
      offsetad(-1,offs1);
     end;
+    firstcall:= false;
    end;
   end; 
  end;//donotfound()
@@ -2536,6 +2538,7 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
+  firstcall:= false;
   foundflags1:= [];
   poind:= @contextstack[s.stackindex];
   pob:= poind-1;
@@ -2709,7 +2712,10 @@ begin
      end
      else begin
       case pob^.d.kind of
-       ck_ref: begin
+       ck_ref,ck_fact,ck_subres: begin
+        dec(firstnotfound);
+        firstcall:= true;
+       (*
         with pob^,ptypedataty(ele.eledataabs(
                              ppropertydataty(po2)^.typ))^ do begin
          d.kind:= ck_prop;
@@ -2725,6 +2731,7 @@ begin
                                                              h.indirectlevel;
          d.dat.prop.propele:= ele.eledatarel(po2);
         end;
+       *)
        end;
        else begin
       {$ifdef mse_checkinternalerror}
