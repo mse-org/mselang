@@ -2293,7 +2293,7 @@ var
       ek_property: begin
        with adatacontext^,ppropertydataty(po4)^ do begin
         case d.kind of
-         ck_ref: begin
+         ck_ref,ck_fact,ck_subres: begin
           d.kind:= ck_prop;
           if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);

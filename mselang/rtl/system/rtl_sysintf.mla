@@ -32,9 +32,16 @@ procedure sys_stdin(): filehandlety;
 procedure sys_stdout(): filehandlety;
 procedure sys_stderr(): filehandlety;
 
+procedure sys_getlasterror(): int32;
+
 implementation
 uses
  rtl_libc,rtl_system,__mla__internaltypes;
+
+procedure sys_getlasterror(): int32;
+begin
+ result:= 0;
+end;
 
 procedure sys_bytestostring8(const source: bytestring): string8; 
 begin

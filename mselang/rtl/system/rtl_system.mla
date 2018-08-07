@@ -50,10 +50,10 @@ type
                );
 
  esys = class(eerror)
-  constructor create(aerror: syserrorty; atext: string);
+  constructor create(const aerror: syserrorty; const atext: string8);
   property error: syserrorty read geterror;
   private
-   procedure geterror(): syserrorty;
+   method geterror(): syserrorty;
  end;
 
 procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
@@ -62,7 +62,7 @@ procedure nowutc(): datetimety;
 
 
 
-procedure syserror(const aerror: syserrorty; const message: string8);
+procedure syserror(const aerror: syserrorty; const amessage: string8 = '');
 
 var //todo: threadvar
  mselasterror: int32;
@@ -72,7 +72,8 @@ implementation
 //uses                           //todo: error with llvm debuginfo:
 // rtl_libc;                     //"Unable to find compile unit!"
                                  //must be in interface
-  
+uses
+ rtl_sysintf;
 const
  unidatetimeoffset = -25569;
 
@@ -82,10 +83,33 @@ begin
  mselasterror:= sys_getlasterror();
 end;
 
-procedure syserror(const aerror: syserrorty; const message: string8);
+const
+ errortexts: array[syserrorty] of string8 =
+  ('','','','Busy','Dirstream','Network error','Write error','Read error',
+     'Thread error',
+    'Mutex error',
+    'Semaphore error',
+    'Condition error',
+    'Time out',
+    'Copy file error',
+    'Can not create directory',
+    'No console',
+    'Not implemented',
+    'Socket address error',
+    'Socket error',
+    'File is directory.'
+   );
+
+procedure buildsyserrormessage(const aerror: syserrorty;
+                                        const amessage: string8): string8;
+begin
+ result:= '';
+end;
+
+procedure syserror(const aerror: syserrorty; const amessage: string8);
 begin
  if aerror <> sye_ok then
-  raise esys.create(error,buildsyserrormessage(error,text));
+  raise esys.create(aerror,buildsyserrormessage(aerror,amessage));
  end;
 end;
 
@@ -109,12 +133,17 @@ const
 
 { esys }
 
-constructor esys.create(aerror: syserrorty;  atext: string);
+constructor esys.create(const aerror: syserrorty;  const atext: string8);
 begin
- inherited create(integer(aerror),atext,errortexts);
+// inherited create(int32(aerror),atext,errortexts);
 end;
 
-function esys.geterror: syserrorty;
+method esys.geterror(): syserrorty;
+begin
+ result:= syserrorty(ferror);
+end;
+
+method esys.geterror: syserrorty;
 begin
  result:= syserrorty(ferror);
 end;
