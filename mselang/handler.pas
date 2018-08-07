@@ -1506,14 +1506,14 @@ begin
     end;
    end
    else begin
-    if (d.kind = ck_prop) then begin
+    if (d.kind in [ck_refprop,ck_factprop]) then begin
      getvalue(potop,das_none);
     end
     else begin
      if hf_propindex in d.handlerflags then begin
       getnextnospace(s.stackindex+1,poa);
      {$ifdef mse_checkinternalerror}
-      if poa^.d.kind <> ck_prop then begin
+      if not (poa^.d.kind in [ck_refprop,ck_factprop]) then begin
        internalerror(ie_handler,'20160214A');
       end;
      {$endif}
@@ -3733,7 +3733,7 @@ begin
     concatterms(dest,source);
    end;
    with dest^ do begin
-    if d.kind = ck_prop then begin
+    if d.kind = ck_refprop then begin
      
      with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
       if pof_writefield in flags then begin

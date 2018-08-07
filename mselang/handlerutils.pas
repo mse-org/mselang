@@ -2968,7 +2968,7 @@ begin
   if hf_propindex in acontext^.d.handlerflags then begin
    acontext:= @contextstack[acontext^.parent-1];
   {$ifdef mse_checkinternalerror}
-   if (acontext^.d.kind <> ck_prop) or 
+   if not(acontext^.d.kind in [ck_refprop,ck_factprop]) or 
                             ((acontext+1)^.d.kind <> ck_index) then begin
     internalerror(ie_handler,'20160608A');
    end;
@@ -3061,7 +3061,7 @@ begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
  {$ifdef mse_checkinternalerror}
-  if not (d.kind in [ck_ref,ck_prop]) then begin
+  if not (d.kind in [ck_ref,ck_refprop]) then begin
    internalerror(ie_handler,'20150413A');
   end;
  {$endif}
@@ -3285,7 +3285,7 @@ begin                    //todo: optimize
    ck_reffact: begin
     doindirect();
    end;
-   ck_prop: begin
+   ck_refprop: begin
     if d.dat.datatyp.indirectlevel < 0 then begin
      errormessage(err_invalidderef,[],stackoffset);
      exit;
@@ -3698,7 +3698,7 @@ procedure getclassvalue(const acontext: pcontextitemty);
 begin
  with info,acontext^ do begin
  {$ifdef mse_checkinternalerror}
-  if d.kind <> ck_prop then begin
+  if not (d.kind in [ck_refprop,ck_factprop]) then begin
    internalerror(ie_handler,'20160202A');
   end;
   if not (ptypedataty(ele.eledataabs(
@@ -4757,7 +4757,7 @@ begin
        writeref(d);
        writetype(d);
       end;
-      ck_prop: begin
+      ck_refprop: begin
        writeref(d);
        writetype(d);
        writeln();

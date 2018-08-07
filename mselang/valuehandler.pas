@@ -2263,7 +2263,7 @@ var
         ele1:= vf.typ;
         typ1:= ele.eledataabs(ele2);
         case d.kind of
-         ck_ref,ck_prop: begin
+         ck_ref,ck_refprop: begin
           if (typ1^.h.kind = dk_class) then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -2293,8 +2293,8 @@ var
       ek_property: begin
        with adatacontext^,ppropertydataty(po4)^ do begin
         case d.kind of
-         ck_ref,ck_fact,ck_subres: begin
-          d.kind:= ck_prop;
+         ck_ref: begin
+          d.kind:= ck_refprop;
           if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -2697,7 +2697,7 @@ begin
       if not checknoclassmethod(po1) then begin
        goto endlab;
       end;
-      initdatacontext(poind^.d,ck_prop);
+      initdatacontext(poind^.d,ck_refprop);
       d.dat.prop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
        d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;

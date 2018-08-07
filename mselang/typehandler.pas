@@ -1503,7 +1503,7 @@ begin
   po2:= @contextstack[s.stackindex];
   po1:= getpreviousnospace(po2-1);
   with info,po1^ do begin
-   if d.kind = ck_prop then begin
+   if d.kind in [ck_refprop,ck_factprop] then begin
     with po2^ do begin
      d.kind:= ck_index;
      d.index.count:= 0;
@@ -1533,7 +1533,7 @@ begin
  outhandle('INDEXITEMSTART');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  if d.kind <> ck_prop then begin
+  if not (d.kind in [ck_refprop,ck_factprop]) then begin
  {$ifdef mse_checkinternalerror}
    if (d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1) then begin
     internalerror(ie_handler,'20160227D');
@@ -1593,7 +1593,7 @@ begin
   inc(contextstack[s.stackindex].d.index.count);
   ptop:= @contextstack[s.stacktop];
   topoffset:= s.stacktop-s.stackindex;
-  if d.kind <> ck_prop then begin //no array property
+  if not (d.kind in [ck_refprop,ck_factprop]) then begin //no array property
   {$ifdef mse_checkinternalerror}
    if contextstack[s.stackindex].d.kind <> ck_getindex then begin
     internalerror(ie_handler,'20160527');

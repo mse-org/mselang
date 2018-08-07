@@ -166,7 +166,8 @@ type
                   ck_block,ck_exceptblock,ck_end,
                   ck_ident,ck_stringident,ck_number,ck_str,
                   ck_subdef,ck_objsubheader,ck_list,
-                  ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
+                  ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
+                  ck_refprop,ck_factprop,
                   ck_subres,ck_subcall,ck_controltoken,
                   ck_getfact,ck_getindex,ck_label,
                   ck_typedef,ck_typedata,ck_typeref,
@@ -190,8 +191,8 @@ type
 const
  dataaddresssize = sizeof(dataaddressty);
  opaddresssize = sizeof(opaddressty);
- datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_prop,ck_reffact];
- alldatacontexts = datacontexts + [ck_prop];
+ datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_refprop,ck_reffact];
+ alldatacontexts = datacontexts + [ck_refprop];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
  factcontexts = [ck_fact,ck_reffact,ck_subres];
 
@@ -268,7 +269,7 @@ type
   c: refconstvaluety;
   castchain: linkindexty;
   case contextkindty of
-   ck_ref,ck_prop:(
+   ck_ref,ck_refprop:(
     offset: dataoffsty;
    );
  end;
@@ -541,9 +542,9 @@ type
    ck_fact,ck_subres:(
     fact: factinfoty;
    );
-   ck_ref,ck_prop:(
+   ck_ref,ck_refprop:(
     ref: refvaluety;
-    case contextkindty of ck_prop:(
+    case contextkindty of ck_refprop:(
      prop: propinfoty;
     );
    );
@@ -583,7 +584,7 @@ type
    ck_list:(
     list: listinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_prop,ck_ref,ck_reffact:( //datacontexts
+   ck_const,ck_fact,ck_subres,ck_refprop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
    ck_index:(
