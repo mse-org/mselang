@@ -3735,7 +3735,7 @@ begin
    with dest^ do begin
     if d.kind = ck_refprop then begin
      
-     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
+     with ppropertydataty(ele.eledataabs(d.dat.refprop.propele))^ do begin
       if pof_writefield in flags then begin
        d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
        d.kind:= ck_ref;

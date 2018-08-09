@@ -541,11 +541,14 @@ type
    );
    ck_fact,ck_subres:(
     fact: factinfoty;
+    case contextkindty of ck_factprop:(
+     factprop: propinfoty;
+    );
    );
    ck_ref,ck_refprop:(
     ref: refvaluety;
     case contextkindty of ck_refprop:(
-     prop: propinfoty;
+     refprop: propinfoty;
     );
    );
    ck_label:(
@@ -584,7 +587,8 @@ type
    ck_list:(
     list: listinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_refprop,ck_ref,ck_reffact:( //datacontexts
+   ck_const,ck_fact,ck_subres,ck_factprop,
+         ck_refprop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
    ck_index:(

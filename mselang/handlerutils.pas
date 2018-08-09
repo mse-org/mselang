@@ -1568,6 +1568,7 @@ begin
   with insertitem(oc_offsetpoimm,acontext,-1)^ do begin
    setimmint32(aoffset,par.imm);
    par.ssas1:= ssabefore;
+   acontext^.d.dat.fact.ssaindex:= par.ssad;
   end;
  end;
 end;
@@ -3285,7 +3286,7 @@ begin                    //todo: optimize
    ck_reffact: begin
     doindirect();
    end;
-   ck_refprop: begin
+   ck_refprop,ck_factprop: begin
     if d.dat.datatyp.indirectlevel < 0 then begin
      errormessage(err_invalidderef,[],stackoffset);
      exit;
@@ -3294,11 +3295,19 @@ begin                    //todo: optimize
      errormessage(err_variableexpected,[],stackoffset);
      exit;
     end;
-testvar:= ppropertydataty(ele.eledataabs(d.dat.prop.propele));
-    with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
+testvar:= ppropertydataty(ele.eledataabs(d.dat.refprop.propele));
+    with ppropertydataty(ele.eledataabs(d.dat.refprop.propele))^ do begin
      if pof_readfield in flags then begin
-      d.dat.ref.offset:= d.dat.ref.offset + readoffset;
-      doref();
+      if d.kind = ck_refprop then begin
+       d.dat.ref.offset:= d.dat.ref.offset + readoffset;
+       doref();
+      end
+      else begin
+       offsetad(acontext,readoffset);
+       typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+       d.kind:= ck_fact;
+       getvalue(acontext,adatasize);
+      end;
      end
      else begin
       if pof_readsub in flags then begin
@@ -3702,14 +3711,14 @@ begin
    internalerror(ie_handler,'20160202A');
   end;
   if not (ptypedataty(ele.eledataabs(
-          ele.eleinfoabs(d.dat.prop.propele)^.header.parent))^.h.kind in
+          ele.eleinfoabs(d.dat.refprop.propele)^.header.parent))^.h.kind in
                                              [dk_class,dk_object]) then begin
    internalerror(ie_handler,'20160202A');
   end;
  {$endif} 
   d.kind:= ck_ref;
   d.dat.datatyp.flags:= [];
-  d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.prop.propele)^.header.parent;
+  d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.refprop.propele)^.header.parent;
   if ptypedataty(ele.eleinfoabs(d.dat.datatyp.typedata))^.h.kind = 
                                                         dk_class then begin
    d.dat.datatyp.indirectlevel:= 1;
@@ -4746,12 +4755,15 @@ begin
         ' flags:',settostring(ptypeinfo(typeinfo(listflagsty)),
                                             integer(d.list.flags),true));
       end;
-      ck_fact,ck_subres: begin
+      ck_fact,ck_subres,ck_factprop: begin
        writedat(d.dat);
        write('ssa:',d.dat.fact.ssaindex,' ');
        write(' flags:',settostring(ptypeinfo(typeinfo(factflagsty)),
                                          integer(d.dat.fact.flags),true),' ');
        writetype(d);
+       if d.kind = ck_factprop then begin
+        write(' E:',d.dat.factprop.propele);
+       end;
       end;
       ck_ref: begin
        writeref(d);
@@ -4761,7 +4773,7 @@ begin
        writeref(d);
        writetype(d);
        writeln();
-       write(' E:',d.dat.prop.propele);
+       write(' E:',d.dat.refprop.propele);
       end;
       ck_reffact: begin
        writedat(d.dat);

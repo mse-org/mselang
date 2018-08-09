@@ -2293,8 +2293,15 @@ var
       ek_property: begin
        with adatacontext^,ppropertydataty(po4)^ do begin
         case d.kind of
-         ck_ref: begin
-          d.kind:= ck_refprop;
+         ck_ref,ck_fact,ck_subres: begin
+          if d.kind = ck_ref then begin
+           d.kind:= ck_refprop;
+           d.dat.refprop.propele:= ele.eledatarel(po4);
+          end
+          else begin
+           d.kind:= ck_factprop;
+           d.dat.refprop.propele:= ele.eledatarel(po4);
+          end;
           if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -2302,7 +2309,6 @@ var
           d.dat.datatyp.typedata:= typ;
           d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
-          d.dat.prop.propele:= ele.eledatarel(po4);
           ele1:= typ;
          end;
          else begin
@@ -2698,7 +2704,7 @@ begin
        goto endlab;
       end;
       initdatacontext(poind^.d,ck_refprop);
-      d.dat.prop.propele:= ele.eleinforel(po1);
+      d.dat.refprop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
        d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
        d.dat.datatyp.flags:= h.flags;
