@@ -3230,6 +3230,7 @@ var
  pocont1,pocont2: pcontextitemty;
  lastitem: pcontextitemty;
  isclassele: boolean;
+ ele1: elementoffsetty;
 label
  errlab; 
 
@@ -3295,8 +3296,14 @@ begin                    //todo: optimize
      errormessage(err_variableexpected,[],stackoffset);
      exit;
     end;
-testvar:= ppropertydataty(ele.eledataabs(d.dat.refprop.propele));
-    with ppropertydataty(ele.eledataabs(d.dat.refprop.propele))^ do begin
+    if d.kind = ck_refprop then begin
+     ele1:= d.dat.refprop.propele;
+    end
+    else begin
+     ele1:= d.dat.factprop.propele;
+    end;
+testvar:= ppropertydataty(ele.eledataabs(ele1));
+    with ppropertydataty(ele.eledataabs(ele1))^ do begin
      if pof_readfield in flags then begin
       if d.kind = ck_refprop then begin
        d.dat.ref.offset:= d.dat.ref.offset + readoffset;
@@ -3710,24 +3717,35 @@ begin
   if not (d.kind in [ck_refprop,ck_factprop]) then begin
    internalerror(ie_handler,'20160202A');
   end;
-  if not (ptypedataty(ele.eledataabs(
-          ele.eleinfoabs(d.dat.refprop.propele)^.header.parent))^.h.kind in
-                                             [dk_class,dk_object]) then begin
-   internalerror(ie_handler,'20160202A');
-  end;
  {$endif} 
-  d.kind:= ck_ref;
-  d.dat.datatyp.flags:= [];
-  d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.refprop.propele)^.header.parent;
-  if ptypedataty(ele.eleinfoabs(d.dat.datatyp.typedata))^.h.kind = 
-                                                        dk_class then begin
-   d.dat.datatyp.indirectlevel:= 1;
-   inc(d.dat.indirection);
-   getvalue(acontext,das_none);
+  if d.kind = ck_factprop then begin
+   if (ptypedataty(ele.eledataabs(ele.eleinfoabs(
+                     d.dat.factprop.propele)^.header.parent))^.h.kind <>
+                                                         dk_class) then begin
+    notimplementederror('20180810A'); //object
+   end;
   end
-  else begin //dk_object
-   d.dat.datatyp.indirectlevel:= 0;
-   getaddress(acontext,true);
+  else begin
+  {$ifdef mse_checkinternalerror}
+   if not (ptypedataty(ele.eledataabs(
+           ele.eleinfoabs(d.dat.refprop.propele)^.header.parent))^.h.kind in
+                                              [dk_class,dk_object]) then begin
+    internalerror(ie_handler,'20160202A');
+   end;
+  {$endif} 
+   d.kind:= ck_ref;
+   d.dat.datatyp.flags:= [];
+   d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.refprop.propele)^.header.parent;
+   if ptypedataty(ele.eleinfoabs(d.dat.datatyp.typedata))^.h.kind = 
+                                                         dk_class then begin
+    d.dat.datatyp.indirectlevel:= 1;
+    inc(d.dat.indirection);
+    getvalue(acontext,das_none);
+   end
+   else begin //dk_object
+    d.dat.datatyp.indirectlevel:= 0;
+    getaddress(acontext,true);
+   end;
   end;
  end;
 end;

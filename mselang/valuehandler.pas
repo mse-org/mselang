@@ -2300,7 +2300,7 @@ var
           end
           else begin
            d.kind:= ck_factprop;
-           d.dat.refprop.propele:= ele.eledatarel(po4);
+           d.dat.factprop.propele:= ele.eledatarel(po4);
           end;
           if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);
