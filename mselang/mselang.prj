@@ -114,7 +114,7 @@ options=131
  sortdescend6=0
  sortdescend7=0
  values8=4
-  -l -Mobjfpc -Sh -Fcutf8 ${fpcflags}
+  -l -Mobjfpc -Sh -Fcutf8
   -gl -O- -dmse_debugparser -dmse_compiler
   -B
   -O2 -XX -Xs -CX
@@ -152,12 +152,13 @@ options=131
  y=68
  cx=821
  cy=572
-settings=13
- [settingsfo.tsplitter2]
- x=192
- y=16
- xprop=0.57879656160458
- yprop=1
+settings=14
+ [settingsfo.macrogrid]
+ propcolwidthref=288
+ width0=152
+ sortdescend0=0
+ width1=129
+ sortdescend1=0
  [settingsfo]
  x=100
  y=106
@@ -285,7 +286,7 @@ targpref=-o
 befcommand=0
 aftcommand=0
 makeoptions=4
- -l -Mobjfpc -Sh -Fcutf8 ${fpcflags}
+ -l -Mobjfpc -Sh -Fcutf8
  -gl -O- -dmse_debugparser -dmse_compiler
  -B
  -O2 -XX -Xs -CX
@@ -614,10 +615,10 @@ findoptions=1
 editpos=6
  0,-1073741823
  0,-1073741823
- 8,21
+ 0,-1073741823
  0,29
- 0,189
- 0,641
+ 0,-1073741823
+ 0,-1073741823
 bookmarks0=0
 bookmarks1=0
 bookmarks2=0
@@ -781,7 +782,7 @@ windowlayout=564
  [disassfo]
  splitdir=0
  useroptions=805322859
- stackedunder=
+ stackedunder=watchfo
  parent=
  mdistate=0
  nx=0
@@ -1169,7 +1170,7 @@ windowlayout=564
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=watchfo
+ stackedunder=breakpointsfo
  parent=
  mdistate=0
  nx=0
