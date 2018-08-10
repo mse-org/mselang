@@ -187,7 +187,7 @@ begin
   for t1:= low(internaltypety) to high(internaltypety) do begin
    if not ele.findcurrent(getident(internaltypenames[t1]),[ek_type],
                                           allvisi,internaltypes[t1]) then begin
-    internalerror(ie_parser,'20171106B');
+    internalerror1(ie_parser,'20171106B');
    end;
   end;
   ele.popelementparent();

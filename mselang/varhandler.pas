@@ -488,12 +488,12 @@ begin
        end;
       end;
       else begin
-       internalerror(ie_handler,'20170615C');
+       internalerror1(ie_handler,'20170615C');
       end;
      end;
     end;
     else begin
-     internalerror(ie_handler,'20170615B');
+     internalerror1(ie_handler,'20170615B');
     end;
    end;
   end;
@@ -634,12 +634,12 @@ begin
                                                sizeof(stringheaderty)).listid;
              end;
              else begin
-              internalerror(ie_handler,'20170615F');
+              internalerror1(ie_handler,'20170615F');
              end;
             end;
            end;
            else begin
-            internalerror(ie_handler,'20170614A');
+            internalerror1(ie_handler,'20170614A');
            end;
           end;
          end;
