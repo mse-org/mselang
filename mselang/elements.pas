@@ -401,7 +401,7 @@ implementation
 uses
  msearrayutils,sysutils,typinfo,mseformatstr,
  mselinklist,msesysutils,opcode,handlerutils,unithandler,
- internaltypes,__mla__internaltypes,errorhandler,identutils,grammarglob;
+ {internaltypes,}__mla__internaltypes,errorhandler,identutils,grammarglob;
 
 const
  recursionmax = 1024;
