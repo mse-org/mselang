@@ -32,7 +32,7 @@ procedure intexp10(aexp: integer): flo64;
 
 implementation
 uses
- sysutils,rtl_exceptions;
+ rtl_exceptions;
 
 const
  binexps: array[0..8] of flo64 = (1e1,1e2,1e4,1e8,1e16,1e32,1e64,1e128,1e256);
