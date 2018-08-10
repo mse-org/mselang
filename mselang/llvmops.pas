@@ -2094,13 +2094,21 @@ begin
 end;
 
 procedure arraytoopenaradop();
+var
+ i1: int32;
 begin
  with pc^.par do begin
   bcstream.emitalloca(bcstream.ptypeval(bcstream.openarraytype));   //1ssa
   bcstream.emitbitcast(bcstream.relval(0),
                            bcstream.typeval(bcstream.pointertype)); //1ssa
+  if ssas1 < 0 then begin
+   i1:= bcstream.constval(ord(nco_pointer)); //nilpointer
+  end
+  else begin
+   i1:= bcstream.ssaval(ssas1);
+  end;
   callcompilersub(cs_arraytoopenar,false,[bcstream.constval(imm.llvm.listid),
-                                   bcstream.ssaval(ssas1),bcstream.relval(0)]);
+                                   i1,bcstream.relval(0)]);
  end;
 end;
 

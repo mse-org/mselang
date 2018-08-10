@@ -1418,15 +1418,18 @@ begin
     end;
    end;
    dk_openarray: begin
-    segad1:= allocdataconst(constval.vopenarray);
-    si1:= das_none;
-    i1:= aopoffset;
-    with insertitem1(oc_pushsegaddr,stackoffset,i1,
-                              pushsegaddrssaar[segad1.segment])^ do begin
-     par.memop.segdataaddress.a:= segad1;
-     par.memop.segdataaddress.offset:= 0;
-     par.memop.t:= bitoptypes[das_pointer];
-     i2:= par.ssad;
+    i2:= -1;
+    if constval.vopenarray.size > 0 then begin
+     segad1:= allocdataconst(constval.vopenarray);
+     si1:= das_none;
+     i1:= aopoffset;
+     with insertitem1(oc_pushsegaddr,stackoffset,i1,
+                               pushsegaddrssaar[segad1.segment])^ do begin
+      par.memop.segdataaddress.a:= segad1;
+      par.memop.segdataaddress.offset:= 0;
+      par.memop.t:= bitoptypes[das_pointer];
+      i2:= par.ssad;
+     end;
     end;
     op1:= oc_arraytoopenar;
     if paramindirect then begin

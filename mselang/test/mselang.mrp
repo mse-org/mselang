@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=26
    (
    kind=1
@@ -292,7 +292,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=38
     (
     kind=1
@@ -606,8 +606,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,0,cmpenum llvm
-     teststate=0
+     a=0,648,1,cmpenum llvm
+     teststate=1
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73275B0
+    ao=An unhandled exception occured at $B72425B0
     ae=
     aec=123
     ie=0
@@ -6016,7 +6016,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=13
     (
     kind=1
@@ -6362,7 +6362,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
+   a=0,665,5,sub
    c=43
     (
     kind=1
@@ -6846,8 +6846,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,openarray
-    c=23
+    a=0,665,5,openarray
+    c=24
      (
      kind=2
      a=0,648,1,openarray1
@@ -7354,7 +7354,29 @@ c=3
      aec=123
      ie=0
      )
-    teststate=1
+     (
+     kind=2
+     a=0,648,2,empty llvm
+     teststate=2
+     path=empty.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=error: Invalid record
+     aec=1
+     ie=0
+     )
+    teststate=2
     path=openarray/
     comment=
     cc=
@@ -7372,7 +7394,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,param
+    a=0,664,4,param
     c=9
      (
      kind=2
@@ -8488,7 +8510,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -9507,7 +9529,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -14886,7 +14908,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -15009,24 +15031,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=238
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=221
  0 0
  0 0
  0 0

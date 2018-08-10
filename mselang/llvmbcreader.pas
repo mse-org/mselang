@@ -1052,15 +1052,17 @@ procedure tllvmbcreader.output(const kind: outputkindty; const text: string);
 var
  str1: string;
 begin
- if fbb <> fbbbefore then begin
-  str1:= inttostr(fbb)+':';
-  extendstring(str1,5);
-  fbbbefore:= fbb;
- end
- else begin
-  str1:= '     ';
+ str1:= '';
+ if ffunctionlevel > 0 then begin
+  str1:= inttostr(fopnum);
+  extendstring(str1,4);
+  if fbb <> fbbbefore then begin
+   str1:= str1+inttostr(fbb)+':';
+   fbbbefore:= fbb;
+  end;
+  extendstring(str1,5+4);
+  system.write(str1);
  end;
- system.write(str1);
  if kind = ok_end then begin
   dec(findent);
   if findent < 0 then begin
