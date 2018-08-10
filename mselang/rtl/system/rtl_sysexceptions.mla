@@ -1,0 +1,63 @@
+//rtl_sysexceptions
+{ MSEgui Copyright (c) 2018 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+} 
+unit rtl_sysexceptions;
+interface
+uses
+ rtl_exceptions;
+type
+ exception = class(texception) end;
+
+ econverterror = class(exception) end;
+ eformaterror = class(exception) end;
+ enotimplemented = class(exception) end;
+ erttierror = class(exception) end;
+
+ estreamerror = class(exception) end;
+ ereaderror = class(estreamerror) end;
+ ewriteerror = class(estreamerror) end;
+ 
+ eerror = class(exception)
+  text: string;
+//  constructor create(error: int32; message: string8;
+//                          const errortexts: array of string8);
+  property error: int32 read ferror;
+  private
+  protected
+   ferror: int32;
+ end;
+
+procedure notimplementederror(const amessage: string8);
+implementation
+uses
+ rtl_sysconsts,rtl_strings;
+var testvar: string8;
+const lineend = #$0a;
+
+{$internaldebug on}
+procedure xx(const amessage: string8);
+begin
+end;
+
+procedure notimplementederror(const amessage: string8);
+begin
+ xx(testvar+':'+lineend);
+// raise enotimplemented.create(testvar+':'+lineend);
+// raise enotimplementederror.create(snotimplementederror+':'+lineend+amessage);
+end;
+
+{ eerror }
+{
+constructor eerror.create(error: int32; message: string8;
+               const errortexts: array of string8);
+begin
+end;
+}
+end.
