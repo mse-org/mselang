@@ -1,0 +1,64 @@
+program prop2;
+type
+ recty = record
+  a,b: int32;
+ end;
+ rec1ty = record
+  a,b: recty;
+ end;
+ ttest = class()
+  private
+   xx: int32;
+   ft: int32;
+   fr1: rec1ty;
+  constructor create();
+  destructor destroy();
+  property t: int32 read ft write ft;
+  property t1: int32 read gett1 write ft;
+  method te: int32;
+  private
+   property r: recty read fr write fr;
+   property r1: rec1ty read fr1 write fr1;
+   method gett1(): int32;
+   fr: recty;
+ end;
+
+constructor ttest.create();
+begin
+
+ ft:= 100;
+ fr.b:= 20;
+ fr1.b.b:= 3;
+
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+method ttest.te(): int32;
+begin
+ result:= ttest(self).t;
+end;
+
+method ttest.gett1(): int32;
+begin
+ result:= ft;
+end;
+
+var
+ t1: ttest;
+ i1: int32;
+
+procedure tt(): ttest;
+begin
+ result:= t1;
+end;
+
+var
+ r1: rec1ty;
+begin
+ t1:= ttest.create;
+ exitcode:= tt().t1+t1.r.b+ttest(t1).r1.b.b+tt().t+t1.te()-200;
+ t1.destroy();
+end.

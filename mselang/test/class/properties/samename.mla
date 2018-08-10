@@ -1,0 +1,35 @@
+program samename;
+type
+ ttest = class()
+  constructor create();
+  destructor destroy();
+  property t: int32 read ft write ft;
+  property t0: int32 read ft write ft;
+  private
+   ft: int32;
+ end;
+
+ ttest1 = class(ttest)
+  property t1: int32 read ft1 write ft1;
+  property t: int32 read ft1 write ft1;
+  private
+   ft1: int32;
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+var
+ t1: ttest1;
+begin
+ t1:= ttest1.create();
+ t1.t:= 100;
+ ttest(t1).t:= 23;
+ exitcode:= t1.t0+t1.t1;
+ t1.destroy(); 
+end.

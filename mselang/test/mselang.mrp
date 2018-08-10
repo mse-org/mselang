@@ -606,8 +606,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,cmpenum llvm
-     teststate=1
+     a=0,648,0,cmpenum llvm
+     teststate=0
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72C25B0
+    ao=An unhandled exception occured at $B73275B0
     ae=
     aec=123
     ie=0
@@ -10861,12 +10861,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,665,4,class
   c=36
    (
    kind=1
    a=0,665,4,properties
-   c=28
+   c=29
     (
     kind=2
     a=0,648,1,classprop1
@@ -11466,6 +11466,28 @@ c=3
     a=0,648,1,propderef llvm
     teststate=1
     path=propderef.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,prop2
+    teststate=1
+    path=prop2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -14987,7 +15009,101 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=144
+rowstate=238
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

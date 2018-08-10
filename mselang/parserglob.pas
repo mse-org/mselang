@@ -191,10 +191,11 @@ type
 const
  dataaddresssize = sizeof(dataaddressty);
  opaddresssize = sizeof(opaddressty);
- datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_refprop,ck_reffact];
- alldatacontexts = datacontexts + [ck_refprop];
+ datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact,
+                                                  ck_refprop,ck_factprop];
+ alldatacontexts = datacontexts + [];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
- factcontexts = [ck_fact,ck_reffact,ck_subres];
+ factcontexts = [ck_fact,ck_reffact,ck_subres,ck_factprop];
 
 type 
  compileoptionty = (co_mlaruntime, //mla interpreter
