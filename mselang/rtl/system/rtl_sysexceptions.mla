@@ -1,5 +1,5 @@
 //rtl_sysexceptions
-{ MSEgui Copyright (c) 2018 by Martin Schreiber
+{ MSElang Copyright (c) 2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -19,6 +19,7 @@ type
  eformaterror = class(exception) end;
  enotimplemented = class(exception) end;
  erttierror = class(exception) end;
+ enotimplementederror = class(exception) end;
 
  estreamerror = class(exception) end;
  ereaderror = class(estreamerror) end;
@@ -26,8 +27,8 @@ type
  
  eerror = class(exception)
   text: string;
-//  constructor create(error: int32; message: string8;
-//                          const errortexts: array of string8);
+  constructor create(error: int32; atext: string8;
+                          const errortexts: array of string8);
   property error: int32 read ferror;
   private
   protected
@@ -35,29 +36,47 @@ type
  end;
 
 procedure notimplementederror(const amessage: string8);
+
 implementation
 uses
- rtl_sysconsts,rtl_strings;
-var testvar: string8;
+ rtl_sysconsts,rtl_strings,rtl_stringconv;
+
 const lineend = #$0a;
 
-{$internaldebug on}
 procedure xx(const amessage: string8);
 begin
 end;
 
 procedure notimplementederror(const amessage: string8);
 begin
- xx(testvar+':'+lineend);
-// raise enotimplemented.create(testvar+':'+lineend);
-// raise enotimplementederror.create(snotimplementederror+':'+lineend+amessage);
+ raise enotimplementederror.create(snotimplementederror+':'+lineend+amessage);
 end;
 
 { eerror }
-{
-constructor eerror.create(error: int32; message: string8;
+
+constructor eerror.create(error: int32; atext: string8;
                const errortexts: array of string8);
+var
+ ch1: char8;
+ s1: string8;
 begin
+ ferror:= error;
+ text:= atext;
+ if (error >= 0) and (error <= high(errortexts)) then
+  s1:= errortexts[error];
+ else
+  s1:= serror+':'+inttostr8(error);
+ end;
+ if text = '' then
+  inherited create(s1+'.');
+ else
+  text:= s1+ ' ' + text;
+  ch1:= text[length(text)];
+  if (ch1 <> '.') and (ch1 <> c_return) and (ch1 <> c_linefeed) then
+   text:= text + '.';
+  end;
+  inherited create(text);
+ end;
 end;
-}
+
 end.

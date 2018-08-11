@@ -18,6 +18,7 @@ resourcestring
  srangeerror = 'Range error argument Nr. %d';
  stypemustbeobjectorclass = 'Type must be object or class';
  senumtypeexpected = 'Enum type expected';
+ serror = 'Error';
  
 implementation
 end.
