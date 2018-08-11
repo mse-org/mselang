@@ -2247,7 +2247,7 @@ begin
   sub1^.nameid:= getunitnameid();
   sub1^.resulttype:= resulttype1;
   sub1^.varchain:= 0;
-  sub1^.paramfinichain:= 0;
+//  sub1^.paramfinichain:= 0;
   sub1^.allocs.nestedalloccount:= 0;
   if sf_external in subflags then begin
    with (poind-1)^ do begin
@@ -2365,8 +2365,9 @@ begin
      dec(var1^.address.locaddress.address,frameoffset);
      curparam^:= ptruint(var1)-eledatabase;
      if tf_needsmanage in var1^.vf.flags then begin
-      var1^.vf.next:= sub1^.paramfinichain;
-      sub1^.paramfinichain:= ele.eledatarel(var1);
+      include(sub1^.flags,sf_hasmanagedparam);
+//      var1^.vf.next:= sub1^.paramfinichain;
+//      sub1^.paramfinichain:= ele.eledatarel(var1);
      end;
      inc(curparam);
     end;
@@ -2935,10 +2936,11 @@ begin
   addsubbegin(oc_subbegin,po1);
   stacktempoffset:= locdatapo;
   if s.currentstatementflags * [stf_needsmanage,stf_needsini] <> [] then begin
-   writemanagedvarop(mo_ini,po1^.varchain,s.stacktop);
+   writemanagedvarop(mo_ini,po1^.varchain,[],s.stacktop);
   end;           //todo: implicit try-finally
-  if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_incref,po1^.paramfinichain,s.stacktop);
+//  if po1^.paramfinichain <> 0 then begin
+  if sf_hasmanagedparam in po1^.flags then begin
+   writemanagedvarop(mo_incref,po1^.varchain,[af_param],s.stacktop);
   end;
   begintempvars();
  end;
@@ -2967,14 +2969,15 @@ begin
   addlabel();
   linkresolveopad(po1^.exitlinks,opcount-1);
   if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
-   writemanagedvarop(mo_fini,po1^.varchain,s.stacktop);
+   writemanagedvarop(mo_fini,po1^.varchain,[],s.stacktop);
   end;
 
   invertlist(tempvarlist,tempvarchain);
   writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
 
-  if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_fini,po1^.paramfinichain,s.stacktop);
+//  if po1^.paramfinichain <> 0 then begin
+  if sf_hasmanagedparam in po1^.flags then begin
+   writemanagedvarop(mo_fini,po1^.varchain,[af_param],s.stacktop);
   end;
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
   deletelistchain(managedtemplist,managedtempchain);

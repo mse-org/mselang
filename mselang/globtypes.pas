@@ -261,7 +261,8 @@ type
               sf_nolineinfo, //for llvm
               sf_vararg,sf_proto, //for llvm
               sf_virtual,sf_override,sf_interface,
-              sf_intfcall); //called by interface
+              sf_intfcall, //called by interface
+              sf_hasmanagedparam);
  subflagsty = set of subflagty;
 
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
@@ -278,7 +279,8 @@ type
                                                     //object sub attachments
  subflag1ty = (sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_dispose,
                sf1_beforedestruct,sf1_incref,sf1_decref,
-              {sf1_params,}sf1_default); //for destructor
+              {sf1_params,}sf1_default //for destructor
+              );
  subflags1ty = set of subflag1ty;
  
 const

@@ -578,13 +578,13 @@ begin
  with info do begin
   if s.currentstatementflags*[stf_needsmanage,stf_needsini] <> [] then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,s.stacktop);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,[],s.stacktop);
     endsimplesub(false);
    end;
   end;
   if s.currentstatementflags*[stf_needsmanage,stf_needsfini] <> [] then begin
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,s.stacktop);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,[],s.stacktop);
     endsimplesub(false);
    end;
   end;
@@ -1787,7 +1787,7 @@ begin
 {$endif}
  checkforwardtypeerrors();
  getinternalsub(isub_ini,ad1);
- writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,info.s.stacktop);
+ writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,[],info.s.stacktop);
 {
  with info,unitinfo^ do begin
   initializationstart:= opcount;
@@ -1853,7 +1853,7 @@ begin
  addlabel();
  linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
                                                       info.opcount-1);
- writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,info.s.stacktop);
+ writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,[],info.s.stacktop);
  endsimplesub(false);
 {
  with info,unitinfo^ do begin

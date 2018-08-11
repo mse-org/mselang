@@ -160,7 +160,7 @@ type
    procedure addelement(const aident: identty; const avislevel: visikindsty;
                                               const aelement: elementoffsetty);
    procedure setelementparent(const element: elementoffsetty);
-   procedure checkbuffersize; inline;
+   procedure checkbuffersize;
    function getrecordsize: int32 override;
    function findchild(aparent: elementoffsetty;
                const achildtree: pidentty; const ahigh: int32; 
@@ -2023,7 +2023,7 @@ begin
 end;
 {$endif}
 
-procedure telementhashdatalist.checkbuffersize; inline;
+procedure telementhashdatalist.checkbuffersize;
 
 begin
  if fnextelement >= felementlen then begin

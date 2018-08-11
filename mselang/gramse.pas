@@ -3020,7 +3020,7 @@ const
      dest: (context: @submethodheaderco); stack: nil; 
      keyword: $0000024C{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @subsubheaderco); stack: nil; 
+     dest: (context: @subprocedureheaderco); stack: nil; 
      keyword: $0000024A{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -3356,7 +3356,7 @@ const
      dest: (context: @methodco); stack: nil; 
      keyword: $0000024C{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @subsubco); stack: nil; 
+     dest: (context: @procedureco); stack: nil; 
      keyword: $0000024A{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 

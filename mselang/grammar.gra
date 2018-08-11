@@ -145,7 +145,7 @@ start2,noimplementation,handleafterintfuses,
 {$gramse}
  'method'.,submethodheader-*^>
 // 'sub'.,subsubheader-*^>
- 'procedure'.,subsubheader-*^>
+ 'procedure'.,subprocedureheader-*^>
 {$}
 start2class,start2,,
  ${whitespace}
@@ -200,7 +200,7 @@ main1,,,handlemain
 {$}
 {$gramse}
  'method'.,method-^*>
- 'procedure'.,subsub-^*>
+ 'procedure'.,procedure-^*>
  'sub'.,subsub-^*>
 {$}
  'constructor'.,constructor-^*>

@@ -483,7 +483,7 @@ type
   varchain: elementoffsetty;
 //  varallocs: dataoffsty;
 //  varalloccount: integer;
-  paramfinichain: elementoffsetty;
+//  paramfinichain: elementoffsetty;
   resulttype: resulttypety;
   allocs: suballocinfoty;
   paramsize: integer;

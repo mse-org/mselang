@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72425B0
+    ao=An unhandled exception occured at $B72C75B0
     ae=
     aec=123
     ie=0
@@ -6362,7 +6362,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,sub
+   a=0,665,4,sub
    c=43
     (
     kind=1
@@ -6846,7 +6846,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,openarray
+    a=0,664,4,openarray
     c=24
      (
      kind=2
@@ -7356,8 +7356,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,empty llvm
-     teststate=2
+     a=0,648,1,empty llvm
+     teststate=1
      path=empty.mla
      comment=
      cc=${mlc_llvm}
@@ -7372,11 +7372,11 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Invalid record
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=openarray/
     comment=
     cc=
@@ -7394,8 +7394,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,param
-    c=9
+    a=0,665,4,param
+    c=10
      (
      kind=2
      a=0,648,1,params
@@ -7577,6 +7577,28 @@ c=3
      a=0,648,1,defaultemptyset llvm
      teststate=1
      path=defaultemptyset.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,managedparam llvm
+     teststate=1
+     path=managedparam.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -8510,7 +8532,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=sub/
    comment=
    cc=
@@ -9529,7 +9551,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -14908,7 +14930,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -15031,21 +15053,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=221
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=207
  0 0
  0 0
  0 0

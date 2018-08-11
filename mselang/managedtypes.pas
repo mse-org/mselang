@@ -48,7 +48,8 @@ procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
                                                   const acontextindex: int32);
 procedure writemanagedvarop(const op: managedopty;
                             const chain: elementoffsetty; //vardataty
-                                                    const acontextindex: int32);
+                            const addressflags: addressflagsty;
+                                              const acontextindex: int32);
 procedure writemanagedtempop(const op: managedopty;
                             const achain: listadty; //managettempitem
                                                     const acontextindex: int32);
@@ -1088,7 +1089,9 @@ begin
 end;
 
 procedure writemanagedvarop(const op: managedopty;
-                 const chain: elementoffsetty; const acontextindex: int32);
+                 const chain: elementoffsetty;
+                 const addressflags: addressflagsty;
+                 const acontextindex: int32);
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
@@ -1103,9 +1106,10 @@ begin
   b1:= (op <> mo_ini) and (op <> mo_fini);
   repeat
    po1:= ele.eledataabs(ele1);
-   if (op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
-      (op = mo_fini) and (tf_needsfini in po1^.vf.flags) or
-      b1 and (tf_needsmanage in po1^.vf.flags) then begin
+   if ((addressflags = []) or (addressflags*po1^.address.flags <> [])) and
+      ((op = mo_ini) and (tf_needsini in po1^.vf.flags) or 
+       (op = mo_fini) and (tf_needsfini in po1^.vf.flags) or
+       b1 and (tf_needsmanage in po1^.vf.flags)) then begin
     ad1.vardata:= po1;
     ad1.isclass:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.
                                                  h.kind in [dk_class]; 
