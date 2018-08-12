@@ -935,6 +935,7 @@ begin
    endsimplesub(true);
   end;
   typ1:= ele.eledataabs(atyp); //can be changed because of added items
+  include(typ1^.h.flags,tf_managehandlervalid);
   if (typ1^.h.kind in [dk_object,dk_class]) and
      (typ1^.infoclass.subattach[osa_destroy] <> 0) then begin
    typ2:= typ1;

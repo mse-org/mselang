@@ -3526,7 +3526,7 @@ var
     callclasssubattach(instancetype1^.infoclass.subattach[osa_beforedestruct]);
    end;
   end;
- end;
+ end; //doinstanceonstack()
  
 var
  realparamco: int32; //including defaults

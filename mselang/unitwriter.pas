@@ -75,7 +75,7 @@ function tidentlist.getrecordsize(): int32;
 begin
  result:= sizeof(identbufferhashdataty);
 end;
-
+var testvar: elementoffsetty;
 function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var
@@ -193,6 +193,7 @@ var
   deststart:= pd;
   pe:= pointer(pd) + s1;
   while pd < pe do begin
+testvar:= (pointer(ps)-pointer(ele.elebase))+(pointer(pd)-deststart);
    with pd^ do begin
     header.name:= updateident(header.name);
     header.defunit:= pointer(ptrint(header.defunit^.key));
@@ -226,7 +227,8 @@ var
          updateref(infodynarray.i.itemtypedata);
         end;
         dk_record,dk_class,dk_object: begin
-         if (tf_needsmanage in h.flags) or (h.kind <> dk_record) then begin
+//         if (tf_needsmanage in h.flags) or (h.kind <> dk_record) then begin
+         if tf_managehandlervalid in h.flags then begin
           for mop1:= low(mop1) to high(mop1) do begin
            updateref(recordmanagehandlers[mop1]);
           end;
