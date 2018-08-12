@@ -27,7 +27,7 @@ type
  
  eerror = class(exception)
   text: string;
-  constructor create(error: int32; atext: string8;
+  constructor create(const error: int32; const atext: string8;
                           const errortexts: array of string8);
   property error: int32 read ferror;
   private
@@ -54,7 +54,7 @@ end;
 
 { eerror }
 
-constructor eerror.create(error: int32; atext: string8;
+constructor eerror.create(const error: int32; const atext: string8;
                const errortexts: array of string8);
 var
  ch1: char8;
