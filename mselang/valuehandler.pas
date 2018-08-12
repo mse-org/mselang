@@ -2895,6 +2895,10 @@ begin
      end;
     end;
     ek_sub: begin
+     if idents.high > 0 then begin
+      errormessage(err_illegalqualifier,[],2);
+      goto endlab;
+     end;
      if not checknoclassmethod(po1) then begin
       goto endlab;
      end;
