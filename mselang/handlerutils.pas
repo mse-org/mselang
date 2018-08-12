@@ -275,7 +275,8 @@ procedure newblockcontext(const stackoffset: int32);
 procedure finiblockcontext(const stackoffset: int32);
 
 function initopenarrayconst(var adata: dataty; const itemcount: int32;
-                                     const itemsize: int32): pointer;
+                                     const itemsize: int32;
+                                     const itemkind: datakindty): pointer;
                                          //returns pointer to data block
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
@@ -3138,7 +3139,8 @@ begin
 end;
 
 function initopenarrayconst(var adata: dataty; const itemcount: int32;
-                                     const itemsize: int32): pointer;
+                                     const itemsize: int32;
+                                     const itemkind: datakindty): pointer;
                                          //returns pointer to data block
 var
  flags1: addressflagsty;
@@ -3148,6 +3150,7 @@ begin
   vopenarray.size:= itemcount*itemsize;
   vopenarray.high:= itemcount-1;
   vopenarray.address:= getglobconstaddress(vopenarray.size,result);
+  vopenarray.itemkind:= itemkind;
  end;
 end;
 
@@ -4840,7 +4843,10 @@ begin
         end;
         dk_openarray: begin
          write('size:',inttostrmse(d.dat.constval.vopenarray.size),
-               ' high:',inttostrmse(d.dat.constval.vopenarray.size));
+               ' high:',inttostrmse(d.dat.constval.vopenarray.size),
+               ' itemkind:',getenumname(
+                              typeinfo(d.dat.constval.vopenarray.itemkind),
+                                      ord(d.dat.constval.vopenarray.itemkind)));
         end;
        end;
       end;

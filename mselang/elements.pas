@@ -473,8 +473,11 @@ var
  stringbuf: tstringbuffer;
  
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
+                                //overwrites seg_globconst
 var
  i1: int32;
+ p1,pe: pstringvaluety;
+ p0,p2: pint32;
 begin
 {$ifdef mse_checkinternalerror}
  if adata.address.segment <> seg_globconst then begin
@@ -482,11 +485,41 @@ begin
  end;
 {$endif}
  result:= adata.address;
- if co_llvm in info.o.compileoptions then begin
-  i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(
-                                 getsegmentpo(result)^,adata.size).listid;
-  result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
-                                      gak_const,i1,info.s.globlinkage);
+ if adata.itemkind = dk_string then begin
+  if co_llvm in info.o.compileoptions then begin
+   p1:= getsegmentpo(result);
+   p0:= pointer(p1);
+   p2:= pointer(p1);
+   pe:= pointer(p1) + adata.size;
+   while p1 < pe do begin
+    if strf_empty in p1^.flags then begin
+     i1:= ord(nco_pointer);
+    end
+    else begin
+     i1:= allocstringconst(p1^).address;
+     i1:= info.s.unitinfo^.llvmlists.constlist.addaddress(
+                                       i1,sizeof(stringheaderty)).listid;
+    end;
+    p2^:= i1;
+    inc(p2);
+    inc(p1);
+   end;
+   i1:= info.s.unitinfo^.llvmlists.constlist.addpointerarray(
+                                             pe-pstringvaluety(p0),p0).listid;
+   result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                              gak_const,i1,info.s.globlinkage);
+  end
+  else begin
+   notimplementederror('20180812A');
+  end;
+ end
+ else begin
+  if co_llvm in info.o.compileoptions then begin
+   i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(
+                                  getsegmentpo(result)^,adata.size).listid;
+   result.address:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(
+                                       gak_const,i1,info.s.globlinkage);
+  end;
  end;
 end;
 

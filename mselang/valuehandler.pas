@@ -211,6 +211,7 @@ var
  alloc1: dataoffsty;
  i1: int32;
  op1: opcodety;
+ 
 begin
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
@@ -268,16 +269,20 @@ begin
  end;
  with acontext^ do begin
   if isallconst and not (tf_untyped in itemtype1^.h.flags) then begin
-   paramindirect:= false;
+   paramindirect:= false;     //todo: indirectlevel
    initdatacontext(d,ck_const);
-   podata1:= initopenarrayconst(d.dat.constval,itemcount1,
-                                                itemtype1^.h.bytesize);
+   i1:= itemtype1^.h.bytesize;
+   if itemtype1^.h.kind = dk_string then begin
+    i1:= sizeof(stringvaluety);
+   end;
+   podata1:= initopenarrayconst(d.dat.constval,itemcount1,i1,itemtype1^.h.kind);
    poitem1:= acontext+1;
    case itemtype1^.h.datasize of //todo: endianess
     das_32: begin
      while poitem1 < poe do begin
       if poitem1^.d.kind <> ck_space then begin
        pv32ty(podata1)^:= pv32ty(@poitem1^.d.dat.constval.vdummy)^;
+                                        //??? endianess
        inc(pv32ty(podata1));
        poitem1^.d.kind:= ck_space;
       end;
@@ -285,13 +290,26 @@ begin
      end;
     end;
     das_pointer: begin
-     while poitem1 < poe do begin
-      if poitem1^.d.kind <> ck_space then begin
-       pvpoty(podata1)^:= pvpoty(@poitem1^.d.dat.constval.vdummy)^;
-       inc(pvpoty(podata1));
-       poitem1^.d.kind:= ck_space;
+     if itemtype1^.h.kind = dk_string then begin
+      while poitem1 < poe do begin
+       if poitem1^.d.kind <> ck_space then begin
+        pstringvaluety(podata1)^:= pstringvaluety(
+                                      @poitem1^.d.dat.constval.vdummy)^;
+        inc(pstringvaluety(podata1));
+        poitem1^.d.kind:= ck_space;
+       end;
+       inc(poitem1);
       end;
-      inc(poitem1);
+     end
+     else begin
+      while poitem1 < poe do begin
+       if poitem1^.d.kind <> ck_space then begin
+        pvpoty(podata1)^:= pvpoty(@poitem1^.d.dat.constval.vdummy)^;
+        inc(pvpoty(podata1));
+        poitem1^.d.kind:= ck_space;
+       end;
+       inc(poitem1);
+      end;
      end;
     end;
     else begin

@@ -338,6 +338,7 @@ type
   flags: stringflagsty;
  // len: databytesizety;
  end;
+ pstringvaluety = ^stringvaluety;
 
  enumvaluety = record
   value: int32;
@@ -353,6 +354,7 @@ type
   address: segaddressty;
   size: int32; //byte size
   high: int32; //item count - 1
+  itemkind: datakindty;
  end;
   
  dataty = record

@@ -3466,7 +3466,7 @@ var
     end;
    end;
   end;
- end;
+ end; //dodefaultparams()
 
 var
  instancetype1: ptypedataty;
@@ -3489,7 +3489,7 @@ var
     end;
    end;
   end;
- end;
+ end; //callclasssubattach()
 
  procedure doinstanceonstack();
  begin

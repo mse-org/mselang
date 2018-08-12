@@ -344,7 +344,7 @@ type
    function addvalue(const avalue; const asize: int32): llvmvaluety;
    function addvalue(const avalue: segaddressty;
                               const asize: int32): llvmvaluety;
-   function addpointerarray(const asize: int32; const ids: pint32;
+   function addpointerarray(const alength: int32; const ids: pint32;
                                  const unique: boolean = true): llvmvaluety;
                //ids[asize] used for type id, restored
    function addaggregatearray(const asize: int32; const atype: int32; 
@@ -2081,7 +2081,7 @@ begin
  end;
 end;
 
-function tconsthashdatalist.addpointerarray(const asize: int32;
+function tconsthashdatalist.addpointerarray(const alength: int32;
                                               const ids: pint32;
                                  const unique: boolean = true): llvmvaluety;
 var
@@ -2090,10 +2090,10 @@ var
  i1: int32;
  b1: boolean;
 begin
- alloc1.header.size:= (asize+1)*sizeof(int32);
+ alloc1.header.size:= (alength+1)*sizeof(int32);
  alloc1.header.data:= ids;
- i1:= ids[asize]; //backup
- ids[asize]:= ftypelist.addpointerarrayvalue(asize);
+ i1:= ids[alength]; //backup
+ ids[alength]:= ftypelist.addpointerarrayvalue(alength);
  alloc1.typeid:= -ord(ct_pointerarray);
  if unique then begin
   b1:= addunique(bufferallocdataty((@alloc1)^),pointer(po1));
@@ -2106,8 +2106,8 @@ begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result.listid:= po1^.data.header.listindex;
- result.typeid:= ids[asize];
- ids[asize]:= i1; //restore
+ result.typeid:= ids[alength];
+ ids[alength]:= i1; //restore
 end;
 
 function tconsthashdatalist.addaggregatearray(const asize: int32;
