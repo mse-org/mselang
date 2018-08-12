@@ -2895,7 +2895,7 @@ begin
      end;
     end;
     ek_sub: begin
-     if idents.high > 0 then begin
+     if idents.high >= firstnotfound then begin
       errormessage(err_illegalqualifier,[],2);
       goto endlab;
      end;
