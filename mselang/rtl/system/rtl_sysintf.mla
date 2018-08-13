@@ -33,6 +33,7 @@ procedure sys_stdout(): filehandlety;
 procedure sys_stderr(): filehandlety;
 
 procedure sys_getlasterror(): int32;
+procedure sys_geterrortext(const aerror: int32): string8;
 
 implementation
 uses
@@ -41,6 +42,20 @@ uses
 procedure sys_getlasterror(): int32;
 begin
  result:= 0;
+end;
+
+procedure sys_geterrortext(const aerror: int32): string8;
+const
+ buflen = 1024;
+var
+ buffer: array[0..buflen] of char8;
+ po1: pchar8;
+begin
+ result:= ''; //compilerwarning
+{
+ po1:= strerror_r(aerror,pchar(@buffer),buflen);
+ setstring(result,po1,strlen(po1));
+}
 end;
 
 procedure sys_bytestostring8(const source: bytestring): string8; 

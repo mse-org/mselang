@@ -65,8 +65,9 @@ procedure nowutc(): datetimety;
 
 procedure syserror(const aerror: syserrorty; const amessage: string8 = '');
 
-var //todo: threadvar
+threadvar
  mselasterror: int32;
+ mselasterrormessage: string8;
  
 implementation
 //{$internaldebug on}
@@ -110,6 +111,15 @@ procedure buildsyserrormessage(const aerror: syserrorty;
                                         const amessage: string8): string8;
 begin
  result:= '';
+ if aerror = sye_lasterror then
+  result:= amessage + sys_geterrortext(mselasterror);
+ else
+  if aerror = sye_extendederror then
+   result:= amessage + mselasterrormessage;
+  else
+   result:= amessage;
+  end;
+ end;
 end;
 
 procedure syserror(const aerror: syserrorty; const amessage: string8);
