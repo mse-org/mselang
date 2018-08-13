@@ -1,0 +1,17 @@
+program impldupplicate;
+
+type
+ tcla = class
+  method tt();
+ end;
+
+method tcla.tt();
+begin
+end;
+
+method tcla.tt();
+begin
+end;
+
+begin
+end.

@@ -13790,7 +13790,7 @@ begin
  clasubheaderco.handleentry:= @handleclasubheaderentry;
  callclasubheaderco.branch:= @bcallclasubheader;
  callclasubheaderco.next:= @subaco;
- callclasubheaderco.handleentry:= @callsubheaderentry;
+ callclasubheaderco.handleentry:= @callclasubheaderentry;
  clasubheader0co.branch:= @bclasubheader0;
  clasubheader0co.next:= @clasubheader1co;
  clasubheader1co.branch:= @bclasubheader1;

@@ -165,7 +165,7 @@ type
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_exceptblock,ck_end,
                   ck_ident,ck_stringident,ck_number,ck_str,
-                  ck_subdef,ck_objsubheader,ck_list,
+                  ck_subdef,ck_objsubheader,ck_subheader,ck_list,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_refprop,ck_factprop,
                   ck_subres,ck_subcall,ck_controltoken,

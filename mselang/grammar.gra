@@ -403,7 +403,7 @@ methodtypedef,subtypedef,handlemethodtypedefentry,
 
 clasubheader,,handleclasubheaderentry,*
  '',callclasubheader*
-callclasubheader,suba,callsubheaderentry,
+callclasubheader,suba,callclasubheaderentry,
 //suba can be canceled by dec(stackindex)
  '',clasubheader0*
 

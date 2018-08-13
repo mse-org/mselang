@@ -113,6 +113,7 @@ procedure handlesubtypedef0entry();
 
 //procedure handleclasubheaderentry();
 procedure callsubheaderentry();
+procedure callclasubheaderentry();
 
 procedure checkfunctiontype();
 procedure handlesub1entry();
@@ -806,17 +807,27 @@ begin
  end;
 end;
 
-(*
-procedure handleclasubheaderentry();
+procedure dosubheaderentry(const akind: contextkindty);
+var
+ po1: pcontextdataty;
 begin
-{$ifdef mse_debugparser}
- outhandle('CLASUBHEADERENTRY');
-{$endif}
- with info,contextstack[s.stackindex] do begin
-  d.kind:= ck_objsubheader;
+ with info,contextstack[s.stackindex].d do begin
+  po1:= @contextstack[s.stackindex-1].d;
+  kind:= ck_subdef;
+  subdef.flags:= po1^.subdef.flags;
+  subdef.flags1:= po1^.subdef.flags1;
+  po1^.kind:= akind;//ck_none;
  end;
 end;
-*)
+
+procedure callclasubheaderentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CALLCLASUBHEADERENTRY');
+{$endif}
+ dosubheaderentry(ck_objsubheader);
+end;
+ 
 procedure callsubheaderentry();
 var
  po1: pcontextdataty;
@@ -824,16 +835,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CALLSUBHEADERENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  po1:= @contextstack[s.stackindex-1].d;
-  kind:= ck_subdef;
-  subdef.flags:= po1^.subdef.flags;
-  subdef.flags1:= po1^.subdef.flags1;
-  po1^.kind:= ck_objsubheader;//ck_none;
- end;
+ dosubheaderentry(ck_subheader);
 end;
 
 procedure checkfunctiontype();
+
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKFUNCTIONTYPE');
@@ -2192,6 +2198,7 @@ begin
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
   sub1^.globid:= -1;
+  sub1^.impl:= 0;
 {
   if (ele1 >= 0) and (sf_method in subflags) then begin
    element1:= ele.eleinfoabs(ele1);
@@ -2495,7 +2502,7 @@ begin
      end;
      if bo1 then begin
       with paramdata.match^ do begin
-       if sf_external in flags then begin
+       if (sf_external in flags) or (impl <> 0) then begin
         errormessage(err_sameparamlist,[]);
        end
        else begin

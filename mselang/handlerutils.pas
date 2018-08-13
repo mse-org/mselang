@@ -3181,7 +3181,7 @@ const
    oc_indirect64,oc_indirect64,oc_indirectpo,
  //das_f16,       das_f32,       das_f64        das_sub,      das_meta
    oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo,oc_none);
-var testvar: ppropertydataty;
+
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 var
@@ -3308,7 +3308,6 @@ begin                    //todo: optimize
     else begin
      ele1:= d.dat.factprop.propele;
     end;
-testvar:= ppropertydataty(ele.eledataabs(ele1));
     with ppropertydataty(ele.eledataabs(ele1))^ do begin
      if pof_readfield in flags then begin
       if d.kind = ck_refprop then begin

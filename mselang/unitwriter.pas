@@ -75,7 +75,7 @@ function tidentlist.getrecordsize(): int32;
 begin
  result:= sizeof(identbufferhashdataty);
 end;
-var testvar: elementoffsetty;
+
 function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var
@@ -193,7 +193,6 @@ var
   deststart:= pd;
   pe:= pointer(pd) + s1;
   while pd < pe do begin
-testvar:= (pointer(ps)-pointer(ele.elebase))+(pointer(pd)-deststart);
    with pd^ do begin
     header.name:= updateident(header.name);
     header.defunit:= pointer(ptrint(header.defunit^.key));

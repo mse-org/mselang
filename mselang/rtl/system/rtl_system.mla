@@ -10,6 +10,7 @@
 }
 unit rtl_system;
 //system functions, preliminary ad-hoc implementation
+//{$internaldebug on}
 interface
 uses
  rtl_base,rtl_libc,rtl_sysexceptions;
@@ -85,19 +86,24 @@ end;
 
 const
  errortexts: array[syserrorty] of string8 =
-  ('','','','Busy','Dirstream','Network error','Write error','Read error',
-     'Thread error',
-    'Mutex error',
-    'Semaphore error',
-    'Condition error',
-    'Time out',
-    'Copy file error',
-    'Can not create directory',
-    'No console',
-    'Not implemented',
-    'Socket address error',
-    'Socket error',
-    'File is directory.'
+  ('','','', //sye_ok,sye_lasterror,sye_extendederror,
+    'Busy',                     //sye_busy,
+    'Dirstream',                //sye_dirstream,
+    'Network error',            //sye_network,
+    'Write error',              //sye_write,
+    'Read error',               //sye_read,
+    'Thread error',             //sye_thread,
+    'Mutex error',              //sye_mutex,
+    'Semaphore error',          //sye_semaphore,
+    'Condition error',          //sye_cond,
+    'Time out',                 //sye_timeout,
+    'Copy file error',          //sye_copyfile,
+    'Can not create directory', //sye_createdir,
+    'No console',               //sye_noconsole,
+    'Not implemented',          //sye_notimplemented,
+    'Socket address error',     //sye_sockaddr,
+    'Socket error',             //sye_socket,
+    'File is directory.'        //sye_isdir
    );
 
 procedure buildsyserrormessage(const aerror: syserrorty;
@@ -139,11 +145,6 @@ begin
 end;
 
 method esys.geterror(): syserrorty;
-begin
- result:= syserrorty(ferror);
-end;
-
-method esys.geterror: syserrorty;
 begin
  result:= syserrorty(ferror);
 end;
