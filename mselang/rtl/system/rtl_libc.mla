@@ -1,5 +1,5 @@
 //rtl_libc
-{ MSEpas Copyright (c) 2017 by Martin Schreiber
+{ MSEpas Copyright (c) 2017-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -10,14 +10,13 @@
 }
 unit rtl_libc;
 //libc bindings, preliminary ad-hoc implementation
-
 interface
-{$define linux}
-
-type
- cint = int32;
- pcchar = ^char8;
+uses
+ rtl_ctypes;
  
+{$define linux}
+{$internaldebug on}
+type
  __time_t = int32;
  __suseconds_t = int32;
 
@@ -33,10 +32,8 @@ type
  end;
  ptimeval = ^timeval;
  
- size_t = card32;
- ssize_t = int32;
  off64_t = int64;
-  
+
 const
 {$ifdef linux}   
    O_ACCMODE  = $00003;
@@ -108,6 +105,10 @@ procedure write(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
 procedure read(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
 
 procedure lseek64(fd: cint; offset: off64_t; whence: cint): off64_t [external]; 
+
+procedure __errno_location(): pcint   [external];
+procedure strerror_r(__errnum: cint; __buf: pcchar;
+                                    __buflen: size_t): pcchar [external];
 
 implementation
 end.

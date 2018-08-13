@@ -70,7 +70,9 @@ begin
  if text = '' then
   inherited create(s1+'.');
  else
-  text:= s1+ ' ' + text;
+  if s1 <> '' then
+   text:= s1+ ' ' + text;
+  end;
   ch1:= text[length(text)];
   if (ch1 <> '.') and (ch1 <> c_return) and (ch1 <> c_linefeed) then
    text:= text + '.';

@@ -37,11 +37,11 @@ procedure sys_geterrortext(const aerror: int32): string8;
 
 implementation
 uses
- rtl_libc,rtl_system,__mla__internaltypes;
+ rtl_ctypes,rtl_libc,rtl_system,__mla__internaltypes,rtl_strings;
 
 procedure sys_getlasterror(): int32;
 begin
- result:= 0;
+ result:= __errno_location()^;
 end;
 
 procedure sys_geterrortext(const aerror: int32): string8;
@@ -52,10 +52,8 @@ var
  po1: pchar8;
 begin
  result:= ''; //compilerwarning
-{
- po1:= strerror_r(aerror,pchar(@buffer),buflen);
+ po1:= strerror_r(aerror,pcchar(@buffer),buflen);
  setstring(result,po1,strlen(po1));
-}
 end;
 
 procedure sys_bytestostring8(const source: bytestring): string8; 
@@ -75,6 +73,7 @@ end;
 
 procedure tosys(const avalue: filenamety): bytestring;
 begin
+ result:= avalue;
 { todo:
  if filenameutfoptions <> [] then begin
   result:= stringtoutf8(avalue,filenameutfoptions);

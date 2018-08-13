@@ -603,6 +603,8 @@ begin
   kind:= ck_subdef;
   subdef.flags:= aflags;
   subdef.flags1:= [];
+  subdef.libname:= 0;
+  subdef.funcname:= 0;
  end;
 end;
 

@@ -327,6 +327,8 @@ var
        updateref(methodele);
       end;
      end;
+     ek_condition: begin
+     end;
      ek_none: begin
      end;
      else begin

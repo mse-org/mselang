@@ -1,0 +1,18 @@
+program errno;
+uses
+ rtl_streams,rtl_sysexceptions,rtl_system;
+var
+ s1: tfilestream;
+ e: esys;
+begin
+ try
+  s1:= tfilestream.create('test.abc');
+ except
+  if getexceptobj(e) then
+   if (e.error = sye_lasterror) and (e.lasterror = 2) and
+              (e.message = 'No such file or directory.') then
+    exitcode:= 123;
+   end;
+  end;
+ end;
+end.

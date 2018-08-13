@@ -58,11 +58,31 @@ const
   #$e0,#$e1,#$e2,#$e3,#$e4,#$e5,#$e6,#$e7,#$e8,#$e9,#$ea,#$eb,#$ec,#$ed,#$ee,#$ef,
   #$f0,#$f1,#$f2,#$f3,#$f4,#$f5,#$f6,#$f7,#$f8,#$f9,#$fa,#$fb,#$fc,#$fd,#$fe,#$ff);
  
+procedure strlen(const stringdata: pchar8): int32;
+procedure setstring(out dest: string8; const source: pchar8; const len: int32);
+
 procedure stringcomp(const a,b: string8): int32;
 procedure stringicomp(const a,b: string8): int32;
          //ascii case insensitive
 
 implementation
+
+procedure strlen(const stringdata: pchar8): int32;
+var
+ p1: pchar8;
+begin
+ p1:= stringdata;
+ while p1^ <> #0 do
+  inc(p1);
+ end;
+ result:= p1 - stringdata;
+end;
+
+procedure setstring(out dest: string8; const source: pchar8; const len: int32);
+begin
+ setlength(dest,len);
+ memcpy(pointer(dest),source,len);
+end;
 
 procedure stringcomp(const a,b: string8): int32;
 var

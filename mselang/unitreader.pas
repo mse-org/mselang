@@ -630,6 +630,8 @@ begin
        end;
        ek_uses: begin
        end;
+       ek_condition: begin
+       end;
        ek_none: begin
        end;
        ek_classintfnamenode: begin
