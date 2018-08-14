@@ -74,7 +74,7 @@ begin
  end;
 end;
 
-procedure tryhandle();
+function tryhandle(): int32; //returns ladingpadalloc
 begin
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
@@ -83,6 +83,10 @@ begin
    if co_llvm in info.o.compileoptions then begin
     par.popcpucontext.landingpadalloc:= 
           allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
+    result:= par.popcpucontext.landingpadalloc;
+   end
+   else begin
+    result:= -1;
    end;
    if info.s.trystacklevel > 1 then begin //restore parent landingpad
     with ptrystackitemty(
@@ -108,16 +112,35 @@ begin
   dec(s.trystacklevel);
  end;
 end;
-
+var testvar: popinfoty;
 procedure handlefinallyentry();
 begin
 {$ifdef mse_debugparser}
  outhandle('FINALLYENTRY');
 {$endif}
  with info do begin
-  getoppo(contextstack[s.stackindex-1].opmark.address)^.
-                                          par.opaddress.opaddress:= opcount-1;
-  tryhandle();
+  if not (co_llvm in o.compileoptions) then begin
+   notimplementederror('20180814A');
+  end;
+  with additem(oc_storelocnil,getssa(ocssa_aggregate))^ do begin 
+                  //set exception temp to nil
+   par.memop.locdataaddress.a.address:= tempvarcount; //alloced by tryhandle()
+   par.memop.locdataaddress.a.framelevel:= -1;
+   par.memop.locdataaddress.offset:= 0;
+   par.memop.t:= bitoptypes[das_pointer];
+   include(par.memop.t.flags,af_aggregate);
+  end;
+  with addcontrolitem(oc_goto)^ do begin
+   par.opaddress.opaddress:= opcount+1-1; //label after landingpad
+  end;
+  with contextstack[s.stackindex-1] do begin
+   d.kind:= ck_finallyblock;
+   d.block.exceptiontemp:= tryhandle();           //add landingpad
+testvar:= getoppo(contextstack[s.stackindex-1].opmark.address);
+   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
+  end;
+  tryexit();
+  addlabel();
  end;
 end;
 
@@ -128,6 +151,7 @@ begin
 {$endif}
  with info do begin
   with additem(oc_continueexception)^ do begin
+   par.id:= contextstack[s.stackindex-1].d.block.exceptiontemp;
   end;
 //  dec(s.stackindex,1);
  end; 

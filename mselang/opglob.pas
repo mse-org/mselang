@@ -109,6 +109,7 @@ type
   
   cs_raise,
   cs_finiexception,
+  cs_continueexception,
   cs_writeenum,
   
   cs_frac64
@@ -1695,6 +1696,9 @@ type
    );
    oc_lineinfo:(
     lineinfo: lineinfoty;
+   );
+   oc_continueexception:(
+    id: int32; //llvm
    )
   end;
 

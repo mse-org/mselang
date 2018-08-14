@@ -129,6 +129,7 @@ procedure __mla__writeenum(const artti: penumrttity; const avalue: int32);
 procedure __mla__halt(const aexitcode: int32);
 procedure __mla__raise(const data: pointer);
 procedure __mla__finiexception(const data: pointer);
+procedure __mla__continueexception(const data: pointer);
 
 procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
 procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
@@ -1866,6 +1867,18 @@ begin
  halt();
 end;
 
+procedure doraise(const exceptinfo: pexceptinfoty);
+var
+ data: pointer;
+begin
+ _Unwind_RaiseException(@exceptinfo^.header);
+ data:= exceptinfo^.data;
+ freemem(exceptinfo);
+ finivirtclass(data);
+ exitcode:= exco_unhandledexception; //no handler found
+ halt();
+end;
+
 procedure __mla__raise(const data: pointer);
 var
  po1: pexceptinfoty;
@@ -1876,11 +1889,7 @@ begin  //todo: handle out of memory situation
   exception_cleanup:= @exceptioncleanup;
  end;
  po1^.data:= data;
- _Unwind_RaiseException(@po1^.header);
- freemem(po1);
- finivirtclass(data);
- exitcode:= exco_unhandledexception; //no handler found
- halt();
+ doraise(po1);
 end;
 
 procedure __mla__finiexception(const data: pointer);
@@ -1891,6 +1900,13 @@ begin
   end;
  end;
  freemem(data);
+end;
+
+procedure __mla__continueexception(const data: pointer);
+begin
+ if data <> nil then
+  doraise(data);
+ end;
 end;
 
 procedure readusleb128(var adata: pointer): ptrint;

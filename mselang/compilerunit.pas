@@ -119,6 +119,7 @@ const
   
   '__mla__raise',
   '__mla__finiexception',
+  '__mla__continueexception',
   '__mla__writeenum',
   '__mla__frac64'
  );

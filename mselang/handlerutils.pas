@@ -4763,7 +4763,7 @@ begin
      write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
                                                int32(d.handlerflags),true),' ');
      case d.kind of
-      ck_block,ck_exceptblock: begin
+      ck_block,ck_exceptblock,ck_finallyblock: begin
        write('idbefore:'+inttostrmse(d.block.blockidbefore));
       end;
       ck_label: begin

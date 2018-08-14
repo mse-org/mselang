@@ -163,7 +163,7 @@ var
 type 
  contextkindty = (ck_none,ck_error,ck_space,
                   ck_interface,ck_implementation,ck_prog,
-                  ck_block,ck_exceptblock,ck_end,
+                  ck_block,ck_exceptblock,ck_finallyblock,ck_end,
                   ck_ident,ck_stringident,ck_number,ck_str,
                   ck_subdef,ck_objsubheader,ck_subheader,ck_list,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
@@ -343,6 +343,9 @@ type
    ck_exceptblock: (
     casechain: listadty;
     caseflags: caseflagsty;
+   );
+   ck_finallyblock: (
+    exceptiontemp: int32; //temp alloc
    );
  end;
  
@@ -567,7 +570,7 @@ type
 //  elemark: elementoffsetty;
   handlerflags: handlerflagsty;
   case kind: contextkindty of
-   ck_block,ck_exceptblock:(
+   ck_block,ck_exceptblock,ck_finallyblock:(
     block: blockinfoty;
    );
    ck_ident,ck_stringident:(

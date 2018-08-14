@@ -2694,42 +2694,6 @@ begin
   end;
  end;
 end;
-(*
-procedure subbody4entry();
-var
- po1: pelementinfoty;
-{$ifdef mse_checkinternalerror}
- bo1: boolean;
-{$endif}
-begin
-{$ifdef mse_debugparser}
- outhandle('SUBBODY4ENTRY');
-{$endif}
-*)
-(*
- with info do begin
-  if s.debugoptions * [do_proginfo,do_name] <> [] then begin
-   with contextstack[s.stackindex-2] do begin
-   {$ifdef mse_checkinternalerror}
-    if (s.stackindex < 2) or (d.kind <> ck_subdef) then begin
-     internalerror(ie_parser,'20151023A');
-    end;
-   {$endif}
-    po1:= ele.eleinfoabs(d.subdef.ref);
-    with s.unitinfo^ do begin
-     if do_proginfo in s.debugoptions then begin
-      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-           {s.}currentscopemeta,getidentname2(po1^.header.name),
-           s.currentfilemeta,
-           info.contextstack[info.s.stackindex].start.line,-1,
-           dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
-     end;
-    end;
-   end;
-  end;
- end;
-*)
-//end;
 
 procedure begintempvars();
 begin
@@ -3551,6 +3515,7 @@ var
  varargcount: int32;
  varargs: array[0..maxparamcount] of int32;
  isvararg: boolean;
+ isllvmgetmem: boolean;
  constbufferref: segmentstatety;
  varresulttemp: tempaddressty;
  varresulttempaddr: int32;
@@ -3733,6 +3698,7 @@ begin
    else begin //not getaddress
     isfactcontext:= d.kind in factcontexts;
     ismethod:= asub^.flags * [sf_method,sf_ofobject] = [sf_method];
+    isllvmgetmem:= false;
 
     if ismethod then begin
      if (dsf_ownedmethod in aflags) then begin
@@ -3922,6 +3888,7 @@ begin
       end;
       instancetype1:= resulttype1;
       with resulttype1^.infoclass do begin
+       isllvmgetmem:= co_llvm in o.compileoptions;
        if subattach[osa_new] <> 0 then begin
         if dsf_classdefonstack in aflags then begin
         end
@@ -4389,6 +4356,8 @@ begin
     if (sf_constructor in asub^.flags) and 
                             not (dsf_isinherited in aflags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach[osa_afterconstruct]);
+     if isllvmgetmem then begin
+     end;
     end;
    end;
   end;

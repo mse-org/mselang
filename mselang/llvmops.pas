@@ -321,7 +321,7 @@ begin
       end
       else begin
        if af_aggregate in t.flags then begin
-        bcstream.emitlocdataaddresspo(memop);
+        bcstream.emitlocdataaddresspo(memop); //3 ssa
         bcstream.emitstoreop(source,bcstream.relval(0));
        end
        else begin
@@ -4932,7 +4932,12 @@ end;
 
 procedure continueexceptionop();
 begin
-// notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.allocval(id),
+                             bcstream.ptypeval(bcstream.pointertype)); //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                             //1ssa
+  callcompilersub(cs_continueexception,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure getmemop();
@@ -5709,7 +5714,7 @@ const
   pushexceptionssa = 8;
   nilexceptionssa = 7;
   finiexceptionssa = 4;
-  continueexceptionssa = 0;
+  continueexceptionssa = 2;
   getmemssa = 1;
 //  getmem1ssa = 1;
   getzeromemssa = 1;
