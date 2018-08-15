@@ -4873,7 +4873,7 @@ begin
  end;
 end;
 
-procedure getexceptdata();
+procedure getexceptdata(); //4ssa
 begin
  with pc^.par do begin
   bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
@@ -4904,29 +4904,8 @@ end;
 procedure finiexceptionop();
 begin
  with pc^.par do begin
- {
-  bcstream.emitgetelementptr(bcstream.tempval(finiexception.landingpadalloc),
-                                                    bcstream.constval(0));//2ssa
-  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
-  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
-  }
-  getexceptdata();
+  getexceptdata();  //4ssa
   callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
-
-{
-  bcstream.emitgetelementptr(ssas1,bcstream.constval(0)); //2ssa
-  bcstream.emitbitcast(bcstream.relval(0),
-              bcstream.ptypeval(bcstream.landingpadtype));
-                                                          //1ssa
-  bcstream.emitloadop(bcstream.relval(0));                //1ssa
-}
-{
-       //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
-  bcstream.emitcallop(true,bcstream.globval(bcstream.getexceptionpointer),
-                                                      [bcstream.relval(0)]);
-                                                          //1ssa
-}
-//  callcompilersub(cs_finiexception,false,[bcstream.relval(0)]);
  end;
 end;
 

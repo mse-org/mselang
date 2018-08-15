@@ -149,13 +149,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALLY');
 {$endif}
+ tryexit();
  with info do begin
   with additem(oc_continueexception)^ do begin
    par.id:= contextstack[s.stackindex-1].d.block.exceptiontemp;
   end;
 //  dec(s.stackindex,1);
  end; 
- tryexit();
 end;
 
 procedure handleexceptentry();

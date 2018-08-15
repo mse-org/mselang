@@ -1021,6 +1021,9 @@ begin
   if aopcode in callops then begin
    if info.s.trystacklevel > 0 then begin
     inc(info.s.ssa.bbindex);
+    if aopcode in call2ops then begin
+     inc(info.s.ssa.bbindex);
+    end;
    end;
   end;
  end;
@@ -1152,6 +1155,9 @@ begin
    if aopcode in callops then begin
     if info.s.trystacklevel > 0 then begin
      inc(info.s.ssa.bbindex);
+     if aopcode in call2ops then begin
+      inc(info.s.ssa.bbindex);
+     end;
     end;
    end;   
   end;

@@ -34,10 +34,14 @@
 //oc_decloop64
   (ssa: decloop64ssa; proc: @decloop64op; flags: []), 
 
+                                                   //callops
 //oc_raise
   (ssa: raisessa; proc: @raiseop; flags: []), 
+//oc_finiexception
+  (ssa: finiexceptionssa; proc: @finiexceptionop; flags: []), 
+//oc_continueexception
+  (ssa: continueexceptionssa; proc: @continueexceptionop; flags: []), 
 
-                                                   //callops
 //oc_call
   (ssa: callssa; proc: @callop; flags: []), 
 //oc_callfunc
@@ -1211,10 +1215,6 @@
   (ssa: pushexceptionssa; proc: @pushexceptionop; flags: []), 
 //oc_nilexception
   (ssa: nilexceptionssa; proc: @nilexceptionop; flags: []), 
-//oc_finiexception
-  (ssa: finiexceptionssa; proc: @finiexceptionop; flags: []), 
-//oc_continueexception
-  (ssa: continueexceptionssa; proc: @continueexceptionop; flags: []), 
 //oc_getmem
   (ssa: getmemssa; proc: @getmemop; flags: []), 
 //oc_getzeromem

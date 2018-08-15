@@ -196,6 +196,8 @@ type
   oc_decloop64,
 
   oc_raise,         //callops
+  oc_finiexception,
+  oc_continueexception,
 
   oc_call,
   oc_callfunc,
@@ -792,8 +794,6 @@ type
   oc_popcpucontext,
   oc_pushexception,
   oc_nilexception,
-  oc_finiexception,
-  oc_continueexception,
   
   oc_getmem,
   oc_getzeromem,
@@ -1366,9 +1366,12 @@ const
            oc_callintf,
            oc_callindi,oc_callfuncindi];
                                     //have subinfo record
- callops = subops + [
+ callops = subops + [      //ops with call, increment bbindex
   oc_halt1,
   oc_raise,
+  oc_finiexception,
+  oc_continueexception,
+  
   oc_writeln,
   oc_writeboolean,
   oc_writecardinal8,
@@ -1410,6 +1413,8 @@ const
   oc_classis,
   oc_checkclasstype
  ];
+ call2ops = [oc_writeln]; //ops with 2 calls, increment bbindex twice
+ 
  listops = [oc_listtoopenar,oc_listtoarrayofconst,
                   oc_concatstring8,oc_concatstring16,oc_concatstring32];  
                     //have listinfo record
