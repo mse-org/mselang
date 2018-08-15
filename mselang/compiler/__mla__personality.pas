@@ -12,6 +12,7 @@ unit __mla__personality;
 interface
 //uses
 // __mla__internaltypes;
+//{$define mse_debugpersonality}
 
 const            //M S E   m l a
  mlaexceptionid = $4d5345006d6c6100;
@@ -147,13 +148,16 @@ const
  selectorregno = 2;
 {$endif}
 
-function installfinallycontext(const actions: _Unwind_Action;
+function handlecontext(const actions: _Unwind_Action;
              const exceptiondata: p_Unwind_Exception;
              const context: p_Unwind_Context;
              const landingpad: pointer): _Unwind_Reason_Code;
 begin
  if actions and _UA_SEARCH_PHASE <> 0 then begin
   result:= _URC_HANDLER_FOUND;
+  {$ifdef mse_debugpersonality}
+   writeln('   handlecontext _URC_HANDLER_FOUND');
+  {$endif}
  end
  else begin
   if actions and _UA_HANDLER_FRAME <> 0 then begin
@@ -161,9 +165,15 @@ begin
    _Unwind_SetGR(context,selectorregno,0);
    _Unwind_SetIP(context,landingpad);
    result:= _URC_INSTALL_CONTEXT;
+  {$ifdef mse_debugpersonality}
+   writeln('   handlecontext _URC_INSTALL_CONTEXT');
+  {$endif}
   end
   else begin
    result:= _URC_CONTINUE_UNWIND;
+  {$ifdef mse_debugpersonality}
+   writeln('   handlecontext _URC_CONTINUE_UNWIND');
+  {$endif}
   end;
  end;
 end;
@@ -186,64 +196,83 @@ var
  ip,regionstart: pointer;
 begin
  result:= _URC_CONTINUE_UNWIND;
-// if actions and _UA_SEARCH_PHASE <> 0 then begin
- po1:= _Unwind_GetLanguageSpecificData(context);
- if po1 <> nil then begin
-  result:= _URC_CONTINUE_UNWIND;
-  bo1:= false;
-  if pcard8(po1)^ = $ff then begin
-   inc(po1);
-   if pcard8(po1)^ = 0 then begin
+{$ifdef mse_debugpersonality}
+ writeln('**** actions ',actions);
+{$endif}
+ if actions and (_UA_SEARCH_PHASE or _UA_HANDLER_FRAME) <> 0 then begin
+  po1:= _Unwind_GetLanguageSpecificData(context);
+  if po1 <> nil then begin
+   result:= _URC_CONTINUE_UNWIND;
+   bo1:= false;
+   if pcard8(po1)^ = $ff then begin
     inc(po1);
-    c1:= readusleb128(po1);
-    typestable:= po1 + c1;
-//writeln(c1);
-    if pcard8(po1)^ = 3 then begin
+    if pcard8(po1)^ = 0 then begin
      inc(po1);
      c1:= readusleb128(po1);
-//writeln(c1);
-     callsitetable:= po1;
-     actiontable:= po1 + c1;
-     ip:= _Unwind_GetIP(context){-1};
-     regionstart:= _Unwind_GetRegionStart(context);
-//writeln('IP            ',ip);
-//writeln('regionstart   ',regionstart);
-//writeln('typestable    ',typestable);
-//writeln('callsitetable ',callsitetable);
-//writeln('actiontable   ',actiontable);
-//writeln('----');
-     while callsitetable < actiontable do begin
-      po1:= regionstart + pptrint(callsitetable)^;    //blockstart
-//writeln(' blockstart   ',po1);
-      if po1 > ip then begin
-       break;                //no region found
-      end;
-      po1:= po1 + (pptrint(callsitetable)+1)^;          //blockend
-//writeln(' blockend   ',po1);
-      if po1 >= ip then begin //region found
-       po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
-//writeln(' landingpad   ',po1);
-       inc(callsitetable,3*sizeof(ptrint));
-       actionoffset:= readusleb128(callsitetable);
-       if actionoffset = 0 then begin
-        result:= installfinallycontext(actions,exceptionobject,context,po1);
+     typestable:= po1 + c1;
+ //writeln(c1);
+     if pcard8(po1)^ = 3 then begin
+      inc(po1);
+      c1:= readusleb128(po1);
+ //writeln(c1);
+      callsitetable:= po1;
+      actiontable:= po1 + c1;
+      ip:= _Unwind_GetIP(context){-1};
+      regionstart:= _Unwind_GetRegionStart(context);
+     {$ifdef mse_debugpersonality}
+      writeln('IP            ',ip);
+      writeln('regionstart   ',regionstart);
+      writeln('typestable    ',typestable);
+      writeln('callsitetable ',callsitetable);
+      writeln('actiontable   ',actiontable);
+      writeln('----');
+     {$endif}
+      while callsitetable < actiontable do begin
+       po1:= regionstart + pptrint(callsitetable)^;    //blockstart
+     {$ifdef mse_debugpersonality}
+       write(' block        ',po1);
+     {$endif}
+       if po1 > ip then begin
+      {$ifdef mse_debugpersonality}
+        writeln(po1 + (pptrint(callsitetable)+1)^,' >= IP');
+      {$endif}
+        break;                //no region found
        end;
-       break;
-      end
-      else begin
-       inc(callsitetable,3*sizeof(ptrint));
-       readusleb128(callsitetable);
+       po1:= po1 + (pptrint(callsitetable)+1)^;          //blockend
+     {$ifdef mse_debugpersonality}
+       writeln('..',po1);
+     {$endif}
+       if po1 >= ip then begin //region found
+        po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
+        if po1 = regionstart then begin
+       {$ifdef mse_debugpersonality}
+         writeln('  no landingpad');
+       {$endif}
+         break;
+        end;
+      {$ifdef mse_debugpersonality}
+        writeln('  landingpad  ',po1);
+      {$endif}
+        inc(callsitetable,3*sizeof(ptrint));
+        actionoffset:= readusleb128(callsitetable);
+        if actionoffset = 0 then begin
+         result:= handlecontext(actions,exceptionobject,context,po1);
+        end;
+        break;
+       end
+       else begin
+        inc(callsitetable,3*sizeof(ptrint));
+        readusleb128(callsitetable);
+       end;
       end;
+      bo1:= true;
      end;
-     bo1:= true;
     end;
    end;
+   if not bo1 then begin
+    fatalerror();
+   end;
   end;
-  if not bo1 then begin
-   fatalerror();
-  end;
- end
- else begin
  end;
 // end
 // else begin

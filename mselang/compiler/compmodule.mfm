@@ -167,6 +167,17 @@ object compmo: tcompmo
         ''
         ''
       )
+      (
+        ak_par
+        'Xt'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
     )
   end
 end

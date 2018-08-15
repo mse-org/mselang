@@ -149,7 +149,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALLY');
 {$endif}
- tryexit();
+// tryexit();
  with info do begin
   with additem(oc_continueexception)^ do begin
    par.id:= contextstack[s.stackindex-1].d.block.exceptiontemp;

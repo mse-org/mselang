@@ -22,7 +22,8 @@ type
             pa_makeobject,              //10
             pa_makebc,                  //11 produce no exe
             pa_showcompilefile,         //12
-            pa_optimizeparams           //13
+            pa_optimizeparams,          //13
+            pa_keeptmpfiles             //14
            );
             //item number in sysenv
  
@@ -90,7 +91,7 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
-   initparams(parserparams);
+//   initparams(parserparams);
    try
     include(parserparams.compileoptions,co_nodeinit);
     if parse(str1,filename1,parserparams) then begin
@@ -206,6 +207,10 @@ begin
  end;
  if sysenv.defined[ord(pa_nortlunits)] then begin
   include(parserparams.compileoptions,co_nortlunits);
+ end;
+ if sysenv.defined[ord(pa_keeptmpfiles)] then begin
+  parserparams.compileoptions:= parserparams.compileoptions +
+                                                        [co_keeptmpfiles];
  end;
  parserparams.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
 end;
