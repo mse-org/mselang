@@ -292,7 +292,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=38
     (
     kind=1
@@ -954,8 +954,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff llvm
-     teststate=1
+     a=0,648,0,pointerdiff llvm
+     teststate=0
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -971,7 +971,7 @@ c=3
      cr=0
      ao=
      ae=
-     aec=123
+     aec=-1
      ie=0
      )
      (
@@ -2148,7 +2148,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=37
     (
     kind=1
@@ -4139,7 +4139,7 @@ c=3
    (
    kind=1
    a=0,665,4,exception
-   c=13
+   c=14
     (
     kind=2
     a=0,648,1,raise1
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73232D0
+    ao=An unhandled exception occured at $B72DA2D0
     ae=
     aec=123
     ie=0
@@ -4409,6 +4409,28 @@ c=3
     a=0,648,1,except6 llvm
     teststate=1
     path=except6.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,except7 llvm
+    teststate=1
+    path=except7.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -15144,8 +15166,8 @@ groupcomment=6
  
 [mainfo]
 stackedunder=
-x=1053
-y=142
+x=1029
+y=143
 cx=775
 cy=660
 wsize=0
@@ -15162,7 +15184,41 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=102
+rowstate=136
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
