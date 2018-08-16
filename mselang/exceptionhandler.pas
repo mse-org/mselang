@@ -38,6 +38,7 @@ procedure handleexceptentry();
 procedure handleexceptelse();
 procedure handleexcept();
 procedure handleraise();
+procedure handleraise1();
 procedure handlegetexceptobj(const paramco: int32);
 
 implementation
@@ -169,6 +170,8 @@ begin
  with info do begin
   dec(s.trystacklevel); //no LLVM invoke
   with contextstack[s.stackindex] do begin
+   b.flags:= s.currentstatementflags;
+   include(s.currentstatementflags,stf_except);
    d.kind:= ck_exceptblock;
    d.block.casechain:= 0;
    d.block.caseflags:= [caf_first];
@@ -290,6 +293,7 @@ begin
     end;
     deletelistchain(pendingclassitems,d.block.casechain);
    end;
+   s.currentstatementflags:= b.flags;
   end;
   with contextstack[s.stackindex-1] do begin
    with additem(oc_finiexception)^ do begin
@@ -499,6 +503,36 @@ begin
    dec(s.stackindex);
    s.stacktop:= s.stackindex;
   end;
+ end;
+end;
+
+procedure handleraise1();
+var
+ p1: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('RAISE1');
+{$endif}
+ with info do begin
+  if not (stf_except in s.currentstatementflags) then begin
+   errormessage(err_classinstanceexpected,[]);
+  end
+  else begin
+   p1:= @contextstack[s.stackindex];
+   while p1^.d.kind <> ck_exceptblock do begin
+   {$ifdef mse_checkinternalerror}
+    if p1 = pointer(contextstack) then begin
+     internalerror(ie_handler,'20180816A');
+    end;
+   {$endif}
+    dec(p1);
+   end;
+   with additem(oc_continueexception)^ do begin
+    par.id:= p1^.d.block.exceptiontemp;
+   end;
+  end;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 

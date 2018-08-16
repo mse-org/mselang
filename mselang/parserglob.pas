@@ -249,7 +249,8 @@ type
   stf_implementation,
   stf_getaddress,stf_addressop,
   stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted,
-  stf_rtti,stf_objrtti,stf_objrttistreaming
+  stf_rtti,stf_objrtti,stf_objrttistreaming,
+  stf_except
  );
  statementflagsty = set of statementflagty;
 

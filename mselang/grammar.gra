@@ -616,8 +616,10 @@ except3,except2,handleexceptelse,
 {$}
 
 raise,,,handleraise*
+ ${whitespace}
+ ';',raise1
  '',exp^*
- 
+raise1,,,handleraise1*
 goto,,,handlegoto*
  '',getident^*
 

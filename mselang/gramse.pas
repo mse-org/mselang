@@ -888,6 +888,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'raise');
+ raise1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'raise1');
  gotoco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -5474,7 +5479,49 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- braise: array[0..1] of branchty = (
+ braise: array[0..7] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @raise1co); stack: nil; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -14177,6 +14224,8 @@ begin
  except3co.handleentry:= @handleexceptelse;
  raiseco.branch:= @braise;
  raiseco.handleexit:= @handleraise;
+ raise1co.branch:= nil;
+ raise1co.handleexit:= @handleraise1;
  gotoco.branch:= @bgoto;
  gotoco.handleexit:= @handlegoto;
  checkendco.branch:= @bcheckend;
