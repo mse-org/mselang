@@ -91,6 +91,7 @@ type
   cs_getallocsize,
   cs_classis,
   cs_checkclasstype,
+  cs_checkexceptclasstype,
 //  cs_initclass,
 //  cs_finiclass,
 
@@ -230,6 +231,7 @@ type
   oc_getclassrtti,//from classdef
   oc_classis,
   oc_checkclasstype,
+  oc_checkexceptclasstype,
   oc_cmpstring,
 
   oc_beginparse,
@@ -1411,7 +1413,8 @@ const
   oc_getclassdef,
   oc_getclassrtti,
   oc_classis,
-  oc_checkclasstype
+  oc_checkclasstype,
+  oc_checkexceptclasstype
  ];
  call2ops = [oc_writeln]; //ops with 2 calls, increment bbindex twice
  
@@ -1702,7 +1705,7 @@ type
    oc_lineinfo:(
     lineinfo: lineinfoty;
    );
-   oc_continueexception:(
+   oc_continueexception,oc_checkexceptclasstype:(
     id: int32; //llvm
    )
   end;

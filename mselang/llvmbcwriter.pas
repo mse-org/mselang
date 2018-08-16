@@ -1739,9 +1739,9 @@ end;
 
 procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
                                                    const aoffset: int32);
-begin
+begin                          //2ssa
  emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,typeval(das_pointer),
-                                                   ord(CAST_BITCAST)]);
+                                                   ord(CAST_BITCAST)]); 
  checkdebugloc();
  inc(fsubopindex);                //no inbounds
  emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_8),

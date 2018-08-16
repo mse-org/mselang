@@ -3118,6 +3118,11 @@ begin
  pboolean(stackpush(sizeof(boolean)))^:= b1;
 end;
 
+procedure checkexceptclasstypeop();
+begin
+ notimplemented();
+end;
+
 procedure addfloop();
 var
  po1,po2,po3: pointer;
@@ -7375,6 +7380,7 @@ const
   getclassrttissa = 0;
   classisssa = 0;
   checkclasstypessa = 0;
+  checkexceptclasstypessa = 0;
 
   storesegnilssa = 0;
   storelocindinilssa = 0;

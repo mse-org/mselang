@@ -101,6 +101,8 @@
   (ssa: classisssa; proc: @classisop; flags: []), 
 //oc_checkclasstype,
   (ssa: checkclasstypessa; proc: @checkclasstypeop; flags: []), 
+//oc_checkexceptclasstype,
+  (ssa: checkexceptclasstypessa; proc: @checkexceptclasstypeop; flags: []), 
 //oc_cmpstring
   (ssa: cmpstringssa; proc: @cmpstringop; flags: []), 
 

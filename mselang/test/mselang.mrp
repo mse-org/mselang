@@ -954,8 +954,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,0,pointerdiff llvm
-     teststate=0
+     a=0,648,1,pointerdiff llvm
+     teststate=1
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -971,7 +971,7 @@ c=3
      cr=0
      ao=
      ae=
-     aec=-1
+     aec=123
      ie=0
      )
      (
@@ -4157,7 +4157,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72DA2D0
+    ao=An unhandled exception occured at $B726C2D0
     ae=
     aec=123
     ie=0

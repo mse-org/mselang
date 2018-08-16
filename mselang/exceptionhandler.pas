@@ -99,8 +99,8 @@ begin
     par.opaddress.bbindex:= 0;
    end;
    newblockcontext(0);
-   info.contextstack[info.s.stackindex].d.block.landingpad:= 
-                                    par.popcpucontext.landingpadalloc;
+//   info.contextstack[info.s.stackindex].d.block.landingpad:= 
+//                                    par.popcpucontext.landingpadalloc;
   end;
  end;
 end;
@@ -135,8 +135,11 @@ begin
    par.opaddress.opaddress:= opcount+1-1; //label after landingpad
   end;
   with contextstack[s.stackindex-1] do begin
+   b.flags:= s.currentstatementflags;
+   include(s.currentstatementflags,stf_finally);
    d.kind:= ck_finallyblock;
-   d.block.exceptiontemp:= tryhandle();           //add landingpad
+   d.block.landingpad:= tryhandle();           //add landingpad
+//   d.block.exceptiontemp:= tryhandle();           //add landingpad
 testvar:= getoppo(contextstack[s.stackindex-1].opmark.address);
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
   end;
@@ -151,10 +154,11 @@ begin
  outhandle('FINALLY');
 {$endif}
 // tryexit();
- with info do begin
+ with info,contextstack[s.stackindex-1] do begin
   with additem(oc_continueexception)^ do begin
-   par.id:= contextstack[s.stackindex-1].d.block.exceptiontemp;
+   par.id:= d.block.landingpad;//exceptiontemp;
   end;
+  s.currentstatementflags:= b.flags;
 //  dec(s.stackindex,1);
  end; 
 end;
@@ -166,10 +170,10 @@ begin
 {$endif}
  with addcontrolitem(oc_goto)^ do begin
  end;
- tryhandle();
  with info do begin
-  dec(s.trystacklevel); //no LLVM invoke
   with contextstack[s.stackindex] do begin
+   d.block.landingpad:= tryhandle();
+   dec(s.trystacklevel); //no LLVM invoke
    b.flags:= s.currentstatementflags;
    include(s.currentstatementflags,stf_except);
    d.kind:= ck_exceptblock;
@@ -322,7 +326,7 @@ var
  i1,i2,i3: int32;
  typ1: ptypedataty;
  b1: boolean;
- ptop: pcontextitemty;
+ ptop,p1: pcontextitemty;
  acquiressa: int32;
 label
  errlab;
@@ -363,17 +367,19 @@ begin
     if (typ1^.h.kind = dk_class) and 
                   (icf_except in typ1^.infoclass.flags) then begin
      b1:= true;
-     i1:= s.stackindex-1;
-     while i1 >= 0 do begin
-      if contextstack[i1].d.kind = ck_exceptblock then begin
-       break;
-      end;
-      dec(i1);
-     end;
-     if i1 < 0 then begin
+     if s.currentstatementflags * [stf_except,stf_finally] = [] then begin
       errormessage(err_noexceptavailable,[]);
      end
      else begin
+      p1:= @contextstack[s.stackindex-1];
+      while not (p1^.d.kind in [ck_exceptblock,ck_finallyblock]) do begin
+      {$ifdef mse_checkinternalerror}
+       if p1 <= pointer(contextstack) then begin
+        internalerror(ie_handler,'20180816B');
+       end;
+      {$endif}
+       dec(p1);
+      end;
       if getaddress(ptop,true) then begin
        if paramco = 1 then begin
         with additem(oc_pushimm1)^.par do begin //acquire default false
@@ -389,12 +395,15 @@ begin
        {$endif}
         acquiressa:= contextstack[s.stacktop].d.dat.fact.ssaindex;
        end;
+      {
        with additem(oc_pushduppo)^.par do begin
         voffset:= -(2*targetpointersize);
         ssas1:= ptop^.d.dat.fact.ssaindex;
         i2:= ssad;
        end;
-       i3:= contextstack[i1].d.block.landingpad;
+      }
+       i3:= p1^.d.block.landingpad;
+      {
        with additem(oc_pushexception)^.par do begin
         finiexception.landingpadalloc:= i3;
         i1:= ssad;
@@ -407,6 +416,7 @@ begin
        with additem(oc_push)^ do begin
         par.imm.vsize:= targetpointersize; //address still valid
        end;
+      }
        with additem(oc_pushclassdef)^.par do begin
         if co_llvm in o.compileoptions then begin
          classdefid:= getclassdefid(typ1);
@@ -416,18 +426,11 @@ begin
         end;
         i2:= ssad;
        end;
-{
-       with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
-        memop.segdataaddress.a:= typ1^.infoclass.defs;
-        memop.segdataaddress.offset:= 0;
-        memop.t:= bitoptypes[das_pointer];
-        i2:= ssad;
-       end;
-}
-       with additem(oc_checkclasstype)^.par do begin 
-                   //returns nil in par 0 if no match
-        ssas1:= ptop^.d.dat.fact.ssaindex;
-        ssas2:= i2;
+       with additem(oc_checkexceptclasstype)^.par do begin 
+                   //returns instance or nil in par 2 if no match
+        ssas1:= i2; //classdef
+        ssas2:= ptop^.d.dat.fact.ssaindex; //dest address
+        id:= i3; //landingpad
         i1:= ssad;
        end;
        with addcontrolitem(oc_gotofalseoffs)^.par do begin //op -3
@@ -528,7 +531,7 @@ begin
     dec(p1);
    end;
    with additem(oc_continueexception)^ do begin
-    par.id:= p1^.d.block.exceptiontemp;
+    par.id:= p1^.d.block.landingpad;//exceptiontemp;
    end;
   end;
   dec(s.stackindex);

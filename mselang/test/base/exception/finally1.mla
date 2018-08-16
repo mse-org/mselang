@@ -1,0 +1,46 @@
+program finally1;
+type
+ ex = class[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+  private
+   f: int32;
+ end;
+
+constructor ex.create();
+begin
+end;
+
+destructor ex.destroy();
+begin
+end;
+ 
+procedure tt();
+begin
+ raise ex.create();
+end;
+
+var
+ e,f: ex;
+
+begin
+ try
+  try
+   tt();
+   exitcode:= 100;
+  finally
+   exitcode:= exitcode + 23;
+   if true then
+{$internaldebug on}
+    if getexceptobj(e) then
+     e.f:= 90;
+    end;
+    raise;
+   end;
+  end;
+ except
+  if getexceptobj(f) then
+   exitcode:= f.f + exitcode + 10;
+  end;
+ end;
+end.

@@ -250,7 +250,7 @@ type
   stf_getaddress,stf_addressop,
   stf_needsmanage,stf_needsini,stf_needsfini,stf_newlineposted,
   stf_rtti,stf_objrtti,stf_objrttistreaming,
-  stf_except
+  stf_except,stf_finally
  );
  statementflagsty = set of statementflagty;
 
@@ -345,9 +345,11 @@ type
     casechain: listadty;
     caseflags: caseflagsty;
    );
+  {
    ck_finallyblock: (
     exceptiontemp: int32; //temp alloc
    );
+  }
  end;
  
  identinfoty = record

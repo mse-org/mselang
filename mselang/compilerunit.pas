@@ -101,6 +101,7 @@ const
   '__mla__getallocsize',
   '__mla__classis',
   '__mla__checkclasstype',
+  '__mla__checkexceptclasstype',
 //  '__mla__initclass',
 //  '__mla__finiclass',
 

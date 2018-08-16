@@ -2762,6 +2762,18 @@ begin
  end;
 end;
 
+procedure checkexceptclasstypeop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.allocval(id), //landingpad
+                        bcstream.typeval(ord(das_pointer))); //1ssa
+  callcompilersub(cs_checkexceptclasstype,true,[bcstream.relval(0),
+                                    bcstream.ssaval(ssas1), //classdef
+                                         bcstream.ssaval(ssas2)]); //dest
+                                                             //1ssa
+ end;
+end;
+
 procedure storesegnilop();
 var
  str1: shortstring;
@@ -5387,6 +5399,7 @@ const
   getclassrttissa = 1;
   classisssa = 1;
   checkclasstypessa = 1;
+  checkexceptclasstypessa = 2;
 
   storesegnilssa = 0;
   storelocindinilssa = 1;

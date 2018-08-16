@@ -8,6 +8,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
+{$ifndef fpc} {$mode mselang} {$endif}
 unit __mla__personality;
 interface
 //uses
@@ -31,6 +32,12 @@ type
  pptrint = ^ptrint;
  ptrcard = card32;
 
+ landingpadty = record
+  data: pointer;
+  code: int32;
+ end;
+ plandingpadty = ^landingpadty;
+ 
  _Unwind_Reason_Code = (
   _URC_NO_REASON,// = 0,
   _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
@@ -60,6 +67,7 @@ type
   data: pointer;
  end;
  pexceptinfoty = ^exceptinfoty;
+ 
  _Unwind_Context = record
  end;
  p_Unwind_Context = ^_Unwind_Context;
@@ -71,17 +79,19 @@ const
  _UA_HANDLER_FRAME = 4;
  _UA_FORCE_UNWIND = 8;
  exco_unhandledexception = 217;
+ 
 {$ifndef mse_compiler}
+
 procedure __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionclass: _Unwind_Exception_Class;
              exceptionobject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 
-procedure _Unwind_RaiseException(
-           exception_object: p_Unwind_Exception): _Unwind_Reason_Code [external];
-procedure _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer
-                                                                       [external];
+procedure _Unwind_RaiseException(exception_object: p_Unwind_Exception):
+                                             _Unwind_Reason_Code [external];
+procedure _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): 
+                                                         pointer [external];
 procedure _Unwind_GetIP(context: p_Unwind_Context): pointer [external];
 procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer)
                                                                   [external];
@@ -96,6 +106,7 @@ procedure _Unwind_GetRegionStart(context: p_Unwind_Context): pointer [external];
 implementation
 
 {$ifndef mse_compiler} 
+
 type
  pcard8 = ^card8;
 
