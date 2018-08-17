@@ -8,6 +8,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
+//{$internaldebug on}
 {$ifndef fpc} {$mode mselang} {$endif}
 unit __mla__personality;
 interface

@@ -342,9 +342,19 @@ directiveend,,handledirective,^>
  '}',-*
  '',-
 linecomment0,,,*
- #$0a,linecomment1-
+{$grapas}
+ #$0a,linecomment1_pas-
+{$}
+{$gramse}
+ #$0a,linecomment1_mse-
+{$}
  '',-
-linecomment1,,,handlecommentend^>
+{$grapas}
+linecomment1_pas,,,handlecommentend^>
+{$}
+{$gramse}
+linecomment1_mse,,,handlecommentend^>
+{$}
 progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*

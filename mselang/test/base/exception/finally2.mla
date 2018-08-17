@@ -1,0 +1,57 @@
+program test;
+type
+ ex = class[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+  private
+   f: int32;
+ end;
+
+constructor ex.create();
+begin
+ f:= 85;
+end;
+
+destructor ex.destroy();
+begin
+end;
+ 
+procedure tt();
+begin
+ raise ex.create();
+end;
+
+var
+ e,f: ex;
+
+begin
+ try
+  try
+//   tt();
+   exitcode:= 100-1;
+  finally
+   exitcode:= exitcode + 23;
+   if getexceptobj(e) then
+    exitcode:= 1;
+   end;
+  end;
+ except
+  exitcode:= 2;
+ end;
+ if exitcode = 122 then
+  try
+   try
+    exitcode:= 10;
+    tt();
+    exitcode:= 100;
+   finally
+    exitcode:= exitcode + 5;
+    if getexceptobj(e) then
+     exitcode:= exitcode+e.f;
+    end;
+   end;
+  except
+   exitcode:= exitcode + 123 -(85+10+5);
+  end;
+ end;
+end.

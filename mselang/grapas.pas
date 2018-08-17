@@ -403,11 +403,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'linecomment0');
- linecomment1co: contextty = (branch: nil; 
+ linecomment1_pasco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'linecomment1');
+               caption: 'linecomment1_pas');
  progbeginco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3942,7 +3942,7 @@ const
    );
  blinecomment0: array[0..2] of branchty = (
    (flags: [bf_nt,bf_eat];
-     dest: (context: @linecomment1co); stack: nil; keys: (
+     dest: (context: @linecomment1_pasco); stack: nil; keys: (
     (kind: bkk_char; chars: [#10]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -13771,8 +13771,8 @@ begin
  directiveendco.branch:= @bdirectiveend;
  directiveendco.handleentry:= @handledirective;
  linecomment0co.branch:= @blinecomment0;
- linecomment1co.branch:= nil;
- linecomment1co.handleexit:= @handlecommentend;
+ linecomment1_pasco.branch:= nil;
+ linecomment1_pasco.handleexit:= @handlecommentend;
  progbeginco.branch:= nil;
  progbeginco.next:= @progblockco;
  progbeginco.handleentry:= @handleprogbegin;

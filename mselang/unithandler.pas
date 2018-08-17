@@ -667,6 +667,7 @@ begin
    end;
    if dialect <> dia_none then begin
     s.dialect:= dialect;
+    s.unitinfo^.dialect:= dialect;
     contextstack[s.stackindex-2].context:= getstartcontext(dialect);
    end;
   end;

@@ -860,7 +860,7 @@ begin
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin
-   if s.unitinfo^.dialect = dia_mse then begin
+   if s.dialect = dia_mse then begin
     if sf_functiontype in d.subdef.flags then begin
      errormessage(err_syntax,[';']);
      dec(s.stackindex,2); //remove result type
