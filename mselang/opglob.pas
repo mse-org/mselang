@@ -110,6 +110,7 @@ type
   
   cs_raise,
   cs_finiexception,
+  cs_unhandledexception,
   cs_continueexception,
   cs_writeenum,
   
@@ -198,6 +199,7 @@ type
 
   oc_raise,         //callops
   oc_finiexception,
+  oc_unhandledexception,
   oc_continueexception,
 
   oc_call,
@@ -1345,33 +1347,48 @@ type
    );
  end;
 
+(*
 const
  controlops = [
   oc_label,
   oc_return,
-  oc_returnfunc,oc_progend,
-  oc_goto,oc_gotofalse,oc_gotofalseoffs,oc_gototrue,
-  oc_gotonil,oc_gotonilindirect,
+  oc_returnfunc,
+  oc_progend,
+  oc_goto,
+  oc_gotofalse,
+  oc_gotofalseoffs,
+  oc_gototrue,
+  oc_gotonil,
+  oc_gotonilindirect,
   oc_cmpjmpneimm,
   oc_cmpjmpeqimm,
   oc_cmpjmploimm,
   oc_cmpjmpgtimm,
   oc_cmpjmploeqimm,
-  oc_if,oc_ifnot,
+  oc_if,
+  oc_ifnot,
   oc_while,
   oc_until,
   oc_decloop32,
   oc_decloop64];
 
- subops = [oc_call,oc_callfunc,oc_callout,oc_callfuncout,
-           oc_callvirt,oc_callvirtclass,oc_callvirtfunc,oc_callvirtclassfunc,
+ subops = [oc_call,
+           oc_callfunc,
+           oc_callout,
+           oc_callfuncout,
+           oc_callvirt,
+           oc_callvirtclass,
+           oc_callvirtfunc,
+           oc_callvirtclassfunc,
            oc_callintf,
-           oc_callindi,oc_callfuncindi];
+           oc_callindi,
+           oc_callfuncindi];
                                     //have subinfo record
  callops = subops + [      //ops with call, increment bbindex
   oc_halt1,
   oc_raise,
   oc_finiexception,
+  oc_unhandledexception,
   oc_continueexception,
   
   oc_writeln,
@@ -1386,25 +1403,41 @@ const
   oc_writeinteger64,
   oc_writefloat32,
   oc_writefloat64,
-  oc_writestring8,oc_writestring16,oc_writestring32,
+  oc_writestring8,
+  oc_writestring16,
+  oc_writestring32,
   oc_writechar8,
   oc_writepointer,
   oc_writeclass,
   oc_writeenum,
 
-  oc_string8to16,oc_string8to32,
-  oc_string16to8,oc_string16to32,
-  oc_string32to8,oc_string32to16,
-  oc_bytestostring,oc_stringtobytes,
+  oc_string8to16,
+  oc_string8to32,
+  oc_string16to8,
+  oc_string16to32,
+  oc_string32to8,
+  oc_string32to16,
+  oc_bytestostring,
+  oc_stringtobytes,
   
-  oc_concatstring8,oc_concatstring16,oc_concatstring32,
+  oc_concatstring8,
+  oc_concatstring16,
+  oc_concatstring32,
   
   oc_cmpstring,
   oc_virttrampoline,
-
-  oc_zeromem,
+{
+  oc_getmem,
+  oc_getzeromem,
+  oc_freemem,
+  oc_reallocmem,
+  oc_setmem,
+  oc_memcpy,
+  oc_memmove,
   oc_getobjectmem,
   oc_getobjectzeromem,
+  oc_zeromem,
+}
   oc_iniobject,
 //  oc_iniobject1,
   oc_callclassdefproc,
@@ -1418,9 +1451,13 @@ const
  ];
  call2ops = [oc_writeln]; //ops with 2 calls, increment bbindex twice
  
- listops = [oc_listtoopenar,oc_listtoarrayofconst,
-                  oc_concatstring8,oc_concatstring16,oc_concatstring32];  
+ listops = [oc_listtoopenar,
+            oc_listtoarrayofconst,
+            oc_concatstring8,
+            oc_concatstring16,
+            oc_concatstring32];  
                     //have listinfo record
+*)
  
 type
      //todo: unify, variable size, maybe use objects instead of records
@@ -1696,7 +1733,7 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
-   oc_finiexception,oc_pushexception:(
+   oc_finiexception,oc_unhandledexception,oc_pushexception:(
     finiexception: finiexceptionty;
    );
    oc_getvirtsubad,oc_getintfmethod:(
@@ -1737,7 +1774,8 @@ type
 // ssatablety = array[opcodety] of integer;
 // pssatablety = ^ssatablety;
 
- opflagty = (of_relocseg); 
+ opflagty = (of_relocseg,of_bbinc1,of_bbinc2,of_bbinc3,
+             of_sub,of_control,of_list);
  opflagsty = set of opflagty;
 
  opdefty = record

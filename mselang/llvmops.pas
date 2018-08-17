@@ -166,28 +166,37 @@ const
                                                  params: @reallocparams),
   (name: 'memset'; flags: [sf_proto,sf_functionx,sf_functioncall];
                                                  params: @memsetparams),
-  (name: 'llvm.memcpy.p0i8.p0i8.i32'; flags: [sf_proto];
+  (name: 'llvm.memcpy.p0i8.p0i8.i32'; flags: [sf_proto,sf_intrinsic];
                                                   params: @memcpyparams),
-  (name: 'llvm.memmove.p0i8.p0i8.i32'; flags: [sf_proto];
+  (name: 'llvm.memmove.p0i8.p0i8.i32'; flags: [sf_proto,sf_intrinsic];
                                                   params: @memmoveparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
-  (name: 'llvm.log.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.log.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                        params: @ffunc64params),
-  (name: 'llvm.exp.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.exp.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                        params: @ffunc64params),
-  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.sin.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                        params: @ffunc64params),
-  (name: 'llvm.cos.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.cos.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                        params: @ffunc64params),
-  (name: 'llvm.fabs.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.fabs.f64';
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                  params: @ffunc64params),
-  (name: 'llvm.sqrt.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.sqrt.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                  params: @ffunc64params),
-  (name: 'llvm.floor.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.floor.f64'; 
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                  params: @ffunc64params),
-  (name: 'llvm.round.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.round.f64';
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                  params: @ffunc64params),
-  (name: 'llvm.nearbyint.f64'; flags: [sf_proto,sf_functionx,sf_functioncall];
+  (name: 'llvm.nearbyint.f64';
+           flags: [sf_proto,sf_functionx,sf_functioncall,sf_intrinsic];
                                                  params: @ffunc64params)
  );
 
@@ -221,7 +230,7 @@ const
 var
  bcstream: tllvmbcwriter;
  globconst: string;
- internalfuncs: array[internalfuncty] of int32;
+ internalfuncsx: array[internalfuncty] of int32;
  internalvars: array[internalvarty] of int32;
  internalstrings: array[internalstringty] of int32;
  nullmethodconst: int32;
@@ -581,10 +590,10 @@ begin
 }
  bcstream.classdefs:= getsegmentbase(seg_classdef);
  
- for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
+ for funcs1:= low(internalfuncsx) to high(internalfuncsx) do begin
                                              //llvm utility functions
   with internalfuncconsts[funcs1] do begin
-   internalfuncs[funcs1]:= info.s.unitinfo^.llvmlists.globlist.
+   internalfuncsx[funcs1]:= info.s.unitinfo^.llvmlists.globlist.
                       addexternalsubvalue(flags,params^,getidentname(name));
   end;
  end;
@@ -762,6 +771,17 @@ begin
  end;
 end;
 
+procedure callinternalfunc(const afunc: internalfuncty; 
+                                    const params: array of int32);
+var
+ fl1: subflagsty;
+begin
+ fl1:= internalfuncconsts[afunc].flags;
+ bcstream.emitcallop(sf_functionx in fl1,
+                      bcstream.globval(internalfuncsx[afunc]),params,
+                                                    sf_intrinsic in fl1);
+end;
+
 procedure haltop();
 begin
  if finihandler <> 0 then begin
@@ -770,8 +790,13 @@ begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
  end;
- bcstream.emitcallop(false,bcstream.globval(internalfuncs[if__exit]),
-                                                        [bcstream.relval(0)]);
+ callinternalfunc(if__exit,[bcstream.relval(0)]);
+ if finihandler = 0 then begin
+  callinternalfunc(if__exit,[bcstream.relval(0)]); 
+                           //dummy for second BB increment
+ end;
+// bcstream.emitcallop(false,bcstream.globval(internalfuncs[if__exit]),
+//                                                        [bcstream.relval(0)]);
 end;
 
 procedure halt1op();
@@ -951,11 +976,9 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_ret]),
                                              bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                                                      [bcstream.relval(0)]);
+  callinternalfunc(if_printf,[bcstream.relval(0)]);
   bcstream.emitloadop(bcstream.globval(internalvars[iv_stdout]));
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_flush]),
-                                   [bcstream.relval(0)]);
+  callinternalfunc(if_flush,[bcstream.relval(0)]);
  end;
 end;
 
@@ -969,8 +992,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[typestring]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -999,8 +1021,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[typestring]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -1029,8 +1050,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_flo32]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -1039,8 +1059,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_flo64]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -1049,8 +1068,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -1060,8 +1078,7 @@ begin
   callcompilersub(cs_string16to8,true,[bcstream.ssaval(ssas1)]);
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.relval(1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.relval(1)]);
   callcompilersub(cs_decrefsize,false,[bcstream.relval(1)]);
  end;
 end;
@@ -1072,8 +1089,7 @@ begin
   callcompilersub(cs_string32to8,true,[bcstream.ssaval(ssas1)]);
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.relval(1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.relval(1)]);
   callcompilersub(cs_decrefsize,false,[bcstream.relval(1)]);
  end;
 end;
@@ -1083,8 +1099,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_char8]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -1104,8 +1119,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_pointer]),
                                            bcstream.typeval(pointertype));
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_printf,[bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -2363,8 +2377,7 @@ end;
 procedure absfloop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_fabs64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_fabs64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -4556,8 +4569,8 @@ end;
 procedure zeromemop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memset]),
-            [bcstream.ssaval(ssas1),bcstream.constval(ord(nco_i32)),
+  callinternalfunc(if_memset,
+              [bcstream.ssaval(ssas1),bcstream.constval(ord(nco_i32)),
                                     bcstream.constval(imm.llvm.listid)]);
  end;
 end;
@@ -4921,6 +4934,14 @@ begin
  end;
 end;
 
+procedure unhandledexceptionop();
+begin
+ with pc^.par do begin
+  getexceptdata();  //4ssa
+  callcompilersub(cs_unhandledexception,false,[bcstream.relval(0)]);
+ end;
+end;
+
 procedure continueexceptionop();
 begin
  with pc^.par do begin
@@ -4979,8 +5000,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_realloc]),
-               [bcstream.relval(0),bcstream.ssaval(ssas2)]);
+  callinternalfunc(if_realloc,[bcstream.relval(0),bcstream.ssaval(ssas2)]);
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;
@@ -4988,19 +5008,17 @@ end;
 procedure setmemop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memset]),
-            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas3),
-                                                    bcstream.ssaval(ssas2)]);
+  callinternalfunc(if_memset,[bcstream.ssaval(ssas1),bcstream.ssaval(ssas3),
+                                                      bcstream.ssaval(ssas2)]);
  end;
 end;
 
 procedure memtransfer(const asub: internalfuncty);
 begin
  with pc^.par do begin
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[asub]),
-            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
-             bcstream.ssaval(ssas3),bcstream.constval(ord(nco_i32)),
-             bcstream.constval(ord(nco_i1))]);
+  callinternalfunc(asub,[bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
+                bcstream.ssaval(ssas3),bcstream.constval(ord(nco_i32)),
+                                           bcstream.constval(ord(nco_i1))]);
  end;
 end;
 
@@ -5017,48 +5035,42 @@ end;
 procedure ln64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_log64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_log64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure exp64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_exp64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_exp64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure sin64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_sin64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_sin64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure cos64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_cos64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_cos64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure sqrt64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_sqrt64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_sqrt64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure floor64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_floor64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_floor64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -5072,16 +5084,14 @@ end;
 procedure round64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_round64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_round64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
 procedure nearbyint64op();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_nearbyint64]),
-                                                  [bcstream.ssaval(ssas1)]);
+  callinternalfunc(if_nearbyint64,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -5706,6 +5716,7 @@ const
   pushexceptionssa = 8;
   nilexceptionssa = 7;
   finiexceptionssa = 4;
+  unhandledexceptionssa = 4;
   continueexceptionssa = 2;
   getmemssa = 1;
 //  getmem1ssa = 1;

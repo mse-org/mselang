@@ -391,6 +391,7 @@ procedure trackstringref(const astring: stringvaluety);
                     //can not been concatenated in place
 procedure concatstringconsts(var dest: stringvaluety; const b: stringvaluety);
 function allocstringconst(const astring: stringvaluety): segaddressty;
+function allocstringconst(const astring: string): segaddressty;
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
 
 var
@@ -536,6 +537,14 @@ end;
 function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= stringbuf.allocconst(astring);
+end;
+
+function allocstringconst(const astring: string): segaddressty;
+var
+ sv1: stringvaluety;
+begin
+ sv1:= newstringconst(stringtolstring(astring));
+ result:= allocstringconst(sv1);
 end;
 
 function getstringconst(const astring: stringvaluety): lstringty;

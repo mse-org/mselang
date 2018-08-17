@@ -20,91 +20,95 @@
   (ssa: nonessa; proc: nil; flags: []), 
 
 //oc_label                                           //controlops
-  (ssa: labelssa; proc: @labelop; flags: []),           
+  (ssa: labelssa; proc: @labelop; flags: [of_control]),           
 //oc_if
-  (ssa: ifssa; proc: @ifop; flags: []), 
+  (ssa: ifssa; proc: @ifop; flags: [of_control]), 
 //oc_ifnot
-  (ssa: ifnotssa; proc: @ifnotop; flags: []), 
+  (ssa: ifnotssa; proc: @ifnotop; flags: [of_control]), 
 //oc_while
-  (ssa: whilessa; proc: @whileop; flags: []), 
+  (ssa: whilessa; proc: @whileop; flags: [of_control]), 
 //oc_until
-  (ssa: untilssa; proc: @untilop; flags: []), 
+  (ssa: untilssa; proc: @untilop; flags: [of_control]), 
 //oc_decloop32
-  (ssa: decloop32ssa; proc: @decloop32op; flags: []), 
+  (ssa: decloop32ssa; proc: @decloop32op; flags: [of_control]), 
 //oc_decloop64
-  (ssa: decloop64ssa; proc: @decloop64op; flags: []), 
+  (ssa: decloop64ssa; proc: @decloop64op; flags: [of_control]), 
 
                                                    //callops
 //oc_raise
-  (ssa: raisessa; proc: @raiseop; flags: []), 
+  (ssa: raisessa; proc: @raiseop; flags: [of_bbinc1]), 
 //oc_finiexception
-  (ssa: finiexceptionssa; proc: @finiexceptionop; flags: []), 
+  (ssa: finiexceptionssa; proc: @finiexceptionop; flags: [of_bbinc1]), 
+//oc_unhandledexception
+  (ssa: unhandledexceptionssa; proc: @unhandledexceptionop; flags: [of_bbinc1]), 
 //oc_continueexception
-  (ssa: continueexceptionssa; proc: @continueexceptionop; flags: []), 
+  (ssa: continueexceptionssa; proc: @continueexceptionop; flags: [of_bbinc1]), 
 
 //oc_call
-  (ssa: callssa; proc: @callop; flags: []), 
+  (ssa: callssa; proc: @callop; flags: [of_bbinc1,of_sub]),
 //oc_callfunc
-  (ssa: callfuncssa; proc: @callfuncop; flags: []), 
+  (ssa: callfuncssa; proc: @callfuncop; flags: [of_bbinc1,of_sub]), 
 //oc_callout
-  (ssa: calloutssa; proc: @calloutop; flags: []), 
+  (ssa: calloutssa; proc: @calloutop; flags: [of_bbinc1,of_sub]), 
 //oc_callfuncout
-  (ssa: callfuncoutssa; proc: @callfuncoutop; flags: []), 
+  (ssa: callfuncoutssa; proc: @callfuncoutop; flags: [of_bbinc1,of_sub]), 
 //oc_callvirt
-  (ssa: callvirtssa; proc: @callvirtop; flags: []), 
+  (ssa: callvirtssa; proc: @callvirtop; flags: [of_bbinc1,of_sub]), 
 //oc_callvirtclass
-  (ssa: callvirtclassssa; proc: @callvirtclassop; flags: []), 
+  (ssa: callvirtclassssa; proc: @callvirtclassop; flags: [of_bbinc1,of_sub]), 
 //oc_callvirtfunc
-  (ssa: callvirtfuncssa; proc: @callvirtfuncop; flags: []), 
+  (ssa: callvirtfuncssa; proc: @callvirtfuncop; flags: [of_bbinc1,of_sub]), 
 //oc_callvirtclassfunc
-  (ssa: callvirtclassfuncssa; proc: @callvirtclassfuncop; flags: []), 
+  (ssa: callvirtclassfuncssa; proc: @callvirtclassfuncop;
+                                                flags: [of_bbinc1,of_sub]), 
 //oc_callintf
-  (ssa: callintfssa; proc: @callintfop; flags: []), 
+  (ssa: callintfssa; proc: @callintfop; flags: [of_bbinc1,of_sub]), 
 //oc_callintffunc
-  (ssa: callintffuncssa; proc: @callintffuncop; flags: []), 
+  (ssa: callintffuncssa; proc: @callintffuncop; flags: [of_bbinc1,of_sub]), 
 //oc_virttrampoline
-  (ssa: virttrampolinessa; proc: @virttrampolineop; flags: []), 
+  (ssa: virttrampolinessa; proc: @virttrampolineop; flags: [of_bbinc1]), 
 
 //oc_callindi
-  (ssa: callindissa; proc: @callindiop; flags: []), 
+  (ssa: callindissa; proc: @callindiop; flags: [of_bbinc1,of_sub]), 
 //oc_callfuncindi
-  (ssa: callfuncindissa; proc: @callfuncindiop; flags: []), 
+  (ssa: callfuncindissa; proc: @callfuncindiop; flags: [of_bbinc1,of_sub]), 
 
 //oc_return
-  (ssa: returnssa; proc: @returnop; flags: []), 
+  (ssa: returnssa; proc: @returnop; flags: [of_control]), 
 //oc_returnfunc
-  (ssa: returnfuncssa; proc: @returnfuncop; flags: []), 
+  (ssa: returnfuncssa; proc: @returnfuncop; flags: [of_control]), 
 
 //oc_zeromem
-  (ssa: zeromemssa; proc: @zeromemop; flags: []), 
+  (ssa: zeromemssa; proc: @zeromemop; flags: [of_bbinc1]), 
 //oc_zeromemindi
-  (ssa: zeromemindissa; proc: @zeromemindiop; flags: []), 
+  (ssa: zeromemindissa; proc: @zeromemindiop; flags: [of_bbinc1]), 
 //oc_getobjectmem
-  (ssa: getobjectmemssa; proc: @getobjectmemop; flags: []), 
+  (ssa: getobjectmemssa; proc: @getobjectmemop; flags: [of_bbinc1]), 
 //oc_getobjectzeromem
-  (ssa: getobjectzeromemssa; proc: @getobjectzeromemop; flags: []), 
+  (ssa: getobjectzeromemssa; proc: @getobjectzeromemop; flags: [of_bbinc1]), 
 //oc_iniobject
-  (ssa: iniobjectssa; proc: @iniobjectop; flags: []), 
+  (ssa: iniobjectssa; proc: @iniobjectop; flags: [of_bbinc1]), 
 //oc_iniobject1
 //  (ssa: iniobject1ssa; proc: @iniobject1op; flags: []), 
 //oc_callclassdefproc
-  (ssa: callclassdefprocssa; proc: @callclassdefprocop; flags: []), 
+  (ssa: callclassdefprocssa; proc: @callclassdefprocop; flags: [of_bbinc1]), 
 //oc_callclassdefproc2
-  (ssa: callclassdefproc2ssa; proc: @callclassdefproc2op; flags: []), 
+  (ssa: callclassdefproc2ssa; proc: @callclassdefproc2op; flags: [of_bbinc1]), 
 //oc_destroyclass
-  (ssa: destroyclassssa; proc: @destroyclassop; flags: []), 
+  (ssa: destroyclassssa; proc: @destroyclassop; flags: [of_bbinc1]), 
 //oc_getclassdef,
-  (ssa: getclassdefssa; proc: @getclassdefop; flags: []), 
+  (ssa: getclassdefssa; proc: @getclassdefop; flags: [of_bbinc1]), 
 //oc_getclassrtti,
-  (ssa: getclassrttissa; proc: @getclassrttiop; flags: []), 
+  (ssa: getclassrttissa; proc: @getclassrttiop; flags: [of_bbinc1]), 
 //oc_classis,
-  (ssa: classisssa; proc: @classisop; flags: []), 
+  (ssa: classisssa; proc: @classisop; flags: [of_bbinc1]), 
 //oc_checkclasstype,
-  (ssa: checkclasstypessa; proc: @checkclasstypeop; flags: []), 
+  (ssa: checkclasstypessa; proc: @checkclasstypeop; flags: [of_bbinc1]), 
 //oc_checkexceptclasstype,
-  (ssa: checkexceptclasstypessa; proc: @checkexceptclasstypeop; flags: []), 
+  (ssa: checkexceptclasstypessa; proc: @checkexceptclasstypeop;
+                                                         flags: [of_bbinc1]), 
 //oc_cmpstring
-  (ssa: cmpstringssa; proc: @cmpstringop; flags: []), 
+  (ssa: cmpstringssa; proc: @cmpstringop; flags: [of_bbinc1]), 
 
 //oc_beginparse
   (ssa: beginparsessa; proc: @beginparseop; flags: []), 
@@ -117,13 +121,13 @@
 //oc_main
   (ssa: mainssa; proc: @mainop; flags: []), 
 //oc_progend
-  (ssa: progendssa; proc: @progendop; flags: []), 
+  (ssa: progendssa; proc: @progendop; flags: [of_control]), 
 //oc_progend1
   (ssa: progend1ssa; proc: @progend1op; flags: []), 
 //oc_halt
-  (ssa: haltssa; proc: @haltop; flags: []), 
+  (ssa: haltssa; proc: @haltop; flags: [of_bbinc1,of_bbinc2]), 
 //oc_halt1
-  (ssa: halt1ssa; proc: @halt1op; flags: []), 
+  (ssa: halt1ssa; proc: @halt1op; flags: [of_bbinc1]), 
 
 //oc_movesegreg0
   (ssa: movesegreg0ssa; proc: @movesegreg0op; flags: []), 
@@ -138,70 +142,72 @@
   (ssa: phissa; proc: @phiop; flags: []), 
 
 //oc_goto
-  (ssa: gotossa; proc: @gotoop; flags: []), 
+  (ssa: gotossa; proc: @gotoop; flags: [of_control]), 
 //oc_gotofalse
-  (ssa: gotofalsessa; proc: @gotofalseop; flags: []), 
+  (ssa: gotofalsessa; proc: @gotofalseop; flags: [of_control]), 
 //oc_gotofalseoffs
-  (ssa: gotofalseoffsssa; proc: @gotofalseoffsop; flags: []), 
+  (ssa: gotofalseoffsssa; proc: @gotofalseoffsop; flags: [of_control]), 
 //oc_gototrue
-  (ssa: gototruessa; proc: @gototrueop; flags: []), 
+  (ssa: gototruessa; proc: @gototrueop; flags: [of_control]), 
 //oc_gotonil
-  (ssa: gotonilssa; proc: @gotonilop; flags: []), 
+  (ssa: gotonilssa; proc: @gotonilop; flags: [of_control]), 
 //oc_gotonilindirect
-  (ssa: gotonilindirectssa; proc: @gotonilindirectop; flags: []), 
+  (ssa: gotonilindirectssa; proc: @gotonilindirectop; flags: [of_control]), 
 //oc_cmpjmpneimm
-  (ssa: cmpjmpneimmssa; proc: @cmpjmpneimmop; flags: []), 
+  (ssa: cmpjmpneimmssa; proc: @cmpjmpneimmop; flags: [of_control]), 
 //oc_cmpjmpeqimm
-  (ssa: cmpjmpeqimmssa; proc: @cmpjmpeqimmop; flags: []), 
+  (ssa: cmpjmpeqimmssa; proc: @cmpjmpeqimmop; flags: [of_control]), 
 //oc_cmpjmploimm
-  (ssa: cmpjmploimmssa; proc: @cmpjmploimmop; flags: []), 
+  (ssa: cmpjmploimmssa; proc: @cmpjmploimmop; flags: [of_control]), 
 //oc_cmpjmpgtimm
-  (ssa: cmpjmpgtimmssa; proc: @cmpjmpgtimmop; flags: []), 
+  (ssa: cmpjmpgtimmssa; proc: @cmpjmpgtimmop; flags: [of_control]), 
 //oc_cmpjmploeqimm
-  (ssa: cmpjmploeqimmssa; proc: @cmpjmploeqimmop; flags: []), 
+  (ssa: cmpjmploeqimmssa; proc: @cmpjmploeqimmop; flags: [of_control]), 
 
 //oc_writeln
-  (ssa: writelnssa; proc: @writelnop; flags: []), 
+  (ssa: writelnssa; proc: @writelnop; flags: [of_bbinc1,of_bbinc2]), 
 //oc_writeboolean
-  (ssa: writebooleanssa; proc: @writebooleanop; flags: []), 
+  (ssa: writebooleanssa; proc: @writebooleanop; flags: [of_bbinc1]), 
 //oc_writecardinal8
-  (ssa: writecardinal8ssa; proc: @writecardinal8op; flags: []), 
+  (ssa: writecardinal8ssa; proc: @writecardinal8op; flags: [of_bbinc1]), 
 //oc_writecardinal16
-  (ssa: writecardinal16ssa; proc: @writecardinal16op; flags: []), 
+  (ssa: writecardinal16ssa; proc: @writecardinal16op; flags: [of_bbinc1]), 
 //oc_writecardinal32
-  (ssa: writecardinal32ssa; proc: @writecardinal32op; flags: []), 
+  (ssa: writecardinal32ssa; proc: @writecardinal32op; flags: [of_bbinc1]), 
 //oc_writecardinal64
-  (ssa: writecardinal64ssa; proc: @writecardinal64op; flags: []), 
+  (ssa: writecardinal64ssa; proc: @writecardinal64op; flags: [of_bbinc1]), 
 //oc_writeinteger8
-  (ssa: writeinteger8ssa; proc: @writeinteger8op; flags: []), 
+  (ssa: writeinteger8ssa; proc: @writeinteger8op; flags: [of_bbinc1]), 
 //oc_writeinteger16
-  (ssa: writeinteger16ssa; proc: @writeinteger16op; flags: []), 
+  (ssa: writeinteger16ssa; proc: @writeinteger16op; flags: [of_bbinc1]), 
 //oc_writeinteger32
-  (ssa: writeinteger32ssa; proc: @writeinteger32op; flags: []), 
+  (ssa: writeinteger32ssa; proc: @writeinteger32op; flags: [of_bbinc1]), 
 //oc_writeinteger64
-  (ssa: writeinteger64ssa; proc: @writeinteger64op; flags: []), 
+  (ssa: writeinteger64ssa; proc: @writeinteger64op; flags: [of_bbinc1]), 
 //oc_writefloat32
-  (ssa: writefloat32ssa; proc: @writefloat32op; flags: []), 
+  (ssa: writefloat32ssa; proc: @writefloat32op; flags: [of_bbinc1]), 
 //oc_writefloat64
-  (ssa: writefloat64ssa; proc: @writefloat64op; flags: []), 
+  (ssa: writefloat64ssa; proc: @writefloat64op; flags: [of_bbinc1]), 
 //oc_writechar8
-  (ssa: writechar8ssa; proc: @writechar8op; flags: []), 
+  (ssa: writechar8ssa; proc: @writechar8op; flags: [of_bbinc1]), 
 //oc_writechar16
-  (ssa: writechar16ssa; proc: @writechar16op; flags: []), 
+  (ssa: writechar16ssa; proc: @writechar16op; flags: [of_bbinc1]), 
 //oc_writechar32
-  (ssa: writechar32ssa; proc: @writechar32op; flags: []), 
+  (ssa: writechar32ssa; proc: @writechar32op; flags: [of_bbinc1]), 
 //oc_writestring8
-  (ssa: writestring8ssa; proc: @writestring8op; flags: []), 
+  (ssa: writestring8ssa; proc: @writestring8op; flags: [of_bbinc1]), 
 //oc_writestring16
-  (ssa: writestring16ssa; proc: @writestring16op; flags: []), 
+  (ssa: writestring16ssa; proc: @writestring16op;
+                            flags: [of_bbinc1,of_bbinc2,of_bbinc3]), 
 //oc_writestring32
-  (ssa: writestring32ssa; proc: @writestring32op; flags: []), 
+  (ssa: writestring32ssa; proc: @writestring32op;
+                            flags: [of_bbinc1,of_bbinc2,of_bbinc3]), 
 //oc_writepointer
-  (ssa: writepointerssa; proc: @writepointerop; flags: []), 
+  (ssa: writepointerssa; proc: @writepointerop; flags: [of_bbinc1]), 
 //oc_writeclass
-  (ssa: writeclassssa; proc: @writeclassop; flags: []), 
+  (ssa: writeclassssa; proc: @writeclassop; flags: [of_bbinc1]), 
 //oc_writeenum
-  (ssa: writeenumssa; proc: @writeenumop; flags: []), 
+  (ssa: writeenumssa; proc: @writeenumop; flags: [of_bbinc1]), 
 
 //oc_nop
   (ssa: nopssa; proc: @nopop; flags: []),
@@ -440,47 +446,49 @@
   (ssa: card1toint32ssa; proc: @card1toint32op; flags: []), 
 
 //oc_string8to16
-  (ssa: string8to16ssa; proc: @string8to16op; flags: []), 
+  (ssa: string8to16ssa; proc: @string8to16op; flags: [of_bbinc1]), 
 //oc_string8to32
-  (ssa: string8to32ssa; proc: @string8to32op; flags: []), 
+  (ssa: string8to32ssa; proc: @string8to32op; flags: [of_bbinc1]), 
 //oc_string16to8
-  (ssa: string16to8ssa; proc: @string16to8op; flags: []), 
+  (ssa: string16to8ssa; proc: @string16to8op; flags: [of_bbinc1]), 
 //oc_string16to32
-  (ssa: string16to32ssa; proc: @string16to32op; flags: []), 
+  (ssa: string16to32ssa; proc: @string16to32op; flags: [of_bbinc1]), 
 //oc_string32to8
-  (ssa: string32to8ssa; proc: @string32to8op; flags: []), 
+  (ssa: string32to8ssa; proc: @string32to8op; flags: [of_bbinc1]), 
 //oc_string32to16
-  (ssa: string32to16ssa; proc: @string32to16op; flags: []), 
+  (ssa: string32to16ssa; proc: @string32to16op; flags: [of_bbinc1]), 
 //oc_bytestostring
-  (ssa: bytestostringssa; proc: @bytestostringop; flags: []), 
+  (ssa: bytestostringssa; proc: @bytestostringop; flags: [of_bbinc1]), 
 //oc_stringtobytes
-  (ssa: stringtobytesssa; proc: @stringtobytesop; flags: []), 
+  (ssa: stringtobytesssa; proc: @stringtobytesop; flags: [of_bbinc1]), 
 
 //oc_concatstring8
-  (ssa: concatstring8ssa; proc: @concatstring8op; flags: []), 
+  (ssa: concatstring8ssa; proc: @concatstring8op; flags: [of_bbinc1,of_list]), 
 //oc_concatstring16
-  (ssa: concatstring16ssa; proc: @concatstring16op; flags: []), 
+  (ssa: concatstring16ssa; proc: @concatstring16op; flags: [of_bbinc1,of_list]), 
 //oc_concatstring32
-  (ssa: concatstring32ssa; proc: @concatstring32op; flags: []), 
+  (ssa: concatstring32ssa; proc: @concatstring32op; flags: [of_bbinc1,of_list]), 
   
 //oc_chartostring8
-  (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
+  (ssa: chartostring8ssa; proc: @chartostring8op; flags: [of_bbinc1]),
 //oc_arraytoopenar
-  (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: []), 
+  (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: [of_bbinc1]), 
 //oc_arraytoopenarad
-  (ssa: arraytoopenaradssa; proc: @arraytoopenaradop; flags: []), 
+  (ssa: arraytoopenaradssa; proc: @arraytoopenaradop; flags: [of_bbinc1]), 
 //oc_dynarraytoopenar
-  (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: []), 
+  (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: [of_bbinc1]), 
 //oc_dynarraytoopenarad
-  (ssa: dynarraytoopenaradssa; proc: @dynarraytoopenaradop; flags: []), 
+  (ssa: dynarraytoopenaradssa; proc: @dynarraytoopenaradop; flags: [of_bbinc1]), 
 //oc_listtoopenar
-  (ssa: listtoopenarssa; proc: @listtoopenarop; flags: []), 
+  (ssa: listtoopenarssa; proc: @listtoopenarop; flags: [of_list,of_bbinc1]), 
 //oc_listtoopenarad
-  (ssa: listtoopenaradssa; proc: @listtoopenaradop; flags: []), 
+  (ssa: listtoopenaradssa; proc: @listtoopenaradop; flags: [of_list,of_bbinc1]), 
 //oc_listtoarrayofconst
-  (ssa: listtoarrayofconstssa; proc: @listtoarrayofconstop; flags: []), 
+  (ssa: listtoarrayofconstssa; proc: @listtoarrayofconstop;
+                                          flags: [of_list,of_bbinc1{,of_bbinc2}]), 
 //oc_listtoarrayofconstad
-  (ssa: listtoarrayofconstadssa; proc: @listtoarrayofconstadop; flags: []), 
+  (ssa: listtoarrayofconstadssa; proc: @listtoarrayofconstadop;
+                                         flags: [of_list,of_bbinc1{,of_bbinc2}]), 
 
 //oc_combinemethod
   (ssa: combinemethodssa; proc: @combinemethodop; flags: []), 
@@ -757,152 +765,195 @@
 
 
 //oc_finirefsizeseg
-  (ssa: finirefsizesegssa; proc: @finirefsizesegop; flags: [of_relocseg]), 
+  (ssa: finirefsizesegssa; proc: @finirefsizesegop; 
+                                    flags: [of_bbinc1,of_relocseg]), 
 //oc_finirefsizeloc
-  (ssa: finirefsizelocssa; proc: @finirefsizelocop; flags: []), 
+  (ssa: finirefsizelocssa; proc: @finirefsizelocop; flags: [of_bbinc1]), 
 //oc_finirefsizelocindi
-  (ssa: finirefsizelocindissa; proc: @finirefsizelocindiop; flags: []), 
+  (ssa: finirefsizelocindissa; proc: @finirefsizelocindiop; flags: [of_bbinc1]), 
 //oc_finirefsizestack
-  (ssa: finirefsizestackssa; proc: @finirefsizestackop; flags: []), 
+  (ssa: finirefsizestackssa; proc: @finirefsizestackop; flags: [of_bbinc1]), 
 //oc_finirefsizestackindi
-  (ssa: finirefsizestackindissa; proc: @finirefsizestackindiop; flags: []), 
+  (ssa: finirefsizestackindissa; proc: @finirefsizestackindiop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizestackref
-  (ssa: finirefsizestackrefssa; proc: @finirefsizestackrefop; flags: []), 
+  (ssa: finirefsizestackrefssa; proc: @finirefsizestackrefop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizetempvar
-  (ssa: finirefsizetempvarssa; proc: @finirefsizetempvarop; flags: []), 
+  (ssa: finirefsizetempvarssa; proc: @finirefsizetempvarop;
+                                                        flags: [of_bbinc1]), 
 
 //oc_finirefsizesegar
-  (ssa: finirefsizesegarssa; proc: @finirefsizesegarop; flags: [of_relocseg]), 
+  (ssa: finirefsizesegarssa; proc: @finirefsizesegarop;
+                                              flags: [of_bbinc1,of_relocseg]), 
 //oc_finirefsizelocar
-  (ssa: finirefsizelocarssa; proc: @finirefsizelocarop; flags: []), 
+  (ssa: finirefsizelocarssa; proc: @finirefsizelocarop; flags: [of_bbinc1]), 
 //oc_finirefsizelocindiar
-  (ssa: finirefsizelocindiarssa; proc: @finirefsizelocindiarop; flags: []), 
+  (ssa: finirefsizelocindiarssa; proc: @finirefsizelocindiarop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizestackar
-  (ssa: finirefsizestackarssa; proc: @finirefsizestackarop; flags: []), 
+  (ssa: finirefsizestackarssa; proc: @finirefsizestackarop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizestackindiar
-  (ssa: finirefsizestackindiarssa; proc: @finirefsizestackindiarop; flags: []), 
+  (ssa: finirefsizestackindiarssa; proc: @finirefsizestackindiarop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizestackrefar
-  (ssa: finirefsizestackrefarssa; proc: @finirefsizestackrefarop; flags: []), 
+  (ssa: finirefsizestackrefarssa; proc: @finirefsizestackrefarop;
+                                                        flags: [of_bbinc1]), 
 //oc_finirefsizetempvarar
-  (ssa: finirefsizetempvararssa; proc: @finirefsizetempvararop; flags: []), 
+  (ssa: finirefsizetempvararssa; proc: @finirefsizetempvararop;
+                                                        flags: [of_bbinc1]), 
 
 //oc_finirefsizesegdynar
-  (ssa: finirefsizesegdynarssa; proc: @finirefsizesegdynarop; flags: [of_relocseg]), 
+  (ssa: finirefsizesegdynarssa; proc: @finirefsizesegdynarop;
+                                            flags: [of_bbinc1,of_relocseg]), 
 //oc_finirefsizelocdynar
-  (ssa: finirefsizelocdynarssa; proc: @finirefsizelocdynarop; flags: []), 
+  (ssa: finirefsizelocdynarssa; proc: @finirefsizelocdynarop; 
+                                                    flags: [of_bbinc1]), 
 //oc_finirefsizelocindidynar
-  (ssa: finirefsizelocindidynarssa; proc: @finirefsizelocindidynarop; flags: []), 
+  (ssa: finirefsizelocindidynarssa; proc: @finirefsizelocindidynarop;
+                                                    flags: [of_bbinc1]), 
 //oc_finirefsizestackdynar
-  (ssa: finirefsizestackdynarssa; proc: @finirefsizestackdynarop; flags: []), 
+  (ssa: finirefsizestackdynarssa; proc: @finirefsizestackdynarop;
+                                                    flags: [of_bbinc1]), 
 //oc_finirefsizestackindidynar
-  (ssa: finirefsizestackindidynarssa; proc: @finirefsizestackindidynarop; flags: []), 
+  (ssa: finirefsizestackindidynarssa; proc: @finirefsizestackindidynarop;
+                                                    flags: [of_bbinc1]), 
 //oc_finirefsizestackrefdynar
-  (ssa: finirefsizestackrefdynarssa; proc: @finirefsizestackrefdynarop; flags: []), 
+  (ssa: finirefsizestackrefdynarssa; proc: @finirefsizestackrefdynarop;
+                                                         flags: [of_bbinc1]), 
 //oc_finirefsizetempvardynar
-  (ssa: finirefsizetempvardynarssa; proc: @finirefsizetempvardynarop; flags: []), 
+  (ssa: finirefsizetempvardynarssa; proc: @finirefsizetempvardynarop;
+                                                         flags: [of_bbinc1]), 
 
 //oc_increfsizeseg
-  (ssa: increfsizesegssa; proc: @increfsizesegop; flags: [of_relocseg]),
+  (ssa: increfsizesegssa; proc: @increfsizesegop; 
+                                 flags: [of_bbinc1,of_relocseg]),
 //oc_increfsizeloc
-  (ssa: increfsizelocssa; proc: @increfsizelocop; flags: []), 
+  (ssa: increfsizelocssa; proc: @increfsizelocop; flags: [of_bbinc1]), 
 //oc_increfsizelocindi
-  (ssa: increfsizelocindissa; proc: @increfsizelocindiop; flags: []), 
+  (ssa: increfsizelocindissa; proc: @increfsizelocindiop; flags: [of_bbinc1]), 
 //oc_increfsizestack
-  (ssa: increfsizestackssa; proc: @increfsizestackop; flags: []), 
+  (ssa: increfsizestackssa; proc: @increfsizestackop; flags: [of_bbinc1]), 
 //oc_increfsizestackindi
-  (ssa: increfsizestackindissa; proc: @increfsizestackindiop; flags: []), 
+  (ssa: increfsizestackindissa; proc: @increfsizestackindiop;
+                                                      flags: [of_bbinc1]), 
 //oc_increfsizestackref
-  (ssa: increfsizestackrefssa; proc: @increfsizestackrefop; flags: []), 
+  (ssa: increfsizestackrefssa; proc: @increfsizestackrefop; flags: [of_bbinc1]), 
 //oc_increfsizetempvar
-  (ssa: increfsizetempvarssa; proc: @increfsizetempvarop; flags: []), 
+  (ssa: increfsizetempvarssa; proc: @increfsizetempvarop; flags: [of_bbinc1]), 
 
 //oc_increfsizesegar
-  (ssa: increfsizesegarssa; proc: @increfsizesegarop; flags: [of_relocseg]),
+  (ssa: increfsizesegarssa; proc: @increfsizesegarop; 
+                                            flags: [of_bbinc1,of_relocseg]),
 //oc_increfsizelocar
-  (ssa: increfsizelocarssa; proc: @increfsizelocarop; flags: []), 
+  (ssa: increfsizelocarssa; proc: @increfsizelocarop; flags: [of_bbinc1]), 
 //oc_increfsizelocindiar
-  (ssa: increfsizelocindiarssa; proc: @increfsizelocindiarop; flags: []), 
+  (ssa: increfsizelocindiarssa; proc: @increfsizelocindiarop; 
+                                                     flags: [of_bbinc1]), 
 //oc_increfsizestackar
-  (ssa: increfsizestackarssa; proc: @increfsizestackarop; flags: []), 
+  (ssa: increfsizestackarssa; proc: @increfsizestackarop; flags: [of_bbinc1]), 
 //oc_increfsizestackindiar
-  (ssa: increfsizestackindiarssa; proc: @increfsizestackindiarop; flags: []), 
+  (ssa: increfsizestackindiarssa; proc: @increfsizestackindiarop;
+                                                          flags: [of_bbinc1]), 
 //oc_increfsizestackrefar
-  (ssa: increfsizestackrefarssa; proc: @increfsizestackrefarop; flags: []), 
+  (ssa: increfsizestackrefarssa; proc: @increfsizestackrefarop;
+                                                          flags: [of_bbinc1]), 
 //oc_increfsizetemparar
-  (ssa: increfsizetempvararssa; proc: @increfsizetempvararop; flags: []), 
+  (ssa: increfsizetempvararssa; proc: @increfsizetempvararop;
+                                                          flags: [of_bbinc1]), 
 
 //oc_increfsizesegar
-  (ssa: increfsizesegdynarssa; proc: @increfsizesegdynarop; flags: [of_relocseg]),
+  (ssa: increfsizesegdynarssa; proc: @increfsizesegdynarop; 
+                                               flags: [of_bbinc1,of_relocseg]),
 //oc_increfsizelocar
-  (ssa: increfsizelocdynarssa; proc: @increfsizelocdynarop; flags: []), 
+  (ssa: increfsizelocdynarssa; proc: @increfsizelocdynarop; flags: [of_bbinc1]), 
 //oc_increfsizelocindiar
-  (ssa: increfsizelocindidynarssa; proc: @increfsizelocindidynarop; flags: []), 
+  (ssa: increfsizelocindidynarssa; proc: @increfsizelocindidynarop;
+                                                            flags: [of_bbinc1]), 
 //oc_increfsizestackar
-  (ssa: increfsizestackdynarssa; proc: @increfsizestackdynarop; flags: []), 
+  (ssa: increfsizestackdynarssa; proc: @increfsizestackdynarop; 
+                                                     flags: [of_bbinc1]), 
 //oc_increfsizestackindiar
-  (ssa: increfsizestackindidynarssa; proc: @increfsizestackindidynarop; flags: []), 
+  (ssa: increfsizestackindidynarssa; proc: @increfsizestackindidynarop;
+                                                        flags: [of_bbinc1]), 
 //oc_increfsizestackrefar
-  (ssa: increfsizestackrefdynarssa; proc: @increfsizestackrefdynarop; flags: []), 
+  (ssa: increfsizestackrefdynarssa; proc: @increfsizestackrefdynarop;
+                                                        flags: [of_bbinc1]), 
 //oc_increfsizetempvardynar
-  (ssa: increfsizetempvardynarssa; proc: @increfsizetempvardynarop; flags: []), 
+  (ssa: increfsizetempvardynarssa; proc: @increfsizetempvardynarop;
+                                                        flags: [of_bbinc1]), 
 
 //oc_decrefsizeseg
-  (ssa: decrefsizesegssa; proc: @decrefsizesegop; flags: [of_relocseg]),
+  (ssa: decrefsizesegssa; proc: @decrefsizesegop; 
+                                      flags: [of_bbinc1,of_relocseg]),
 //oc_decrefsizeloc
-  (ssa: decrefsizelocssa; proc: @decrefsizelocop; flags: []), 
+  (ssa: decrefsizelocssa; proc: @decrefsizelocop; flags: [of_bbinc1]), 
 //oc_decrefsizelocindi
-  (ssa: decrefsizelocindissa; proc: @decrefsizelocindiop; flags: []), 
+  (ssa: decrefsizelocindissa; proc: @decrefsizelocindiop; flags: [of_bbinc1]), 
 //oc_decrefsizestack
-  (ssa: decrefsizestackssa; proc: @decrefsizestackop; flags: []), 
+  (ssa: decrefsizestackssa; proc: @decrefsizestackop; flags: [of_bbinc1]), 
 //oc_decrefsizestackindi
-  (ssa: decrefsizestackindissa; proc: @decrefsizestackindiop; flags: []), 
+  (ssa: decrefsizestackindissa; proc: @decrefsizestackindiop;
+                                                   flags: [of_bbinc1]), 
 //oc_decrefsizestackref
-  (ssa: decrefsizestackrefssa; proc: @decrefsizestackrefop; flags: []), 
+  (ssa: decrefsizestackrefssa; proc: @decrefsizestackrefop; flags: [of_bbinc1]), 
 //oc_decrefsizetempvar
-  (ssa: decrefsizetempvarssa; proc: @decrefsizetempvarop; flags: []), 
+  (ssa: decrefsizetempvarssa; proc: @decrefsizetempvarop; flags: [of_bbinc1]), 
 
 //oc_decrefsizesegar
-  (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; flags: [of_relocseg]),
+  (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; 
+                                       flags: [of_bbinc1,of_relocseg]),
 //oc_decrefsizelocar
-  (ssa: decrefsizelocarssa; proc: @decrefsizelocarop; flags: []), 
+  (ssa: decrefsizelocarssa; proc: @decrefsizelocarop; flags: [of_bbinc1]), 
 //oc_decrefsizelocindiar
-  (ssa: decrefsizelocindiarssa; proc: @decrefsizelocindiarop; flags: []), 
+  (ssa: decrefsizelocindiarssa; proc: @decrefsizelocindiarop;
+                                                      flags: [of_bbinc1]), 
 //oc_decrefsizestackar
-  (ssa: decrefsizestackarssa; proc: @decrefsizestackarop; flags: []), 
+  (ssa: decrefsizestackarssa; proc: @decrefsizestackarop; flags: [of_bbinc1]), 
 //oc_decrefsizestackindiar
-  (ssa: decrefsizestackindiarssa; proc: @decrefsizestackindiarop; flags: []), 
+  (ssa: decrefsizestackindiarssa; proc: @decrefsizestackindiarop;
+                                                          flags: [of_bbinc1]), 
 //oc_decrefsizestackrefar
-  (ssa: decrefsizestackrefarssa; proc: @decrefsizestackrefarop; flags: []), 
+  (ssa: decrefsizestackrefarssa; proc: @decrefsizestackrefarop;
+                                                          flags: [of_bbinc1]), 
 //oc_decrefsizetempvarar
-  (ssa: decrefsizetempvararssa; proc: @decrefsizetempvararop; flags: []), 
+  (ssa: decrefsizetempvararssa; proc: @decrefsizetempvararop;
+                                                          flags: [of_bbinc1]), 
 
 //oc_decrefsizesegdynar
-  (ssa: decrefsizesegdynarssa; proc: @decrefsizesegdynarop; flags: [of_relocseg]),
+  (ssa: decrefsizesegdynarssa; proc: @decrefsizesegdynarop;
+                                             flags: [of_bbinc1,of_relocseg]),
 //oc_decrefsizelocdynar
-  (ssa: decrefsizelocdynarssa; proc: @decrefsizelocdynarop; flags: []), 
+  (ssa: decrefsizelocdynarssa; proc: @decrefsizelocdynarop; flags: [of_bbinc1]), 
 //oc_decrefsizelocindidynar
-  (ssa: decrefsizelocindidynarssa; proc: @decrefsizelocindidynarop; flags: []), 
+  (ssa: decrefsizelocindidynarssa; proc: @decrefsizelocindidynarop;
+                                                         flags: [of_bbinc1]), 
 //oc_decrefsizestackdynar
-  (ssa: decrefsizestackdynarssa; proc: @decrefsizestackdynarop; flags: []), 
+  (ssa: decrefsizestackdynarssa; proc: @decrefsizestackdynarop;
+                                                         flags: [of_bbinc1]), 
 //oc_decrefsizestackindidynar
-  (ssa: decrefsizestackindidynarssa; proc: @decrefsizestackindidynarop; flags: []), 
+  (ssa: decrefsizestackindidynarssa; proc: @decrefsizestackindidynarop;
+                                                         flags: [of_bbinc1]), 
 //oc_decrefsizestackrefdynar
-  (ssa: decrefsizestackrefdynarssa; proc: @decrefsizestackrefdynarop; flags: []), 
+  (ssa: decrefsizestackrefdynarssa; proc: @decrefsizestackrefdynarop;
+                                                         flags: [of_bbinc1]), 
 //oc_decrefsizetempvardynar
-  (ssa: decrefsizetempvardynarssa; proc: @decrefsizetempvardynarop; flags: []), 
+  (ssa: decrefsizetempvardynarssa; proc: @decrefsizetempvardynarop;
+                                                     flags: [of_bbinc1]), 
 
 //oc_highstring,
-  (ssa: highstringssa; proc: @highstringop; flags: []), 
+  (ssa: highstringssa; proc: @highstringop; flags: [of_bbinc1]), 
 //oc_highdynar,
-  (ssa: highdynarssa; proc: @highdynarop; flags: []), 
+  (ssa: highdynarssa; proc: @highdynarop; flags: [of_bbinc1]), 
 //oc_highopenar,
-  (ssa: highopenarssa; proc: @highopenarop; flags: []), 
+  (ssa: highopenarssa; proc: @highopenarop; flags: [of_bbinc1]), 
 //oc_lengthstring,
-  (ssa: lengthstringssa; proc: @lengthstringop; flags: []), 
+  (ssa: lengthstringssa; proc: @lengthstringop; flags: [of_bbinc1]), 
 //oc_lengthdynar,
-  (ssa: lengthdynarssa; proc: @lengthdynarop; flags: []), 
+  (ssa: lengthdynarssa; proc: @lengthdynarop; flags: [of_bbinc1]), 
 //oc_lengthopenar,
-  (ssa: lengthopenarssa; proc: @lengthopenarop; flags: []), 
+  (ssa: lengthopenarssa; proc: @lengthopenarop; flags: [of_bbinc1]), 
 
 //oc_popseg8
   (ssa: popseg8ssa; proc: @popseg8op; flags: [of_relocseg]), 
@@ -1173,41 +1224,41 @@
   (ssa: externalsubssa; proc: @externalsubop; flags: []), 
 
 //oc_copystring
-  (ssa: copystringssa; proc: @copystringop; flags: []), 
+  (ssa: copystringssa; proc: @copystringop; flags: [of_bbinc1]),
 //oc_copysdynar
-  (ssa: copydynarssa; proc: @copydynarop; flags: []), 
+  (ssa: copydynarssa; proc: @copydynarop; flags: [of_bbinc1]), 
 
 //oc_setlengthstr8
-  (ssa: setlengthstr8ssa; proc: @setlengthstr8op; flags: []), 
+  (ssa: setlengthstr8ssa; proc: @setlengthstr8op; flags: [of_bbinc1]), 
 //oc_setlengthstr16
-  (ssa: setlengthstr16ssa; proc: @setlengthstr16op; flags: []), 
+  (ssa: setlengthstr16ssa; proc: @setlengthstr16op; flags: [of_bbinc1]), 
 //oc_setlengthstr32
-  (ssa: setlengthstr32ssa; proc: @setlengthstr32op; flags: []), 
+  (ssa: setlengthstr32ssa; proc: @setlengthstr32op; flags: [of_bbinc1]), 
 //oc_setlengthdynarray
-  (ssa: setlengthdynarrayssa; proc: @setlengthdynarrayop; flags: []), 
+  (ssa: setlengthdynarrayssa; proc: @setlengthdynarrayop; flags: [of_bbinc1]), 
 //oc_setlengthincdecrefstring
-  (ssa: setlengthincdecrefstringssa; 
-                           proc: @setlengthincdecrefstringop; flags: []), 
+  (ssa: setlengthincdecrefstringssa; proc: @setlengthincdecrefstringop;
+                                                           flags: [of_bbinc1]), 
 //oc_setlengthincdecrefdynarray
-  (ssa: setlengthincdecrefdynarrayssa; 
-                           proc: @setlengthincdecrefdynarrayop; flags: []), 
+  (ssa: setlengthincdecrefdynarrayssa; proc: @setlengthincdecrefdynarrayop;
+                                                           flags: [of_bbinc1]), 
 
 //oc_uniquestr8
-  (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: []), 
+  (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: [of_bbinc1]), 
 //oc_uniquestr8a
-  (ssa: uniquestr8assa; proc: @uniquestr8aop; flags: []), 
+  (ssa: uniquestr8assa; proc: @uniquestr8aop; flags: [of_bbinc1]), 
 //oc_uniquestr16
-  (ssa: uniquestr16ssa; proc: @uniquestr16op; flags: []), 
+  (ssa: uniquestr16ssa; proc: @uniquestr16op; flags: [of_bbinc1]), 
 //oc_uniquestr16a
-  (ssa: uniquestr16assa; proc: @uniquestr16aop; flags: []), 
+  (ssa: uniquestr16assa; proc: @uniquestr16aop; flags: [of_bbinc1]), 
 //oc_uniquestr32
-  (ssa: uniquestr32ssa; proc: @uniquestr32op; flags: []), 
+  (ssa: uniquestr32ssa; proc: @uniquestr32op; flags: [of_bbinc1]), 
 //oc_uniquestr32a
-  (ssa: uniquestr32assa; proc: @uniquestr32aop; flags: []), 
+  (ssa: uniquestr32assa; proc: @uniquestr32aop; flags: [of_bbinc1]), 
 //oc_uniquedynarray
-  (ssa: uniquedynarrayssa; proc: @uniquedynarrayop; flags: []), 
+  (ssa: uniquedynarrayssa; proc: @uniquedynarrayop; flags: [of_bbinc1]), 
 //oc_uniquedynarraya
-  (ssa: uniquedynarrayassa; proc: @uniquedynarrayaop; flags: []), 
+  (ssa: uniquedynarrayassa; proc: @uniquedynarrayaop; flags: [of_bbinc1]), 
 
 //oc_pushcpucontext
   (ssa: pushcpucontextssa; proc: @pushcpucontextop; flags: []), 
@@ -1218,38 +1269,38 @@
 //oc_nilexception
   (ssa: nilexceptionssa; proc: @nilexceptionop; flags: []), 
 //oc_getmem
-  (ssa: getmemssa; proc: @getmemop; flags: []), 
+  (ssa: getmemssa; proc: @getmemop; flags: [of_bbinc1]), 
 //oc_getzeromem
-  (ssa: getzeromemssa; proc: @getzeromemop; flags: []), 
+  (ssa: getzeromemssa; proc: @getzeromemop; flags: [of_bbinc1]), 
 //oc_freemem
-  (ssa: freememssa; proc: @freememop; flags: []), 
+  (ssa: freememssa; proc: @freememop; flags: [of_bbinc1]), 
 //oc_reallocmem
-  (ssa: reallocmemssa; proc: @reallocmemop; flags: []), 
+  (ssa: reallocmemssa; proc: @reallocmemop; flags: [of_bbinc1]), 
 //oc_setmem
-  (ssa: setmemssa; proc: @setmemop; flags: []), 
+  (ssa: setmemssa; proc: @setmemop; flags: [of_bbinc1]), 
 //oc_memcpy
-  (ssa: memcpyssa; proc: @memcpyop; flags: []), 
+  (ssa: memcpyssa; proc: @memcpyop; flags: [{of_bbinc1}]), 
 //oc_memmove
-  (ssa: memmovessa; proc: @memmoveop; flags: []), 
+  (ssa: memmovessa; proc: @memmoveop; flags: [{of_bbinc1}]), 
   
 //oc_ln64
-  (ssa: ln64ssa; proc: @ln64op; flags: []), 
+  (ssa: ln64ssa; proc: @ln64op; flags: [{of_bbinc1}]), 
 //oc_exp64
-  (ssa: exp64ssa; proc: @exp64op; flags: []), 
+  (ssa: exp64ssa; proc: @exp64op; flags: [{of_bbinc1}]), 
 //oc_sin64
-  (ssa: sin64ssa; proc: @sin64op; flags: []), 
+  (ssa: sin64ssa; proc: @sin64op; flags: [{of_bbinc1}]), 
 //oc_cos64
-  (ssa: cos64ssa; proc: @cos64op; flags: []), 
+  (ssa: cos64ssa; proc: @cos64op; flags: [{of_bbinc1}]), 
 //oc_sqrt64
-  (ssa: sqrt64ssa; proc: @sqrt64op; flags: []), 
+  (ssa: sqrt64ssa; proc: @sqrt64op; flags: [{of_bbinc1}]), 
 //oc_floor64
-  (ssa: floor64ssa; proc: @floor64op; flags: []), 
+  (ssa: floor64ssa; proc: @floor64op; flags: [{of_bbinc1}]), 
 //oc_frac64
-  (ssa: frac64ssa; proc: @frac64op; flags: []), 
+  (ssa: frac64ssa; proc: @frac64op; flags: [of_bbinc1]), 
 //oc_round64
-  (ssa: round64ssa; proc: @round64op; flags: []), 
+  (ssa: round64ssa; proc: @round64op; flags: [{of_bbinc1}]), 
 //oc_nearbyint64
-  (ssa: nearbyint64ssa; proc: @nearbyint64op; flags: []), 
+  (ssa: nearbyint64ssa; proc: @nearbyint64op; flags: [{of_bbinc1}]), 
   
 //oc_lineinfo
   (ssa: lineinfossa; proc: @lineinfoop; flags: []), 

@@ -519,6 +519,9 @@ begin
  with acontext^,insertitem(op1,poitem1,0,
              itemcount1*getssa(ocssa_listtoarrayofconstitem))^ do begin
                                      //at start of next context
+  if info.s.trystacklevel > 0 then begin
+   inc(info.s.ssa.bbindex,itemcount1); //per item compilersub call
+  end;
   if target64 then begin
    i1:= sizeof(varrecty64);
   end

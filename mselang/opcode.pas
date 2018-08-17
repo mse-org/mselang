@@ -1008,9 +1008,9 @@ end;
 function additem(const aopcode: opcodety;
                             const ssaextension: integer = 0): popinfoty;
 begin
- with info do begin
+ with info,optable^[aopcode] do begin
   s.ssa.index:= s.ssa.nextindex;
-  inc(s.ssa.nextindex,optable^[aopcode].ssa+ssaextension);
+  inc(s.ssa.nextindex,ssa+ssaextension);
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   with result^ do begin
    op.op:= aopcode;
@@ -1018,10 +1018,14 @@ begin
    par.ssad:= s.ssa.nextindex - 1;
   end;
   inc(opcount);
-  if aopcode in callops then begin
+//  if aopcode in callops then begin
+  if of_bbinc1 in flags then begin
    if info.s.trystacklevel > 0 then begin
     inc(info.s.ssa.bbindex);
-    if aopcode in call2ops then begin
+    if of_bbinc2 in flags then begin
+     inc(info.s.ssa.bbindex);
+    end;
+    if of_bbinc3 in flags then begin
      inc(info.s.ssa.bbindex);
     end;
    end;
@@ -1033,7 +1037,7 @@ function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 begin
 {$ifdef mse_checkinternalerror}
- if not (aopcode in controlops) then begin
+ if not (of_control in optable^[aopcode].flags) then begin
   internalerror(ie_parser,'20150113A');
  end;
 {$endif}
@@ -1070,96 +1074,101 @@ begin
    end;
   end
   else begin
-   ssadelta:= optable^[aopcode].ssa+ssaextension;
-   allocsegmentpo(seg_op,sizeof(opinfoty));
-   if aopoffset >= 0 then begin
-    ad1:= contextstack[int1].opmark.address+aopoffset;
-   end
-   else begin
-    ad1:= contextstack[int1+1].opmark.address
-   end;
-   linkinsertop(s.currentopcodemarkchain,ad1); //shift pending relocations
-   result:= getoppo(ad1);
-   move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
-   result^.op.op:= aopcode;
-   result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
-                //there is at least a subbegin op
-   s.ssa.index:= s.ssa.nextindex;
-   po1:= result+1;
-   poend:= po1+opcount-ad1;
-   while po1 < poend do begin
-    if (po1^.op.op in controlops) and
-                  (po1^.par.opaddress.opaddress >= ad1) then begin
-     inc(po1^.par.opaddress.opaddress);
-    end;  
-    inc(po1);         //update controlops?
-   end;
-   if ssadelta > 0 then begin
-    
-    inc(s.ssa.nextindex,ssadelta);
+   with optable^[aopcode] do begin
+    ssadelta:= ssa+ssaextension;
+    allocsegmentpo(seg_op,sizeof(opinfoty));
+    if aopoffset >= 0 then begin
+     ad1:= contextstack[int1].opmark.address+aopoffset;
+    end
+    else begin
+     ad1:= contextstack[int1+1].opmark.address
+    end;
+    linkinsertop(s.currentopcodemarkchain,ad1); //shift pending relocations
+    result:= getoppo(ad1);
+    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
+    result^.op.op:= aopcode;
+    result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
+                 //there is at least a subbegin op
+    s.ssa.index:= s.ssa.nextindex;
     po1:= result+1;
     poend:= po1+opcount-ad1;
-    int2:= (result-1)^.par.ssad; //original start ssa
-    while po1 < poend do begin           
-                         //todo: boolean expression shortcut addresses?
-     inc(po1^.par.ssad,ssadelta);
-     if po1^.par.ssas1 >{=} int2 then begin
-      inc(po1^.par.ssas1,ssadelta);
-     end;
-     if po1^.par.ssas2 >= int2 then begin
-      inc(po1^.par.ssas2,ssadelta);
-     end;
-     if po1^.par.ssas3 >= int2 then begin
-      inc(po1^.par.ssas3,ssadelta);
-     end;
-     if po1^.op.op in subops then begin //adjust param ssa's
-      parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
-      endpo:= parpo + po1^.par.callinfo.paramcount;
-      while parpo < endpo do begin
-       if parpo^.ssaindex >{=} int2 then begin
-        inc(parpo^.ssaindex,ssadelta);
-       end;
-       inc(parpo);
+    while po1 < poend do begin
+     if (of_control in optable^[po1^.op.op].flags) and
+                   (po1^.par.opaddress.opaddress >= ad1) then begin
+      inc(po1^.par.opaddress.opaddress);
+     end;  
+     inc(po1);         //update controlops?
+    end;
+    if ssadelta > 0 then begin
+     
+     inc(s.ssa.nextindex,ssadelta);
+     po1:= result+1;
+     poend:= po1+opcount-ad1;
+     int2:= (result-1)^.par.ssad; //original start ssa
+     while po1 < poend do begin           
+                          //todo: boolean expression shortcut addresses?
+      inc(po1^.par.ssad,ssadelta);
+      if po1^.par.ssas1 >{=} int2 then begin
+       inc(po1^.par.ssas1,ssadelta);
       end;
-     end
-     else begin
-      if po1^.op.op = oc_phi then begin
-       pphi1:= getsegmentpo(seg_localloc,po1^.par.phi.philist);
-       pphii1:= @pphi1^.items;
-       pphiie:= pphii1 + pphi1^.count;
-       while pphii1 < pphiie do begin
-        if pphii1^.ssa > int2 then begin
-         inc(pphii1^.ssa,ssadelta);
+      if po1^.par.ssas2 >= int2 then begin
+       inc(po1^.par.ssas2,ssadelta);
+      end;
+      if po1^.par.ssas3 >= int2 then begin
+       inc(po1^.par.ssas3,ssadelta);
+      end;
+      if of_sub in optable^[po1^.op.op].flags then begin //adjust param ssa's
+       parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
+       endpo:= parpo + po1^.par.callinfo.paramcount;
+       while parpo < endpo do begin
+        if parpo^.ssaindex >{=} int2 then begin
+         inc(parpo^.ssaindex,ssadelta);
         end;
-        inc(pphii1);
+        inc(parpo);
+       end;
+      end
+      else begin
+       if po1^.op.op = oc_phi then begin
+        pphi1:= getsegmentpo(seg_localloc,po1^.par.phi.philist);
+        pphii1:= @pphi1^.items;
+        pphiie:= pphii1 + pphi1^.count;
+        while pphii1 < pphiie do begin
+         if pphii1^.ssa > int2 then begin
+          inc(pphii1^.ssa,ssadelta);
+         end;
+         inc(pphii1);
+        end;
        end;
       end;
+      inc(po1);
      end;
-     inc(po1);
     end;
-   end;
-   inc(opcount);
-   with contextstack[int1] do begin
-    if d.kind in factcontexts then begin
-     inc(d.dat.fact.ssaindex,ssadelta);
-    end;
-   end;
-   for int1:= int1+1 to s.stacktop do begin
+    inc(opcount);
     with contextstack[int1] do begin
-     inc(opmark.address);
      if d.kind in factcontexts then begin
       inc(d.dat.fact.ssaindex,ssadelta);
      end;
     end;
-   end;
-   if aopcode in callops then begin
-    if info.s.trystacklevel > 0 then begin
-     inc(info.s.ssa.bbindex);
-     if aopcode in call2ops then begin
-      inc(info.s.ssa.bbindex);
+    for int1:= int1+1 to s.stacktop do begin
+     with contextstack[int1] do begin
+      inc(opmark.address);
+      if d.kind in factcontexts then begin
+       inc(d.dat.fact.ssaindex,ssadelta);
+      end;
      end;
     end;
-   end;   
+    if of_bbinc1 in flags then begin
+     if info.s.trystacklevel > 0 then begin
+      inc(info.s.ssa.bbindex);
+      if of_bbinc2 in flags then begin
+       inc(info.s.ssa.bbindex);
+      end;
+      if of_bbinc3 in flags then begin
+       inc(info.s.ssa.bbindex);
+      end;
+     end;
+    end;   
+   end;
   end;
  end;
 end;

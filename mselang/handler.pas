@@ -178,7 +178,7 @@ procedure concatterms(const wanted,terms: pcontextitemty);
 implementation
 uses
  stackops,msestrings,elements,sysutils,handlerutils,mseformatstr,
- unithandler,errorhandler,parser,opcode,
+ unithandler,errorhandler,parser,opcode,exceptionhandler,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
  llvmlists,llvmbitcodes,identutils,__mla__internaltypes,elementcache,
  grammarglob,gramse,grapas;
@@ -253,23 +253,8 @@ begin
    par.main.exitcodeaddress:= getexitcodeaddress();
   end;
   begintempvars();
-(*
-  if co_llvm in o.compileoptions then begin
-   n1:= getidentname2(getident('main'));
-   i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
-   if do_proginfo in info.s.debugoptions then begin
-    with info.s.unitinfo^ do begin
-     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
-           info.{s.}currentscopemeta,
-           n1,info.s.currentfilemeta,
-           info.contextstack[info.s.stackindex].start.line+1,i1,
-           llvmlists.metadatalist.adddisubroutinetype(nil{,
-                      filepathmeta,s.currentscopemeta}),[flagprototyped],false);
-     pushcurrentscope(mainsubmeta);
-    end;
-   end;
-  end;
-*) 
+  tryblockbegin();
+  
   invertlist(unitlinklist,unitchain); //init first unit first
   with unitlinklist do begin
    ad1:= unitchain;
@@ -321,6 +306,20 @@ begin
   addlabel();
   linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
                                                        opcount-1);
+  i2:= opcount;
+  with addcontrolitem(oc_goto)^ do begin //skip landingpad
+  end;  
+  i1:= tryhandle(); //landingpad
+  tryblockend();
+  with additem(oc_unhandledexception)^ do begin
+   par.id:= i1;
+  end;
+  
+  addlabel();
+  with getoppo(i2)^ do begin //goto
+   par.opaddress.opaddress:= opcount-2; //skip landingpad
+  end;
+
   invertlist(tempvarlist,tempvarchain);
   writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
   writemanagedtempop(mo_decref,managedtempchain,s.stacktop);

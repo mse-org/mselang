@@ -80,7 +80,7 @@ function getoptable: poptablety;
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,{internaltypes,}
- mserttiutils,errorhandler,
+ mserttiutils,errorhandler,__mla__personality,
  segmentutils,classhandler,interfacehandler,
  mseapplication;
 
@@ -6862,6 +6862,13 @@ begin
  end;
 end;
 
+procedure unhandledexceptionop();
+begin
+ finiexceptionop();
+ exitcodeaddress^:= exco_unhandledexception;
+ writeln(stderr,'Unhandled exception');
+end;
+
 procedure continueexceptionop();
 begin
  with exceptioninfo do begin
@@ -7687,6 +7694,7 @@ const
   pushexceptionssa = 0;
   nilexceptionssa = 0;
   finiexceptionssa = 0;
+  unhandledexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 0;
 //  getmem1ssa = 0;

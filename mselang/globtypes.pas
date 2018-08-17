@@ -262,7 +262,8 @@ type
               sf_vararg,sf_proto, //for llvm
               sf_virtual,sf_override,sf_interface,
               sf_intfcall, //called by interface
-              sf_hasmanagedparam);
+              sf_hasmanagedparam,
+              sf_intrinsic);
  subflagsty = set of subflagty;
 
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,

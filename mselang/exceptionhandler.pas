@@ -41,6 +41,10 @@ procedure handleraise();
 procedure handleraise1();
 procedure handlegetexceptobj(const paramco: int32);
 
+procedure tryblockbegin();
+function tryhandle(): int32; //returns ladingpadalloc
+procedure tryblockend();
+
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
@@ -58,13 +62,11 @@ begin
  end; 
 end;
 
-procedure handletryentry();
+//todo: no memoryleaks by exceptions in except and finally block
+
+procedure tryblockbegin();
 begin
-{$ifdef mse_debugparser}
- outhandle('TRYYENTRY');
-{$endif}
  with info do begin
-  initblockcontext(0,ck_block);
   inc(s.trystacklevel);
   with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
    links:= 0;
@@ -73,6 +75,23 @@ begin
    end;
   end;
  end;
+end;
+
+procedure tryblockend();
+begin
+ with info do begin
+  deletelistitem(trystacklist,s.trystack);
+  dec(s.trystacklevel);
+ end;
+end;
+
+procedure handletryentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('TRYYENTRY');
+{$endif}
+ initblockcontext(0,ck_block);
+ tryblockbegin();
 end;
 
 function tryhandle(): int32; //returns ladingpadalloc
@@ -107,11 +126,8 @@ end;
 
 procedure tryexit();
 begin
- with info do begin
-  finiblockcontext(0);  
-  deletelistitem(trystacklist,s.trystack);
-  dec(s.trystacklevel);
- end;
+ finiblockcontext(0);
+ tryblockend();
 end;
 var testvar: popinfoty;
 procedure handlefinallyentry();

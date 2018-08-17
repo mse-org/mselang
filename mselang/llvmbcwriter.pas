@@ -202,7 +202,8 @@ type
              const valueid: int32; const aparams: idarty);
                                           //changes aparams
    procedure emitcallop(const afunc: boolean;
-             const valueid: int32; aparams: array of int32);
+             const valueid: int32; aparams: array of int32;
+                                       const noinvoke: boolean = false);
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstentry(const aid: integer; const anames: array of lstringty);
@@ -2018,14 +2019,15 @@ begin
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean; 
-                          const valueid: int32; aparams: array of int32);
+                          const valueid: int32; aparams: array of int32;
+                                                     const noinvoke: boolean);
 var
  i1: int32;
 begin
  for i1:= high(aparams) downto 0 do begin
   aparams[i1]:= fsubopindex-aparams[i1];
  end;
- if flandingpadblock = 0 then begin
+ if (flandingpadblock = 0) or noinvoke then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  end
  else begin
