@@ -912,7 +912,7 @@ begin
    end;
    addlabel();                                     //op 0
    with additem(oc_pushexception)^.par do begin    //op 1
-    finiexception.landingpadalloc:= d.block.landingpad;
+    landingpad.alloc:= d.block.landingpad;
     i1:= ssad;
    end;
    with additem(oc_getclassdef)^.par do begin      //op 2

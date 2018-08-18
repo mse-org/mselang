@@ -4367,7 +4367,7 @@ begin
       i1:= tryhandle(topoffset,-1); //landingpad
       tryblockend();
       with insertitem(oc_continueexception,topoffset,-1)^ do begin
-       par.id:= i1;
+       par.landingpad.alloc:= i1;
       end;
       insertlabel(topoffset,-1);
       op1^.par.opaddress.opaddress:= getcontextopmark(topoffset+1).address-2;

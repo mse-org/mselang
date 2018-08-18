@@ -176,7 +176,7 @@ begin
 // tryexit();
  with info,contextstack[s.stackindex-1] do begin
   with additem(oc_continueexception)^ do begin
-   par.id:= d.block.landingpad;//exceptiontemp;
+   par.landingpad.alloc:= d.block.landingpad;//exceptiontemp;
   end;
   s.currentstatementflags:= b.flags;
 //  dec(s.stackindex,1);
@@ -321,8 +321,7 @@ begin
   end;
   with contextstack[s.stackindex-1] do begin
    with additem(oc_finiexception)^ do begin
-    par.finiexception.landingpadalloc:= 
-                     contextstack[s.stackindex].d.block.landingpad;
+    par.landingpad.alloc:= contextstack[s.stackindex].d.block.landingpad;
    end;
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
                                        //skip exception handling code
@@ -450,7 +449,7 @@ begin
                    //returns instance or nil in par 2 if no match
         ssas1:= i2; //classdef
         ssas2:= ptop^.d.dat.fact.ssaindex; //dest address
-        id:= i3; //landingpad
+        landingpad.alloc:= i3; //landingpad
         i1:= ssad;
        end;
        with additem(oc_gotofalseoffs)^.par do begin //op -3
@@ -463,7 +462,7 @@ begin
         gotostackoffs:= -2*(alignsize(sizeof(vbooleanty)));
        end;
        with additem(oc_nilexception)^.par do begin        //op -1
-        finiexception.landingpadalloc:= i3;
+        landingpad.alloc:= i3;
        end;
        getoppo(opcount,-2)^.par.opaddress.opaddress:= opcount - 1;
        getoppo(opcount,-3)^.par.opaddress.opaddress:= opcount - 1;
@@ -551,7 +550,7 @@ begin
     dec(p1);
    end;
    with additem(oc_continueexception)^ do begin
-    par.id:= p1^.d.block.landingpad;//exceptiontemp;
+    par.landingpad.alloc:= p1^.d.block.landingpad;//exceptiontemp;
    end;
   end;
   dec(s.stackindex);

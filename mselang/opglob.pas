@@ -1157,8 +1157,8 @@ type
   landingpadalloc: int32; //tempval ssa
  end;
 
- finiexceptionty = record
-  landingpadalloc: int32; //tempval ssa
+ landingpadty = record
+  alloc: int32; //tempval ssa
  end;
   
  setlengthty = record
@@ -1733,8 +1733,9 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
-   oc_finiexception,oc_unhandledexception,oc_pushexception:(
-    finiexception: finiexceptionty;
+   oc_finiexception,oc_unhandledexception,oc_pushexception,oc_nilexception,
+                      oc_continueexception,oc_checkexceptclasstype:(
+    landingpad: landingpadty;
    );
    oc_getvirtsubad,oc_getintfmethod:(
     getvirtsubad: getvirtsubadinfoty;
@@ -1742,9 +1743,6 @@ type
    oc_lineinfo:(
     lineinfo: lineinfoty;
    );
-   oc_continueexception,oc_checkexceptclasstype:(
-    id: int32; //llvm
-   )
   end;
 
 // opflagty = (opf_label);

@@ -312,7 +312,7 @@ begin
   i1:= tryhandle(); //landingpad
   tryblockend();
   with additem(oc_unhandledexception)^ do begin
-   par.id:= i1;
+   par.landingpad.alloc:= i1;
   end;
   
   addlabel();
