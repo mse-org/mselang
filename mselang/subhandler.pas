@@ -3439,11 +3439,12 @@ var
   end;
  end; //dodefaultparams()
 
-var
- instancetype1: ptypedataty;
-
- procedure callclasssubattach(const asub: elementoffsetty);
+ procedure callclasssubattach(const instancetype1: ptypedataty;
+                                            const attach: objsubattachty);
+ var
+  asub: elementoffsetty;
  begin
+  asub:= instancetype1^.infoclass.subattach[attach];
   if asub <> 0 then begin
    callsub(adestindex,ele.eledataabs(asub),paramstart,0,
             [dsf_instanceonstack,dsf_attach,dsf_useobjssa] + 
@@ -3462,7 +3463,7 @@ var
   end;
  end; //callclasssubattach()
 
- procedure doinstanceonstack();
+ procedure doinstanceonstack(var instancetype1: ptypedataty);
  begin
   with info.contextstack[adestindex] do begin
    if dsf_destroy in aflags then begin
@@ -3494,12 +3495,53 @@ var
     end;
    end;
    if (sf_destructor in asub^.flags) then begin
-    callclasssubattach(instancetype1^.infoclass.subattach[osa_beforedestruct]);
+    callclasssubattach(instancetype1,osa_beforedestruct);
    end;
   end;
  end; //doinstanceonstack()
+
+ procedure dodispose(const instancetype1: ptypedataty);
+ var
+  adref1: addressrefty;
+  mo1: managedopty;
+ begin
+  if instancetype1^.infoclass.subattach[osa_dispose] <> 0 then begin
+   callclasssubattach(instancetype1,osa_dispose);
+  end
+  else begin
+   if (icf_virtual in instancetype1^.infoclass.flags) and 
+                       not (co_mlaruntime in info.o.compileoptions) then begin
+                              //not implemented in runtime mode
+    callclassdefproc(cdp_fini,instancetype1,instancessa,topoffset);
+   end
+   else begin
+    if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
+     adref1.offset:= 0;
+     adref1.ssaindex:= instancessa;
+     adref1.contextindex:= info.s.stacktop;
+     adref1.isclass:= false;
+     adref1.kind:= ark_stack;
+     adref1.address:= 0; //instance removed by destroy()
+     adref1.typ:= instancetype1;
+     if tf_needsfini in instancetype1^.h.flags then begin
+      mo1:= mo_fini;
+     end
+     else begin
+      mo1:= mo_decref;
+     end;
+     writemanagedtypeop(mo1,instancetype1,adref1);
+    end;
+   end;
+   with insertitem(oc_destroyclass,topoffset,-1)^ do begin
+    par.ssas1:= instancessa;
+    par.destroyclass.flags:= [];
+   end;
+  end;
+ end; //dodispose()
  
 var
+ instancetype1: ptypedataty;
+
  realparamco: int32; //including defaults
  {poparams,indpo,}poitem1{,pe}: pcontextitemty;
  stacksize,resultsize: int32;
@@ -3508,9 +3550,7 @@ var
  opoffset1: int32;
  methodtype1: ptypedataty;
  i4: int32;
- adref1: addressrefty;
  b1: boolean;
- mo1: managedopty;
  typ1: ptypedataty;
  varargcount: int32;
  varargs: array[0..maxparamcount] of int32;
@@ -3520,6 +3560,7 @@ var
  varresulttemp: tempaddressty;
  varresulttempaddr: int32;
  op1: popinfoty;
+ adref1: addressrefty;
  
 label
  paramloopend;
@@ -3539,7 +3580,7 @@ begin
   with contextstack[adestindex] do begin //classinstance, result,
                                          //classdefreturn for ini/fini
    if dsf_instanceonstack in aflags then begin
-    doinstanceonstack();
+    doinstanceonstack(instancetype1);
    end;
    paramschecked:= false;
    if (sf_overload in asub^.flags) and 
@@ -3722,8 +3763,7 @@ begin
       instancetype1:= ele.eledataabs(vardata1^.vf.typ);
       if (sf_destructor in asub^.flags) and 
                          not (dsf_isinherited in aflags) then begin
-       callclasssubattach(instancetype1^.infoclass.
-                                         subattach[osa_beforedestruct]);
+       callclasssubattach(instancetype1,osa_beforedestruct);
       end;
      end
      else begin
@@ -3756,7 +3796,7 @@ begin
           memop.t:= getopdatatype(typ1,0);
          end;
          include(aflags,dsf_instanceonstack);
-         doinstanceonstack();
+         doinstanceonstack(instancetype1);
         end
         else begin
          if d.kind <> ck_none then begin //constructor otherwise
@@ -4283,38 +4323,7 @@ begin
        par.imm.vsize:= targetpointersize; //compensate missing instance copy
       end;
      end;
-     if instancetype1^.infoclass.subattach[osa_dispose] <> 0 then begin
-      callclasssubattach(instancetype1^.infoclass.subattach[osa_dispose]);
-     end
-     else begin
-      if (icf_virtual in instancetype1^.infoclass.flags) and 
-                            not (co_mlaruntime in o.compileoptions) then begin
-                                 //not implemented in runtime mode
-       callclassdefproc(cdp_fini,instancetype1,instancessa,topoffset);
-      end
-      else begin
-       if instancetype1^.h.flags*[tf_needsmanage,tf_needsfini] <> [] then begin
-        adref1.offset:= 0;
-        adref1.ssaindex:= instancessa;
-        adref1.contextindex:= s.stacktop;
-        adref1.isclass:= false;
-        adref1.kind:= ark_stack;
-        adref1.address:= 0; //instance removed by destroy()
-        adref1.typ:= instancetype1;
-        if tf_needsfini in instancetype1^.h.flags then begin
-         mo1:= mo_fini;
-        end
-        else begin
-         mo1:= mo_decref;
-        end;
-        writemanagedtypeop(mo1,instancetype1,adref1);
-       end;
-      end;
-      with insertitem(oc_destroyclass,topoffset,-1)^ do begin
-       par.ssas1:= instancessa;
-       par.destroyclass.flags:= [];
-      end;
-     end;
+     dodispose(instancetype1);
     end;
     if dsf_indirect in aflags then begin
      if hasresult then begin
@@ -4360,12 +4369,13 @@ begin
     end;
     if (sf_constructor in asub^.flags) and 
                             not (dsf_isinherited in aflags) then begin
-     callclasssubattach(instancetype1^.infoclass.subattach[osa_afterconstruct]);
+     callclasssubattach(instancetype1,osa_afterconstruct);
      if isllvmgetmem then begin
       checkopcapacity(10); //max
       op1:= insertitem(oc_goto,topoffset,-1);
       i1:= tryhandle(topoffset,-1); //landingpad
       tryblockend();
+      dodispose(instancetype1);
       with insertitem(oc_continueexception,topoffset,-1)^ do begin
        par.landingpad.alloc:= i1;
       end;
