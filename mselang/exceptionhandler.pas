@@ -18,7 +18,7 @@ unit exceptionhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,listutils,parserglob;
+ globtypes,listutils,parserglob,msetypes;
 
 type
  trystackitemty = record
@@ -42,7 +42,9 @@ procedure handleraise1();
 procedure handlegetexceptobj(const paramco: int32);
 
 procedure tryblockbegin();
-function tryhandle(): int32; //returns ladingpadalloc
+function tryhandle(const stackoffset: integer = bigint;
+                   const aopoffset: int32 = -1 //-1 -> at end  
+                                       ): int32; //returns ladingpadalloc
 procedure tryblockend();
 
 implementation
@@ -94,12 +96,14 @@ begin
  tryblockbegin();
 end;
 
-function tryhandle(): int32; //returns ladingpadalloc
-begin
+function tryhandle(const stackoffset: integer = bigint;
+                          const aopoffset: int32 = -1 //-1 -> at end  
+                                              ): int32; //returns ladingpadalloc
+begin                      
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
 //  addlabel();
-  with additem(oc_popcpucontext)^ do begin
+  with insertitem(oc_popcpucontext,stackoffset,aopoffset)^ do begin
    if co_llvm in info.o.compileoptions then begin
     par.popcpucontext.landingpadalloc:= 
           allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
@@ -147,7 +151,7 @@ begin
    par.memop.t:= bitoptypes[das_pointer];
    include(par.memop.t.flags,af_aggregate);
   end;
-  with addcontrolitem(oc_goto)^ do begin
+  with additem(oc_goto)^ do begin
    par.opaddress.opaddress:= opcount+1-1; //label after landingpad
   end;
   with contextstack[s.stackindex-1] do begin
@@ -184,7 +188,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPTENTRY');
 {$endif}
- with addcontrolitem(oc_goto)^ do begin
+ with additem(oc_goto)^ do begin
  end;
  with info do begin
   with contextstack[s.stackindex] do begin
@@ -215,7 +219,7 @@ begin
   end;
  {$endif}
   if d.block.casechain <> 0 then begin //else no labels
-   addcontrolitem(oc_goto);                       //op -1
+   additem(oc_goto);                       //op -1
      //jump to except end, address set later     
    with pclasspendingitemty(addlistitem(pendingclassitems,
                                            d.block.casechain))^ do begin
@@ -449,12 +453,12 @@ begin
         id:= i3; //landingpad
         i1:= ssad;
        end;
-       with addcontrolitem(oc_gotofalseoffs)^.par do begin //op -3
+       with additem(oc_gotofalseoffs)^.par do begin //op -3
                           //checkclasstype result
         ssas1:= i1;
         gotostackoffs:= -(alignsize(sizeof(vbooleanty)));
        end;
-       with addcontrolitem(oc_gotofalseoffs)^.par do begin //op -2
+       with additem(oc_gotofalseoffs)^.par do begin //op -2
         ssas1:= acquiressa;
         gotostackoffs:= -2*(alignsize(sizeof(vbooleanty)));
        end;

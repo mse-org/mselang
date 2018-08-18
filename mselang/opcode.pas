@@ -116,9 +116,9 @@ function getoppo(const ref: int32; offset: int32): popinfoty;
                            //skips op_lineinfo
 //function getitem(const index: integer): popinfoty;
 function opoffset(const ref: int32; offset: int32): int32; //skips lineinfo
+{
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
-{
 function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
                           const ssaextension: integer = 0): popinfoty;
@@ -127,6 +127,8 @@ function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
 //                               const ssaextension: integer = 0): popinfoty;
 
 procedure addlabel();
+procedure insertlabel(const stackoffset: integer;
+                          const aopoffset: int32); //-1 -> at end
 
           //refcount helpers
 procedure inipointer(const arop: aropty;{ const atype: ptypedataty;}
@@ -1016,23 +1018,28 @@ begin
    op.op:= aopcode;
 //   op.flags:= [];
    par.ssad:= s.ssa.nextindex - 1;
-  end;
-  inc(opcount);
-//  if aopcode in callops then begin
-  if of_bbinc1 in flags then begin
-   if info.s.trystacklevel > 0 then begin
+   inc(opcount);
+ //  if aopcode in callops then begin
+   if of_bbinc1 in flags then begin
+    if info.s.trystacklevel > 0 then begin
+     inc(info.s.ssa.bbindex);
+     if of_bbinc2 in flags then begin
+      inc(info.s.ssa.bbindex);
+     end;
+     if of_bbinc3 in flags then begin
+      inc(info.s.ssa.bbindex);
+     end;
+    end;
+   end;
+   if of_control in flags then begin
     inc(info.s.ssa.bbindex);
-    if of_bbinc2 in flags then begin
-     inc(info.s.ssa.bbindex);
-    end;
-    if of_bbinc3 in flags then begin
-     inc(info.s.ssa.bbindex);
-    end;
+    par.opaddress.bbindex:= info.s.ssa.bbindex;
    end;
   end;
  end;
 end;
 
+(*
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 begin
@@ -1045,6 +1052,7 @@ begin
  inc(info.s.ssa.bbindex);
  result^.par.opaddress.bbindex:= info.s.ssa.bbindex;
 end;
+*)
 
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                     const aopoffset: int32; //-1 -> at end
@@ -1168,6 +1176,10 @@ begin
       end;
      end;
     end;   
+    if of_control in flags then begin
+     inc(info.s.ssa.bbindex);
+     result^.par.opaddress.bbindex:= info.s.ssa.bbindex;
+    end;
    end;
   end;
  end;
@@ -1281,9 +1293,27 @@ end;
 
 procedure addlabel();
 begin
- with addcontrolitem(oc_label)^ do begin
+ with additem(oc_label)^ do begin
   par.opaddress.opaddress:= info.opcount-1;
   par.opaddress.bbindex:= info.s.ssa.bbindex;
+ end;
+end;
+
+procedure insertlabel(const stackoffset: integer;
+                          const aopoffset: int32); //-1 -> at end
+var
+ i1,i2: int32;
+begin
+ with info,insertitem(oc_label,stackoffset,aopoffset)^ do begin
+  i1:= s.stackindex + stackoffset;
+  if (i1 > s.stacktop) or (aopoffset < 0) and (i1 = s.stacktop) then begin
+   i2:= info.opcount;
+  end
+  else begin
+   i2:= contextstack[i1].opmark.address + aopoffset;
+  end;
+  par.opaddress.opaddress:= i2-1;
+  par.opaddress.bbindex:= info.s.ssa.bbindex; //todo: track BB insertions
  end;
 end;
 

@@ -8,7 +8,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-{$ifndef fpc} {$mode mselang} {$endif}
+{$ifndef fpc} {$mode mselang} {$endif} //unit used in MSElang compiler
 unit __mla__internaltypes;
 interface
 // {$internaldebug on}

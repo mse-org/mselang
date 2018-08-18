@@ -1641,7 +1641,7 @@ begin
     par.stacksize:= varsize1;
    end;
   end;
-  with addcontrolitem(oc_return)^ do begin
+  with additem(oc_return)^ do begin
    if pointerparam then begin
     par.stacksize:= targetpointersize + sizeof(frameinfoty);
    end
@@ -2698,7 +2698,7 @@ end;
 procedure begintempvars();
 begin
  with info do begin
-  with addcontrolitem(oc_goto)^ do begin //for possible tempvar init
+  with additem(oc_goto)^ do begin //for possible tempvar init
    par.opaddress.opaddress:= opcount-1;
   end;
   tempinitlabel:= opcount;
@@ -2723,7 +2723,7 @@ begin
   {$endif}
    po2^.par.opaddress.opaddress:= i1;
   end;
-  with addcontrolitem(oc_goto)^ do begin       //terminator
+  with additem(oc_goto)^ do begin       //terminator
    par.opaddress.opaddress:= tempinitlabel-1;
   end;
  end;
@@ -2971,14 +2971,14 @@ begin
 //   end;
   end;
   if sf_functioncall in po1^.flags then begin
-   with addcontrolitem(oc_returnfunc)^ do begin
+   with additem(oc_returnfunc)^ do begin
     par.stacksize:= i1;
 //    par.returnfuncinfo.flags:= po1^.flags;
 //    par.returnfuncinfo.allocs:= po1^.allocs;
    end;
   end
   else begin
-   with addcontrolitem(oc_return)^ do begin
+   with additem(oc_return)^ do begin
     par.stacksize:= i1;
    end;
   end;
@@ -3519,6 +3519,8 @@ var
  constbufferref: segmentstatety;
  varresulttemp: tempaddressty;
  varresulttempaddr: int32;
+ op1: popinfoty;
+ 
 label
  paramloopend;
 begin
@@ -3888,7 +3890,6 @@ begin
       end;
       instancetype1:= resulttype1;
       with resulttype1^.infoclass do begin
-       isllvmgetmem:= co_llvm in o.compileoptions;
        if subattach[osa_new] <> 0 then begin
         if dsf_classdefonstack in aflags then begin
         end
@@ -3927,6 +3928,10 @@ begin
         end;
        end;
       end;
+      isllvmgetmem:= co_llvm in o.compileoptions;
+      if isllvmgetmem then begin
+       tryblockbegin();
+      end;      
      end
      else begin
       resulttype1:= ele.eledataabs(asub^.resulttype.typeele);
@@ -4357,6 +4362,16 @@ begin
                             not (dsf_isinherited in aflags) then begin
      callclasssubattach(instancetype1^.infoclass.subattach[osa_afterconstruct]);
      if isllvmgetmem then begin
+      checkopcapacity(10); //max
+      op1:= insertitem(oc_goto,topoffset,-1);
+      i1:= tryhandle(topoffset,-1); //landingpad
+      tryblockend();
+      with insertitem(oc_continueexception,topoffset,-1)^ do begin
+       par.id:= i1;
+      end;
+      insertlabel(topoffset,-1);
+      op1^.par.opaddress.opaddress:= getcontextopmark(topoffset+1).address-2;
+                                                      //jump to label
      end;
     end;
    end;

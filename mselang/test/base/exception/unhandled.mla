@@ -1,0 +1,27 @@
+program unhandled;
+uses
+ rtl_stringconv;
+
+type
+ ttest = class() [except,virtual]
+  fa,fb: int32;
+  constructor create();
+  destructor destroy() [default];
+ end;
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+
+var
+ c1: ttest;
+ s1: string8;
+begin
+ s1:= inttostr8(123);
+ raise ttest.create();
+end.

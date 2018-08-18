@@ -307,7 +307,7 @@ begin
   linkresolveopad(pimplementationdataty(ele.parentdata)^.exitlinks,
                                                        opcount-1);
   i2:= opcount;
-  with addcontrolitem(oc_goto)^ do begin //skip landingpad
+  with additem(oc_goto)^ do begin //skip landingpad
   end;  
   i1:= tryhandle(); //landingpad
   tryblockend();
@@ -347,7 +347,7 @@ begin
     paramcount:= 0;
    end;
   end;
-  updateprogend(addcontrolitem(oc_progend));
+  updateprogend(additem(oc_progend));
   endtempvars();
   with additem(oc_progend1)^ do begin
    par.progend1.submeta:= s.currentscopemeta;
@@ -1088,7 +1088,7 @@ begin
        if op1 = oc_none then begin
         notimplementederror('20151016B');
        end;
-       po1:= addcontrolitem(op1);
+       po1:= additem(op1);
        with po1^ do begin
         par.ssas1:= pob^.d.dat.fact.ssaindex;
         linkmarkphi(d.shortcutexp.shortcuts,

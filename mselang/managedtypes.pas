@@ -321,7 +321,7 @@ begin
    if ele1 <> 0 then begin
     i1:= pushmanageaddr(aref);
     i3:= opcount;
-    with addcontrolitem(oc_gotonilindirect)^ do begin //insert?
+    with additem(oc_gotonilindirect)^ do begin //insert?
      par.ssas1:= i1;
     end; //skip call in case of nil instance
     with insertitem(oc_indirectpo,i2,-1)^ do begin
@@ -757,7 +757,7 @@ begin
   {$endif}
    sub1:= ele.eledataabs(asub);
    i3:= opcount;
-   with addcontrolitem(oc_gotonil)^ do begin
+   with additem(oc_gotonil)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
    end; //skip call in case of nil instance
    op1:= callinternalsubpo(sub1{^.address},d.dat.fact.ssaindex,s.stacktop);

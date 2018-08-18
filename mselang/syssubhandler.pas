@@ -909,7 +909,7 @@ procedure handleexit(const paramco: int32);
 begin
  with info do begin         //todo: try/finally
   if checkparamco(0,paramco) then begin
-   with addcontrolitem(oc_goto)^ do begin
+   with additem(oc_goto)^ do begin
     if ele.parentelement^.header.kind = ek_implementation then begin
      linkmark(pimplementationdataty(ele.parentdata)^.exitlinks,
                                 getsegaddress(seg_op,@par.opaddress));

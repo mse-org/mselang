@@ -81,7 +81,7 @@ begin
     errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
     result:= nil;
    end;
-   result:= addcontrolitem(aopcode);
+   result:= additem(aopcode);
    with result^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
    end;
@@ -166,7 +166,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ELSE0');
 {$endif}
- with addcontrolitem(oc_goto)^ do begin  
+ with additem(oc_goto)^ do begin  
  end;
 end;
 
@@ -253,7 +253,7 @@ begin
      for i1:= s.stackindex downto 0 do begin
       with contextstack[i1] do begin
        if (d.kind = ck_control) and (d.control.kind in loopcontrols) then begin
-        with addcontrolitem(oc_goto)^ do begin
+        with additem(oc_goto)^ do begin
          if ident1 = tk_continue then begin
           linkmark(d.control.linkscontinue,
                        getsegaddress(seg_op,@par.opaddress.opaddress));
@@ -300,7 +300,7 @@ begin
  outhandle('WHILEEND');
 {$endif}
  with info,contextstack[s.stackindex] do begin
-  with addcontrolitem(oc_goto)^ do begin
+  with additem(oc_goto)^ do begin
    par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
   setcurrentlocbefore(s.stacktop-s.stackindex); //dest for oc_while
@@ -516,7 +516,7 @@ begin
       stackop.t:= alloc;
      end;
      checkopcapacity(10);
-     po2:= addcontrolitem(oc_if); //jump to loop end
+     po2:= additem(oc_if); //jump to loop end
      po2^.par.ssas1:= i1;
 
      i1:= pushtemppo(varad);
@@ -587,7 +587,7 @@ begin
       stackop.compkind:= cok1;
       stackop.t:= forinfo.alloc;
      end;    
-     with addcontrolitem(oc_if)^ do begin //jump to loop start
+     with additem(oc_if)^ do begin //jump to loop start
       par.opaddress.opaddress:= d.control.opmark1.address;
       par.ssas1:= i1;
      end;
@@ -703,7 +703,7 @@ begin
                               poexp^.d.dat.datatyp.typedata))^.h.datasize;
             //todo: signed/unsigned, use table
      if tf_lower in d.dat.datatyp.flags then begin
-      po1:= addcontrolitem(oc_cmpjmploimm);
+      po1:= additem(oc_cmpjmploimm);
       if int1 <> last-1 then begin
        po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
       end;
@@ -711,19 +711,19 @@ begin
      else begin
       if tf_upper in d.dat.datatyp.flags then begin
        if int1 = last then begin
-        po1:= addcontrolitem(oc_cmpjmpgtimm);
+        po1:= additem(oc_cmpjmpgtimm);
        end
        else begin
-        po1:= addcontrolitem(oc_cmpjmploeqimm);
+        po1:= additem(oc_cmpjmploeqimm);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end
       else begin
        if int1 = last then begin
-        po1:= addcontrolitem(oc_cmpjmpneimm);
+        po1:= additem(oc_cmpjmpneimm);
        end
        else begin
-        po1:= addcontrolitem(oc_cmpjmpeqimm);
+        po1:= additem(oc_cmpjmpeqimm);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end;
@@ -796,7 +796,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCH');
 {$endif}
- with addcontrolitem(oc_goto)^ do begin
+ with additem(oc_goto)^ do begin
     //goto casend
  end;
 end;
@@ -900,7 +900,7 @@ begin
    end;
   {$endif}
    if (caf_first in d.block.caseflags) and (d.block.casechain <> 0) then begin
-    addcontrolitem(oc_goto);                       //op -1
+    additem(oc_goto);                       //op -1
      //jump to except end, address set later     
    end;
    with pclasspendingitemty(addlistitem(pendingclassitems,
@@ -944,7 +944,7 @@ begin
     ssas2:= i2;
     i1:= ssad;
    end;
-   with addcontrolitem(oc_gotofalse)^.par do begin //op 5
+   with additem(oc_gotofalse)^.par do begin //op 5
     ssas1:= i1;
                       //jump to next case label, address set in handleexcept
    end;
@@ -952,7 +952,7 @@ begin
     addlabel();                                    //op 6
    end
    else begin
-    addcontrolitem(oc_goto);                      //op 6
+    additem(oc_goto);                      //op 6
                       //jump to except code, address set in handleexcept
    end;
    if last then begin
@@ -1166,7 +1166,7 @@ begin
    identerror(1,err_labelnotfound);
   end
   else begin
-   with addcontrolitem(oc_goto)^ do begin
+   with additem(oc_goto)^ do begin
     if po1^.address <> 0 then begin
      par.opaddress.opaddress:= po1^.address-1;
      par.opaddress.blockid:= currentblockid;

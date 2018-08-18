@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 //{$internaldebug on}
-{$ifndef fpc} {$mode mselang} {$endif}
+{$ifndef fpc} {$mode mselang} {$endif} //unit used in MSElang compiler
 unit __mla__personality;
 interface
 //uses
