@@ -3439,13 +3439,15 @@ var
   end;
  end; //dodefaultparams()
 
- procedure callclasssubattach(const instancetype1: ptypedataty;
-                                            const attach: objsubattachty);
+ function callclasssubattach(const instancetype1: ptypedataty;
+                                       const attach: objsubattachty): boolean;
  var
   asub: elementoffsetty;
  begin
+  result:= false;
   asub:= instancetype1^.infoclass.subattach[attach];
   if asub <> 0 then begin
+   result:= true;
    callsub(adestindex,ele.eledataabs(asub),paramstart,0,
             [dsf_instanceonstack,dsf_attach,dsf_useobjssa] + 
             aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],
@@ -4110,7 +4112,12 @@ begin
      topoffset:= getstackindex(lastitem);
     end
     else begin
-     topoffset:= getstackindex(poitem1);
+     if lastitem <> nil then begin
+      topoffset:= getstackindex(poitem1);
+     end
+     else begin
+      topoffset:= s.stacktop; //no params
+     end;
     end;
     if topoffset < paramstart then begin
      topoffset:= paramstart;
@@ -4375,7 +4382,10 @@ begin
       op1:= insertitem(oc_goto,topoffset,-1);
       i1:= tryhandle(topoffset,-1); //landingpad
       tryblockend();
-      dodispose(instancetype1);
+      if not callclasssubattach(instancetype1,osa_destroy) then begin
+                                  //osa_destroy does dispose
+       dodispose(instancetype1);
+      end;
       with insertitem(oc_continueexception,topoffset,-1)^ do begin
        par.landingpad.alloc:= i1;
       end;
