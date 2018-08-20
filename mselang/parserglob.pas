@@ -339,7 +339,7 @@ type
 // identkindty = (ik_param); 
  blockinfoty = record
   blockidbefore: int32;
-  landingpad: int32; //ssa
+  landingpad: landingpadty; //ssa
   case contextkindty of
    ck_exceptblock: (
     casechain: listadty;

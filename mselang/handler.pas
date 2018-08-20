@@ -292,6 +292,7 @@ var
  finicall: opaddressty;
  i1,i2: int32;
  managedtempsize1: int32;
+ landingpad1: landingpadty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -309,10 +310,10 @@ begin
   i2:= opcount;
   with additem(oc_goto)^ do begin //skip landingpad
   end;  
-  i1:= tryhandle(); //landingpad
+  landingpad1:= tryhandle(); //landingpad
   tryblockend();
   with additem(oc_unhandledexception)^ do begin
-   par.landingpad.alloc:= i1;
+   par.landingpad:= landingpad1;
   end;
   
   addlabel();

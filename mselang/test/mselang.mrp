@@ -14559,7 +14559,7 @@ c=3
   c=6
    (
    kind=1
-   a=0,664,4,variants
+   a=0,665,5,variants
    c=7
     (
     kind=2
@@ -14673,8 +14673,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,variantstring llvm
-    teststate=1
+    a=0,648,2,variantstring llvm
+    teststate=2
     path=variantstring.mla
     comment=
     cc=${mlc_llvm}
@@ -14688,7 +14688,7 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abcabcabc
+    ao=(null)abcabc
     ae=
     aec=0
     ie=0
@@ -14715,7 +14715,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=variants/
    comment=
    cc=
@@ -15250,7 +15250,14 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=338
+rowstate=345
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

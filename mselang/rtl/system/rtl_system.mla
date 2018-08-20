@@ -60,6 +60,8 @@ type
  end;
 
 procedure syelasterror: syserrorty; //returns sye_lasterror, sets mselasterror
+procedure buildsyserrormessage(const aerror: syserrorty;
+                                        const amessage: string8): string8;
 
 procedure nowutc(): datetimety;
 

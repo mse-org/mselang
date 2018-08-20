@@ -18,7 +18,7 @@ unit exceptionhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,listutils,parserglob,msetypes;
+ globtypes,listutils,parserglob,msetypes,opglob;
 
 type
  trystackitemty = record
@@ -44,13 +44,13 @@ procedure handlegetexceptobj(const paramco: int32);
 procedure tryblockbegin();
 function tryhandle(const stackoffset: integer = bigint;
                    const aopoffset: int32 = -1 //-1 -> at end  
-                                       ): int32; //returns ladingpadalloc
+                                                         ): landingpadty;
 procedure tryblockend();
 
 implementation
 uses
  handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
- segmentutils,opglob,unithandler,classhandler,syssubhandler,llvmlists,
+ segmentutils,unithandler,classhandler,syssubhandler,llvmlists,
  __mla__internaltypes;
  
 procedure handlefinallyexpected();
@@ -98,19 +98,19 @@ end;
 
 function tryhandle(const stackoffset: integer = bigint;
                           const aopoffset: int32 = -1 //-1 -> at end  
-                                              ): int32; //returns ladingpadalloc
+                                                           ): landingpadty;
 begin                      
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.bbindex);
 //  addlabel();
   with insertitem(oc_popcpucontext,stackoffset,aopoffset)^ do begin
    if co_llvm in info.o.compileoptions then begin
-    par.popcpucontext.landingpadalloc:= 
-          allocllvmtemp(info.s.unitinfo^.llvmlists.typelist.landingpad);
-    result:= par.popcpucontext.landingpadalloc;
+    result.tempval:= allocllvmtemp(
+                             info.s.unitinfo^.llvmlists.typelist.landingpad);
+    par.popcpucontext.landingpad:= result;
    end
    else begin
-    result:= -1;
+    result.tempval:= -1;
    end;
    if info.s.trystacklevel > 1 then begin //restore parent landingpad
     with ptrystackitemty(
@@ -176,7 +176,7 @@ begin
 // tryexit();
  with info,contextstack[s.stackindex-1] do begin
   with additem(oc_continueexception)^ do begin
-   par.landingpad.alloc:= d.block.landingpad;//exceptiontemp;
+   par.landingpad:= d.block.landingpad;//exceptiontemp;
   end;
   s.currentstatementflags:= b.flags;
 //  dec(s.stackindex,1);
@@ -321,7 +321,7 @@ begin
   end;
   with contextstack[s.stackindex-1] do begin
    with additem(oc_finiexception)^ do begin
-    par.landingpad.alloc:= contextstack[s.stackindex].d.block.landingpad;
+    par.landingpad:= contextstack[s.stackindex].d.block.landingpad;
    end;
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
                                        //skip exception handling code
@@ -342,7 +342,8 @@ end;
 procedure handlegetexceptobj(const paramco: int32);
            //getexceptobj(out obj; const acquire = false)
 var
- i1,i2,i3: int32;
+ i1,i2{,i3}: int32;
+ landingpad1: landingpadty;
  typ1: ptypedataty;
  b1: boolean;
  ptop,p1: pcontextitemty;
@@ -421,7 +422,7 @@ begin
         i2:= ssad;
        end;
       }
-       i3:= p1^.d.block.landingpad;
+       landingpad1:= p1^.d.block.landingpad;
       {
        with additem(oc_pushexception)^.par do begin
         finiexception.landingpadalloc:= i3;
@@ -449,7 +450,7 @@ begin
                    //returns instance or nil in par 2 if no match
         ssas1:= i2; //classdef
         ssas2:= ptop^.d.dat.fact.ssaindex; //dest address
-        landingpad.alloc:= i3; //landingpad
+        landingpad:= landingpad1;
         i1:= ssad;
        end;
        with additem(oc_gotofalseoffs)^.par do begin //op -3
@@ -462,7 +463,7 @@ begin
         gotostackoffs:= -2*(alignsize(sizeof(vbooleanty)));
        end;
        with additem(oc_nilexception)^.par do begin        //op -1
-        landingpad.alloc:= i3;
+        landingpad:= landingpad1;
        end;
        getoppo(opcount,-2)^.par.opaddress.opaddress:= opcount - 1;
        getoppo(opcount,-3)^.par.opaddress.opaddress:= opcount - 1;
@@ -550,7 +551,7 @@ begin
     dec(p1);
    end;
    with additem(oc_continueexception)^ do begin
-    par.landingpad.alloc:= p1^.d.block.landingpad;//exceptiontemp;
+    par.landingpad:= p1^.d.block.landingpad;//exceptiontemp;
    end;
   end;
   dec(s.stackindex);

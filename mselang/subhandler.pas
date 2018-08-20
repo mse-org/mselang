@@ -3563,6 +3563,7 @@ var
  varresulttempaddr: int32;
  op1: popinfoty;
  adref1: addressrefty;
+ landingpad1: landingpadty;
  
 label
  paramloopend;
@@ -4112,6 +4113,7 @@ begin
      topoffset:= getstackindex(lastitem);
     end
     else begin
+//     if true {lastitem <> nil} then begin
      if lastitem <> nil then begin
       topoffset:= getstackindex(poitem1);
      end
@@ -4380,14 +4382,14 @@ begin
      if isllvmgetmem then begin
       checkopcapacity(10); //max
       op1:= insertitem(oc_goto,topoffset,-1);
-      i1:= tryhandle(topoffset,-1); //landingpad
+      landingpad1:= tryhandle(topoffset,-1); //landingpad
       tryblockend();
       if not callclasssubattach(instancetype1,osa_destroy) then begin
                                   //osa_destroy does dispose
        dodispose(instancetype1);
       end;
       with insertitem(oc_continueexception,topoffset,-1)^ do begin
-       par.landingpad.alloc:= i1;
+       par.landingpad:= landingpad1;
       end;
       insertlabel(topoffset,-1);
       op1^.par.opaddress.opaddress:= getcontextopmark(topoffset+1).address-2;

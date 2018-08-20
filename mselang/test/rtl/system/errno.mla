@@ -5,6 +5,8 @@ var
  s1: tfilestream;
  e: esys;
 begin
+  s1:= tfilestream.create('test.abc');
+{
  try
   s1:= tfilestream.create('test.abc');
  except
@@ -15,4 +17,5 @@ begin
    end;
   end;
  end;
+}
 end.

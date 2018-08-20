@@ -2778,7 +2778,7 @@ end;
 procedure checkexceptclasstypeop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.allocval(landingpad.alloc), //landingpad
+  bcstream.emitbitcast(bcstream.tempval(landingpad.tempval), //landingpad
                         bcstream.typeval(ord(das_pointer))); //1ssa
   callcompilersub(cs_checkexceptclasstype,true,[bcstream.relval(0),
                                     bcstream.ssaval(ssas1), //classdef
@@ -4894,14 +4894,14 @@ begin
 //                  info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality])); //1ssa
   bcstream.emitstoreop(bcstream.relval(0),
-                  bcstream.tempval(popcpucontext.landingpadalloc));
+                  bcstream.tempval(popcpucontext.landingpad.tempval));
  end;
 end;
 
 procedure getexceptdata(); //4ssa
 begin
  with pc^.par do begin
-  bcstream.emitgetelementptr(bcstream.tempval(landingpad.alloc),
+  bcstream.emitgetelementptr(bcstream.tempval(landingpad.tempval),
                                                     bcstream.constval(0));//2ssa
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));//1ssa
   bcstream.emitloadop(bcstream.relval(0));                                //1ssa
@@ -4945,7 +4945,7 @@ end;
 procedure continueexceptionop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.allocval(landingpad.alloc),
+  bcstream.emitbitcast(bcstream.tempval(landingpad.tempval),
                              bcstream.ptypeval(bcstream.pointertype)); //1ssa
   bcstream.emitloadop(bcstream.relval(0));                             //1ssa
   callcompilersub(cs_continueexception,false,[bcstream.relval(0)]);

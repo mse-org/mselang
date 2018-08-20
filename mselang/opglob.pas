@@ -1153,14 +1153,15 @@ type
     bytesize: int32;
    );
  end;
- popcpucontextty = record
-  landingpadalloc: int32; //tempval ssa
- end;
 
  landingpadty = record
-  alloc: int32; //tempval ssa
+  tempval: int32; //tempval ssa
  end;
   
+ popcpucontextty = record
+  landingpad: landingpadty;
+ end;
+
  setlengthty = record
   itemsize: int32;
  end;
