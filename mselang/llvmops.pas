@@ -517,6 +517,17 @@ begin
  end;
 end;
 
+procedure nopssaop();
+var
+ i1: int32;
+begin
+ with pc^.par do begin
+  for i1:= ssacount-1 downto 0 do begin
+   bcstream.emitnopssa();
+  end;
+ end;
+end;
+
 procedure labelop();
 begin
  with pc^.par do begin
@@ -1138,17 +1149,6 @@ begin
                                            bcstream.pointertype); //1ssa
   callcompilersub(cs_writeenum,false,
                                  [bcstream.relval(0),bcstream.ssaval(ssas1)]);
- end;
-end;
-
-procedure nopssaop();
-var
- i1: int32;
-begin
- with pc^.par do begin
-  for i1:= ssacount-1 downto 0 do begin
-   bcstream.emitnopssa();
-  end;
  end;
 end;
 
@@ -4917,6 +4917,15 @@ begin
  bcstream.emitloadop(bcstream.relval(0));                                //1ssa
 end;
 
+procedure iniexceptionop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.tempval(landingpad.tempval),
+                                bcstream.ptypeval(pointertype));//1ssa
+  bcstream.emitstoreop(bcstream.constval(ord(nco_pointer)),bcstream.relval(0));
+ end;
+end;
+
 procedure nilexceptionop();
 begin
  getexceptdata(); //4ssa
@@ -5714,6 +5723,7 @@ const
   pushcpucontextssa = 0;
   popcpucontextssa = 1;
   pushexceptionssa = 8;
+  iniexceptionssa = 1;
   nilexceptionssa = 7;
   finiexceptionssa = 4;
   unhandledexceptionssa = 4;

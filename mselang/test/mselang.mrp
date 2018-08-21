@@ -15026,9 +15026,10 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=********** Memory alloc error 2 blocks
+    ao=Unhandled exception
+    +********** Memory alloc error 2 blocks
     ae=
-    aec=123
+    aec=217
     ie=0
     )
    teststate=2

@@ -14,6 +14,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
+
+{$define mse_implicittryfinally}
+
 unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
@@ -1031,6 +1034,9 @@ begin
     case p1^.d.kind of
      ck_ident: begin
       case p1^.d.ident.ident of
+       tk_noexception: begin
+        include(d.subdef.flags,sf_noimplicitexception);
+       end;
        tk_operator: begin
         inc(p1);
         if (p1 <= pe) and (p1^.d.kind = ck_stringident) then begin
@@ -1194,6 +1200,9 @@ begin
          else begin
           errormessage(err_invalidattachmentvalue,[],p1);
          end;
+        end;
+        tk_noexception: begin
+         include(d.subdef.flags,sf_noimplicitexception);
         end;
         else begin
          identerror(p1,p1^.d.ident.ident,err_invalidattachment);
@@ -2798,7 +2807,7 @@ begin
    end;
    po2^.address:= po1^.address;
    po2^.globid:= po1^.globid;
-   po1^.flags:= po2^.flags;
+   po1^.flags:= po1^.flags*[sf_noimplicitexception] + po2^.flags;
    po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
    {$ifdef mse_checkinternalerror}
@@ -2914,6 +2923,12 @@ begin
    writemanagedvarop(mo_incref,po1^.varchain,[af_param],s.stacktop);
   end;
   begintempvars();
+ {$ifdef mse_implicittryfinally}
+  if (co_llvm in o.compileoptions) and 
+                         not (sf_noimplicitexception in po1^.flags) then begin
+   tryblockbegin();
+  end;
+ {$endif}
  end;
 end;
 
@@ -2922,35 +2937,74 @@ var
  po1: psubdataty;
  po2: popinfoty;
  m1,m2: metavaluety;
- i1: int32;
+ i1,i2,i3: int32;
  managedtempsize1,tempsize1,varsize1: int32;
+ op1: popinfoty;
+ landingpad1: landingpadty;
+ b1: boolean;
+{$ifdef mse_implicittryfinally}
+ implicitexcept: boolean;
+{$endif} 
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBBODY6');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
    //todo: check local forward
-  po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
+  po1:= ele.eledataabs(d.subdef.ref);
+ {$ifdef mse_implicittryfinally}
+  implicitexcept:= false;
+ {$endif}
   if co_llvm in o.compileoptions then begin
 //   if sf_hasnestedaccess in po1^.flags then begin
 //   if po1^.flags * [sf_hasnestedref,hasnestedaccess] <> [] then begin
-    info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
+   info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
 //   end;
-  end;
-  addlabel();
-  linkresolveopad(po1^.exitlinks,opcount-1);
-  if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
-   writemanagedvarop(mo_fini,po1^.varchain,[],s.stacktop);
+  {$ifdef mse_implicittryfinally}
+   implicitexcept:= not (sf_noimplicitexception in po1^.flags);
+   if implicitexcept then begin
+    checkopcapacity(10); //max
+    op1:= additem(oc_goto);        //-> label 1                  //0
+  
+    landingpad1:= tryhandle(); //landingpad 1 ssa                //1
+    tryblockend();
+ 
+    i3:= opcount;
+    with additem(oc_continueexception)^ do begin //2 ssa         //2
+     par.landingpad:= landingpad1;
+    end;
+    
+    with additem(oc_goto)^ do begin    //-> label 2              //3
+     par.opaddress.opaddress:= opcount+1;        //jump to label 2
+    end;
+    op1^.par.opaddress.opaddress:= opcount-1;    //jump to label 1
+   end;
+  {$endif}
   end;
 
+  addlabel();                                //label 1          //4
+  linkresolveopad(po1^.exitlinks,opcount-1);
+ {$ifdef mse_implicittryfinally}
+  if implicitexcept then begin
+   i2:= opcount;
+   with additem(oc_iniexception)^ do begin //1 ssa              //5
+    par.landingpad:= landingpad1;
+   end;
+   addlabel();                               //label 2          //6
+  end;
+ {$endif}                                                       //7...
+  b1:= false;
+  if s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> [] then begin
+   b1:= writemanagedvarop(mo_fini,po1^.varchain,[],s.stacktop) or b1;
+  end;
   invertlist(tempvarlist,tempvarchain);
-  writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop);
+  b1:= writemanagedtempvarop(mo_decref,tempvarchain,s.stacktop) or b1;
 
 //  if po1^.paramfinichain <> 0 then begin
   if sf_hasmanagedparam in po1^.flags then begin
-   writemanagedvarop(mo_fini,po1^.varchain,[af_param],s.stacktop);
+   b1:= writemanagedvarop(mo_fini,po1^.varchain,[af_param],s.stacktop) or b1;
   end;
-  writemanagedtempop(mo_decref,managedtempchain,s.stacktop);
+  b1:= writemanagedtempop(mo_decref,managedtempchain,s.stacktop) or b1;
   deletelistchain(managedtemplist,managedtempchain);
   managedtempsize1:= managedtempcount*targetpointersize; 
   tempsize1:= locdatapo-stacktempoffset;
@@ -2970,6 +3024,19 @@ begin
 //    i1:= i1 + vpointersize; //class pointer
 //   end;
   end;
+ {$ifdef mse_implicittryfinally}
+  if implicitexcept then begin
+   if b1 then begin
+    with additem(oc_continueexception)^ do begin
+     par.landingpad:= landingpad1;
+    end;
+    donop(i3);                 //remove continueexception 
+   end
+   else begin
+    donop(i2);                 //niling landingpad not necessary 
+   end;
+  end;
+ {$endif}
   if sf_functioncall in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
     par.stacksize:= i1;

@@ -129,6 +129,7 @@ function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
 procedure addlabel();
 procedure insertlabel(const stackoffset: integer;
                           const aopoffset: int32); //-1 -> at end
+procedure donop(const aopnum: int32); //changes op to nop with same ssa delta
 
           //refcount helpers
 procedure inipointer(const arop: aropty;{ const atype: ptypedataty;}
@@ -1314,6 +1315,14 @@ begin
   end;
   par.opaddress.opaddress:= i2-1;
   par.opaddress.bbindex:= info.s.ssa.bbindex; //todo: track BB insertions
+ end;
+end;
+
+procedure donop(const aopnum: int32); //changes op to nop with same ssa delta
+begin
+ with getoppo(aopnum)^ do begin
+  par.ssacount:= optable^[op.op].ssa;
+  op.op:= oc_nopssa;              
  end;
 end;
 

@@ -6852,6 +6852,11 @@ begin
  end;
 end;
 
+procedure iniexceptionop();
+begin
+ notimplemented();
+end;
+
 procedure finiexceptionop();
 begin
  with exceptioninfo do begin
@@ -7692,6 +7697,7 @@ const
   pushcpucontextssa = 0;
   popcpucontextssa = 0;
   pushexceptionssa = 0;
+  iniexceptionssa = 0;
   nilexceptionssa = 0;
   finiexceptionssa = 0;
   unhandledexceptionssa = 0;

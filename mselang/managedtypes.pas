@@ -45,14 +45,16 @@ const
 
               //todo: check ssaindex
 procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
-                                                  const acontextindex: int32);
-procedure writemanagedvarop(const op: managedopty;
+                                      const acontextindex: int32);
+function writemanagedvarop(const op: managedopty;
                             const chain: elementoffsetty; //vardataty
                             const addressflags: addressflagsty;
-                                              const acontextindex: int32);
-procedure writemanagedtempop(const op: managedopty;
+                                        const acontextindex: int32): boolean;
+                                                 //false if none
+function writemanagedtempop(const op: managedopty;
                             const achain: listadty; //managettempitem
-                                                    const acontextindex: int32);
+                                        const acontextindex: int32): boolean;
+                                                 //false if none
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                     const aaddress: addressvaluety; const acontextindex: int32);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
@@ -1076,7 +1078,7 @@ begin
 end;
 
 procedure writemanagedvarop(const op: managedopty; const avar: pvardataty;
-                                                 const acontextindex: int32);
+                                                   const acontextindex: int32);
 var
  ad1: addressrefty;
 begin
@@ -1088,16 +1090,17 @@ begin
  writemanagedtypeop(op,ele.eledataabs(avar^.vf.typ),ad1);
 end;
 
-procedure writemanagedvarop(const op: managedopty;
+function writemanagedvarop(const op: managedopty;
                  const chain: elementoffsetty;
                  const addressflags: addressflagsty;
-                 const acontextindex: int32);
+                 const acontextindex: int32): boolean;
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
  b1: boolean;
 begin
+ result:= false;
  if chain <> 0 then begin
   ad1.contextindex:= acontextindex;
   ad1.kind:= ark_vardatanoaggregate;
@@ -1115,6 +1118,7 @@ begin
                                                  h.kind in [dk_class]; 
                                                         //todo: dk_interface
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
+    result:= true;
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
@@ -1157,9 +1161,9 @@ begin
  end;
 end;
 
-procedure writemanagedtempop(const op: managedopty;
+function writemanagedtempop(const op: managedopty;
                             const achain: listadty; //managettempitem
-                                                    const acontextindex: int32);
+                                       const acontextindex: int32): boolean;
 var
  ad1: listadty;
  po2: pointer;
@@ -1167,6 +1171,7 @@ var
  ref1: addressrefty;
 begin
  if achain <> 0 then begin
+  result:= true;
   ref1.contextindex:= acontextindex;
   ref1.isclass:= false;
   ref1.offset:= 0;
@@ -1189,6 +1194,9 @@ begin
    writemanagedtypeop(op,ref1.typ,ref1);
    ad1:= po1^.header.next;
   end;
+ end
+ else begin
+  result:= false;
  end;
 end;
 

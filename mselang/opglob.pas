@@ -797,6 +797,7 @@ type
   oc_pushcpucontext,
   oc_popcpucontext,
   oc_pushexception,
+  oc_iniexception,
   oc_nilexception,
   
   oc_getmem,
@@ -1734,8 +1735,9 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
-   oc_finiexception,oc_unhandledexception,oc_pushexception,oc_nilexception,
-                      oc_continueexception,oc_checkexceptclasstype:(
+   oc_finiexception,oc_unhandledexception,oc_pushexception,
+   oc_iniexception,oc_nilexception,oc_continueexception,
+                                                oc_checkexceptclasstype:(
     landingpad: landingpadty;
    );
    oc_getvirtsubad,oc_getintfmethod:(

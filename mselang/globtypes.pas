@@ -263,7 +263,7 @@ type
               sf_virtual,sf_override,sf_interface,
               sf_intfcall, //called by interface
               sf_hasmanagedparam,
-              sf_intrinsic);
+              sf_intrinsic,sf_noimplicitexception);
  subflagsty = set of subflagty;
 
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
@@ -277,8 +277,9 @@ type
                dk_data);
  pdatakindty = ^datakindty;
 
-                                                    //object sub attachments
- subflag1ty = (sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_dispose,
+                                                    
+ subflag1ty = (//object sub attachments
+               sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_dispose,
                sf1_beforedestruct,sf1_incref,sf1_decref,
               {sf1_params,}sf1_default //for destructor
               );

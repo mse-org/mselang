@@ -135,6 +135,8 @@ begin
 end;
 var testvar: popinfoty;
 procedure handlefinallyentry();
+var
+ p1: popinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FINALLYENTRY');
@@ -143,6 +145,9 @@ begin
   if not (co_llvm in o.compileoptions) then begin
    notimplementederror('20180814A');
   end;
+  checkopcapacity(10); //max
+  p1:= additem(oc_iniexception);
+{  
   with additem(oc_storelocnil,getssa(ocssa_aggregate))^ do begin 
                   //set exception temp to nil
    par.memop.locdataaddress.a.address:= tempvarcount; //alloced by tryhandle()
@@ -151,6 +156,7 @@ begin
    par.memop.t:= bitoptypes[das_pointer];
    include(par.memop.t.flags,af_aggregate);
   end;
+}
   with additem(oc_goto)^ do begin
    par.opaddress.opaddress:= opcount+1-1; //label after landingpad
   end;
@@ -159,6 +165,7 @@ begin
    include(s.currentstatementflags,stf_finally);
    d.kind:= ck_finallyblock;
    d.block.landingpad:= tryhandle();           //add landingpad
+   p1^.par.landingpad:= d.block.landingpad;
 //   d.block.exceptiontemp:= tryhandle();           //add landingpad
 testvar:= getoppo(contextstack[s.stackindex-1].opmark.address);
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;

@@ -111,7 +111,7 @@ implementation
 type
  pcard8 = ^card8;
 
-procedure readusleb128(var adata: pointer): ptrint;
+procedure readusleb128(var adata: pointer): ptrint [noexception];
 var
  po1: pcard8;
  shift,i1: int32;
@@ -127,7 +127,7 @@ begin
  adata:= po1+1;
 end;
 
-procedure readssleb128(var adata: pointer): ptrint;
+procedure readssleb128(var adata: pointer): ptrint [noexception];
 var
  po1: pcard8;
  shift,i1: int32;
@@ -146,7 +146,7 @@ begin
  adata:= po1+1;
 end;
 
-procedure fatalerror();
+procedure fatalerror() [noexception];
 begin
  writeln('Fatal error');
  halt();
@@ -164,7 +164,7 @@ const
 procedure handlecontext(const actions: _Unwind_Action;
              const exceptiondata: p_Unwind_Exception;
              const context: p_Unwind_Context;
-             const landingpad: pointer): _Unwind_Reason_Code;
+             const landingpad: pointer): _Unwind_Reason_Code [noexception];
 begin
  if actions and _UA_SEARCH_PHASE <> 0 then
   result:= _URC_HANDLER_FOUND;
@@ -193,7 +193,7 @@ procedure __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionclass: _Unwind_Exception_Class;
              exceptionobject: p_Unwind_Exception;
-             context: p_Unwind_Context): _Unwind_Reason_Code;
+             context: p_Unwind_Context): _Unwind_Reason_Code [noexception];
 var
  po1: pointer;
  c1: ptrcard;
@@ -245,7 +245,7 @@ begin
      {$endif}
        if po1 > ip then
       {$ifdef mse_debugpersonality}
-        writeln(po1 + (pptrint(callsitetable)+1)^,' >= IP');
+        writeln('..',po1 + (pptrint(callsitetable)+1)^,' >= IP');
       {$endif}
         break;                //no region found
        end;
@@ -253,7 +253,7 @@ begin
      {$ifdef mse_debugpersonality}
        writeln('..',po1);
      {$endif}
-       if po1 >= ip then //region found
+       if po1 > ip then //region found
         po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
         if po1 = regionstart then
        {$ifdef mse_debugpersonality}

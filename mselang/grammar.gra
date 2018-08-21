@@ -78,7 +78,7 @@
  'new','dispose','afterconstruct','beforedestruct'
  'ini','fini','incref','decref'
  'operator','operatorright'
- 'default','streaming'
+ 'default','streaming','noexception'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-

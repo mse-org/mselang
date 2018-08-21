@@ -1266,6 +1266,8 @@
   (ssa: popcpucontextssa; proc: @popcpucontextop; flags: []), 
 //oc_pushexception
   (ssa: pushexceptionssa; proc: @pushexceptionop; flags: []), 
+//oc_iniexception
+  (ssa: iniexceptionssa; proc: @iniexceptionop; flags: []), 
 //oc_nilexception
   (ssa: nilexceptionssa; proc: @nilexceptionop; flags: []), 
 //oc_getmem

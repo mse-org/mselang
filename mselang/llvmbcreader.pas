@@ -1051,16 +1051,27 @@ end;
 procedure tllvmbcreader.output(const kind: outputkindty; const text: string);
 var
  str1: string;
+ i1: int32;
 begin
  str1:= '';
  if ffunctionlevel > 0 then begin
   str1:= inttostr(fopnum);
-  extendstring(str1,4);
+  i1:= 4;
+  if fopnum >= 1000 then begin
+   inc(i1);
+  end;
+  if fopnum >= 10000 then begin
+   inc(i1);
+  end;
+  if fopnum >= 10000 then begin
+   inc(i1);
+  end;
+  extendstring(str1,i1);
   if fbb <> fbbbefore then begin
    str1:= str1+inttostr(fbb)+':';
    fbbbefore:= fbb;
   end;
-  extendstring(str1,5+4);
+  extendstring(str1,5+i1);
   system.write(str1);
  end;
  if kind = ok_end then begin
