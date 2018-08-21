@@ -160,7 +160,8 @@ implementation
 const
  temprefcount = 1;
 
-procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
+procedure __mla__zeropointerar(dest: ppointer; const count: ptrint)
+                                                              [noexception];
 var
  pe: ppointer;
 begin
@@ -173,7 +174,7 @@ end;
 
 //todo: thread safe managed types
 
-procedure __mla__increfsize(ref: pointer);
+procedure __mla__increfsize(ref: pointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -186,7 +187,7 @@ begin
  end;
 end;
 
-procedure __mla__increfsizedynar(const ref: pointer);
+procedure __mla__increfsizedynar(const ref: pointer) [noexception];
 var
  d: pdynarrayheaderty;
  p1,pe: ppointer;
@@ -202,12 +203,12 @@ begin
  end;
 end;
 
-procedure __mla__increfsizerefdynar(const ref: ppointer);
+procedure __mla__increfsizerefdynar(const ref: ppointer) [noexception];
 begin
  __mla__increfsizedynar(ref^);
 end;
 
-procedure __mla__decrefsize(const ref: pointer);
+procedure __mla__decrefsize(const ref: pointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -223,7 +224,7 @@ begin
  end;
 end;
 
-procedure __mla__decrefsizedynar(const ref: pointer);
+procedure __mla__decrefsizedynar(const ref: pointer) [noexception];
 var
  d: pdynarrayheaderty;
  p1,pe: ppointer;
@@ -241,7 +242,7 @@ begin
  end;
 end;
 
-procedure __mla__increfsizeref(ref: ppointer);
+procedure __mla__increfsizeref(ref: ppointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -254,7 +255,7 @@ begin
  end;
 end;
 
-procedure __mla__decrefsizeref(const ref: ppointer);
+procedure __mla__decrefsizeref(const ref: ppointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -271,7 +272,7 @@ begin
  end;
 end;
 
-procedure __mla__finirefsize(const ref: ppointer);
+procedure __mla__finirefsize(const ref: ppointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -288,7 +289,8 @@ begin
  end;
 end;
 
-procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+procedure __mla__finirefsizear(ref: ppointer; const count: ptrint)
+                                                           [noexception];
 var
  pe: ppointer;
 begin
@@ -299,7 +301,7 @@ begin
  end;
 end;
 
-procedure finirefsizenonil(const ref: ppointer);
+procedure finirefsizenonil(const ref: ppointer) [noexception];
 var
  d: prefsizeinfoty;
 begin
@@ -316,7 +318,7 @@ begin
  end;
 end;
 
-procedure __mla__finirefsizedynar(const ref: ppointer);
+procedure __mla__finirefsizedynar(const ref: ppointer) [noexception];
 var
  d: pdynarrayheaderty;
  p1,pe: ppointer;
@@ -341,7 +343,7 @@ begin
  end;
 end;
 
-procedure __mla__storenildynar(const dest: pointer);
+procedure __mla__storenildynar(const dest: pointer) [noexception];
 var
  p1,pe: ppointer;
 begin
@@ -356,7 +358,7 @@ begin
 end;
 
 procedure __mla__setlengthdynarray(const ref: ppointer;
-                                    const count: int32; const itemsize: int32);
+                   const count: int32; const itemsize: int32) [noexception];
 var
  s,d: pdynarrayheaderty;
  i1,i2: int32;
@@ -410,7 +412,7 @@ begin
 end;
 
 procedure __mla__setlengthincdecrefdynarray(const ref: ppointer; 
-                                                   const count: int32);
+                                           const count: int32) [noexception];
 var
  d: pdynarrayheaderty;
  p1,pe: ppointer;
@@ -440,7 +442,8 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring8(const ref: ppointer; const count: int32);
+procedure __mla__setlengthstring8(const ref: ppointer; const count: int32)
+                                                                 [noexception];
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -490,7 +493,8 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring16(const ref: ppointer; const count: int32);
+procedure __mla__setlengthstring16(const ref: ppointer; const count: int32)
+                                                                 [noexception];
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -540,7 +544,8 @@ begin
  end;
 end;
 
-procedure __mla__setlengthstring32(const ref: ppointer; const count: int32);
+procedure __mla__setlengthstring32(const ref: ppointer; const count: int32)
+                                                                [noexception];
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -590,7 +595,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring8(const val: pointer): pointer;
+procedure __mla__uniquestring8(const val: pointer): pointer [noexception];
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -611,7 +616,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring16(const val: pointer): pointer;
+procedure __mla__uniquestring16(const val: pointer): pointer [noexception];
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -632,7 +637,7 @@ begin
  end;
 end;
 
-procedure __mla__uniquestring32(const val: pointer): pointer;
+procedure __mla__uniquestring32(const val: pointer): pointer [noexception];
 var
  s,d: pstringheaderty;
  i1: int32;
@@ -654,7 +659,7 @@ begin
 end;
 
 procedure __mla__uniquedynarray(const val: pointer;
-                                  const itemsize: int32): pointer;
+                               const itemsize: int32): pointer [noexception];
 var
  s,d: pdynarrayheaderty;
  i1: int32;
@@ -674,7 +679,7 @@ begin
 end;
 
 procedure __mla__copystring(const val: pointer; const start: int32;
-                                 size: int32; const itemsize: int32): pointer;
+                   size: int32; const itemsize: int32): pointer [noexception];
 var
  s,d: pstringheaderty;
  i1,i2: int32;
@@ -708,7 +713,7 @@ begin
 end;
 
 procedure __mla__copydynarray(const val: pointer; const start: int32;
-                          size: int32; const itemsize: int32): pointer;
+                  size: int32; const itemsize: int32): pointer [noexception];
 var
  s,d: pdynarrayheaderty;
  i1,i2: int32;
@@ -737,8 +742,8 @@ const
  errorcodepoint = $3f; //?
 
 procedure getcodepoint(var ps: pcard8; const pe: pcard8;
-                                  out ares: card32);
- procedure checkok(var acodepoint: card32): boolean; //inline;
+                                  out ares: card32) [noexception];
+ procedure checkok(var acodepoint: card32): boolean [noexception];
  var
   c1: card8;
  begin
@@ -797,7 +802,7 @@ begin
 end;
 
 procedure getcodepoint(var ps: pcard16; const pe: pcard16;
-                                  out ares: card32): boolean;
+                                  out ares: card32): boolean [noexception];
 begin
  result:= true;
  ares:= ps^;
@@ -819,7 +824,7 @@ begin
  end;
 end;
 
-procedure setutf8(const codepoint: card32; var dest: pcard8);
+procedure setutf8(const codepoint: card32; var dest: pcard8) [noexception];
 begin
  if codepoint < $80 then
   dest^:= codepoint;
@@ -849,7 +854,8 @@ begin
  inc(dest);
 end;
 
-procedure string8to16(const source: pcard8; const len: int32): pointer;
+procedure string8to16(const source: pcard8; const len: int32): pointer
+                                                              [noexception];
 var
  {pss,}pds: pstringheaderty;
  by1: card8;
@@ -926,7 +932,8 @@ begin
  result:= pds;
 end;
 
-procedure __mla__string8to16a(const source: pcard8; const len: int32): pointer;
+procedure __mla__string8to16a(const source: pcard8; const len: int32): pointer
+                                                                  [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -934,7 +941,7 @@ begin
  end;
 end;
 
-procedure __mla__string8to16(source: pointer): pointer;
+procedure __mla__string8to16(source: pointer): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -942,7 +949,8 @@ begin
  end;
 end;
 
-procedure string8to32(const source: pcard8; const len: int32): pointer;
+procedure string8to32(const source: pcard8; const len: int32): pointer
+                                                              [noexception];
 
 //todo: maybe use string result (faf_varsubres)
 
@@ -967,7 +975,8 @@ begin
  result:= pds;
 end;
 
-procedure __mla__string8to32a(const source: pcard8; const len: int32): pointer;
+procedure __mla__string8to32a(const source: pcard8; const len: int32): pointer
+                                                                  [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -975,7 +984,7 @@ begin
  end;
 end;
 
-procedure __mla__string8to32(source: pointer): pointer;
+procedure __mla__string8to32(source: pointer): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -983,7 +992,8 @@ begin
  end;
 end;
 
-procedure string16to8(const source: pcard16; const len: int32): pointer;
+procedure string16to8(const source: pcard16; const len: int32): pointer
+                                                              [noexception];
 var
  pds: pstringheaderty;
  p1,pe: pcard16;
@@ -1007,7 +1017,8 @@ begin
  result:= pds;
 end;
 
-procedure __mla__string16to8a(const source: pcard16; const len: int32): pointer;
+procedure __mla__string16to8a(const source: pcard16; const len: int32): pointer
+                                                                  [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1015,7 +1026,7 @@ begin
  end;
 end;
 
-procedure __mla__string16to8(source: pointer): pointer;
+procedure __mla__string16to8(source: pointer): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1023,7 +1034,8 @@ begin
  end;
 end;
 
-procedure string16to32(const source: pcard16; const len: int32): pointer;
+procedure string16to32(const source: pcard16; const len: int32): pointer
+                                                                [noexception];
 var
  pds: pstringheaderty;
  p1,pe: pcard16;
@@ -1046,7 +1058,7 @@ begin
 end;
 
 procedure __mla__string16to32a(const source: pcard16; 
-                                       const len: int32): pointer;
+                                       const len: int32): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1054,7 +1066,7 @@ begin
  end; 
 end;
 
-procedure __mla__string16to32(source: pointer): pointer;
+procedure __mla__string16to32(source: pointer): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1062,7 +1074,8 @@ begin
  end;
 end;
 
-procedure string32to8(const source: pcard32; const len: int32): pointer;
+procedure string32to8(const source: pcard32; const len: int32): pointer
+                                                               [noexception];
 var
  {pss,}pds: pstringheaderty;
  p1,pe: pcard32;
@@ -1087,7 +1100,8 @@ begin
  result:= pds;
 end;
 
-procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer;
+procedure __mla__string32to8a(const source: pcard32; const len: int32): pointer
+                                                                  [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1095,12 +1109,13 @@ begin
  end;
 end;
 
-procedure __mla__string32to8(source: pointer): pointer;
+procedure __mla__string32to8(source: pointer): pointer [noexception];
 begin
  result:= string32to8(source,(pstringheaderty(source)-1)^.len);
 end;
 
-procedure string32to16(const source: pcard32; const len: int32): pointer;
+procedure string32to16(const source: pcard32; const len: int32): pointer
+                                                               [noexception];
 var
  pds: pstringheaderty;
  p1,pe: pcard32;
@@ -1142,7 +1157,7 @@ begin
  end; 
 end;
 
-procedure __mla__string32to16(source: pointer): pointer;
+procedure __mla__string32to16(source: pointer): pointer [noexception];
 begin
  result:= nil;
  if source <> nil then
@@ -1150,20 +1165,20 @@ begin
  end;
 end;
 
-procedure __mla__bytestostring(source: pointer): pointer;
+procedure __mla__bytestostring(source: pointer): pointer [noexception];
 begin
  result:= bytestostring8(source);
 // result:= pointer(sys_bytestostring8(bytestring(source)));
 end;
 
-procedure __mla__stringtobytes(source: pointer): pointer;
+procedure __mla__stringtobytes(source: pointer): pointer [noexception];
 begin
  result:= string8tobytes(source);
 // result:= pointer(sys_string8tobytes(string8(source)));
 end;
 
 procedure __mla__concatstring8(count: int32;
-                              strings: ppointer): pointer;
+                              strings: ppointer): pointer [noexception];
 var
  p1,pe: ppstringheaderty;
  ps,pd: pstringheaderty;
@@ -1202,7 +1217,7 @@ begin
 end;
 
 procedure __mla__concatstring16(count: int32;
-                                   strings: ppointer): pointer;
+                                   strings: ppointer): pointer [noexception];
 var
  p1,pe: ppstringheaderty;
  ps,pd: pstringheaderty;
@@ -1241,7 +1256,7 @@ begin
 end;
 
 procedure __mla__concatstring32(count: int32;
-                                   strings: ppointer): pointer;
+                                   strings: ppointer): pointer [noexception];
 var
  p1,pe: ppstringheaderty;
  ps,pd: pstringheaderty;
@@ -1279,7 +1294,7 @@ begin
  end;
 end;
 
-procedure compstring8(a,b:pointer): stringsizety; //a and b <> nil
+procedure compstring8(a,b:pointer): stringsizety [noexception]; //a and b <> nil
 var
  poa,poe,pob: pcard8;
  la,lb: stringsizety;
@@ -1309,7 +1324,8 @@ begin
  result:= la - lb; //cut text equal, compare length
 end;
 
-procedure compstring16(a,b:pointer): stringsizety; //a and b <> nil
+procedure compstring16(a,b:pointer): stringsizety [noexception]; 
+                                                      //a and b <> nil
 var
  poa,poe,pob: pcard16;
  la,lb: stringsizety;
@@ -1339,7 +1355,8 @@ begin
  result:= la - lb; //cut text equal, compare length
 end;
 
-procedure compstring32(a,b:pointer): stringsizety; //a and b <> nil
+procedure compstring32(a,b:pointer): stringsizety [noexception]; 
+                                                      //a and b <> nil
 var
  poa,poe,pob: pcard32;
  la,lb: stringsizety;
@@ -1369,7 +1386,7 @@ begin
  result:= la - lb; //cut text equal, compare length
 end;
 
-procedure __mla__compstring8eq(a,b: pointer): bool1;
+procedure __mla__compstring8eq(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1381,7 +1398,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring8ne(a,b: pointer): bool1;
+procedure __mla__compstring8ne(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1393,7 +1410,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring8gt(a,b: pointer): bool1;
+procedure __mla__compstring8gt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1405,7 +1422,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring8lt(a,b: pointer): bool1;
+procedure __mla__compstring8lt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1417,7 +1434,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring8ge(a,b: pointer): bool1;
+procedure __mla__compstring8ge(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1429,7 +1446,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring8le(a,b: pointer): bool1;
+procedure __mla__compstring8le(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1441,7 +1458,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16eq(a,b: pointer): bool1;
+procedure __mla__compstring16eq(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1453,7 +1470,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16ne(a,b: pointer): bool1;
+procedure __mla__compstring16ne(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1465,7 +1482,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16gt(a,b: pointer): bool1;
+procedure __mla__compstring16gt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1477,7 +1494,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16lt(a,b: pointer): bool1;
+procedure __mla__compstring16lt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1489,7 +1506,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16ge(a,b: pointer): bool1;
+procedure __mla__compstring16ge(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1501,7 +1518,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring16le(a,b: pointer): bool1;
+procedure __mla__compstring16le(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1513,7 +1530,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32eq(a,b: pointer): bool1;
+procedure __mla__compstring32eq(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1525,7 +1542,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32ne(a,b: pointer): bool1;
+procedure __mla__compstring32ne(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1537,7 +1554,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32gt(a,b: pointer): bool1;
+procedure __mla__compstring32gt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1549,7 +1566,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32lt(a,b: pointer): bool1;
+procedure __mla__compstring32lt(a,b: pointer): bool1 [noexception];
 begin
  result:= a <> b;
  if result then
@@ -1561,7 +1578,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32ge(a,b: pointer): bool1;
+procedure __mla__compstring32ge(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1573,7 +1590,7 @@ begin
  end;
 end;
 
-procedure __mla__compstring32le(a,b: pointer): bool1;
+procedure __mla__compstring32le(a,b: pointer): bool1 [noexception];
 begin
  result:= a = b;
  if not result then
@@ -1585,7 +1602,7 @@ begin
  end;
 end;
 
-procedure __mla__chartostring8(achar: card8): pointer;
+procedure __mla__chartostring8(achar: card8): pointer [noexception];
 var
  po1: pstringheaderty;
 begin
@@ -1597,7 +1614,7 @@ begin
  (pcard8(result)+1)^:= 0; //terminator
 end;
 
-procedure __mla__chartostring16(achar: card16): pointer;
+procedure __mla__chartostring16(achar: card16): pointer [noexception];
 var
  po1: pstringheaderty;
 begin
@@ -1609,7 +1626,7 @@ begin
  (pcard16(result)+1)^:= 0; //terminator
 end;
 
-procedure __mla__chartostring32(achar: card32): pointer;
+procedure __mla__chartostring32(achar: card32): pointer [noexception];
 var
  po1: pstringheaderty;
 begin
@@ -1622,13 +1639,14 @@ begin
 end;
 
 procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
-                                      out result: openarrayty);
+                                      out result: openarrayty) [noexception];
 begin
  result.high:= ahigh;
  result.data:= adata;
 end;
 
-procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
+procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty)
+                                                               [noexception];
 begin
  if ref = nil then
   result.high:= -1;
@@ -1638,7 +1656,7 @@ begin
  result.data:= ref;
 end;
 
-procedure __mla__lengthdynarray(ref: pointer): int32;
+procedure __mla__lengthdynarray(ref: pointer): int32 [noexception];
 begin
  if ref <> nil then
   result:= (pdynarrayheaderty(ref)-1)^.high + 1;
@@ -1647,12 +1665,12 @@ begin
  end;
 end;
 
-procedure __mla__lengthopenarray(ref: popenarrayty): int32;
+procedure __mla__lengthopenarray(ref: popenarrayty): int32 [noexception];
 begin
  result:= ref^.high+1;
 end;
 
-procedure __mla__lengthstring(ref: pointer): int32;
+procedure __mla__lengthstring(ref: pointer): int32 [noexception];
 begin
  if ref <> nil then
   result:= (pstringheaderty(ref)-1)^.len;
@@ -1661,7 +1679,7 @@ begin
  end;
 end;
 
-procedure __mla__highdynarray(ref: pointer): int32;
+procedure __mla__highdynarray(ref: pointer): int32 [noexception];
 begin
  if ref <> nil then
   result:= (pdynarrayheaderty(ref)-1)^.high;
@@ -1670,13 +1688,13 @@ begin
  end;
 end;
 
-procedure __mla__highopenarray(ref: popenarrayty): int32;
+procedure __mla__highopenarray(ref: popenarrayty): int32 [noexception];
 begin
  result:= ref^.high;
 end;
 
 
-procedure __mla__highstring(ref: pointer): int32;
+procedure __mla__highstring(ref: pointer): int32 [noexception];
 begin
  if ref <> nil then
   result:= (pstringheaderty(ref)-1)^.len;
@@ -1686,7 +1704,7 @@ begin
 end;
 
 procedure __mla__initobject(const instance: pointer;
-                                           const classinfo: classdefty);
+                                    const classinfo: classdefty) [noexception];
 var
  ps,pd,pe: ppointer;
  po1: pclassdefty;
@@ -1730,7 +1748,7 @@ begin
 end;
 }
 procedure __mla__getclassdef(const instance: pointer;
-                          const virttaboffset: int32): pointer;
+                          const virttaboffset: int32): pointer [noexception];
 begin
  result:= instance;
  if instance <> nil then
@@ -1738,17 +1756,18 @@ begin
  end;
 end;
 
-procedure __mla__getclassrtti(const classdef: pclassdefty): pointer;
+procedure __mla__getclassrtti(const classdef: pclassdefty): pointer
+                                                          [noexception];
 begin
  result:= classdef^.header.rtti;
 end;
 
-procedure __mla__getallocsize(const classdef: pclassdefty): int32;
+procedure __mla__getallocsize(const classdef: pclassdefty): int32 [noexception];
 begin
  result:= classdef^.header.allocs.size;
 end;
 
-procedure __mla__classis(const a,b: pclassdefty): bool1;
+procedure __mla__classis(const a,b: pclassdefty): bool1 [noexception];
 var
  p1: pclassdefty;
 begin
@@ -1766,7 +1785,7 @@ begin
 end;
 
 procedure __mla__checkclasstype(var instance: pointer; 
-                              const classtype: pclassdefty): bool1;
+                         const classtype: pclassdefty): bool1 [noexception];
 begin
  if (instance <> nil) and 
          __mla__classis(ppointer(instance)^,classtype) then
@@ -1778,7 +1797,7 @@ begin
 end;
 
 procedure __mla__checkexceptclasstype(const landingpad: plandingpadty;
-                 const classtype: pclassdefty; out instance: pointer): bool1;
+     const classtype: pclassdefty; out instance: pointer): bool1 [noexception];
 begin
  if (landingpad^.data <> nil) and 
            __mla__classis(pexceptinfoty(landingpad^.data)^.data,classtype) then
@@ -1791,7 +1810,7 @@ begin
 end;
 
 procedure __mla__getenumname(const rtti: penumrttity; 
-                                       const enumvalue: int32): string8;
+                                const enumvalue: int32): string8 [noexception];
 var
  p1,pe: ^enumitemrttity;
  i1: int32;
@@ -1862,7 +1881,7 @@ begin
 end;
 *)
 
-procedure finivirtclass(const instance: pointer);
+procedure finivirtclass(const instance: pointer) [noexception];
 var
  p1: pclassdefty;
 begin
@@ -1875,18 +1894,18 @@ begin
 end;
 
 procedure exceptioncleanup(reason: _Unwind_Reason_Code;
-                                                      exc: p_Unwind_Exception);
+                                        exc: p_Unwind_Exception) [noexception];
 begin
  freemem(exc);
 end;
 
-procedure __mla__halt(const aexitcode: int32);
+procedure __mla__halt(const aexitcode: int32) [noexception];
 begin
  exitcode:= aexitcode;
  halt();
 end;
 
-procedure doraise(const exceptinfo: pexceptinfoty);
+procedure doraise(const exceptinfo: pexceptinfoty) [noexception];
 var
  data: pointer;
 begin
@@ -1898,7 +1917,7 @@ begin
  halt();
 end;
 
-procedure __mla__raise(const data: pointer);
+procedure __mla__raise(const data: pointer) [noexception];
 var
  po1: pexceptinfoty;
 begin  //todo: handle out of memory situation
@@ -1911,7 +1930,7 @@ begin  //todo: handle out of memory situation
  doraise(po1);
 end;
 
-procedure __mla__finiexception(const data: pointer);
+procedure __mla__finiexception(const data: pointer) [noexception];
 begin
  with pexceptinfoty(data)^ do
   if data <> nil then
@@ -1921,21 +1940,21 @@ begin
  freemem(data);
 end;
 
-procedure __mla__unhandledexception(const data: pointer);
+procedure __mla__unhandledexception(const data: pointer) [noexception];
 begin
  writeln('Unhandled exception');
  exitcode:= exco_unhandledexception;
  __mla__finiexception(data);
 end;
 
-procedure __mla__continueexception(const data: pointer);
+procedure __mla__continueexception(const data: pointer) [noexception];
 begin
  if data <> nil then
   doraise(data);
  end;
 end;
 
-procedure readusleb128(var adata: pointer): ptrint;
+procedure readusleb128(var adata: pointer): ptrint [noexception];
 var
  po1: pcard8;
  shift,i1: int32;
@@ -1951,7 +1970,7 @@ begin
  adata:= po1+1;
 end;
 
-procedure readssleb128(var adata: pointer): ptrint;
+procedure readssleb128(var adata: pointer): ptrint [noexception];
 var
  po1: pcard8;
  shift,i1: int32;
@@ -1988,7 +2007,7 @@ const
 procedure installfinallycontext(const actions: _Unwind_Action;
              const exceptiondata: p_Unwind_Exception;
              const context: p_Unwind_Context;
-             const landingpad: pointer): _Unwind_Reason_Code;
+             const landingpad: pointer): _Unwind_Reason_Code [noexception];
 begin
  if actions and _UA_SEARCH_PHASE <> 0 then
   result:= _URC_HANDLER_FOUND;
@@ -2004,61 +2023,71 @@ begin
  end;
 end;
 
-procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty);
+procedure __mla__int32tovarrecty(const value: int32; const res: pvarrecty)
+                                                                [noexception];
 begin
  res^.vtype:= vt_int32;
  res^.vint32:= value;
 end;
 
-procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty);
+procedure __mla__int64tovarrecty(const value: pint64; const res: pvarrecty)
+                                                                 [noexception];
 begin
  res^.vtype:= vt_int64;
  res^.vint64:= value;
 end;
 
-procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty);
+procedure __mla__card32tovarrecty(const value: card32; const res: pvarrecty)
+                                                                 [noexception];
 begin
  res^.vtype:= vt_card32;
  res^.vcard32:= value;
 end;
 
-procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty);
+procedure __mla__card64tovarrecty(const value: pcard64; const res: pvarrecty)
+                                                                 [noexception];
 begin
  res^.vtype:= vt_card64;
  res^.vcard64:= value;
 end;
 
-procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__pointertovarrecty(const value: pointer; const res: pvarrecty)
+                                                                  [noexception];
 begin
  res^.vtype:= vt_pointer;
  res^.vpointer:= value;
 end;
 
-procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty);
+procedure __mla__flo64tovarrecty(const value: pflo64; const res: pvarrecty)
+                                                                  [noexception];
 begin
  res^.vtype:= vt_flo64;
  res^.vflo64:= value;
 end;
 
-procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty);
+procedure __mla__char32tovarrecty(const value: char32; const res: pvarrecty)
+                                                                 [noexception];
 begin
  res^.vtype:= vt_char32;
  res^.vchar32:= value;
 end;
 
-procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty)
+                                                                  [noexception];
 begin
  res^.vtype:= vt_string8;
  res^.vstring8:= value;
 end;
 
-procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty)
+                                                                  [noexception];
 begin
  res^.vtype:= vt_string16;
  res^.vstring16:= value;
 end;
 
-procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
+procedure __mla__string32tovarrecty(const value: pointer;
+                                           const res: pvarrecty) [noexception];
 begin
  res^.vtype:= vt_string32;
  res^.vstring32:= value;
@@ -2070,7 +2099,7 @@ const          //b7b6b5b4b3b2b1b0
  mantissafullmask = mantissaonemask or mantissamask;
  msbmask = $10; //for b6
 
-procedure __mla__frac64(value: flo64): flo64;
+procedure __mla__frac64(value: flo64): flo64 [noexception];
 var
  exp: int16;
 begin
@@ -2112,7 +2141,7 @@ begin
 }
 end;
 
-procedure stringcopy(source: pointer): pointer;
+procedure stringcopy(source: pointer): pointer [noexception];
 begin
 // __mla__increfsizeref(@source);
 // __mla__decrefsizeref(@result);
