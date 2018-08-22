@@ -205,6 +205,12 @@ var
  callsitetable: pointer;
  actiontable: pointer;
  ip,regionstart: pointer;
+{$ifdef mse_debugpersonality}
+ i1: int32;
+label
+ nextlab;
+{$endif}
+
 begin
  result:= _URC_CONTINUE_UNWIND;
 {$ifdef mse_debugpersonality}
@@ -237,15 +243,19 @@ begin
       writeln('callsitetable ',callsitetable);
       writeln('actiontable   ',actiontable);
       writeln('----');
+      i1:= 1;
      {$endif}
+      dec(ip); //in last op
       while callsitetable < actiontable do
        po1:= regionstart + pptrint(callsitetable)^;    //blockstart
      {$ifdef mse_debugpersonality}
-       write(' block        ',po1);
+       write(' ',i1,' ',po1);
+       inc(i1);
      {$endif}
        if po1 > ip then
       {$ifdef mse_debugpersonality}
         writeln('..',po1 + (pptrint(callsitetable)+1)^,' >= IP');
+        goto nextlab;
       {$endif}
         break;                //no region found
        end;
@@ -258,6 +268,7 @@ begin
         if po1 = regionstart then
        {$ifdef mse_debugpersonality}
          writeln('  no landingpad');
+         goto nextlab;
        {$endif}
          break;
         end;
@@ -271,6 +282,9 @@ begin
         end;
         break;
        else
+{$ifdef mse_debugpersonality}
+nextlab:
+{$endif}
         inc(callsitetable,3*sizeof(ptrint));
         readusleb128(callsitetable);
        end;
