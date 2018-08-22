@@ -988,9 +988,10 @@ begin
                      //check "()" operator, convert to object
     operatorsig.d[0]:= tks_operators;
     operatorsig.d[1]:= objectoperatoridents[oa_convert];
-    setoperparamid(@operatorsig.d[2],0,nil); //no return value
-    setoperparamid(@operatorsig.d[4],d.dat.datatyp.indirectlevel,source1);
-    operatorsig.high:= 5;
+    operatorsig.high:= 1;
+    setoperparamid(operatorsig,0,nil); //no return value
+    setoperparamid(operatorsig,d.dat.datatyp.indirectlevel,source1);
+
     if ele.findchilddata(basetype(dest),
                           operatorsig,[ek_operator],allvisi,oper1) then begin
      result:= getvalue(acontext,das_none);
@@ -1107,8 +1108,9 @@ begin
                     // check "()" operator, convert from object
     operatorsig.d[0]:= tks_operators;
     operatorsig.d[1]:= objectoperatoridents[oa_convert];
-    setoperparamid(@operatorsig.d[2],destindirectlevel,dest); //return value
-    operatorsig.high:= 3;
+    operatorsig.high:= 1;
+    setoperparamid(operatorsig,destindirectlevel,dest); //return value
+
     if ele.findchilddata(basetype(source1),
                           operatorsig,[ek_operator],allvisi,oper1) then begin
      if result then begin

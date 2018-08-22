@@ -1854,8 +1854,8 @@ begin
                       (acontext^.d.dat.datatyp.indirectlevel = 0) then begin
   operatorsig.d[0]:= tks_operators;
   operatorsig.d[1]:= objectoperatoridents[aop];
-  setoperparamid(@operatorsig.d[2],0,nil); //no return value
-  operatorsig.high:= 3;
+  operatorsig.high:= 1;
+  setoperparamid(operatorsig,0,nil); //no return value
 
   if ele.findchilddata(basetype(ele.eledatarel(atype)),
                           operatorsig,[ek_operator],allvisi,oper1) then begin

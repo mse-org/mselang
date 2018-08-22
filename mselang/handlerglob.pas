@@ -292,7 +292,7 @@ type
   bytesize: integer;
   datasize: databitsizety;
   next: elementoffsetty; //for pending manageproc chain
-  signature: identty;    //for operator overload
+  signature: card32;    //for operator overload
  end;
 
  stringflagty = (strf_bytes);
@@ -657,7 +657,7 @@ procedure callmanageproc(const akind: manageprockindty; const op: managedopty;
 
 implementation
 uses
- elements,identutils,managedtypes;
+ elements,identutils,managedtypes,unithandler;
 
 const
  manageprocs: array[manageprockindty] of managedtypeprocty = (

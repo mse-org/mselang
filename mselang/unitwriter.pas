@@ -204,6 +204,7 @@ var
     case header.kind of
      ek_type: begin
       with ptypedataty(po)^ do begin
+       h.signature:= updateident(h.signature);
        updateref(h.base);
        updateref(h.ancestor);
        case h.kind of

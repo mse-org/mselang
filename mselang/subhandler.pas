@@ -174,9 +174,9 @@ function startsimplesub(const asub: pinternalsubdataty;
                                const options: simplesuboptionsty;
                                      const aglobname: identty = 0): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
-procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
-                                                     const atyp: ptypedataty);
-                                                        //nil -> void
+procedure setoperparamid(var dest: identvecty; const aindirectlevel: int32;
+                                                 const atyp: ptypedataty);
+                                                        //0 -> void
 procedure updateparams(const info: paramupdatechainty);
 
 implementation
@@ -1715,29 +1715,48 @@ begin
           (var1^.vf.typ = info.currentcontainer);
 end;
 
-procedure setoperparamid(const dest: pidentty; const aindirectlevel: int32;
-                                                     const atyp: ptypedataty);
+procedure setoperparamid(var dest: identvecty; const aindirectlevel: int32;
+                                                  const atyp: ptypedataty);
+var
+ p1: ptypedataty;
+ p2: punitinfoty;
+ p3: pidentty;
 begin
- dest^:= getident(aindirectlevel);
+ p3:= @dest.d[dest.high];
+ (p3+1)^:= getident(aindirectlevel);
  if atyp = nil then begin
-  (dest+1)^:= tks_void;
+  (p3+2)^:= tks_void;
+  (p3+3)^:= tks_system;
  end
  else begin
-  (dest+1)^:= basetype1(atyp)^.h.signature;
+  p1:= basetype1(atyp);
+  (p3+2)^:= p1^.h.signature;
+  p2:= datatoele(p1)^.header.defunit;
+  if p2 = nil then begin
+   (p3+3)^:= tks_system;
+  end
+  else begin
+   (p3+3)^:= p2^.key;
+  end;
  end;
+ dest.high:= dest.high + 3;
 end;
 
-procedure setoperparamid(var dest: pidentty; const avar: pvardataty);
+procedure setoperparamid(var dest: identvecty; const avar: pvardataty);
+                                                 //nil -> void
+var
+ i1: int32;
 begin
- if af_paramindirect in avar^.address.flags then begin
-  dest^:= getident(avar^.address.indirectlevel-1);
+ if avar = nil then begin
+  setoperparamid(dest,0,nil);
  end
  else begin
-  dest^:= getident(avar^.address.indirectlevel);
+  i1:= avar^.address.indirectlevel;
+  if af_paramindirect in avar^.address.flags then begin
+   dec(i1);
+  end;
+  setoperparamid(dest,i1,ele.eledataabs(avar^.vf.typ));
  end;
- inc(dest);
- dest^:= ptypedataty(ele.eledataabs(basetype(avar^.vf.typ)))^.h.signature;
- inc(dest);
 end;
 
 procedure updateparams(const info: paramupdatechainty);
@@ -2053,8 +2072,7 @@ var
  poind: pcontextitemty;
  poper1: poperatordataty;
  poperid: pidentty;
- operparamids: identvecty;
- p1: pidentty;
+ operatorsig: identvecty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -2636,26 +2654,30 @@ begin
     end;
    end;
    if subflags * [sf_operator,sf_operatorright] <> [] then begin
-    if sub1^.paramcount*2 >= high(operparamids.d)-1 then begin
+    if sub1^.paramcount*2 >= high(operatorsig.d)-1 then begin
      errormessage(err_toomanyoperparams,[]);
     end
     else begin
-     p1:= @operparamids.d[1];
+     operatorsig.high:= 0;
      if sf_functionx in subflags then begin
-      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[0]));
+      setoperparamid(operatorsig,ele.eledataabs(
+                                 pelementoffsetty(@sub1^.paramsrel)[0]));
       i1:= 2;
      end
      else begin
+      setoperparamid(operatorsig,nil);
+{
       p1^:= getident(0);
       inc(p1);
       p1^:= tks_void;
       inc(p1);
+}
       i1:= 1;
      end;
      for i1:= i1 to sub1^.paramcount-1 do begin
-      setoperparamid(p1,ele.eledataabs(pelementoffsetty(@sub1^.paramsrel)[i1]));
+      setoperparamid(operatorsig,ele.eledataabs(
+                                 pelementoffsetty(@sub1^.paramsrel)[i1]));
      end;
-     operparamids.high:= (p1-pidentty(@operparamids.d[0]))-1;
      if sf_operator in subflags then begin
       if currentoperator = objectoperatoridents[oa_assign] then begin
        var1:= ele.eledataabs(sub1^.varchain); //last param
@@ -2671,11 +2693,11 @@ begin
                                                          ele.eledatarel(sub1);
        end;
       end;
-      operparamids.d[0]:= currentoperator;
+      operatorsig.d[0]:= currentoperator;
       if not ele.findcurrent(tks_operators,[],allvisi,ele1) then begin
        ele1:= ele.addelementduplicate1(tks_operators,ek_none,allvisi);
       end;
-      if ele.adduniquechilddata(ele1,operparamids,
+      if ele.adduniquechilddata(ele1,operatorsig,
                                           ek_operator,allvisi,poper1) then begin
        poper1^.methodele:= ele.eledatarel(sub1);
       end
@@ -2684,11 +2706,11 @@ begin
       end;
      end;
      if sf_operatorright in subflags then begin
-      operparamids.d[0]:= currentoperatorright;
+      operatorsig.d[0]:= currentoperatorright;
       if not ele.findcurrent(tks_operatorsright,[],allvisi,ele1) then begin
        ele1:= ele.addelementduplicate1(tks_operatorsright,ek_none,allvisi);
       end;
-      if ele.adduniquechilddata(ele1,operparamids,
+      if ele.adduniquechilddata(ele1,operatorsig,
                                           ek_operator,allvisi,poper1) then begin
        poper1^.methodele:= ele.eledatarel(sub1);
       end

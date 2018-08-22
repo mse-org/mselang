@@ -772,6 +772,7 @@ type
   interfacestart: markinfoty;
   interfaceend: markinfoty;
   reloc: unitrelocty;
+//  signaturebase: identty;
 
   stackstart: int32;  
   implementationstart: markinfoty;

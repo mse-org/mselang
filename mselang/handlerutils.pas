@@ -4116,11 +4116,13 @@ begin
     if b1 or b2 then begin
      result:= nil;
      operatorsig.d[1]:= objectoperatoridents[opsinfo.objop];
-     setoperparamid(@operatorsig.d[2],0,nil); //no return value
-     operatorsig.high:= 5;
+     operatorsig.high:= 1;
+     setoperparamid(operatorsig,0,nil); //no return value
+
      if b1 then begin //left side
       operatorsig.d[0]:= tks_operators;
-      setoperparamid(@operatorsig.d[4],pob^.d.dat.datatyp.indirectlevel,ptb);
+      setoperparamid(operatorsig,pob^.d.dat.datatyp.indirectlevel,ptb);
+
       if ele.findchilddata(basetype(d.dat.datatyp.typedata),
                           operatorsig,[ek_operator],allvisi,oper1) then begin
        if getvalue(poa,das_none) then begin //???
@@ -4146,7 +4148,7 @@ begin
      end;
      if b2 then begin //right side
       operatorsig.d[0]:= tks_operatorsright;
-      setoperparamid(@operatorsig.d[4],poa^.d.dat.datatyp.indirectlevel,pta);
+      setoperparamid(operatorsig,poa^.d.dat.datatyp.indirectlevel,pta);
       if ele.findchilddata(basetype(pob^.d.dat.datatyp.typedata),
                            operatorsig,[ek_operator],allvisi,oper1) then begin
        if getvalue(poa,das_none) and getvalue(pob,das_none) then begin //???

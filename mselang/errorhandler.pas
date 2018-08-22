@@ -239,7 +239,7 @@ const
   (level: erl_error; message: 
           'No matching implementation for interface method "%s" found'),
   (level: erl_error; message: 'Duplicate ancestor type'),
-  (level: erl_error; message: 'Local class definitions are not allowed'),
+  (level: erl_fatal; message: 'Local class definitions are not allowed'),
   (level: erl_fatal; message: 'No input file defined'),
   (level: erl_fatal; message: 'Can not write target file, error:'+lineend+
                               '%s'),

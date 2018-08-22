@@ -512,9 +512,12 @@ end;
 
 procedure nopop();
 begin
+ //dummy
+{
  with pc^.par do begin
   bcstream.emitnopssa();
  end;
+}
 end;
 
 procedure nopssaop();
@@ -5113,7 +5116,6 @@ end;
 
 const
   nonessa = 0;
-  nopssa = 1;
   labelssa = 0;
   ifssa = 0;
   ifnotssa = 0;
@@ -5173,6 +5175,7 @@ const
   writeclassssa = 1;
   writeenumssa = 1;
 
+  nopssa = 0;
   nopssassa = 0; //dummy
   
   pushssa = 0; //dummy

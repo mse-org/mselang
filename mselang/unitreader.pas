@@ -520,6 +520,9 @@ begin
       case header.kind of
        ek_type: begin
         with ptypedataty(po)^ do begin
+         if not updateident(int32(h.signature)) then begin
+          goto errorlab;
+         end;
          updateref(h.base,id1);
          updateref(h.ancestor,id1);
          case h.kind of

@@ -66,7 +66,8 @@ var
  intfparsedlinklist: linklistty;
  intfparsedchain: listadty;
 
-function newunit(const aname: string): punitinfoty; 
+function newunit(const aname: string): punitinfoty;
+//function getsignature(): card32;
 //procedure markunitstate(var ref: markinfoty);
 //procedure releaseunitstate(const ref: markinfoty);
 function defaultdialect(const afilename: filenamety): dialectty;
@@ -826,8 +827,18 @@ begin
   result^.namestring:= aname;
   result^.name:= stringtolstring(result^.namestring);
   result^.dwarflangid:= DW_LANG_Pascal83;
+//  result^.signaturebase:= getident;
  end;
 end;
+{
+function getsignature(): card32;
+begin
+ result:= getident();
+ if info.s.unitinfo <> nil then begin
+  result:= result -info.s.unitinfo^.signaturebase;
+ end;
+end;
+}
 {
 procedure markunitstate(var ref: markinfoty);
 begin

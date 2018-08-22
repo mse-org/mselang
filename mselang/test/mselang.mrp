@@ -15007,12 +15007,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,system
+   a=0,665,4,system
    c=1
     (
     kind=2
-    a=0,648,2,errno llvm
-    teststate=2
+    a=0,648,1,errno llvm
+    teststate=1
     path=errno.mla
     comment=
     cc=${mlc_llvm}
@@ -15026,13 +15026,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Unhandled exception
-    +********** Memory alloc error 2 blocks
+    ao=
     ae=
-    aec=217
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=system/
    comment=
    cc=
