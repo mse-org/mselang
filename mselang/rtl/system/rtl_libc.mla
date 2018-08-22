@@ -15,7 +15,7 @@ uses
  rtl_ctypes;
  
 {$define linux}
-{$internaldebug on}
+//{$internaldebug on}
 type
  __time_t = int32;
  __suseconds_t = int32;

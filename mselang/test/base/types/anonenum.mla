@@ -1,5 +1,4 @@
 program anonenum;
-{$internaldebug on}
 type
  enuty = (e_0,e_1,e2);
 var

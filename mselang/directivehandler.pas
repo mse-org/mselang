@@ -129,7 +129,7 @@ begin
  outhandle('DEFINE');
 {$endif}
  with info,contextstack[s.stackindex+1] do begin
- {$ifdef mse_internaldebug}
+ {$ifdef mse_checkinternalerror}
   if d.kind <> ck_ident then begin
    internalerror(ie_handler,'20160703A');
   end;
@@ -150,7 +150,7 @@ begin
  outhandle('DEFINEVALUE');
 {$endif}
  with info,contextstack[s.stacktop] do begin
- {$ifdef mse_internaldebug}
+ {$ifdef mse_checkinternalerror}
   if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
    internalerror(ie_handler,'20160703A');
   end;

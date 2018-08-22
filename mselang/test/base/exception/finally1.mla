@@ -31,7 +31,6 @@ begin
   finally
    exitcode:= exitcode + 23;
    if true then
-{$internaldebug on}
     if getexceptobj(e) then
      e.f:= 90;
     end;

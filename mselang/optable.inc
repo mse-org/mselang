@@ -1156,7 +1156,7 @@
 //oc_pushrtti
   (ssa: pushrttissa; proc: @pushrttiop; flags: []), 
 //oc_pushallocsize
-  (ssa: pushallocsizessa; proc: @pushallocsizeop; flags: []), 
+  (ssa: pushallocsizessa; proc: @pushallocsizeop; flags: [of_bbinc1]),
 
 //oc_pushduppo
   (ssa: pushduppossa; proc: @pushduppoop; flags: []), 
