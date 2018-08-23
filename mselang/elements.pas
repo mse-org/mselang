@@ -324,6 +324,10 @@ type
    function addelement(const aname: identty; const akind: elementkindty;
                        const avislevel: visikindsty): pelementinfoty; 
                                               //nil if duplicate
+   function addelement(const aname: identty; const akind: elementkindty;
+                       const avislevel: visikindsty; 
+                          out aelement: pelementinfoty): boolean; 
+                      //false if duplicate, aelement = new or duplicate
    function addelementdata(const aname: identty; const akind: elementkindty;
                        const avislevel: visikindsty): pointer; 
                                               //nil if duplicate
@@ -2294,6 +2298,27 @@ begin
  fscopespo:= nil;
  if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
   result:= addelementduplicate(aname,akind,avislevel);
+ end;
+ fscopespo:= scopebefore;
+end;
+
+function telementhashdatalist.addelement(const aname: identty;
+               const akind: elementkindty; const avislevel: visikindsty;
+               out aelement: pelementinfoty): boolean;
+                      //false if duplicate, aelement = new or duplicate
+var
+ scopebefore: pscopeinfoty;
+ ele1: elementoffsetty;
+begin
+ scopebefore:= fscopespo;
+ fscopespo:= nil;
+ if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
+  aelement:= addelementduplicate(aname,akind,avislevel);
+  result:= true;
+ end
+ else begin
+  aelement:= eledataabs(ele1);
+  result:= false;
  end;
  fscopespo:= scopebefore;
 end;

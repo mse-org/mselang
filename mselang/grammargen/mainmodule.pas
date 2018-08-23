@@ -342,6 +342,7 @@ var
    exit;
   end;
   str1:= ansistring(mstr1);
+{
   for int1:= 1 to length(str1) do begin
    if not (str1[int1] in ['a'..'z','A'..'Z']) then begin
     error('Invalid keyword "'+str1+'".');
@@ -349,6 +350,7 @@ var
     exit;
    end;
   end;
+}
   for int1:= 0 to high(keywords) do begin
    if keywords[int1] = str1 then begin
     keyword:= keywordids[int1];

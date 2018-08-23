@@ -25,11 +25,13 @@ type
  datasizetyxx = type integer;
  
  systypeinfoty = record
-  name: string;
+//  name: string;
+  ident: identty;
   data: typedataty;
  end;
  sysconstinfoty = record
-  name: string;
+//  name: string;
+  ident: identty;
   ctyp: systypety;
   cval: dataty;
  end;
@@ -367,22 +369,22 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: '._none'; data: (h: (ancestor: 0; kind: dk_none;
+   ({name: '._none';} ident: tks__none; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
-   (name: '._nil'; data: (h: (ancestor: 0; kind: dk_none;
+   ({name: '._nil';} ident: tks__nil; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
-   (name: '._forward'; data: (h: (ancestor: 0; kind: dk_none;
+   ({name: '._forward';} ident: tks__forward; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [tf_forward]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)),
-   (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;
+   ({name: 'pointer';} ident: tk_pointer; data: (h: (ancestor: 0; kind: dk_pointer;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 1;
 //       bitsize: pointerbitsize; bytesize: pointersize;
@@ -395,87 +397,87 @@ const
                                       datasize: das_none; next: 0);
        dummy1: 0)),
 }
-   (name: 'bool1'; data: (h: (ancestor: 0; kind: dk_boolean;
+   ({name: 'bool1';} ident: tk_bool1; data: (h: (ancestor: 0; kind: dk_boolean;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 1; bytesize: 1; datasize: das_1; next: 0; signature: 0);
        dummy1: 0)),
-   (name: 'int8'; data: (h: (ancestor: 0; kind: dk_integer;
+   ({name: 'int8';} ident: tk_int8; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0; rtti: 0; llvmrtticonst:0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [];indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infoint8:(min: int8($80); max: $7f))),
-   (name: 'int16'; data: (h: (ancestor: 0; kind: dk_integer;
+   ({name: 'int16';} ident: tk_int16; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0; rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infoint16:(min: int16($8000); max: $7fff))),
-   (name: 'int32'; data: (h: (ancestor: 0; kind: dk_integer;
+   ({name: 'int32';} ident: tk_int32; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0; rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
       infoint32:(min: int32($80000000); max: $7fffffff))),
-   (name: 'int64'; data: (h: (ancestor: 0; kind: dk_integer;
+   ({name: 'int64';} ident: tk_int64; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0; rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infoint64:(min: int64($8000000000000000); max: $7fffffffffffffff))),
-   (name: 'intpo'; data: (h: (ancestor: 0; kind: dk_none;
+   ({name: 'intpo';} ident: tk_intpo; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)), //dummy
-   (name: 'card8'; data: (h: (ancestor: 0; kind: dk_cardinal;
+   ({name: 'card8';} ident: tk_card8; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [];indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infocard8:(min: int8($00); max: $ff))),
-   (name: 'card16'; data: (h: (ancestor: 0; kind: dk_cardinal;
+   ({name: 'card16';} ident: tk_card16; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infocard16:(min: int16($0000); max: $ffff))),
-   (name: 'card32'; data: (h: (ancestor: 0; kind: dk_cardinal;
+   ({name: 'card32';} ident: tk_card32; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
       infocard32:(min: int32($00000000); max: $ffffffff))),
-   (name: 'card64'; data: (h: (ancestor: 0; kind: dk_cardinal;
+   ({name: 'card64';} ident: tk_card64; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64; next: 0; signature: 0);
        infocard64:(min: $0000000000000000; max: card64($ffffffffffffffff)))),
-   (name: 'cardpo'; data: (h: (ancestor: 0; kind: dk_none;
+   ({name: 'cardpo';} ident: tk_cardpo; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: [tf_untyped]; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; next: 0; signature: 0);
        dummy1: 0)), //dummy
-   (name: 'flo32'; data: (h: (ancestor: 0; kind: dk_float;
+   ({name: 'flo32';} ident: tk_flo32; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_f32; next: 0; signature: 0);
        infofloat32:(min: minflo32; max: maxflo32))),
-   (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
+   ({name: 'flo64';} ident: tk_flo64; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_f64; next: 0; signature: 0);
        infofloat64:(min: minflo64; max: maxflo64))),
-   (name: 'char8'; data: (h: (ancestor: 0; kind: dk_character;
+   ({name: 'char8';} ident: tk_char8; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; next: 0; signature: 0);
        infochar8:(min: int8($00000000); max: $ff))),
-   (name: 'char16'; data: (h: (ancestor: 0; kind: dk_character;
+   ({name: 'char16';} ident: tk_char16; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 16; bytesize: 2; datasize: das_16; next: 0; signature: 0);
        infochar16:(min: int16($00000000); max: $ffff))),
-   (name: 'char32'; data: (h: (ancestor: 0; kind: dk_character;
+   ({name: 'char32';} ident: tk_char32; data: (h: (ancestor: 0; kind: dk_character;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_none; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32; next: 0; signature: 0);
        infochar32:(min: int32($00000000); max: $ffffffff))),
-   (name: 'bytestring'; data: (h: (ancestor: 0; kind: dk_string;
+   ({name: 'bytestring';} ident: tk_bytestring; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
        flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed]; 
@@ -483,7 +485,7 @@ const
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 1; infostring: (flags: [strf_bytes]))),
-   (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string;
+   ({name: 'string8';} ident: tk_string8; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
        flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed]; 
@@ -491,7 +493,7 @@ const
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 1; infostring: (flags: []))),
-   (name: 'string16'; data: (h: (ancestor: 0; kind: dk_string;
+   ({name: 'string16';} ident: tk_string16; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
        flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed];
@@ -499,7 +501,7 @@ const
        bitsize: targetpointerbitsize; bytesize: targetpointersize;
                             datasize: das_pointer; next: 0; signature: 0);
        itemsize: 2; infostring: (flags: []))),
-   (name: 'string32'; data: (h: (ancestor: 0; kind: dk_string;
+   ({name: 'string32';} ident: tk_string32; data: (h: (ancestor: 0; kind: dk_string;
        base: 0;  rtti: 0; llvmrtticonst: 0; llvmrttivar:0; rttinameid: 0;
        manageproc: mpk_managestring;
        flags: [tf_needsmanage,tf_needsini,tf_needsfini,tf_managed];
@@ -509,9 +511,11 @@ const
        itemsize: 4; infostring: (flags: [])))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (
-   (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
-   (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
-   (name: 'nil'; ctyp: st_nil; cval:(kind: dk_none; vdummy: ()))
+   ({name: 'false';} ident: tk_false; ctyp: st_bool1; 
+                                 cval:(kind: dk_boolean; vboolean: false)),
+   ({name: 'true';} ident: tk_true; ctyp: st_bool1;
+                                 cval:(kind: dk_boolean; vboolean: true)),
+   ({name: 'nil';} ident: tk_nil; ctyp: st_nil; cval:(kind: dk_none; vdummy: ()))
 //   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
 //             vaddress: (flags: [af_nil]; indirectlevel: 1; poaddress: 0)))
   );
@@ -3812,15 +3816,18 @@ procedure init();
     end;
    end;
   end;
-  po1:= ele.addelement(getident(systypeinfos[aitem].name),ek_type,globalvisi);
   with systypeinfos[item1] do begin
-   po2:= @po1^.data;
-   po2^:= data;
-   po2^.h.signature:= getident();
-   with sysdatatypes[aitem] do begin
-    flags:= data.h.flags;
-    indirectlevel:= data.h.indirectlevel;
-    typedata:= ele.eleinforel(po1);
+//   po1:= ele.addelement(getident(systypeinfos[aitem].name),ek_type,globalvisi);
+   if ele.addelement(ident,ek_type,globalvisi,po1) then begin
+    po2:= @po1^.data;
+    po2^:= data;
+ //   po2^.h.signature:= getident();
+    po2^.h.signature:= ident;
+    with sysdatatypes[aitem] do begin
+     flags:= data.h.flags;
+     indirectlevel:= data.h.indirectlevel;
+     typedata:= ele.eleinforel(po1);
+    end;
    end;
   end;
  end;//addsystype
@@ -3858,7 +3865,8 @@ begin
  end; 
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= ele.addelement(getident(name),ek_const,globalvisi);
+//   po1:= ele.addelement(getident(name),ek_const,globalvisi);
+   po1:= ele.addelement(ident,ek_const,globalvisi);
    with pconstdataty(@po1^.data)^ do begin
     val.d:= cval;
     val.typ:= sysdatatypes[ctyp];

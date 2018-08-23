@@ -70,15 +70,23 @@
  '.units','.ancestors','.nestedvarref','.defines'
  '.ini','.inizeroed','.fini','.incref','.decref','.decrefindi','.destroy'
  '.method','.operators','.operatorsright','.system','.__mla__mainfini'
+ '._none','._nil','._forward'
 @.tokens
  'mselang','pascal','system'
- 'nil','result','exitcode','sizeof','defined','break','continue','self'
+ 'result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
  'nozeroinit','zeroinit','rtti','nortti','virtual','except','end'
  'new','dispose','afterconstruct','beforedestruct'
  'ini','fini','incref','decref'
  'operator','operatorright'
  'default','streaming','noexception'
+ 'pointer','bool1'
+ 'int8','int16','int32','int64','intpo'
+ 'card8','card16','card32','card64','cardpo'
+ 'flo32','flo64'
+ 'char8','char16','char32'
+ 'bytestring','string8','string16','string32'
+ 'false','true','nil'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
