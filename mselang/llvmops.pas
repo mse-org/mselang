@@ -3819,8 +3819,6 @@ begin
 end;
 
 procedure pushsegaddrop();
-var
- str1: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitsegdataaddress(memop);

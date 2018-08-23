@@ -4207,6 +4207,15 @@ begin
       topoffset:= getstackindex(poitem1);
      end
      else begin
+     {
+      topoffset:= adestindex+1;
+      if topoffset > s.stacktop then begin
+       topoffset:= s.stacktop;
+      end
+      else begin
+       topoffset:= getnextnospace(topoffset);
+      end;
+      }
       topoffset:= s.stacktop; //no params
      end;
     end;
