@@ -3919,14 +3919,16 @@ begin
     if dsf_indirect in aflags then begin
      if co_llvm in o.compileoptions then begin
       if sf_ofobject in asub^.flags then begin //method pointer call
-       with insertitem(oc_getmethodcode,destoffset,-1)^ do begin
+       with insertitem(oc_getmethodcode,topoffset{destoffset},-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
+        callssa:= par.ssad;
        end;
-       callssa:= d.dat.fact.ssaindex;
-       with insertitem(oc_getmethoddata,destoffset,-1)^ do begin
+//       callssa:= d.dat.fact.ssaindex;
+       with insertitem(oc_getmethoddata,topoffset{destoffset},-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
+        instancessa:= par.ssad;
        end;
-       instancessa:= d.dat.fact.ssaindex;
+//       instancessa:= d.dat.fact.ssaindex;
       end
       else begin
        callssa:= d.dat.fact.ssaindex;
@@ -4187,7 +4189,8 @@ begin
        dodefaultparams(); //varargs can not have defaultparams
       end;
       if dsf_instanceonstack in aflags then begin
-       if aflags * [dsf_usedestinstance,dsf_useobjssa] = [] then begin
+       if aflags * 
+             [dsf_usedestinstance,dsf_useobjssa,dsf_indirect] = [] then begin
         selfpo^.ssaindex:= d.dat.fact.ssaindex; 
                //could be shifted by right side operator param
        end;

@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=26
    (
    kind=1
@@ -6450,7 +6450,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,665,5,sub
    c=43
     (
     kind=1
@@ -6650,7 +6650,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,subvar
+    a=0,665,5,subvar
     c=12
      (
      kind=2
@@ -6830,8 +6830,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,callsubres llvm
-     teststate=1
+     a=0,648,2,callsubres llvm
+     teststate=2
      path=callsubres.mla
      comment=
      cc=${mlc_llvm}
@@ -6846,8 +6846,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=error: Explicit load/store type does not match pointee type of pointer operand
+     aec=1
      ie=0
      )
      (
@@ -6916,7 +6916,7 @@ c=3
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=2
     path=subvar/
     comment=
     cc=
@@ -8642,7 +8642,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -9661,7 +9661,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -14555,11 +14555,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=6
    (
    kind=1
-   a=0,665,5,variants
+   a=0,665,4,variants
    c=7
     (
     kind=2
@@ -14673,8 +14673,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,variantstring llvm
-    teststate=2
+    a=0,648,1,variantstring llvm
+    teststate=1
     path=variantstring.mla
     comment=
     cc=${mlc_llvm}
@@ -14688,7 +14688,7 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=(null)abcabc
+    ao=abcabcabc
     ae=
     aec=0
     ie=0
@@ -14715,7 +14715,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=variants/
    comment=
    cc=
@@ -15047,7 +15047,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -15250,7 +15250,19 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=345
+rowstate=357
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
