@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -6450,7 +6450,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,sub
+   a=0,665,4,sub
    c=43
     (
     kind=1
@@ -6650,7 +6650,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,subvar
+    a=0,665,4,subvar
     c=12
      (
      kind=2
@@ -6830,8 +6830,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,callsubres llvm
-     teststate=2
+     a=0,648,1,callsubres llvm
+     teststate=1
      path=callsubres.mla
      comment=
      cc=${mlc_llvm}
@@ -6846,8 +6846,8 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=error: Explicit load/store type does not match pointee type of pointer operand
-     aec=1
+     ae=
+     aec=123
      ie=0
      )
      (
@@ -6916,7 +6916,7 @@ c=3
      aec=123
      ie=0
      )
-    teststate=2
+    teststate=1
     path=subvar/
     comment=
     cc=
@@ -8642,7 +8642,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=sub/
    comment=
    cc=
@@ -9661,7 +9661,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -15127,7 +15127,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

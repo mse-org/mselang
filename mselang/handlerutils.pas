@@ -3401,8 +3401,8 @@ begin                    //todo: optimize
       internalerror(ie_handler,'20171009A');
      end;
     {$endif}
-//     with insertitem(oc_pushtemp,stackoffset,-1)^ do begin
-     with insertitem(oc_pushtemp,s.stacktop-s.stackindex,-1)^ do begin
+     with insertitem(oc_pushtemp,stackoffset,-1)^ do begin
+//     with insertitem(oc_pushtemp,s.stacktop-s.stackindex,-1)^ do begin
                    //todo: should be after last param
       par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
       d.dat.fact.ssaindex:= par.ssad;

@@ -60,6 +60,7 @@ type
                 dsf_destroy,
                 dsf_noconstructor, //constructor called from constructor
                 dsf_objassign,
+                dsf_objconvert,
                 dsf_objini,dsf_objfini);  //from objectmanagehandler
  dosubflagsty = set of dosubflagty;
 
@@ -3919,15 +3920,16 @@ begin
     if dsf_indirect in aflags then begin
      if co_llvm in o.compileoptions then begin
       if sf_ofobject in asub^.flags then begin //method pointer call
-       with insertitem(oc_getmethodcode,topoffset{destoffset},-1)^ do begin
+       with insertitem(oc_getmethodcode,{topoffset}destoffset,-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
         callssa:= par.ssad;
        end;
 //       callssa:= d.dat.fact.ssaindex;
-       with insertitem(oc_getmethoddata,topoffset{destoffset},-1)^ do begin
+       with insertitem(oc_getmethoddata,{topoffset}destoffset,-1)^ do begin
         par.ssas1:= instancessa; //[code,data]
         instancessa:= par.ssad;
        end;
+       include(aflags,dsf_useobjssa); //do not update instancessa later
 //       instancessa:= d.dat.fact.ssaindex;
       end
       else begin
@@ -4190,7 +4192,7 @@ begin
       end;
       if dsf_instanceonstack in aflags then begin
        if aflags * 
-             [dsf_usedestinstance,dsf_useobjssa,dsf_indirect] = [] then begin
+             [dsf_usedestinstance,dsf_useobjssa] = [] then begin
         selfpo^.ssaindex:= d.dat.fact.ssaindex; 
                //could be shifted by right side operator param
        end;
@@ -4219,7 +4221,12 @@ begin
        topoffset:= getnextnospace(topoffset);
       end;
       }
-      topoffset:= s.stacktop; //no params
+      if dsf_objconvert in aflags then begin
+       topoffset:= destoffset; //no params
+      end
+      else begin
+       topoffset:= s.stacktop; //no params
+      end;
      end;
     end;
     if topoffset < paramstart then begin

@@ -1153,7 +1153,8 @@ begin
      end;
     {$endif}
      i2:= getstackindex(acontext);
-     callsub(i2,sub1,i2,0,[dsf_instanceonstack,dsf_nooverloadcheck],0,i1);
+     callsub(i2,sub1,i2,0,[dsf_instanceonstack,dsf_nooverloadcheck,
+                                                      dsf_objconvert],0,i1);
      //todo: fini object
      if co_mlaruntime in info.o.compileoptions then begin
       if i1 > 0 then begin
