@@ -1,0 +1,8 @@
+program stream1;
+uses
+ rtl_streams;
+var
+ s1: tfilestream;
+begin
+  s1:= tfilestream.create('qwer.xyz');
+end.
