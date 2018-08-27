@@ -4,7 +4,7 @@ uses
 var
  v1: tfiler;
 begin
- v1:= twriter.create();
+ v1:= twriter.create(nil);
  if v1.iswriter then 
   exitcode:= 123;
  end;

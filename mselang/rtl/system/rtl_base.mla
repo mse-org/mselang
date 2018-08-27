@@ -24,6 +24,7 @@ type
   method free();
   method rtti(): pobjectrttity;
   method classname(): string8;
+  method test() [virtual];
  end;
   
 procedure inttostr(const value: integer): string;
@@ -31,6 +32,11 @@ procedure random(const limit: int32): int32;
 procedure random(const limit: int64): int64;
 
 implementation
+
+method tbase.test();
+begin
+ writeln('tbase.test');
+end;
 
 procedure inttostr(const value: integer): string;
 var
@@ -102,6 +108,7 @@ constructor tbase.create();
 begin
  //dummy
 end;
+
 destructor tbase.destroy();
 begin
  //dummy

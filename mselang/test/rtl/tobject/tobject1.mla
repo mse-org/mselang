@@ -1,0 +1,20 @@
+program tobject1;
+uses
+ rtl_fpccompatibility;
+type
+ ttest = class(tobject)
+  method afterconstruction() [override];
+ end;
+
+method ttest.afterconstruction();
+begin
+ exitcode:= 123;
+ inherited;
+end;
+
+var
+ t1: ttest;
+begin
+ t1:= ttest.create();
+ t1.destroy();
+end.

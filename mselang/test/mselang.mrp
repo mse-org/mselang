@@ -14734,7 +14734,7 @@ c=3
    (
    kind=1
    a=0,665,4,tobject
-   c=3
+   c=4
     (
     kind=2
     a=0,648,1,ini llvm
@@ -14784,6 +14784,28 @@ c=3
     a=0,648,1,free llvm
     teststate=1
     path=free.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,tobject1 llvm
+    teststate=1
+    path=tobject1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -15292,7 +15314,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=38
+rowstate=39
+ 0 0
  0 0
  0 0
  0 0

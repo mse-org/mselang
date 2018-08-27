@@ -29,11 +29,13 @@ type
  end;
  
  twriter = class(tfiler)
+  constructor create(const astream: tstream);
   class method iswriter(): boolean [override];
   method writeproperties(const instance: tpersistent);
   method writeproperty(const instance: tpersistent;
                                      const propinfo: ppropertyrttity);
   protected
+   fstream: tstream;
  end;
  
  tpersistent = class(tobject)
@@ -91,6 +93,16 @@ end;
 
 { twriter }
 
+constructor twriter.create(const astream: tstream);
+begin
+ fstream:= astream;
+end;
+
+class method twriter.iswriter(): boolean;
+begin
+ result:= true;
+end;
+
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
@@ -110,11 +122,6 @@ begin
   writeproperty(instance,p1^);
   inc(p1);
  end;
-end;
-
-class method twriter.iswriter(): boolean;
-begin
- result:= true;
 end;
 
 end.

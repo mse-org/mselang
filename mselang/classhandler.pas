@@ -837,6 +837,7 @@ var
  p1: pparamupdatechainty;
  p2: pointer;
  e1: pelementinfoty;
+ linkedunit: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -926,15 +927,18 @@ begin
       if modularllvm and (e1^.header.defunit <> s.unitinfo) then begin
        header.parentclass:= -h.ancestor; //must be relocated ->
                                          //-eleoffset of classypedef
+       linkedunit:= true;
       end
       else begin
        header.parentclass:= parentinfoclass1^.defs.address; 
                                               //offset in seg_classdef
+       linkedunit:= false;
       end;
       if parentinfoclass1^.virtualcount > 0 then begin
        fillchar(virtualmethods,
                     parentinfoclass1^.virtualcount*targetpointersize,0);
-       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
+       if (icf_virtualtablevalid in parentinfoclass1^.flags) and 
+                    not linkedunit then begin
         copyvirtualtable(parentinfoclass1^.defs,infoclass.defs,
                                         parentinfoclass1^.virtualcount);
        end

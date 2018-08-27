@@ -1713,7 +1713,7 @@ begin
 // ppointer(instance+virttaboffset)^:= po1;//@classinfo;
  ppointer(instance+classinfo.header.virttaboffset)^:= po1;//@classinfo;
 {$ifdef mse_debugclass}
- writeln('***initobject ',result);
+ writeln('***initobject ',instance);
 {$endif}
  repeat
   pd:= instance + po1^.header.allocs.instanceinterfacestart;

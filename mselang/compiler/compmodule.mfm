@@ -178,6 +178,39 @@ object compmo: tcompmo
         ''
         ''
       )
+      (
+        ak_pararg
+        '-as'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        '-gcc'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        '-llc'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
     )
   end
 end

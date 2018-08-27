@@ -1001,21 +1001,22 @@ end;
 procedure updatellvmclassdefs(const updatesubs: boolean);
 
 var
- offss,offse: int32;
+ {offss,}offse: int32;
  
- procedure setvirtsubs(const atyp: ptypedataty; var offs: int32);
+ procedure setvirtsubs(const atyp: ptypedataty; const offss: int32);
  var
   ele1: elementoffsetty;
   sub1: psubdataty;
   v1: llvmvaluety;
-  i1: int32;
+  i1,i2: int32;
  begin
   if atyp^.h.ancestor > 0 then begin
-   setvirtsubs(ele.eledataabs(atyp^.h.ancestor),offs);
+   setvirtsubs(ele.eledataabs(atyp^.h.ancestor),offss);
   end;
   ele1:= atyp^.infoclass.subchain;
   while ele1 <> 0 do begin
    sub1:= ele.eledataabs(ele1);
+(*
    if sf_virtual in sub1^.flags then begin
    {$ifdef mse_checkinternalerror}
     if offs >= offse then begin
@@ -1034,15 +1035,22 @@ var
     end;
     inc(offs,sizeof(int32));
    end;
-   if sf_override in sub1^.flags then begin
+*)
+   if sub1^.flags * [sf_virtual,sf_override] <> [] then begin
     i1:= offss + sub1^.tableindex * sizeof(int32);
    {$ifdef mse_checkinternalerror}
     if i1 >= offse then begin
      internalerror(ie_llvmlist,'20180508A');
     end;
    {$endif}
+    i2:= trackaccess(sub1);
+   {$ifdef mse_checkinternalerror}
+    if i2 < 0 then begin
+     internalerror(ie_llvmlist,'20190703A');
+    end;
+   {$endif}
     with info.s.unitinfo^.llvmlists.constlist do begin
-     v1:= addpointercast(sub1^.globid);
+     v1:= addpointercast(i2);
      pint32(absdata(i1))^:= v1.listid;
     end;
    end;
@@ -1144,14 +1152,16 @@ begin
                                                                constlist.buffer;
  //    pd:= @bufdat2.
     end;
-    offss:= i2;
+//    offss:= i2;
     offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
     setvirtsubs(typ1,i2);
+(*
    {$ifdef mse_checkinternalerror}
     if i2 <> offse then begin
      internalerror(ie_llvmlist,'20180506B');
     end;
    {$endif}
+*)
    end;
   end;
 loopend:

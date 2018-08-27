@@ -136,9 +136,11 @@ begin
  if opted.value <> '' then begin
   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
  end;
- parserparams.buildoptions.gcccommand:= tosysfilepath('gcc')+' '+gcced.value;
+ if gcced.value <> '' then begin
+  parserparams.buildoptions.gcccommand:= tosysfilepath('gcc')+' '+gcced.value;
+ end;
  
- parserparams.buildoptions.ascommand:= tosysfilepath('as');
+// parserparams.buildoptions.ascommand:= tosysfilepath('as');
  parserparams.buildoptions.exefile:= tosysfilepath(
                                         replacefileext(filena.value,'bin'));
  if llvm.value then begin

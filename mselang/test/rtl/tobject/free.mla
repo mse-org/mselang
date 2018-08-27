@@ -1,0 +1,58 @@
+program free;
+uses
+ rtl_fpccompatibility;
+type
+
+ ctest2 = class(tobject)
+  constructor create();
+  destructor destroy() [override];
+  method freeinstance() [override];
+  method afterconstruction() [afterconstruct,override];
+  method beforedestruction() [beforedestruct,override];
+ end;
+
+constructor ctest2.create();
+begin
+ exitcode:= 85;
+end;
+
+destructor ctest2.destroy();
+begin
+ if exitcode = 100 then 
+  exitcode:= 120;
+ end;
+end;
+
+method ctest2.afterconstruction();
+begin
+ if exitcode = 85 then
+  exitcode:= 90;
+ end;
+end;
+
+method ctest2.beforedestruction();
+begin
+ if exitcode = 90 then
+  exitcode:= 100;
+ end;
+end;
+
+method ctest2.freeinstance();
+begin
+ if exitcode = 120 then
+  exitcode:= 123;
+ end;
+ inherited;
+end;
+
+var
+ c1: ctest2;
+begin
+ c1:= ctest2.create();
+ if c1.instancesize <> sizeof(ctest2) then
+  exitcode:= 0;
+ end;
+ c1.free();
+ c1:= nil;
+ c1.free();
+end.

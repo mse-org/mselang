@@ -23,7 +23,10 @@ type
             pa_makebc,                  //11 produce no exe
             pa_showcompilefile,         //12
             pa_optimizeparams,          //13
-            pa_keeptmpfiles             //14
+            pa_keeptmpfiles,            //14
+            pa_as,                      //15
+            pa_gcc,                     //16
+            pa_llc                      //17
            );
             //item number in sysenv
  
@@ -172,7 +175,13 @@ begin
  end;
 //   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
  parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
+ if sysenv.defined[ord(pa_gcc)] then begin
+  parserparams.buildoptions.gcccommand:= sysenv.value[ord(pa_gcc)];
+ end;
  parserparams.buildoptions.ascommand:= tosysfilepath('as');
+ if sysenv.defined[ord(pa_as)] then begin
+  parserparams.buildoptions.ascommand:= sysenv.value[ord(pa_as)];
+ end;
  parserparams.buildoptions.exefile:= tosysfilepath(
                        replacefileext(sysenv.value[ord(pa_source)],'bin'));
 
