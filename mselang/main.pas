@@ -137,7 +137,8 @@ begin
   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
  end;
  if gcced.value <> '' then begin
-  parserparams.buildoptions.gcccommand:= tosysfilepath('gcc')+' '+gcced.value;
+  parserparams.buildoptions.gcccommand:= 
+                parserparams.buildoptions.gcccommand+' '+gcced.value;
  end;
  
 // parserparams.buildoptions.ascommand:= tosysfilepath('as');

@@ -10,7 +10,7 @@ object compmo: tcompmo
   object sysenv: tsysenvmanager
     options = [seo_appterminateonexception, seo_terminateonerror, seo_tooutput, seo_toerror]
     onvalueread = valuereadev
-    left = 24
+    left = 16
     top = 16
     defs = (
       (
@@ -182,7 +182,7 @@ object compmo: tcompmo
         ak_pararg
         '-as'
         (        )
-        []
+        [arf_unquote]
         ''
         ''
         ''
@@ -193,7 +193,7 @@ object compmo: tcompmo
         ak_pararg
         '-gcc'
         (        )
-        []
+        [arf_unquote]
         ''
         ''
         ''
@@ -204,7 +204,7 @@ object compmo: tcompmo
         ak_pararg
         '-llc'
         (        )
-        []
+        [arf_unquote]
         ''
         ''
         ''
