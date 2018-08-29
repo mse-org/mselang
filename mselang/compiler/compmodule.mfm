@@ -182,7 +182,7 @@ object compmo: tcompmo
         ak_pararg
         '-as'
         (        )
-        [arf_unquote]
+        []
         ''
         ''
         ''
@@ -193,7 +193,7 @@ object compmo: tcompmo
         ak_pararg
         '-gcc'
         (        )
-        [arf_unquote]
+        []
         ''
         ''
         ''
@@ -204,7 +204,7 @@ object compmo: tcompmo
         ak_pararg
         '-llc'
         (        )
-        [arf_unquote]
+        []
         ''
         ''
         ''

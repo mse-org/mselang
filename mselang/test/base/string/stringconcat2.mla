@@ -1,11 +1,11 @@
 program stringconcat2;
 var
- testvar0,testvar1,testvar2: string8;
+ testv0,testv1,testv2: string8;
  s1: string8;
 
 begin
- testvar0:= '00';
- s1:= testvar0+'aa'+'bb';
+ testv0:= '00';
+ s1:= testv0+'aa'+'bb';
  if s1 = '00aabb' then
   exitcode:= 123;
  end;

@@ -151,10 +151,14 @@ procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__frac64(value: flo64): flo64;
 
 type
- conversionfuncty = procedure(source: pointer): pointer;
+ conversionprocty = procedure(source: pointer): pointer;
+ exceptionhandlerty = procedure(const exception: pointer);
+ 
 var
- bytestostring8: conversionfuncty;
- string8tobytes: conversionfuncty;
+ bytestostring8: conversionprocty;
+ string8tobytes: conversionprocty;
+ unhandledexceptionhandler: exceptionhandlerty;
+ 
 implementation
 // __mla__personality;
 const
@@ -1942,8 +1946,12 @@ end;
 
 procedure __mla__unhandledexception(const data: pointer) [noexception];
 begin
- writeln('Unhandled exception');
- exitcode:= exco_unhandledexception;
+ if unhandledexceptionhandler <> nil then
+  unhandledexceptionhandler(pexceptinfoty(data)^.data);
+ else
+  writeln('Unhandled exception');
+  exitcode:= exco_unhandledexception;
+ end;
  __mla__finiexception(data);
 end;
 

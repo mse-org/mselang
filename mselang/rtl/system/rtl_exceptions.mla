@@ -25,7 +25,7 @@ type
 
 implementation
 uses
- rtl_format;
+ rtl_format,__mla__compilerunit,__mla__personality;
  
 constructor texception.create(const amessage: string8);
 begin
@@ -43,4 +43,12 @@ begin
  //dummy
 end;
 
+procedure handleexception(const data: pointer) [noexception];
+begin
+  writeln('Unhandled exception ****');
+  exitcode:= exco_unhandledexception;
+end;
+
+initialization
+ unhandledexceptionhandler:= @handleexception;
 end.

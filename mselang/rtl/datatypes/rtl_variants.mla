@@ -525,10 +525,9 @@ begin
    tovalueerror(VT_R8);
  end;
 end;
-var testvar1: pointer; testvar2: string8;
+
 method variantty.tovalue(): string8;
 begin
-testvar1:= vstring;
  case vtype of
   vt_string8:
    result:= string8(vstring);
@@ -539,7 +538,6 @@ testvar1:= vstring;
   else:
    tovalueerror(vt_string8);
  end;
-testvar2:= result;
 end;
 
 method variantty.tovalue(): string16;

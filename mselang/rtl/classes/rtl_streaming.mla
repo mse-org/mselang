@@ -107,7 +107,7 @@ method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
  writererror(format(scannotwritepropertykind,[propinfo^.name,
-               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]);
+               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
 end;
 
 method twriter.writeproperties(const instance: tpersistent);

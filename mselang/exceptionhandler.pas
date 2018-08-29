@@ -133,7 +133,7 @@ begin
  finiblockcontext(0);
  tryblockend();
 end;
-var testvar: popinfoty;
+
 procedure handlefinallyentry();
 var
  p1: popinfoty;
@@ -167,7 +167,6 @@ begin
    d.block.landingpad:= tryhandle();           //add landingpad
    p1^.par.landingpad:= d.block.landingpad;
 //   d.block.exceptiontemp:= tryhandle();           //add landingpad
-testvar:= getoppo(contextstack[s.stackindex-1].opmark.address);
    getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
   end;
   tryexit();

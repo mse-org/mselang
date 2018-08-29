@@ -19,7 +19,7 @@ implementation
 uses
  __mla__compilerunit,rtl_flotostr,rtl_sysexceptions,rtl_sysconsts,
  rtl_stringconv;
- 
+
 procedure format(const fmt: string8; const args: array of const): string8;
 type
  argsty = record
@@ -299,6 +299,9 @@ begin
        inc(ps);
        b1:= false;       //consumed
        inc(valindex);    //next value
+      else
+       itemindex:= valindex;
+       inc(valindex);
       end;
       if ps^ = '-' then
        minus:= true;
