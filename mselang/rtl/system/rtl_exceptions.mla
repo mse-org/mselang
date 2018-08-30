@@ -45,8 +45,11 @@ end;
 
 procedure handleexception(const data: pointer) [noexception];
 begin
-  writeln('Unhandled exception ****');
-  exitcode:= exco_unhandledexception;
+ writeln('Unhandled exception'); 
+ exitcode:= exco_unhandledexception;
+ if tbase(data) is texception then
+  writeln(texception(data).message);
+ end;
 end;
 
 initialization

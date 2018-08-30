@@ -51,7 +51,7 @@ type
 implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format;
-
+{$internaldebug on}
 procedure writererror(const amessage: string8);
 begin
  raise ewritererror.create(amessage);
@@ -106,7 +106,7 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
- writererror(format(scannotwritepropertykind,[propinfo^.name,
+ writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
                getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
 end;
 

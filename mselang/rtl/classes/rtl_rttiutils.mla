@@ -134,7 +134,6 @@ begin
  p2:= @rtti^.properties.items;
  pe:= pointer(p2) + rtti^.properties.size;
  while p2 < pe do
-writeln(string8(p2^.name));
   p3^:= p2;
   inc(p3);
   inc(p2);
