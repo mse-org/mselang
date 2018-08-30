@@ -3150,7 +3150,8 @@ var
  
  function doparam(var context1: pcontextitemty;
                                const subparams1: pelementoffsetty; 
-                               const parallocpo: pparallocinfoty): boolean;
+                               var parallocpo: pparallocinfoty): boolean;
+                 //parallocpo will be relocated in case of seg_localloc grow
                                               //false if skipped
  var
   vardata1: pvardataty;
@@ -3223,6 +3224,7 @@ var
   err1: errorty;
   opref1: int32;
   p1,pe: pcontextitemty;
+  p2: pointer;
   ele1: elementoffsetty;
   sourcetype: ptypedataty;
   destindilev1: int32;
@@ -3296,6 +3298,7 @@ var
        end
        else begin
         if desttype^.h.kind = dk_openarray then begin
+         p2:= getsegmentbase(seg_localloc);
          if af_untyped in vardata1^.address.flags then begin
           if not listtoarrayofconst(context1,lastitem,true) then begin
            exit;
@@ -3306,6 +3309,8 @@ var
            exit;
           end;
          end;
+         inc(pointer(parallocpo),getsegmentbase(seg_localloc)-p2);
+                    //relocate
          if context1^.d.kind = ck_const then begin
           pushinsertconst(stackoffset,-1,si1,true);
          end;
