@@ -15,6 +15,11 @@ uses
  __mla__internaltypes;
  
 type
+ pint8 = ^int8;
+ pint16 = ^int16;
+ pint32 = ^int32;
+ pint64 = ^int64;
+ 
  pcard8 = ^card8;
  pchar8 = ^char8;
  

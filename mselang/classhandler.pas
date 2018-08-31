@@ -843,6 +843,7 @@ begin
  outhandle('CLASSDEFRETURN');
 {$endif}
  with info do begin
+  resolvelist(pendingclassitems,@resolveforwardprop,forwardpropchain);
   with contextstack[s.stackindex-1] do begin
    classinfo1:= @contextstack[s.stackindex].d.cla;
    currenttypedef:= d.typ.typedata;
@@ -917,10 +918,12 @@ begin
      header.parentclass:= -1;
      header.interfaceparent:= -1;
      header.rtti:= -1;
+    (* moved to updatellvmcalssdefs()
      if (co_llvm in o.compileoptions) and (icf_rtti in infoclass.flags)
                         {(stf_rtti in s.currentstatementflags)} then begin
       header.rtti:= s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
      end;
+    *)
      if h.ancestor <> 0 then begin 
       e1:= ele.eleinfoabs(h.ancestor);
       parentinfoclass1:= @ptypedataty(eletodata(e1))^.infoclass;
@@ -999,7 +1002,7 @@ begin
   end;
   realobjsize:= alignsize(typ1^.h.bytesize);
   resolvelist(pendingclassitems,@resolveselfobjparam,selfobjparamchain);
-  resolvelist(pendingclassitems,@resolveforwardprop,forwardpropchain);
+//  resolvelist(pendingclassitems,@resolveforwardprop,forwardpropchain);
   ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
   currentfieldflags:= [];

@@ -31,11 +31,17 @@ procedure isstoredprop(const instance: tbase;
                            
 implementation
 uses
- rtl_sysexceptions,rtl_sysconsts,rtl_strings,__mla__compilerunit;
+ rtl_sysexceptions,rtl_sysconsts,rtl_strings,__mla__compilerunit,
+ rtl_format;
 
 procedure rttierror(const amessage: string8);
 begin
  raise erttierror.create(srttierror+':'+lineend+amessage);
+end;
+
+procedure rttierror(const amessage: string8; const values: array of const);
+begin
+ raise erttierror.create(srttierror+':'+lineend+format(amessage,values));
 end;
 
 procedure getenumname(const typ: prttity; const value: int32): string8;
@@ -47,7 +53,7 @@ begin
 end;
  
 type
- propertyaccessty = (pa_field,pa_proc);
+ propertyaccessty = (pa_none,pa_field,pa_method);
 
 procedure notimplemented(const atext: string8);
 begin
@@ -57,19 +63,60 @@ end;
 procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
                    out po: pointer): propertyaccessty;
 begin
- result:= pa_proc;
+ result:= pa_none;
+ if prf_readfield in propinfo^.flags then
+  result:= pa_field;
+  po:= pointer(instance)+propinfo^.readaccess.fieldoffset;
+ else
+  if prf_readproc in propinfo^.flags then
+   result:= pa_method;
+   po:= propinfo^.readaccess.accessproc;
+  end;
+ end;
 end;
 
+type
+ getter32ty = method(): int32;
+ 
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
 var
  p1: pointer;
+ m1: methodty;
 begin
- case getpropreadad(instance,propinfo,p1) of
-  pa_field:
-   result:= pint64(p1)^;
-  else:
-   notimplemented('getordprop()');
+ with propinfo^ do
+  if not (kind in ordinalkinds) then
+   rttierror(snoordprop,[string8(name),getenumname(typeinfo(kind),ord(kind))];
+  else   
+   case getpropreadad(instance,propinfo,p1) of
+    pa_field:
+     case size of
+      bs_8:
+       result:= pint8(p1)^;
+      bs_16:
+       result:= pint16(p1)^;
+      bs_32:
+       result:= pint32(p1)^;
+      bs_64:
+       result:= pint64(p1)^;
+      else:
+       rttierror(sinvalidpropertysize,
+                [string8(name),getenumname(typeinfo(size),ord(size))]);
+     end;
+    pa_method:
+     m1.data:= instance;
+     m1.code:= p1;
+     case size of
+      bs_32:
+       result:= getter32ty(m1)();
+      else:
+       rttierror(sinvalidpropertysize,
+                [string8(name),getenumname(typeinfo(size),ord(size))]);
+     end;
+    else:
+     notimplemented('getordprop()');
+   end;
+  end;
  end;
 end;
 

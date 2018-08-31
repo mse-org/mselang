@@ -431,9 +431,9 @@ type
   flags: propflagsty;
   typ: elementoffsetty;
   readele: elementoffsetty;
-  readoffset: int32;
+  readoffset: dataoffsty;
   writeele: elementoffsetty;
-  writeoffset: int32;
+  writeoffset: dataoffsty;
   defaultconst: datainfoty;
   next: elementoffsetty;
  end;

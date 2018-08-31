@@ -19,6 +19,8 @@ resourcestring
  stypemustbeobjectorclass = 'Type must be object or class';
  senumtypeexpected = 'Enum type expected';
  serror = 'Error';
+ snoordprop = '"%s0" with datakind %s1 is no ordinal property';
+ sinvalidpropertysize = 'Property "%s0" has invalid property size %s1';
  
 implementation
 end.

@@ -106,8 +106,13 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
- writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
+ case propinfo^.kind of
+  rtk_integer:
+   
+  else:
+   writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
                getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
+ end;
 end;
 
 method twriter.writeproperties(const instance: tpersistent);

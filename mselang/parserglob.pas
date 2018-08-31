@@ -879,6 +879,7 @@ type
   scopemetaindex: int32;
 //  compilerswitches: compilerswitchesty;
   modularllvm: boolean;
+  target64bit: boolean;
   buildoptions: buildoptionsty;
 
   unitinfochain: elementoffsetty;

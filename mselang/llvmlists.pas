@@ -338,6 +338,7 @@ type
    function addi16(const avalue: int16): llvmvaluety;
    function addi32(const avalue: int32): llvmvaluety;
    function addi64(const avalue: int64): llvmvaluety;
+   function addipo(const avalue: int64): llvmvaluety;
    function addf32(const avalue: flo32): llvmvaluety;
    function addf64(const avalue: flo64): llvmvaluety;
    function adddataoffs(const avalue: dataoffsty): llvmvaluety;
@@ -1088,6 +1089,10 @@ begin
    li1:= constlinkage;
    if vik_global in datatoele(typ1)^.header.visibility then begin
     li1:= li_external;
+   end;
+   if (icf_rtti in typ1^.infoclass.flags) then begin
+    poclassdef^.header.rtti:= info.s.unitinfo^.
+                        llvmlists.globlist.addrtticonst(typ1).listid;
    end;
    typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
@@ -1958,6 +1963,16 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
+function tconsthashdatalist.addipo(const avalue: int64): llvmvaluety;
+begin
+ if info.target64bit then begin
+  result:= addi64(avalue);
+ end
+ else begin
+  result:= addi32(avalue);
+ end;
+end;
+
 function tconsthashdatalist.addf32(const avalue: flo32): llvmvaluety;
 var
  alloc1: constallocdataty;
@@ -2000,11 +2015,12 @@ end;
 
 function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmvaluety;
 begin
-{$ifdef target64}
- result:= addi64(avalue);
-{$else}
- result:= addi32(avalue);
-{$ifend}
+ if info.target64bit then begin
+  result:= addi64(avalue);
+ end
+ else begin
+  result:= addi32(avalue);
+ end;
 end;
 
 function tconsthashdatalist.addvalue(const avalue;
@@ -3045,7 +3061,7 @@ var
  p1,pe: pointer;
  enuflags1: enumrttiflagsty;
  ele1: elementoffsetty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  m1: llvmvaluety;
  intmin1,intmax1: int64;
  cardmin1,cardmax1: card64;
@@ -3053,7 +3069,8 @@ var
  typ1: ptypedataty;
  b1: boolean;
  link1: linkagety;
- 
+ propflags1: propertyflagsty;
+ v1: llvmvaluety;
 begin
  with fconstlist do begin
   case atype^.h.kind of
@@ -3165,6 +3182,11 @@ begin
      while ele1 > 0 do begin
       with ppropertydataty(ele.eledataabs(ele1))^ do begin
        typ1:= ele.eledataabs(typ);
+       propflags1:= [];
+       if pof_readfield in flags then include(propflags1,prf_readfield);
+       if pof_readsub in flags then include(propflags1,prf_readproc);
+       if pof_writefield in flags then include(propflags1,prf_writefield);
+       if pof_writesub in flags then include(propflags1,prf_writeproc);
       {$ifdef mse_checkinternalerror}
        if datakindtorttikind[typ1^.h.kind] = rtk_none then begin
         internalerror(ie_llvmlist,'20180711A');
@@ -3176,6 +3198,21 @@ begin
        putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
        putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
        putagitem(agloc2,addidentconst(ele.eleinfoabs(ele1)^.header.name)); //2      //2
+       putagitem(agloc2,addi32(int32(propflags1)));                        //3
+       if not (prf_readproc in propflags1) then begin
+        v1:= adddataoffs(readoffset);
+       end
+       else begin
+        v1:= addpointercast(trackaccess(psubdataty(ele.eledataabs(readele))));
+       end;
+       putagitem(agloc2,v1);                                               //4
+       if not (prf_writeproc in propflags1) then begin
+        v1:= adddataoffs(readoffset);
+       end
+       else begin
+        v1:= addpointercast(trackaccess(psubdataty(ele.eledataabs(readele))));
+       end;
+       putagitem(agloc2,v1);                                               //5
        ele1:= next;
       end;
      end;

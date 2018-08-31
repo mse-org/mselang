@@ -147,6 +147,9 @@ type
                rtk_enum,rtk_enumitem,rtk_set,
                rtk_object,
                rtk_property);
+const
+ ordinalkinds = [rtk_boolean,rtk_integer,rtk_cardinal,rtk_enum];
+type
  bitsizety = (bs_none,bs_1,bs_8,bs_16,bs_32,bs_64,bs_po);
 
  rttity = object
@@ -174,7 +177,7 @@ const
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
  listrttifieldcount = 1;
- propertyrttifieldcount = 3;
+ propertyrttifieldcount = 6;
 
 type
  intrttity = record              //rtk_int
@@ -238,11 +241,27 @@ type
  classprocty = procedure(instance: pointer);
 {$endif}
 
+ propertyflagty = (prf_readfield,prf_readproc,prf_writefield,prf_writeproc);
+ propertyflagsty = set of propertyflagty;
+ propertyaccessinfoty = record
+ {$ifdef mse_compiler}
+  case integer of
+   0: (fieldoffset: targetptrintty);
+   1: (accessproc: targetptrintty);
+ {$else}
+  (fieldoffset: ptrint);
+  (accessproc: pointer);
+ {$endif}
+ end;
+ 
  propertyrttity = record
-  kind: rttikindty;                //0
-  size: bitsizety;                 //1
-  name: pointer;                   //2 const string8
- end;                              //propertyrttifieldcount
+  kind: rttikindty;                  //0
+  size: bitsizety;                   //1
+  name: pointer;                     //2 const string8
+  flags: propertyflagsty;            //3
+  readaccess: propertyaccessinfoty;  //4
+  writeaccess: propertyaccessinfoty; //5
+ end;                                //propertyrttifieldcount
  ppropertyrttity = ^propertyrttity;
 
  rttilistty = record
