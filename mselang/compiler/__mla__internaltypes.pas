@@ -241,16 +241,19 @@ type
  classprocty = procedure(instance: pointer);
 {$endif}
 
- propertyflagty = (prf_readfield,prf_readproc,prf_writefield,prf_writeproc);
+ propertyflagty = (prf_readfield,prf_readproc,prf_virtualread,
+                   prf_writefield,prf_writeproc,prf_virtualwrite);
  propertyflagsty = set of propertyflagty;
  propertyaccessinfoty = record
  {$ifdef mse_compiler}
   case integer of
-   0: (fieldoffset: targetptrintty);
+   0: (fieldoffset: int32);
    1: (accessproc: targetptrintty);
+   2: (tableindex: int32);
  {$else}
-  (fieldoffset: ptrint);
+  (fieldoffset: int32);
   (accessproc: pointer);
+  (tableindex: int32);
  {$endif}
  end;
  

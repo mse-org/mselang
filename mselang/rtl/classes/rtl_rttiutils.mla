@@ -70,7 +70,12 @@ begin
  else
   if prf_readproc in propinfo^.flags then
    result:= pa_method;
-   po:= propinfo^.readaccess.accessproc;
+   if prf_virtualread in propinfo^.flags then
+    po:= (ppointer(@ppclassdefty(instance)^^.virtualmethods) + 
+                                             propinfo^.readaccess.tableindex)^;
+   else
+    po:= propinfo^.readaccess.accessproc;
+   end;
   end;
  end;
 end;

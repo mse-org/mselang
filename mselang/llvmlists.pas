@@ -3069,7 +3069,26 @@ var
     //typename: string8;      //2
    putagitem(agloc1,self.addidentconst(datatoele(atype)^.header.name));
   end;
- end;
+ end; //initmainagloc()
+
+ function checkpropertymethod(const sub: psubdataty; 
+                                      var value: llvmvaluety): boolean;
+ begin
+  result:= false;
+  if sub <> nil then begin
+   if sub^.tableindex >= 0 then begin
+    value:= fconstlist.addi32(sub^.tableindex);
+   end
+   else begin
+    value:= fconstlist.addpointercast(trackaccess(sub));
+    if sub^.globid < 0 then begin
+     linkmarkllvmconst(sub^.calllinks,-1);  //dummy, updated in addagloc
+     value.listid:= -sub^.calllinks;
+    end;
+   end;
+   result:= true;
+  end;
+ end; //checkpropertymethod()
  
 var
  p1,pe: pointer;
@@ -3085,7 +3104,8 @@ var
  link1: linkagety;
  propflags1: propertyflagsty;
  v1: llvmvaluety;
- sub1: psubdataty;
+ readsub1,writesub1: psubdataty;
+
 begin
  with fconstlist do begin
   case atype^.h.kind of
@@ -3197,11 +3217,29 @@ begin
      while ele1 > 0 do begin
       with ppropertydataty(ele.eledataabs(ele1))^ do begin
        typ1:= ele.eledataabs(typ);
+       readsub1:= nil;
+       writesub1:= nil;
        propflags1:= [];
-       if pof_readfield in flags then include(propflags1,prf_readfield);
-       if pof_readsub in flags then include(propflags1,prf_readproc);
-       if pof_writefield in flags then include(propflags1,prf_writefield);
-       if pof_writesub in flags then include(propflags1,prf_writeproc);
+       if pof_readfield in flags then begin
+        include(propflags1,prf_readfield);
+       end;
+       if pof_readsub in flags then begin
+        include(propflags1,prf_readproc);
+        readsub1:= ele.eledataabs(readele);
+        if readsub1^.flags * [sf_virtual,sf_override] <> [] then begin
+         include(propflags1,prf_virtualread);
+        end;
+       end;
+       if pof_writefield in flags then begin
+        include(propflags1,prf_writefield);
+       end;
+       if pof_writesub in flags then begin
+        include(propflags1,prf_writeproc);
+        writesub1:= ele.eledataabs(writeele);
+        if writesub1^.flags * [sf_virtual,sf_override] <> [] then begin
+         include(propflags1,prf_virtualwrite);
+        end;
+       end;
       {$ifdef mse_checkinternalerror}
        if datakindtorttikind[typ1^.h.kind] = rtk_none then begin
         internalerror(ie_llvmlist,'20180711A');
@@ -3214,23 +3252,12 @@ begin
        putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
        putagitem(agloc2,addidentconst(ele.eleinfoabs(ele1)^.header.name)); //2      //2
        putagitem(agloc2,addi32(int32(propflags1)));                        //3
-       if not (prf_readproc in propflags1) then begin
-        v1:= adddataoffs(readoffset);
-       end
-       else begin
-        sub1:= ele.eledataabs(readele);
-        v1:= addpointercast(trackaccess(sub1));
-        if sub1^.globid < 0 then begin
-         linkmarkllvmconst(sub1^.calllinks,-1);  //dummy, updated in addagloc
-         v1.listid:= -sub1^.calllinks;
-        end;
+       if not checkpropertymethod(readsub1,v1) then begin
+        v1:= addi32(readoffset);
        end;
        putagitem(agloc2,v1);                                               //4
-       if not (prf_writeproc in propflags1) then begin
-        v1:= adddataoffs(readoffset);
-       end
-       else begin
-        v1:= addpointercast(trackaccess(psubdataty(ele.eledataabs(readele))));
+       if checkpropertymethod(writesub1,v1) then begin
+        v1:= addi32(writeoffset);
        end;
        putagitem(agloc2,v1);                                               //5
        ele1:= next;

@@ -22,7 +22,9 @@ type
  
  pcard8 = ^card8;
  pchar8 = ^char8;
- 
+
+ pppointer = ^ppointer;
+  
  tbase = class() [virtual]
   destructor destroy() [virtual];
   constructor create();

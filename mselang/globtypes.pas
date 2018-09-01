@@ -147,9 +147,11 @@ const
  addresscompflags = addresskindflags + [af_nil];
 
 type 
- propflagty = (pof_class,pof_readfield,pof_readsub,pof_writefield,pof_writesub,
-                       pof_default,
-                       pof_indexvalid,pof_readforward,pof_writeforward);
+ propflagty = (pof_class,
+               pof_readfield,pof_readsub,
+               pof_writefield,pof_writesub,
+               pof_default,
+               pof_indexvalid,pof_readforward,pof_writeforward);
  propflagsty = set of propflagty;
 const
  canreadprop = [pof_readfield,pof_readsub];
