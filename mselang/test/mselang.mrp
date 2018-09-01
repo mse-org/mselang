@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -8769,40 +8769,7 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2018 by Martin Schreiber
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +<<<<<<< typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +***************** Parse end ***********
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +Heap dump by heaptrc unit
-    +216343 memory blocks allocated : 8422056/9095464
-    +216343 memory blocks freed     : 8422056/9095464
-    +0 unfreed memory blocks : 0
-    +True heap size : 196608
-    +True free heap : 196608
     aec=1
     ie=0
     )
@@ -13384,7 +13351,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -13430,7 +13397,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,typeinfo
+   a=0,665,4,typeinfo
    c=6
     (
     kind=2
@@ -13456,8 +13423,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,typeinfoclass llvm
-    teststate=2
+    a=0,648,1,typeinfoclass llvm
+    teststate=1
     path=typeofclass.mla
     comment=
     cc=${mlc_llvm}
@@ -13473,13 +13440,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,typeinfoclass1 llvm
-    teststate=2
+    a=0,648,1,typeinfoclass1 llvm
+    teststate=1
     path=typeofclass1.mla
     comment=
     cc=${mlc_llvm}
@@ -13495,13 +13462,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,typeinfoclass2 llvm
-    teststate=2
+    a=0,648,1,typeinfoclass2 llvm
+    teststate=1
     path=typeofclass2.mla
     comment=
     cc=${mlc_llvm}
@@ -13517,13 +13484,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classrtti llvm
-    teststate=2
+    a=0,648,1,classrtti llvm
+    teststate=1
     path=classrtti.mla
     comment=
     cc=${mlc_llvm}
@@ -13538,9 +13505,10 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=rtk_integer bs_32
+    +rtk_integer bs_16
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
@@ -13565,7 +13533,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=typeinfo/
    comment=
    cc=
@@ -13909,7 +13877,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=intrinsics/
   comment=
   cc=
@@ -14195,40 +14163,7 @@ c=3
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +<<<<<<< pointertostring1.mla(5,10) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +***************** Parse end ***********
      ae=pointertostring1.mla(5,10) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +Heap dump by heaptrc unit
-     +216050 memory blocks allocated : 8430973/9103768
-     +216050 memory blocks freed     : 8430973/9103768
-     +0 unfreed memory blocks : 0
-     +True heap size : 196608
-     +True free heap : 196608
      aec=1
      ie=0
      )
@@ -14251,40 +14186,7 @@ c=3
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +<<<<<<< pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
-     +***************** Parse end ***********
      ae=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
-     +Heap dump by heaptrc unit
-     +216107 memory blocks allocated : 8432492/9105456
-     +216107 memory blocks freed     : 8432492/9105456
-     +0 unfreed memory blocks : 0
-     +True heap size : 196608
-     +True free heap : 196608
      aec=1
      ie=0
      )
@@ -14307,40 +14209,7 @@ c=3
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-     +
-     +***************************************** uses
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +***************************************** usesend
-     +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-     +<<<<<<< pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +***************** Parse end ***********
      ae=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +Heap dump by heaptrc unit
-     +216109 memory blocks allocated : 8432475/9105472
-     +216109 memory blocks freed     : 8432475/9105472
-     +0 unfreed memory blocks : 0
-     +True heap size : 196608
-     +True free heap : 196608
      aec=1
      ie=0
      )
@@ -14561,40 +14430,7 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2018 by Martin Schreiber
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/rtl/system/system.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__personality.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__internaltypes.pas
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__debugmemhandler.mla
-    +
-    +***************************************** uses
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +***************************************** usesend
-    +/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
-    +<<<<<<< missingend.mla(6,4) Fatal: Illegal expression
-    +***************** Parse end ***********
     ae=missingend.mla(6,4) Fatal: Illegal expression
-    +Heap dump by heaptrc unit
-    +215972 memory blocks allocated : 8425596/9098168
-    +215972 memory blocks freed     : 8425596/9098168
-    +0 unfreed memory blocks : 0
-    +True heap size : 196608
-    +True free heap : 196608
     aec=1
     ie=0
     )
@@ -14723,7 +14559,7 @@ c=3
   c=7
    (
    kind=1
-   a=0,665,4,variants
+   a=0,664,4,variants
    c=7
     (
     kind=2
@@ -14897,7 +14733,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,tobject
+   a=0,664,4,tobject
    c=4
     (
     kind=2
@@ -15005,7 +14841,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=3
     (
     kind=2
@@ -15109,13 +14945,57 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,typeinfo
-   c=1
+   a=0,665,4,typeinfo
+   c=3
     (
     kind=2
     a=0,648,1,property1 llvm
     teststate=1
     path=property1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,getordprop1 llvm
+    teststate=1
+    path=getordprop1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,getorprop2 llvm
+    teststate=1
+    path=getordprop2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -15151,7 +15031,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,streaming
+   a=0,664,4,streaming
    c=1
     (
     kind=2
@@ -15193,7 +15073,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,stream
+   a=0,664,4,stream
    c=1
     (
     kind=2
@@ -15237,7 +15117,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,system
+   a=0,664,4,system
    c=1
     (
     kind=2
@@ -15357,7 +15237,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -15470,54 +15350,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=669
+propcolwidthref=684
 width0=50
 sortdescend0=0
-width1=228
+width1=233
 sortdescend1=0
-width2=252
+width2=258
 sortdescend2=0
-width3=173
+width3=177
 sortdescend3=0
 sortdescend4=0
-rowstate=71
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

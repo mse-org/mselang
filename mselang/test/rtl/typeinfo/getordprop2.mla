@@ -1,0 +1,49 @@
+program getordprop2;
+uses
+ __mla__internaltypes,rtl_rttiutils,rtl_base;
+type
+ ttest = class(tbase)[rtti]
+  f1: int32;
+  property p1: int32 read getp1;
+  method getp1(): int32;
+  constructor create();
+  destructor destroy();
+  f2: int32;
+  property p2: int32 read f2 write f2;
+ end;
+
+constructor ttest.create();
+begin
+ f1:= 10;
+ f2:= 103;
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+method ttest.getp1(): int32;
+begin
+ result:= f1*2;
+end;
+
+var
+ p1,p3: prttity;
+ p2: pclassdefty;
+ c1: class of ttest;
+ i1: int32;
+ h1: classdefheaderty;
+ t1: ttest;
+ ar1: propertyrttiarty;
+ p4: ppropertyrttity;
+ m1: methodty;
+begin
+ t1:= ttest.create();
+ ar1:= getproperties(t1);
+ p4:= ar1[0];
+ m1:= methodty(@t1.getp1);
+ if (p4^.kind = rtk_integer) and (pointer(p4^.readaccess.accessproc) = m1.code) and (m1.data = t1) then
+  exitcode:= t1.p1 + t1.p2;
+ end;
+ t1.destroy();
+end.
