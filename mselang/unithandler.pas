@@ -54,7 +54,6 @@ type
  castcallbackty = procedure (const acontext: pcontextitemty;
                             const item: castitemty; var aflags: docastflagsty);
 
- 
  unitlinkinfoty = record  //used for ini, fini
   header: linkheaderty;
   ref: punitinfoty
@@ -122,6 +121,9 @@ procedure handlecompilerswitch();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
+procedure linkmarkllvmconst(var alinks: linkindexty; const index: int32);
+procedure linksetconstref(const alink: linkindexty;
+                      const aconstindex: int32; const aitemindex: int32);
 procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
                                                 const ssaindex: int32);
@@ -1233,12 +1235,35 @@ type
    4:(opreloc: oprelocitemty);
  end;
  plinkinfoty = ^linkinfoty;
+
  linkarty = array of linkinfoty;
  
 var
  links: linkarty; //[0] -> dummy entry
  linkindex: linkindexty;
  deletedlinks: linkindexty;
+
+procedure linksetconstref(const alink: linkindexty;
+                         const aconstindex: int32; const aitemindex: int32);
+{$ifdef mse_checkinternalerror}
+var
+ p1: paggregateconstty;
+{$endif}
+begin
+ with links[alink],info.s.unitinfo^.llvmlists.constlist do begin
+ {$ifdef mse_checkinternalerror}
+  if (alink <= 0) or (alink > high(links)) then begin
+   internalerror(ie_unit,'20180901A');
+  end;
+  p1:= getitemdata(aconstindex);
+  if (aitemindex < 0) or (aitemindex >= p1^.header.itemcount) then begin
+   internalerror(ie_unit,'20180901B');
+  end;
+ {$endif}
+  dest.address:= @paggregateconstty(getitemdata(aconstindex))^.items + 
+                                           aitemindex * sizeof(int32) - buffer;
+ end;
+end;
  
 function link(var alinks: linkindexty): plinkinfoty;
 var
@@ -1294,6 +1319,15 @@ begin
    opreloc.link:= alinks;
   end;
  end;
+end;
+
+procedure linkmarkllvmconst(var alinks: linkindexty; const index: int32);
+var
+ po1: plinkinfoty;
+begin
+ po1:= link(alinks);
+ po1^.dest.segment:= seg_llvmconst;
+ po1^.dest.address:= index;
 end;
 
 procedure linkinsertop(const alinks: linkindexty; const aaddress: opaddressty);
@@ -1381,12 +1415,14 @@ begin
   deletedlinks:= alinks;
  end;
 end;
-
+var testvar: int32;
 procedure linkresolvecall(const alinks: linkindexty; 
                             const aaddress: opaddressty; const aglobid: int32);
 var
  li1: linkindexty;
  ad1: calladdressty;
+ i1: int32;
+ v1: llvmvaluety;
 begin
  if alinks <> 0 then begin
   ad1.ad:= aaddress-1;
@@ -1399,7 +1435,21 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
-    pcalladdressty(getsegmentpo(dest))^:= ad1;
+    if dest.segment = seg_llvmconst then begin
+     v1:= info.s.unitinfo^.llvmlists.constlist.addpointercast(aglobid);
+    {$ifdef mse_checkinternalerror}
+     if (dest.address < 0) or 
+          (dest.address >= 
+                   info.s.unitinfo^.llvmlists.constlist.buffersize) then begin
+      internalerror(ie_handler,'20180901C');
+     end;
+    {$endif}
+     pint32(info.s.unitinfo^.llvmlists.constlist.buffer +
+                                              dest.address)^:= v1.listid;
+    end
+    else begin
+     pcalladdressty(getsegmentpo(dest))^:= ad1;
+    end;
 //    popaddressty(getsegmentpo(dest))^:= aaddress-1;
     if next = 0 then begin
      break;

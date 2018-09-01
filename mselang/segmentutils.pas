@@ -237,7 +237,7 @@ begin
 end;
  
 const
- minsize: array[segmentty] of integer = (
+ minsize: array[low(segmentty)..lastdatasegment] of integer = (
 //seg_classdef,seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
   1024,        0,      0,        0,          1024,         1024,     
 //seg_op,{seg_classinfo,}seg_rtti,
@@ -246,11 +246,11 @@ const
   1024,    1024,        {1024,}              1024,             
 //seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
   1024,        1024,          1024,         1024,
-//set_temp
+//seg_temp
   1024);          
   
 var
- segmentsx: array[segmentty] of bufferinfoty;
+ segmentsx: array[low(segmentty)..lastdatasegment] of bufferinfoty;
  useunitsegments: boolean;
  
 function getsegbuffer(const asegment: segmentty): pbufferinfoty; 
@@ -922,7 +922,7 @@ procedure dofinalize();
 var
  seg1: segmentty;
 begin
- for seg1:= low(segmentty) to high(segmentty) do begin
+ for seg1:= low(segmentty) to lastdatasegment do begin
   with segmentsx[seg1] do begin
    if data <> nil then begin
     freemem(data);

@@ -918,12 +918,12 @@ begin
      header.parentclass:= -1;
      header.interfaceparent:= -1;
      header.rtti:= -1;
-    (* moved to updatellvmcalssdefs()
+//    (* moved to updatellvmcalssdefs()
      if (co_llvm in o.compileoptions) and (icf_rtti in infoclass.flags)
                         {(stf_rtti in s.currentstatementflags)} then begin
       header.rtti:= s.unitinfo^.llvmlists.globlist.addrtticonst(typ1).listid;
      end;
-    *)
+//    *)
      if h.ancestor <> 0 then begin 
       e1:= ele.eleinfoabs(h.ancestor);
       parentinfoclass1:= @ptypedataty(eletodata(e1))^.infoclass;

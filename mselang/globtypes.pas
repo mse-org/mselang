@@ -91,7 +91,11 @@ type
               seg_localloc,
               {seg_classintfcount,}seg_intfitemcount,
               seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
-              seg_temp);
+              seg_temp,
+              seg_llvmconst);
+const
+ lastdatasegment = seg_temp;
+type
  segmentsty = set of segmentty;
  unitsegmentty = low(segmentty)..seg_classdef;
  

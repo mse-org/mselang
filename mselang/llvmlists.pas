@@ -366,6 +366,7 @@ type
                                        const acount: int32): llvmvaluety;
                                                    //overwrites aintf data
    function addagloc(const agloc: aglocty): llvmvaluety; //frees agloc
+                                 //negative items -> seg_llvmconst linkindex
    function addnullvalue(const atypeid: int32): llvmvaluety;
 
    property typelist: ttypehashdatalist read ftypelist;
@@ -1090,10 +1091,12 @@ begin
    if vik_global in datatoele(typ1)^.header.visibility then begin
     li1:= li_external;
    end;
+{
    if (icf_rtti in typ1^.infoclass.flags) then begin
     poclassdef^.header.rtti:= info.s.unitinfo^.
                         llvmlists.globlist.addrtticonst(typ1).listid;
    end;
+}
    typ1^.infoclass.defsid:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
               info.s.unitinfo^.llvmlists.constlist.addclassdef(
@@ -2243,10 +2246,21 @@ begin
 end;
 
 function tconsthashdatalist.addagloc(const agloc: aglocty): llvmvaluety;
+var
+ p0,p1,pe: pint32;
 begin
  agloc.ag^.header.typeid:= typelist.addstructvalue(
                                   agloc.ag^.header.itemcount,agloc.ty);
  result:= addaggregate(agloc.ag);
+ p1:= @agloc.ag^.items;
+ p0:= p1;
+ pe:= p1 + agloc.ag^.header.itemcount;
+ while p1 < pe do begin
+  if p1^ < 0 then begin
+   linksetconstref(-p1^,result.listid,p1-p0);
+  end;
+  inc(p1);
+ end;
  freeagloc(agloc);
 end;
 
@@ -3071,6 +3085,7 @@ var
  link1: linkagety;
  propflags1: propertyflagsty;
  v1: llvmvaluety;
+ sub1: psubdataty;
 begin
  with fconstlist do begin
   case atype^.h.kind of
@@ -3203,7 +3218,12 @@ begin
         v1:= adddataoffs(readoffset);
        end
        else begin
-        v1:= addpointercast(trackaccess(psubdataty(ele.eledataabs(readele))));
+        sub1:= ele.eledataabs(readele);
+        v1:= addpointercast(trackaccess(sub1));
+        if sub1^.globid < 0 then begin
+         linkmarkllvmconst(sub1^.calllinks,-1);  //dummy, updated in addagloc
+         v1.listid:= -sub1^.calllinks;
+        end;
        end;
        putagitem(agloc2,v1);                                               //4
        if not (prf_writeproc in propflags1) then begin
