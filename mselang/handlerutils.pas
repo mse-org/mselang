@@ -3056,6 +3056,7 @@ begin
   d.block.blockidbefore:= currentblockid;
   inc(s.blockid);
   currentblockid:= s.blockid;
+  d.block.ident:= 0;
  end;
 end;
 

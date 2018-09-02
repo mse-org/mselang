@@ -3256,7 +3256,7 @@ begin
         v1:= addi32(readoffset);
        end;
        putagitem(agloc2,v1);                                               //4
-       if checkpropertymethod(writesub1,v1) then begin
+       if not checkpropertymethod(writesub1,v1) then begin
         v1:= addi32(writeoffset);
        end;
        putagitem(agloc2,v1);                                               //5

@@ -158,9 +158,10 @@ procedure handleassignment();
 
 procedure handledoexpected();
 procedure handlewithentry();
-procedure handlewith2entry();
+procedure handlewithitem();
 //procedure handlewith3entry();
 procedure handlewith3();
+procedure handlewith4();
 
 procedure stringlineenderror();
 procedure handlestringstart();
@@ -4125,7 +4126,7 @@ begin
 end;
 *)
 
-procedure handlewith2entry();
+procedure handlewithitem();
 var
  po1: ptypedataty;
  ele1: elementoffsetty;
@@ -4134,7 +4135,7 @@ label
  errlab;
 begin
 {$ifdef mse_debugparser}
- outhandle('WITH2ENTRY');
+ outhandle('WITHITEM');
 {$endif}
  with info do begin
   ptop:= @contextstack[s.stacktop];
@@ -4192,6 +4193,18 @@ begin
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
   releasepointertempaddress();
+ end;
+end;
+
+procedure handlewith4();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WITH4');
+{$endif}
+ with info do begin
+  contextstack[s.stackindex].d.block.ident:=
+                    contextstack[s.stacktop].d.ident.ident;
+  s.stacktop:= s.stacktop-1;
  end;
 end;
 

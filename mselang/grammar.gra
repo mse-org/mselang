@@ -649,22 +649,27 @@ checkend,,,*
 with,with1,,handlewithentry
 with1,with2,,
  '',addressfact*
-with2,,handlewith2entry,handledoexpected*
+//with2,with2a,handlewith2entry,
+with2,,,handledoexpected*
  ${whitespace}
- ',',with1-
+ ':',with4-
+ ',',with2a-
  'do'.,with3-
+with2a,with1,handlewithitem,
 {$grapas}
-with3,,,handlewith3*
+with3,,handlewithitem,handlewith3*
  '',statement*
 {$}
 {$gramse}
-with3,with3a,,
+with3,with3a,handlewithitem,
  '',statementgroup^*
 with3a,,,handleendexpected*
  'end'.,with3b-
 with3b,,,handlewith3*
 {$}
-
+with4,with2,,handlewith4
+ '',getident^*
+ 
 endcontext,,,
 blockend,,,^*
 
@@ -1666,6 +1671,8 @@ ident,ident0,,
  'destructor'.,reservedword
  'end'.,reservedword
  'else'.,reservedword
+// 'with'.,reservedword
+ 'do'.,reservedword
  'initialization'.,reservedword
  'finalization'.,reservedword
  'finally'.,reservedword

@@ -918,6 +918,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'with2');
+ with2aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'with2a');
  with3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -933,6 +938,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'with3b');
+ with4co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'with4');
  endcontextco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5599,7 +5609,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwith2: array[0..7] of branchty = (
+ bwith2: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @with3co); stack: nil; 
      keyword: $0000028C{'do'}),
@@ -5639,7 +5649,14 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @with1co); stack: nil; keys: (
+     dest: (context: @with4co); stack: nil; keys: (
+    (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @with2aco); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5661,6 +5678,16 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @with3bco); stack: nil; 
      keyword: $00000234{'end'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bwith4: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getidentco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bsimplestatement: array[0..1] of branchty = (
@@ -13264,7 +13291,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bident: array[0..21] of branchty = (
+ bident: array[0..22] of branchty = (
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000025D{'implementation'}),
@@ -13316,6 +13343,9 @@ const
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000027A{'else'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
+     keyword: $0000028C{'do'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $00000269{'initialization'}),
@@ -14235,14 +14265,20 @@ begin
  with1co.branch:= @bwith1;
  with1co.next:= @with2co;
  with2co.branch:= @bwith2;
- with2co.handleentry:= @handlewith2entry;
  with2co.handleexit:= @handledoexpected;
+ with2aco.branch:= nil;
+ with2aco.next:= @with1co;
+ with2aco.handleentry:= @handlewithitem;
  with3co.branch:= @bwith3;
  with3co.next:= @with3aco;
+ with3co.handleentry:= @handlewithitem;
  with3aco.branch:= @bwith3a;
  with3aco.handleexit:= @handleendexpected;
  with3bco.branch:= nil;
  with3bco.handleexit:= @handlewith3;
+ with4co.branch:= @bwith4;
+ with4co.next:= @with2co;
+ with4co.handleexit:= @handlewith4;
  endcontextco.branch:= nil;
  blockendco.branch:= nil;
  simplestatementco.branch:= @bsimplestatement;

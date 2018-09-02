@@ -339,6 +339,7 @@ type
 // identkindty = (ik_param); 
  blockinfoty = record
   blockidbefore: int32;
+  ident: identty; //for with statement
   landingpad: landingpadty; //ssa
   case contextkindty of
    ck_exceptblock: (
