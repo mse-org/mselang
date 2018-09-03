@@ -594,6 +594,7 @@ begin
        end;
        ek_const: begin
         with pconstdataty(po)^ do begin
+         updateref(val.typ.typedata,id1);
         end;
        end;
        ek_ref: begin

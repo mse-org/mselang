@@ -273,6 +273,7 @@ var
      end;
      ek_const: begin
       with pconstdataty(po)^ do begin
+       updateref(val.typ.typedata);
       end;
      end;
      ek_ref: begin

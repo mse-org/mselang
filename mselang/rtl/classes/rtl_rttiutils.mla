@@ -89,8 +89,8 @@ var
  p1: pointer;
  m1: methodty;
 begin
- with propinfo^ do
-  if not (kind in ordinalkinds) then
+ with propinfo^:a do
+  if not (a.kind in ordinalkinds) then
    rttierror(snoordprop,[string8(name),getenumname(typeinfo(kind),ord(kind))];
   else   
    case getpropreadad(instance,propinfo,p1) of
