@@ -1561,7 +1561,7 @@ begin
  result:= false;
  p1:= fscopespo;
  if p1 <> nil then begin
-  while p1 > fscopes do begin
+  while p1 >= fscopes do begin
    if p1^.name = aname then begin
     result:= true;
     break;
