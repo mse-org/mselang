@@ -91,11 +91,12 @@ var
 begin
  with propinfo^:a do
   if not (a.kind in ordinalkinds) then
-   rttierror(snoordprop,[string8(name),getenumname(typeinfo(kind),ord(kind))];
+   rttierror(snoordprop,[string8(a.name),
+                         getenumname(typeinfo(a.kind),ord(a.kind))];
   else   
    case getpropreadad(instance,propinfo,p1) of
     pa_field:
-     case size of
+     case a.size of
       bs_8:
        result:= pint8(p1)^;
       bs_16:
@@ -106,17 +107,17 @@ begin
        result:= pint64(p1)^;
       else:
        rttierror(sinvalidpropertysize,
-                [string8(name),getenumname(typeinfo(size),ord(size))]);
+                [string8(a.name),getenumname(typeinfo(a.size),ord(a.size))]);
      end;
     pa_method:
      m1.data:= instance;
      m1.code:= p1;
-     case size of
+     case a.size of
       bs_32:
        result:= getter32ty(m1)();
       else:
        rttierror(sinvalidpropertysize,
-                [string8(name),getenumname(typeinfo(size),ord(size))]);
+                [string8(a.name),getenumname(typeinfo(a.size),ord(a.size))]);
      end;
     else:
      notimplemented('getordprop()');

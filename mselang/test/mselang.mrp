@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -8965,7 +8965,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=14
     (
     kind=2
@@ -14118,7 +14118,7 @@ c=3
    (
    kind=1
    a=0,665,4,error check
-   c=6
+   c=7
     (
     kind=1
     a=0,664,4,control
@@ -14367,7 +14367,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,procedure
+    a=0,664,4,procedure
     c=2
      (
      kind=2
@@ -14419,6 +14419,73 @@ c=3
      )
     teststate=1
     path=procedure/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,sets
+    c=2
+     (
+     kind=2
+     a=0,648,1,set1 llvm
+     teststate=1
+     path=set1.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
+     +set1.mla(10,5) Error: Boolean expression expected
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
+     +set1.mla(10,5) Error: Boolean expression expected
+     aec=1
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,set2 llvm
+     teststate=1
+     path=set2.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=1
+    path=sets/
     comment=
     cc=
     cd=
@@ -15382,46 +15449,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=78
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=39
  0 0
  0 0
  0 0

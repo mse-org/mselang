@@ -3241,8 +3241,9 @@ procedure handleinsimpexp();
 var
 // baseoffset: int32;
  poa,pob: pcontextitemty;
+ typ1: ptypedataty;
 label
- errlab;
+ errlab,endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('INSIMPEXP');
@@ -3256,27 +3257,33 @@ begin
  {$endif}
 //  baseoffset:= s.stacktop-s.stackindex-2;
   if getvalue(poa,das_32,true) and getvalue(pob,das_none,true) and 
-     tryconvert(poa,st_card32,[coo_enum]) and 
-     (pob^.d.dat.datatyp.indirectlevel = 0) and 
-     (ptypedataty(ele.eledataabs(
-                      pob^.d.dat.datatyp.typedata))^.h.kind = dk_set) then begin
-   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
-    poa^.d.dat.constval.kind:= dk_boolean;
-    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
-    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
-                    tintegerset(pob^.d.dat.constval.vset);
-   end
-   else begin
-    if getvalue(poa,das_32) and getvalue(pob,das_none) then begin
-     addfactbinop(poa,pob,oc_setin);
-     setsysfacttype(poa^.d,st_bool1);
+                   (pob^.d.dat.datatyp.indirectlevel = 0) then begin
+   typ1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+   if typ1^.h.kind = dk_set then begin
+    if basetype(poa^.d.dat.datatyp.typedata) <> 
+              basetype(typ1^.infoset.itemtype) then begin
+     goto errlab;
     end;
+    if tryconvert(poa,st_card32,[coo_enum]) then begin
+     if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
+      poa^.d.dat.constval.kind:= dk_boolean;
+      poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+      poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
+                      tintegerset(pob^.d.dat.constval.vset);
+     end
+     else begin
+      if getvalue(poa,das_32) and getvalue(pob,das_none) then begin
+       addfactbinop(poa,pob,oc_setin);
+       setsysfacttype(poa^.d,st_bool1);
+      end;
+     end;
+    end;
+    goto endlab;
    end;
-  end
-  else begin
-   operationnotsupportederror(poa^.d,pob^.d,'in');
   end;
 errlab:
+  operationnotsupportederror(poa^.d,pob^.d,'in');
+endlab:
   s.stacktop:= getpreviousnospace(s.stackindex-1);
   s.stackindex:= getpreviousnospace(s.stacktop-1);
  end;

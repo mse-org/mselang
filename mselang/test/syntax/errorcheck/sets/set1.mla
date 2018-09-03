@@ -1,0 +1,13 @@
+program set1;
+type
+ enuty = (e_1);
+ enusty = set of enuty;
+
+ enu2ty = (e2_1);
+const
+ c1 = [e_1];
+begin
+ if e2_1 in c1 then
+  exitcode:= 123;
+ end;
+end.
