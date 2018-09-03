@@ -687,6 +687,7 @@ function findkindelements(const astackoffset: integer;
 var
  eleres,ele1,ele2: elementoffsetty;
  int1: integer;
+ b1: boolean;
 begin
  result:= false;
  aelement:= nil;
@@ -698,14 +699,20 @@ begin
    exit;
   end;
   with info do begin
+   b1:= false;
    if (stf_condition in s.currentstatementflags) and 
         (ele.findchild(s.unitinfo^.interfaceelement,
                [tks_defines,idents.d[0]],[],allvisi,eleres) or
         ele.findchild(rootelement,[tks_defines,idents.d[0]],
                                                 [],allvisi,eleres)) or 
-            ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
+        ele.findparentscope(idents.d[0],akinds,visibility,eleres,b1) then begin
     result:= true;
-    firstnotfound:= 0;
+    if b1 then begin
+     firstnotfound:= 1;
+    end
+    else begin
+     firstnotfound:= 0;
+    end;
    end
    else begin
     if vik_implementation in visibility then begin
@@ -4794,6 +4801,8 @@ begin
      case d.kind of
       ck_block,ck_exceptblock,ck_finallyblock: begin
        write('idbefore:'+inttostrmse(d.block.blockidbefore));
+       write(' ident:'+inttostrmse(d.block.ident));
+       write(' ',getidentname(d.block.ident));
       end;
       ck_label: begin
        write('lab:'+inttostrmse(d.dat.lab));

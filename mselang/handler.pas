@@ -4131,6 +4131,7 @@ var
  po1: ptypedataty;
  ele1: elementoffsetty;
  ptop: pcontextitemty;
+ ident1: identty;
 label
  errlab;
 begin
@@ -4139,6 +4140,13 @@ begin
 {$endif}
  with info do begin
   ptop:= @contextstack[s.stacktop];
+  ident1:= contextstack[s.stackindex].d.block.ident;
+  if ident1 <> 0 then begin
+   if ele.findcurrent(ident1,[],allvisi,ele1) or 
+                                       ele.hasscope(ident1) then begin
+    identerror(ident1,err_duplicateidentifier);
+   end;
+  end;
   with ptop^ do begin
    case d.kind of
     ck_ref,ck_fact: begin
@@ -4156,7 +4164,7 @@ begin
         goto errlab;
        end;
       end;
-      with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
+      with pvardataty(ele.addscope(ident1,ek_var,basetype(po1)))^ do begin
        address:= getpointertempaddress();
        if po1^.h.kind <> dk_class then begin
         include(address.flags,af_withindirect);

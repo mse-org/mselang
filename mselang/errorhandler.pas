@@ -713,7 +713,7 @@ end;
 procedure identerror(const aident: identty; const aerror: errorty;
                              const aerrorlevel: errorlevelty = erl_none);
 begin
- errormessage(aerror,[getidentname(aident)],-1,0,aerrorlevel);
+ errormessage(aerror,[getidentname(aident)],minint,0,aerrorlevel);
 end;
 
 procedure identerror(const astackoffset: integer; const aident: identty; 

@@ -130,6 +130,7 @@ type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
  scopeinfoty = record
+  name: identty;
   element: elementoffsetty;
   childparent: elementoffsetty;
  end;
@@ -263,8 +264,10 @@ type
                  const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out adata: pointer): boolean;
+   function hasscope(const aname: identty): boolean;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
-           const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
+           const avislevel: visikindsty; out aparent: elementoffsetty;
+           out anamed: boolean): boolean;
                   //searches in scopestack, returns parent
    property lastdescendent: elementoffsetty read flastdescendent;
    function elebase: pointer; inline;
@@ -361,7 +364,7 @@ type
                            
    procedure pushscopelevel();
    procedure popscopelevel();
-   function addscope(const akind: elementkindty;
+   function addscope(const aname: identty; const akind: elementkindty;
                         const achildparent: elementoffsetty): pointer;
    
    function decelementparent: elementoffsetty; //returns old offset
@@ -1551,9 +1554,26 @@ begin
 end;
 }
 
+function telementhashdatalist.hasscope(const aname: identty): boolean;
+var
+ p1: pscopeinfoty;
+begin
+ result:= false;
+ p1:= fscopespo;
+ if p1 <> nil then begin
+  while p1 > fscopes do begin
+   if p1^.name = aname then begin
+    result:= true;
+    break;
+   end;
+   dec(p1);
+  end;
+ end;
+end;
+
 function telementhashdatalist.findparentscope(const aident: identty;
                const akinds: elementkindsty; const avislevel: visikindsty;
-               out aparent: elementoffsetty): boolean;
+               out aparent: elementoffsetty; out anamed: boolean): boolean;
 var
  uint1: ptruint;
  po1: pelementhashdataty;
@@ -1564,39 +1584,50 @@ label
  endloop;
 begin
  result:= false;
+ anamed:= false;
  if (fscopespo <> nil) and (count > 0) then begin // check "with" and the like 
   po3:= fscopespo;
   while true do begin
-   with pelementinfoty(pointer(felementdata)+po3^.childparent)^ do begin
-    id1:= header.path+header.name+aident;
-    uint1:= fhashtable[id1 and fmask];
-    if uint1 <> 0 then begin
-     po1:= pelementhashdataty(pchar(fdata) + uint1);
-     while true do begin
-      if (po1^.data.key = id1) then begin
-       with pelementinfoty(
-              pointer(felementdata)+po1^.data.data)^.header do begin    //child
-        if (name = aident) and (parent = po3^.childparent) then begin
-         po2:= pelementinfoty(pointer(felementdata) + po3^.childparent);//parent
-         if po2^.header.kind = ek_alias then begin
-          po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
-         end;
-         with po2^.header do begin 
-          if ((visibility * avislevel <> [])  or 
-          (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
-                             ((akinds = []) or (kind in akinds)) then begin
-           aparent:= po3^.element;
-           result:= true;
-           exit;
+   if po3^.name <> 0 then begin
+    if po3^.name = aident then begin
+     aparent:= po3^.element;
+     result:= true;
+     anamed:= true;
+     exit;
+    end;
+   end
+   else begin
+    with pelementinfoty(pointer(felementdata)+po3^.childparent)^ do begin
+     id1:= header.path+header.name+aident;
+     uint1:= fhashtable[id1 and fmask];
+     if uint1 <> 0 then begin
+      po1:= pelementhashdataty(pchar(fdata) + uint1);
+      while true do begin
+       if (po1^.data.key = id1) then begin
+        with pelementinfoty(
+               pointer(felementdata)+po1^.data.data)^.header do begin    //child
+         if (name = aident) and (parent = po3^.childparent) then begin
+          po2:= pelementinfoty(pointer(felementdata) + po3^.childparent);//parent
+          if po2^.header.kind = ek_alias then begin
+           po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
+          end;
+          with po2^.header do begin 
+           if ((visibility * avislevel <> [])  or 
+           (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
+                              ((akinds = []) or (kind in akinds)) then begin
+            aparent:= po3^.element;
+            result:= true;
+            exit;
+           end;
           end;
          end;
         end;
        end;
+       if po1^.header.nexthash = 0 then begin
+        goto endloop; //not found
+       end;
+       po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
       end;
-      if po1^.header.nexthash = 0 then begin
-       goto endloop; //not found
-      end;
-      po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
      end;
     end;
    end;
@@ -2641,7 +2672,8 @@ begin
  end; 
 end;
 
-function telementhashdatalist.addscope(const akind: elementkindty;
+function telementhashdatalist.addscope(const aname: identty;
+                                 const akind: elementkindty;
                                  const achildparent: elementoffsetty): pointer;
 var
  int1: integer;
@@ -2665,6 +2697,7 @@ begin
  {$endif}
  end;
  with fscopespo^ do begin
+  name:= aname;
   element:= result-pointer(felementdata);
   childparent:= achildparent;
  end;
