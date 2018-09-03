@@ -132,6 +132,21 @@ start1,start2,,
  ${whitespace}
  'uses'.,uses0-*,start2a
 uses0,uses1,,
+ ${whitespace}
+ 'implementation'.,usesok
+ 'type'.,usesok
+ 'const'.,usesok
+ 'var'.,usesok
+ 'threadvar'.,usesok
+ 'resourcestring'.,usesok
+ 'procedure'.,usesok
+{$grapas}
+ 'function'.,usesok
+{$}
+{$gramse}
+ 'method'.,usesok
+ 'procedure'.,usesok
+{$}
  '',commaidents^*
 uses1,useserror,,
  ';',usesok-

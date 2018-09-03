@@ -2986,7 +2986,69 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- buses0: array[0..1] of branchty = (
+ buses0: array[0..15] of branchty = (
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $0000025D{'implementation'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $0000025F{'type'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000260{'const'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000261{'var'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000262{'threadvar'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000263{'resourcestring'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000264{'procedure'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000268{'method'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @usesokco); stack: nil; 
+     keyword: $00000264{'procedure'}),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @commaidentsco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
@@ -3027,19 +3089,19 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @start2classco); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subprocedureheaderco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @submethodheaderco); stack: nil; 
      keyword: $00000268{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subprocedureheaderco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3080,7 +3142,7 @@ const
  bstart2class: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassprocedureheaderco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentafterpush];
      dest: (context: @subclassmethodheaderco); stack: nil; 
      keyword: $00000268{'method'}),
@@ -3369,16 +3431,16 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @main1classco); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @methodco); stack: nil; 
      keyword: $00000268{'method'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 
      keyword: $0000028A{'sub'}),
@@ -3431,7 +3493,7 @@ const
  bmain1class: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classprocedureco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classclamethodco); stack: nil; 
      keyword: $00000268{'method'}),
@@ -5216,10 +5278,10 @@ const
      keyword: $00000262{'threadvar'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @labeldefco); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @subsubco); stack: nil; 
      keyword: $0000028A{'sub'}),
@@ -7755,13 +7817,13 @@ const
      keyword: $00000286{'object'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @classdefco); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @interfacedefco); stack: nil; 
      keyword: $0000025C{'interface'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @proceduretypedefco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @subtypedefco); stack: nil; 
      keyword: $0000028A{'sub'}),
@@ -7847,19 +7909,19 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026D{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000028A{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000268{'method'}),
@@ -8060,19 +8122,19 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026D{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000028A{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000268{'method'}),
@@ -8245,19 +8307,19 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026D{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000028A{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000268{'method'}),
@@ -8716,19 +8778,19 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000026D{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $0000028A{'sub'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $00000268{'method'}),
@@ -9358,7 +9420,7 @@ const
      keyword: $000002A0{'published'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classmethodco); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methmethodheaderco); stack: nil; 
      keyword: $00000268{'method'}),
@@ -13312,13 +13374,13 @@ const
      keyword: $00000263{'resourcestring'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $00000264{'label'}),
+     keyword: $00000266{'label'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000026D{'begin'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $00000265{'class'}),
+     keyword: $00000267{'class'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $00000285{'of'}),
@@ -13330,7 +13392,7 @@ const
      keyword: $0000028A{'sub'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
-     keyword: $00000266{'procedure'}),
+     keyword: $00000264{'procedure'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @reservedwordco); stack: nil; 
      keyword: $0000026B{'constructor'}),

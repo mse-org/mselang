@@ -406,47 +406,49 @@ begin
 {$endif}
  with info do begin
   int2:= s.stacktop-s.stackindex-1;
-  setlength(ar1,int2);
-  for int1:= 0 to int2-1 do begin
-   if not ele.addelement(contextstack[s.stackindex+int1+2].d.ident.ident,
-                                    ek_uses,[vik_global],ar1[int1]) then begin
-    identerror(int1+2,err_duplicateidentifier);
-   end;
-  end;
-//  offs1:= ele.decelementparent;
-  with s.unitinfo^ do begin
-   if us_interfaceparsed in state then begin
-    setlength(implementationuses,int2);
-    po1:= pointer(implementationuses);
-   end
-   else begin
-   {$ifdef mse_checkinternalerror}
-    if interfaceuses = nil then begin
-     internalerror(ie_parser,'20150831A');
-    end;
-   {$endif}
-    setlength(interfaceuses,int2+1);
-    po1:= pointer(interfaceuses);
-    inc(po1);
-   end;
-  end;
-  inc(po1,int2);
-  int2:= 0;
-  for int1:= s.stackindex+2 to s.stacktop do begin
-   dec(po1);
-   po1^:= loadunit(int1);
-   if po1^ = nil then begin
-    s.state:= s.state + [ps_stop,ps_abort];
-    break;
-   end;
-   if ar1[int2] <> 0 then begin
-    with pusesdataty(ele.eledataabs(ar1[int2]))^ do begin
-     ref:= po1^^.interfaceelement;
+  if int2 > 0 then begin //else empty uses
+   setlength(ar1,int2);
+   for int1:= 0 to int2-1 do begin
+    if not ele.addelement(contextstack[s.stackindex+int1+2].d.ident.ident,
+                                     ek_uses,[vik_global],ar1[int1]) then begin
+     identerror(int1+2,err_duplicateidentifier);
     end;
    end;
-   inc(int2);
+ //  offs1:= ele.decelementparent;
+   with s.unitinfo^ do begin
+    if us_interfaceparsed in state then begin
+     setlength(implementationuses,int2);
+     po1:= pointer(implementationuses);
+    end
+    else begin
+    {$ifdef mse_checkinternalerror}
+     if interfaceuses = nil then begin
+      internalerror(ie_parser,'20150831A');
+     end;
+    {$endif}
+     setlength(interfaceuses,int2+1);
+     po1:= pointer(interfaceuses);
+     inc(po1);
+    end;
+   end;
+   inc(po1,int2);
+   int2:= 0;
+   for int1:= s.stackindex+2 to s.stacktop do begin
+    dec(po1);
+    po1^:= loadunit(int1);
+    if po1^ = nil then begin
+     s.state:= s.state + [ps_stop,ps_abort];
+     break;
+    end;
+    if ar1[int2] <> 0 then begin
+     with pusesdataty(ele.eledataabs(ar1[int2]))^ do begin
+      ref:= po1^^.interfaceelement;
+     end;
+    end;
+    inc(int2);
+   end;
+ //  ele.elementparent:= offs1;
   end;
-//  ele.elementparent:= offs1;
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
  end;

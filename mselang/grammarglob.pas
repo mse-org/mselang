@@ -121,10 +121,10 @@ const
  tk_var = $00000261;
  tk_threadvar = $00000262;
  tk_resourcestring = $00000263;
- tk_label = $00000264;
- tk_class = $00000265;
- tk_procedure = $00000266;
- tk_function = $00000267;
+ tk_procedure = $00000264;
+ tk_function = $00000265;
+ tk_label = $00000266;
+ tk_class = $00000267;
  tk_method = $00000268;
  tk_initialization = $00000269;
  tk_finalization = $0000026A;
@@ -212,8 +212,8 @@ const
   'int64','intpo','card8','card16','card32','card64','cardpo','flo32','flo64',
   'char8','char16','char32','bytestring','string8','string16','string32',
   'false','true','nil','unit','program','interface','implementation','uses',
-  'type','const','var','threadvar','resourcestring','label','class','procedure',
-  'function','method','initialization','finalization','constructor',
+  'type','const','var','threadvar','resourcestring','procedure','function',
+  'label','class','method','initialization','finalization','constructor',
   'destructor','begin','mode','dumpelements','dumpopcode','abort','stoponerror',
   'nop','include','define','undef','ifdef','ifndef','if','else','endif','ifend',
   'h','inline','on','off','constref','out','override','overload','of','object',
