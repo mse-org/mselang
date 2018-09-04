@@ -167,8 +167,8 @@ begin
   end
   else begin
    result:= getrttistackops(atype);
+   atype^.h.rtti:= result;
   end;
-  atype^.h.rtti:= result;
  end
  else begin
   p1:= datatoele(atype);

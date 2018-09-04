@@ -1442,7 +1442,8 @@ begin
           else begin
            s1:= inttostr(rec1[2]);
           end;
-          s1:= s1 + ':'+ftypelist.typename(rec1[3])+','+inttostr(rec1[4]);
+//          s1:= s1 + ':'+ftypelist.typename(rec1[3])+','+inttostr(rec1[4]);
+          s1:= s1 + ':'+ftypelist.typename(rec1[3])+','+getopname(rec1[4]);
           outconst([s1]);
          end
          else begin

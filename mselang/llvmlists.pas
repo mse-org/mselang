@@ -3100,7 +3100,7 @@ var
  cardmin1,cardmax1: card64;
  agloc2: aglocty;
  typ1: ptypedataty;
- b1: boolean;
+ b1,b2: boolean;
  link1: linkagety;
  propflags1: propertyflagsty;
  v1: llvmvaluety;
@@ -3274,8 +3274,10 @@ begin
    end;
   end;
   m1:= addagloc(agloc1);
-  atype^.h.llvmrtticonst:= m1.listid;
-  b1:= vik_interfacedef in datatoele(atype)^.header.visibility;
+  with datatoele(atype)^ do begin
+   b2:= header.defunit = info.s.unitinfo;
+   b1:= b2 and (vik_interfacedef in header.visibility);
+  end;
   if b1 then begin
    link1:= li_external;
   end
@@ -3283,9 +3285,12 @@ begin
    link1:= li_internal;
   end;
   i1:= self.addinitvalue(gak_const,m1.listid,link1);
-  atype^.h.llvmrttivar:= i1;
   result:= addpointercast(i1); //prtti
-  atype^.h.rtti:= result.listid;
+  if b2 then begin //type define unit
+   atype^.h.llvmrttivar:= i1;
+   atype^.h.llvmrtticonst:= m1.listid;
+   atype^.h.rtti:= result.listid;
+  end;
   if b1 then begin
    atype^.h.rttinameid:= getunitnameid();
    namelist.addname(info.s.unitinfo,atype^.h.rttinameid,atype^.h.llvmrttivar);

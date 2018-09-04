@@ -28,7 +28,7 @@ procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 
 procedure isstoredprop(const instance: tbase; 
                            const propinfo: ppropertyrttity): boolean;
-                           
+{$internaldebug on}                           
 implementation
 uses
  rtl_sysexceptions,rtl_sysconsts,rtl_strings,__mla__compilerunit,
