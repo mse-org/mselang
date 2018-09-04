@@ -62,8 +62,16 @@ type
                                     out afirstnotfound: int32): boolean;
  end;
  
+ tidcache = class(tint32int32hashdatalist)
+  public
+   procedure addid(const adata: pointer; const aid: int32);
+   function findid(const adata: pointer): int32;
+ end;
+ 
 implementation
-
+uses
+ elements;
+ 
 { telementcache }
 
 destructor telementcache.destroy();
@@ -169,6 +177,20 @@ begin
   result:= true;
   aelement:= p1^.data.element;
   afirstnotfound:= p1^.data.firstnotfound;
+ end;
+end;
+
+{ tidcache }
+
+procedure tidcache.addid(const adata: pointer; const aid: int32);
+begin
+ add(ele.eledatarel(adata),aid);
+end;
+
+function tidcache.findid(const adata: pointer): int32;
+begin
+ if not find(ele.eledatarel(adata),result) then begin
+  result:= -1;
  end;
 end;
 

@@ -784,6 +784,7 @@ type
 
   interfaceuses,implementationuses: unitinfopoarty;
   usescache: telementcache;
+  rtticache: tidcache;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
   resolvedforwardtypes: listadty;

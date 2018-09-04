@@ -281,7 +281,7 @@ type
   kind: datakindty;
   base: elementoffsetty; //base type, ex: precordty = ^recordty -> recordty type
                          //used for addressing record fields or typex = typey
-  rtti: dataaddressty; //0 -> none
+  rtti: int32; //-1 -> none
   llvmrtticonst: int32; //listid in constlist
   llvmrttivar: int32; //listid in globlist
   rttinameid: int32;    //for external link
@@ -716,7 +716,7 @@ procedure inittypedata(var atype: typedataty; akind: datakindty;
             {artti: dataaddressty;} aancestor: elementoffsetty); inline;
 begin
  atype.h.base:= 0;
- atype.h.rtti:= 0;//artti;
+ atype.h.rtti:= -1;//artti;
  atype.h.llvmrtticonst:= -1;
  atype.h.llvmrttivar:= -1;
  atype.h.rttinameid:= -1;

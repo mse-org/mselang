@@ -1096,6 +1096,7 @@ begin
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
  result^.usescache:= telementcache.create();
+ result^.rtticache:= tidcache.create();
  for rtlunit1:= low(info.rtlunits) to high(info.rtlunits) do begin
   if info.rtlunits[rtlunit1] <> nil then begin
    msearrayutils.additem(pointerarty(result^.interfaceuses),
@@ -2149,6 +2150,7 @@ begin
    freeandnil(llvmlists);
   end;
   freeandnil(usescache);
+  freeandnil(rtticache);
  end;
 end;
 

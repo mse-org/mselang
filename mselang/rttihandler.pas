@@ -20,7 +20,7 @@ interface
 uses
  globtypes,parserglob,handlerglob;
  
-function getrtti(const atype: ptypedataty): dataaddressty;
+function getrtti(const atype: ptypedataty): int32;
 {
 procedure init();
 procedure deinit();
@@ -154,15 +154,21 @@ begin
  end;
 end;
 
-function getrtti(const atype: ptypedataty): dataaddressty;
+function getrtti(const atype: ptypedataty): int32;
 var
  i1: int32;
  p1: pelementinfoty;
 begin
  result:= atype^.h.rtti;
- if result = 0 then begin
+ if result < 0 then begin
   if co_llvm in info.o.compileoptions then begin
-   result:= info.s.unitinfo^.llvmlists.globlist.addrtticonst(atype).listid;
+   result:= info.s.unitinfo^.rtticache.findid(atype);
+   if result < 0 then begin
+    result:= info.s.unitinfo^.llvmlists.globlist.addrtticonst(atype).listid;
+    if atype^.h.rtti < 0 then begin  //typedef in other unit
+     info.s.unitinfo^.rtticache.addid(atype,result);
+    end;
+   end;
 //   atype^.h.rttinameid:= getunitnameid();
   end
   else begin
