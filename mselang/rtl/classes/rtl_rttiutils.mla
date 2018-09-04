@@ -81,7 +81,10 @@ begin
 end;
 
 type
+ getter8ty = method(): int8;
+ getter16ty = method(): int16;
  getter32ty = method(): int32;
+ getter64ty = method(): int64;
  
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
@@ -113,8 +116,14 @@ begin
      m1.data:= instance;
      m1.code:= p1;
      case a.size of
+      bs_8:
+       result:= getter8ty(m1)();
+      bs_16:
+       result:= getter16ty(m1)();
       bs_32:
        result:= getter32ty(m1)();
+      bs_64:
+       result:= getter64ty(m1)();
       else:
        rttierror(sinvalidpropertysize,
                 [string8(a.name),getenumname(typeinfo(a.size),ord(a.size))]);
