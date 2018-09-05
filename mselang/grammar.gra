@@ -1590,7 +1590,7 @@ params0,params1,handleparams0entry,
  ')',paramsend-
 params1,params2,,
  '',exp^*
-params2,,,
+params2,,,handlenoparamsend
  ${whitespace}
  ',',params1-
  ')',paramsend-

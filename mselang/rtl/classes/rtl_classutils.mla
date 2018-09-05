@@ -23,7 +23,7 @@ begin
   result:= 'NIL';
  else
   decref(result);
-  pointer(result):= pointer(prttity(typeinfo(ainstance)^.typename); 
+  pointer(result):= pointer(prttity(typeinfo(ainstance)^.typename)); 
                                           //const, no incref needed
  end;
 end;

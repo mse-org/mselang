@@ -100,6 +100,7 @@ procedure handleuntypedparam();
 procedure handleparamdef3();
 procedure handleparamdefault();
 procedure handleparamsend();
+procedure handlenoparamsend();
 //procedure handlesubheader();
 
 procedure handleclassprocedureentry();
@@ -707,6 +708,14 @@ begin
   end;
  end;
 }
+end;
+
+procedure handlenoparamsend();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMSEND');
+{$endif}
+ tokenexpectederror(')');
 end;
 
 procedure handleclassprocedureentry();

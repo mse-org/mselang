@@ -33,7 +33,7 @@ begin
  if testv = 1 then
   testpro(8);
   if testv = 2 then
-   testpro(card16(8);
+   testpro(card16(8));
    if testv = 3 then
     testpro(card32(33));
     if testv = 3 then

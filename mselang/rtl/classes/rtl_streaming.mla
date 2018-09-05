@@ -106,6 +106,7 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
+// writestr(string8(propinfo^.name));
  case propinfo^.kind of
   rtk_integer:
    

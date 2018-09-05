@@ -135,7 +135,7 @@ constructor tfilestream.create(const afilename: string8;
 var
  fh: filehandlety;
 begin
- syserror(sys_fileopen(afilename,aopenmode,aaccessmode,arights,fh);
+ syserror(sys_fileopen(afilename,aopenmode,aaccessmode,arights,fh));
 end;
 
 end.

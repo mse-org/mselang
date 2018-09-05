@@ -14644,6 +14644,7 @@ begin
  params1co.branch:= @bparams1;
  params1co.next:= @params2co;
  params2co.branch:= @bparams2;
+ params2co.handleexit:= @handlenoparamsend;
  paramsendco.branch:= nil;
  paramsendco.handleentry:= @handleparamsend;
  getindexco.branch:= @bgetindex;

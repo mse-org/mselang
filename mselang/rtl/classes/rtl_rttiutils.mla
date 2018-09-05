@@ -94,7 +94,7 @@ begin
  with propinfo^:a do
   if not (a.kind in ordinalkinds) then
    rttierror(snoordprop,[string8(a.name),
-                         getenumname(typeinfo(a.kind),ord(a.kind))];
+                         getenumname(typeinfo(a.kind),ord(a.kind))]);
   else   
    case getpropreadad(instance,propinfo,p1) of
     pa_field:

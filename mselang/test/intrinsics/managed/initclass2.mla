@@ -32,7 +32,7 @@ end;
 var
  c2: ttest;
 begin
- c2:= getmem(sizeof(ttest1^);
+ c2:= getmem(sizeof(ttest1^));
  initialize(c2,ttest1);
  exitcode:= ttest1(c2).f3;
  c2.destroy();
