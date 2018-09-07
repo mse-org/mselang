@@ -121,7 +121,7 @@ begin
    else begin
     par.opaddress.bbindex:= 0;
    end;
-   newblockcontext(0);
+   newblockcontext({0});
 //   info.contextstack[info.s.stackindex].d.block.landingpad:= 
 //                                    par.popcpucontext.landingpadalloc;
   end;

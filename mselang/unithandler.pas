@@ -37,7 +37,8 @@ type
 
  oprelocitemty = record
   opad: opaddressty;
-  link: linkindexty;
+  link: linkindexty; //dest
+  prev: linkindexty; //for deleting of item
  end;
  poprelocitemty = ^oprelocitemty;
  
@@ -127,7 +128,8 @@ procedure linksetconstref(const alink: linkindexty;
 procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
                                                 const ssaindex: int32);
-procedure linkresolve(var alinks: linkindexty); //delete chain
+//procedure linkresolve(var alinks: linkindexty); //delete chain
+procedure deleterelocchain(var achain: linkindexty);
 
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
@@ -1231,6 +1233,7 @@ type
  end;
  linkinfoty = record
   next: linkindexty;
+  reloc: linkindexty; //for insert op relocation
   case integer of
    1:(dest: segaddressty);
    2:(phi: phiitemty);
@@ -1267,6 +1270,36 @@ begin
                                            aitemindex * sizeof(int32) - buffer;
  end;
 end;
+
+{$ifdef mse_checkrelocchain}
+procedure checkrelocchain(const checkreloc: boolean = true);
+var
+ i1,i2: int32;
+begin
+ i2:= 0;
+ i1:= info.s.currentopcodemarkchain;
+ if checkreloc then begin
+  while i1 <> 0 do begin
+   with links[i1] do begin
+    if (opreloc.prev <> i2) or (opreloc.prev = i1) or (next = i1) then begin
+     internalerror(ie_unit,'20180907A');
+    end;
+    i2:= i1;
+    i1:= next;
+   end;
+  end;
+ end;
+ i1:= deletedlinks;
+ while i1 <> 0 do begin
+  with links[i1] do begin
+   if next = i1 then begin
+    internalerror(ie_unit,'20180907B');
+   end;
+   i1:= next;
+  end;
+ end;
+end;
+{$endif}
  
 function link(var alinks: linkindexty): plinkinfoty;
 var
@@ -1286,7 +1319,11 @@ begin
   deletedlinks:= result^.next;
  end;
  result^.next:= alinks;
+ result^.reloc:= 0;
  alinks:= li1;
+{$ifdef mse_checkrelocchain}
+ checkrelocchain(false);
+{$endif}
 end;
 
 procedure linksreverse(var alinks: linkindexty);
@@ -1306,22 +1343,34 @@ begin
   until li1 = 0;
   alinks:= li2;
  end;
+{$ifdef mse_checkrelocchain}
+ checkrelocchain();
+{$endif}
 end;
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                     const offset: integer = 0);
 var
  po1: plinkinfoty;
+ i1: int32;
 begin
  po1:= link(alinks);
  po1^.dest:= aaddress;
  inc(po1^.dest.address,offset);
  if aaddress.segment = seg_op then begin
+  i1:= info.s.currentopcodemarkchain;
   with link(info.s.currentopcodemarkchain)^ do begin
+   po1:= @links[alinks]; //could be relocated
+   links[i1].opreloc.prev:= info.s.currentopcodemarkchain;
+   opreloc.prev:= 0;
    opreloc.opad:= po1^.dest.address;
    opreloc.link:= alinks;
   end;
+  po1^.reloc:= info.s.currentopcodemarkchain;
  end;
+{$ifdef mse_checkrelocchain}
+ checkrelocchain();
+{$endif}
 end;
 
 procedure linkmarkllvmconst(var alinks: linkindexty; const index: int32);
@@ -1356,7 +1405,47 @@ begin
   end;
  end;
 end;
+var testvar: pint32;
+procedure deleterelocitem(const alink: int32);
+begin
+ if alink <> 0 then begin
+  with links[alink] do begin
+   if info.s.currentopcodemarkchain = alink then begin
+    info.s.currentopcodemarkchain:= next;
+   end;
+testvar:= @next;
+   links[opreloc.prev].next:= next;         //links[0] is dummy
+   links[next].opreloc.prev:= opreloc.prev; //links[0] is dummy
+   next:= deletedlinks;
+   deletedlinks:= alink;
+  end;
+ end;
+{$ifdef mse_checkrelocchain}
+ checkrelocchain();
+{$endif}
+end;
 
+procedure deleterelocchain(var achain: linkindexty);
+var
+ li1: linkindexty;
+begin
+ if achain <> 0 then begin
+  li1:= achain;
+  while true do begin
+   with links[li1] do begin
+    links[opreloc.link].reloc:= 0;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= achain;
+  achain:= 0;
+ end;
+end;
+{
 procedure linkresolve(var alinks: linkindexty); //delete chain
 var
  li1: linkindexty;
@@ -1365,6 +1454,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
+    deleterelocitem(reloc);
     if next = 0 then begin
      break;
     end;
@@ -1376,7 +1466,7 @@ begin
   alinks:= 0;
  end;
 end;
-
+}
 procedure linkresolveopad(const alinks: linkindexty;
                                    const aaddress: opaddressty);
 var
@@ -1386,6 +1476,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
+    deleterelocitem(reloc);
     popaddressty(getsegmentpo(dest))^:= aaddress-1;
     if next = 0 then begin
      break;
@@ -1407,6 +1498,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
+    deleterelocitem(reloc);
     popaddressty(getsegmentpo(dest))^:= aaddress-1;
     if next = 0 then begin
      break;
@@ -1418,7 +1510,7 @@ begin
   deletedlinks:= alinks;
  end;
 end;
-var testvar: int32;
+
 procedure linkresolvecall(const alinks: linkindexty; 
                             const aaddress: opaddressty; const aglobid: int32);
 var
@@ -1473,6 +1565,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
+    deleterelocitem(reloc);
     pint32(getsegmentpo(dest))^:= avalue;
     if next = 0 then begin
      break;
@@ -1480,7 +1573,11 @@ begin
     li1:= next;
    end;
   end;
-  links[li1].next:= deletedlinks;
+  with links[li1] do begin
+//   if dest.segment = seg_op then begin
+//   end;
+   next:= deletedlinks;
+  end;
   deletedlinks:= alinks;
  end;
 end;

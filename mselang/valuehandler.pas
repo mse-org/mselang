@@ -2356,7 +2356,7 @@ var
        end;
        subflags1:= psubdataty(po4)^.flags;
        case po1^.header.kind of
-        ek_var: begin
+        ek_var,ek_field: begin
          if isclassof then begin
           if subflags1 * [sf_classmethod,sf_constructor] = [] then begin
            errormessage(err_classmethodexpected,[]);
@@ -2369,12 +2369,18 @@ var
          end
          else begin
           pvar1:= eletodata(po1);
-          typ1:= ele.eledataabs(pvar1^.vf.typ);
+          typ1:= ele.eledataabs(pvar1^.vf.typ); //ek_var and ek_field
           if typ1^.h.kind = dk_class then begin
            include(subflags1,sf_class);
           end;
           if [sf_class,sf_interface] * subflags1 <> [] then begin
-           if pvar1^.address.indirectlevel <> 1 then begin
+           if po1^.header.kind = ek_var then begin
+            i2:= pvar1^.address.indirectlevel;
+           end
+           else begin
+            i2:= pfielddataty(pvar1)^.indirectlevel;
+           end;
+           if i2 <> 1 then begin
             if sf_class in subflags1 then begin
              errormessage(err_classinstanceexpected,[]);
             end

@@ -1042,7 +1042,7 @@ parseend:
    writeinfoline('after2');
   end;
 {$endif}
-  linkresolve(s.currentopcodemarkchain); //delete chain
+  deleterelocchain(s.currentopcodemarkchain); //delete chain
 {
   with s.unitinfo^,externallinklist do begin
    ad1:= externalchain;

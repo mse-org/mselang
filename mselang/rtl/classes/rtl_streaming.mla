@@ -34,6 +34,7 @@ type
   method writeproperties(const instance: tpersistent);
   method writeproperty(const instance: tpersistent;
                                      const propinfo: ppropertyrttity);
+  method writestr(const avalue: string8);
   protected
    fstream: tstream;
  end;
@@ -106,13 +107,29 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
-// writestr(string8(propinfo^.name));
+ writestr(string8(propinfo^.name));
  case propinfo^.kind of
   rtk_integer:
    
   else:
    writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
                getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
+ end;
+end;
+
+method twriter.writestr(const avalue: string8);
+var
+ i1: int32;
+ ca1: card8;
+begin
+ i1:= length(avalue);
+ if i1 > $ff then
+  i1:= $ff;
+ end;
+ ca1:= i1;
+ fstream.write(ca1,1);
+ if avalue <> '' then
+  fstream.write(pointer(avalue)^,i1);
  end;
 end;
 

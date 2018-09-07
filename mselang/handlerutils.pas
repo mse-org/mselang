@@ -274,7 +274,7 @@ procedure initfactcontext(const stackoffset: int32);
 procedure initfactcontext(const acontext: pcontextitemty);
 procedure initblockcontext(const stackoffset: int32;
                                    const blockkind: contextkindty);
-procedure newblockcontext(const stackoffset: int32);
+procedure newblockcontext({const stackoffset: int32});
 procedure finiblockcontext(const stackoffset: int32);
 
 function initopenarrayconst(var adata: dataty; const itemcount: int32;
@@ -3067,9 +3067,9 @@ begin
  end;
 end;
 
-procedure newblockcontext(const stackoffset: int32);
+procedure newblockcontext({const stackoffset: int32});
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
+ with info{,contextstack[s.stackindex+stackoffset]} do begin
   inc(s.blockid);
   currentblockid:= s.blockid;
  end;
