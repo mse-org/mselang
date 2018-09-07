@@ -6451,7 +6451,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=43
+   c=41
     (
     kind=1
     a=0,664,4,managed
@@ -6650,7 +6650,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,subvar
+    a=0,664,4,subvar
     c=12
      (
      kind=2
@@ -6934,7 +6934,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,openarray
+    a=0,664,4,openarray
     c=25
      (
      kind=2
@@ -8537,50 +8537,6 @@ c=3
     a=0,648,1,setparams llvm
     teststate=1
     path=setparam.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,untypedconst
-    teststate=1
-    path=untypedconst.mla
-    comment=
-    cc=${mlc}
-    cd=
-    rc=${mli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=123
-    cr=0
-    ao=
-    ae=
-    aec=123
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,untypedconst llvm
-    teststate=1
-    path=untypedconst.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13373,7 +13329,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -14164,8 +14120,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,conversions
-    c=3
+    a=0,665,4,conversions
+    c=4
      (
      kind=2
      a=0,648,1,pointertostring1
@@ -14179,8 +14135,8 @@ c=3
      in=
      eo=
      ao=1
-     ee=
-     ae=1
+     ee=pointertostring1.mla(5,10) Error: Incompatible types: got "^pointer" expected "dk_string"
+     ae=0
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
@@ -14202,8 +14158,8 @@ c=3
      in=
      eo=
      ao=1
-     ee=
-     ae=1
+     ee=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
+     ae=0
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
@@ -14225,13 +14181,36 @@ c=3
      in=
      eo=
      ao=1
-     ee=
-     ae=1
+     ee=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
+     ae=0
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
+     aec=1
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,constparam
+     teststate=1
+     path=constparam.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=constparam.mla(11,6) Error: Variable identifier expected
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=constparam.mla(11,6) Error: Variable identifier expected
      aec=1
      ie=0
      )
@@ -14253,7 +14232,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,params
+    a=0,665,4,params
     c=4
      (
      kind=2
@@ -15495,61 +15474,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=171
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=117
  0 0
  0 0
  0 0

@@ -20,7 +20,9 @@ type
  efilererror = class(exception) end;
  ereadererror = class(efilererror) end;
  ewritererror = class(ereadererror) end;
- 
+
+ valuety = (va_none,va_int8,va_int16,va_int32,va_int64);
+
  tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
  end;
@@ -31,10 +33,15 @@ type
  twriter = class(tfiler)
   constructor create(const astream: tstream);
   class method iswriter(): boolean [override];
+
+  method writevalue(const avalue: valuety);
+  method writestr(const avalue: string8); //legth truncated to 255 chars
+  method writeinteger(const avalue: int32);
+  method writeinteger(const avalue: int64);
+
   method writeproperties(const instance: tpersistent);
   method writeproperty(const instance: tpersistent;
                                      const propinfo: ppropertyrttity);
-  method writestr(const avalue: string8);
   protected
    fstream: tstream;
  end;
@@ -52,7 +59,7 @@ type
 implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format;
-{$internaldebug on}
+ 
 procedure writererror(const amessage: string8);
 begin
  raise ewritererror.create(amessage);
@@ -104,17 +111,12 @@ begin
  result:= true;
 end;
 
-method twriter.writeproperty(const instance: tpersistent;
-               const propinfo: ppropertyrttity);
+method twriter.writevalue(const avalue: valuety);
+var
+ c1: card8;
 begin
- writestr(string8(propinfo^.name));
- case propinfo^.kind of
-  rtk_integer:
-   
-  else:
-   writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
-               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
- end;
+ c1:= card8(card32(avalue));
+ fstream.write(c1,1);
 end;
 
 method twriter.writestr(const avalue: string8);
@@ -130,6 +132,50 @@ begin
  fstream.write(ca1,1);
  if avalue <> '' then
   fstream.write(pointer(avalue)^,i1);
+ end;
+end;
+
+method twriter.writeinteger(const avalue: int32);
+var
+ i8: int8;
+ i16: int16;
+begin
+ if (avalue >= -$80) and (avalue < $80) then
+  writevalue(va_int8);
+  i8:= avalue;
+  fstream.write(i8,1);
+ else
+  if (avalue >= -$8000) and (avalue < $8000) then
+   writevalue(va_int16);
+   i16:= avalue;
+   write(i16,2);
+  else
+    writevalue(va_int32);
+    write(avalue,4);
+  end;
+ end;  
+end;
+
+method twriter.writeinteger(const avalue: int64);
+begin
+ if (avalue >= -$8000) and (avalue < $8000) then
+  writeinteger(int32(avalue));
+ else
+  writevalue(va_int64);
+  write(avalue,8);
+ end;
+end;
+
+method twriter.writeproperty(const instance: tpersistent;
+               const propinfo: ppropertyrttity);
+begin
+ writestr(string8(propinfo^.name));
+ case propinfo^.kind of
+  rtk_integer:
+   writeinteger(getordprop(instance,propinfo));
+  else:
+   writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
+               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
  end;
 end;
 

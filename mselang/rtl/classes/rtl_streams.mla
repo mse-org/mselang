@@ -29,6 +29,7 @@ type
  
  thandlestream = class(tstream)
   constructor create(const ahandle: filehandlety);
+  destructor destroy() [override];
   method read(var buffer; count: int32): int32 [override];
   method write(const buffer; count: int32): int32 [override];
   method seek(const offset: int64; 
@@ -38,6 +39,7 @@ type
   private
   protected
    fhandle: filehandlety;
+   method closehandle() [virtual];
 //   procedure SetSize(const NewSize: Int64); override;
   public
  end;
@@ -47,6 +49,8 @@ type
                      const aopenmode: fileopenmodety = fm_read;
                      const aaccessmode: fileaccessmodesty = [];
                      const arights: filerightsty = defaultfilerights);
+  protected
+   method closehandle() [override];
  end;
   
 implementation
@@ -110,6 +114,17 @@ begin
  inherited create();
 end;
 
+destructor thandlestream.destroy();
+var
+ fh1: filehandlety;
+begin
+ fh1:= fhandle;
+ if fh1 <> invalidfilehandle then
+  fhandle:= invalidfilehandle;
+  closehandle();
+ end;
+end;
+
 method thandlestream.read(var buffer; count: int32): int32;
 begin
  result:= sys_fileread(fhandle,@buffer,count);
@@ -126,6 +141,11 @@ begin
  result:= sys_fileseek(fhandle,offset,origin);
 end;
 
+method thandlestream.closehandle();
+begin
+ fhandle:= invalidfilehandle;
+end;
+
 { tfilestream }
 
 constructor tfilestream.create(const afilename: string8;
@@ -133,9 +153,17 @@ constructor tfilestream.create(const afilename: string8;
                const aaccessmode: fileaccessmodesty = [];
                const arights: filerightsty = defaultfilerights);
 var
- fh: filehandlety;
+ fh1: filehandlety;
 begin
- syserror(sys_fileopen(afilename,aopenmode,aaccessmode,arights,fh));
+ inherited create(invalidfilehandle);
+ syserror(sys_fileopen(afilename,aopenmode,aaccessmode,arights,fh1));
+ fhandle:= fh1;
+end;
+
+method tfilestream.closehandle();
+begin
+ sys_fileclose(fhandle); //no exception
+ inherited;
 end;
 
 end.

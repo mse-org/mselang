@@ -3296,7 +3296,11 @@ var
       end
       else begin
        if context1^.d.kind = ck_const then begin
-        if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
+        if desttype^.h.kind = dk_none then begin
+         errormessage(err_variableexpected,[],context1);
+         exit;
+        end;
+        if not tryconvert(context1,desttype,
                   vardata1^.address.indirectlevel-1,[]) then begin
          internalerror1(ie_handler,'20170423A');
         end;

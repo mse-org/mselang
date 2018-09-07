@@ -1,0 +1,12 @@
+program constparam;
+
+type
+ enutype = (en_1,en_2);
+
+procedure ttt(const a);
+begin
+end;
+
+begin
+ ttt(en_2);
+end.
