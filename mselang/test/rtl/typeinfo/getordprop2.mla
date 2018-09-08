@@ -42,7 +42,9 @@ begin
  ar1:= getproperties(t1);
  p4:= ar1[0];
  m1:= methodty(@t1.getp1);
- if (p4^.kind = rtk_integer) and (pointer(p4^.readaccess.accessproc) = m1.code) and (m1.data = t1) then
+ if (p4^.proptype^.kind = rtk_integer) and 
+          (pointer(p4^.readaccess.accessproc) = m1.code) and 
+                                                (m1.data = t1) then
   exitcode:= t1.p1 + t1.p2;
  end;
  t1.destroy();

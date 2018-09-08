@@ -3056,10 +3056,17 @@ const
 function tgloballocdatalist.addrtticonst(const atype: ptypedataty): llvmvaluety;
 var
  agloc1: aglocty;
- 
- procedure initmainagloc(const count: int32; const asize: int32;
+const
+ datarttikinds = [rtk_integer,rtk_cardinal,rtk_enum]; 
+ procedure initmainagloc(count: int32; const asize: int32;
                                                       const akind: rttikindty);
+ var
+  b1: boolean;
  begin
+  b1:= akind in datarttikinds;
+  if b1 then begin
+   count:= count + datarttifieldcount;
+  end;
   initagloc(agloc1,count+rttifieldcount);
   with fconstlist do begin
     //size: int32;            //0
@@ -3068,6 +3075,9 @@ var
    putagitem(agloc1,addi32(ord(akind)));
     //typename: string8;      //2
    putagitem(agloc1,self.addidentconst(datatoele(atype)^.header.name));
+   if b1 then begin
+    putagitem(agloc1,addi32(ord(datasizetorttisize[atype^.h.datasize]))); //0
+   end;
   end;
  end; //initmainagloc()
 

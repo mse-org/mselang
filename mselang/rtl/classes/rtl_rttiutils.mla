@@ -98,7 +98,7 @@ begin
   else   
    case getpropreadad(instance,propinfo,p1) of
     pa_field:
-     case b.size of
+     case b.datasize of
       bs_8:
        result:= pint8(p1)^;
       bs_16:
@@ -114,7 +114,7 @@ begin
     pa_method:
      m1.data:= instance;
      m1.code:= p1;
-     case b.size of
+     case b.datasize of
       bs_8:
        result:= getter8ty(m1)();
       bs_16:

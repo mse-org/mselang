@@ -22,7 +22,7 @@ begin
   p2:= (@p1^.properties.items);
   pe:= pointer(p2) + p1^.properties.size;
   while p2 < pe do
-   writeln(p2^.kind,' ',p2^.size);
+   writeln(p2^.proptype^.kind,' ',p2^.proptype^.datasize);
    inc(p2);
   end;
   exitcode:= 123;

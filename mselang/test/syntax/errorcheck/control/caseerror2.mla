@@ -1,0 +1,16 @@
+program caseerror2;
+
+type
+ enuty = (en_1,en_2);
+
+var
+ e1: enuty;
+ i1: int32;
+begin
+ case e1 of
+  en_2:
+ end;
+ case i1 of
+  en_2:
+ end;
+end.

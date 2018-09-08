@@ -182,11 +182,11 @@ const
 
 type
  datarttity = object(rttity)
-  
+  datasize: bitsizety;
  end;
  pdatarttity = ^datarttity;
   
- intrttity = object(datarttity)  //rtk_int
+ intrttity = object(datarttity)  //rtk_integer
   bytesize: int32;   //0
   bitsize: int32;    //1
   min: int64;        //2
@@ -194,7 +194,7 @@ type
  end;
  pintrttity = ^intrttity;
 
- cardrttity = object(datarttity) //rtk_card same layout as intrttity!
+ cardrttity = object(datarttity) //rtk_cardinal same layout as intrttity!
   bytesize: int32;   //0
   bitsize: int32;    //1
   min: card64;       //2
@@ -225,7 +225,7 @@ type
  penumitemrttity = ^enumitemrttity;
 {$endif}
 
- enumrttity = object(datarttity)
+ enumrttity = object(datarttity) //rtk_enum
   itemcount: int32;                   //0
   min: int32;                         //1
   max: int32;                         //2
@@ -273,7 +273,7 @@ type
  {$ifdef msecompiler}
   proptype: targetptrintty;
  {$else}
-  proptype: prttity;                 //0
+  proptype: pdatarttity;                 //0
  {$endif}
 //  size: bitsizety;                 
   name: pointer;                     //1 const string8
