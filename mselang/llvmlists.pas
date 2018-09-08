@@ -3105,6 +3105,7 @@ var
  propflags1: propertyflagsty;
  v1: llvmvaluety;
  readsub1,writesub1: psubdataty;
+ stringkind1: stringkindty;
 
 begin
  with fconstlist do begin
@@ -3170,7 +3171,7 @@ begin
      end;
     end;
     initmainagloc(4,sizeof(intrttity),rtk_cardinal);
-    putagitem(agloc1,addi32(atype^.h.bytesize));                  //0
+    putagitem(agloc1,addi32(atype^.h.bytesize));                   //0
     putagitem(agloc1,addi32(atype^.h.bitsize));                    //1
     putagitem(agloc1,addi64(cardmin1));                            //2
     putagitem(agloc1,addi64(cardmax1));                            //3
@@ -3193,7 +3194,7 @@ begin
       include(enuflags1,erf_ascending);
      end;
       //flags: enumrttiflagsty;
-     putagitem(agloc1,addi32(int32(enuflags1)));   //3
+     putagitem(agloc1,addi32(int32(enuflags1)));                  //3
      ele1:= first;
       //items: record end; //array of enumitemrttity
      while ele1 <> 0 do begin
@@ -3205,6 +3206,29 @@ begin
       end;
      end;
     end;
+   end;
+   dk_string: begin
+    case atype^.itemsize of
+     1: begin
+      if strf_bytes in atype^.infostring.flags then begin
+       stringkind1:= stk_byte;
+      end
+      else begin
+       stringkind1:= stk_8;
+      end;
+     end;
+     2: begin
+      stringkind1:= stk_16;
+     end;
+     4: begin
+      stringkind1:= stk_32;
+     end;
+     else begin
+      internalerror1(ie_rtti,'20180908A');
+     end;
+    end;
+    initmainagloc(1,sizeof(stringrttity),rtk_string);
+    putagitem(agloc1,addi32(ord(stringkind1)));       //0
    end;
    dk_class,dk_object: begin
     i1:= 0;
@@ -3248,18 +3272,19 @@ begin
         internalerror(ie_llvmlist,'20180711B');
        end;
       {$endif}
-       putagitem(agloc2,addi32(ord(datakindtorttikind[typ1^.h.kind])));    //0
-       putagitem(agloc2,addi32(ord(datasizetorttisize[typ1^.h.datasize])));//1
-       putagitem(agloc2,addidentconst(ele.eleinfoabs(ele1)^.header.name)); //2      //2
-       putagitem(agloc2,addi32(int32(propflags1)));                        //3
+       v1.listid:= getrtti(typ1);
+       v1.typeid:= pointertype;
+       putagitem(agloc2,v1);                                               //0
+       putagitem(agloc2,addidentconst(ele.eleinfoabs(ele1)^.header.name)); //1
+       putagitem(agloc2,addi32(int32(propflags1)));                        //2
        if not checkpropertymethod(readsub1,v1) then begin
         v1:= addi32(readoffset);
        end;
-       putagitem(agloc2,v1);                                               //4
+       putagitem(agloc2,v1);                                               //3
        if not checkpropertymethod(writesub1,v1) then begin
         v1:= addi32(writeoffset);
        end;
-       putagitem(agloc2,v1);                                               //5
+       putagitem(agloc2,v1);                                               //4
        ele1:= next;
       end;
      end;

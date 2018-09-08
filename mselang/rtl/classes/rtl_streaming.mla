@@ -21,7 +21,7 @@ type
  ereadererror = class(efilererror) end;
  ewritererror = class(ereadererror) end;
 
- valuety = (va_none,va_int8,va_int16,va_int32,va_int64);
+ valuety = (va_none,va_int1,va_int8,va_int16,va_int32,va_int64);
 
  tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
@@ -42,6 +42,7 @@ type
   method writeproperties(const instance: tpersistent);
   method writeproperty(const instance: tpersistent;
                                      const propinfo: ppropertyrttity);
+
   protected
    fstream: tstream;
  end;
@@ -49,6 +50,7 @@ type
  tpersistent = class(tobject)
   method assign(source: tpersistent) [virtual];
   method getnamepath(): string8 [virtual];
+
   protected
    method assignerror(const source: tpersistent);
    method assignto(dest: tpersistent) [virtual];
@@ -169,13 +171,18 @@ end;
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
 begin
+ if propinfo^.flags * [prf_readfield,prf_readproc] = [] then
+  exit; //can not get data for writing
+ end;
  writestr(string8(propinfo^.name));
- case propinfo^.kind of
+ case propinfo^.proptype^.kind of
   rtk_integer:
    writeinteger(getordprop(instance,propinfo));
+  rtk_string:
   else:
    writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
-               getenumname(typeinfo(propinfo^.kind),ord(propinfo^.kind))]));
+               getenumname(typeinfo(propinfo^.proptype^.kind),
+                                          ord(propinfo^.proptype^.kind))]));
  end;
 end;
 

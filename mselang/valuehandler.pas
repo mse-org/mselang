@@ -934,7 +934,8 @@ var
  var1: pvardataty;
  lastitem: pcontextitemty;
  fl1: stringflagsty;
- 
+label
+ endlab; 
 begin
  result:= false;
  with info do begin
@@ -949,7 +950,7 @@ begin
      listtoset(acontext,lastitem);
     end;
     else begin
-     exit;
+     goto endlab;
     end;
    end;
   end;
@@ -1229,7 +1230,7 @@ begin
        end;
       end;
       if not result then begin
-       exit; //no conversion possible
+       goto endlab; //no conversion possible
       end;
      end;
     end;
@@ -1238,7 +1239,7 @@ begin
            (source1^.h.kind = dk_class) and (destindirectlevel = 1) and 
                   (tf_classdef in acontext^.d.dat.datatyp.flags) then begin
       if not checkancestorclass(dest,source1) then begin
-       exit;
+       goto endlab;
       end;
       result:= true;
      end
@@ -1316,8 +1317,8 @@ begin
               dk_enum: begin
                if coo_enum in aoptions then begin
                 result:= true;
+                vcardinal:= venum.value;
                end;
-               vcardinal:= venum.value;
               end;
               {
               dk_boolean: begin
@@ -1330,14 +1331,14 @@ begin
               dk_character: begin
                if coo_character in aoptions then begin
                 result:= true;
+                vcardinal:= vcharacter;
                end;
-               vcardinal:= vcharacter;
               end;
               dk_set: begin //todo: arbitrary size
                if coo_set in aoptions then begin
                 result:= true;
+                vcardinal:= vset.value;
                end;
-               vcardinal:= vset.value;
               end;
              end;
             end;
@@ -1352,8 +1353,8 @@ begin
               dk_enum: begin
                if coo_enum in aoptions then begin
                 result:= true;
+                vinteger:= venum.value;
                end;
-               vinteger:= venum.value;
               end;
               {
               dk_boolean: begin
@@ -1371,14 +1372,14 @@ begin
               dk_character: begin
                if coo_character in aoptions then begin
                 result:= true;
+                vinteger:= vcharacter;
                end;
-               vinteger:= vcharacter;
               end;
               dk_set: begin //todo: arbitrary size
                if coo_set in aoptions then begin
                 result:= true;
+                vinteger:= vset.value;
                end;
-               vinteger:= vset.value;
               end;
              end;
             end;
@@ -1787,6 +1788,10 @@ begin
    end;
   end;
  end;
+endlab:
+ if not result and (coo_errormessage in aoptions) then begin
+  incompatibletypeserror(dest,source1,getstackoffset(acontext));
+ end;
 end;
 (*
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
@@ -1806,10 +1811,12 @@ begin
  with sysdatatypes[dest] do begin
   result:= tryconvert(acontext,
                               ele.eledataabs(typedata),indirectlevel,aoptions);
+{
   if not result and (coo_errormessage in aoptions) then begin
    incompatibletypeserror(typedata,acontext^.d.dat.datatyp.typedata,
                                                 getstackoffset(acontext));
   end;
+}
  end;
 end;
 {

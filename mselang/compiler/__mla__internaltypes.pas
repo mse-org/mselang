@@ -177,10 +177,16 @@ const
  rttifieldcount = 3;
  classrttidefindex = rttifieldcount + 0;
  listrttifieldcount = 1;
- propertyrttifieldcount = 6;
+ propertyrttifieldcount = 5;
+ datarttifieldcount = 1;
 
 type
- intrttity = record              //rtk_int
+ datarttity = object(rttity)
+  
+ end;
+ pdatarttity = ^datarttity;
+  
+ intrttity = object(datarttity)  //rtk_int
   bytesize: int32;   //0
   bitsize: int32;    //1
   min: int64;        //2
@@ -188,13 +194,18 @@ type
  end;
  pintrttity = ^intrttity;
 
- cardrttity = record             //rtk_card
+ cardrttity = object(datarttity) //rtk_card same layout as intrttity!
   bytesize: int32;   //0
   bitsize: int32;    //1
   min: card64;       //2
   max: card64;       //3
  end;
  pcardrttity = ^cardrttity;
+
+ stringkindty = (stk_byte,stk_8,stk_16,stk_32); 
+ stringrttity = object(datarttity)
+  stringkind: stringkindty; //0
+ end;
  
  enumrttiflagty = (erf_contiguous,erf_ascending);
  enumrttiflagsty = set of enumrttiflagty;
@@ -214,7 +225,7 @@ type
  penumitemrttity = ^enumitemrttity;
 {$endif}
 
- enumrttity = object(rttity)
+ enumrttity = object(datarttity)
   itemcount: int32;                   //0
   min: int32;                         //1
   max: int32;                         //2
@@ -258,12 +269,17 @@ type
  end;
  
  propertyrttity = record
-  kind: rttikindty;                  //0
-  size: bitsizety;                   //1
-  name: pointer;                     //2 const string8
-  flags: propertyflagsty;            //3
-  readaccess: propertyaccessinfoty;  //4
-  writeaccess: propertyaccessinfoty; //5
+//  kind: rttikindty;                
+ {$ifdef msecompiler}
+  proptype: targetptrintty;
+ {$else}
+  proptype: prttity;                 //0
+ {$endif}
+//  size: bitsizety;                 
+  name: pointer;                     //1 const string8
+  flags: propertyflagsty;            //2
+  readaccess: propertyaccessinfoty;  //3
+  writeaccess: propertyaccessinfoty; //4
  end;                                //propertyrttifieldcount
  ppropertyrttity = ^propertyrttity;
 

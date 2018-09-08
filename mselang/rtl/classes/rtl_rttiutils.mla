@@ -91,14 +91,14 @@ var
  p1: pointer;
  m1: methodty;
 begin
- with propinfo^:a do
-  if not (a.kind in ordinalkinds) then
+ with propinfo^:a,a.proptype^:b do
+  if not (b.kind in ordinalkinds) then
    rttierror(snoordprop,[string8(a.name),
-                         getenumname(typeinfo(a.kind),ord(a.kind))]);
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
   else   
    case getpropreadad(instance,propinfo,p1) of
     pa_field:
-     case a.size of
+     case b.size of
       bs_8:
        result:= pint8(p1)^;
       bs_16:
@@ -109,12 +109,12 @@ begin
        result:= pint64(p1)^;
       else:
        rttierror(sinvalidpropertysize,
-                [string8(a.name),getenumname(typeinfo(a.size),ord(a.size))]);
+                [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
      end;
     pa_method:
      m1.data:= instance;
      m1.code:= p1;
-     case a.size of
+     case b.size of
       bs_8:
        result:= getter8ty(m1)();
       bs_16:
@@ -125,7 +125,7 @@ begin
        result:= getter64ty(m1)();
       else:
        rttierror(sinvalidpropertysize,
-                [string8(a.name),getenumname(typeinfo(a.size),ord(a.size))]);
+                [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
      end;
     else:
      notimplemented('getordprop()');

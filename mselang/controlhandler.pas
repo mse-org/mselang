@@ -667,6 +667,7 @@ var
  expssa: int32;
  si1: databitsizety;
  b1: boolean;
+ typ1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
@@ -685,6 +686,7 @@ begin
    internalerror(ie_parser,'20150909A');
   end;
  {$endif}
+  typ1:= ele.eledataabs(poexp^.d.dat.datatyp.typedata);
   expssa:= poexp^.d.dat.fact.ssaindex;
   last:= getitemcount(poitem)-2;
   
@@ -699,85 +701,87 @@ begin
      end;
     end;
     if b1 then begin
-     si1:= ptypedataty(ele.eledataabs(
-                              poexp^.d.dat.datatyp.typedata))^.h.datasize;
-            //todo: signed/unsigned, use table
-     if tf_lower in d.dat.datatyp.flags then begin
-      po1:= additem(oc_cmpjmploimm);
-      if int1 <> last-1 then begin
-       po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
-      end;
-     end
-     else begin
-      if tf_upper in d.dat.datatyp.flags then begin
-       if int1 = last then begin
-        po1:= additem(oc_cmpjmpgtimm);
-       end
-       else begin
-        po1:= additem(oc_cmpjmploeqimm);
-        po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
+     if tryconvert(poitem,typ1,0,[coo_errormessage]) then begin
+      si1:= ptypedataty(ele.eledataabs(
+                               poexp^.d.dat.datatyp.typedata))^.h.datasize;
+             //todo: signed/unsigned, use table
+      if tf_lower in d.dat.datatyp.flags then begin
+       po1:= additem(oc_cmpjmploimm);
+       if int1 <> last-1 then begin
+        po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
        end;
       end
       else begin
-       if int1 = last then begin
-        po1:= additem(oc_cmpjmpneimm);
+       if tf_upper in d.dat.datatyp.flags then begin
+        if int1 = last then begin
+         po1:= additem(oc_cmpjmpgtimm);
+        end
+        else begin
+         po1:= additem(oc_cmpjmploeqimm);
+         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
+        end;
        end
        else begin
-        po1:= additem(oc_cmpjmpeqimm);
-        po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
+        if int1 = last then begin
+         po1:= additem(oc_cmpjmpneimm);
+        end
+        else begin
+         po1:= additem(oc_cmpjmpeqimm);
+         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
+        end;
        end;
       end;
-     end;
-     opmark.address:= opcount-1;
-     po1^.par.cmpjmpimm.imm.datasize:= si1;
-     if co_llvm in info.o.compileoptions then begin
-//      po1^.par.ssas1:= 
-             //todo: cardinal
-      with po1^.par do begin
+      opmark.address:= opcount-1;
+      po1^.par.cmpjmpimm.imm.datasize:= si1;
+      if co_llvm in info.o.compileoptions then begin
+ //      po1^.par.ssas1:= 
+              //todo: cardinal
+       with po1^.par do begin
+        case si1 of
+         das_1: begin
+          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi1(
+                                                       d.dat.constval.vboolean);
+         end;
+         das_8: begin
+          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi8(
+                                                       d.dat.constval.vinteger);
+         end;
+         das_16: begin
+          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi16(
+                                                       d.dat.constval.vinteger);
+         end;
+         das_32: begin
+          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
+                                                       d.dat.constval.vinteger);
+         end;
+         das_64: begin
+          cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi64(
+                                                       d.dat.constval.vinteger);
+         end;
+         else begin
+          internalerror1(ie_handler,'20170611A');
+         end;
+        end;
+        ssas1:= expssa;
+       end;
+      end
+      else begin
        case si1 of
         das_1: begin
-         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi1(
-                                                      d.dat.constval.vboolean);
+         po1^.par.cmpjmpimm.imm.vboolean:= d.dat.constval.vboolean;
         end;
         das_8: begin
-         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi8(
-                                                      d.dat.constval.vinteger);
+         po1^.par.cmpjmpimm.imm.vint8:= d.dat.constval.vinteger;
         end;
         das_16: begin
-         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi16(
-                                                      d.dat.constval.vinteger);
+         po1^.par.cmpjmpimm.imm.vint16:= d.dat.constval.vinteger;
         end;
         das_32: begin
-         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
-                                                      d.dat.constval.vinteger);
+         po1^.par.cmpjmpimm.imm.vint32:= d.dat.constval.vinteger;
         end;
         das_64: begin
-         cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi64(
-                                                      d.dat.constval.vinteger);
+         po1^.par.cmpjmpimm.imm.vint64:= d.dat.constval.vinteger;
         end;
-        else begin
-         internalerror1(ie_handler,'20170611A');
-        end;
-       end;
-       ssas1:= expssa;
-      end;
-     end
-     else begin
-      case si1 of
-       das_1: begin
-        po1^.par.cmpjmpimm.imm.vboolean:= d.dat.constval.vboolean;
-       end;
-       das_8: begin
-        po1^.par.cmpjmpimm.imm.vint8:= d.dat.constval.vinteger;
-       end;
-       das_16: begin
-        po1^.par.cmpjmpimm.imm.vint16:= d.dat.constval.vinteger;
-       end;
-       das_32: begin
-        po1^.par.cmpjmpimm.imm.vint32:= d.dat.constval.vinteger;
-       end;
-       das_64: begin
-        po1^.par.cmpjmpimm.imm.vint64:= d.dat.constval.vinteger;
        end;
       end;
      end;
