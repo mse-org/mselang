@@ -1,0 +1,31 @@
+program withderef;
+
+procedure format(const fmt: string8; const args: array of const): string8;
+type
+ pchar8 = ^char8;
+ convertinfoty = record
+  ps,pe,pd: pchar8;
+  value: int32;
+ end;
+var
+ info: convertinfoty; 
+begin
+ setlength(result,3);
+ info.pd:= pointer(result);
+ with info do
+  pd^:= 'A';
+  pd[1]:= 'B';
+  pd[2]:= 'C';
+ end;
+end;
+
+var
+ s1: string8;
+var
+ i1: int32;
+begin
+ s1:= format('abc',[]);
+ if s1 = 'ABC' then
+  exitcode:= 123;
+ end;
+end.

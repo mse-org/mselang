@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -6450,7 +6450,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=41
     (
     kind=1
@@ -8921,8 +8921,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,with
-   c=14
+   a=0,665,4,with
+   c=15
     (
     kind=2
     a=0,640,0,with1
@@ -9038,6 +9038,28 @@ c=3
     a=0,648,1,with3 llvm
     teststate=1
     path=with3.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,with4 llvm
+    teststate=1
+    path=with4.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13329,7 +13351,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -13375,7 +13397,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,typeinfo
+   a=0,665,4,typeinfo
    c=6
     (
     kind=2
@@ -13468,7 +13490,7 @@ c=3
     (
     kind=2
     a=0,648,1,classrtti llvm
-    teststate=2
+    teststate=1
     path=classrtti.mla
     comment=
     cc=${mlc_llvm}
@@ -13482,9 +13504,10 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=rtk_integer bs_32
+    +rtk_integer bs_16
+    ae=
     aec=123
     ie=0
     )
@@ -13510,7 +13533,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=typeinfo/
    comment=
    cc=
@@ -13854,7 +13877,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=intrinsics/
   comment=
   cc=
@@ -14068,7 +14091,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syntax
+  a=0,664,4,syntax
   c=1
    (
    kind=1
@@ -14691,7 +14714,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=7
    (
    kind=1
@@ -15081,12 +15104,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,typeinfo
+   a=0,665,4,typeinfo
    c=3
     (
     kind=2
-    a=0,648,2,property1 llvm
-    teststate=2
+    a=0,648,1,property1 llvm
+    teststate=1
     path=property1.mla
     comment=
     cc=${mlc_llvm}
@@ -15099,16 +15122,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,getordprop1 llvm
-    teststate=2
+    a=0,648,1,getordprop1 llvm
+    teststate=1
     path=getordprop1.mla
     comment=
     cc=${mlc_llvm}
@@ -15121,16 +15144,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,getorprop2 llvm
-    teststate=2
+    a=0,648,1,getorprop2 llvm
+    teststate=1
     path=getordprop2.mla
     comment=
     cc=${mlc_llvm}
@@ -15143,13 +15166,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=typeinfo/
    comment=
    cc=
@@ -15167,12 +15190,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,streaming
+   a=0,664,4,streaming
    c=1
     (
     kind=2
     a=0,648,1,streaming1 llvm
-    teststate=2
+    teststate=1
     path=streaming1.mla
     comment=
     cc=${mlc_llvm}
@@ -15185,13 +15208,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=streaming/
    comment=
    cc=
@@ -15293,7 +15316,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -15373,7 +15396,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -15496,7 +15519,24 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=52
+rowstate=69
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

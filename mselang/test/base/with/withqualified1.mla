@@ -1,0 +1,28 @@
+program withqualified1;
+type
+ rec1ty = object
+  a,b: int32;
+ end;
+
+ recty = object
+  a,b: int32;
+  c: rec1ty;
+ end;
+
+procedure test(const a,b: recty);
+begin
+ exitcode:= a.a + a.b + b.b + a.c.b;
+end;
+
+var
+ r1,r2: recty;
+ b: int32;
+begin
+ with r1:d, r2:e, d.c:f do
+  d.a:= 70;
+  d.b:= 20;
+  e.b:= 3;
+  f.b:= 30;
+  test(d,e);
+ end;
+end.

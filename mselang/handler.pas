@@ -1540,14 +1540,31 @@ begin
      else begin
       case d.kind of
        ck_ref: begin        //todo: make universal
-        include(d.dat.ref.c.address.flags,af_dereferenced);
-        if not (stf_getaddress in s.currentstatementflags) then begin
+        if (stf_getaddress in s.currentstatementflags) then begin
+         if af_dereferenced in d.dat.ref.c.address.flags then begin
+          exclude(d.dat.ref.c.address.flags,af_nostartoffset);
+          getvalue(potop,das_none); //returns ck_fact
+          include(d.dat.datatyp.flags,tf_derefop);
+         end
+         else begin
+          include(d.dat.ref.c.address.flags,af_dereferenced);
+         end;
+        end
+        else begin
+         include(d.dat.ref.c.address.flags,af_dereferenced);
          if af_nostartoffset in d.dat.ref.c.address.flags then begin
           exclude(d.dat.ref.c.address.flags,af_nostartoffset);
           getvalue(potop,das_none);
          end
          else begin
           include(d.dat.ref.c.address.flags,af_startoffset);
+         end;
+        end;
+       end;
+       ck_fact,ck_subres: begin
+        if (stf_getaddress in s.currentstatementflags) then begin
+         if tf_derefop in d.dat.datatyp.flags then begin
+          getvalue(potop,das_none);
          end;
         end;
        end;
@@ -1558,9 +1575,6 @@ begin
         else begin
          internalerror1(ie_notimplemented,'20140402B'); //todo
         end;
-       end;
-       ck_fact,ck_subres: begin
-        //nothing to do
        end;
        ck_none,ck_error: begin
         exit;
@@ -1683,8 +1697,8 @@ begin
         end;
        end;
        ck_fact: begin
-        if d.dat.indirection = -1 then begin
-         d.dat.indirection:= 0;
+        if d.dat.indirection < 0 then begin
+         inc(d.dat.indirection);
          inc(d.dat.datatyp.indirectlevel);
         end
         else begin

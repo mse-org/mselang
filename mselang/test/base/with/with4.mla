@@ -1,0 +1,22 @@
+program with4;
+
+type
+ precty = ^recty;
+ recty = record
+  a: int32;
+  b: precty;
+  c: int32;
+ end;
+
+var
+ r1,r2: recty;
+ p1: precty;
+begin
+
+ p1:= @r1;
+ r1.b:= @r2;
+ with p1^.b^ do
+  c:= 123;
+ end;
+ exitcode:= r2.c;
+end.
