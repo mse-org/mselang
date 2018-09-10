@@ -148,6 +148,8 @@ procedure __mla__string8tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__string16tovarrecty(const value: pointer; const res: pvarrecty);
 procedure __mla__string32tovarrecty(const value: pointer; const res: pvarrecty);
 
+procedure __mla__inttostr(const value: int32): string8;
+
 procedure __mla__frac64(value: flo64): flo64;
 
 type
@@ -1826,6 +1828,8 @@ begin
   if (i1 >= 0) and (i1 < rtti^.itemcount) then
    decref(result);
    pointer(result):= pointer((p1 + i1)^.name); //const string, no incref
+  else
+   result:= __mla__inttostr(enumvalue);
   end;
  else
   pe:= p1+rtti^.itemcount;
@@ -2147,6 +2151,33 @@ begin
   result:= value - floor(value);
  end; 
 }
+end;
+
+procedure __mla__inttostr(const value: int32): string8 [noexception];
+var
+ buffer: array[0..22] of char8;
+ i1,i2: int32;
+ ca1,ca2: card32;
+begin
+ ca1:= abs(value);
+ if ca1 = 0 then
+  result:= '0';
+  exit;
+ end;
+ i1:= high(buffer);
+ while ca1 > 0 do
+  ca2:= ca1 div 10;
+  buffer[i1]:= char8(card8(ca1 - ca2 * 10 + ord('0')));
+  ca1:= ca2;
+  dec(i1);
+ end;
+ if value < 0 then
+  buffer[i1]:= '-';
+  dec(i1);
+ end;
+ i2:= (high(buffer))-i1;
+ setlength(result,i2);
+ memcpy(pointer(result),@buffer[i1+1],i2*sizeof(char8));
 end;
 
 procedure stringcopy(source: pointer): pointer [noexception];

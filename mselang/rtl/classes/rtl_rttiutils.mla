@@ -19,6 +19,15 @@ type
 procedure getenumname(const typ: prttity; const value: int32): string8;
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
+procedure getbytestringprop(const instance: tbase;
+                             const propinfo: ppropertyrttity): bytestring;
+procedure getstring8prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string8;
+procedure getstring16prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string16;
+procedure getstring32prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string32;
+
 procedure getpropinfo(const atypeinfo: pobjectrttity;
                            const propname: string8): ppropertyrttity;
 procedure getpropinfo(const instance: tbase;
@@ -132,6 +141,40 @@ begin
    end;
   end;
  end;
+end;
+
+procedure getbytestringprop(const instance: tbase;
+                             const propinfo: ppropertyrttity): bytestring;
+begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_byte then
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'sk_byte']);
+   end;
+  end;
+ end;
+end;
+
+procedure getstring8prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string8;
+begin
+end;
+
+procedure getstring16prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string16;
+begin
+end;
+
+procedure getstring32prop(const instance: tbase;
+                                const propinfo: ppropertyrttity): string32;
+begin
 end;
 
 procedure getpropinfo(const atypeinfo: pobjectrttity;

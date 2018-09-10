@@ -3057,7 +3057,7 @@ function tgloballocdatalist.addrtticonst(const atype: ptypedataty): llvmvaluety;
 var
  agloc1: aglocty;
 const
- datarttikinds = [rtk_integer,rtk_cardinal,rtk_enum]; 
+ datarttikinds = [rtk_integer,rtk_cardinal,rtk_enum,rtk_string]; 
  procedure initmainagloc(count: int32; const asize: int32;
                                                       const akind: rttikindty);
  var

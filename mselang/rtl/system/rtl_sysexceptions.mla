@@ -65,7 +65,7 @@ begin
  if (error >= 0) and (error <= high(errortexts)) then
   s1:= errortexts[error];
  else
-  s1:= serror+':'+inttostr8(error);
+  s1:= serror+':'+inttostring8(error);
  end;
  if text = '' then
   inherited create(s1+'.');

@@ -19,6 +19,7 @@ resourcestring
  swriteerror = 'Stream write error';
  
  scannotwritepropertykind = 'Can not stream property "%0s" of kind "%1s"';
+ sinvalidstringkind = 'Invalid string kind in property "%0s": "%1s"';
  
 implementation
 end.

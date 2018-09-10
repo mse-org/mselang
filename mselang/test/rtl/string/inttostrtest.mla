@@ -5,10 +5,10 @@ var
  s1,s2: string8;
  s1a,s2a: string16;
 begin
- s1:= inttostr8(123);
- s2:= inttostr8(-123);
- s1a:= inttostr16(123);
- s2a:= inttostr16(-123);
+ s1:= inttostring8(123);
+ s2:= inttostring8(-123);
+ s1a:= inttostring16(123);
+ s2a:= inttostring16(-123);
  if (s1 = '123') and (s2 = '-123') and
      (s1a = '123') and (s2a = '-123') then
   exitcode:= 123;

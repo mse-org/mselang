@@ -22,6 +22,6 @@ var
  c1: ttest;
  s1: string8;
 begin
- s1:= inttostr8(123);
+ s1:= inttostring8(123);
  raise ttest.create();
 end.

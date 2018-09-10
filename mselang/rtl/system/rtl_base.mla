@@ -34,7 +34,7 @@ type
 //  method test() [virtual];
  end;
   
-procedure inttostr(const value: integer): string;
+//procedure inttostr(const value: integer): string;
 procedure random(const limit: int32): int32;
 procedure random(const limit: int64): int64;
 
@@ -45,6 +45,7 @@ begin
  writeln('tbase.test');
 end;
 }
+{
 procedure inttostr(const value: integer): string;
 var
  buffer: array[0..22] of char;
@@ -71,7 +72,7 @@ begin
  setlength(result,int2);
  memcpy(pointer(result),@buffer[int1+1],int2*sizeof(char));
 end;
-
+}
 const
  defaultmwcseedw = 521288629;
  defaultmwcseedz = 362436069;

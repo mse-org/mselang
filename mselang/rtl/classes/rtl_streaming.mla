@@ -21,7 +21,9 @@ type
  ereadererror = class(efilererror) end;
  ewritererror = class(ereadererror) end;
 
- valuety = (va_none,va_int1,va_int8,va_int16,va_int32,va_int64);
+ valuety = (va_none,va_int1,va_int8,va_int16,va_int32,va_int64,
+            va_strl1,va_strl2,va_strl4 //size of length value
+           );
 
  tfiler = class(tobject)
   class method iswriter(): boolean [virtual];
@@ -35,9 +37,14 @@ type
   class method iswriter(): boolean [override];
 
   method writevalue(const avalue: valuety);
-  method writestr(const avalue: string8); //legth truncated to 255 chars
+  method writestr(const avalue: string8); //length truncated to 255 chars
+
   method writeinteger(const avalue: int32);
   method writeinteger(const avalue: int64);
+  method writebytestring(const avalue: bytestring);
+  method writestring8(const avalue: string8);
+  method writestring16(const avalue: string16);
+  method writestring32(const avalue: string32);
 
   method writeproperties(const instance: tpersistent);
   method writeproperty(const instance: tpersistent;
@@ -65,6 +72,11 @@ uses
 procedure writererror(const amessage: string8);
 begin
  raise ewritererror.create(amessage);
+end;
+
+procedure writererror(const amessage: string8; const avalues: array of const);
+begin
+ raise ewritererror.create(format(amessage,avalues));
 end;
 
 { tpersistent }
@@ -168,8 +180,50 @@ begin
  end;
 end;
 
+method twriter.writebytestring(const avalue: bytestring);
+var
+ i1: int32;
+ c1: card8;
+ c2: card16;
+ 
+begin
+ i1:= length(avalue);
+ if i1 < $100 then
+  writevalue(va_strl1);
+  c1:= i1;
+  write(c1,sizeof(c1));
+ else
+  if i1 < $10000 then
+   writevalue(va_strl2);
+   c2:= i1;
+   write(c2,sizeof(c2));
+  else
+   writevalue(va_strl4);
+   write(i1,sizeof(i1));
+  end;
+ end;
+ write(pointer(avalue)^,i1);
+end;
+
+method twriter.writestring8(const avalue: string8);
+begin
+ writebytestring(bytestring(pointer(avalue)));
+end;
+
+method twriter.writestring16(const avalue: string16);
+begin
+ writestring8(string8(avalue));
+end;
+
+method twriter.writestring32(const avalue: string32);
+begin
+ writestring8(string8(avalue));
+end;
+
 method twriter.writeproperty(const instance: tpersistent;
                const propinfo: ppropertyrttity);
+var
+ k1: stringkindty;
 begin
  if propinfo^.flags * [prf_readfield,prf_readproc] = [] then
   exit; //can not get data for writing
@@ -179,10 +233,24 @@ begin
   rtk_integer:
    writeinteger(getordprop(instance,propinfo));
   rtk_string:
+   k1:= pstringrttity(propinfo.proptype)^.stringkind;
+   case k1 of
+    stk_byte:
+     writebytestring(getbytestringprop(instance,propinfo));
+    stk_8:
+     writestring8(getstring8prop(instance,propinfo));
+    stk_16:
+     writestring16(getstring16prop(instance,propinfo));
+    stk_32:
+     writestring32(getstring32prop(instance,propinfo));
+    else:
+     writererror(sinvalidstringkind,[string8(propinfo^.name),
+                                     getenumname(typeinfo(k1),ord(k1))])
+   end;
   else:
-   writererror(format(scannotwritepropertykind,[string8(propinfo^.name),
+   writererror(scannotwritepropertykind,[string8(propinfo^.name),
                getenumname(typeinfo(propinfo^.proptype^.kind),
-                                          ord(propinfo^.proptype^.kind))]));
+                                          ord(propinfo^.proptype^.kind))]);
  end;
 end;
 

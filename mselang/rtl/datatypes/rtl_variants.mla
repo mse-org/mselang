@@ -148,7 +148,7 @@ type
 implementation
 
 uses
- rtl_base{,rtl_exceptions};
+ rtl_base,rtl_stringconv{,rtl_exceptions};
  
 { evariant }
 
@@ -163,8 +163,8 @@ end;
 constructor evarianttovalue.create(const source,dest: card16);
 begin
  fdest:= dest;
- inherited create('Can not convert type '+inttostr(source)+
-                                               'to '+inttostr(dest),source);
+ inherited create('Can not convert type '+inttostring8(source)+
+                                             'to '+inttostring8(dest),source);
 end;
 
 { evariantbinop }
@@ -173,8 +173,8 @@ constructor evariantbinop.create(const atype,btype: card16;
                                            const operation: string8);
 begin
  fbtype:= btype;
- inherited create('variant operandtypeerror a: '+inttostr(atype)+' b: '+
-                        inttostr(btype)+' "'+operation+'"',atype);
+ inherited create('variant operandtypeerror a: '+inttostring8(atype)+' b: '+
+                        inttostring8(btype)+' "'+operation+'"',atype);
 end;
 
 { variantty }

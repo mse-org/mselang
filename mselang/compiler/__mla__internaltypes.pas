@@ -202,10 +202,11 @@ type
  end;
  pcardrttity = ^cardrttity;
 
- stringkindty = (stk_byte,stk_8,stk_16,stk_32); 
+ stringkindty = (stk_none,stk_byte,stk_8,stk_16,stk_32); 
  stringrttity = object(datarttity)
   stringkind: stringkindty; //0
  end;
+ pstringrttity = ^stringrttity;
  
  enumrttiflagty = (erf_contiguous,erf_ascending);
  enumrttiflagsty = set of enumrttiflagty;

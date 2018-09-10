@@ -21,6 +21,8 @@ resourcestring
  serror = 'Error';
  snoordprop = '"%s0" with datakind %s1 is no ordinal property';
  sinvalidpropertysize = 'Property "%s0" has invalid property size %s1';
+ snostringprop = '"%s0" with datakind %s1 is no string property';
+ swrongstringkind = '"%s0" has wrong string kind, got "%s1", expected "%s2"';
  
 implementation
 end.
