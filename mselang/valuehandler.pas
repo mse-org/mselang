@@ -2320,6 +2320,11 @@ var
          end;
         {$endif}
         end;
+        if d.dat.datatyp.indirectlevel <> 0 then begin
+         errormessage(err_illegalqualifier,[],
+                            s.stacktop-s.stackindex + int1-idents.high);
+         exit;
+        end;
         d.dat.datatyp.typedata:= ele1; //todo: adress operator
         d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                        ptypedataty(ele.eledataabs(ele1))^.h.indirectlevel;

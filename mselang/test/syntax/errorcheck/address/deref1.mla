@@ -1,0 +1,13 @@
+program deref1;
+type
+ recty = record
+  a,b: int32;
+ end;
+ precty = ^recty;
+var
+ r1: recty;
+ p1: precty;
+begin
+ p1:= @r1;
+ exitcode:= p1.b; 
+end.

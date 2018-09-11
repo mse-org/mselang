@@ -233,7 +233,7 @@ begin
   rtk_integer:
    writeinteger(getordprop(instance,propinfo));
   rtk_string:
-   k1:= pstringrttity(propinfo.proptype)^.stringkind;
+   k1:= pstringrttity(propinfo^.proptype)^.stringkind;
    case k1 of
     stk_byte:
      writebytestring(getbytestringprop(instance,propinfo));
