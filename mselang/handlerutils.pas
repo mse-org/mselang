@@ -3613,6 +3613,9 @@ begin
    d.dat.datatyp:= datatypbefore;
    if d.kind = ck_ref then begin 
     d.dat.ref.offset:= offsetbefore; //???
+    acontext^.d.dat.ref.c.address.flags:= 
+        acontext^.d.dat.ref.c.address.flags + flagsbefore*[af_startoffset];
+                        //todo: correct?
    end;
   end;
  end;

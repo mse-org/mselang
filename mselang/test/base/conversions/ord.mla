@@ -1,0 +1,14 @@
+program ord;
+type
+ enuty = (en_0,en_1,en_2);
+var
+ en1: enuty;
+ ch1: char8;
+ bo1: bool1;
+begin
+ exitcode:= ord(en_2) + ord('0')+ord(5)+ord(true); //56
+ en1:= en_1; //1
+ ch1:= '1';  //49
+ bo1:= true; //1
+ exitcode:= exitcode+ord(en1)+ord(ch1)+ord(bo1)+123-56-51;
+end.

@@ -1,0 +1,22 @@
+program objtoobj;
+type
+ obj1ty = object
+  a,b: int32;
+ end;
+ pobj1ty = ^obj1ty;
+
+ obj2ty = object(obj1ty)
+  c: int32;
+ end;
+ pobj2ty = ^obj2ty;
+
+var
+ o1: obj2ty;
+ p1: pobj1ty;
+begin
+ p1:= @o1;
+ with pobj2ty(p1)^ do
+ c:= 123;
+ end;
+ exitcode:= o1.c;
+end.

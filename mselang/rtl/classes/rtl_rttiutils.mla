@@ -67,22 +67,24 @@ procedure notimplemented(const atext: string8);
 begin
  raise enotimplemented.create(atext);
 end;
-
+var testvar: pointer;
 procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
-                   out po: pointer): propertyaccessty;
+                   out po: methodty): propertyaccessty;
 begin
  result:= pa_none;
  if prf_readfield in propinfo^.flags then
   result:= pa_field;
-  po:= pointer(instance)+propinfo^.readaccess.fieldoffset;
+  po.data:= pointer(instance)+propinfo^.readaccess.fieldoffset;
+testvar:= po.data;
  else
   if prf_readproc in propinfo^.flags then
    result:= pa_method;
+   po.data:= instance;
    if prf_virtualread in propinfo^.flags then
-    po:= (ppointer(@ppclassdefty(instance)^^.virtualmethods) + 
+    po.code:= (ppointer(@ppclassdefty(instance)^^.virtualmethods) + 
                                              propinfo^.readaccess.tableindex)^;
    else
-    po:= propinfo^.readaccess.accessproc;
+    po.code:= propinfo^.readaccess.accessproc;
    end;
   end;
  end;
@@ -93,11 +95,11 @@ type
  getter16ty = method(): int16;
  getter32ty = method(): int32;
  getter64ty = method(): int64;
+ getterpoty = method(): pointer;
  
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
 var
- p1: pointer;
  m1: methodty;
 begin
  with propinfo^:a,a.proptype^:b do
@@ -105,24 +107,24 @@ begin
    rttierror(snoordprop,[string8(a.name),
                          getenumname(typeinfo(b.kind),ord(b.kind))]);
   else   
-   case getpropreadad(instance,propinfo,p1) of
+   case getpropreadad(instance,propinfo,m1) of
     pa_field:
+testvar:= m1.data;
      case b.datasize of
       bs_8:
-       result:= pint8(p1)^;
+       result:= pint8(m1.data)^;
       bs_16:
-       result:= pint16(p1)^;
+       result:= pint16(m1.data)^;
       bs_32:
-       result:= pint32(p1)^;
+result:= pint32(testvar)^;
+       result:= pint32(m1.data)^;
       bs_64:
-       result:= pint64(p1)^;
+       result:= pint64(m1.data)^;
       else:
        rttierror(sinvalidpropertysize,
                 [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
      end;
     pa_method:
-     m1.data:= instance;
-     m1.code:= p1;
      case b.datasize of
       bs_8:
        result:= getter8ty(m1)();
@@ -145,6 +147,9 @@ end;
 
 procedure getbytestringprop(const instance: tbase;
                              const propinfo: ppropertyrttity): bytestring;
+var
+ s1: bytestring;
+ m1: methodty;
 begin
  with propinfo^:a,pstringrttity(a.proptype)^:b do
   if b.kind <> rtk_string then
@@ -152,6 +157,14 @@ begin
                          getenumname(typeinfo(b.kind),ord(b.kind))]);
   else
    if b.stringkind = stk_byte then
+    case getpropreadad(instance,propinfo,m1) of
+     pa_field:
+      result:= pbytestring(m1.data)^;
+     pa_method:
+      pointer(s1):= getterpoty(m1)();
+      incref(s1);
+      result:= s1;
+    end;
    else
     rttierror(swrongstringkind,
                 [string8(a.name),

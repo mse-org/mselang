@@ -33,6 +33,10 @@ type
  char8 = char;
  char16 = unicodechar;
  char32 = card32;
+ bytestring = targetptrintty;
+ string8 = targetptrintty;
+ string16 = targetptrintty;
+ string32 = targetptrintty;
 {$endif}
  cint = int32;
  
@@ -51,6 +55,11 @@ type
  pchar8 = ^char8; 
  pchar16 = ^char16; 
  pchar32 = ^char32; 
+ 
+ pbytestring = ^bytestring;
+ pstring8 = ^string8;
+ pstring16 = ^string16;
+ pstring32 = ^string32;
 
 {$ifdef fpc}
  flo64recty = packed record       //little endian
@@ -137,9 +146,6 @@ const
  dynarrayallocsize = dynarrayheadersize;
 
 type
-{$ifdef mse_compiler}
- string8 = targetptrintty;
-{$endif}
 // filenamety = string16;
 
  rttikindty = (rtk_none,rtk_boolean,rtk_integer,rtk_cardinal,rtk_float,

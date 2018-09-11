@@ -1637,7 +1637,7 @@ procedure handlefact1();
 var
  i1: integer;
  c1: card64;
- indpo,toppo: pcontextitemty;
+ poind,potop: pcontextitemty;
 // fl1: factflagsty;
 label
  endlab,endlab1;
@@ -1647,25 +1647,25 @@ begin
 {$endif}
  with info do begin
   if s.stackindex < s.stacktop then begin
-   toppo:= @contextstack[s.stacktop];
-   with toppo^ do begin
+   potop:= @contextstack[s.stacktop];
+   with potop^ do begin
     case d.kind of
      ck_str: begin
-      initdatacontext(toppo^.d,ck_const);
+      initdatacontext(potop^.d,ck_const);
       d.dat.datatyp:= sysdatatypes[st_string8];
       d.dat.constval.kind:= dk_string;
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
       c1:= d.number.value;
-      initdatacontext(toppo^.d,ck_const);
-      setnumberconst(toppo,c1);
+      initdatacontext(potop^.d,ck_const);
+      setnumberconst(potop,c1);
      end;
     end;
    end;
-   indpo:= @contextstack[s.stackindex];
-   indpo^.d.kind:= ck_space;
-   if hf_propindex in toppo^.d.handlerflags then begin //
+   poind:= @contextstack[s.stackindex];
+   poind^.d.kind:= ck_space;
+   if hf_propindex in potop^.d.handlerflags then begin //
     if stf_getaddress in s.currentstatementflags then begin
      errormessage(err_varidentexpected,[],1);
     end
@@ -1674,7 +1674,7 @@ begin
     goto endlab1;
    end
    else begin
-    with toppo^ do begin
+    with potop^ do begin
      if stf_getaddress in s.currentstatementflags
                 {fl1 * [ff_address,ff_addressfact] <> []} then begin
       case d.kind of
@@ -1688,6 +1688,16 @@ begin
         else begin
          inc(d.dat.indirection);
          inc(d.dat.datatyp.indirectlevel);
+        end;
+        if (d.dat.indirection = 0) and 
+                      (d.dat.datatyp.indirectlevel <= 1) then begin 
+                                                    //origin was a pointer
+         i1:= d.dat.ref.offset;
+         d.dat.ref.offset:= 0;
+         if not getvalue(potop,das_none) then begin
+          goto endlab;
+         end;
+         offsetad(potop,i1);
         end;
         if (stf_addressop in s.currentstatementflags)
                     {not (ff_addressfact in fl1)} and
@@ -1728,7 +1738,7 @@ begin
       end;
      end;
     end;
-    s.currentstatementflags:= indpo^.b.flags;
+    s.currentstatementflags:= poind^.b.flags;
     goto endlab1; //no stacktop release
    end;
   end

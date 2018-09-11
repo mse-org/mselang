@@ -1,0 +1,12 @@
+program convchain1;
+var
+ s1,s2: string32;
+ p1: pointer;
+
+begin
+ p1:= pointer(string8('Äbc'));
+ s1:= string32(string8(p1));
+ if s1[1] = 'Ä' then
+  exitcode:= 123;
+ end;
+end.

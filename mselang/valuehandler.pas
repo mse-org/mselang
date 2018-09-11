@@ -1221,6 +1221,10 @@ begin
          end;
          po1:= ele.eledataabs(po1^.h.ancestor);
         end;
+        if not result and (destindirectlevel > 0) and 
+                                  (coo_type in aoptions) then begin
+         result:= true; //todo: "not related" warning
+        end;
        end;
        dk_classof: begin
         if not checkancestorclass(dest,source1) then begin
