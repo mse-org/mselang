@@ -3358,10 +3358,12 @@ begin                    //todo: optimize
        i2:= s.stackindex;
        inc(s.stackindex,stackoffset); //class instance
        i1:= 0; //result, class instance
-       pocont1:= acontext+1;
-       if pocont1^.d.kind = ck_index then begin
-        i1:= pocont1^.d.index.count;
-        pocont1^.d.kind:= ck_space;
+       if s.stackindex < s.stacktop then begin
+        pocont1:= acontext+1;
+        if pocont1^.d.kind = ck_index then begin
+         i1:= pocont1^.d.index.count;
+         pocont1^.d.kind:= ck_space;
+        end;
        end;
        callsub(s.stackindex,psubdataty(ele.eledataabs(readele)),
                                      s.stackindex+1,i1,[dsf_readsub]);

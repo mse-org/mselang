@@ -1,0 +1,42 @@
+program int64getterass;
+uses
+
+type
+ tstream = class()[virtual]
+  constructor create();
+  destructor destroy();
+  property position: int64 read getposition write setposition;
+  private
+   f1: int64;
+   method getposition(): int64;// [virtual];
+   method setposition(const avalue: int64);// [virtual];
+ end;
+
+constructor tstream.create();
+begin
+end;
+
+destructor tstream.destroy();
+begin
+end;
+
+method tstream.getposition(): int64;
+begin
+ result:= f1;
+end;
+
+method tstream.setposition(const avalue: int64);
+begin
+ f1:= avalue;
+end;
+
+var
+ stream1: tstream;
+ i1: int64;
+begin
+ stream1:= tstream.create();
+ stream1.position:= 123;
+ i1:= stream1.position;
+ exitcode:= i1;
+ stream1.destroy();
+end.

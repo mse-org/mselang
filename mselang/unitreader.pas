@@ -752,6 +752,9 @@ endlab:
    include(aunit^.state,us_invalidunitfile);
   end;
  end;
+ if result and (co_compilefileinfo in info.o.compileoptions) then begin
+  writeln('load '+quotefilename(fna1));
+ end;
 {$ifdef mse_debugparser}
  if result then begin
   writeln('** read unit '+fna1+' OK');

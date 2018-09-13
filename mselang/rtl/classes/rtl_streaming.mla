@@ -26,14 +26,18 @@ type
            );
 
  tfiler = class(tobject)
+  constructor create(const astream: tstream);
   class method iswriter(): boolean [virtual];
+  protected
+   fstream: tstream;
  end;
  
  treader = class(tfiler)
+  method readstr(): string8;
+  method readproperty(const instance: tpersistent);
  end;
  
  twriter = class(tfiler)
-  constructor create(const astream: tstream);
   class method iswriter(): boolean [override];
 
   method writevalue(const avalue: valuety);
@@ -50,10 +54,8 @@ type
   method writeproperty(const instance: tpersistent;
                                      const propinfo: ppropertyrttity);
 
-  protected
-   fstream: tstream;
  end;
- 
+
  tpersistent = class(tobject)
   method assign(source: tpersistent) [virtual];
   method getnamepath(): string8 [virtual];
@@ -108,17 +110,17 @@ end;
 
 { tfiler }
 
+constructor tfiler.create(const astream: tstream);
+begin
+ fstream:= astream;
+end;
+
 class method tfiler.iswriter(): boolean;
 begin
  result:= false;
 end;
 
 { twriter }
-
-constructor twriter.create(const astream: tstream);
-begin
- fstream:= astream;
-end;
 
 class method twriter.iswriter(): boolean;
 begin
@@ -162,10 +164,10 @@ begin
   if (avalue >= -$8000) and (avalue < $8000) then
    writevalue(va_int16);
    i16:= avalue;
-   write(i16,2);
+   fstream.write(i16,2);
   else
     writevalue(va_int32);
-    write(avalue,4);
+    fstream.write(avalue,4);
   end;
  end;  
 end;
@@ -176,7 +178,7 @@ begin
   writeinteger(int32(avalue));
  else
   writevalue(va_int64);
-  write(avalue,8);
+  fstream.write(avalue,8);
  end;
 end;
 
@@ -191,18 +193,18 @@ begin
  if i1 < $100 then
   writevalue(va_strl1);
   c1:= i1;
-  write(c1,sizeof(c1));
+  fstream.write(c1,sizeof(c1));
  else
   if i1 < $10000 then
    writevalue(va_strl2);
    c2:= i1;
-   write(c2,sizeof(c2));
+   fstream.write(c2,sizeof(c2));
   else
    writevalue(va_strl4);
-   write(i1,sizeof(i1));
+   fstream.write(i1,sizeof(i1));
   end;
  end;
- write(pointer(avalue)^,i1);
+ fstream.write(pointer(avalue)^,i1);
 end;
 
 method twriter.writestring8(const avalue: string8);
@@ -266,6 +268,26 @@ begin
   writeproperty(instance,p1^);
   inc(p1);
  end;
+end;
+
+{ treader }
+
+method treader.readstr(): string8;
+var
+ c1: card8;
+begin
+ fstream.read(c1,sizeof(c1));
+ setlength(result,c1);
+ fstream.read(pointer(result)^,c1);
+end;
+
+method treader.readproperty(const instance: tpersistent);
+var
+ s1: string8;
+ prop1: ppropertyrttity;
+begin
+ s1:= readstr();
+ prop1:= getpropinfo(instance,s1);
 end;
 
 end.

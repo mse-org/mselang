@@ -25,6 +25,10 @@ type
   method seek(const offset: int64; const origin: seekoriginty): int64 [virtual];
   method readbuffer(var buffer; count: int32);
   method writebuffer(const buffer; count: int32);
+  property position: int64 read getposition write setposition;
+  private
+   method getposition: int64 [virtual];
+   method setposition(const avalue: int64) [virtual];
  end;
  
  thandlestream = class(tstream)
@@ -74,6 +78,16 @@ begin
  raise estreamerror.createfmt(sstreamnoseeking,[classname]);
 end;
 
+method tstream.getposition: int64;
+begin
+ result:= seek(0,so_current);
+end;
+
+method tstream.setposition(const avalue: int64);
+begin
+ seek(avalue,so_beginning);
+end;
+
 method tstream.readbuffer(var buffer; count: int32);
 var
  p1: pointer;
@@ -101,6 +115,7 @@ begin
   if i1 < 0 then
    raise ewriteerror.create(swriteerror);
   end;
+
   inc(p1,count);
   dec(count,i1);
  end;
