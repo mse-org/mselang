@@ -3692,6 +3692,11 @@ begin
                                          //classdefreturn for ini/fini
    if dsf_instanceonstack in aflags then begin
     doinstanceonstack(instancetype1);
+//   end
+//   else begin
+//    if dsf_readsub in aflags then begin
+//     instancetype1:= ele.eledataabs(d.dat.datatyp.typedata);
+//    end;
    end;
    paramschecked:= false;
    if (sf_overload in asub^.flags) and 
@@ -4341,12 +4346,15 @@ begin
                          adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
       po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
                                                             addsubvalue(asub);
-     end;
-     if sf_functioncall in asub^.flags then begin
-      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
+      po1^.par.ssas1:= instancessa;
      end
      else begin
-      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
+      if sf_functioncall in asub^.flags then begin
+       po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
+      end
+      else begin
+       po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
+      end;
      end;
      setimmint32(instancetype1^.infoclass.virttaboffset,
                                  po1^.par.callinfo.virt.virttaboffset);

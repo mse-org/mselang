@@ -4163,7 +4163,7 @@ begin
   idar.ids:= @ids;
   docallparam(0,idar);
 //  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa **i8
-  bcstream.emitgetelementptr(ids[0],               
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),               
                     bcstream.constval(callinfo.virt.virttaboffset));//2ssa *i8
   bcstream.emitbitcast(bcstream.relval(0),
                             bcstream.ptypeval(pointertype)); //1ssa **i8

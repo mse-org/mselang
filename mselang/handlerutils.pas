@@ -3366,7 +3366,7 @@ begin                    //todo: optimize
         end;
        end;
        callsub(s.stackindex,psubdataty(ele.eledataabs(readele)),
-                                     s.stackindex+1,i1,[dsf_readsub]);
+                        s.stackindex+1,i1,[dsf_readsub,dsf_instanceonstack]);
        while i1 > 0 do begin //clear index params
        {$ifdef mse_checkinternalerror}
         if pocont1 > @contextstack[s.stacktop] then begin

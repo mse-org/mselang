@@ -3790,7 +3790,8 @@ begin
         i1:= s.stackindex;
         s.stackindex:= getstackindex(dest);
         callsub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
-                   s.stackindex+1,i2,[dsf_indexedsetter,dsf_writesub]{flags1});
+            s.stackindex+1,i2,
+                    [dsf_indexedsetter,dsf_writesub,dsf_instanceonstack]);
         s.stackindex:= i1;
         ele.popelementparent();
        end

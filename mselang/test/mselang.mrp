@@ -11085,7 +11085,7 @@ c=3
    (
    kind=1
    a=0,665,4,properties
-   c=30
+   c=31
     (
     kind=2
     a=0,648,1,classprop1
@@ -11741,8 +11741,30 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,int64getterass2 llvm
+    teststate=1
+    path=int64getterass2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -15639,7 +15661,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=110
+rowstate=111
+ 0 0
  0 0
  0 0
  0 0
