@@ -37,6 +37,8 @@ begin
  stream1:= tstream.create();
  stream1.position:= 123;
  i1:= stream1.position;
- exitcode:= i1;
+ if i1 = 123 then
+  exitcode:= i1;
+ end;
  stream1.destroy();
 end.

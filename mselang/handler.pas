@@ -3736,7 +3736,7 @@ var
  i2: int32;
  flags1: dosubflagsty;
  sourcessa1: int32;
- sourcetyp: ptypedataty;
+ sourcetyp,desttyp: ptypedataty;
  b1: boolean;
 label
  endlab;
@@ -3766,7 +3766,8 @@ begin
    end;
    with dest^ do begin
     if d.kind = ck_refprop then begin
-     
+     desttyp:= ele.eledataabs(dest^.d.dat.datatyp.typedata);
+     indilev1:= dest^.d.dat.datatyp.indirectlevel;
      with ppropertydataty(ele.eledataabs(d.dat.refprop.propele))^ do begin
       if pof_writefield in flags then begin
        d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
@@ -3786,14 +3787,16 @@ begin
         end;
         getclassvalue(dest);
         ele.pushelementparent(writeele);
-        getvalue(source,das_none);
-        i1:= s.stackindex;
-        s.stackindex:= getstackindex(dest);
-        callsub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
-            s.stackindex+1,i2,
-                    [dsf_indexedsetter,dsf_writesub,dsf_instanceonstack]);
-        s.stackindex:= i1;
-        ele.popelementparent();
+        if tryconvert(source,desttyp,indilev1,[coo_errormessage]) then begin
+         getvalue(source,das_none);
+         i1:= s.stackindex;
+         s.stackindex:= getstackindex(dest);
+         callsub(s.stackindex,psubdataty(ele.eledataabs(writeele)),
+             s.stackindex+1,i2,
+                     [dsf_indexedsetter,dsf_writesub,dsf_instanceonstack]);
+         s.stackindex:= i1;
+         ele.popelementparent();
+        end;
        end
        else begin
         errormessage(err_nomemberaccessproperty,[],1);

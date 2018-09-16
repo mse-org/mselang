@@ -41,7 +41,7 @@ type
  fileattributesty = set of fileattributety;
  accessmodety = (am_read,am_write,am_execute,am_exist);
  accessmodesty = set of accessmodety;
- seekoriginty = (so_beginning, so_current, so_end);
+ seekoriginty = (so_beginning, so_current, so_end); //must match unix numbers
 
  syserrorty = (sye_ok,sye_lasterror,sye_extendederror,sye_busy,sye_dirstream,
                 sye_network,sye_write,sye_read,

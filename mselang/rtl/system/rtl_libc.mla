@@ -96,6 +96,12 @@ const
 
 {$endif}
 
+//* The possibilities for the third argument to `fseek'.
+//   These values should not be changed.  */
+ SEEK_SET = 0; //* Seek from beginning of file.  */
+ SEEK_CUR = 1; //* Seek from current position.  */
+ SEEK_END = 2; //* Seek from end of file.  */
+
 procedure gettimeofday(__tv: ptimeval; __tz: ptimezone): cint [external];
 procedure open(__file:  pcchar; __oflag: cint;
                                  args:array of const): cint [external];
