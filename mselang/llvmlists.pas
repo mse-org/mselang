@@ -3273,6 +3273,17 @@ begin
         if writesub1^.flags * [sf_virtual,sf_override] <> [] then begin
          include(propflags1,prf_virtualwrite);
         end;
+       {$ifdef mse_checkinternalerror}
+        if writesub1^.paramcount <> 2 then begin
+         internalerror(ie_llvmlist,'20180918A');
+        end;
+       {$endif}
+        with pvardataty(ele.eledataabs(
+                   (pelementoffsetty(@writesub1^.paramsrel)+1)^))^ do begin
+         if af_paramconst in address.flags then begin
+          include(propflags1,prf_writeprocconst);
+         end;
+        end;
        end;
       {$ifdef mse_checkinternalerror}
        if datakindtorttikind[typ1^.h.kind] = rtk_none then begin

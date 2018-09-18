@@ -17,16 +17,27 @@ type
  propertyrttiarty = array of ppropertyrttity;
 
 procedure getenumname(const typ: prttity; const value: int32): string8;
+
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
+procedure setordprop(const instance: tbase;
+                         const propinfo: ppropertyrttity; const value: int64);
 procedure getbytestringprop(const instance: tbase;
                              const propinfo: ppropertyrttity): bytestring;
+procedure setbytestringprop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: bytestring);
 procedure getstring8prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string8;
+procedure setstring8prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string8);
 procedure getstring16prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string16;
+procedure setstring16prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string16);
 procedure getstring32prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string32;
+procedure setstring32prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string32);
 
 procedure getpropinfo(const atypeinfo: pobjectrttity;
                            const propname: string8): ppropertyrttity;
@@ -61,13 +72,14 @@ begin
 end;
  
 type
- propertyaccessty = (pa_none,pa_field,pa_method);
+ propertyaccessty = (pa_none,pa_field,pa_method,
+                     pa_methodconst); //const value parameter
 
 procedure notimplemented(const atext: string8);
 begin
  raise enotimplemented.create(atext);
 end;
-var testvar: pointer;
+
 procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
                    out po: methodty): propertyaccessty;
 begin
@@ -75,7 +87,6 @@ begin
  if prf_readfield in propinfo^.flags then
   result:= pa_field;
   po.data:= pointer(instance)+propinfo^.readaccess.fieldoffset;
-testvar:= po.data;
  else
   if prf_readproc in propinfo^.flags then
    result:= pa_method;
@@ -90,12 +101,60 @@ testvar:= po.data;
  end;
 end;
 
+procedure getpropwritead(const instance: tbase; const propinfo: ppropertyrttity;
+                   out po: methodty): propertyaccessty;
+begin
+ result:= pa_none;
+ if prf_writefield in propinfo^.flags then
+  result:= pa_field;
+  po.data:= pointer(instance)+propinfo^.readaccess.fieldoffset;
+ else
+  if prf_writeproc in propinfo^.flags then
+   if prf_writeprocconst in propinfo^.flags then
+    result:= pa_methodconst;
+   else
+    result:= pa_method;
+   end;
+   po.data:= instance;
+   if prf_virtualread in propinfo^.flags then
+    po.code:= (ppointer(@ppclassdefty(instance)^^.virtualmethods) + 
+                                             propinfo^.writeaccess.tableindex)^;
+   else
+    po.code:= propinfo^.writeaccess.accessproc;
+   end;
+  end;
+ end;
+end;
+
 type
  getter8ty = method(): int8;
  getter16ty = method(): int16;
  getter32ty = method(): int32;
  getter64ty = method(): int64;
  getterpoty = method(): pointer;
+ 
+ setter8ty = method(avalue: int8);
+ setter16ty = method(avalue: int16);
+ setter32ty = method(avalue: int32);
+ setter64ty = method(avalue: int64);
+ setterpoty = method(avalue: pointer);
+
+ setterc8ty = method(const avalue: int8);
+ setterc16ty = method(const avalue: int16);
+ setterc32ty = method(const avalue: int32);
+ setterc64ty = method(const avalue: int64);
+ settercpoty = method(const avalue: pointer);
+ 
+ setterbytestringty = method(avalue: bytestring);
+ setterstring8ty = method(avalue: string8);
+ setterstring16ty = method(avalue: string16);
+ setterstring32ty = method(avalue: string32);
+
+ settercbytestringty = method(const avalue: bytestring);
+ settercstring8ty = method(const avalue: string8);
+ settercstring16ty = method(const avalue: string16);
+ settercstring32ty = method(const avalue: string32);
+
  
 procedure getordprop(const instance: tbase;
                                  const propinfo: ppropertyrttity): int64;
@@ -109,14 +168,12 @@ begin
   else   
    case getpropreadad(instance,propinfo,m1) of
     pa_field:
-testvar:= m1.data;
      case b.datasize of
       bs_8:
        result:= pint8(m1.data)^;
       bs_16:
        result:= pint16(m1.data)^;
       bs_32:
-result:= pint32(testvar)^;
        result:= pint32(m1.data)^;
       bs_64:
        result:= pint64(m1.data)^;
@@ -140,6 +197,68 @@ result:= pint32(testvar)^;
      end;
     else:
      notimplemented('getordprop()');
+   end;
+  end;
+ end;
+end;
+var testvar1,testvar2: pointer;
+procedure setordprop(const instance: tbase;
+                         const propinfo: ppropertyrttity; const value: int64);
+var
+ m1: methodty;
+begin
+ with propinfo^:a,a.proptype^:b do
+  if not (b.kind in ordinalkinds) then
+   rttierror(snoordprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else   
+   case getpropwritead(instance,propinfo,m1) of
+    pa_field:
+     case b.datasize of
+      bs_8:
+       pint8(m1.data)^:= value;
+      bs_16:
+       pint16(m1.data)^:= value;
+      bs_32:
+       pint32(m1.data)^:= value;
+      bs_64:
+       pint64(m1.data)^:= value;
+      else:
+       rttierror(sinvalidpropertysize,
+                [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
+     end;
+    pa_method:
+     case b.datasize of
+      bs_8:
+       setter8ty(m1)(value);
+      bs_16:
+       setter16ty(m1)(value);
+      bs_32:
+testvar1:= m1.code;
+testvar2:= m1.data;
+       setter32ty(m1)(value);
+      bs_64:
+       setter64ty(m1)(value);
+      else:
+       rttierror(sinvalidpropertysize,
+                [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
+     end;
+    pa_methodconst:
+     case b.datasize of
+      bs_8:
+       setterc8ty(m1)(value);
+      bs_16:
+       setterc16ty(m1)(value);
+      bs_32:
+       setterc32ty(m1)(value);
+      bs_64:
+       setterc64ty(m1)(value);
+      else:
+       rttierror(sinvalidpropertysize,
+                [string8(a.name),getenumname(typeinfo(b.size),ord(b.size))]);
+     end;
+    else:
+     notimplemented('setordprop()');
    end;
   end;
  end;
@@ -169,7 +288,36 @@ begin
     rttierror(swrongstringkind,
                 [string8(a.name),
                  getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
-                 'sk_byte']);
+                 'stk_byte']);
+   end;
+  end;
+ end;
+end;
+
+procedure setbytestringprop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: bytestring);
+var
+ m1: methodty;
+begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_byte then
+    case getpropwritead(instance,propinfo,m1) of
+     pa_field:
+      pbytestring(m1.data)^:= value;
+     pa_method:
+      setterbytestringty(m1)(value);
+     pa_methodconst:
+      settercbytestringty(m1)(value);
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_byte']);
    end;
   end;
  end;
@@ -177,17 +325,179 @@ end;
 
 procedure getstring8prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string8;
+var
+ s1: string8;
+ m1: methodty;
 begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_8 then
+    case getpropreadad(instance,propinfo,m1) of
+     pa_field:
+      result:= pstring8(m1.data)^;
+     pa_method:
+      pointer(s1):= getterpoty(m1)();
+      incref(s1);
+      result:= s1;
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_8']);
+   end;
+  end;
+ end;
+end;
+
+procedure setstring8prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string8);
+var
+ m1: methodty;
+begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_8 then
+    case getpropwritead(instance,propinfo,m1) of
+     pa_field:
+      pstring8(m1.data)^:= value;
+     pa_method:
+      setterstring8ty(m1)(value);
+     pa_methodconst:
+      settercstring8ty(m1)(value);
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_8']);
+   end;
+  end;
+ end;
 end;
 
 procedure getstring16prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string16;
+var
+ s1: string16;
+ m1: methodty;
 begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_16 then
+    case getpropreadad(instance,propinfo,m1) of
+     pa_field:
+      result:= pstring16(m1.data)^;
+     pa_method:
+      pointer(s1):= getterpoty(m1)();
+      incref(s1);
+      result:= s1;
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_16']);
+   end;
+  end;
+ end;
+end;
+
+procedure setstring16prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string16);
+var
+ m1: methodty;
+begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_16 then
+    case getpropwritead(instance,propinfo,m1) of
+     pa_field:
+      pstring16(m1.data)^:= value;
+     pa_method:
+      setterstring16ty(m1)(value);
+     pa_methodconst:
+      settercstring16ty(m1)(value);
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_16']);
+   end;
+  end;
+ end;
 end;
 
 procedure getstring32prop(const instance: tbase;
                                 const propinfo: ppropertyrttity): string32;
+var
+ s1: string32;
+ m1: methodty;
 begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_32 then
+    case getpropreadad(instance,propinfo,m1) of
+     pa_field:
+      result:= pstring16(m1.data)^;
+     pa_method:
+      pointer(s1):= getterpoty(m1)();
+      incref(s1);
+      result:= s1;
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_32']);
+   end;
+  end;
+ end;
+end;
+
+procedure setstring32prop(const instance: tbase;
+                  const propinfo: ppropertyrttity; const value: string32);
+var
+ m1: methodty;
+begin
+ with propinfo^:a,pstringrttity(a.proptype)^:b do
+  if b.kind <> rtk_string then
+   rttierror(snostringprop,[string8(a.name),
+                         getenumname(typeinfo(b.kind),ord(b.kind))]);
+  else
+   if b.stringkind = stk_32 then
+    case getpropwritead(instance,propinfo,m1) of
+     pa_field:
+      pstring32(m1.data)^:= value;
+     pa_method:
+      setterstring32ty(m1)(value);
+     pa_methodconst:
+      settercstring32ty(m1)(value);
+    end;
+   else
+    rttierror(swrongstringkind,
+                [string8(a.name),
+                 getenumname(typeinfo(b.stringkind),ord(b.stringkind)),
+                 'stk_32']);
+   end;
+  end;
+ end;
 end;
 
 procedure getpropinfo(const atypeinfo: pobjectrttity;

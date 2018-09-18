@@ -20,6 +20,9 @@ resourcestring
  
  scannotwritepropertykind = 'Can not stream property "%0s" of kind "%1s"';
  sinvalidstringkind = 'Invalid string kind in property "%0s": "%1s"';
+ sunknownproperty = 'Unknown property "%s0"';
+ sinvalidpropvalue = 'Invalid property value "%s0"';
+ sinvalidproptype = 'Invalid property type "%s0"';
  
 implementation
 end.

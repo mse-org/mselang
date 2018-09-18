@@ -260,7 +260,8 @@ type
 {$endif}
 
  propertyflagty = (prf_readfield,prf_readproc,prf_virtualread,
-                   prf_writefield,prf_writeproc,prf_virtualwrite);
+                   prf_writefield,prf_writeproc,prf_virtualwrite,
+                   prf_writeprocconst);
  propertyflagsty = set of propertyflagty;
  propertyaccessinfoty = record
  {$ifdef mse_compiler}

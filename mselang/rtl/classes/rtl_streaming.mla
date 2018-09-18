@@ -34,7 +34,17 @@ type
  
  treader = class(tfiler)
   method readstr(): string8;
+  method readvalue(): valuety;
+  method readint32(): int32;
+  method readint64(): int64;
+  method readbytestring(): bytestring;
+  method readstring8(): string8;
+  method readstring16(): string8;
+  method readstring32(): string8;
   method readproperty(const instance: tpersistent);
+  method skipvalue();
+  protected
+   method propertyerror(const aname: string8);
  end;
  
  twriter = class(tfiler)
@@ -81,6 +91,26 @@ begin
  raise ewritererror.create(format(amessage,avalues));
 end;
 
+procedure readererror(const amessage: string8);
+begin
+ raise ereadererror.create(amessage);
+end;
+
+procedure readererror(const amessage: string8; const avalues: array of const);
+begin
+ raise ereadererror.create(format(amessage,avalues));
+end;
+
+procedure invalidpropertyvalue(const avalue: valuety);
+begin
+ readererror(sinvalidpropvalue,[getenumname(typeinfo(avalue),ord(avalue))]);
+end;
+
+procedure invalidpropertytype(const avalue: rttikindty);
+begin
+ readererror(sinvalidproptype,[getenumname(typeinfo(avalue),ord(avalue))]);
+end;
+
 { tpersistent }
 
 method tpersistent.assignerror(const source: tpersistent);
@@ -90,22 +120,27 @@ end;
 
 method tpersistent.assignto(dest: tpersistent);
 begin
+ notimplementederror('tpersistent.assignto');
 end;
 
 method tpersistent.defineproperties(filer: tfiler);
 begin
+ notimplementederror('tpersistent.defineproperties');
 end;
 
 method tpersistent.getowner(): tpersistent;
 begin
+ notimplementederror('tpersistent.getowner');
 end;
 
 method tpersistent.assign(source: tpersistent);
 begin
+ notimplementederror('tpersistent.assign');
 end;
 
 method tpersistent.getnamepath(): string8;
 begin
+ notimplementederror('tpersistent.getnamepath');
 end;
 
 { tfiler }
@@ -281,13 +316,150 @@ begin
  fstream.read(pointer(result)^,c1);
 end;
 
+method treader.readvalue(): valuety;
+var
+ c1: card8;
+begin
+ fstream.read(c1,1);
+ result:= valuety(ord(c1));
+end;
+
+method treader.readint32(): int32;
+var
+ i8: int8;
+ i16: int16;
+ i32: int32;
+ v1: valuety;
+begin
+ v1:= readvalue();
+ case v1 of
+  va_int8: 
+   fstream.read(i8,sizeof(i8));
+   result:= i8;
+  va_int16:
+   fstream.read(i16,sizeof(i16));
+   result:= i16
+  va_int32: 
+   fstream.read(i32,sizeof(i32));
+   result:= i32;
+  else:
+   invalidpropertyvalue(v1);
+ end;
+end;
+
+method treader.readint64(): int64;
+var
+ i8: int8;
+ i16: int16;
+ i32: int32;
+ i64: int32;
+ v1: valuety;
+begin
+ v1:= readvalue();
+ case v1 of
+  va_int8: 
+   fstream.read(i8,sizeof(i8));
+   result:= i8;
+  va_int16:
+   fstream.read(i16,sizeof(i16));
+   result:= i16
+  va_int32: 
+   fstream.read(i32,sizeof(i32));
+   result:= i32;
+  va_int64: 
+   fstream.read(i64,sizeof(i64));
+   result:= i64;
+  else:
+   invalidpropertyvalue(v1);
+ end;
+end;
+
+method treader.readbytestring(): bytestring;
+var
+ v1: valuety;
+ c8: card8;
+ c16: card16;
+ i32: int32;
+begin
+ v1:= readvalue();
+ case v1 of
+  va_strl1: 
+   fstream.read(c8,sizeof(c8));
+   i32:= c8;
+  va_int16:
+   fstream.read(c16,sizeof(c16));
+   i32:= c16;
+  va_int32: 
+   fstream.read(i32,sizeof(i32));
+  else:
+   invalidpropertyvalue(v1);
+ end;
+ setlength(result,i32);
+ fstream.read(pointer(result)^,i32);
+end;
+
+method treader.readstring8(): string8;
+begin
+ result:= string8(pointer(readbytestring));
+end;
+
+method treader.readstring16(): string8;
+begin
+ result:= readstring8();
+end;
+
+method treader.readstring32(): string8;
+begin
+ result:= readstring8();
+end;
+
+method treader.skipvalue();
+begin
+ notimplementederror('treader.skipvalue');
+end;
+
+method treader.propertyerror(const aname: string8);
+begin
+ skipvalue();
+ readererror(sunknownproperty,[aname]);
+end;
+
 method treader.readproperty(const instance: tpersistent);
 var
  s1: string8;
  prop1: ppropertyrttity;
+ k1: stringkindty;
 begin
- s1:= readstr();
- prop1:= getpropinfo(instance,s1);
+ try
+  s1:= readstr();
+  prop1:= getpropinfo(instance,s1); //todo: property path
+  if prop1 = nil then
+   propertyerror(s1);
+  end;
+  case prop1^.proptype^.kind of
+   rtk_integer:
+    setordprop(instance,prop1,readint64());
+   rtk_string:
+    k1:= pstringrttity(prop1^.proptype)^.stringkind;
+    case k1 of
+     stk_byte:
+      setbytestringprop(instance,prop1,readbytestring());
+     stk_8:
+      setstring8prop(instance,prop1,readstring8());
+     stk_16:
+      setstring16prop(instance,prop1,readstring16());
+     stk_32:
+      setstring32prop(instance,prop1,readstring32());
+     else:
+      readererror(sinvalidstringkind,[string8(prop1^.name),
+                                      getenumname(typeinfo(k1),ord(k1))])
+    end;
+   else:
+    invalidpropertytype(prop1^.proptype^.kind);
+  end;
+ except
+  raise; //todo: error handling
+ end;
 end;
 
 end.
