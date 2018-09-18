@@ -1503,13 +1503,20 @@ begin
  with info do begin
   po2:= @contextstack[s.stackindex];
   po1:= getpreviousnospace(po2-1);
+  with po2^ do begin
+   d.kind:= ck_index;
+   d.index.count:= 0;
+   d.index.flags:= [];
+  end;
   with info,po1^ do begin
    if d.kind in [ck_refprop,ck_factprop] then begin
+   {
     with po2^ do begin
      d.kind:= ck_index;
      d.index.count:= 0;
      d.index.flags:= [];
     end;
+   }
    end
    else begin
     if d.dat.datatyp.indirectlevel = 1 then begin
@@ -1542,9 +1549,14 @@ begin
   if not (d.kind in [ck_refprop,ck_factprop]) then begin
    po1:= @contextstack[s.stackindex];
    poa:= getpreviousnospace(po1-1);
+  {$ifdef mse_checkinternalerror}
+   if not (po1^.d.kind in [ck_index,ck_getindex]) then begin
+    internalerror(ie_handler,'20180918B');
+   end;
+  {$endif}
    po1^.d.kind:= ck_getindex;
-   po1^.d.index.flags:= [];
-   po1^.d.index.count:= 0;
+//   po1^.d.index.flags:= [];
+//   po1^.d.index.count:= 0;
 
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
  {$ifdef mse_checkinternalerror}
