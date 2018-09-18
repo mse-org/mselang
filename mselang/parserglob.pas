@@ -169,14 +169,14 @@ type
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_refprop,ck_factprop,
                   ck_subres,ck_subcall,ck_controltoken,
-                  ck_getfact,ck_getindex,ck_label,
+                  ck_getfact,ck_getindex,ck_index,ck_label,
                   ck_typedef,ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,ck_shortcutexp,
                   ck_recorddef,ck_recordcase,
                   ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
-                  ck_paramdef,ck_params,ck_index,ck_casebranch,ck_caseblock,
+                  ck_paramdef,ck_params,ck_casebranch,ck_caseblock,
                   ck_arrayconst);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
@@ -284,9 +284,6 @@ type
 //  flags: factflagsty;
  end;
 
- getindexinfoty = record
-//  arraytype: elementoffsetty;
- end;
  factflagty = (faf_varsubres,  //ck_subres function with result pointer
                faf_create,faf_classele,faf_constref);
  factflagsty = set of factflagty;
@@ -530,9 +527,17 @@ type
   flags: listflagsty;
  end;
  
+ indexflagty = (inf_setelement);
+ indexflagsty = set of indexflagty;
+{ 
+ getindexinfoty = record
+  flags: getindexflagsty;
+ end;
+}
  indexinfoty = record
 //  opshiftmark: integer;
   count: int32;
+  flags: indexflagsty;
  end;
  
 // datacontextflagty = (dcf_listitem);
@@ -589,9 +594,6 @@ type
    ck_getfact:(
     getfact: getfactinfoty;
    );
-   ck_getindex:(
-    getindex: getindexinfoty;
-   );
    ck_list:(
     list: listinfoty;
    );
@@ -599,7 +601,12 @@ type
          ck_refprop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
-   ck_index:(
+{
+   ck_getindex:(
+    getindex: getindexinfoty;
+   );
+}
+   ck_index,ck_getindex:(
     index: indexinfoty;
    );
    ck_subdef:(

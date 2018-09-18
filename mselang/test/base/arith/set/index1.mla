@@ -1,0 +1,16 @@
+program index1;
+uses
+type
+ enuty = (en_0,en_1,en_2);
+ enusty = set of enuty;
+
+var
+ set1,set2: enusty;
+ b1: boolean;
+begin
+ set1:= [en_1];
+ b1:= set1[en_1];
+ if b1 and not set2[en_1] then
+  exitcode:= 123;
+ end;
+end.

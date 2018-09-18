@@ -4945,14 +4945,18 @@ begin
         end;
        end;
       end;
-      ck_index: begin
+      ck_index,ck_getindex: begin
        write({'opshiftmark:'+inttostrmse(d.index.opshiftmark)+}
-                'count:'+inttostrmse(d.index.count));
+                'count:'+inttostrmse(d.index.count)+' flags:',
+                settostring(ptypeinfo(typeinfo(d.index.flags)),
+                                             integer(d.index.flags),true));
       end;
+     {
       ck_getindex: begin
  //      write('itemtype:'+inttostrmse(d.getindex.itemtype)+' ');
  //      writetypedata(ele.eledataabs(d.getindex.itemtype));
       end;
+     }
       ck_typedata: begin
        writetypedata(d.typedata);
       end;

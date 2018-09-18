@@ -21,18 +21,26 @@ type
  ereadererror = class(efilererror) end;
  ewritererror = class(ereadererror) end;
 
- valuety = (va_none,va_int1,va_int8,va_int16,va_int32,va_int64,
+ valuety = (va_none,va_null,va_list,
+            va_int1,va_int8,va_int16,va_int32,va_int64,
             va_strl1,va_strl2,va_strl4 //size of length value
            );
 
+ filerstatety = (fis_nextvaluevalid);
+ filerstatesty = set of filerstatety;
+  
  tfiler = class(tobject)
   constructor create(const astream: tstream);
   class method iswriter(): boolean [virtual];
   protected
-   fstream: tstream;
+   fstate: filerstatesty;
+   fstreamx: tstream;
  end;
- 
+
  treader = class(tfiler)
+  method read(var buffer; const count: int32);
+  method nextvalue(): valuety; //peek current value type
+
   method readstr(): string8;
   method readvalue(): valuety;
   method readint32(): int32;
@@ -44,6 +52,7 @@ type
   method readproperty(const instance: tpersistent);
   method skipvalue();
   protected
+   fnextvalue: valuety;
    method propertyerror(const aname: string8);
  end;
  
@@ -79,7 +88,8 @@ type
  
 implementation
 uses
- rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format;
+ rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format,
+ rtl_system;
  
 procedure writererror(const amessage: string8);
 begin
@@ -147,7 +157,7 @@ end;
 
 constructor tfiler.create(const astream: tstream);
 begin
- fstream:= astream;
+ fstreamx:= astream;
 end;
 
 class method tfiler.iswriter(): boolean;
@@ -167,7 +177,7 @@ var
  c1: card8;
 begin
  c1:= card8(card32(avalue));
- fstream.write(c1,1);
+ write(c1,1);
 end;
 
 method twriter.writestr(const avalue: string8);
@@ -180,9 +190,9 @@ begin
   i1:= $ff;
  end;
  ca1:= i1;
- fstream.write(ca1,1);
+ write(ca1,1);
  if avalue <> '' then
-  fstream.write(pointer(avalue)^,i1);
+  write(pointer(avalue)^,i1);
  end;
 end;
 
@@ -194,15 +204,15 @@ begin
  if (avalue >= -$80) and (avalue < $80) then
   writevalue(va_int8);
   i8:= avalue;
-  fstream.write(i8,1);
+  write(i8,1);
  else
   if (avalue >= -$8000) and (avalue < $8000) then
    writevalue(va_int16);
    i16:= avalue;
-   fstream.write(i16,2);
+   write(i16,2);
   else
     writevalue(va_int32);
-    fstream.write(avalue,4);
+    write(avalue,4);
   end;
  end;  
 end;
@@ -213,7 +223,7 @@ begin
   writeinteger(int32(avalue));
  else
   writevalue(va_int64);
-  fstream.write(avalue,8);
+  write(avalue,8);
  end;
 end;
 
@@ -228,18 +238,18 @@ begin
  if i1 < $100 then
   writevalue(va_strl1);
   c1:= i1;
-  fstream.write(c1,sizeof(c1));
+  write(c1,sizeof(c1));
  else
   if i1 < $10000 then
    writevalue(va_strl2);
    c2:= i1;
-   fstream.write(c2,sizeof(c2));
+   write(c2,sizeof(c2));
   else
    writevalue(va_strl4);
-   fstream.write(i1,sizeof(i1));
+   write(i1,sizeof(i1));
   end;
  end;
- fstream.write(pointer(avalue)^,i1);
+ write(pointer(avalue)^,i1);
 end;
 
 method twriter.writestring8(const avalue: string8);
@@ -307,20 +317,35 @@ end;
 
 { treader }
 
+method treader.read(var buffer; const count: int32);
+begin
+ fstreamx.read(buffer,count);
+end;
+
+method treader.nextvalue(): valuety;
+begin
+ if not fstate[fis_nextvaluevalid] then
+  fnextvalue:= readvalue();
+//////////////////  include(fstate,fis_nextvaluevalid);
+//  fstate[fis_nextvaluevalid]:= true;
+  result:= fnextvalue;
+ end;
+end;
+
 method treader.readstr(): string8;
 var
  c1: card8;
 begin
- fstream.read(c1,sizeof(c1));
+ read(c1,sizeof(c1));
  setlength(result,c1);
- fstream.read(pointer(result)^,c1);
+ read(pointer(result)^,c1);
 end;
 
 method treader.readvalue(): valuety;
 var
  c1: card8;
 begin
- fstream.read(c1,1);
+ read(c1,1);
  result:= valuety(ord(c1));
 end;
 
@@ -334,13 +359,13 @@ begin
  v1:= readvalue();
  case v1 of
   va_int8: 
-   fstream.read(i8,sizeof(i8));
+   read(i8,sizeof(i8));
    result:= i8;
   va_int16:
-   fstream.read(i16,sizeof(i16));
+   read(i16,sizeof(i16));
    result:= i16
   va_int32: 
-   fstream.read(i32,sizeof(i32));
+   read(i32,sizeof(i32));
    result:= i32;
   else:
    invalidpropertyvalue(v1);
@@ -358,16 +383,16 @@ begin
  v1:= readvalue();
  case v1 of
   va_int8: 
-   fstream.read(i8,sizeof(i8));
+   read(i8,sizeof(i8));
    result:= i8;
   va_int16:
-   fstream.read(i16,sizeof(i16));
+   read(i16,sizeof(i16));
    result:= i16
   va_int32: 
-   fstream.read(i32,sizeof(i32));
+   read(i32,sizeof(i32));
    result:= i32;
   va_int64: 
-   fstream.read(i64,sizeof(i64));
+   read(i64,sizeof(i64));
    result:= i64;
   else:
    invalidpropertyvalue(v1);
@@ -384,18 +409,18 @@ begin
  v1:= readvalue();
  case v1 of
   va_strl1: 
-   fstream.read(c8,sizeof(c8));
+   read(c8,sizeof(c8));
    i32:= c8;
   va_int16:
-   fstream.read(c16,sizeof(c16));
+   read(c16,sizeof(c16));
    i32:= c16;
   va_int32: 
-   fstream.read(i32,sizeof(i32));
+   read(i32,sizeof(i32));
   else:
    invalidpropertyvalue(v1);
  end;
  setlength(result,i32);
- fstream.read(pointer(result)^,i32);
+ read(pointer(result)^,i32);
 end;
 
 method treader.readstring8(): string8;

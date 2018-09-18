@@ -175,6 +175,7 @@ procedure setconstcontext(const aitem: pcontextitemty; const avalue: dataty);
 function getpoptempop(const asize: databitsizety): opcodety;
 procedure concatterms(const wanted,terms: pcontextitemty); 
         //wanted = nil -> use first term
+function setinop(poa,pob: pcontextitemty; const pobisresult: boolean): boolean;
 
 implementation
 uses
@@ -3261,6 +3262,33 @@ begin
  handlecomparison(cok_le);
 end;
 
+function setinop(poa,pob: pcontextitemty;
+                               const pobisresult: boolean): boolean;
+begin
+ result:= tryconvert(poa,st_card32,[coo_enum]);
+ if result then begin
+  if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
+   poa^.d.dat.constval.kind:= dk_boolean;
+   poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+   poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
+                   tintegerset(pob^.d.dat.constval.vset);
+  end
+  else begin
+   result:= getvalue(poa,das_32) and getvalue(pob,das_none);
+   if result then begin
+    addfactbinop(poa,pob,oc_setin);
+    if pobisresult then begin
+     setsysfacttype(pob^.d,st_bool1);
+     pob^.d.dat.fact.ssaindex:= poa^.d.dat.fact.ssaindex;
+    end
+    else begin
+     setsysfacttype(poa^.d,st_bool1);
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure handleinsimpexp();
 var
 // baseoffset: int32;
@@ -3288,20 +3316,7 @@ begin
               basetype(typ1^.infoset.itemtype) then begin
      goto errlab;
     end;
-    if tryconvert(poa,st_card32,[coo_enum]) then begin
-     if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
-      poa^.d.dat.constval.kind:= dk_boolean;
-      poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
-      poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
-                      tintegerset(pob^.d.dat.constval.vset);
-     end
-     else begin
-      if getvalue(poa,das_32) and getvalue(pob,das_none) then begin
-       addfactbinop(poa,pob,oc_setin);
-       setsysfacttype(poa^.d,st_bool1);
-      end;
-     end;
-    end;
+    setinop(poa,pob,false);
     goto endlab;
    end;
   end;

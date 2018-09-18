@@ -81,7 +81,7 @@ implementation
 uses
  elements,errorhandler,handlerutils,parser,opcode,stackops,
  opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,llvmlists,
- segmentutils,__mla__internaltypes,grammarglob;
+ segmentutils,__mla__internaltypes,grammarglob,handler;
 
 procedure handletypedefentry();
 begin
@@ -1508,6 +1508,7 @@ begin
     with po2^ do begin
      d.kind:= ck_index;
      d.index.count:= 0;
+     d.index.flags:= [];
     end;
    end
    else begin
@@ -1515,7 +1516,11 @@ begin
      getvalue(po1,das_none); //pointer arithmetic
     end
     else begin
-     getaddress(po1,true);
+     if (d.dat.datatyp.indirectlevel <> 0) or 
+      (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind <> 
+                                                           dk_set) then begin
+      getaddress(po1,true);
+     end;
     end;
     handleindexitemstart();
    end;
@@ -1535,15 +1540,19 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if not (d.kind in [ck_refprop,ck_factprop]) then begin
- {$ifdef mse_checkinternalerror}
-   if (d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1) then begin
-    internalerror(ie_handler,'20160227D');
-   end;
- {$endif}
    po1:= @contextstack[s.stackindex];
    poa:= getpreviousnospace(po1-1);
    po1^.d.kind:= ck_getindex;
+   po1^.d.index.flags:= [];
+   po1^.d.index.count:= 0;
+
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
+ {$ifdef mse_checkinternalerror}
+   if (kind1 <> dk_set) and 
+     ((d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1)) then begin
+    internalerror(ie_handler,'20160227D');
+   end;
+ {$endif}
    exclude(d.handlerflags,hf_needsunique);
    case kind1 of
     dk_openarray: begin
@@ -1583,6 +1592,7 @@ var
  ptop: pcontextitemty;
  topoffset: int32;
  i1: int32;
+ context1: pcontextitemty;
 label
  errorlab;
 begin
@@ -1590,8 +1600,9 @@ begin
  outhandle('INDEXITEM');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
+  context1:= @contextstack[s.stackindex];
 //  getnextnospace(s.stackindex+1,poa);
-  inc(contextstack[s.stackindex].d.index.count);
+  inc(context1^.d.index.count);
   ptop:= @contextstack[s.stacktop];
   topoffset:= s.stacktop-s.stackindex;
   if not (d.kind in [ck_refprop,ck_factprop]) then begin //no array property
@@ -1636,6 +1647,15 @@ begin
       goto errorlab;
      end;
      isdynarray:= false;
+    end;
+    dk_set: begin
+     itemtype:= ele.eledataabs(itemtype^.infoset.itemtype);
+     if not tryconvert(ptop,itemtype,0,[]) then begin
+      errormessage(err_illegalqualifier,[],topoffset);
+      goto errorlab;
+     end;
+     include(context1^.d.index.flags,inf_setelement);
+     exit;
     end;
     else begin
      if d.dat.datatyp.indirectlevel > 0 then begin
@@ -1732,23 +1752,34 @@ errorlab:
 end;
 
 procedure handleindex();
+var
+ poa: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEX');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  if d.kind = ck_index then begin //for indexed property
-   include(contextstack[s.stacktop].d.handlerflags,hf_propindex);
-//   d.kind:= ck_space;
-  end
-  else begin
-   s.stacktop:= s.stackindex-1;
-   with contextstack[s.stacktop] do begin
-    dec(d.dat.indirection);
-    dec(d.dat.datatyp.indirectlevel);
+ with info do begin
+  poa:= @contextstack[s.stackindex];
+  with poa^ do begin
+   if d.kind = ck_index then begin //for indexed property
+    include(contextstack[s.stacktop].d.handlerflags,hf_propindex);
+ //   d.kind:= ck_space;
+   end
+   else begin
+    if inf_setelement in d.index.flags then begin
+     setinop(@contextstack[s.stacktop],poa-1,true);
+     s.stacktop:= s.stackindex-1;
+    end
+    else begin
+     s.stacktop:= s.stackindex-1;
+     with contextstack[s.stacktop] do begin
+      dec(d.dat.indirection);
+      dec(d.dat.datatyp.indirectlevel);
+     end;
+    end;
    end;
+   s.stackindex:= parent;
   end;
-  s.stackindex:= parent;
  end;
 end;
 

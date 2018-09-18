@@ -201,7 +201,7 @@ begin
   end;
  end;
 end;
-var testvar1,testvar2: pointer;
+
 procedure setordprop(const instance: tbase;
                          const propinfo: ppropertyrttity; const value: int64);
 var
@@ -234,8 +234,6 @@ begin
       bs_16:
        setter16ty(m1)(value);
       bs_32:
-testvar1:= m1.code;
-testvar2:= m1.data;
        setter32ty(m1)(value);
       bs_64:
        setter64ty(m1)(value);
