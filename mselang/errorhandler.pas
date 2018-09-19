@@ -741,7 +741,7 @@ begin
 end;
 
 procedure tokenexpectederror(const atoken: string;
-                                               const aerrorlevel: errorlevelty);
+                        const aerrorlevel: errorlevelty = erl_none);
 begin
  errormessage(err_tokenexpected,[atoken],minint,0,aerrorlevel);
 end;

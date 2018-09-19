@@ -1661,6 +1661,14 @@ begin
      isdynarray:= false;
     end;
     dk_set: begin
+     if d.dat.datatyp.indirectlevel <> 0 then begin
+      errormessage(err_illegalqualifier,[],topoffset);
+      goto errorlab;
+     end;
+     if inf_setelement in context1^.d.index.flags then begin 
+                                              //single index item only
+      errormessage(err_tokenexpected,[']'],s.stacktop-s.stackindex);
+     end;
      itemtype:= ele.eledataabs(itemtype^.infoset.itemtype);
      if not tryconvert(ptop,itemtype,0,[]) then begin
       errormessage(err_illegalqualifier,[],topoffset);
