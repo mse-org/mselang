@@ -141,6 +141,10 @@ function getcontextopcount(const stackoffset: int32): int32;
 
 function checkreftypeconversion(const acontext: pcontextitemty): boolean;
 function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
+
+function setinop1(poa,pob: pcontextitemty; const pobisresult: boolean): boolean;
+function setinop2(pob: pcontextitemty): boolean;
+
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 //function getvalue(const stackoffset: integer; const adatasize: databitsizety;
@@ -3201,6 +3205,70 @@ begin
  end;
 end;
 
+function setinop1(poa,pob: pcontextitemty;
+                               const pobisresult: boolean): boolean;
+begin
+ result:= tryconvert(poa,st_card32,[coo_enum]);
+ if result then begin
+  if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
+   poa^.d.dat.constval.kind:= dk_boolean;
+   poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+   poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
+                   tintegerset(pob^.d.dat.constval.vset);
+  end
+  else begin
+   result:= getvalue(poa,das_32);
+   if result then begin
+    if pobisresult and (pob^.d.kind in refcontexts) then begin
+     include(pob^.d.dat.flags,df_setelement);
+     pob^.d.dat.ref.c.ssa:= poa^.d.dat.fact.ssaindex; 
+                              //todo: ssa shift by op insert?
+     pob^.d.dat.datatyp:= sysdatatypes[st_bool1];
+    end
+    else begin
+     result:= getvalue(pob,das_none);
+     if result then begin
+      addfactbinop(poa,pob,oc_setin);
+      if pobisresult then begin
+       setsysfacttype(pob^.d,st_bool1);
+       pob^.d.dat.fact.ssaindex:= poa^.d.dat.fact.ssaindex;
+      end
+      else begin
+       setsysfacttype(poa^.d,st_bool1);
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+function setinop2(pob: pcontextitemty): boolean;
+var
+ i1,i2: int32;
+begin
+ result:= true;
+ if pob^.d.kind in refcontexts then begin
+  i1:= pob^.d.dat.ref.c.ssa;
+  exclude(pob^.d.dat.flags,df_setelement);
+  pob^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
+  result:= getvalue(pob,das_none);
+  if result then begin
+   i2:= pob^.d.dat.fact.ssaindex;
+   with insertitem(oc_setin,pob,-1)^ do begin
+    par.ssas1:= i1;
+    par.ssas2:= i2;
+    par.stackop.t:= getopdatatype(pob^.d.dat.datatyp.typedata,
+                                    pob^.d.dat.datatyp.indirectlevel);
+    pob^.d.kind:= ck_fact;
+    pob^.d.dat.fact.ssaindex:= par.ssad;
+    pob^.d.dat.indirection:= 0;
+    setsysfacttype(pob^.d,st_bool1);
+   end;
+  end;
+ end;
+end;
+
 const
  indirect: array[databitsizety] of opcodety = (
  //das_none,   das_1,       das_2_7,     das_8,
@@ -3238,23 +3306,29 @@ var
   end;
  end; //doindirect
 
- procedure doref();
+ function doref(): boolean;
  begin
   with acontext^ do begin
-   if d.dat.indirection < 0 then begin //dereference
-    inc(d.dat.indirection); //correct addr handling
-    if not pushindirection(stackoffset,false) then begin
-     exit;
-    end;
-//      dec(d.dat.datatyp.indirectlevel); //correct addr handling
-    doindirect;
+   if df_setelement in d.dat.flags then begin
+    result:= setinop2(acontext);
    end
    else begin
-    opdata1:= getopdatatype(d.dat.datatyp.typedata,
-                                           d.dat.datatyp.indirectlevel);
-    pushinsertdata(stackoffset,-1,d.dat.ref.c.address,
-                             d.dat.ref.c.varele,d.dat.ref.offset,
-                             d.dat.flags,opdata1);
+    result:= true;
+    if d.dat.indirection < 0 then begin //dereference
+     inc(d.dat.indirection); //correct addr handling
+     if not pushindirection(stackoffset,false) then begin
+      exit;
+     end;
+  //      dec(d.dat.datatyp.indirectlevel); //correct addr handling
+     doindirect();
+    end
+    else begin
+     opdata1:= getopdatatype(d.dat.datatyp.typedata,
+                                            d.dat.datatyp.indirectlevel);
+     pushinsertdata(stackoffset,-1,d.dat.ref.c.address,
+                              d.dat.ref.c.varele,d.dat.ref.offset,
+                              d.dat.flags,opdata1);
+    end;
    end;
   end;
  end; //doref
@@ -3317,7 +3391,10 @@ begin                    //todo: optimize
      end;
     end
     else begin
-     doref();
+     result:= doref();
+     if not result then begin
+      exit;
+     end;
     end;
    end;
    ck_reffact: begin
