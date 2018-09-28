@@ -131,6 +131,8 @@ const
   (name: '__mla__string16tovarrecty'; flags: []),
   (name: '__mla__string32tovarrecty'; flags: []),
 
+//  (name: '__mla__setsetele'; flags: []),
+
   (name: '__mla__halt'; flags: []),
   
   (name: '__mla__raise'; flags: []),

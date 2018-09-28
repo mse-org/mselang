@@ -106,6 +106,8 @@ type
   cs_string16tovarrecty,
   cs_string32tovarrecty,
 
+//  cs_setsetele,
+  
   cs_halt,
   
   cs_raise,
@@ -514,6 +516,8 @@ type
 }
   oc_setcontains,
   oc_setin,
+  oc_setsetele,  
+  
   oc_storesegnil,
   oc_storelocnil,
   oc_storelocindinil,

@@ -3798,7 +3798,6 @@ begin
     d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
     d.dat.ref.offset:= 0;
     d.dat.ref.c.varele:= 0;
-    d.dat.ref.c.ssa:= 0;
     if dsf_instanceonstack in aflags then begin //get method
      case instancetype1^.h.kind of
       dk_interface: begin

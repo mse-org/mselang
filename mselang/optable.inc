@@ -715,6 +715,8 @@
   (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 //oc_setin,
   (ssa: setinssa; proc: @setinop; flags: []), 
+//oc_setsetele
+  (ssa: setsetelessa; proc: @setseteleop;flags: [{of_bbinc1}]), 
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 

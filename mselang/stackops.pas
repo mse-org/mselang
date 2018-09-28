@@ -4299,6 +4299,11 @@ begin
  notimplemented();
 end;
 
+procedure setseteleop();
+begin
+ notimplemented();
+end;
+
 procedure combinemethodop();
 var                            //classinstance,subaddress
  poa,pob: ppointer;
@@ -7295,6 +7300,8 @@ const
   listtoopenaradssa = 0;
   listtoarrayofconstssa = 0;
   listtoarrayofconstadssa = 0;
+  
+  setsetelessa = 0;
   
   combinemethodssa = 0;
   getmethodcodessa = 0;

@@ -3825,6 +3825,10 @@ begin
     isconst:= (source^.d.kind = ck_const) or 
           (source^.d.kind = ck_list) and (lf_allconst in source^.d.list.flags);
 //     getvalue(source,das_none);
+    if df_setelement in dest^.d.dat.flags then begin
+     assignsetitem(source,dest);
+     goto endlab;
+    end;
     if getassignaddress(dest,false) then begin
      destkind:= d.kind;
      typematch:= false;

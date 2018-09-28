@@ -144,6 +144,7 @@ function checkdatatypeconversion(const acontext: pcontextitemty): boolean;
 
 function setinop1(poa,pob: pcontextitemty; const pobisresult: boolean): boolean;
 function setinop2(pob: pcontextitemty): boolean;
+function assignsetitem(const source,dest: pcontextitemty): boolean;
 
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
@@ -151,6 +152,7 @@ function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety
 //                               const retainconst: boolean = false): boolean;
 function getaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
+function checkassigncontext(const acontext: pcontextitemty): boolean;
 function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 //function getassignaddress(const stackoffset: integer;
@@ -3033,6 +3035,7 @@ begin
   indirection:= 0;
   ref.castchain:= 0;
   flags:= [];
+  ssa1:= -1;
   if akind in factcontexts then begin
    fact.flags:= [];
   end;
@@ -3208,7 +3211,7 @@ end;
 function setinop1(poa,pob: pcontextitemty;
                                const pobisresult: boolean): boolean;
 begin
- result:= tryconvert(poa,st_card32,[coo_enum]);
+ result:= tryconvert(poa,st_card32,[coo_enum,coo_errormessage]);
  if result then begin
   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
    poa^.d.dat.constval.kind:= dk_boolean;
@@ -3221,7 +3224,7 @@ begin
    if result then begin
     if pobisresult and (pob^.d.kind in refcontexts) then begin
      include(pob^.d.dat.flags,df_setelement);
-     pob^.d.dat.ref.c.ssa:= poa^.d.dat.fact.ssaindex; 
+     pob^.d.dat.ssa1:= poa^.d.dat.fact.ssaindex; 
                               //todo: ssa shift by op insert?
      pob^.d.dat.datatyp:= sysdatatypes[st_bool1];
     end
@@ -3249,7 +3252,7 @@ var
 begin
  result:= true;
  if pob^.d.kind in refcontexts then begin
-  i1:= pob^.d.dat.ref.c.ssa;
+  i1:= pob^.d.dat.ssa1;
   exclude(pob^.d.dat.flags,df_setelement);
   pob^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
   result:= getvalue(pob,das_none);
@@ -3264,6 +3267,27 @@ begin
     pob^.d.dat.fact.ssaindex:= par.ssad;
     pob^.d.dat.indirection:= 0;
     setsysfacttype(pob^.d,st_bool1);
+   end;
+  end;
+ end;
+end;
+
+function assignsetitem(const source,dest: pcontextitemty): boolean;
+var
+ i1,i2: int32;
+begin
+ result:= false;
+ if checkassigncontext(dest) and
+        tryconvert(source,st_bool1,[coo_enum,coo_errormessage]) then begin
+  i1:= dest^.d.dat.ssa1; //item index
+  exclude(dest^.d.dat.flags,df_setelement);
+  dest^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
+  if getaddress(dest,true) and getvalue(source,das_none) then begin
+   i2:= dest^.d.dat.fact.ssaindex;
+   with additem(oc_setsetele)^ do begin
+    par.ssas1:= i2;                           //set address
+    par.ssas2:= i1;                           //item index
+    par.ssas3:= source^.d.dat.fact.ssaindex;  //boolean value
    end;
   end;
  end;
@@ -3800,12 +3824,11 @@ begin
  end;
 end;
 
-function getassignaddress(const acontext: pcontextitemty;
-                                  const endaddress: boolean): boolean;
+function checkassigncontext(const acontext: pcontextitemty): boolean;
 begin
  result:= false;
  with acontext^ do begin
-  if (d.kind in datacontexts) and 
+  if (d.kind in datacontexts) and
       not ((d.kind = ck_ref) and 
            ((af_segment in d.dat.ref.c.address.flags) and 
                 (d.dat.ref.c.address.segaddress.segment = seg_globconst) or
@@ -3813,12 +3836,18 @@ begin
                   (d.dat.indirection >= 0)
            )
           ) then begin
-   result:= getaddress(acontext,endaddress);
+   result:= true;
   end
   else begin
    errormessage(err_argnotassign,[],getstackoffset(acontext));
   end;
  end;
+end;
+
+function getassignaddress(const acontext: pcontextitemty;
+                                  const endaddress: boolean): boolean;
+begin
+ result:= checkassigncontext(acontext) and getaddress(acontext,endaddress);
 end;
 {
 function getassignaddress(const stackoffset: integer;
@@ -4786,7 +4815,8 @@ procedure outinfo(const text: string; const indent: boolean = true);
 
  procedure writedat(const adat: datacontextty);
  begin
-  write('Tg:',adat.termgroupstart,' ');
+  write('Tg:',adat.termgroupstart,
+    settostring(ptypeinfo(typeinfo(adat.flags)),int32(adat.flags),true));
  end;
   
  procedure writeref(const ainfo: contextdataty);

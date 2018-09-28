@@ -266,7 +266,6 @@ type
  refconstvaluety = record
   address: addressvaluety;  //indirectlevel = additional
   varele: elementoffsetty;
-  ssa: int32; //used for set item index
  end;
 
  refvaluety = record
@@ -550,6 +549,7 @@ type
   indirection: int32; //pending
   flags: dataflagsty;
   datatyp: typeinfoty;
+  ssa1: int32;        //for set item index
   case contextkindty of
    ck_const:(
     constval: dataty;

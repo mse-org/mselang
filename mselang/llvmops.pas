@@ -2740,10 +2740,37 @@ procedure setinop();
 begin
  with pc^.par do begin
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                                      bcstream.ssaval(ssas1));
-  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));
+                                               bcstream.ssaval(ssas1));   //1
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));//2
   bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),
-                                             bcstream.constval(ord(nco_i32)));
+                                         bcstream.constval(ord(nco_i32)));//3
+ end;
+end;
+
+procedure setseteleop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
+                                            bcstream.ssaval(ssas2));   //1
+                                     //mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(0),
+                           bcstream.constval(ord(mco_i32)));           //2
+                                     //not mask
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                               bcstream.ptypeval(ord(das_32)));        //3
+                                     //address
+  bcstream.emitloadop(bcstream.relval(0));                             //4
+                                     //value
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(2)); //5
+                                     //clear bit
+  bcstream.emitcastop(bcstream.ssaval(ssas3),
+                             bcstream.typeval(das_32),CAST_ZEXT);      //6
+                                     //boolean value
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(0),
+                                            bcstream.ssaval(ssas2));   //7
+                                     //mask
+  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //8
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(5));
  end;
 end;
 
@@ -5415,6 +5442,8 @@ const
 
   setcontainsssa = 3;
   setinssa = 3;
+  setsetelessa = 8;
+  
   getclassdefssa = 1;
   getclassrttissa = 1;
   classisssa = 1;
