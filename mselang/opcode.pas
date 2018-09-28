@@ -1120,10 +1120,10 @@ begin
       if po1^.par.ssas1 >{=} int2 then begin
        inc(po1^.par.ssas1,ssadelta);
       end;
-      if po1^.par.ssas2 >= int2 then begin
+      if po1^.par.ssas2 >{=} int2 then begin
        inc(po1^.par.ssas2,ssadelta);
       end;
-      if po1^.par.ssas3 >= int2 then begin
+      if po1^.par.ssas3 >{=} int2 then begin
        inc(po1^.par.ssas3,ssadelta);
       end;
       if of_sub in optable^[po1^.op.op].flags then begin //adjust param ssa's

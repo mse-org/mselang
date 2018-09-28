@@ -196,6 +196,7 @@ const
  alldatacontexts = datacontexts + [];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
  factcontexts = [ck_fact,ck_reffact,ck_subres,ck_factprop];
+ refcontexts = [ck_ref,ck_refprop];
 
 type 
  compileoptionty = (co_mlaruntime, //mla interpreter
@@ -265,8 +266,9 @@ type
  refconstvaluety = record
   address: addressvaluety;  //indirectlevel = additional
   varele: elementoffsetty;
+  ssa: int32; //used for set item index
  end;
-   
+
  refvaluety = record
   c: refconstvaluety;
   castchain: linkindexty;

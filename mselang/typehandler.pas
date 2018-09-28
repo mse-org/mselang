@@ -1787,8 +1787,9 @@ begin
    end
    else begin
     if inf_setelement in d.index.flags then begin
-     setinop(@contextstack[s.stacktop],poa-1,true);
+     setinop1(@contextstack[s.stacktop],poa-1,true);
      s.stacktop:= s.stackindex-1;
+     setinop2(poa-1);
     end
     else begin
      s.stacktop:= s.stackindex-1;
