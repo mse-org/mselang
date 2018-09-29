@@ -97,7 +97,8 @@ type
             err_doesnotinheritfromtype,err_doesnotinheritfromclass,
             err_cannotgettypeinfo,err_wrongarrayitemtype,
             err_cannotassigntoconst,err_stringconstantexpected,
-            err_attachnotallowed,err_invalidattachmentvalue);
+            err_attachnotallowed,err_invalidattachmentvalue,
+            err_setvarexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -362,7 +363,8 @@ const
   (level: erl_error; message: 'Can''t assign values to const variable'),
   (level: erl_error; message: 'String constant expected'),
   (level: erl_error; message: 'Attachments are not allowed here'),
-  (level: erl_error; message: 'Invalid attachment value')
+  (level: erl_error; message: 'Invalid attachment value'),
+  (level: erl_error; message: 'Set variable expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

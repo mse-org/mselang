@@ -4304,6 +4304,16 @@ begin
  notimplemented();
 end;
 
+procedure includeop();
+begin
+ notimplemented();
+end;
+
+procedure excludeop();
+begin
+ notimplemented();
+end;
+
 procedure combinemethodop();
 var                            //classinstance,subaddress
  poa,pob: ppointer;
@@ -7302,6 +7312,8 @@ const
   listtoarrayofconstadssa = 0;
   
   setsetelessa = 0;
+  includessa = 0;
+  excludessa = 0;
   
   combinemethodssa = 0;
   getmethodcodessa = 0;

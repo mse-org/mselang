@@ -32,6 +32,8 @@ procedure handleord(const paramco: int32);
 procedure handleinc(const paramco: int32);
 procedure handledec(const paramco: int32);
 procedure handleabs(const paramco: int32);
+procedure handleinclude(const paramco: int32);
+procedure handleexclude(const paramco: int32);
 procedure handlegetmem(const paramco: int32);
 procedure handlegetzeromem(const paramco: int32);
 procedure handlefreemem(const paramco: int32);
@@ -73,6 +75,8 @@ const
   @handleord,
   //syf_inc,  syf_dec    syf_abs,   
   @handleinc,@handledec,@handleabs,
+  //syf_include,syf_exclude,
+  @handleinclude,@handleexclude,
   //syf_getmem,  syf_getzeromem,   syf_freemem
   @handlegetmem,@handlegetzeromem,@handlefreemem,
   //syf_reallocmem
@@ -905,6 +909,49 @@ begin
  end;
 end;
 
+procedure handleincludeexclude(const paramco: int32; const excl: boolean);
+var
+ p1,p2: pcontextitemty;
+ t1,t2: ptypedataty;
+ op1: opcodety;
+begin
+ with info do begin
+  if checkparamco(2,paramco) then begin
+   p2:= @contextstack[s.stacktop];
+   p1:= getpreviousnospace(p2-1);
+   t1:= ele.eledataabs(p1^.d.dat.datatyp.typedata);
+   if (t1^.h.kind <> dk_set) or 
+                   (p1^.d.dat.datatyp.indirectlevel <> 0) then begin
+    errormessage(err_setvarexpected,[],p1);
+   end
+   else begin
+    if getaddress(p1,true) and 
+            tryconvert(p2,ptypedataty(ele.eledataabs(t1^.infoset.itemtype)),0,
+              [coo_enum,coo_errormessage]) and getvalue(p2,das_none) then begin
+     op1:= oc_include;
+     if excl then begin
+      op1:= oc_exclude;
+     end;
+     with additem(op1)^ do begin
+      par.ssas1:= p1^.d.dat.fact.ssaindex;
+      par.ssas2:= p2^.d.dat.fact.ssaindex;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handleinclude(const paramco: int32);
+begin
+ handleincludeexclude(paramco,false);
+end;
+
+procedure handleexclude(const paramco: int32);
+begin
+ handleincludeexclude(paramco,true);
+end;
+
 procedure handleexit(const paramco: int32);
 begin
  with info do begin         //todo: try/finally
@@ -1131,11 +1178,11 @@ begin
  end;
 end;
 *)
-
+{
 procedure handlesetlength(const paramco: int32);
 begin
 end;
-
+}
 procedure call2param(const paramco: int32; const op: opcodety);
      //(var [stacktop-1]: pointer; [stacktop]: i32)
 var
@@ -1224,15 +1271,17 @@ var
  po1,po2,po3: pcontextitemty;
 begin
  with info do begin
-  po3:= @contextstack[s.stacktop];
-  po2:= getpreviousnospace(po3-1);
-  po1:= getpreviousnospace(po2-1);
-  if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
-           getbasevalue(po2,das_32) and getbasevalue(po3,das_32) then begin
-   with additem(oc_setmem)^ do begin
-    par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
-    par.ssas2:= po2^.d.dat.fact.ssaindex; //count
-    par.ssas3:= po3^.d.dat.fact.ssaindex; //fill value
+  if checkparamco(3,paramco) then begin
+   po3:= @contextstack[s.stacktop];
+   po2:= getpreviousnospace(po3-1);
+   po1:= getpreviousnospace(po2-1);
+   if getbasevalue(po1,das_pointer) and 
+            getbasevalue(po2,das_32) and getbasevalue(po3,das_32) then begin
+    with additem(oc_setmem)^ do begin
+     par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
+     par.ssas2:= po2^.d.dat.fact.ssaindex; //count
+     par.ssas3:= po3^.d.dat.fact.ssaindex; //fill value
+    end;
    end;
   end;
  end;
@@ -1244,15 +1293,17 @@ var
 // i1: int32;
 begin
  with info do begin
-  po3:= @contextstack[s.stacktop];
-  po2:= getpreviousnospace(po3-1);
-  po1:= getpreviousnospace(po2-1);
-  if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
-           getbasevalue(po2,das_pointer) and getbasevalue(po3,das_32) then begin
-   with additem(aop)^ do begin        //todo: alignment
-    par.ssas1:= po1^.d.dat.fact.ssaindex; //dest
-    par.ssas2:= po2^.d.dat.fact.ssaindex; //source
-    par.ssas3:= po3^.d.dat.fact.ssaindex; //count
+  if checkparamco(3,paramco) then begin
+   po3:= @contextstack[s.stacktop];
+   po2:= getpreviousnospace(po3-1);
+   po1:= getpreviousnospace(po2-1);
+   if getbasevalue(po1,das_pointer) and getbasevalue(po2,das_pointer) and 
+                                            getbasevalue(po3,das_32) then begin
+    with additem(aop)^ do begin        //todo: alignment
+     par.ssas1:= po1^.d.dat.fact.ssaindex; //dest
+     par.ssas2:= po2^.d.dat.fact.ssaindex; //source
+     par.ssas3:= po3^.d.dat.fact.ssaindex; //count
+    end;
    end;
   end;
  end;
@@ -1900,6 +1951,8 @@ const
    (name: 'inc'; data: (func: syf_inc)),
    (name: 'dec'; data: (func: syf_dec)),
    (name: 'abs'; data: (func: syf_abs)),
+   (name: 'include'; data: (func: syf_include)),
+   (name: 'exclude'; data: (func: syf_exclude)),
    (name: 'getmem'; data: (func: syf_getmem)),
    (name: 'getzeromem'; data: (func: syf_getzeromem)),
    (name: 'freemem'; data: (func: syf_freemem)),

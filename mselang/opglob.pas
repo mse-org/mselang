@@ -517,6 +517,8 @@ type
   oc_setcontains,
   oc_setin,
   oc_setsetele,  
+  oc_include,
+  oc_exclude,
   
   oc_storesegnil,
   oc_storelocnil,

@@ -2774,6 +2774,41 @@ begin
  end;
 end;
 
+procedure includeop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
+                                            bcstream.ssaval(ssas2));   //1
+                                     //mask
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                               bcstream.ptypeval(ord(das_32)));        //2
+                                     //address
+  bcstream.emitloadop(bcstream.relval(0));                             //3
+                                     //value
+  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //4
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure excludeop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
+                                            bcstream.ssaval(ssas2));   //1
+                                     //mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(0),
+                           bcstream.constval(ord(mco_i32)));           //2
+                                     //not mask
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                               bcstream.ptypeval(ord(das_32)));        //3
+                                     //address
+  bcstream.emitloadop(bcstream.relval(0));                             //4
+                                     //value
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0));  //5
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
 procedure getclassdefop();
 begin
  with pc^.par do begin
@@ -5443,6 +5478,8 @@ const
   setcontainsssa = 3;
   setinssa = 3;
   setsetelessa = 8;
+  includessa = 4;
+  excludessa = 5;
   
   getclassdefssa = 1;
   getclassrttissa = 1;

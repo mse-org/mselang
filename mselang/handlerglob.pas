@@ -520,6 +520,7 @@ type
               syf_sizeof,syf_classof,syf_typeinfo,
               syf_ord,
               syf_inc,syf_dec,syf_abs,
+              syf_include,syf_exclude,
               syf_getmem,syf_getzeromem,syf_freemem,syf_reallocmem,syf_setmem,
               syf_memcpy,syf_memmove,
               syf_halt,
