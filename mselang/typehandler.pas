@@ -1606,7 +1606,7 @@ var
  i1: int32;
  context1: pcontextitemty;
 label
- errorlab;
+ pointerlab,errorlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXITEM');
@@ -1623,22 +1623,24 @@ begin
     internalerror(ie_handler,'20160527');
    end;
   {$endif}
+   if d.dat.datatyp.indirectlevel < 0 then begin
+    errormessage(err_illegalqualifier,[],topoffset);
+    goto errorlab;
+   end;
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
    isdynarray:= true;
    ispointer:= false;
    case itemtype^.h.kind of
     dk_dynarray,dk_openarray: begin
-     if d.dat.datatyp.indirectlevel <> 0 then begin
-      errormessage(err_illegalqualifier,[],topoffset);
-      goto errorlab;
+     if d.dat.datatyp.indirectlevel > 0 then begin
+      goto pointerlab;
      end;
      itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
      range.min:= 0;
     end;
     dk_string: begin
-     if d.dat.datatyp.indirectlevel <> 0 then begin
-      errormessage(err_illegalqualifier,[],topoffset);
-      goto errorlab;
+     if d.dat.datatyp.indirectlevel > 0 then begin
+      goto pointerlab;
      end;
      range.min:= 1;
      case itemtype^.itemsize of
@@ -1654,16 +1656,14 @@ begin
      end;
     end;
     dk_array: begin
-     if d.dat.datatyp.indirectlevel <> 1 then begin
-      errormessage(err_illegalqualifier,[],topoffset);
-      goto errorlab;
+     if d.dat.datatyp.indirectlevel > 1 then begin
+      goto pointerlab;
      end;
      isdynarray:= false;
     end;
     dk_set: begin
-     if d.dat.datatyp.indirectlevel <> 0 then begin
-      errormessage(err_illegalqualifier,[],topoffset);
-      goto errorlab;
+     if d.dat.datatyp.indirectlevel > 0 then begin
+      goto pointerlab;
      end;
      if inf_setelement in context1^.d.index.flags then begin 
                                               //single index item only
@@ -1679,6 +1679,7 @@ begin
     end;
     else begin
      if d.dat.datatyp.indirectlevel > 0 then begin
+pointerlab:
       ispointer:= true;
       isdynarray:= false;
      end
