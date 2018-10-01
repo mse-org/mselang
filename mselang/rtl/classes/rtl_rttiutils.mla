@@ -506,25 +506,27 @@ var
  p1,pe: ppropertyrttity;
 begin
  result:= nil;
- if atypeinfo^.kind <> rtk_object then
-  rttierror(stypemustbeobjectorclass);
- end;
- cla:= pobjectrttity(atypeinfo)^.classdef;
- while cla <> nil do
-  rtti:= pointer(cla^.header.rtti);
-  if rtti = nil then
-   exit;
+ if atypeinfo <> nil then
+  if atypeinfo^.kind <> rtk_object then
+   rttierror(stypemustbeobjectorclass);
   end;
-  p1:= @rtti^.properties.items;
-  pe:= pointer(p1)+rtti^.properties.size;
-  while p1 < pe do
-   if stringicomp(string8(p1^.name),propname) = 0 then
-    result:= p1;
+  cla:= pobjectrttity(atypeinfo)^.classdef;
+  while cla <> nil do
+   rtti:= pointer(cla^.header.rtti);
+   if rtti = nil then
     exit;
    end;
-   inc(p1);
+   p1:= @rtti^.properties.items;
+   pe:= pointer(p1)+rtti^.properties.size;
+   while p1 < pe do
+    if stringicomp(string8(p1^.name),propname) = 0 then
+     result:= p1;
+     exit;
+    end;
+    inc(p1);
+   end;
+   cla:= cla^.header.parentclass;
   end;
-  cla:= cla^.header.parentclass;
  end;
 end;
 
