@@ -555,8 +555,23 @@ begin
 end;
 
 function getstringconst(const astring: stringvaluety): lstringty;
+var
+ p1: pstringvaluety;
 begin
- result:= stringbuf.getstring(astring);
+ if strf_ele in astring.flags then begin
+ {$ifdef mse_checkinternalerror}
+  if (ele.eleinfoabs(astring.offset)^.header.kind <> ek_const) or
+     (pconstdataty(ele.eledataabs(astring.offset))^.val.d.kind <>
+                                                    dk_string) then begin
+   internalerror(ie_elements,'20180903B');
+  end;
+ {$endif}
+  p1:= @pconstdataty(ele.eledataabs(astring.offset))^.val.d.vstring;
+ end
+ else begin
+  p1:= @astring;
+ end;
+ result:= stringbuf.getstring(p1^);
 end;
 
 function stringconstlen(const astring: stringvaluety): int32;
