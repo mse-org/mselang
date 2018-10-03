@@ -83,10 +83,6 @@ type
 var
  tempvarlist: linklistty;
 
-procedure callsub(const adestindex: int32; asub: psubdataty;
-                 const paramstart,paramco: int32; aflags: dosubflagsty;
-                          const aobjssa: int32 = 0; const aobjsize: int32 = 0;
-                                              ainstancetype: ptypedataty = nil);
 procedure handleparamsdefentry();
 procedure handleparamsdef();
 procedure handleparamdef0entry();
@@ -150,6 +146,10 @@ function checkparamsbase(const po1,ref: psubdataty): boolean;
                //compare base types
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
+procedure callsub(const adestindex: int32; asub: psubdataty;
+                 const paramstart,paramco: int32; aflags: dosubflagsty;
+                          const aobjssa: int32 = 0; const aobjsize: int32 = 0;
+                                              ainstancetype: ptypedataty = nil);
 function callinternalsub(const asub: opaddressty;
                                    const stackindex: int32 = bigint): popinfoty;
                                                         //ignores op address 0

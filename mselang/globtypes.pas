@@ -85,7 +85,8 @@ type
  indirectlevelty = int32;
  framelevelty = int32;
 
- segmentty = (seg_classdef,seg_nil,seg_stack,seg_globvar,seg_globconst,
+ segmentty = ({seg_constdef,}seg_classdef,
+              seg_nil,seg_stack,seg_globvar,seg_globconst,
               seg_reloc,
               seg_op,{seg_classdef,}seg_rtti,seg_intf,
               seg_localloc,
@@ -338,11 +339,12 @@ type
  end;
  ptypeinfoty = ^typeinfoty;
 
- stringflagty = (strf_empty,strf_16,strf_32);
+ stringflagty = (strf_empty,strf_16,strf_32,strf_ele);
  stringflagsty = set of stringflagty;
  
  stringvaluety = record
-  offset: ptruint; //stringbufhashdataty offset in string buffer
+  offset: int32; //stringbufhashdataty offset in string buffer or
+                 //ele offs for constdef if strf_ele is set
   flags: stringflagsty;
  // len: databytesizety;
  end;

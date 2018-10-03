@@ -934,15 +934,6 @@ begin
     end;
     i2:= ssad;
    end;
-{
-   with additem(oc_pushsegaddr,pushsegaddrssaar[seg_classdef])^.par do begin
-    memop.segdataaddress.a:= ptypedataty(ele.eledataabs(
-          contextstack[s.stackindex].d.statement.excepttype))^.infoclass.defs;
-    memop.segdataaddress.offset:= 0;
-    memop.t:= bitoptypes[das_pointer];
-    i2:= ssad;
-   end;
-}
    with additem(oc_classis)^.par do begin          //op 4
     ssas1:= i1;
     ssas2:= i2;

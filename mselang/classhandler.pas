@@ -298,7 +298,8 @@ begin
      infoclass.nameid:= -1;
      if (co_llvm in o.compileoptions) and 
                    not (us_implementation in s.unitinfo^.state) then begin
-      infoclass.nameid:= s.unitinfo^.nameid; //for llvm
+//      infoclass.nameid:= s.unitinfo^.nameid; //for llvm
+      infoclass.nameid:= getunitnameid(); //for llvm
      end;
      fillchar(infoclass.subattach,sizeof(infoclass.subattach),0);
 //     if isclass then begin

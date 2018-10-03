@@ -523,6 +523,7 @@ begin
       llvmout1.free();
       if co_llvm in info.o.compileoptions then begin
        freebuffer(info.s.unitinfo^.segments[seg_classdef]); //not used anymore
+//       freebuffer(info.s.unitinfo^.segments[seg_constdef]); //not used anymore
       end;
      end;
     end

@@ -238,8 +238,10 @@ end;
  
 const
  minsize: array[low(segmentty)..lastdatasegment] of integer = (
-//seg_classdef,seg_nil,seg_stack,seg_globvar,seg_globconst,seg_reloc,
-  1024,        0,      0,        0,          1024,         1024,     
+//{seg_constdef,}seg_classdef,seg_nil,seg_stack,seg_globvar,seg_globconst,
+  {1024,}        1024,        0,      0,        0,          1024,         
+//seg_reloc,
+  1024,     
 //seg_op,{seg_classinfo,}seg_rtti,
   1024,  {1024,}         1024,
 //seg_intf,seg_paralloc,{seg_classintfcount,}seg_intfitemcount,

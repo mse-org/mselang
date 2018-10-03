@@ -397,6 +397,7 @@ type
  constdataty = record
 //  typ: elementoffsetty; //typedataty
   val: datainfoty;
+  nameid: int32; //-1 -> none
 //  d: contextdataty;
  end;
  pconstdataty = ^constdataty;

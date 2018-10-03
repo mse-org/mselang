@@ -594,14 +594,6 @@ begin
   internalerror(ie_llvm,'20170613F');
  end;
 {$endif}
-{
- int1:= getsegmentsize(seg_globconst);
- if int1 > 0 then begin                               //global consts
-  bcstream.constseg:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_var,
-             info.s.unitinfo^.llvmlists.constlist.
-             addvalue(getsegmentpo(seg_globconst,0)^,int1).listid,constlinkage);
- end;
-}
  bcstream.classdefs:= getsegmentbase(seg_classdef);
  
  for funcs1:= low(internalfuncsx) to high(internalfuncsx) do begin

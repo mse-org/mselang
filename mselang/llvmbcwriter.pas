@@ -1775,15 +1775,6 @@ begin
    emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
   end;
-  {
-  seg_classdef: begin
-   emitgetelementptr(constval(
-       (pclassdefconstheaderty(
-              fclassdefs+aaddress.segdataaddress.a.address)-1)^.defsid),
-                                      constval(aaddress.segdataaddress.offset)); 
-                                                           //2ssa
-  end;
-  }
   seg_nil: begin
    emitpushconst(nullconst);
   end;
@@ -2044,7 +2035,7 @@ end;
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;
 begin
  result:= aadress.address;
- if aadress.segment in [{seg_globconst,}seg_classdef] then begin
+ if aadress.segment in [{seg_constdef,}seg_classdef] then begin //???
   result:= result + fconststart;
  end;
  {

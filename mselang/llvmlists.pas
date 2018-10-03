@@ -1111,44 +1111,13 @@ begin
     internalerror(ie_llvmlist,'20171118A');
    end;
   {$endif}
-{
-   if typ1^.h.llvmrtticonst > 0 then begin
-    i3:= getrtti(typ1);
-    with info.s.unitinfo^.llvmlists.constlist do begin
-     bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
-     pint32(@bufdat1^.items)[classrttidefindex]:= i3;
-//     pint32(@bufdat1^.items)[classrttidefindex]:= 
-//                            addpointercast(pint32(poclassdef)^).listid;
-              //todo: hide for search because hash is wrong
-    end;
-   end;
-}
   end;
   if updatesubs then begin
-  (*
-   if poclassdef^.header.parentclass < -1 then begin
-    i1:= getclassid(poclassdef^.header.parentclass);
-   {$ifdef mse_checkinternalerror}
-    if i1 < 0 then begin
-     internalerror(ie_llvmlist,'20180716B');
-    end;
-   {$endif}
-    with info.s.unitinfo^.llvmlists do begin
-     i3:= constlist.addpointercast(i1).listid;
-     bufdat1:= constlist.getitemdata(
-               globlist.getinitconst(typ1^.infoclass.defsid));
-     pint32(@bufdat1^.items)[classparentindex]:= i3;
-    end;
-   end;
-  *)
    if typ1^.h.llvmrtticonst > 0 then begin
- //   i3:= getrtti(typ1);
     with info.s.unitinfo^.llvmlists,constlist do begin
      i3:= addpointercast(typ1^.infoclass.defsid).listid;
      bufdat1:= getitemdata(typ1^.h.llvmrtticonst);
      pint32(@bufdat1^.items)[classrttidefindex]:= i3;
- //     pint32(@bufdat1^.items)[classrttidefindex]:= 
- //                            addpointercast(pint32(poclassdef)^).listid;
               //todo: hide for search because hash is wrong
     end;
    end;
@@ -1158,18 +1127,9 @@ begin
                        globlist.getinitconst(typ1^.infoclass.defsid));
      i2:= constlist.getitemdata(pint32(@bufdat1^.items)[classvirttabindex]) -
                                                                constlist.buffer;
- //    pd:= @bufdat2.
     end;
-//    offss:= i2;
     offse:= i2 + typ1^.infoclass.virtualcount * sizeof(int32);
     setvirtsubs(typ1,i2);
-(*
-   {$ifdef mse_checkinternalerror}
-    if i2 <> offse then begin
-     internalerror(ie_llvmlist,'20180506B');
-    end;
-   {$endif}
-*)
    end;
   end;
 loopend:
@@ -2446,10 +2406,6 @@ begin
  i2:= 4;
  for proc1:= low(proc1) to high(proc1) do begin
   types1[i2]:= pointertype;
-//  if aclassdef^.header.procs[proc1] <= 0 then begin
-//   classdef1.items[i2]:= nullpointer;
-//  end
-//  else begin
   i1:= aclassdef^.header.procs[proc1];
   if i1 > 0 then begin //opcode in current module, globid otherwise
    pop1:= getoppo(i1);
@@ -2464,16 +2420,6 @@ begin
    i1:= -i1 - 1;
   end;
   classdef1.items[i2]:= addpointercast(i1).listid;
-(*
-   pop1:= getoppo(aclassdef^.header.procs[proc1]);
-  {$ifdef mse_checkinternalerror}
-   if pop1^.op.op <> oc_subbegin then begin
-    internalerror(ie_llvmlist,'20170721A');
-   end;
-  {$endif}
-   classdef1.items[i2]:= addpointercast(pop1^.par.subbegin.globid).listid;
-*)
-//  end;
   inc(i2);
  end;
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
@@ -2489,13 +2435,6 @@ begin
    pd^:= nullpointer;
    inc(pd);
   end;
-{
-  while ps < pe do begin
-   pd^:= addpointercast(ps^).listid;
-   inc(pd);
-   inc(ps);
-  end;
-}
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods,false);
   types1[i2]:= co1.typeid;
   classdef1.items[i2]:= co1.listid;

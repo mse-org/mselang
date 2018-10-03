@@ -2850,7 +2850,7 @@ end;
 
 procedure tstringbuffer.initbuffer;
 const
- minbuffersize = $16;// $10000;
+ minbuffersize = $16;// $10000; //todo: use bigger size for production
 begin
  fbufsize:= 0;
  fbufcapacity:= minbuffersize;

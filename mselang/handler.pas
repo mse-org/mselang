@@ -2583,12 +2583,19 @@ begin
       identerror(1,err_duplicateidentifier);
      end
      else begin
+      po1^.nameid:= -1;
       po1^.val.typ:= d.dat.datatyp;
       if df_typeconversion in d.dat.flags then begin
        include(po1^.val.typ.flags,tf_typeconversion);
       end;
       if d.dat.constval.kind = dk_string then begin
        trackstringref(d.dat.constval.vstring);
+       if modularllvm and 
+                    not (us_implementation in s.unitinfo^.state) then begin
+        po1^.nameid:= s.unitinfo^.nameid; 
+                            //will be defined in allocstringconst()
+        segad1:= allocstringconst(d.dat.constval.vstring);
+       end;
       end;
       po1^.val.d:= d.dat.constval;
       result:= true;
@@ -3381,14 +3388,6 @@ procedure handleissimpexp();
      classdefstackops:= typ1^.infoclass.defs.address;
     end;
    end;
-{
-   with insertitem(oc_pushsegaddr,acontext,-1,
-                                    pushsegaddrssaar[seg_classdef])^ do begin
-    par.memop.segdataaddress.a:= typ1^.infoclass.defs;
-    par.memop.segdataaddress.offset:= 0;
-    par.memop.t:= bitoptypes[das_pointer];
-   end;
-}
    initfactcontext(acontext);
    result:= true;
   end
