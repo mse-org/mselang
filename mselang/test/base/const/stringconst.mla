@@ -1,0 +1,14 @@
+program stringconst;
+{$internaldebug on}
+interface
+uses
+ unit1;
+var
+ s1: string8;
+begin
+ s1:= c1;
+ writeln(s1);
+ if s1 = 'abc' then
+  exitcode:= 123;
+ end;
+end.

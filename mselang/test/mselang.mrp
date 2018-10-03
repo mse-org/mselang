@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=39
     (
     kind=1
@@ -2149,7 +2149,7 @@ c=3
    (
    kind=1
    a=0,665,4,const
-   c=4
+   c=5
     (
     kind=2
     a=0,648,1,typedconst1
@@ -2234,6 +2234,28 @@ c=3
     eec=123
     cr=0
     ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringconst llvm
+    teststate=1
+    path=stringconst.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=abc
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=abc
     ae=
     aec=123
     ie=0
@@ -15780,48 +15802,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=307
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=266
  0 0
  0 0
  0 0

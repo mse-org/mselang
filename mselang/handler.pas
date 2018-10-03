@@ -2592,9 +2592,9 @@ begin
        trackstringref(d.dat.constval.vstring);
        if modularllvm and 
                     not (us_implementation in s.unitinfo^.state) then begin
-        po1^.nameid:= s.unitinfo^.nameid; 
-                            //will be defined in allocstringconst()
         segad1:= allocstringconst(d.dat.constval.vstring);
+        po1^.nameid:= s.unitinfo^.nameid; 
+                            //defined in allocstringconst()
        end;
       end;
       po1^.val.d:= d.dat.constval;

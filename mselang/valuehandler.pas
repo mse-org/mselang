@@ -2915,11 +2915,19 @@ begin
     ek_const: begin
      if checknoparam then begin
       initdatacontext(poind^.d,ck_const);
-      d.dat.datatyp:= pconstdataty(po2)^.val.typ;
-      if tf_typeconversion in d.dat.datatyp.flags then begin
-       include(d.dat.flags,df_typeconversion);
+      with pconstdataty(po2)^ do begin
+       d.dat.datatyp:= val.typ;
+       if tf_typeconversion in d.dat.datatyp.flags then begin
+        include(d.dat.flags,df_typeconversion);
+       end;
+       d.dat.constval:= val.d;
+       if (val.d.kind = dk_string) and modularllvm and (nameid >= 0) and
+               (datatoele(po2)^.header.defunit <> s.unitinfo) then begin
+                                   //other unit
+        d.dat.constval.vstring.offset:= ele.eledatarel(po2);
+        include(d.dat.constval.vstring.flags,strf_ele);
+       end;
       end;
-      d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
     end;
     ek_sub: begin

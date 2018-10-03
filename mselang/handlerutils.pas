@@ -297,6 +297,7 @@ procedure trackalloc(const adatasize: databitsizety; const asize: integer;
 procedure tracklocalaccess(var aaddress: locaddressty; 
                                  const avarele: elementoffsetty;
                                  const aopdatatype: typeallocinfoty);
+function trackaccess(const aconst: pconstdataty): segaddressty;
 function trackaccess(const avar: pvardataty): addressvaluety;
 function trackaccess(const asub: psubdataty): int32;
 function trackaccess(const asub: pinternalsubdataty): int32;
@@ -1369,7 +1370,13 @@ begin
    dk_string: begin
     si1:= das_pointer;
     isimm:= false;
-    segad1:= allocstringconst(constval.vstring);
+    if strf_ele in constval.vstring.flags then begin
+     segad1:= trackaccess(pconstdataty(
+                     ele.eledataabs(constval.vstring.offset)));
+    end
+    else begin
+     segad1:= allocstringconst(constval.vstring);
+    end;
     if segad1.segment = seg_nil then begin
      insertitem(oc_pushnil,stackoffset,aopoffset);
     end
@@ -2444,6 +2451,30 @@ begin
      locglobid:= -1; //new
     end;
    end;
+  end;
+ end;
+end;
+
+function trackaccess(const aconst: pconstdataty): segaddressty;
+var
+ unitid: identty;
+ globid: int32;
+begin
+{$ifdef mse_checkinternalerror}
+ if (aconst^.nameid < 0) or 
+      (datatoele(aconst)^.header.defunit = info.s.unitinfo) or
+                                  (aconst^.val.d.kind <> dk_string) then begin
+  internalerror(ie_handler,'20180903A');
+ end;
+{$endif}
+ result.segment:= seg_globvar;
+ if llvmlink(aconst,unitid,globid) then begin
+  if globid < 0 then begin
+   result.address:= info.s.unitinfo^.llvmlists.globlist.addexternalvalue(
+           datatoele(aconst),aconst^.nameid,ord(das_pointer),li_external);
+  end
+  else begin
+   result.address:= globid;
   end;
  end;
 end;
