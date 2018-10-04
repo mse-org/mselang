@@ -323,6 +323,8 @@ var
  id1: identty;
  mop1: managedopty;
  sa1: objsubattachty;
+ str1: lstringty;
+ p1: pointer;
 label
  errorlab,fatallab,oklab,endlab;
 begin
@@ -341,7 +343,7 @@ begin
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filematch.timestamp) and
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
-                         [seg_unitintf,seg_unitlinks,seg_unitidents]);
+                [seg_unitintf,seg_unitlinks,seg_unitidents,seg_unitconstbuf]);
    if result then begin
     result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
@@ -595,6 +597,18 @@ begin
        ek_const: begin
         with pconstdataty(po)^ do begin
          updateref(val.typ.typedata,id1);
+         if val.d.kind = dk_string then begin
+          if not getsegmentpo(seg_unitconstbuf,val.d.vstring.offset,
+                                                sizeof(int32),p1) then begin
+           goto errorlab;
+          end;
+          str1.len:= pint32(p1)^;
+          if not getsegmentpo(seg_unitconstbuf,
+               val.d.vstring.offset+sizeof(int32),str1.len,str1.po) then begin
+           goto errorlab;
+          end;
+          val.d.vstring:= newstringconst(str1);
+         end;
         end;
        end;
        ek_ref: begin

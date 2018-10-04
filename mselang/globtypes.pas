@@ -92,6 +92,7 @@ type
               seg_localloc,
               {seg_classintfcount,}seg_intfitemcount,
               seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
+              seg_unitconstbuf,
               seg_temp,
               seg_llvmconst);
 const
@@ -112,7 +113,8 @@ const
 // idstart = $12345678;
  idstart = firstident;
  storedsegments = [seg_globconst,seg_reloc,seg_classdef,seg_op,seg_rtti,
-                   seg_intf,{seg_classintfcount,}seg_intfitemcount];
+                   seg_intf,{seg_classintfcount,}seg_intfitemcount,
+                   seg_unitconstbuf];
 type
  dataflagty = (df_typeconversion,df_setelement);
  dataflagsty = set of dataflagty;

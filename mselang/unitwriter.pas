@@ -184,10 +184,12 @@ var
  procedure puteledata(ps,pd: pelementinfoty; const s1: int32);
  var
   pe: pelementinfoty;
+  p1: pointer;
   pe1,pee: pelementoffsetty;
   mop1: managedopty;
   sa1: objsubattachty;
   po: pointer;
+  str1: lstringty;
  begin
   move(ps^,pd^,s1);
   deststart:= pd;
@@ -274,6 +276,14 @@ var
      ek_const: begin
       with pconstdataty(po)^ do begin
        updateref(val.typ.typedata);
+       if val.d.kind = dk_string then begin
+        str1:= getstringconst(val.d.vstring);
+        p1:= allocsegmentpo(seg_unitconstbuf,sizeof(int32)+str1.len);
+        val.d.vstring.offset:= getsegmentoffset(seg_unitconstbuf,p1);
+        pint32(p1)^:= str1.len;
+        inc(pint32(p1));
+        move(str1.po^,p1^,str1.len);
+       end;
       end;
      end;
      ek_ref: begin
@@ -344,14 +354,6 @@ var
 
 begin
  result:= false;
-{
- if info.modularllvm then begin
-  aunit^.globidbasex:= info.globidcountx;
-  aunit^.reloc.globidcountx:= aunit^.nameid - aunit^.globidbasex;
-  info.globidcountx:= info.globidcountx + aunit^.reloc.globidcountx;
-                  //for unique linklist key
- end;
-} 
  elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.interfaceend.bufferref - aunit^.interfacestart.bufferref;
  eleend:= elestart + s1;
@@ -452,7 +454,6 @@ end;
 
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
-// stat1: subsegmentstatety;
  stream1: tmsefilestream;
  fna1: filenamety;
  llvmout1: tllvmbcwriter = nil;
@@ -468,12 +469,10 @@ begin
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    try
     aunit^.rtfilepath:= fna1;
-    segs1:= [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op];
+    segs1:= [seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitconstbuf,seg_op];
     if co_llvm in info.o.compileoptions then begin
      segs1:= segs1 - [seg_op,seg_classdef];
     end;
-//    stat1:= setsubsegment(aunit^.opseg,-startupoffset);
-//    opsegstart:= stat1.state.data;
     writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
                                                      aunit^.filematch.timestamp);
                                //todo: complete
@@ -484,31 +483,6 @@ begin
     stream1.destroy();
    end;
    if co_llvm in info.o.compileoptions then begin
-   {
-    if info.modularllvm then begin
-     for cu1:= succ(low(cu1)) to high(cu1) do begin
-      with compilerunitdefs[cu1] do begin
-       if name <> aunit^.namestring then begin
-        for sub1:= first to last do begin
-         if compilersubs[sub1] <> 0 then begin
-          ps1:= ele.eledataabs(compilersubs[sub1]);
-          compilersubids[sub1]:= 
-                     info.s.unitinfo^.llvmlists.globlist.addsubvalue(ps1,true);
-         end;
-        end;
-       end
-       else begin
-        for sub1:= first to last do begin
-         if compilersubs[sub1] <> 0 then begin
-          ps1:= ele.eledataabs(compilersubs[sub1]);
-          compilersubids[sub1]:= ps1^.globid;
-         end;
-        end;
-       end;
-      end;
-     end;
-    end;
-   }
     fna1:= getbcunitfilename(aunit^.rtfilepath);
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;

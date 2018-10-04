@@ -56,9 +56,10 @@ const
  minsegmentreserve = 32; //at least free bytes at buffer end  
 
 const
- unitsegmentcount = 4;
+ unitsegmentcount = 5;
  unitsegments: array[0..unitsegmentcount-1] of segmentty = 
-               (seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl);
+               (seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
+                seg_unitconstbuf);
 type
  unitsegmentsstatety = array[0..unitsegmentcount-1] of bufferinfoty;
 
@@ -124,6 +125,9 @@ function getsegmentoffset(const asegment: segmentty;
 
 function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
+function getsegmentpo(const asegment: segmentty; const aoffset: dataoffsty; 
+                                 const len: int32; out po: pointer): boolean;
+                                          //false on error
 function getsegmentpo(const aaddress: segaddressty): pointer;
 function getsegaddress(const asegment: segmentty;
                              const aaddress: dataoffsty): segaddressty;
@@ -248,6 +252,8 @@ const
   1024,    1024,        {1024,}              1024,             
 //seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl,
   1024,        1024,          1024,         1024,
+//seg_unitconstbuf,
+  1024,
 //seg_temp
   1024);          
   
@@ -836,6 +842,16 @@ function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
 begin
  result:= getsegbuffer(asegment)^.data + aoffset;
+end;
+
+function getsegmentpo(const asegment: segmentty; const aoffset: dataoffsty; 
+                                 const len: int32; out po: pointer): boolean;
+                                          //false on error
+begin
+ with getsegbuffer(asegment)^ do begin
+  po:= data+aoffset;
+  result:= (aoffset >= 0) and (po+len <= toppo);
+ end;
 end;
 
 function getsegmentpo(const aaddress: segaddressty): pointer;

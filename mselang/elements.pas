@@ -456,6 +456,7 @@ type
    function checkkey(const akey; const aitem: phashdataty): boolean; override;
    function getrecordsize(): int32 override;
    function checkgrow(): boolean;
+   function getbufpo(const astring: stringvaluety): pstringbufhashdataty;
   public
    constructor create;
    destructor destroy; override;
@@ -555,23 +556,8 @@ begin
 end;
 
 function getstringconst(const astring: stringvaluety): lstringty;
-var
- p1: pstringvaluety;
 begin
- if strf_ele in astring.flags then begin
- {$ifdef mse_checkinternalerror}
-  if (ele.eleinfoabs(astring.offset)^.header.kind <> ek_const) or
-     (pconstdataty(ele.eledataabs(astring.offset))^.val.d.kind <>
-                                                    dk_string) then begin
-   internalerror(ie_elements,'20180903B');
-  end;
- {$endif}
-  p1:= @pconstdataty(ele.eledataabs(astring.offset))^.val.d.vstring;
- end
- else begin
-  p1:= @astring;
- end;
- result:= stringbuf.getstring(p1^);
+ result:= stringbuf.getstring(astring);
 end;
 
 function stringconstlen(const astring: stringvaluety): int32;
@@ -2995,9 +2981,28 @@ begin
  end;
 end;
 
+function tstringbuffer.getbufpo(
+              const astring: stringvaluety): pstringbufhashdataty;
+begin
+ if strf_ele in astring.flags then begin
+ {$ifdef mse_checkinternalerror}
+  if (ele.eleinfoabs(astring.offset)^.header.kind <> ek_const) or
+     (pconstdataty(ele.eledataabs(astring.offset))^.val.d.kind <>
+                                                    dk_string) then begin
+   internalerror(ie_elements,'20180903B');
+  end;
+ {$endif}
+  result:= fdata+pconstdataty(
+                    ele.eledataabs(astring.offset))^.val.d.vstring.offset;
+ end
+ else begin
+  result:= fdata+astring.offset;
+ end;
+end;
+
 function tstringbuffer.getstring(const astring: stringvaluety): lstringty;
 begin
- with pstringbufhashdataty(fdata+astring.offset)^ do begin
+ with getbufpo(astring)^ do begin
   result.len:= data.len;
   result.po:= fbuffer + data.offset;
  end;
@@ -3005,7 +3010,7 @@ end;
 
 procedure tstringbuffer.trackstringref(const astring: stringvaluety);
 begin
- with pstringbufhashdataty(fdata+astring.offset)^ do begin
+ with getbufpo(astring)^ do begin
   include(data.flags,sbf_referenced);
  end; 
 end;
@@ -3019,8 +3024,10 @@ var
  lstr1: lstringty;
  hash1: hashvaluety;
 begin
- pa:= pstringbufhashdataty(fdata+dest.offset);
- pb:= pstringbufhashdataty(fdata+b.offset);
+// pa:= pstringbufhashdataty(fdata+dest.offset);
+// pb:= pstringbufhashdataty(fdata+b.offset);
+ pa:= getbufpo(dest);
+ pb:= getbufpo(b);
  if (pb^.data.offset + pb^.data.len = fbufsize) and 
                        (pa^.data.offset + pa^.data.len = pb^.data.offset) and
                        //last two entries
