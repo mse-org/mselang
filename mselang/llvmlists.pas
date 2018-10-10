@@ -459,6 +459,9 @@ type
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
                                     const externunit: boolean): int32;
                                                             //returns listid
+   function addvalue(const avalue: pconstdataty; const alinkage: linkagety; 
+                                    const externunit: boolean): int32;
+                                                            //returns listid
    function addalias(const aliasee: int32; const name: identty): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
@@ -2619,6 +2622,21 @@ function tgloballocdatalist.addvalue(const avalue: pvardataty;
                               const externunit: boolean): int32;
 begin
  result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage,externunit);
+ if externunit then begin
+  fnamelist.addname(datatoele(avalue)^.header.defunit,avalue^.nameid,result);
+  flinklist.addlink(avalue,result);
+ end;
+end;
+
+function tgloballocdatalist.addvalue(const avalue: pconstdataty;
+               const alinkage: linkagety; const externunit: boolean): int32;
+begin
+{$ifdef mse_checkinternalerror}
+ if (avalue^.nameid < 0) or (avalue^.val.d.kind <> dk_string) then begin
+  internalerror(ie_handler,'20181010A');
+ end;
+{$endif}
+ result:= addnoinit(ord(das_pointer),alinkage,true);
  if externunit then begin
   fnamelist.addname(datatoele(avalue)^.header.defunit,avalue^.nameid,result);
   flinklist.addlink(avalue,result);

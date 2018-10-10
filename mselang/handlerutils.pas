@@ -2470,8 +2470,10 @@ begin
  result.segment:= seg_globvar;
  if llvmlink(aconst,unitid,globid) then begin
   if globid < 0 then begin
-   result.address:= info.s.unitinfo^.llvmlists.globlist.addexternalvalue(
-           datatoele(aconst),aconst^.nameid,ord(das_pointer),li_external);
+   result.address:= info.s.unitinfo^.llvmlists.globlist.addvalue(aconst,
+                                                             li_external,true);
+//   result.address:= info.s.unitinfo^.llvmlists.globlist.addexternalvalue(
+//           datatoele(aconst),aconst^.nameid,ord(das_pointer),li_external);
   end
   else begin
    result.address:= globid;

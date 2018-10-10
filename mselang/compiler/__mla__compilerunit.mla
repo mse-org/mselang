@@ -1240,7 +1240,7 @@ begin
   inc(p1);
  end;
  if i1 > 0 then
-  pd:= getmem(string8allocsize+i1*1);
+  pd:= getmem(string16allocsize+i1*2);
   pd^.ref.count:= temprefcount;
   pd^.len:= i1;
   inc(pd);
