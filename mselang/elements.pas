@@ -3031,12 +3031,14 @@ begin
  if (pb^.data.offset + pb^.data.len = fbufsize) and 
                        (pa^.data.offset + pa^.data.len = pb^.data.offset) and
                        //last two entries
-    not (sbf_referenced in pa^.data.flags) and 
-             not (sbf_referenced in pa^.data.flags) and
+           not (sbf_referenced in pa^.data.flags) and 
+           not (sbf_referenced in pb^.data.flags) and
+           not (strf_ele in dest.flags) and
            (pa^.data.constoffset8 = -1) and (pa^.data.constoffset16 = -1) and
                (pa^.data.constoffset32 = -1) and
            (pb^.data.constoffset8 = -1) and (pb^.data.constoffset16 = -1) and
-               (pb^.data.constoffset32 = -1) then begin
+               (pb^.data.constoffset32 = -1) then begin 
+     //concat in place
   removehash(pointer(pa));
   pa^.data.len:= pa^.data.len + pb^.data.len;
   internaldelete(b.offset);
@@ -3045,8 +3047,10 @@ begin
   i1:= pa^.data.len + pb^.data.len;
   fbufsize:= fbufsize + i1;
   if checkgrow() then begin
-   pa:= pstringbufhashdataty(fdata+dest.offset);
-   pb:= pstringbufhashdataty(fdata+b.offset);
+   pa:= getbufpo(dest);
+   pb:= getbufpo(b);
+//   pa:= pstringbufhashdataty(fdata+dest.offset);
+//   pb:= pstringbufhashdataty(fdata+b.offset);
   end;
   lstr1.po:= fbuffer+fbufsize-i1;
   lstr1.len:= i1;
@@ -3066,6 +3070,7 @@ begin
   end
   else begin
    fbufsize:= fbufsize-i1;
+//   include(pa^.data.flags,sbf_referenced); 
   end;
   dest.offset:= pointer(pa)-fdata;
   dest.flags:= [];
