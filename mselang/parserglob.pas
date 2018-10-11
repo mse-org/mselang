@@ -798,6 +798,7 @@ type
   forwardtypes: listadty;
   resolvedforwardtypes: listadty;
   llvmlists: tllvmlists;
+  stringbuffer: pointer; //tstringbuffer
   nameid: int32;
 
   pendingcount: integer;

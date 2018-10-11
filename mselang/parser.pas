@@ -618,7 +618,7 @@ begin
       par.beginparse.mainad:= info.s.unitinfo^.mainad;
      end;
     end;
-    finalizeunit(aunit);
+    finalizeunit(aunit,true);
     exit;
    end;
   end;
@@ -1108,7 +1108,7 @@ parseend:
   popcurrentscope();
   if (result = false) or 
           (us_implementationparsed in aunit^.state) and modularllvm then begin
-   finalizeunit(aunit);
+   finalizeunit(aunit,true);
   end;
   s:= statebefore;  
   dec(unitlevel);

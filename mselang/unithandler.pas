@@ -179,7 +179,7 @@ procedure checkinifini();
 
 procedure beginunit(const aunit: punitinfoty);
 function endunit(const aunit: punitinfoty): boolean;
-procedure finalizeunit(const aunit: punitinfoty);
+procedure finalizeunit(const aunit: punitinfoty; const aftercompile: boolean);
 
 function getexitcodeaddress: segaddressty;
 function bcfiles(): filenamearty;
@@ -1072,7 +1072,7 @@ end;
 procedure tunitlist.finalizeitem(const aitem: phashdataty);
 begin
  with punithashdataty(aitem)^ do begin
-  finalizeunit(data);
+  finalizeunit(data,false);
   system.finalize(data^);
   freesegments(data^.segments);
 //  data^.usescache.free;
@@ -1099,6 +1099,7 @@ begin
  result^.key:= aname;
  result^.usescache:= telementcache.create();
  result^.rtticache:= tidcache.create();
+ elements.initunit(result);
  for rtlunit1:= low(info.rtlunits) to high(info.rtlunits) do begin
   if info.rtlunits[rtlunit1] <> nil then begin
    msearrayutils.additem(pointerarty(result^.interfaceuses),
@@ -2240,8 +2241,9 @@ begin
  end;
 end;
 
-procedure finalizeunit(const aunit: punitinfoty);
+procedure finalizeunit(const aunit: punitinfoty; const aftercompile: boolean);
 begin
+ elements.deinitunit(aunit,aftercompile);
  with aunit^ do begin
   if llvmlists <> globllvmlists then begin
    freeandnil(llvmlists);

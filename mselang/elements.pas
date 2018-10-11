@@ -383,12 +383,14 @@ type
 
 procedure clear;
 procedure init;
+procedure initunit(const aunit: punitinfoty);
+procedure deinitunit(const aunit: punitinfoty; const aftercompile: boolean);
 
 function eletodata(const aele: pelementinfoty): pointer; inline;
 function datatoele(const adata: pointer): pelementinfoty; inline;
 
 //todo: code unit sizes
-function newstringconst(): stringvaluety; //save info.stringbuffer
+function newstringconst(): stringvaluety; //save info.unitinfo^.stringbuffer
 function newstringconst(const avalue: lstringty): stringvaluety;
 function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
@@ -456,7 +458,8 @@ type
    function checkkey(const akey; const aitem: phashdataty): boolean; override;
    function getrecordsize(): int32 override;
    function checkgrow(): boolean;
-   function getbufpo(const astring: stringvaluety): pstringbufhashdataty;
+   function getbufpo(const astring: stringvaluety;
+                          out datapo: pointer): pstringbufhashdataty;
   public
    constructor create;
    destructor destroy; override;
@@ -479,7 +482,7 @@ type
  pelementhashdataty = ^elementhashdataty;
 }
 var
- stringbuf: tstringbuffer;
+ stringbuf: tstringbuffer; //used for monolythic compile
  
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
                                 //overwrites seg_globconst
@@ -534,17 +537,28 @@ end;
 
 function newstringconst(): stringvaluety;
 begin
- result:= stringbuf.add(info.stringbuffer);
+ result:= tstringbuffer(info.s.unitinfo^.stringbuffer).add(info.stringbuffer);
 end;
 
 function newstringconst(const avalue: lstringty): stringvaluety;
 begin
- result:= stringbuf.add(avalue);
+ result:= tstringbuffer(info.s.unitinfo^.stringbuffer).add(avalue);
+end;
+
+function getstringbuf(const avalue: stringvaluety): tstringbuffer;
+begin
+ if strf_ele in avalue.flags then begin
+  result:= tstringbuffer(ele.eleinfoabs(avalue.offset)^.header.defunit^.
+                                                               stringbuffer);
+ end
+ else begin
+  result:= tstringbuffer(info.s.unitinfo^.stringbuffer)
+ end;
 end;
 
 function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
- result:= stringbuf.allocconst(astring);
+ result:= getstringbuf(astring).allocconst(astring);
 end;
 
 function allocstringconst(const astring: string): segaddressty;
@@ -557,12 +571,12 @@ end;
 
 function getstringconst(const astring: stringvaluety): lstringty;
 begin
- result:= stringbuf.getstring(astring);
+ result:= getstringbuf(astring).getstring(astring);
 end;
 
 function stringconstlen(const astring: stringvaluety): int32;
 begin
- result:= stringbuf.getlength(astring);
+ result:= getstringbuf(astring).getlength(astring);
 end;
 
 const
@@ -641,7 +655,7 @@ var
  c1: card32;
 begin
  result:= false;
- ls1:= stringbuf.getstring(astring);
+ ls1:= getstringbuf(astring).getstring(astring);
  if ls1.len > 0 then begin
   getcodepoint(pointer(ls1.po),pointer(ls1.po)+ls1.len,c1);
   case aitemsize of
@@ -661,12 +675,12 @@ end;
 procedure trackstringref(const astring: stringvaluety);
                     //can not been concatenated in place
 begin
- stringbuf.trackstringref(astring);
+ getstringbuf(astring).trackstringref(astring);
 end;
 
 procedure concatstringconsts(var dest: stringvaluety; const b: stringvaluety);
 begin
- stringbuf.concatstringconsts(dest,b);
+ tstringbuffer(info.s.unitinfo^.stringbuffer).concatstringconsts(dest,b);
 end;
 
 function telementhashdatalist.elebase: pointer; inline;
@@ -782,7 +796,8 @@ end;
 procedure clear1();
 begin
  ele.clear;
- stringbuf.clear;
+ freeandnil(stringbuf); //possibly used for monolyhic compile
+// stringbuf.clear;
  globllvmlists.clear();
 end;
 
@@ -2874,30 +2889,30 @@ var
  len1: int32;
  hash1: hashvaluety;
  lstr1: lstringty;
- stringbuf: pstringbufhashdataty;
+ stringbuf1: pstringbufhashdataty;
  hashbuf2: phashdataty;
  bufferstart: segmentstatety;
 begin
- stringbuf:= pstringbufhashdataty(fdata+astring.offset);
- if stringbuf^.data.len = 0 then begin
+ stringbuf1:= pstringbufhashdataty(fdata+astring.offset);
+ if stringbuf1^.data.len = 0 then begin
   result.address:= 0;
   result.segment:= seg_nil;
  end
  else begin
   bufferstart:= savesegment(seg_globconst);
-  if stringbuf^.header.prevhash < 0 then begin //temp string
-   lstr1.len:= stringbuf^.data.len;
-   lstr1.po:= fbuffer + stringbuf^.data.offset;
+  if stringbuf1^.header.prevhash < 0 then begin //temp string
+   lstr1.len:= stringbuf1^.data.len;
+   lstr1.po:= fbuffer + stringbuf1^.data.offset;
    hash1:= hashkey(lstr1);
    hashbuf2:= internalfind(lstr1,hash1);
    if hashbuf2 <> nil then begin
-    stringbuf:= pointer(hashbuf2);
+    stringbuf1:= pointer(hashbuf2);
    end
    else begin
-    inserthash(hash1,pointer(stringbuf));
+    inserthash(hash1,pointer(stringbuf1));
    end;
   end;
-  with stringbuf^.data do begin
+  with stringbuf1^.data do begin
    ps:= fbuffer+offset;
    pe:= ps+len;
    if strf_16 in astring.flags then begin
@@ -2980,9 +2995,11 @@ begin
   result:= data.len;
  end;
 end;
-
-function tstringbuffer.getbufpo(
-              const astring: stringvaluety): pstringbufhashdataty;
+var testvar: tstringbuffer;testvar1: punitinfoty;testvar2: pchar;
+function tstringbuffer.getbufpo(const astring: stringvaluety;
+                           out datapo: pointer): pstringbufhashdataty;
+var
+ p1: pconstdataty;
 begin
  if strf_ele in astring.flags then begin
  {$ifdef mse_checkinternalerror}
@@ -2992,25 +3009,35 @@ begin
    internalerror(ie_elements,'20180903B');
   end;
  {$endif}
-  result:= fdata+pconstdataty(
-                    ele.eledataabs(astring.offset))^.val.d.vstring.offset;
+  p1:= ele.eledataabs(astring.offset);
+testvar1:= datatoele(p1)^.header.defunit;
+testvar:= tstringbuffer(datatoele(p1)^.header.defunit^.stringbuffer);
+  with tstringbuffer(datatoele(p1)^.header.defunit^.stringbuffer) do begin
+   result:= fdata+p1^.val.d.vstring.offset;
+   datapo:= fbuffer+result^.data.offset;
+testvar2:= fbuffer+result^.data.offset;
+  end;
  end
  else begin
   result:= fdata+astring.offset;
+  datapo:= fbuffer+result^.data.offset;
  end;
 end;
 
 function tstringbuffer.getstring(const astring: stringvaluety): lstringty;
+var
+ po1: pointer;
 begin
- with getbufpo(astring)^ do begin
+ with getbufpo(astring,result.po)^ do begin
   result.len:= data.len;
-  result.po:= fbuffer + data.offset;
  end;
 end;
 
 procedure tstringbuffer.trackstringref(const astring: stringvaluety);
+var
+ p1: pointer;
 begin
- with getbufpo(astring)^ do begin
+ with getbufpo(astring,p1)^ do begin
   include(data.flags,sbf_referenced);
  end; 
 end;
@@ -3019,6 +3046,7 @@ procedure tstringbuffer.concatstringconsts(var dest: stringvaluety;
                const b: stringvaluety);
 var
  pa,pb: pstringbufhashdataty;
+ pac,pbc: pointer;
  p1: pointer;
  i1: int32;
  lstr1: lstringty;
@@ -3026,9 +3054,10 @@ var
 begin
 // pa:= pstringbufhashdataty(fdata+dest.offset);
 // pb:= pstringbufhashdataty(fdata+b.offset);
- pa:= getbufpo(dest);
- pb:= getbufpo(b);
- if (pb^.data.offset + pb^.data.len = fbufsize) and 
+ pa:= getbufpo(dest,pac);
+ pb:= getbufpo(b,pbc);
+ if not (strf_ele in dest.flags) and 
+          (pb^.data.offset + pb^.data.len = fbufsize) and 
                        (pa^.data.offset + pa^.data.len = pb^.data.offset) and
                        //last two entries
            not (sbf_referenced in pa^.data.flags) and 
@@ -3047,15 +3076,15 @@ begin
   i1:= pa^.data.len + pb^.data.len;
   fbufsize:= fbufsize + i1;
   if checkgrow() then begin
-   pa:= getbufpo(dest);
-   pb:= getbufpo(b);
+   pa:= getbufpo(dest,pac);
+   pb:= getbufpo(b,pbc);
 //   pa:= pstringbufhashdataty(fdata+dest.offset);
 //   pb:= pstringbufhashdataty(fdata+b.offset);
   end;
   lstr1.po:= fbuffer+fbufsize-i1;
   lstr1.len:= i1;
-  move((fbuffer+pa^.data.offset)^,lstr1.po^,pa^.data.len);
-  move((fbuffer+pb^.data.offset)^,(fbuffer+fbufsize-pb^.data.len)^,
+  move(pac^,lstr1.po^,pa^.data.len);
+  move(pbc^,(fbuffer+fbufsize-pb^.data.len)^,
                                                          pb^.data.len);
   hash1:= stringhash(lstr1);
   pa:= pointer(internalfind(lstr1,hash1));
@@ -3077,8 +3106,33 @@ begin
  end;
 end;
 
+procedure initunit(const aunit: punitinfoty);
+begin
+ if info.modularllvm then begin
+  aunit^.stringbuffer:= tstringbuffer.create();
+ end
+ else begin
+  if stringbuf = nil then begin
+   stringbuf:= tstringbuffer.create();
+  end;
+  aunit^.stringbuffer:= stringbuf;
+ end;
+end;
+
+procedure deinitunit(const aunit: punitinfoty; const aftercompile: boolean);
+begin
+ if not aftercompile then begin
+  if info.modularllvm then begin
+   freeandnil(tstringbuffer(aunit^.stringbuffer));
+  end
+  else begin
+   aunit^.stringbuffer:= nil;
+  end;
+ end;
+end;
+
 initialization
- stringbuf:= tstringbuffer.create;
+// stringbuf:= tstringbuffer.create; //todo: use per unit string buffer
  ele:= telementhashdatalist.create;
  globllvmlists:= tllvmlists.create();
 // typelist:= ttypehashdatalist.create();
@@ -3086,7 +3140,7 @@ initialization
 // globlist:= tgloballocdatalist.create(typelist,constlist);
  clear();
 finalization
- stringbuf.free();
+// stringbuf.free();
  ele.free();
  globllvmlists.free();
 // typelist.free();
