@@ -157,7 +157,8 @@ procedure forwardresolve(const aforward: forwardindexty);
 procedure checkforwarderrors(const aforward: forwardindexty);
 //function addtypedef(const aname: identty; const avislevel: visikindsty;
 //                                        out aelementdata: pointer): boolean;
-procedure markforwardtype(const atype: ptypedataty; const aforwardname: identty);
+procedure markforwardtype(const atype: ptypedataty;
+                                  const aforwardname: identty);
 procedure resolveforwardtype(const atype: ptypedataty;
                                         const first: boolean = true);
 procedure checkforwardtypeerrors();
@@ -304,6 +305,7 @@ begin
   ele.markelement(interfaceend);
   reloc.interfaceelesize:= interfaceend.bufferref- interfacestart.bufferref;
 //  reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
+  elements.interfaceend(unitinfo);
  end;
 end;
 
@@ -2238,6 +2240,7 @@ begin
    result:= writeunitfile(aunit);
    freeandnil(aunit^.llvmlists);
   end;
+  elements.implementationend(aunit);
  end;
 end;
 

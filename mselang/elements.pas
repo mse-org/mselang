@@ -385,6 +385,8 @@ procedure clear;
 procedure init;
 procedure initunit(const aunit: punitinfoty);
 procedure deinitunit(const aunit: punitinfoty; const aftercompile: boolean);
+procedure interfaceend(const aunit: punitinfoty);
+procedure implementationend(const aunit: punitinfoty);
 
 function eletodata(const aele: pelementinfoty): pointer; inline;
 function datatoele(const adata: pointer): pelementinfoty; inline;
@@ -464,6 +466,8 @@ type
    constructor create;
    destructor destroy; override;
    procedure clear; override;
+   procedure mark(out ref: stringbufmarkty);
+   procedure release(const ref: stringbufmarkty);
    function add(const avalue: string): stringvaluety;
    function add(const avalue: lstringty): stringvaluety;
    function allocconst(const astring: stringvaluety): segaddressty;
@@ -2864,6 +2868,26 @@ begin
  inherited; 
 end;
 
+procedure tstringbuffer.mark(out ref: stringbufmarkty);
+begin
+ inherited mark(ref.hashmark);
+ ref.size:= fbufsize;
+end;
+
+procedure tstringbuffer.release(const ref: stringbufmarkty);
+begin
+ inherited release(ref.hashmark);
+ if ref.size = 0 then begin
+  freemem(fbuffer);
+  fbuffer:= nil;
+ end
+ else begin
+  reallocmem(fbuffer,ref.size);
+ end;
+ fbufsize:= ref.size;
+ fbufcapacity:= fbufsize;
+end;
+
 procedure tstringbuffer.initbuffer;
 const
  minbuffersize = $16;// $10000; //todo: use bigger size for production
@@ -3127,6 +3151,24 @@ begin
   end
   else begin
    aunit^.stringbuffer:= nil;
+  end;
+ end;
+end;
+
+procedure interfaceend(const aunit: punitinfoty);
+begin
+ if info.modularllvm then begin
+  with aunit^ do begin
+   tstringbuffer(stringbuffer).mark(implementationstringbufstart);
+  end;
+ end;
+end;
+
+procedure implementationend(const aunit: punitinfoty);
+begin
+ if info.modularllvm then begin
+  with aunit^ do begin
+   tstringbuffer(stringbuffer).release(implementationstringbufstart);
   end;
  end;
 end;

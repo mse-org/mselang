@@ -744,6 +744,11 @@ type
 //  globidcountx: int32;
  end;
 
+ stringbufmarkty = record
+  hashmark: hashoffsetty;
+  size: int32;
+ end;
+
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
@@ -789,6 +794,8 @@ type
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;
   globallocstart: int32; //first index in llvm globallocdatalist
+  implementationstringbufstart: stringbufmarkty;
+
 //  globidbasex: int32; //for unique linklist key
 
   interfaceuses,implementationuses: unitinfopoarty;
