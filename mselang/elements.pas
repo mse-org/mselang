@@ -2917,6 +2917,11 @@ var
  hashbuf2: phashdataty;
  bufferstart: segmentstatety;
 begin
+ if strf_empty in astring.flags then begin
+  result.address:= 0;
+  result.segment:= seg_nil;
+  exit;
+ end;
  stringbuf1:= pstringbufhashdataty(fdata+astring.offset);
  if stringbuf1^.data.len = 0 then begin
   result.address:= 0;
