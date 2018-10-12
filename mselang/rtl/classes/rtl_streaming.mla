@@ -58,6 +58,7 @@ type
  
  twriter = class(tfiler)
   class method iswriter(): boolean [override];
+  method write(const buffer; const count: int32);
 
   method writevalue(const avalue: valuety);
   method writestr(const avalue: string8); //length truncated to 255 chars
@@ -170,6 +171,11 @@ end;
 class method twriter.iswriter(): boolean;
 begin
  result:= true;
+end;
+
+method twriter.write(const buffer; const count: int32);
+begin
+ fstreamx.writebuffer(buffer,count);
 end;
 
 method twriter.writevalue(const avalue: valuety);
@@ -316,17 +322,19 @@ begin
 end;
 
 { treader }
-
+var testvar: int64; testvar1: tstream;
 method treader.read(var buffer; const count: int32);
 begin
- fstreamx.read(buffer,count);
+//testvar1:= fstreamx;
+//testvar:= fstreamx.position;
+ fstreamx.readbuffer(buffer,count);
 end;
 
 method treader.nextvalue(): valuety;
 begin
  if not fstate[fis_nextvaluevalid] then
   fnextvalue:= readvalue();
-//////////////////  include(fstate,fis_nextvaluevalid);
+  include(fstate,fis_nextvaluevalid);
 //  fstate[fis_nextvaluevalid]:= true;
   result:= fnextvalue;
  end;

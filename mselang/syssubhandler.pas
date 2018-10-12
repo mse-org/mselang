@@ -552,15 +552,51 @@ var
  par2isconst: boolean;
 
  procedure handleimm(const dest: pcontextitemty);
+
+  function adjuststep(const step: int32; out si1: databitsizety): int32;
+  var
+   i2: int32;
+  begin
+   with info,contextstack[s.stacktop] do begin
+    si1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize;
+    if step <> 1 then begin
+     i2:= d.dat.fact.ssaindex;
+     with insertitem(oc_mulimmint,s.stacktop-s.stackindex,-1)^ do begin
+      par.ssas1:= i2;
+      case si1 of 
+       das_8: begin
+        setimmint8(step,par.imm);
+       end;
+       das_16: begin
+        setimmint16(step,par.imm);
+       end;
+       das_32: begin
+        setimmint32(step,par.imm);
+       end;
+       das_64: begin
+        setimmint64(step,par.imm);
+       end;
+       else begin
+        internalerror1(ie_handler,'20181011A');
+       end;
+      end;
+     end;
+    end;
+    result:= d.dat.fact.ssaindex;
+   end;
+  end; //adjuststep()
+
  var
   po1: ptypedataty;
   po3: popinfoty;
   i1,i2: int32;
- begin
+  si1: databitsizety;
+
+ begin //handleimm()
   with info,dest^ do begin
    dec(d.dat.datatyp.indirectlevel); //dest type
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-   if (paramco = 1) or par2isconst then begin
+   if {(paramco = 1) or }par2isconst then begin
     if (d.dat.datatyp.indirectlevel > 0) then begin
      po3:= addmemop(d,incdecimmpoops,true,das_32);
      if d.dat.datatyp.indirectlevel = 1 then begin
@@ -576,8 +612,10 @@ var
      end;
     end
     else begin
-     po3:= addmemop(d,incdecimmint32ops,true,das_32);
-     po3^.par.memimm.vint32:= 1;
+     po3:= addmemop(d,incdecimmint32ops,true,das_32); 
+             //datasize will be overridden for llvm
+             //todo: use setimm*() here
+     po3^.par.memimm.vint32:= po1^.h.bytesize;
     end;
     if par2isconst and (paramco > 1) then begin
      po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
@@ -585,7 +623,11 @@ var
     end;
    end
    else begin
-    if (d.dat.datatyp.indirectlevel > 0) then begin
+    if (d.dat.datatyp.indirectlevel > 0) then begin //pointer inc/dec
+     if not tryconvert(@contextstack[s.stacktop],st_int32,
+                                              [coo_errormessage]) then begin
+      exit;
+     end;
      if d.dat.datatyp.indirectlevel = 1 then begin
       if po1^.h.kind = dk_pointer then begin
        i1:= 1;
@@ -597,21 +639,12 @@ var
      else begin
       i1:= targetpointersize;
      end;
-     with contextstack[s.stacktop] do begin
-      if i1 <> 1 then begin
-       i2:= d.dat.fact.ssaindex;
-       with insertitem(oc_mulimmint,s.stacktop-s.stackindex,-1)^ do begin
-        par.ssas1:= i2;
-        setimmint32(i1,par.imm);
-       end;
-      end;
-      i2:= d.dat.fact.ssaindex;
-     end;
+     i2:= adjuststep(i1,si1);
      if adec then begin
-      po3:= addmemop(d,decpoops,true,das_32);
+      po3:= addmemop(d,decpoops,true,si1{das_32});
      end
      else begin
-      po3:= addmemop(d,incpoops,true,das_32);
+      po3:= addmemop(d,incpoops,true,si1{das_32});
      end;
      po3^.par.ssas2:= i2;
     end
@@ -621,12 +654,17 @@ var
                                               po1,0,err_incompatibletypes);
       exit;
      end;
+    {
      i1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+     si1:= ptypedataty(ele.eledataabs(
+               contextstack[s.stacktop].d.dat.datatyp.typedata))^.h.datasize;
+    }
+     i1:= adjuststep(po1^.h.bytesize,si1);
      if adec then begin
-      po3:= addmemop(d,decint32ops,true,das_32);
+      po3:= addmemop(d,decint32ops,true,si1);
      end
      else begin
-      po3:= addmemop(d,incint32ops,true,das_32);
+      po3:= addmemop(d,incint32ops,true,si1);
      end;
      po3^.par.ssas2:= i1;
     end;
@@ -635,27 +673,32 @@ var
                 contextstack[s.stacktop].d.dat.constval.vinteger;
     end;
    end;
-   po3^.par.ssas1:= info.s.ssa.index - 1;
-   if adec then begin
-    po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
+   if dest^.d.kind in factcontexts then begin
+    po3^.par.ssas1:= dest^.d.dat.fact.ssaindex;
    end;
-   if co_llvm in o.compileoptions then begin
-    with po3^.par.memimm do begin
-     case po1^.h.datasize of
-      das_8: begin
-       llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(vint32);
-      end;
-      das_16: begin
-       llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(vint32);
-      end;
-      das_32: begin
-       llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
-      end;
-      das_64: begin
-       llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(vint32);
-      end;
-      else begin
-       llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+//   po3^.par.ssas1:= info.s.ssa.index - 1;
+   if par2isconst then begin
+    if adec then begin
+     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
+    end;
+    if co_llvm in o.compileoptions then begin
+     with po3^.par.memimm do begin
+      case po1^.h.datasize of
+       das_8: begin
+        llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(vint32);
+       end;
+       das_16: begin
+        llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(vint32);
+       end;
+       das_32: begin
+        llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+       end;
+       das_64: begin
+        llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(vint32);
+       end;
+       else begin
+        llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
+       end;
       end;
      end;
     end;
@@ -670,7 +713,7 @@ var
 // po3: popinfoty;
 //label
 // factlab;
-begin
+begin //handleincdec()
  with info do begin
   if (paramco < 1) or (paramco > 2) then begin
    identerror(1,err_wrongnumberofparameters);
@@ -709,9 +752,10 @@ begin
      case d.kind of
       ck_ref: begin
        if (d.dat.indirection <> 0) or 
-                (af_local in d.dat.ref.c.address.flags) and 
-                    (d.dat.ref.c.address.locaddress.framelevel < sublevel) then begin
+            (af_local in d.dat.ref.c.address.flags) and 
+               (d.dat.ref.c.address.locaddress.framelevel < sublevel) then begin
         getaddress(poa,true);
+//        inc(d.dat.datatyp.indirectlevel);
        end
        else begin
         inc(d.dat.indirection);         //address

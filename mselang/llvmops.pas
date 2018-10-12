@@ -2546,7 +2546,7 @@ procedure decsegintop();
 begin
  with pc^.par do begin
   loadseg();
-  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(0),
                                 bcstream.ssaval(ssas2));
   storelastseg();
  end;
@@ -2556,7 +2556,11 @@ procedure decsegpoop();
 begin
  with pc^.par do begin
   loadseg();
-  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
+  bcstream.emitbinop(BINOP_SUB,
+           bcstream.constval(ord(nullconsts[memop.operanddatasize])),
+                                                 bcstream.ssaval(ssas2)); //0
+  bcstream.emitgetelementptr(bcstream.relval(1),bcstream.relval(0));
+//  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
   storelastseg();
  end;
 end;
@@ -2565,7 +2569,7 @@ procedure declocintop();
 begin
  with pc^.par do begin
   loadloc(false);
-  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(0),
                                 bcstream.ssaval(ssas2));
   storelastloc();
  end;
@@ -2575,7 +2579,11 @@ procedure declocpoop();
 begin
  with pc^.par do begin
   loadloc(false);
-  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas1));
+  bcstream.emitbinop(BINOP_SUB,
+           bcstream.constval(ord(nullconsts[memop.operanddatasize])),
+                                                 bcstream.ssaval(ssas1)); //0
+  bcstream.emitgetelementptr(bcstream.relval(1),bcstream.relval(0));
+//  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas1));
   storelastloc();
  end;
 end;
@@ -2605,7 +2613,7 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(memop.t.kind));
   bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(0),
                                   bcstream.ssaval(ssas2));
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
@@ -2616,8 +2624,12 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitptroffset(bcstream.relval(0),bcstream.ssaval(ssas2));
-  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+  bcstream.emitbinop(BINOP_SUB,
+           bcstream.constval(ord(nullconsts[memop.operanddatasize])),
+                                                 bcstream.ssaval(ssas2)); //0
+  bcstream.emitptroffset(bcstream.relval(1),bcstream.relval(0));
+//  bcstream.emitptroffset(bcstream.relval(0),bcstream.ssaval(ssas2));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(3));
  end;
 end;
 
@@ -5446,19 +5458,19 @@ const
   incindipossa = 3;
 
   decsegintssa = 2;
-  decsegpossa = 3;
+  decsegpossa = 4;//3;
 
   declocintssa = 2;
-  declocpossa = 3;
+  declocpossa = 4;//3;
 
   decparintssa = 2;
-  decparpossa = 3;
+  decparpossa = 4;//3;
 
   decparindiintssa = 3;
   decparindipossa = 4;
 
   decindiintssa = 3;
-  decindipossa = 3;
+  decindipossa = 4;//3;
 
   cmppossa = 1;
   cmpboolssa = 1;
