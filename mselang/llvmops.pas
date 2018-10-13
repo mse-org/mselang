@@ -2581,7 +2581,7 @@ begin
   loadloc(false);
   bcstream.emitbinop(BINOP_SUB,
            bcstream.constval(ord(nullconsts[memop.operanddatasize])),
-                                                 bcstream.ssaval(ssas1)); //0
+                                                 bcstream.ssaval(ssas2)); //0
   bcstream.emitgetelementptr(bcstream.relval(1),bcstream.relval(0));
 //  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas1));
   storelastloc();

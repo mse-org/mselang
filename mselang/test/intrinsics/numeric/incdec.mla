@@ -1,0 +1,63 @@
+program incdec;
+type
+ pcard16 = ^card16;
+ ppcard16 = ^pcard16;
+
+procedure test(): boolean;
+var
+ i1,i2: int8;
+ p2: pcard16;
+ p1: ppcard16;
+begin
+ result:= false;
+ p2:= nil;
+ inc(p2);
+ if p2 = pointer(2) then
+  dec(p2);
+  if p2 = nil then
+   i1:= 3;
+   inc(p2,i1);
+   if p2 = pointer(2*3) then
+    dec(p2,i1);
+    if p2 = nil then
+     p1:= @p2;
+     inc(p1^,i1);
+     if p2 = pointer(2*3) then
+      dec(p1^,i1);
+      if p2 = nil then
+       result:= true;
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+var
+ i1,i2: int8;
+ p2: pcard16;
+ p1: ppcard16;
+begin
+ inc(p2);
+ if p2 = pointer(2) then
+  dec(p2);
+  if p2 = nil then
+   i1:= 3;
+   inc(p2,i1);
+   if p2 = pointer(2*3) then
+    dec(p2,i1);
+    if p2 = nil then
+     p1:= @p2;
+     inc(p1^,i1);
+     if p2 = pointer(2*3) then
+      dec(p1^,i1);
+      if (p2 = nil) and test() then
+       exitcode:= 123;
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end.

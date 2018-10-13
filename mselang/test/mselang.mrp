@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,address
+   a=0,665,4,address
    c=5
     (
     kind=2
@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=39
     (
     kind=1
@@ -2148,7 +2148,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,const
+   a=0,664,4,const
    c=5
     (
     kind=2
@@ -2278,11 +2278,11 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
+   a=0,665,4,control
    c=37
     (
     kind=1
-    a=0,664,4,goto
+    a=0,665,4,goto
     c=6
      (
      kind=2
@@ -4706,7 +4706,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=22
     (
     kind=2
@@ -11189,7 +11189,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=36
    (
    kind=1
@@ -13569,17 +13569,39 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,intrinsics
+  a=0,665,4,intrinsics
   c=4
    (
    kind=1
-   a=0,664,4,numeric
-   c=1
+   a=0,665,4,numeric
+   c=2
     (
     kind=2
     a=0,648,1,decnested llvm
     teststate=1
     path=decnested.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,incdec llvm
+    teststate=1
+    path=incdec.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -15802,15 +15824,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=266
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=258
  0 0
  0 0
  0 0

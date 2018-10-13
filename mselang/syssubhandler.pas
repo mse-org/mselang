@@ -615,7 +615,8 @@ var
      po3:= addmemop(d,incdecimmint32ops,true,das_32); 
              //datasize will be overridden for llvm
              //todo: use setimm*() here
-     po3^.par.memimm.vint32:= po1^.h.bytesize;
+     po3^.par.memimm.vint32:= 1;
+//     po3^.par.memimm.vint32:= po1^.h.bytesize;
     end;
     if par2isconst and (paramco > 1) then begin
      po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
@@ -648,7 +649,7 @@ var
      end;
      po3^.par.ssas2:= i2;
     end
-    else begin
+    else begin //indirectlevel = 1
      if not tryconvert(@contextstack[s.stacktop],po1,0,[]) then begin
       typeconversionerror(contextstack[s.stacktop].d,
                                               po1,0,err_incompatibletypes);
@@ -659,7 +660,8 @@ var
      si1:= ptypedataty(ele.eledataabs(
                contextstack[s.stacktop].d.dat.datatyp.typedata))^.h.datasize;
     }
-     i1:= adjuststep(po1^.h.bytesize,si1);
+//     i1:= adjuststep(po1^.h.bytesize,si1);
+     i1:= adjuststep(1,si1);
      if adec then begin
       po3:= addmemop(d,decint32ops,true,si1);
      end
