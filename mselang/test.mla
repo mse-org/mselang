@@ -1,0 +1,60 @@
+program test;
+uses
+ rtl_streaming,rtl_streams,rtl_system;
+type
+
+ pcomponentownerty = ^componentownerty;
+
+ componentty = object
+  property name: string8 read fname write setname;
+  property owner: pcomponentownerty read fowner write setowner;
+  private
+   fowner: pcomponentownerty;
+   fname: string8;
+   method setname(const avalue: string8);
+   method setowner(const avalue: pcomponentownerty);
+ end;
+ pcomponentty = ^componentty;
+ componentarty = array of pcomponentty;
+ 
+ componentownerty = object
+  private
+   fcomponents: componentarty;
+ end; 
+
+ tcomponentowner = class; 
+ tcomponent = class(tpersistent)
+  constructor create(const aowner: tcomponent);
+  property owner: tcomponentowner read fcomponent.fowner 
+                                           write fcomponent.fowner;
+  protected
+   fcomponent: componentty;
+ end;
+
+ tcomponentowner = class(tcomponent)
+  protected
+   fcomponentowner: componentownerty;
+ end;
+  
+{ componentty }
+
+method componentty.setname(const avalue: string8);
+begin
+ fname:= avalue;
+end;
+
+method componentty.setowner(const avalue: pcomponentownerty);
+begin
+ fowner:= avalue;
+end;
+
+{ tcomponent }
+
+constructor tcomponent.create(const aowner: tcomponent);
+begin
+ inherited create();
+ owner:= aowner;
+end;
+
+begin
+end.
