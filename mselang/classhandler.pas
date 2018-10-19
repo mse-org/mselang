@@ -111,6 +111,9 @@ procedure classpropertyentry();
 procedure handlereadprop();
 procedure handlewriteprop();
 procedure handledefaultprop();
+procedure handlepropertyattach();
+//procedure expxentry();
+//procedure expyentry();
 procedure handleclassproperty();
 
 function checkclassis(base,ancestor: ptypedataty): boolean;
@@ -1747,6 +1750,18 @@ begin
  end; 
 end;
 
+procedure handlepropertyattach();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROPERTYATTACH');
+{$endif}
+ with info do begin
+//  dec(s.stackindex);
+  s.stacktop:= s.stackindex-1;
+  s.stackindex:= contextstack[s.stackindex].parent;
+ end;
+end;
+
 procedure updateprop(const resinfo: resolvepropertyinfoty;
                                          const typedata: ppropertydataty);
 begin
@@ -1786,7 +1801,20 @@ begin
   updateprop(p1^,ele.eledataabs(propele));
  end;
 end;
-
+(*
+procedure expxentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXPXENTRY');
+{$endif}
+end;
+procedure expyentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXPYENTRY');
+{$endif}
+end;
+*)
 procedure handleclassproperty();
 var
  po1: ppropertydataty;

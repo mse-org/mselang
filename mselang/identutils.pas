@@ -57,6 +57,9 @@ function getident(const aname: string): identty;
 function getident(const aname: stringvaluety): identty;
 function getident(const anum: int32): identty; //0..255
 
+function getstringident(const aindex: int32; out ident: identty): boolean;
+            //string const -> ident, returns true if ok
+
 function getidentname(const aident: identty; out name: identnamety): boolean;
                              //true if found
 function getidentname(const aident: identty; out name: lstringty): boolean;
@@ -207,6 +210,23 @@ begin
  end;
 {$endif}
  result:= numidents[anum];
+end;
+
+function getstringident(const aindex: int32;
+                                   out ident: identty): boolean;
+            //string const -> ident, returns true if ok
+begin
+ with info,contextstack[aindex] do begin
+  if (d.kind <> ck_const) or 
+        (d.dat.constval.kind <> dk_string) then begin
+   errormessage(err_stringconstantexpected,[],aindex-s.stackindex);
+   result:= false;
+  end
+  else begin
+   ident:= getident(d.dat.constval.vstring);
+   result:= true;
+  end;
+ end;
 end;
 
 function nametolstring(const aname: identnamety): lstringty;

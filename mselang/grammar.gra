@@ -1310,7 +1310,7 @@ classproperty1,,,handlecolonexpected
  ${whitespace}
  ':',classproperty2-
  '[',classproperty2a-
-classproperty2a,classproperty2b,,
+classproperty2a,classproperty2b,, //index
  '',propinddef1-^*
 classproperty2b,,,handlecolonexpected
  ${whitespace}
@@ -1323,19 +1323,27 @@ classproperty3,classproperty4,,
  'read'.,readprop-
  'write'.,writeprop-
  'default'.,defaultprop-
+ '[',propattach-*
 readprop,readpropa,,handlereadprop
  '',getidentpath^*
 readpropa,classproperty4,,
  ${whitespace}
  'write'.,getidentpath-*,writeprop^
  'default'.,exp-^*,defaultprop^
+ '[',propattach-*
 writeprop,writepropa,,handlewriteprop
  '',getident^*
 writepropa,classproperty4,,
  ${whitespace}
  'default'.,exp-^*,defaultprop^
+ '[',propattach-*
+//expx,exp,expxentry,
+//expy,exp,expyentry,
 defaultprop,classproperty4,,handledefaultprop*^
- '',exp^*
+// '',exp^*
+propattach,classproperty4,,handlepropertyattach*^
+ '',attach^*
+
 classproperty4,,,handleclassproperty
  ${whitespace}
  ';',-*

@@ -164,7 +164,7 @@ type
  contextkindty = (ck_none,ck_error,ck_space,
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_exceptblock,ck_finallyblock,ck_end,
-                  ck_ident,ck_stringident,ck_number,ck_str,
+                  ck_ident,{ck_stringident,}ck_number,ck_str,
                   ck_subdef,ck_objsubheader,ck_subheader,ck_list,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_refprop,ck_factprop,
@@ -584,7 +584,7 @@ type
    ck_block,ck_exceptblock,ck_finallyblock:(
     block: blockinfoty;
    );
-   ck_ident,ck_stringident:(
+   ck_ident{,ck_stringident}:(
     ident: identinfoty;
    );
    ck_number:(

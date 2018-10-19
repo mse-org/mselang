@@ -1818,6 +1818,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'defaultprop');
+ propattachco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               caption: 'propattach');
  classproperty4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -9951,7 +9956,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassproperty3: array[0..8] of branchty = (
+ bclassproperty3: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @readpropco); stack: nil; 
      keyword: $000002A2{'read'}),
@@ -9996,6 +10001,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @propattachco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  breadprop: array[0..1] of branchty = (
@@ -10008,7 +10020,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- breadpropa: array[0..7] of branchty = (
+ breadpropa: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_changeparentcontext];
      dest: (context: @getidentpathco); stack: @writepropco; 
      keyword: $000002A3{'write'}),
@@ -10050,6 +10062,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @propattachco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bwriteprop: array[0..1] of branchty = (
@@ -10062,7 +10081,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwritepropa: array[0..6] of branchty = (
+ bwritepropa: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush,bf_changeparentcontext];
      dest: (context: @expco); stack: @defaultpropco; 
      keyword: $0000023F{'default'}),
@@ -10101,11 +10120,18 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @propattachco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bdefaultprop: array[0..1] of branchty = (
+ bpropattach: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @expco); stack: nil; keys: (
+     dest: (context: @attachco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -14490,9 +14516,12 @@ begin
  writepropco.handleexit:= @handlewriteprop;
  writepropaco.branch:= @bwritepropa;
  writepropaco.next:= @classproperty4co;
- defaultpropco.branch:= @bdefaultprop;
+ defaultpropco.branch:= nil;
  defaultpropco.next:= @classproperty4co;
  defaultpropco.handleexit:= @handledefaultprop;
+ propattachco.branch:= @bpropattach;
+ propattachco.next:= @classproperty4co;
+ propattachco.handleexit:= @handlepropertyattach;
  classproperty4co.branch:= @bclassproperty4;
  classproperty4co.handleexit:= @handleclassproperty;
  interfacedefco.branch:= @binterfacedef;

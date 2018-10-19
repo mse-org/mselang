@@ -1049,10 +1049,13 @@ begin
        end;
        tk_operator: begin
         inc(p1);
-        if (p1 <= pe) and (p1^.d.kind = ck_stringident) then begin
+        if (p1 <= pe) and (p1^.d.kind = ck_const) then begin
          if not (sf_operator in d.subdef.flags) then begin
-          include(d.subdef.flags,sf_operator);
-          currentoperator:= p1^.d.ident.ident;
+          if getstringident(getstackindex(p1),
+                                    identty(currentoperator)) then begin
+           include(d.subdef.flags,sf_operator);
+ //         currentoperator:= p1^.d.ident.ident;
+          end;
          end
          else begin
           errormessage(err_multipleoperators,[],p1);
@@ -1067,10 +1070,13 @@ begin
        end;
        tk_operatorright: begin
         inc(p1);
-        if (p1 <= pe) and (p1^.d.kind = ck_stringident) then begin
+        if (p1 <= pe) and (p1^.d.kind = ck_const) then begin
          if not (sf_operatorright in d.subdef.flags) then begin
-          include(d.subdef.flags,sf_operatorright);
-          currentoperatorright:= p1^.d.ident.ident;
+          if getstringident(getstackindex(p1),
+                                    identty(currentoperatorright)) then begin
+           include(d.subdef.flags,sf_operatorright);
+ //         currentoperatorright:= p1^.d.ident.ident;
+          end;
          end
          else begin
           errormessage(err_multipleoperators,[],p1);
@@ -1195,17 +1201,19 @@ begin
          end
          else begin
           d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
-          if (p1+1)^.d.kind = ck_stringident then begin
+          if (p1+1)^.d.kind = ck_const then begin
            inc(p1);
-           d.subdef.libname:= p1^.d.ident.ident;
+           getstringident(getstackindex(p1),d.subdef.libname);
+//           d.subdef.libname:= p1^.d.ident.ident;
           end;
          end;
         end;
         tk_name: begin
          d.subdef.flags:= d.subdef.flags + [{sf_external,}sf_header];
-         if (p1+1)^.d.kind = ck_stringident then begin
+         if (p1+1)^.d.kind = ck_const then begin
           inc(p1);
-          d.subdef.funcname:= p1^.d.ident.ident;
+          getstringident(getstackindex(p1),d.subdef.funcname);
+//          d.subdef.funcname:= p1^.d.ident.ident;
          end
          else begin
           errormessage(err_invalidattachmentvalue,[],p1);
@@ -1219,7 +1227,8 @@ begin
         end;
        end;
       end;
-      ck_stringident: begin
+  //    ck_stringident: begin
+      ck_const: begin
        errormessage(err_invalidattachmentvalue,[],p1);
       end;
       else begin

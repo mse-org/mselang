@@ -48,7 +48,7 @@ procedure handleillegalexpression();
 procedure handlenoidenterror();
 procedure handleattachitemsentry();
 procedure handleattachvalue();
-procedure handlestringattach();
+//procedure handlestringattach();
 procedure handlestringexpected();
 procedure handlenoattachitemerror();
 
@@ -2412,6 +2412,16 @@ begin
  with info do begin
   ptop:= @contextstack[s.stacktop];
   with ptop^ do begin
+   if (d.kind = ck_const) then begin
+    pa:= getpreviousnospace(ptop-1)+1;
+    pa^.d:= d;
+    s.stacktop:= getstackindex(pa);
+    exit;
+   end
+   else begin
+    errormessage(err_constexpressionexpected,[]);
+   end;
+  {
    if (d.kind = ck_const) and (d.dat.constval.kind = dk_string) then begin
     pa:= getpreviousnospace(ptop-1)+1;
     id1:= getident(d.dat.constval.vstring);
@@ -2425,12 +2435,13 @@ begin
    else begin
     errormessage(err_stringconstantexpected,[]);
    end;
+  }
   end;
   s.stacktop:= s.stackindex+1;
 //  s.stacktop:= s.stacktop-1;
  end;
 end;
-
+(*
 procedure handlestringattach();
 begin
 {$ifdef mse_debugparser}
@@ -2441,7 +2452,7 @@ begin
   d.ident.ident:= getident(info.stringbuffer);
  end;
 end;
-
+*)
 procedure handlestringexpected();
 begin
 {$ifdef mse_debugparser}

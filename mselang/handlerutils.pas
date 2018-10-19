@@ -4952,7 +4952,7 @@ begin
       ck_label: begin
        write('lab:'+inttostrmse(d.dat.lab));
       end;
-      ck_ident,ck_stringident: begin
+      ck_ident{,ck_stringident}: begin
        write('N',inttostr(d.ident.ident),':',d.ident.len);
        write(' ',getidentname(d.ident.ident));
        write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
