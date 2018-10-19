@@ -1715,6 +1715,34 @@ begin
  end;
 end;
 
+function setpropdefault(const prop,def: pcontextitemty): boolean;
+var
+ po1: ptypedataty;
+begin
+ result:= false;
+ with info do begin
+  if def^.d.kind <> ck_const then begin
+   errormessage(err_constexpressionexpected,[],def);
+  end
+  else begin
+   po1:= ele.eledataabs(prop^.d.typeref);
+   if not tryconvert(def,po1,po1^.h.indirectlevel,[]) then begin
+    incompatibletypeserror(prop^.d.typeref,def^.d.dat.datatyp.typedata);
+   end
+   else begin
+    with presolvepropertyinfoty(getsegmentpo(seg_temp,
+             contextstack[s.stackindex].d.classprop.propinfo))^ do begin
+     if pof_default in propflags then begin
+      errormessage(err_invaliddefault,[],def);
+     end;
+     include(propflags,pof_default);
+    end;
+    result:= true;
+   end;
+  end;
+ end;
+end;
+
 procedure handledefaultprop();
 var
  po1: ptypedataty;
@@ -1726,6 +1754,7 @@ begin
  with info do begin
   potop:= @contextstack[s.stacktop];
   poa:= getpreviousnospace(potop-1);
+  
  {$ifdef mse_checkinternalerror}
   if poa^.d.kind <> ck_typeref then begin
    internalerror(ie_handler,'20151202C');
@@ -1736,6 +1765,8 @@ begin
     errormessage(err_constexpressionexpected,[]);
    end
    else begin
+    setpropdefault(poa,potop);
+{
     po1:= ele.eledataabs(poa^.d.typeref);
     if not tryconvert(potop,po1,po1^.h.indirectlevel,[]) then begin
      incompatibletypeserror(poa^.d.typeref,d.dat.datatyp.typedata);
@@ -1745,20 +1776,65 @@ begin
               contextstack[s.stackindex].d.classprop.propinfo))^.
                                                     propflags,pof_default);
     end;
+}
    end;
   end;
  end; 
 end;
 
 procedure handlepropertyattach();
+var
+ i1: int32;
+ prop: pcontextitemty;
+ p1,pe: pcontextitemty;
+ hasdefault: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROPERTYATTACH');
 {$endif}
  with info do begin
-//  dec(s.stackindex);
-  s.stacktop:= s.stackindex-1;
+  prop:= @contextstack[s.stackindex-1];
+ {$ifdef mse_checkinternalerror}
+  if prop^.d.kind <> ck_typeref then begin
+   internalerror(ie_handler,'20181019A');
+  end;
+ {$endif}
+  p1:= @contextstack[s.stackindex+3];
+  pe:= @contextstack[s.stacktop];
   s.stackindex:= contextstack[s.stackindex].parent;
+  hasdefault:= false;
+  while p1 <= pe do begin
+  {$ifdef mse_checkinternalerror}
+   if p1^.d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20170501A');
+   end;
+  {$endif}
+   case p1^.d.ident.ident of
+    tk_default: begin
+     inc(p1);
+     if (p1 > pe) or (p1^.d.kind <> ck_const) then begin
+      dec(p1);
+      errormessage(err_constexpressionexpected,[],p1);
+     end
+     else begin
+      if setpropdefault(prop,p1) then begin
+       hasdefault:= true;
+       (prop+1)^.d:= p1^.d; //todo: no big copy
+      end;
+     end;
+    end;
+    else begin
+     identerror(getstackoffset(p1),p1^.d.ident.ident,err_invalidattachment);
+    end;
+   end;
+   inc(p1);
+  end;
+  s.stacktop:= getstackindex(prop);
+  if hasdefault then begin
+   inc(s.stacktop);
+  end;
+//  s.stacktop:= s.stackindex-1;
+//  s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
 
