@@ -1027,7 +1027,7 @@ begin
         po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
        end;
        with po2^.header do begin
-        if ((visibility * avislevel <> []) or 
+        if ((avislevel = []) or (visibility * avislevel <> []) or 
           (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
                            ((akinds = []) or (kind in akinds)) then begin
          element:= pointer(po2) - pointer(felementdata);
@@ -2398,7 +2398,7 @@ begin
  fscopespo:= nil;
  vk1:= avislevel;
  if vik_noancestor in vk1 then begin
-  exclude(vk1,vik_ancestor);
+  vk1:= vk1 - [vik_ancestor,vik_noancestor];
  end;
  result:= not findcurrent(aname,[],{avislevel}vk1{allvisi}{ffindvislevel},ele1);
  if result then begin
