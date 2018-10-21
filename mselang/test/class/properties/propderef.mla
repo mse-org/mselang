@@ -15,7 +15,7 @@ type
    destructor destroy();
    property field: pint32 read getfield write setfield;
    property field1: pint32 read ffield write ffield;
-   property field2[a: int32; b: int32]: pint32 read getfield2 write setfield2;
+   property field2(a: int32; b: int32): pint32 read getfield2 write setfield2;
  end;
 
 { ttest }

@@ -122,12 +122,12 @@ const
  tk_threadvar = $00000262;
  tk_resourcestring = $00000263;
  tk_procedure = $00000264;
- tk_function = $00000265;
+ tk_method = $00000265;
  tk_label = $00000266;
  tk_class = $00000267;
- tk_method = $00000268;
- tk_initialization = $00000269;
- tk_finalization = $0000026A;
+ tk_initialization = $00000268;
+ tk_finalization = $00000269;
+ tk_sub = $0000026A;
  tk_constructor = $0000026B;
  tk_destructor = $0000026C;
  tk_begin = $0000026D;
@@ -152,51 +152,51 @@ const
  tk_off = $00000280;
  tk_constref = $00000281;
  tk_out = $00000282;
- tk_override = $00000283;
- tk_overload = $00000284;
- tk_of = $00000285;
- tk_object = $00000286;
- tk_external = $00000287;
- tk_forward = $00000288;
- tk_name = $00000289;
- tk_sub = $0000028A;
- tk_finally = $0000028B;
- tk_do = $0000028C;
- tk_with = $0000028D;
- tk_case = $0000028E;
- tk_while = $0000028F;
- tk_repeat = $00000290;
- tk_for = $00000291;
- tk_try = $00000292;
- tk_raise = $00000293;
- tk_goto = $00000294;
- tk_then = $00000295;
- tk_until = $00000296;
- tk_to = $00000297;
- tk_downto = $00000298;
- tk_set = $00000299;
- tk_packed = $0000029A;
- tk_record = $0000029B;
- tk_array = $0000029C;
- tk_private = $0000029D;
- tk_protected = $0000029E;
- tk_public = $0000029F;
- tk_published = $000002A0;
- tk_property = $000002A1;
- tk_read = $000002A2;
- tk_write = $000002A3;
- tk_div = $000002A4;
- tk_mod = $000002A5;
- tk_and = $000002A6;
- tk_shl = $000002A7;
- tk_shr = $000002A8;
- tk_or = $000002A9;
- tk_xor = $000002AA;
- tk_in = $000002AB;
- tk_is = $000002AC;
- tk_not = $000002AD;
- tk_as = $000002AE;
- tk_inherited = $000002AF;
+ tk_name = $00000283;
+ tk_finally = $00000284;
+ tk_do = $00000285;
+ tk_with = $00000286;
+ tk_case = $00000287;
+ tk_while = $00000288;
+ tk_repeat = $00000289;
+ tk_for = $0000028A;
+ tk_try = $0000028B;
+ tk_raise = $0000028C;
+ tk_goto = $0000028D;
+ tk_then = $0000028E;
+ tk_until = $0000028F;
+ tk_to = $00000290;
+ tk_downto = $00000291;
+ tk_of = $00000292;
+ tk_set = $00000293;
+ tk_packed = $00000294;
+ tk_record = $00000295;
+ tk_array = $00000296;
+ tk_object = $00000297;
+ tk_external = $00000298;
+ tk_private = $00000299;
+ tk_protected = $0000029A;
+ tk_public = $0000029B;
+ tk_published = $0000029C;
+ tk_property = $0000029D;
+ tk_read = $0000029E;
+ tk_write = $0000029F;
+ tk_div = $000002A0;
+ tk_mod = $000002A1;
+ tk_and = $000002A2;
+ tk_shl = $000002A3;
+ tk_shr = $000002A4;
+ tk_or = $000002A5;
+ tk_xor = $000002A6;
+ tk_in = $000002A7;
+ tk_is = $000002A8;
+ tk_not = $000002A9;
+ tk_as = $000002AA;
+ tk_inherited = $000002AB;
+ tk_function = $000002AC;
+ tk_override = $000002AD;
+ tk_overload = $000002AE;
+ tk_forward = $000002AF;
 
  tokens: array[0..175] of string = ('',
   '.rootele','.void','.classes','.private','.protected','.public','.published',
@@ -212,16 +212,16 @@ const
   'int64','intpo','card8','card16','card32','card64','cardpo','flo32','flo64',
   'char8','char16','char32','bytestring','string8','string16','string32',
   'false','true','nil','unit','program','interface','implementation','uses',
-  'type','const','var','threadvar','resourcestring','procedure','function',
-  'label','class','method','initialization','finalization','constructor',
+  'type','const','var','threadvar','resourcestring','procedure','method',
+  'label','class','initialization','finalization','sub','constructor',
   'destructor','begin','mode','dumpelements','dumpopcode','abort','stoponerror',
   'nop','include','define','undef','ifdef','ifndef','if','else','endif','ifend',
-  'h','inline','on','off','constref','out','override','overload','of','object',
-  'external','forward','name','sub','finally','do','with','case','while',
-  'repeat','for','try','raise','goto','then','until','to','downto','set',
-  'packed','record','array','private','protected','public','published',
-  'property','read','write','div','mod','and','shl','shr','or','xor','in','is',
-  'not','as','inherited');
+  'h','inline','on','off','constref','out','name','finally','do','with','case',
+  'while','repeat','for','try','raise','goto','then','until','to','downto','of',
+  'set','packed','record','array','object','external','private','protected',
+  'public','published','property','read','write','div','mod','and','shl','shr',
+  'or','xor','in','is','not','as','inherited','function','override','overload',
+  'forward');
 
  tokenids: array[0..175] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,

@@ -1292,7 +1292,12 @@ propinddef1,propinddef2,, //index
 propinddef2,,,
  ${whitespace}
  ';',propinddef1-
+{$gramse}
+ ')',propinddef3-
+{$}
+{$grapas}
  ']',propinddef3-
+{$}
 propinddef3,,,^      //return
 propind0,propind1,handleparamdef0entry,
  ${whitespace}
@@ -1309,7 +1314,12 @@ classproperty,classproperty1,classpropertyentry,
 classproperty1,,,handlecolonexpected
  ${whitespace}
  ':',classproperty2-
+{$gramse}
+ '(',classproperty2a-
+{$}
+{$grapas}
  '[',classproperty2a-
+{$}
 classproperty2a,classproperty2b,, //index
  '',propinddef1-^*
 classproperty2b,,,handlecolonexpected

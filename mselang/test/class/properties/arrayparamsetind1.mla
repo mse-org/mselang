@@ -8,7 +8,7 @@ type
   public
    constructor create();
    destructor destroy();
-   property field[i2: int32;i3:int32]: int32 write setfield;
+   property field(i2: int32;i3:int32): int32 write setfield;
  end;
 
 { ttest }

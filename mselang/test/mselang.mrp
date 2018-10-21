@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -11189,16 +11189,16 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=36
    (
    kind=1
-   a=0,665,5,properties
+   a=0,665,4,properties
    c=31
     (
     kind=2
-    a=0,648,2,classprop1
-    teststate=2
+    a=0,648,1,classprop1
+    teststate=1
     path=classprop1.mla
     comment=
     cc=${mlc}
@@ -11211,16 +11211,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classprop1 llvm
-    teststate=2
+    a=0,648,1,classprop1 llvm
+    teststate=1
     path=classprop1.mla
     comment=
     cc=${mlc_llvm}
@@ -11233,16 +11233,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classprop2
-    teststate=2
+    a=0,648,1,classprop2
+    teststate=1
     path=classprop2.mla
     comment=
     cc=${mlc}
@@ -11255,16 +11255,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classprop2 llvm
-    teststate=2
+    a=0,648,1,classprop2 llvm
+    teststate=1
     path=classprop2.mla
     comment=
     cc=${mlc_llvm}
@@ -11277,16 +11277,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classprop3
-    teststate=2
+    a=0,648,1,classprop3
+    teststate=1
     path=classprop3.mla
     comment=
     cc=${mlc}
@@ -11299,16 +11299,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,classprop3 llvm
-    teststate=2
+    a=0,648,1,classprop3 llvm
+    teststate=1
     path=classprop3.mla
     comment=
     cc=${mlc_llvm}
@@ -11321,9 +11321,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -11769,8 +11769,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,propderef
-    teststate=2
+    a=0,648,1,propderef
+    teststate=1
     path=propderef.mla
     comment=
     cc=${mlc}
@@ -11783,16 +11783,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,propderef llvm
-    teststate=2
+    a=0,648,1,propderef llvm
+    teststate=1
     path=propderef.mla
     comment=
     cc=${mlc_llvm}
@@ -11805,9 +11805,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -11877,7 +11877,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=properties/
    comment=
    cc=
@@ -13423,7 +13423,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -14331,11 +14331,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
-   a=0,665,5,error check
+   a=0,665,4,error check
    c=9
     (
     kind=1
@@ -14855,12 +14855,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,objects
+    a=0,665,4,objects
     c=1
      (
      kind=2
-     a=0,648,2,doubleprop
-     teststate=2
+     a=0,648,1,doubleprop
+     teststate=1
      path=doubleprop.mla
      comment=
      cc=
@@ -14876,11 +14876,11 @@ c=3
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=doubleprop.mla(7,38) Fatal: Syntax error,";" expected
+     ae=doubleprop.mla(8,13) Error: Duplicate identifier "i"
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=objects/
     comment=
     cc=
@@ -14942,7 +14942,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=errorcheck/
    comment=
    cc=
@@ -14958,7 +14958,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=syntax/
   comment=
   cc=
@@ -15744,7 +15744,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

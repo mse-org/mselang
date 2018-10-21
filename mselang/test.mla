@@ -1,61 +1,48 @@
 program test;
-
 type
- ea = class()[virtual,except]
-  constructor create(const message: string8);
-  destructor destroy() [default];
-  property message: string8 read fmessage;
-
-  protected
-   fmessage: string8;
- end;
-
- ea1 = class(ea)
- end;
-
- ea2 = class(ea1)
- end;
-
- eb = class()[virtual,except]
+ tt = class
   constructor create();
-  destructor destroy() [default];
+  destructor destroy();
+//  property i: int32 read fi write fi [default =123];
+//  property i: int32 read fi write fi default 123;
+//  property i: int32 read fi write fi;
+  private
+   fi: int32;
+   fa: array[0..4] of int32;
+   method geta(index: int32): int32;
+   method seta(index: int32; value: int32);
+  public
+{$internaldebug on}
+   property a[index: int32]: int32 read geta write seta;
  end;
 
-constructor ea.create(const message: string8);
+constructor tt.create();
 begin
- fmessage:= message;
+ fa[0]:= 100;
 end;
 
-destructor ea.destroy();
-begin
-end;
-
-constructor eb.create();
+destructor tt.destroy();
 begin
 end;
 
-destructor eb.destroy();
+method tt.geta(index: int32): int32;
 begin
+ result:= fa[index];
+end;
+
+method tt.seta(index: int32; value: int32);
+begin
+ fa[index]:= value;
 end;
 
 var
- e: ea;
- e1: ea2;
+ t: tt;
 begin
-{$internaldebug on}
- try
-  e1:= ea2.create('abc');
-  raise e1;
- except
-  if getexceptobj(e,true) and (e1 = e) then
-   e.destroy();
-   exitcode:= 100;
-  end;
-  ea2:
-   exitcode:= 10;
-  ea1:
-   exitcode:= 20;
-  else
-   exitcode:= exitcode+23;
- end;
+
+ t:= tt.create;
+ t.fa[1]:= 20;
+ t.fa[2]:= 3;
+
+ exitcode:= t.a[0]+t.fa[1];//+t.fa[2];
+ t.destroy();
 end.

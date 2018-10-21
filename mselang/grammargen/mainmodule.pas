@@ -279,8 +279,8 @@ type
  tokendefarty = array of tokendefty;
  
 var
- grammarstream: ttextstream = nil;
- passtream: ttextstream = nil;
+ grammarstream: ttextstream;
+ passtream: ttextstream;
  str1: string;
  usesdef: string;
  internaltokens: stringarty;
@@ -294,6 +294,7 @@ var
  intokendef: boolean;
  keywords: array of string;
  keywordids: array of keywordty;
+ dialect: string;
 
  procedure error(const text: string; aline: integer = -1);
  begin
@@ -302,7 +303,7 @@ var
   end;
   exitcode:= 1;
 //  application.terminated:= true;
-  writestderr('***ERROR*** line '+inttostr(aline)+lineend+str1+lineend+text,true);
+  writestderr('***ERROR '+dialect+' *** line '+inttostr(aline)+lineend+str1+lineend+text,true);
  end;
 
  procedure readline(var astr: string);
@@ -460,12 +461,12 @@ var
  conditionlevel: int32;
  disablelevel: int32;
  disabled: boolean;
- dialect: string;
 const
  contlast = 3; 
 begin
  internaltokens:= nil; //compiler warning
  application.terminated:= true;
+ grammarstream:= nil;
  try
   id:= idstart; //invalid
   nextid;
@@ -476,6 +477,7 @@ begin
   grammarstream:= ttextstream.create(grammar,fm_read);
   macrolist1:= tmacrolist.create([mao_curlybraceonly]);
   for of1:= 0 to high(outfiles) do begin
+   passtream:= nil;
    dialect:= ansistring(filenamebase(outfiles[of1]));
    conditionlevel:= 0;
    disablelevel:= 0;
@@ -608,7 +610,7 @@ begin
             error('Invalid condition level');
             exit;
            end;
-           if conditionlevel < disablelevel then begin
+           if conditionlevel <= disablelevel then begin
             disabled:= false;
            end;
           end
