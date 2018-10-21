@@ -4,7 +4,7 @@ type
   constructor create();
   destructor destroy();
 //  property i: int32 read fi write fi [{default='123'}];
-  property i: int32 read fi write fi default 123;
+  property i: int32 read fi write fi [default=123];
   property i: int32 read fi write fi;
   private
    fi: int32;

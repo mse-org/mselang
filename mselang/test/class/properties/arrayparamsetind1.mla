@@ -4,7 +4,7 @@ type
  ttest = class
   private
    ffield: int32;
-   method setfield(avalue: int32;i2: int32;i3:int32);
+   method setfield(i2: int32;i3:int32;avalue: int32);
   public
    constructor create();
    destructor destroy();
@@ -21,7 +21,7 @@ destructor ttest.destroy();
 begin
 end;
 
-method ttest.setfield(avalue: int32; i2: int32;i3:int32);
+method ttest.setfield(i2: int32;i3:int32;avalue: int32);
 begin
  self.ffield:= avalue*i2+i3;
 end;

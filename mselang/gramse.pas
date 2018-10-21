@@ -10189,16 +10189,13 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassproperty3: array[0..9] of branchty = (
+ bclassproperty3: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @readpropco); stack: nil; 
      keyword: $000002A2{'read'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @writepropco); stack: nil; 
      keyword: $000002A3{'write'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @defaultpropco); stack: nil; 
-     keyword: $0000023F{'default'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -10253,13 +10250,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- breadpropa: array[0..8] of branchty = (
+ breadpropa: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_changeparentcontext];
      dest: (context: @getidentpathco); stack: @writepropco; 
      keyword: $000002A3{'write'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush,bf_changeparentcontext];
-     dest: (context: @expco); stack: @defaultpropco; 
-     keyword: $0000023F{'default'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -10314,10 +10308,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwritepropa: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush,bf_changeparentcontext];
-     dest: (context: @expco); stack: @defaultpropco; 
-     keyword: $0000023F{'default'}),
+ bwritepropa: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),

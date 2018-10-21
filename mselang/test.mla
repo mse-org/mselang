@@ -1,23 +1,77 @@
 program test;
+
 type
-{$internaldebug on}
- tt= class
-  constructor create();
-  destructor destroy();
-  property i: int32 read fi write fi [default{=123}];
-//  property i: int32 read fi write fi default 123;
-//  property i: int32 read fi write fi;
+ pint32 = ^int32;
+
+ ttest = class
   private
-   fi: int32;
+   ffield: pint32;
+   method getfield(): pint32;
+   method setfield(avalue: pint32);
+   method getfield2(a: int32; b: int32): pint32;
+   method setfield2(a: int32; b: int32; avalue: pint32);
+  public
+   constructor create();
+   destructor destroy();
+   property field: pint32 read getfield write setfield;
+   property field1: pint32 read ffield write ffield;
+   property field2[a: int32; b: int32]: pint32 read getfield2 write setfield2;
  end;
 
-constructor tt.create();
+{ ttest }
+
+constructor ttest.create();
 begin
 end;
 
-destructor tt.destroy();
+destructor ttest.destroy();
 begin
 end;
 
+method ttest.getfield(): pint32;
 begin
+// result:= ffield;
+end;
+
+method ttest.setfield(avalue: pint32);
+begin
+// ffield:= avalue;
+end;
+
+method ttest.getfield2(a: int32; b: int32): pint32;
+begin
+// result:= ffield-a-b;
+end;
+
+method ttest.setfield2(a: int32; b: int32; avalue: pint32);
+begin
+// ffield:= avalue+a+b;
+end;
+
+var
+ i1: int32;
+ t1: ttest;
+ po1: pint32;
+begin
+{$internaldebug on}
+   t1.field2[1,2]:= @i1;
+{
+ t1:= ttest.create();
+ t1.field:= @i1;
+ t1.field^:= 123;
+ if i1 = 123 then
+  i1:= 0;
+  t1.ffield:= nil;
+  t1.field1:= @i1;
+  t1.field1^:= 123;
+  if i1 = 123 then
+   i1:= 0;
+   t1.ffield:= nil;
+   t1.field2[1,2]:= @i1;
+   t1.field2[1,2]^:= 123;
+   exitcode:= i1;
+  end;
+ end;
+ t1.destroy();
+}
 end.

@@ -1345,7 +1345,7 @@ begin
  end;
 end;
 *)
-
+var testvar,testvar1: addressflagsty;
 function resolvepropaccessor(var resinfo: resolvepropertyinfoty;
                                               const awrite: boolean): boolean;
 var
@@ -1364,7 +1364,11 @@ var
   result:= false;
   popar:= pelementoffsetty(@sub^.paramsrel);
   pe:= popar + sub^.paramcount;
-  inc(popar,2); //first index param
+  inc(popar);  //first index param write
+  if not awrite then begin
+   inc(popar); //first index param read
+  end;
+//  inc(popar,2); //first index param
   for i1:= 0 to resinfo.indexparams.high do begin
    if (popar >= pe) then begin //not enough index parameters
     illegalsymbol();
@@ -1372,6 +1376,8 @@ var
    end;
    with resinfo.indexparams.d[i1] do begin
     with pvardataty(ele.eledataabs(popar^))^ do begin
+testvar:= parflags;
+testvar1:= address.flags;
      if (partype <> vf.typ) or 
                 ((parflags >< address.flags) * paramflagsmask <> []) then begin
       illegalsymbol();
@@ -1380,6 +1386,9 @@ var
     end;
    end;
    inc(popar);
+  end;
+  if awrite then begin
+   inc(popar); //skip value param
   end;
   result:= popar = pe; //correct param count
   if not result then begin
@@ -1459,7 +1468,8 @@ begin
        if not (sf_functionx in flags) and ((paramcount = 2) or 
                                        (paramcount > 2) and hasindex) and
          (pvardataty(ele.eledataabs(
-                 pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele) then begin
+                pelementoffsetty(@paramsrel)[paramcount-1]))^.vf.typ = 
+                                                           typeele) then begin
         propele:= ele1;
         propoffs:= 0;
         include(propflags,pof_writesub);

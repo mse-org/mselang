@@ -13,7 +13,7 @@ type
  tcla = class(tcla1)
   private
   public
-   property a: int32 read fa default 1+3;
+   property a: int32 read fa [default=1+3];
  end;
 
 constructor tcla1.create();

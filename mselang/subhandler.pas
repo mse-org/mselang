@@ -3250,6 +3250,7 @@ var
   
  begin //doparam()
   result:= true; //not skipped
+  lastitem:= context1;
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
    if vardata1^.vf.typ = 0 then begin
@@ -3498,7 +3499,7 @@ var
  firstnotfound1: integer;
  callssa: int32;
  vardata1: pvardataty;
- lastparamsize1: int32;
+// lastparamsize1: int32;
  instancessa: int32;
  subdata1: psubdataty;
  cost1,matchcount1: int32;
@@ -4174,9 +4175,10 @@ begin
 //    tempsize:= 0;
     i1:= paramco;
 //    tempsbefore:= locdatapo;
+(*
     if dsf_indexedsetter in aflags then begin
-     inc(parallocpo); //second, first index
-     inc(subparams1);
+//     inc(parallocpo); //second, first index
+//     inc(subparams1);
      while i1 > 1 do begin
       getnextnospace(poitem1+1,poitem1);
       doparam(poitem1,subparams1,parallocpo);
@@ -4185,14 +4187,17 @@ begin
       dec(i1);
      end;
      dodefaultparams();
+{
      lastparamsize1:= paramsize1;
      dec(parallocpo,paramco); //first, value
      dec(subparams1,paramco);
      getnextnospace(poitem1+1,poitem1);
      doparam(poitem1,subparams1,parallocpo); //last
      lastparamsize1:= paramsize1 - lastparamsize1;
+}
     end
     else begin
+*)
      if not (dsf_noparams in aflags) then begin
       paramschecked:= paramschecked or (dsf_objassign in aflags);
       constbufferref:= savesegment(seg_globconst); //for openarray const
@@ -4234,8 +4239,18 @@ begin
        restoresegment(constbufferref); //data stored in llvmconst
       end;
      end;
-    end;
+//    end;
+
 //    locdatapo:= tempsbefore;
+(*
+    if lastitem <> nil then begin
+     topoffset:= getstackindex(lastitem);
+    end
+    else begin
+     topoffset:= adestindex; //no params
+    end;
+*)
+//(*
     if lastitem > poitem1 then begin
      topoffset:= getstackindex(lastitem);
     end
@@ -4258,10 +4273,11 @@ begin
        topoffset:= destoffset; //no params
       end
       else begin
-       topoffset:= s.stacktop; //no params
+       topoffset:= s.stacktop; //no params //correct ???
       end;
      end;
     end;
+//*)
     if topoffset < paramstart then begin
      topoffset:= paramstart;
     end;
@@ -4310,6 +4326,7 @@ begin
     if not hasresult and 
             (aflags*[dsf_attach,dsf_objini,dsf_objfini] = []) then begin
      d.kind:= ck_subcall;
+{
      if (dsf_indexedsetter in aflags) and 
                              (co_mlaruntime in o.compileoptions) then begin
       with insertitem(oc_swapstack,topoffset,-1)^.par.swapstack do begin
@@ -4317,6 +4334,7 @@ begin
        size:= lastparamsize1;
       end;
      end;
+}
     end;
     if not (dsf_isinherited in aflags) and 
          (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
