@@ -3567,7 +3567,7 @@ var
   asub:= instancetype1^.infoclass.subattach[attach];
   if asub <> 0 then begin
    result:= true;
-   callsub(adestindex,ele.eledataabs(asub),paramstart,0,
+   callsub(adestindex,ele.eledataabs(asub),topoffset+info.s.stackindex,0,
             [dsf_instanceonstack,dsf_attach,dsf_useobjssa] + 
             aflags*[dsf_destroy,dsf_noparams,dsf_noinstancecopy],
                                                instancessa,0,instancetype1);
@@ -4242,15 +4242,15 @@ begin
 //    end;
 
 //    locdatapo:= tempsbefore;
-(*
+//(*
     if lastitem <> nil then begin
      topoffset:= getstackindex(lastitem);
     end
     else begin
      topoffset:= adestindex; //no params
     end;
-*)
-//(*
+//*)
+(*
     if lastitem > poitem1 then begin
      topoffset:= getstackindex(lastitem);
     end
@@ -4277,7 +4277,7 @@ begin
       end;
      end;
     end;
-//*)
+*)
     if topoffset < paramstart then begin
      topoffset:= paramstart;
     end;

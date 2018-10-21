@@ -1,77 +1,61 @@
 program test;
 
 type
- pint32 = ^int32;
+ ea = class()[virtual,except]
+  constructor create(const message: string8);
+  destructor destroy() [default];
+  property message: string8 read fmessage;
 
- ttest = class
-  private
-   ffield: pint32;
-   method getfield(): pint32;
-   method setfield(avalue: pint32);
-   method getfield2(a: int32; b: int32): pint32;
-   method setfield2(a: int32; b: int32; avalue: pint32);
-  public
-   constructor create();
-   destructor destroy();
-   property field: pint32 read getfield write setfield;
-   property field1: pint32 read ffield write ffield;
-   property field2[a: int32; b: int32]: pint32 read getfield2 write setfield2;
+  protected
+   fmessage: string8;
  end;
 
-{ ttest }
+ ea1 = class(ea)
+ end;
 
-constructor ttest.create();
+ ea2 = class(ea1)
+ end;
+
+ eb = class()[virtual,except]
+  constructor create();
+  destructor destroy() [default];
+ end;
+
+constructor ea.create(const message: string8);
+begin
+ fmessage:= message;
+end;
+
+destructor ea.destroy();
 begin
 end;
 
-destructor ttest.destroy();
+constructor eb.create();
 begin
 end;
 
-method ttest.getfield(): pint32;
+destructor eb.destroy();
 begin
-// result:= ffield;
-end;
-
-method ttest.setfield(avalue: pint32);
-begin
-// ffield:= avalue;
-end;
-
-method ttest.getfield2(a: int32; b: int32): pint32;
-begin
-// result:= ffield-a-b;
-end;
-
-method ttest.setfield2(a: int32; b: int32; avalue: pint32);
-begin
-// ffield:= avalue+a+b;
 end;
 
 var
- i1: int32;
- t1: ttest;
- po1: pint32;
+ e: ea;
+ e1: ea2;
 begin
 {$internaldebug on}
-   t1.field2[1,2]:= @i1;
-{
- t1:= ttest.create();
- t1.field:= @i1;
- t1.field^:= 123;
- if i1 = 123 then
-  i1:= 0;
-  t1.ffield:= nil;
-  t1.field1:= @i1;
-  t1.field1^:= 123;
-  if i1 = 123 then
-   i1:= 0;
-   t1.ffield:= nil;
-   t1.field2[1,2]:= @i1;
-   t1.field2[1,2]^:= 123;
-   exitcode:= i1;
+ try
+  e1:= ea2.create('abc');
+  raise e1;
+ except
+  if getexceptobj(e,true) and (e1 = e) then
+   e.destroy();
+   exitcode:= 100;
   end;
+  ea2:
+   exitcode:= 10;
+  ea1:
+   exitcode:= 20;
+  else
+   exitcode:= exitcode+23;
  end;
- t1.destroy();
-}
 end.
