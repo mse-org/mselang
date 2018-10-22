@@ -4141,7 +4141,7 @@ begin
      end;
      inc(subparams1); //first param
     end;
-    opoffset1:= getcontextopcount(adestindex-s.stackindex);
+    opoffset1:= getcontextopcount(destoffset);
     if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;
@@ -4483,9 +4483,10 @@ begin
      end;
      par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
      par.callinfo.ad.globid:= trackaccess(asub);
-    end;
-    if sf_functioncall in asub^.flags then begin
-     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+     if sf_functioncall in asub^.flags then begin
+      d.dat.fact.ssaindex:= par.ssad;
+//      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+     end;
     end;
     if (sf_destructor in asub^.flags) and 
                      (aflags * [dsf_isinherited,dsf_nofreemem] = []) then begin
