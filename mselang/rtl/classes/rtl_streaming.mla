@@ -86,7 +86,19 @@ type
    method defineproperties(filer: tfiler) [virtual];
    method getowner(): tpersistent [virtual];
  end;
- 
+
+ tcomponent = class(tpersistent)
+  property name: string8 read fname write setname;
+  property owner: tcomponent read fowner write setowner;
+  constructor create(aowner: tcomponent) [virtual];
+  destructor destroy() [override];
+  private
+   fowner: tcomponent;
+   fname: string8;
+   method setname(const avalue: string8);
+   method setowner(const avalue: tcomponent);
+ end;
+
 implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format,
@@ -152,6 +164,27 @@ end;
 method tpersistent.getnamepath(): string8;
 begin
  notimplementederror('tpersistent.getnamepath');
+end;
+
+{ tcomponent }
+
+constructor tcomponent.create(aowner: tcomponent);
+begin
+end;
+
+destructor tcomponent.destroy();
+begin
+ inherited;
+end;
+
+method tcomponent.setname(const avalue: string8);
+begin
+ fname:= avalue;
+end;
+
+method tcomponent.setowner(const avalue: tcomponent);
+begin
+ fowner:= avalue;
 end;
 
 { tfiler }
