@@ -1105,7 +1105,14 @@ begin
  result:= [];
  while true do begin
   p1:= pelementinfoty(pointer(felementdata)+felementparent);
-  result:= result + p1^.header.visibility;
+//  result:= result + p1^.header.visibility;
+  result:= p1^.header.visibility;
+  if p1^.header.name = aident then begin
+   element:= pointer(p1)-pointer(felementdata);
+   include(result,vik_found);
+   exclude(result,vik_nochildren);
+   break;
+  end;
   if findcurrent(aident,akinds,avislevel,element) then begin
    include(result,vik_found);
    break;
@@ -1152,7 +1159,7 @@ begin //todo: optimize
   result:= findupward(aidents.d[start],k1,avislevel,element);
   if result <> [] then begin
    firstnotfound:= start+1;
-   if aidents.high > start then begin
+   if (aidents.high > start) and not (vik_nochildren in result) then begin
     parentbefore:= felementparent;
     pathbefore:= felementpath;
     po1:= pointer(felementdata)+element;

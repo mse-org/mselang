@@ -1,23 +1,10 @@
 program test;
-uses
- rtl_streaming,rtl_streams,rtl_system;
-type
- otest = object
-  property i: int32 read fi write fi;
-  private
-   fi: int32;
-  protected
-   method xx(i: int32);
- end;
-
-method otest.xx(i: int32);
-begin
- exitcode:= i + self.i;
-end;
-
 var
- t: otest;
+ f1: flo64;
 begin
- t.fi:= 120;
- t.xx(3);
+ f1:= 1.570796326794896619;
+ f1:= sin(f1);
+ if f1 = 1 then
+  exitcode:= 123;
+ end;
 end.

@@ -708,7 +708,7 @@ procedure identerror(const astackoffset: integer;
             const aerror: errorty; const aerrorlevel: errorlevelty = erl_none);
 begin
  with info,contextstack[s.stackindex+astackoffset] do begin
-  errormessage(aerror,[lstringtostring(start.po,d.ident.len)],
+  errormessage(aerror,[lstringtostring(d.ident.po,d.ident.len)],
                                     astackoffset,d.ident.len,aerrorlevel);
  end;
 end;

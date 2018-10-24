@@ -2083,8 +2083,6 @@ var                       //todo: move after doparams()
  ele1: elementoffsetty;
  ident1: identty;
  resulttype1: resulttypety;
-
-var
  lstr1: lstringty;  
  i1: int32;
  element1: pelementinfoty;
@@ -2092,6 +2090,7 @@ var
  poper1: poperatordataty;
  poperid: pidentty;
  operatorsig: identvecty;
+ vis1: visikindsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -2240,7 +2239,8 @@ begin
    end;
   end;
 // }
-  sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
+  vis1:= allvisi+[vik_nochildren];
+  sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,vis1,
                                      paramco*sizeof(pvardataty))^.data);
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);

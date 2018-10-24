@@ -2137,6 +2137,7 @@ begin
  with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
   ident.len:= s.source.po-start.po;
+  ident.po:= start.po;
   ident.ident:= getident(start.po,ident.len);
   exclude(ident.flags,idf_continued);
   if ident.len = 0 then begin
@@ -2583,6 +2584,7 @@ var
  bo1: boolean;
  vis1,foundflags1: visikindsty;
  pe1: pelementinfoty;
+ id1: identty;
  
 label
  endlab;
@@ -3042,8 +3044,33 @@ begin
       setconstcontext(poind,value)
      end;
     end;
+    ek_unit: begin
+     id1:= po1^.header.name;
+     with info.s.unitinfo^ do begin
+      if stf_implementation in s.currentstatementflags then begin
+       for i1:= 0 to high(implementationuses) do begin
+        if implementationuses[i1]^.key = id1 then begin
+         identerror(firstnotfound+1,err_identifiernotfound);
+         goto endlab;
+        end;
+       end;
+      end;
+      for i1:= 0 to high(interfaceuses) do begin
+       if interfaceuses[i1]^.key = id1 then begin
+        identerror(firstnotfound+1,err_identifiernotfound);
+        goto endlab;
+       end;
+      end;
+      identerror(1,err_identifiernotfound); //unit not in scope
+      goto endlab;
+     end;
+    end;
+    ek_uses: begin
+     identerror(1,err_identifiernotfound);
+    end;
     else begin
-     internalerror1(ie_parser,'20150917C');
+     errormessage(err_illegalexpression,[],potop); 
+//     internalerror1(ie_parser,'20150917C');
     end;
    end;
   end;

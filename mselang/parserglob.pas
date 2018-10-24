@@ -80,7 +80,8 @@ type
                vik_found,vik_stoponstarttype,
                vik_interfacedef, //element defined in interface
                vik_classele,  //used by handlevalueidentifier,
-               vik_noancestor //do not check ancestor for dupplicate
+               vik_noancestor, //do not check ancestor for dupplicate
+               vik_nochildren  //children are hidden
               );
  visikindsty = set of visikindty;
  
@@ -353,6 +354,7 @@ type
  
  identinfoty = record
   ident: identty;
+  po: pointer;
   len: integer;
   flags: identflagsty;
 //  continued: boolean;
