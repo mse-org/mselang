@@ -3045,6 +3045,10 @@ begin
      end;
     end;
     ek_unit: begin
+     if (firstnotfound = 1) and (idents.high = 0) then begin
+      errormessage(err_illegalexpression,[],1); 
+      goto endlab;
+     end;
      id1:= po1^.header.name;
      with info.s.unitinfo^ do begin
       if stf_implementation in s.currentstatementflags then begin

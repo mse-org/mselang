@@ -3,14 +3,14 @@ var
  i1,i2: int32;
  f1,f2: flo64;
 begin
- i1:= abs(-100);
+ i1:= system.abs(-100);
  exitcode:= i1;
- f1:= abs(-30.5);
+ f1:= system.abs(-30.5);
  if f1 = 30.5 then
   i1:= -23;
-  i2:= abs(i1);
+  i2:= system.abs(i1);
   f1:= -40.5;
-  f2:= abs(f1);
+  f2:= system.abs(f1);
   if f2 = 40.5 then
    exitcode:= exitcode+i2;
   end;

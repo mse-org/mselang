@@ -7,11 +7,11 @@ var
 begin
  setlength(str1,10);
  str2:= str1;
- unique(str1);
+ system.unique(str1);
  setlength(ar1,10);
  ar1[2]:= 100;
  ar2:= ar1;
- unique(ar2);
+ system.unique(ar2);
  ar2[2]:= 23;
  exitcode:= ar1[2] + ar2[2];
 end.

@@ -756,7 +756,8 @@ begin
          end;
         end;
        end;
-       if not result then begin
+       if not result or (idents.d[0] = tk_system) and 
+                                  (firstnotfound <= idents.high)then begin
         ele.elementparent:= info.systemelement;
         if idents.d[0] = tk_system then begin
          result:= ele.findupward(idents,akinds,visibility,eleres,

@@ -25,7 +25,7 @@ end;
 class method ttest.newinstance(): pointer;
 begin
  result:= getmem(sizeof(self));
- initialize(ttest(result),classof(self));
+ initialize(ttest(result),system.classof(self));
 end;
 
 class method ttest1.newinstance(): pointer;
@@ -49,12 +49,12 @@ var
  p1: pointer;
  proc1: procty;
 begin
- p1:= classof(ttest);
+ p1:= system.classof(ttest);
  proc1:= @ttest.test;
  if p1 = methodty(proc1).data then
   exitcode:= 123;
   c2:= ttest1.create();
-  p1:= classof(c2);
+  p1:= system.classof(c2);
   proc1:= @ttest.test;
   if p1 = methodty(proc1).data then
    exitcode:= ttest1(c2).f3;

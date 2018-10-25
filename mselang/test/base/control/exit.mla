@@ -3,10 +3,10 @@ program exit;
 procedure test();
 begin
  if false then
-  exit;
+  system.exit;
  end;
  exitcode:= 123;
- exit;
+ system.exit;
  exitcode:= 11;
 end;
 

@@ -13,7 +13,7 @@ begin
  exitcode:= 1;
  pointer(a.s):= pointer(123);
  if pointer(a.s) = pointer(123) then
-  initialize(a);
+  system.initialize(a);
   if a.s = '' then
    exitcode:= 123;
   end;

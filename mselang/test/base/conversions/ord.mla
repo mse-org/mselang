@@ -6,9 +6,9 @@ var
  ch1: char8;
  bo1: bool1;
 begin
- exitcode:= ord(en_2) + ord('0')+ord(5)+ord(true); //56
+ exitcode:= system.ord(en_2) + system.ord('0')+system.ord(5)+system.ord(true); //56
  en1:= en_1; //1
  ch1:= '1';  //49
  bo1:= true; //1
- exitcode:= exitcode+ord(en1)+ord(ch1)+ord(bo1)+123-56-51;
+ exitcode:= exitcode+system.ord(en1)+system.ord(ch1)+system.ord(bo1)+123-56-51;
 end.

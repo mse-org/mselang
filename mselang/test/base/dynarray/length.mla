@@ -9,5 +9,5 @@ var
 begin
  str1:= 'abcdefg';
  setlength(ar1,20);
- exitcode:= length(ar1)+length(str1)+length(arty)+length('abc')+90;
+ exitcode:= system.length(ar1)+system.length(str1)+system.length(arty)+system.length('abc')+90;
 end.
