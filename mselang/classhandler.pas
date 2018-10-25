@@ -1345,7 +1345,7 @@ begin
  end;
 end;
 *)
-var testvar,testvar1: addressflagsty;
+
 function resolvepropaccessor(var resinfo: resolvepropertyinfoty;
                                               const awrite: boolean): boolean;
 var
@@ -1376,8 +1376,6 @@ var
    end;
    with resinfo.indexparams.d[i1] do begin
     with pvardataty(ele.eledataabs(popar^))^ do begin
-testvar:= parflags;
-testvar1:= address.flags;
      if (partype <> vf.typ) or 
                 ((parflags >< address.flags) * paramflagsmask <> []) then begin
       illegalsymbol();

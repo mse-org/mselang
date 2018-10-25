@@ -1408,7 +1408,7 @@ begin
   end;
  end;
 end;
-var testvar: pint32;
+
 procedure deleterelocitem(const alink: int32);
 begin
  if alink <> 0 then begin
@@ -1416,7 +1416,6 @@ begin
    if info.s.currentopcodemarkchain = alink then begin
     info.s.currentopcodemarkchain:= next;
    end;
-testvar:= @next;
    links[opreloc.prev].next:= next;         //links[0] is dummy
    links[next].opreloc.prev:= opreloc.prev; //links[0] is dummy
    next:= deletedlinks;

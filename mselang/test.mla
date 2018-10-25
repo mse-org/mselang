@@ -1,9 +1,19 @@
 program test;
+uses
+ unit1;
 var
  f1: flo64;
+ i1: int32;
+const
+// c = 'def';
 begin
- f1:= 1.570796326794896619;
- f1:= sin(f1);
+// f1:= 1.570796326794896619;
+writeln(c1);
+{$dumpelements}
+{$abort}
+{$internaldebug on}
+ i1:= unit1.v1;
+// f1:= system.sin(f1);
  if f1 = 1 then
   exitcode:= 123;
  end;

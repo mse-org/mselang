@@ -355,11 +355,9 @@ begin
 end;
 
 { treader }
-var testvar: int64; testvar1: tstream;
+
 method treader.read(var buffer; const count: int32);
 begin
-//testvar1:= fstreamx;
-//testvar:= fstreamx.position;
  fstreamx.readbuffer(buffer,count);
 end;
 

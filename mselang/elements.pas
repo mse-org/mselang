@@ -1791,7 +1791,10 @@ function telementhashdatalist.dumpelements: msestringarty;
   end;
  end; //dumptyp
 
- function dumpconstvalue(const avalue: dataty): msestring;
+ function dumpconstvalue(const avalue: dataty;
+                           const data: pconstdataty): msestring;
+ var
+  strval1: stringvaluety;
  begin
   with avalue do begin
    result:= msestring(getenumname(typeinfo(kind),ord(kind)))+' ';
@@ -1819,16 +1822,22 @@ function telementhashdatalist.dumpelements: msestringarty;
                //todo: arbitrary size, set format
     end;
     dk_string{8,dk_string16,dk_string32}: begin
-     result:= result + msestring(lstringtostring(getstringconst(vstring)));
+     strval1:= vstring;
+     if (data <> nil) and (data^.nameid >= 0) then begin
+      include(strval1.flags,strf_ele);
+      strval1.offset:= eledatarel(data);
+     end;
+     result:= result + msestring(lstringtostring(getstringconst(strval1)));
     end;
    end;
   end;
  end;
 
- function dumpconst(const avalue: datainfoty): msestring;
+ function dumpconst(const avalue: datainfoty;
+                                     const data: pconstdataty): msestring;
  begin
   with avalue do begin
-   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d);
+   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d,data);
   end; 
  end; //dumpconst
   
@@ -1841,6 +1850,7 @@ var
  ar2: msestringarty;
  po4: pscopeinfoty;
  po5: popaddressty;
+ po6: pconstdataty;
 begin
  int1:= 0;
  int2:= 0;
@@ -1935,7 +1945,7 @@ begin
       mstr1:= mstr1 + ' W:' + inttostrmse(writeele);
      end;
      if pof_default in flags then begin
-      mstr1:= mstr1 + ' default:' + dumpconst(defaultconst);
+      mstr1:= mstr1 + ' default:' + dumpconst(defaultconst,nil);
      end;
     end;
    end;
@@ -1989,9 +1999,8 @@ begin
     end;
    end;
    ek_const: begin
-    with pconstdataty(@po1^.data)^ do begin
-     mstr1:= mstr1+' '+dumpconst(val);
-    end;
+    po6:= pconstdataty(@po1^.data);
+    mstr1:= mstr1+' '+dumpconst(po6^.val,po6);
    end;
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
@@ -2050,7 +2059,7 @@ begin
       mstr1:= mstr1 + 'false';
      end;
      if value.kind <> dk_none then begin
-      mstr1:= mstr1+lineend+' value:'+dumpconstvalue(value);
+      mstr1:= mstr1+lineend+' value:'+dumpconstvalue(value,nil);
      end;
     end;
    end;
@@ -3031,7 +3040,7 @@ begin
   result:= data.len;
  end;
 end;
-var testvar: tstringbuffer;testvar1: punitinfoty;testvar2: pchar;
+
 function tstringbuffer.getbufpo(const astring: stringvaluety;
                            out datapo: pointer): pstringbufhashdataty;
 var
@@ -3046,12 +3055,9 @@ begin
   end;
  {$endif}
   p1:= ele.eledataabs(astring.offset);
-testvar1:= datatoele(p1)^.header.defunit;
-testvar:= tstringbuffer(datatoele(p1)^.header.defunit^.stringbuffer);
   with tstringbuffer(datatoele(p1)^.header.defunit^.stringbuffer) do begin
    result:= fdata+p1^.val.d.vstring.offset;
    datapo:= fbuffer+result^.data.offset;
-testvar2:= fbuffer+result^.data.offset;
   end;
  end
  else begin
