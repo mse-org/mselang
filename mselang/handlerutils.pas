@@ -4865,6 +4865,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
  
 var
  int1: integer;
+ lstr1: lstringty;
 begin
  with info do begin
   if not (cos_internaldebug in s.compilerswitches) then begin
@@ -4955,7 +4956,10 @@ begin
       end;
       ck_ident{,ck_stringident}: begin
        write('N',inttostr(d.ident.ident),':',d.ident.len);
-       write(' ',getidentname(d.ident.ident));
+       lstr1.len:= d.ident.len;
+       lstr1.po:= d.ident.po;
+       write(' ',lstringtostring(lstr1));
+//       write(' ',getidentname(d.ident.ident));
        write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
                                             integer(d.ident.flags),true));
       end;

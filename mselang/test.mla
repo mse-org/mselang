@@ -1,8 +1,23 @@
 program test;
-uses
- unit1;
-begin
+type
+ tt= class
+//  constructor create();
+//  destructor destroy();
+//  property i: int32 read fi write fi [{default='123'}];
+  property i: int32 read fi write fi [default=123];
 {$internaldebug on}
- writeln(c1);
-{$dumpelements}
+  property i: int32 read fi write fi;
+  private
+   fi: int32;
+ end;
+
+constructor tt.create();
+begin
+end;
+
+destructor tt.destroy();
+begin
+end;
+
+begin
 end.

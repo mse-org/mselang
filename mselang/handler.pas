@@ -2152,6 +2152,7 @@ begin
 {$endif}
  with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
+  ident.po:= start.po;
   ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
   exclude(ident.flags,idf_continued);
@@ -2176,6 +2177,7 @@ begin
 {$endif}
  with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
+  ident.po:= start.po;
   ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
   exclude(ident.flags,idf_continued);
@@ -2768,6 +2770,7 @@ begin
 {$endif}
  with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
+  ident.po:= start.po;
   ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
  end;

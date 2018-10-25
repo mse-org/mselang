@@ -870,6 +870,8 @@ begin
  end;
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_ident;
+  d.ident.po:= nil;
+  d.ident.len:= 0;
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin

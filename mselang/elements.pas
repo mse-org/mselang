@@ -560,6 +560,11 @@ begin
  end;
 end;
 
+function getstringbuf(const aele: pelementinfoty): tstringbuffer;
+begin
+ result:= tstringbuffer(aele^.header.defunit^.stringbuffer);
+end;
+
 function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= getstringbuf(astring).allocconst(astring);
@@ -1670,6 +1675,9 @@ end;
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 
+var
+ po1: pelementinfoty;
+ 
  function getidentstring(const ident: identty): msestring;
  begin
   if ident = 0 then begin
@@ -1791,10 +1799,7 @@ function telementhashdatalist.dumpelements: msestringarty;
   end;
  end; //dumptyp
 
- function dumpconstvalue(const avalue: dataty;
-                           const data: pconstdataty): msestring;
- var
-  strval1: stringvaluety;
+ function dumpconstvalue(const avalue: dataty): msestring;
  begin
   with avalue do begin
    result:= msestring(getenumname(typeinfo(kind),ord(kind)))+' ';
@@ -1822,28 +1827,33 @@ function telementhashdatalist.dumpelements: msestringarty;
                //todo: arbitrary size, set format
     end;
     dk_string{8,dk_string16,dk_string32}: begin
-     strval1:= vstring;
+     if not (strf_ele in vstring.flags) then begin
+      result:= result + lstringtostring(getstringbuf(po1).getstring(vstring));
+     end
+     else begin
+     {
      if (data <> nil) and (data^.nameid >= 0) then begin
       include(strval1.flags,strf_ele);
       strval1.offset:= eledatarel(data);
      end;
-     result:= result + msestring(lstringtostring(getstringconst(strval1)));
+     }
+      result:= result + msestring(lstringtostring(getstringconst(vstring)));
+     end;
     end;
    end;
   end;
  end;
 
- function dumpconst(const avalue: datainfoty;
-                                     const data: pconstdataty): msestring;
+ function dumpconst(const avalue: datainfoty): msestring;
  begin
   with avalue do begin
-   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d,data);
+   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d);
   end; 
  end; //dumpconst
   
 var
  int1,int2,int3,int4,int5,int6: integer;
- po1,po2,po3: pelementinfoty;
+ po2,po3: pelementinfoty;
  mstr1,mstr2: msestring;
  ar1: dumpinfoarty;
  off1: elementoffsetty;
@@ -1945,7 +1955,7 @@ begin
       mstr1:= mstr1 + ' W:' + inttostrmse(writeele);
      end;
      if pof_default in flags then begin
-      mstr1:= mstr1 + ' default:' + dumpconst(defaultconst,nil);
+      mstr1:= mstr1 + ' default:' + dumpconst(defaultconst);
      end;
     end;
    end;
@@ -2000,7 +2010,7 @@ begin
    end;
    ek_const: begin
     po6:= pconstdataty(@po1^.data);
-    mstr1:= mstr1+' '+dumpconst(po6^.val,po6);
+    mstr1:= mstr1+' '+dumpconst(po6^.val);
    end;
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
@@ -2059,7 +2069,7 @@ begin
       mstr1:= mstr1 + 'false';
      end;
      if value.kind <> dk_none then begin
-      mstr1:= mstr1+lineend+' value:'+dumpconstvalue(value,nil);
+      mstr1:= mstr1+lineend+' value:'+dumpconstvalue(value);
      end;
     end;
    end;

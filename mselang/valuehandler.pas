@@ -2136,8 +2136,8 @@ begin
 {$endif}
  with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
-  ident.len:= s.source.po-start.po;
   ident.po:= start.po;
+  ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
   exclude(ident.flags,idf_continued);
   if ident.len = 0 then begin
