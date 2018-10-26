@@ -1,45 +1,29 @@
 program test;
 uses
-type
 {$internaldebug on}
- tcomponent = class()[virtual]
-  constructor create();
-  destructor destroy();//[virtual];
-  private
-   fowner: tcomponent;
- end;
-{ tcomponent }
 
-constructor tcomponent.create();
+procedure ttt();
 begin
 end;
-
-
-destructor tcomponent.destroy();
-begin
-// inherited;
-end;
-
 {
-method tcomponent.setname(const avalue: string8);
+procedure test(): string8;
+//var s1: string8;
 begin
- fname:= avalue;
-end;
-
-method tcomponent.setowner(const avalue: tcomponent);
-begin
- fowner:= avalue;
+ ttt();
+// setlength(result,1);
+// result[1]:= 'A';
 end;
 }
-{
-destructor ttest.destroy();
+procedure tt();
+var s1: string8;
 begin
- inherited;
+try
+ ttt();
+finally
 end;
-}
-var
- t1: tcomponent;
+// test();
+end;
+
 begin
- t1:= tcomponent.create({nil});
- t1.destroy();
+ tt();
 end.

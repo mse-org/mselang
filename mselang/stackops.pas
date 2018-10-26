@@ -6832,6 +6832,11 @@ begin
  exceptioninfo.trystack:= po1;
 end;
 
+procedure pushcpucontextdummyop(); //todo: don't use push/pop stack
+begin
+ //dummy
+end;
+
 procedure popcpucontextop();
 var
  po1: pjumpinfoty;
@@ -7714,6 +7719,7 @@ const
 
   raisessa = 0;
   pushcpucontextssa = 0;
+  pushcpucontextdummyssa = 0;
   popcpucontextssa = 0;
   pushexceptionssa = 0;
   iniexceptionssa = 0;

@@ -4953,6 +4953,13 @@ begin
  end;
 end;
 
+procedure pushcpucontextdummyop();
+begin
+ with pc^.par do begin
+  bcstream.landingpadblock:= -1;
+ end;
+end;
+
 procedure popcpucontextop();
 begin
  with pc^.par do begin
@@ -5792,6 +5799,7 @@ const
 
   raisessa = 0;
   pushcpucontextssa = 0;
+  pushcpucontextdummyssa = 0;
   popcpucontextssa = 1;
   pushexceptionssa = 8;
   iniexceptionssa = 1;

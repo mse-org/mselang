@@ -1995,8 +1995,11 @@ begin
  for i1:= aparams.count-1 downto 0 do begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
- if flandingpadblock = 0 then begin
+ if flandingpadblock <= 0 then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+  if flandingpadblock < 0 then begin
+   emitbrop(fcurrentbb+1);
+  end;
  end
  else begin
   inc(fcurrentbb);
@@ -2014,12 +2017,20 @@ procedure tllvmbcwriter.emitcallop(const afunc: boolean;
                                                      const noinvoke: boolean);
 var
  i1: int32;
+ ids: idarty;
 begin
- for i1:= high(aparams) downto 0 do begin
+ ids.count:= high(aparams);
+ for i1:= ids.count downto 0 do begin
   aparams[i1]:= fsubopindex-aparams[i1];
  end;
- if (flandingpadblock = 0) or noinvoke then begin
+ inc(ids.count);
+ ids.ids:= @aparams[0];
+{
+ if (flandingpadblock <= 0) or noinvoke then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+  if flandingpadblock < 0 then begin
+   emitbrop(fcurrentbb+1);
+  end;
  end
  else begin
   inc(fcurrentbb);
@@ -2030,6 +2041,7 @@ begin
  if afunc then begin
   inc(fsubopindex);
  end;
+}
 end;
 
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;

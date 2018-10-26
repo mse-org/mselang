@@ -784,6 +784,8 @@ type
     
   state: unitstatesty;
   dialect: dialectty;
+  tempvarflags: typeflagsty;
+  subtryblockbeginad: int32; //-1 if none
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;

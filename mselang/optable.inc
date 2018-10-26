@@ -1268,6 +1268,8 @@
 
 //oc_pushcpucontext
   (ssa: pushcpucontextssa; proc: @pushcpucontextop; flags: []), 
+//oc_pushcpucontextdummy
+  (ssa: pushcpucontextdummyssa; proc: @pushcpucontextdummyop; flags: []), 
 //oc_popcpucontext
   (ssa: popcpucontextssa; proc: @popcpucontextop; flags: []), 
 //oc_pushexception

@@ -801,6 +801,7 @@ type
   oc_uniquedynarraya,
 
   oc_pushcpucontext,
+  oc_pushcpucontextdummy,
   oc_popcpucontext,
   oc_pushexception,
   oc_iniexception,
