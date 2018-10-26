@@ -1,23 +1,45 @@
 program test;
+uses
 type
- tt= class
-//  constructor create();
-//  destructor destroy();
-//  property i: int32 read fi write fi [{default='123'}];
-  property i: int32 read fi write fi [default=123];
 {$internaldebug on}
-  property i: int32 read fi write fi;
+ tcomponent = class()[virtual]
+  constructor create();
+  destructor destroy();//[virtual];
   private
-   fi: int32;
+   fowner: tcomponent;
  end;
+{ tcomponent }
 
-constructor tt.create();
+constructor tcomponent.create();
 begin
 end;
 
-destructor tt.destroy();
+
+destructor tcomponent.destroy();
 begin
+// inherited;
 end;
 
+{
+method tcomponent.setname(const avalue: string8);
 begin
+ fname:= avalue;
+end;
+
+method tcomponent.setowner(const avalue: tcomponent);
+begin
+ fowner:= avalue;
+end;
+}
+{
+destructor ttest.destroy();
+begin
+ inherited;
+end;
+}
+var
+ t1: tcomponent;
+begin
+ t1:= tcomponent.create({nil});
+ t1.destroy();
 end.

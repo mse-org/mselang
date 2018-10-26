@@ -757,7 +757,8 @@ var
    while ele1 <> 0 do begin
     field1:= ele.eledataabs(ele1);
     typ2:= ele.eledataabs(field1^.vf.typ);
-    if typ2^.h.manageproc <> mpk_none then begin
+    if (typ2^.h.indirectlevel = 0) and 
+                           (typ2^.h.manageproc <> mpk_none) then begin
      if (op <> mo_inizeroed) or 
             (typ2^.h.flags * [tf_complexini,tf_hascomplexini] <> []) then begin
       fieldoffset:= field1^.offset - fieldoffset;
