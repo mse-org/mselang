@@ -507,7 +507,7 @@ end;
 procedure callcompilersub(const asub: compilersubty;
           const afunc: boolean; const aparams: array of int32);
 begin
- bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams);
+ bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams,true);
 end;
 
 procedure nopop();
@@ -791,7 +791,7 @@ end;
 procedure haltop();
 begin
  if finihandler <> 0 then begin
-  bcstream.emitcallop(false,bcstream.globval(finihandler),[]);
+  bcstream.emitcallop(false,bcstream.globval(finihandler),[],true);
  end;
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
@@ -4710,7 +4710,7 @@ begin
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
-  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)],true);
  end;
 end;
 
@@ -4724,7 +4724,7 @@ begin
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
-  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)],true);
  end;
 end;
 

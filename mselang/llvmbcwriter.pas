@@ -199,11 +199,13 @@ type
    procedure endsub();
                                         //todo: add explicit typeid to call ops
    procedure emitcallop(const afunc: boolean;
-             const valueid: int32; const aparams: idarty);
+             const valueid: int32; const aparams: idarty;
+                                       const noinvoke: boolean = false);
                                           //changes aparams
    procedure emitcallop(const afunc: boolean;
              const valueid: int32; aparams: array of int32;
                                        const noinvoke: boolean = false);
+                                          //changes aparams
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstentry(const aid: integer; const anames: array of lstringty);
@@ -1988,17 +1990,18 @@ begin
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean;
-                           const valueid: int32; const aparams: idarty);
+                           const valueid: int32; const aparams: idarty;
+                                       const noinvoke: boolean = false);
 var
  i1: int32;
 begin
  for i1:= aparams.count-1 downto 0 do begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
- if flandingpadblock <= 0 then begin
+ if (flandingpadblock <= 0) or noinvoke then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
-  if flandingpadblock < 0 then begin
-   emitbrop(fcurrentbb+1);
+  if (flandingpadblock < 0) and not noinvoke then begin
+   emitbrop(fcurrentbb+1);              //dummy bbinc
   end;
  end
  else begin
@@ -2014,17 +2017,14 @@ end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean; 
                           const valueid: int32; aparams: array of int32;
-                                                     const noinvoke: boolean);
+                                            const noinvoke: boolean = false);
 var
  i1: int32;
  ids: idarty;
 begin
- ids.count:= high(aparams);
- for i1:= ids.count downto 0 do begin
-  aparams[i1]:= fsubopindex-aparams[i1];
- end;
- inc(ids.count);
+ ids.count:= length(aparams);
  ids.ids:= @aparams[0];
+ emitcallop(afunc,valueid,ids,noinvoke);
 {
  if (flandingpadblock <= 0) or noinvoke then begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
