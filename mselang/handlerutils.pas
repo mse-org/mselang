@@ -1680,7 +1680,7 @@ begin
   p2^.typeele:= atype;
   result.indirectlevel:= p1^.h.indirectlevel;
   if result.indirectlevel = 0 then begin
-   s.unitinfo^.tempvarflags:= s.unitinfo^.tempvarflags + p1^.h.flags;
+   tempvarflags:= tempvarflags + p1^.h.flags;
   end;
   if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - info.stacktempoffset;

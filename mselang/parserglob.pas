@@ -784,8 +784,6 @@ type
     
   state: unitstatesty;
   dialect: dialectty;
-  tempvarflags: typeflagsty;
-  subtryblockbeginad: int32; //-1 if none
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;
@@ -929,6 +927,8 @@ type
   llvmtempcount: int32;
   firstllvmtemp: dataoffsty; //in seg_localloc -1 ->none
 //  lastllvmtemp: dataoffsty;  //in seg_localloc -1 ->none
+  subtryblockbeginad: int32; //-1 if none
+  tempvarflags: typeflagsty;
   tempvarcount: int32;
   tempvarchain: listadty;
   tempinitlabel: int32; //op address

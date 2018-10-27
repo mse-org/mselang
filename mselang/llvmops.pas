@@ -505,9 +505,11 @@ begin
 end;
 
 procedure callcompilersub(const asub: compilersubty;
-          const afunc: boolean; const aparams: array of int32);
+          const afunc: boolean; const aparams: array of int32;
+                                            const noinvoke: boolean = false);
 begin
- bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams,true);
+ bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams,
+                                                                    noinvoke);
 end;
 
 procedure nopop();
@@ -791,7 +793,7 @@ end;
 procedure haltop();
 begin
  if finihandler <> 0 then begin
-  bcstream.emitcallop(false,bcstream.globval(finihandler),[],true);
+  bcstream.emitcallop(false,bcstream.globval(finihandler),[]);
  end;
  with pc^.par do begin
   bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
@@ -4710,7 +4712,7 @@ begin
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
-  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)],true);
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -4724,7 +4726,7 @@ begin
   bcstream.emitloadop(bcstream.relval(0));                           //1ssa
   bcstream.emitbitcast(bcstream.relval(0),
                     bcstream.ptypeval(bcstream.pointerproctype));    //1ssa
-  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)],true);
+  bcstream.emitcallop(false,bcstream.relval(0),[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -4949,21 +4951,24 @@ end;
 procedure pushcpucontextop();
 begin
  with pc^.par do begin
-  bcstream.landingpadblock:= opaddress.bbindex;
+  bcstream.begintryblock(opaddress.bbindex);
+//  bcstream.landingpadblock:= opaddress.bbindex;
  end;
 end;
 
 procedure pushcpucontextdummyop();
 begin
  with pc^.par do begin
-  bcstream.landingpadblock:= -1;
+  bcstream.begintryblock(-1);
+//  bcstream.landingpadblock:= -1;
  end;
 end;
 
 procedure popcpucontextop();
 begin
  with pc^.par do begin
-  bcstream.landingpadblock:= opaddress.bbindex;
+  bcstream.endtryblock(opaddress.bbindex);
+//  bcstream.landingpadblock:= opaddress.bbindex;
   bcstream.emitlandingpad(bcstream.typeval(bcstream.landingpadtype),
 //                  info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality])); //1ssa

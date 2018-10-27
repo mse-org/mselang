@@ -46,7 +46,10 @@ type
   data: pcard8;
  end;
  pbcdataty = ^bcdataty;
-  
+
+ bcwritersubflagty = (bwf_dummyinvoke);
+ bcwritersubflagsty = set of bcwritersubflagty;  
+ 
  tllvmbcwriter = class(tmsefilestream)
   private
    fbuffer: array[0..bcwriterbuffersize-1] of byte;
@@ -83,6 +86,8 @@ type
    fsubopstart: int32;      //start of op ssa id's
    fsubopindex: int32;      //current op ssa id
    fcurrentbb: int32;
+   fsubflags: bcwritersubflagsty;
+   ftrylevel: int32;
    flandingpadblock: int32;
 //   fgetexceptionpointer: int32;
   {$ifdef mse_debugparser}
@@ -166,6 +171,7 @@ type
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
+   
    procedure emitrec(const id: int32; const data: array of int32;
                                          const extensioncount: int32 = 0);
    procedure emitrec(const id: int32; const data: array of int32;
@@ -198,6 +204,9 @@ type
                                                           const bbcount: int32);
    procedure endsub();
                                         //todo: add explicit typeid to call ops
+   procedure begintryblock(const landingpad: int32); //-1 -> dummy
+   procedure endtryblock(const landingpadbefore: int32);
+
    procedure emitcallop(const afunc: boolean;
              const valueid: int32; const aparams: idarty;
                                        const noinvoke: boolean = false);
@@ -205,7 +214,6 @@ type
    procedure emitcallop(const afunc: boolean;
              const valueid: int32; aparams: array of int32;
                                        const noinvoke: boolean = false);
-                                          //changes aparams
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstentry(const aid: integer; const anames: array of lstringty);
@@ -286,7 +294,7 @@ type
    property pointerproctype: int32 read fpointerproctype;
    property openarraytype: int32 read fopenarraytype;
    property pointersizeconst: int32 read fpointersizeconst;
-   property landingpadblock: int32 read flandingpadblock write flandingpadblock;
+//   property landingpadblock: int32 read flandingpadblock write flandingpadblock;
 //   property getexceptionpointer: int32 read fgetexceptionpointer 
 //                                                   write fgetexceptionpointer;
        //"token" and llvm.eh.padparam.pNi8 seem not to work with llvm 3.8
@@ -1944,6 +1952,8 @@ procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                    const allocs: suballocinfoty; const bbcount: int32);
 begin
  fcurrentbb:= 0;
+ fsubflags:= [];
+ ftrylevel:= 0;
  flandingpadblock:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
@@ -1987,6 +1997,24 @@ begin
 {$ifdef mse_debugparser}
  finsub:= false;
 {$endif}
+end;
+
+procedure tllvmbcwriter.begintryblock(const landingpad: int32); //-1 -> dummy
+begin
+ inc(ftrylevel);
+ flandingpadblock:= landingpad;
+ if landingpad = -1 then begin
+  include(fsubflags,bwf_dummyinvoke);
+ end;
+end;
+
+procedure tllvmbcwriter.endtryblock(const landingpadbefore: int32);
+begin
+ flandingpadblock:= landingpadbefore;
+ dec(ftrylevel);
+ if (ftrylevel <= 1) and (bwf_dummyinvoke in fsubflags) then begin
+  flandingpadblock:= -1;
+ end;
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean;

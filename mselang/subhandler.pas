@@ -1434,9 +1434,11 @@ begin
  with info do begin
 //  frameoffset:= 0;
 //  stacktempoffset:= 0;
+  subtryblockbeginad:= -1;
   llvmtempcount:= 0;
   firstllvmtemp:= -1;
 //  lastllvmtemp:= -1;
+  tempvarflags:= [];
   tempvarcount:= 0;
   tempvarchain:= 0;
   managedtempcount:= 0;
@@ -2811,7 +2813,7 @@ begin
   managedtemparrayid:= locallocid;  
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
-  info.s.unitinfo^.tempvarflags:= [];
+//  info.s.unitinfo^.tempvarflags:= [];
   if d.subdef.match <> 0 then begin
    po2:= ele.eledataabs(d.subdef.match);    
    if co_llvm in o.compileoptions then begin
@@ -2969,10 +2971,10 @@ begin
   end;
   begintempvars();
  {$ifdef mse_implicittryfinally}
-  s.unitinfo^.subtryblockbeginad:= -1;
+//  s.unitinfo^.subtryblockbeginad:= -1;
   if (co_llvm in o.compileoptions) and 
                          not (sf_noimplicitexception in po1^.flags) then begin
-   s.unitinfo^.subtryblockbeginad:= opcount;
+   subtryblockbeginad:= opcount;
    tryblockbegin();
   end;
  {$endif}
@@ -3011,7 +3013,7 @@ begin
    implicitexcept:= not (sf_noimplicitexception in po1^.flags) and
           ((sf_hasmanagedparam in po1^.flags) or 
            (s.currentstatementflags * [stf_needsmanage,stf_needsfini] <> []) or
-           (s.unitinfo^.tempvarflags * [tf_needsmanage,tf_needsfini] <> [])
+           (tempvarflags * [tf_needsmanage,tf_needsfini] <> [])
           );
    if implicitexcept then begin
     checkopcapacity(10); //max
@@ -3033,7 +3035,7 @@ begin
    else begin
     if not (sf_noimplicitexception in po1^.flags) then begin
      tryblockend();
-     po2:= getoppo(s.unitinfo^.subtryblockbeginad);
+     po2:= getoppo(subtryblockbeginad);
     {$ifdef mse_checkinternalerror}
      if po2^.op.op <> oc_pushcpucontext then begin
       internalerror(ie_handler,'20181026A');
