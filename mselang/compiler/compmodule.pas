@@ -26,7 +26,8 @@ type
             pa_keeptmpfiles,            //14
             pa_as,                      //15
             pa_gcc,                     //16
-            pa_llc                      //17
+            pa_llc,                     //17
+            pa_llvmbindir               //18
            );
             //item number in sysenv
  
@@ -63,8 +64,9 @@ const
 'MSElang Compiler version 0.0'+lineend+
 'Copyright (c) 2013-2018 by Martin Schreiber';
 
- llvmbindir = 
- '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+ defaultllvmbindir =
+ '/home/mse/packs/standard/git/llvm/build_release/bin/';
+// '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
 
 procedure tcompmo.createexe(const sender: TObject);
 begin
@@ -161,30 +163,37 @@ procedure tcompmo.initparams(var parserparams: parserparamsty);
 var
  ar1: msestringarty;
  i1: int32;
+ llvmbindir: filenamety;
 begin
-
- parserparams.buildoptions.llvmlinkcommand:= 
-                                    tosysfilepath(llvmbindir+'llvm-link');
- parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc');
- if sysenv.defined[ord(pa_optimizeparams)] then begin
-  parserparams.buildoptions.llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +
-          ' '+sysenv.value[ord(pa_optimizeparams)];
- end
- else begin
-  parserparams.buildoptions.llvmoptcommand:= '';
+ with parserparams.buildoptions do begin
+  if sysenv.defined[ord(pa_llvmbindir)] then begin
+   llvmbindir:= filepath(sysenv.value[ord(pa_llvmbindir)],fk_dir);
+  end
+  else begin
+   llvmbindir:= defaultllvmbindir;
+  end;
+  
+  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link');
+  llccommand:= tosysfilepath(llvmbindir+'llc');
+  if sysenv.defined[ord(pa_optimizeparams)] then begin
+   llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +
+           ' '+sysenv.value[ord(pa_optimizeparams)];
+  end
+  else begin
+   llvmoptcommand:= '';
+  end;
+ //   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
+  gcccommand:= tosysfilepath('gcc');
+  if sysenv.defined[ord(pa_gcc)] then begin
+   gcccommand:= sysenv.value[ord(pa_gcc)];
+  end;
+  parserparams.buildoptions.ascommand:= tosysfilepath('as');
+  if sysenv.defined[ord(pa_as)] then begin
+   ascommand:= sysenv.value[ord(pa_as)];
+  end;
+  exefile:= tosysfilepath(replacefileext(sysenv.value[ord(pa_source)],'bin'));
  end;
-//   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
- parserparams.buildoptions.gcccommand:= tosysfilepath('gcc');
- if sysenv.defined[ord(pa_gcc)] then begin
-  parserparams.buildoptions.gcccommand:= sysenv.value[ord(pa_gcc)];
- end;
- parserparams.buildoptions.ascommand:= tosysfilepath('as');
- if sysenv.defined[ord(pa_as)] then begin
-  parserparams.buildoptions.ascommand:= sysenv.value[ord(pa_as)];
- end;
- parserparams.buildoptions.exefile:= tosysfilepath(
-                       replacefileext(sysenv.value[ord(pa_source)],'bin'));
-
+ 
  parserparams.compileoptions:= mlaruntimecompileoptions;
  if sysenv.defined[ord(pa_llvm)] then begin
   parserparams.compileoptions:= llvmcompileoptions+[co_modular,co_buildexe];

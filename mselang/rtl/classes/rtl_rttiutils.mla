@@ -18,35 +18,35 @@ type
 
 procedure getenumname(const typ: prttity; const value: int32): string8;
 
-procedure getordprop(const instance: tbase;
+procedure getordprop(const instance: Cbase;
                                  const propinfo: ppropertyrttity): int64;
-procedure setordprop(const instance: tbase;
+procedure setordprop(const instance: Cbase;
                          const propinfo: ppropertyrttity; const value: int64);
-procedure getbytestringprop(const instance: tbase;
+procedure getbytestringprop(const instance: Cbase;
                              const propinfo: ppropertyrttity): bytestring;
-procedure setbytestringprop(const instance: tbase;
+procedure setbytestringprop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: bytestring);
-procedure getstring8prop(const instance: tbase;
+procedure getstring8prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string8;
-procedure setstring8prop(const instance: tbase;
+procedure setstring8prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string8);
-procedure getstring16prop(const instance: tbase;
+procedure getstring16prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string16;
-procedure setstring16prop(const instance: tbase;
+procedure setstring16prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string16);
-procedure getstring32prop(const instance: tbase;
+procedure getstring32prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string32;
-procedure setstring32prop(const instance: tbase;
+procedure setstring32prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string32);
 
 procedure getpropinfo(const atypeinfo: pobjectrttity;
                            const propname: string8): ppropertyrttity;
-procedure getpropinfo(const instance: tbase;
+procedure getpropinfo(const instance: Cbase;
                            const propname: string8): ppropertyrttity;
-procedure getproperties(const instance: tbase): propertyrttiarty;
+procedure getproperties(const instance: Cbase): propertyrttiarty;
 procedure getproperties(const atypeinfo: pobjectrttity): propertyrttiarty;
 
-procedure isstoredprop(const instance: tbase; 
+procedure isstoredprop(const instance: Cbase; 
                            const propinfo: ppropertyrttity): boolean;
 implementation
 uses
@@ -80,7 +80,7 @@ begin
  raise enotimplemented.create(atext);
 end;
 
-procedure getpropreadad(const instance: tbase; const propinfo: ppropertyrttity;
+procedure getpropreadad(const instance: Cbase; const propinfo: ppropertyrttity;
                    out po: methodty): propertyaccessty;
 begin
  result:= pa_none;
@@ -101,7 +101,7 @@ begin
  end;
 end;
 
-procedure getpropwritead(const instance: tbase; const propinfo: ppropertyrttity;
+procedure getpropwritead(const instance: Cbase; const propinfo: ppropertyrttity;
                    out po: methodty): propertyaccessty;
 begin
  result:= pa_none;
@@ -156,7 +156,7 @@ type
  settercstring32ty = method(const avalue: string32);
 
  
-procedure getordprop(const instance: tbase;
+procedure getordprop(const instance: Cbase;
                                  const propinfo: ppropertyrttity): int64;
 var
  m1: methodty;
@@ -202,7 +202,7 @@ begin
  end;
 end;
 
-procedure setordprop(const instance: tbase;
+procedure setordprop(const instance: Cbase;
                          const propinfo: ppropertyrttity; const value: int64);
 var
  m1: methodty;
@@ -262,7 +262,7 @@ begin
  end;
 end;
 
-procedure getbytestringprop(const instance: tbase;
+procedure getbytestringprop(const instance: Cbase;
                              const propinfo: ppropertyrttity): bytestring;
 var
  s1: bytestring;
@@ -292,7 +292,7 @@ begin
  end;
 end;
 
-procedure setbytestringprop(const instance: tbase;
+procedure setbytestringprop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: bytestring);
 var
  m1: methodty;
@@ -321,7 +321,7 @@ begin
  end;
 end;
 
-procedure getstring8prop(const instance: tbase;
+procedure getstring8prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string8;
 var
  s1: string8;
@@ -351,7 +351,7 @@ begin
  end;
 end;
 
-procedure setstring8prop(const instance: tbase;
+procedure setstring8prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string8);
 var
  m1: methodty;
@@ -380,7 +380,7 @@ begin
  end;
 end;
 
-procedure getstring16prop(const instance: tbase;
+procedure getstring16prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string16;
 var
  s1: string16;
@@ -410,7 +410,7 @@ begin
  end;
 end;
 
-procedure setstring16prop(const instance: tbase;
+procedure setstring16prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string16);
 var
  m1: methodty;
@@ -439,7 +439,7 @@ begin
  end;
 end;
 
-procedure getstring32prop(const instance: tbase;
+procedure getstring32prop(const instance: Cbase;
                                 const propinfo: ppropertyrttity): string32;
 var
  s1: string32;
@@ -469,7 +469,7 @@ begin
  end;
 end;
 
-procedure setstring32prop(const instance: tbase;
+procedure setstring32prop(const instance: Cbase;
                   const propinfo: ppropertyrttity; const value: string32);
 var
  m1: methodty;
@@ -530,7 +530,7 @@ begin
  end;
 end;
 
-procedure getpropinfo(const instance: tbase;
+procedure getpropinfo(const instance: Cbase;
                            const propname: string8): ppropertyrttity;
 begin
  result:= getpropinfo(instance.rtti,propname);
@@ -581,12 +581,12 @@ begin
  end;
 end;
 
-procedure getproperties(const instance: tbase): propertyrttiarty;
+procedure getproperties(const instance: Cbase): propertyrttiarty;
 begin
  result:= getproperties(instance.rtti);
 end;
 
-procedure isstoredprop(const instance: tbase; 
+procedure isstoredprop(const instance: Cbase; 
                            const propinfo: ppropertyrttity): boolean;
 begin
  result:= propinfo^.name <> nil;

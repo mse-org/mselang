@@ -19,7 +19,7 @@ const
                      s_ixgrp,s_iroth,s_iwoth,s_ixoth];
 
 type
- tstream = class(tbase)
+ tstream = class(Cbase)
   method read(var buffer; count: int32): int32 [virtual];
   method write(const buffer; count: int32): int32 [virtual];
   method seek(const offset: int64; const origin: seekoriginty): int64 [virtual];

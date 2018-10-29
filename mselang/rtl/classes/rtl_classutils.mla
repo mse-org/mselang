@@ -13,11 +13,11 @@ interface
 uses
  rtl_base,__mla__internaltypes;
 
-procedure getclassname(const ainstance: tbase): string8;
+procedure getclassname(const ainstance: Cbase): string8;
 
 implementation
  
-procedure getclassname(const ainstance: tbase): string8;
+procedure getclassname(const ainstance: Cbase): string8;
 begin
  if ainstance = nil then
   result:= 'NIL';

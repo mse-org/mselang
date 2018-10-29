@@ -2,7 +2,7 @@ program getordprop2;
 uses
  __mla__internaltypes,rtl_rttiutils,rtl_base;
 type
- ttest = class(tbase)[rtti]
+ Ctest = class(Cbase)[rtti]
   f1: int32;
   property p1: int32 read getp1;
   method getp1(): int32;
@@ -12,17 +12,17 @@ type
   property p2: int32 read f2 write f2;
  end;
 
-constructor ttest.create();
+constructor Ctest.create();
 begin
  f1:= 10;
  f2:= 103;
 end;
 
-destructor ttest.destroy();
+destructor Ctest.destroy();
 begin
 end;
 
-method ttest.getp1(): int32;
+method Ctest.getp1(): int32;
 begin
  result:= f1*2;
 end;
@@ -30,15 +30,15 @@ end;
 var
  p1,p3: prttity;
  p2: pclassdefty;
- c1: class of ttest;
+ c1: class of Ctest;
  i1: int32;
  h1: classdefheaderty;
- t1: ttest;
+ t1: Ctest;
  ar1: propertyrttiarty;
  p4: ppropertyrttity;
  m1: methodty;
 begin
- t1:= ttest.create();
+ t1:= Ctest.create();
  ar1:= getproperties(t1);
  p4:= ar1[0];
  m1:= methodty(@t1.getp1);

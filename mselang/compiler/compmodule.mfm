@@ -26,7 +26,7 @@ object compmo: tcompmo
       )
       (
         ak_par
-        '-llvm'
+        '-llvmbackend'
         (        )
         []
         ''
@@ -203,6 +203,17 @@ object compmo: tcompmo
       (
         ak_pararg
         '-llc'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        '-llvmbindir'
         (        )
         []
         ''

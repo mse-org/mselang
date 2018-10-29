@@ -13,7 +13,7 @@ interface
 uses
  rtl_base;
 type
- texception = class(tbase)[except]
+ Cexception = class(Cbase)[except]
   constructor create(const amessage: string8);
   constructor createfmt(const msg: string8; const args : array of const);
   destructor destroy()[virtual,default];
@@ -27,18 +27,18 @@ implementation
 uses
  rtl_format,__mla__compilerunit,__mla__personality;
  
-constructor texception.create(const amessage: string8);
+constructor Cexception.create(const amessage: string8);
 begin
  fmessage:= amessage;
 end;
 
-constructor texception.createfmt(const msg: string8;
+constructor Cexception.createfmt(const msg: string8;
                                            const args : array of const);
 begin
  create(format(msg,args));
 end;
 
-destructor texception.destroy();
+destructor Cexception.destroy();
 begin
  //dummy
 end;
@@ -47,8 +47,8 @@ procedure handleexception(const data: pointer) [noexception];
 begin
  writeln('Unhandled exception'); 
  exitcode:= exco_unhandledexception;
- if tbase(data) is texception then
-  writeln(texception(data).message);
+ if Cbase(data) is Cexception then
+  writeln(Cexception(data).message);
  end;
 end;
 

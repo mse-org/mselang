@@ -22,7 +22,7 @@ type
  tclass  = class of tobject;
  pclass  = ^tclass;
 
- tobject = class(tbase) [virtual]
+ tobject = class(Cbase) [virtual]
   private
    class method newinst(): pointer [new];
   protected

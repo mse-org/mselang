@@ -2,7 +2,7 @@ program classparam;
 uses
  rtl_base;
 type
- t1 = class (tbase)
+ t1 = class (Cbase)
   f1: int32;
   constructor create();
  end;
@@ -12,7 +12,7 @@ begin
  f1:= 123;
 end;
 
-procedure getpropinfox(const instance: tbase): int32;
+procedure getpropinfox(const instance: Cbase): int32;
 begin
  result:= t1(instance).f1;
 // result:= getpropinfo(typeinfo(instance),propname);

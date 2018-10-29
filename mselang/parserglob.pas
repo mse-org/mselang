@@ -848,6 +848,7 @@ type
  end;
 
  buildoptionsty = record
+  llvmbindir: msestring;
   llccommand: msestring;
   ascommand: msestring;
   llvmlinkcommand: msestring;

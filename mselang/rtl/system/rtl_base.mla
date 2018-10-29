@@ -25,7 +25,7 @@ type
 
  pppointer = ^ppointer;
   
- tbase = class() [virtual]
+ Cbase = class() [virtual]
   destructor destroy() [virtual];
   constructor create();
   method free();
@@ -110,31 +110,31 @@ begin
  end;
 end;
 
-{ tbase }
+{ Cbase }
 
-constructor tbase.create();
+constructor Cbase.create();
 begin
  //dummy
 end;
 
-destructor tbase.destroy();
+destructor Cbase.destroy();
 begin
  //dummy
 end;
 
-method tbase.free();
+method Cbase.free();
 begin
  if self <> nil then
   destroy();
  end;
 end;
 
-method tbase.rtti(): pobjectrttity;
+method Cbase.rtti(): pobjectrttity;
 begin
  result:= pointer(typeinfo(classof(self)));
 end;
 
-method tbase.classname(): string8;
+method Cbase.classname(): string8;
 var
  p1: pobjectrttity;
 begin

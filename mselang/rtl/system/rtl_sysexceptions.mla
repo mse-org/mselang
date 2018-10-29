@@ -13,7 +13,7 @@ interface
 uses
  rtl_exceptions;
 type
- exception = class(texception) end;
+ exception = class(Cexception) end;
 
  econverterror = class(exception) end;
  eformaterror = class(exception) end;

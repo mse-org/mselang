@@ -1,5 +1,7 @@
 program test;
 uses
+ rtl_streaming;
+ 
 {$internaldebug on}
 
 procedure ttt();

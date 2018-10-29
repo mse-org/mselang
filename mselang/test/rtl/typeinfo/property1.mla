@@ -3,7 +3,7 @@ uses
  __mla__internaltypes,rtl_base,rtl_rttiutils;
 
 type
- t1 = class (tbase)[rtti]
+ t1 = class (Cbase)[rtti]
   f1: int32;
   constructor create();
   destructor destroy();
