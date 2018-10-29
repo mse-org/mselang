@@ -336,6 +336,7 @@ begin
 {$endif}
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin
+  inc(info.compileinfo.unitcount);
   aunit^.rtfilepath:= fna1;
   resetunitsegments();
   ele.markelement(startref);

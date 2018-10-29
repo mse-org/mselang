@@ -1,8 +1,8 @@
 program test;
 uses
- rtl_streaming;
- 
-{$internaldebug on}
+ rtl_streaming,rtl_variants;
+//{$include 'test.inc'}
+//{$internaldebug on}
 
 procedure ttt();
 begin

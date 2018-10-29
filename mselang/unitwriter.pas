@@ -25,7 +25,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  msetypes,elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,
- msestream,opglob,compilerunit,mseprocutils,unithandler,
+ msestream,opglob,compilerunit,mseprocutils,unithandler,msedate,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
  sysutils,llvmbcwriter,llvmops,elementcache;
 {
@@ -406,6 +406,7 @@ function compileobjmodule(const aunit: punitinfoty): boolean; //true if ok
 var
  fna1,fna1no: filenamety;
  fna2: filenamety;
+ t1: tdatetime;
 label
  errlab1;
 begin
@@ -419,6 +420,7 @@ begin
   if co_compilefileinfo in info.o.compileoptions then begin
    write(fna1+' ');
   end;
+  t1:= nowutc();
   if llvmoptcommand <> '' then begin
    if co_compilefileinfo in info.o.compileoptions then begin
     write('llvm-opt ');
@@ -443,6 +445,7 @@ begin
    result:= execwaitmse(ascommand+' -o '+
                     tosysfilepath(aunit^.objfilepath)+' '+ fna2) = 0;
   end;
+  info.compileinfo.llvmtime:= info.compileinfo.llvmtime + nowutc() - t1;
   deletetempfile(fna2); 
 errlab1:
   if co_compilefileinfo in info.o.compileoptions then begin
@@ -461,7 +464,6 @@ var
  ps1: psubdataty;
  sub1: compilersubty;
  cu1: compilerunitty;
-
 begin
  result:= putunit(aunit);
  if result then begin

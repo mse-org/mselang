@@ -1,5 +1,5 @@
 //rtl_fpccompatibility
-{ MSEpas Copyright (c) 2017 by Martin Schreiber
+{ MSEpas Copyright (c) 2017-2018 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -19,10 +19,10 @@ type
  tobject = class;
 // iunknown = interface;
 
- tclass  = class of tobject;
+ tclass  = class of Tobject;
  pclass  = ^tclass;
 
- tobject = class(Cbase) [virtual]
+ Tobject = class(Cbase) [virtual]
   private
    class method newinst(): pointer [new];
   protected
@@ -30,9 +30,9 @@ type
    constructor create();
    destructor destroy() [override,default];
    method free();
-   class method newinstance(): tobject [virtual];
+   class method newinstance(): Tobject [virtual];
    method freeinstance [dispose,virtual];
-   class method initinstance(instance : pointer): tobject;
+   class method initinstance(instance : pointer): Tobject;
    method cleanupinstance();
    class method classtype(): tclass;
    class method classinfo(): pointer; //returns pobjectrttity
@@ -105,97 +105,97 @@ begin
  result:= close(fd);
 end;
 
-{ tobject }
+{ Tobject }
 
-constructor tobject.create();
+constructor Tobject.create();
 begin
  //dummy
 end;
 
-destructor tobject.destroy();
+destructor Tobject.destroy();
 begin
  //dummy
 end;
 
-method tobject.free();
+method Tobject.free();
 begin
  if self <> nil then
   destroy();
  end;
 end;
 
-class method tobject.newinst(): pointer;
+class method Tobject.newinst(): pointer;
 begin
  result:= newinstance();
 end;
 
-class method tobject.newinstance(): tobject;
+class method Tobject.newinstance(): Tobject;
 begin
  result:= getmem(sizeof(self^));
  initialize(result,classof(self));
 end;
 
-method tobject.freeinstance();
+method Tobject.freeinstance();
 begin
  finalize(self^);
  freemem(self);
 end;
 
-class method tobject.initinstance(instance: pointer): tobject;
+class method Tobject.initinstance(instance: pointer): Tobject;
 begin
  result:= instance;
  initialize(result,classof(self));
 end;
 
-method tobject.cleanupinstance();
+method Tobject.cleanupinstance();
 begin
  finalize(self^);
 end;
 
-class method tobject.classtype(): tclass;
+class method Tobject.classtype(): tclass;
 begin
  result:= tclass(self);
 end;
 
-class method tobject.classparent(): tclass;
+class method Tobject.classparent(): tclass;
 begin
  result:= tclass(pclassdefty(classof(self))^.header.parentclass);
 end;
    
-class method tobject.classinfo(): pointer; //returns pobjectrttity
+class method Tobject.classinfo(): pointer; //returns pobjectrttity
 begin
  result:= pclassdefty(self)^.header.rtti;
 end;
 
-class method tobject.classname(): string8;
+class method Tobject.classname(): string8;
 begin
  decref(result);
  pointer(result):= pointer(prttity(classinfo)^.typename); 
                                           //const, no incref needed
 end;
 
-class method tobject.classnameis(const name: string8): boolean;
+class method Tobject.classnameis(const name: string8): boolean;
 begin
  result:= stringicomp(name,
             string8(prttity(pclassdefty(self)^.header.rtti)^.typename)) = 0;
 end;
 
-class method tobject.instancesize(): int32;
+class method Tobject.instancesize(): int32;
 begin
  result:= sizeof(self^);
 end;
 
-class method tobject.inheritsfrom(aclass: tclass): boolean;
+class method Tobject.inheritsfrom(aclass: tclass): boolean;
 begin
  result:= self is aclass;
 end;
 
-method tobject.afterconstruction();
+method Tobject.afterconstruction();
 begin
  //dummy
 end;
 
-method tobject.beforedestruction();
+method Tobject.beforedestruction();
 begin
  //dummy
 end;

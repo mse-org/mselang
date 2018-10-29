@@ -764,6 +764,7 @@ type
   rtfilepath: filenamety; //elements and opcode (interpreter only)
   bcfilepath: filenamety; //llvm bitcode
   objfilepath: filenamety; //*.o files
+  
 //  bcfilename: filenamety;
   
   dwarflangid: int32;
@@ -890,10 +891,18 @@ type
   globlinkage: linkagety;
   blockid: int32;
  end;
+
+ compileinfoty = record
+  unitcount: int32;
+  linecount: int32;
+  start: tdatetime;
+  llvmtime: tdatetime;
+ end;
   
  parseinfoty = record
   s: savedparseinfoty;
   o: parseoptionsty;
+  compileinfo: compileinfoty;
   rootelement: elementoffsetty;
   systemelement: elementoffsetty;
 //  currentscopemeta: metavaluety;

@@ -30,7 +30,7 @@ type
  filerstatety = (fis_nextvaluevalid);
  filerstatesty = set of filerstatety;
   
- tfiler = class(tobject)
+ Tfiler = class(Tobject)
   constructor create(const astream: tstream);
   class method iswriter(): boolean [virtual];
   protected
@@ -38,7 +38,7 @@ type
    fstreamx: tstream;
  end;
 
- treader = class(tfiler)
+ Treader = class(Tfiler)
   method read(var buffer; const count: int32);
   method nextvalue(): valuety; //peek current value type
 
@@ -57,7 +57,7 @@ type
    method propertyerror(const aname: string8);
  end;
  
- twriter = class(tfiler)
+ Twriter = class(Tfiler)
   class method iswriter(): boolean [override];
   method write(const buffer; const count: int32);
 
@@ -71,31 +71,39 @@ type
   method writestring16(const avalue: string16);
   method writestring32(const avalue: string32);
 
-  method writeproperties(const instance: tpersistent);
-  method writeproperty(const instance: tpersistent;
+  method writeproperties(const instance: Tpersistent);
+  method writeproperty(const instance: Tpersistent;
                                      const propinfo: ppropertyrttity);
 
  end;
 
- tpersistent = class(tobject)
-  method assign(source: tpersistent) [virtual];
+ Tpersistent = class(Tobject)
+  method assign(source: Tpersistent) [virtual];
   method getnamepath(): string8 [virtual];
 
   protected
-   method assignerror(const source: tpersistent);
-   method assignto(dest: tpersistent) [virtual];
-   method defineproperties(filer: tfiler) [virtual];
-   method getowner(): tpersistent [virtual];
+   method assignerror(const source: Tpersistent);
+   method assignto(dest: Tpersistent) [virtual];
+   method defineproperties(filer: Tfiler) [virtual];
+   method getowner(): Tpersistent [virtual];
  end;
 
- Ccomponents = class(Cbase)
+ componentlistty = object
+  private
+   fcount: int32;
  end;
  
- tcomponent = class(tpersistent)
-  property name: string8 read fname write setname;
-  property owner: tcomponent read fowner write setowner;
+ Ccomponents = class(Cbase)
+  private
+   fcomponents: componentlistty;
+ end;
+ 
+ tcomponent = class(Tpersistent)
   constructor create(aowner: tcomponent) [virtual];
   destructor destroy() [override];
+  property name: string8 read fname write setname;
+  property owner: tcomponent read fowner write setowner;
+  method componentcount(): int32;
   private
    fowner: tcomponent;
    fcomponents: Ccomponents;
@@ -139,36 +147,36 @@ begin
  readererror(sinvalidproptype,[getenumname(typeinfo(avalue),ord(avalue))]);
 end;
 
-{ tpersistent }
+{ Tpersistent }
 
-method tpersistent.assignerror(const source: tpersistent);
+method Tpersistent.assignerror(const source: Tpersistent);
 begin
  raise econverterror.createfmt(sassignerror,[getclassname(source),classname]);
 end;
 
-method tpersistent.assignto(dest: tpersistent);
+method Tpersistent.assignto(dest: Tpersistent);
 begin
- notimplementederror('tpersistent.assignto');
+ notimplementederror('Tpersistent.assignto');
 end;
 
-method tpersistent.defineproperties(filer: tfiler);
+method Tpersistent.defineproperties(filer: Tfiler);
 begin
- notimplementederror('tpersistent.defineproperties');
+ notimplementederror('Tpersistent.defineproperties');
 end;
 
-method tpersistent.getowner(): tpersistent;
+method Tpersistent.getowner(): Tpersistent;
 begin
- notimplementederror('tpersistent.getowner');
+ notimplementederror('Tpersistent.getowner');
 end;
 
-method tpersistent.assign(source: tpersistent);
+method Tpersistent.assign(source: Tpersistent);
 begin
- notimplementederror('tpersistent.assign');
+ notimplementederror('Tpersistent.assign');
 end;
 
-method tpersistent.getnamepath(): string8;
+method Tpersistent.getnamepath(): string8;
 begin
- notimplementederror('tpersistent.getnamepath');
+ notimplementederror('Tpersistent.getnamepath');
 end;
 
 { tcomponent }
@@ -182,6 +190,14 @@ begin
  inherited;
 end;
 
+method tcomponent.componentcount(): int32;
+begin
+ result:= 0;
+ if fcomponents <> nil then
+  result:= fcomponents.fcomponents.fcount;
+ end;
+end;
+
 method tcomponent.setname(const avalue: string8);
 begin
  fname:= avalue;
@@ -192,31 +208,31 @@ begin
  fowner:= avalue;
 end;
 
-{ tfiler }
+{ Tfiler }
 
-constructor tfiler.create(const astream: tstream);
+constructor Tfiler.create(const astream: tstream);
 begin
  fstreamx:= astream;
 end;
 
-class method tfiler.iswriter(): boolean;
+class method Tfiler.iswriter(): boolean;
 begin
  result:= false;
 end;
 
-{ twriter }
+{ Twriter }
 
-class method twriter.iswriter(): boolean;
+class method Twriter.iswriter(): boolean;
 begin
  result:= true;
 end;
 
-method twriter.write(const buffer; const count: int32);
+method Twriter.write(const buffer; const count: int32);
 begin
  fstreamx.writebuffer(buffer,count);
 end;
 
-method twriter.writevalue(const avalue: valuety);
+method Twriter.writevalue(const avalue: valuety);
 var
  c1: card8;
 begin
@@ -224,7 +240,7 @@ begin
  write(c1,1);
 end;
 
-method twriter.writestr(const avalue: string8);
+method Twriter.writestr(const avalue: string8);
 var
  i1: int32;
  ca1: card8;
@@ -240,7 +256,7 @@ begin
  end;
 end;
 
-method twriter.writeinteger(const avalue: int32);
+method Twriter.writeinteger(const avalue: int32);
 var
  i8: int8;
  i16: int16;
@@ -261,7 +277,7 @@ begin
  end;  
 end;
 
-method twriter.writeinteger(const avalue: int64);
+method Twriter.writeinteger(const avalue: int64);
 begin
  if (avalue >= -$8000) and (avalue < $8000) then
   writeinteger(int32(avalue));
@@ -271,7 +287,7 @@ begin
  end;
 end;
 
-method twriter.writebytestring(const avalue: bytestring);
+method Twriter.writebytestring(const avalue: bytestring);
 var
  i1: int32;
  c1: card8;
@@ -296,22 +312,22 @@ begin
  write(pointer(avalue)^,i1);
 end;
 
-method twriter.writestring8(const avalue: string8);
+method Twriter.writestring8(const avalue: string8);
 begin
  writebytestring(bytestring(pointer(avalue)));
 end;
 
-method twriter.writestring16(const avalue: string16);
+method Twriter.writestring16(const avalue: string16);
 begin
  writestring8(string8(avalue));
 end;
 
-method twriter.writestring32(const avalue: string32);
+method Twriter.writestring32(const avalue: string32);
 begin
  writestring8(string8(avalue));
 end;
 
-method twriter.writeproperty(const instance: tpersistent;
+method Twriter.writeproperty(const instance: Tpersistent;
                const propinfo: ppropertyrttity);
 var
  k1: stringkindty;
@@ -345,7 +361,7 @@ begin
  end;
 end;
 
-method twriter.writeproperties(const instance: tpersistent);
+method Twriter.writeproperties(const instance: Tpersistent);
 var
  ar1: propertyrttiarty;
  p1,pe: pppropertyrttity;
@@ -359,14 +375,14 @@ begin
  end;
 end;
 
-{ treader }
+{ Treader }
 
-method treader.read(var buffer; const count: int32);
+method Treader.read(var buffer; const count: int32);
 begin
  fstreamx.readbuffer(buffer,count);
 end;
 
-method treader.nextvalue(): valuety;
+method Treader.nextvalue(): valuety;
 begin
  if not fstate[fis_nextvaluevalid] then
   fnextvalue:= readvalue();
@@ -376,7 +392,7 @@ begin
  end;
 end;
 
-method treader.readstr(): string8;
+method Treader.readstr(): string8;
 var
  c1: card8;
 begin
@@ -385,7 +401,7 @@ begin
  read(pointer(result)^,c1);
 end;
 
-method treader.readvalue(): valuety;
+method Treader.readvalue(): valuety;
 var
  c1: card8;
 begin
@@ -393,7 +409,7 @@ begin
  result:= valuety(ord(c1));
 end;
 
-method treader.readint32(): int32;
+method Treader.readint32(): int32;
 var
  i8: int8;
  i16: int16;
@@ -416,7 +432,7 @@ begin
  end;
 end;
 
-method treader.readint64(): int64;
+method Treader.readint64(): int64;
 var
  i8: int8;
  i16: int16;
@@ -443,7 +459,7 @@ begin
  end;
 end;
 
-method treader.readbytestring(): bytestring;
+method Treader.readbytestring(): bytestring;
 var
  v1: valuety;
  c8: card8;
@@ -467,33 +483,33 @@ begin
  read(pointer(result)^,i32);
 end;
 
-method treader.readstring8(): string8;
+method Treader.readstring8(): string8;
 begin
  result:= string8(pointer(readbytestring));
 end;
 
-method treader.readstring16(): string8;
+method Treader.readstring16(): string8;
 begin
  result:= readstring8();
 end;
 
-method treader.readstring32(): string8;
+method Treader.readstring32(): string8;
 begin
  result:= readstring8();
 end;
 
-method treader.skipvalue();
+method Treader.skipvalue();
 begin
- notimplementederror('treader.skipvalue');
+ notimplementederror('Treader.skipvalue');
 end;
 
-method treader.propertyerror(const aname: string8);
+method Treader.propertyerror(const aname: string8);
 begin
  skipvalue();
  readererror(sunknownproperty,[aname]);
 end;
 
-method treader.readproperty(const instance: tpersistent);
+method Treader.readproperty(const instance: Tpersistent);
 var
  s1: string8;
  prop1: ppropertyrttity;

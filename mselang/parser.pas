@@ -75,7 +75,7 @@ uses
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
  identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse,
- __mla__internaltypes;
+ __mla__internaltypes,msedate;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -149,6 +149,7 @@ begin
   if result then begin
    dec(includeindex);
    with includestack[includeindex] do begin
+    compileinfo.linecount:= compileinfo.linecount+s.source.line;
     input:= '';
     s.source:= sourcebefore;
     s.sourcestart:= sourcestartbefore;
@@ -666,6 +667,7 @@ begin
 
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
                             //parse from start
+   inc(compileinfo.unitcount);
    s.debugoptions:= o.debugoptions;
    s.compilerswitches:= o.compilerswitches;
    s.input:= input;
@@ -1102,6 +1104,7 @@ parseend:
     end;
    end;
    if us_implementationparsed in aunit^.state then begin
+    compileinfo.linecount:= compileinfo.linecount + s.source.line;
     result:= endunit(aunit) and result;
    end;
   end;
@@ -1183,10 +1186,13 @@ var
  cu1: compilerunitty;
  ar1: filenamearty;
  fna1,fna1no,fna2: filenamety;
+ t1: tdatetime;
 begin
  result:= false;
 // init();
  with info do begin
+  fillchar(compileinfo,sizeof(compileinfo),0);
+  compileinfo.start:= nowutc();
   try
    try
     buildoptions:= aparams.buildoptions;
@@ -1305,69 +1311,84 @@ begin
      if result then begin
       include(unit1^.state,us_invalidunitfile); //force compilation of main unit
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
-      if result and (o.compileoptions * [co_llvm,co_buildexe] = 
+      if result then begin
+       if (o.compileoptions * [co_llvm,co_buildexe] = 
                                               [co_llvm,co_buildexe]) then begin
-       if (co_modular in o.compileoptions) and 
-                                (us_program in unit1^.state) then begin
-        with info.buildoptions do begin
-         fna2:= removefileext(exefile);
-         if co_objmodules in o.compileoptions then begin
-          ar1:= objfiles();
-         {$ifdef mse_debugparser}
-          writeln('link -> '+tosysfilepath(exefile));
-          for i1:= 0 to high(ar1) do begin
-           writeln(' ',ar1[i1]);
-          end;
-         {$endif}
-          writeln('Linking (gcc)');
-          result:= execwaitmse(gcccommand+
-                         ' -lm -o'+tosysfilepath(exefile)+' '+
-                              quotefilename(tosysfilepath(ar1))) = 0;
-         end
-         else begin
-          ar1:= bcfiles();
-          fna1:= tosysfilepath(fna2)+'_all.bc';
-          fna1no:= fna1;
-          if llvmoptcommand <> '' then begin
-           fna1:= fna1+'.noopt';
-          end;
-          fna2:= fna2+'.s';
-         {$ifdef mse_debugparser}
-          writeln('link -> '+fna1);
-          for i1:= 0 to high(ar1) do begin
-           writeln(' ',ar1[i1]);
-          end;
-         {$else}
-          if co_compilefileinfo in o.compileoptions then begin
-           writeln('Linking bc modules (llvm-link)');
+        if (co_modular in o.compileoptions) and 
+                                 (us_program in unit1^.state) then begin
+         with info.buildoptions do begin
+          fna2:= removefileext(exefile);
+          if co_objmodules in o.compileoptions then begin
+           ar1:= objfiles();
+          {$ifdef mse_debugparser}
+           writeln('link -> '+tosysfilepath(exefile));
            for i1:= 0 to high(ar1) do begin
-            writeln(' ',quotefilename(ar1[i1]));
+            writeln(' ',ar1[i1]);
            end;
-          end;
-         {$endif}
-          result:= execwaitmse(llvmlinkcommand+
-                           ' -o='+fna1+' '+quotefilename(ar1)) = 0;
-          if result then begin
+          {$endif}
+           writeln('Linking (gcc)');
+           result:= execwaitmse(gcccommand+
+                          ' -lm -o'+tosysfilepath(exefile)+' '+
+                               quotefilename(tosysfilepath(ar1))) = 0;
+          end
+          else begin
+           ar1:= bcfiles();
+           fna1:= tosysfilepath(fna2)+'_all.bc';
+           fna1no:= fna1;
            if llvmoptcommand <> '' then begin
-            writeln('Optimizing bc code (llvm-opt)');
-            result:= execwaitmse(llvmoptcommand+' -o='+fna1no+' '+fna1) = 0;
-            deletetempfile(fna1);
-            if not result then begin
-             exit;
+            fna1:= fna1+'.noopt';
+           end;
+           fna2:= fna2+'.s';
+           t1:= nowutc();
+          {$ifdef mse_debugparser}
+           writeln('link -> '+fna1);
+           for i1:= 0 to high(ar1) do begin
+            writeln(' ',ar1[i1]);
+           end;
+          {$else}
+           if co_compilefileinfo in o.compileoptions then begin
+            writeln('Linking bc modules (llvm-link)');
+            for i1:= 0 to high(ar1) do begin
+             writeln(' ',quotefilename(ar1[i1]));
             end;
-            fna1:= fna1no;
            end;
-           writeln('Compiling bc code (llc)');
-           result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
-           deletetempfile(fna1);
+          {$endif}
+           result:= execwaitmse(llvmlinkcommand+
+                            ' -o='+fna1+' '+quotefilename(ar1)) = 0;
            if result then begin
-            writeln('Assembling (gcc)');
-            result:= execwaitmse(gcccommand+
-                           ' -lm -o'+tosysfilepath(exefile)+' '+fna2) = 0;
+            if llvmoptcommand <> '' then begin
+             writeln('Optimizing bc code (llvm-opt)');
+             result:= execwaitmse(llvmoptcommand+' -o='+fna1no+' '+fna1) = 0;
+             deletetempfile(fna1);
+             if not result then begin
+              exit;
+             end;
+             fna1:= fna1no;
+            end;
+            writeln('Compiling bc code (llc)');
+            result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
+            deletetempfile(fna1);
+            if result then begin
+             writeln('Assembling (gcc)');
+             result:= execwaitmse(gcccommand+
+                            ' -lm -o'+tosysfilepath(exefile)+' '+fna2) = 0;
+            end;
+            deletetempfile(fna2);
+            with compileinfo do begin
+             llvmtime:= llvmtime + nowutc()-t1;
+            end;
            end;
-           deletetempfile(fna2);
           end;
          end;
+        end;
+        with compileinfo do begin
+         t1:= nowutc() - start;
+         writeln(inttostr(linecount)+' lines, '+
+          inttostr(unitcount)+' units, '+
+          ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
+          ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
+              ' MSElang, '+
+          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest');
         end;
        end;
       end;
