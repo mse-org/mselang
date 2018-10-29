@@ -1,31 +1,9 @@
 program test;
 uses
  rtl_streaming,rtl_variants;
-//{$include 'test.inc'}
-//{$internaldebug on}
-
-procedure ttt();
+var
+ c1: Tcomponent;
 begin
-end;
-{
-procedure test(): string8;
-//var s1: string8;
-begin
- ttt();
-// setlength(result,1);
-// result[1]:= 'A';
-end;
-}
-procedure tt();
-var s1: string8;
-begin
-try
- ttt();
-finally
-end;
-// test();
-end;
-
-begin
- tt();
+ c1:= Tcomponent.create(nil);
+ c1.destroy();
 end.

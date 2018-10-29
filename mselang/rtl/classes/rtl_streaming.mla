@@ -88,9 +88,18 @@ type
    method getowner(): Tpersistent [virtual];
  end;
 
- componentlistty = object
+ TComponent = class;
+ 
+ componentlistty = object [nozeroinit]
+  method add(const acomponent: Tcomponent);
+  method remove(const acomponent: Tcomponent);
   private
    fcount: int32;
+   fcapacity: int32;
+   fdata: ppointer;
+   method ini() [ini];
+   method fini() [fini];
+   method grow();
  end;
  
  Ccomponents = class(Cbase)
@@ -98,18 +107,20 @@ type
    fcomponents: componentlistty;
  end;
  
- tcomponent = class(Tpersistent)
-  constructor create(aowner: tcomponent) [virtual];
+ Tcomponent = class(Tpersistent)
+  constructor create(aowner: Tcomponent) [virtual];
   destructor destroy() [override];
+  method insertcomponent(acomponent: tcomponent);
+  method removecomponent(acomponent: tcomponent);
   property name: string8 read fname write setname;
-  property owner: tcomponent read fowner write setowner;
+  property owner: Tcomponent read fowner write setowner;
   method componentcount(): int32;
   private
-   fowner: tcomponent;
+   fowner: Tcomponent;
    fcomponents: Ccomponents;
    fname: string8;
    method setname(const avalue: string8);
-   method setowner(const avalue: tcomponent);
+   method setowner(const avalue: Tcomponent);
  end;
 
 implementation
@@ -179,18 +190,40 @@ begin
  notimplementederror('Tpersistent.getnamepath');
 end;
 
-{ tcomponent }
+{ Tcomponent }
 
-constructor tcomponent.create(aowner: tcomponent);
+constructor Tcomponent.create(aowner: Tcomponent);
 begin
+ if aowner <> nil then
+  aowner.insertcomponent(self);
+ end;
 end;
 
-destructor tcomponent.destroy();
+destructor Tcomponent.destroy();
 begin
+ fcomponents.free();
  inherited;
 end;
 
-method tcomponent.componentcount(): int32;
+method Tcomponent.insertcomponent(acomponent: tcomponent);
+begin
+ if (acomponent.fowner <> self) then
+  if fcomponents = nil then
+   fcomponents:= Ccomponents.create();
+  end;
+  fcomponents.fcomponents.add(acomponent);
+ end;  
+end;
+
+method Tcomponent.removecomponent(acomponent: tcomponent);
+begin
+ if acomponent.fowner = self then
+  acomponent.fowner:= nil;
+  fcomponents.fcomponents.remove(acomponent);
+ end;
+end;
+
+method Tcomponent.componentcount(): int32;
 begin
  result:= 0;
  if fcomponents <> nil then
@@ -198,12 +231,12 @@ begin
  end;
 end;
 
-method tcomponent.setname(const avalue: string8);
+method Tcomponent.setname(const avalue: string8);
 begin
  fname:= avalue;
 end;
 
-method tcomponent.setowner(const avalue: tcomponent);
+method Tcomponent.setowner(const avalue: Tcomponent);
 begin
  fowner:= avalue;
 end;
@@ -546,5 +579,40 @@ begin
   raise; //todo: error handling
  end;
 end;
+
+{ componentlistty }
+
+method componentlistty.ini();
+begin
+ fcount:= 0;
+ fcapacity:= 0;
+ fdata:= nil;
+end;
+
+method componentlistty.fini();
+begin
+ if fdata <> nil then
+  freemem(fdata);
+ end;
+end;
+
+method componentlistty.grow();
+begin
+ reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
+end;
+
+method componentlistty.add(const acomponent: Tcomponent);
+begin
+ if fcount >= fcapacity then
+  grow();
+ end;
+ fdata[fcount]:= acomponent;
+ inc(fcount);
+end;
+
+method componentlistty.remove(const acomponent: Tcomponent);
+begin
+end;
+
 
 end.
