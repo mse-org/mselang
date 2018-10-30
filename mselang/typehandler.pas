@@ -1520,7 +1520,7 @@ begin
    }
    end
    else begin
-    if d.dat.datatyp.indirectlevel = 1 then begin
+    if d.dat.datatyp.indirectlevel >= 1 then begin
      getvalue(po1,das_none); //pointer arithmetic
     end
     else begin
@@ -1562,7 +1562,7 @@ begin
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
  {$ifdef mse_checkinternalerror}
    if (kind1 <> dk_set) and 
-     ((d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1)) then begin
+     ((d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel < 1)) then begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}

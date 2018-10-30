@@ -89,7 +89,7 @@ type
  end;
 
  TComponent = class;
- 
+
  componentlistty = object [nozeroinit]
   method add(const acomponent: Tcomponent);
   method remove(const acomponent: Tcomponent);

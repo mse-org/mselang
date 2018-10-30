@@ -2564,7 +2564,7 @@ var
     end;
    end;
   end;
- end;
+ end; //checcknoclassmethod
   
 var
  po3: ptypedataty;
@@ -2588,7 +2588,7 @@ var
  
 label
  endlab;
-begin
+begin //handlevalueident
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;

@@ -1,9 +1,64 @@
 program test;
 uses
- rtl_streaming,rtl_variants;
-var
- c1: Tcomponent;
+ rtl_streaming;
+
+type
+ ppointer = ^pointer;
+
+ tcomponent = class
+ end;
+
+ componentlistty = object [nozeroinit]
+  method add(const acomponent: Tcomponent);
+  method remove(const acomponent: Tcomponent);
+  private
+   fcount: int32;
+   fcapacity: int32;
+   fdata: ppointer;
+   method ini() [ini];
+   method fini() [fini];
+   method grow();
+ end;
+
+method componentlistty.ini();
 begin
- c1:= Tcomponent.create(nil);
- c1.destroy();
+{
+ fcount:= 0;
+ fcapacity:= 0;
+ fdata:= nil;
+}
+end;
+
+method componentlistty.fini();
+begin
+{
+ if fdata <> nil then
+  freemem(fdata);
+ end;
+}
+end;
+
+method componentlistty.grow();
+begin
+// reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
+end;
+
+method componentlistty.add(const acomponent: Tcomponent);
+begin
+{
+ if fcount >= fcapacity then
+  grow();
+ end;
+}
+{$internaldebug on}
+ fdata[fcount]:= pointer(acomponent);
+// inc(fcount);
+end;
+
+method componentlistty.remove(const acomponent: Tcomponent);
+begin
+end;
+
+
+begin
 end.
