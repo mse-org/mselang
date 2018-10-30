@@ -158,6 +158,40 @@ begin
  readererror(sinvalidproptype,[getenumname(typeinfo(avalue),ord(avalue))]);
 end;
 
+{ componentlistty }
+
+method componentlistty.ini();
+begin
+ fcount:= 0;
+ fcapacity:= 0;
+ fdata:= nil;
+end;
+
+method componentlistty.fini();
+begin
+ if fdata <> nil then
+  freemem(fdata);
+ end;
+end;
+
+method componentlistty.grow();
+begin
+ reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
+end;
+
+method componentlistty.add(const acomponent: Tcomponent);
+begin
+ if fcount >= fcapacity then
+  grow();
+ end;
+ fdata[fcount]:= acomponent;
+ inc(fcount);
+end;
+
+method componentlistty.remove(const acomponent: Tcomponent);
+begin
+end;
+
 { Tpersistent }
 
 method Tpersistent.assignerror(const source: Tpersistent);
@@ -579,40 +613,5 @@ begin
   raise; //todo: error handling
  end;
 end;
-
-{ componentlistty }
-
-method componentlistty.ini();
-begin
- fcount:= 0;
- fcapacity:= 0;
- fdata:= nil;
-end;
-
-method componentlistty.fini();
-begin
- if fdata <> nil then
-  freemem(fdata);
- end;
-end;
-
-method componentlistty.grow();
-begin
- reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
-end;
-
-method componentlistty.add(const acomponent: Tcomponent);
-begin
- if fcount >= fcapacity then
-  grow();
- end;
- fdata[fcount]:= acomponent;
- inc(fcount);
-end;
-
-method componentlistty.remove(const acomponent: Tcomponent);
-begin
-end;
-
 
 end.

@@ -1,12 +1,11 @@
 program test;
 uses
- rtl_streaming;
+ rtl_base,rtl_streaming;
 
 type
  ppointer = ^pointer;
 
- tcomponent = class
- end;
+ TComponent = class;
 
  componentlistty = object [nozeroinit]
   method add(const acomponent: Tcomponent);
@@ -18,6 +17,19 @@ type
    method ini() [ini];
    method fini() [fini];
    method grow();
+ end;
+ 
+ Ccomponents = class(Cbase)
+  private
+   fcomponents: componentlistty;
+ end;
+
+ tcomponent = class
+  method insertcomponent(acomponent: tcomponent);
+  private
+   fowner: Tcomponent;
+   fcomponents: Ccomponents;
+   fname: string8;
  end;
 
 method componentlistty.ini();
@@ -57,6 +69,16 @@ end;
 
 method componentlistty.remove(const acomponent: Tcomponent);
 begin
+end;
+
+method Tcomponent.insertcomponent(acomponent: tcomponent);
+begin
+ if (acomponent.fowner <> self) then
+  if fcomponents = nil then
+   fcomponents:= Ccomponents.create();
+  end;
+  fcomponents.fcomponents.add(acomponent);
+ end;  
 end;
 
 
