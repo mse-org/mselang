@@ -501,22 +501,6 @@ begin
  end;
 end;
 
-procedure handleparams0entry();
-begin
-{$ifdef mse_debugparser}
- outhandle('PARAMS0ENTRY');
-{$endif}
- with info do begin
-  with contextstack[s.stackindex] do begin
-   d.kind:= ck_params;
-//   d.params.tempsize:= 0;
-   b.flags:= s.currentstatementflags;
-   include(s.currentstatementflags,stf_params);
-   exclude(s.currentstatementflags,stf_cutvalueident);
-  end;
- end;
-end;
-
 procedure setconstparam();
 begin
 {$ifdef mse_debugparser}
@@ -696,6 +680,22 @@ begin
  end;
 end;
 
+procedure handleparams0entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMS0ENTRY');
+{$endif}
+ with info do begin
+  with contextstack[s.stackindex] do begin
+   d.kind:= ck_params;
+//   d.params.tempsize:= 0;
+   b.flags:= s.currentstatementflags;
+   include(s.currentstatementflags,stf_params);
+   exclude(s.currentstatementflags,stf_cutvalueident);
+  end;
+ end;
+end;
+
 procedure handleparamsend();
 begin
 {$ifdef mse_debugparser}
@@ -704,7 +704,9 @@ begin
 {
  with info do begin
   with contextstack[s.stackindex] do begin
-   s.currentstatementflags:= b.flags;
+   s.currentstatementflags:=
+     (s.currentstatementflags - [stf_params,stf_cutvalueident]) + 
+                                      b.flags * [stf_params,stf_cutvalueident];
   end;
  end;
 }
@@ -3682,6 +3684,29 @@ var
    end;
   end;
  end; //dodispose()
+
+var
+ varresulttemp: tempaddressty;
+ varresulttempaddr: int32;
+
+ procedure initvarresult();
+ begin
+  with info,contextstack[adestindex] do begin
+   include(d.dat.fact.flags,faf_varsubres);
+   d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
+   varresulttemp:= alloctempvar(asub^.resulttype.typeele,
+                                  d.dat.fact.varsubres.tempvar).tempaddress;
+   d.dat.fact.varsubres.ssaindex:= varresulttemp.ssaindex;
+   if co_llvm in o.compileoptions then begin
+    with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
+     par.tempaddr.a:= varresulttemp;
+//        if co_llvm in o.compileoptions then begin
+      varresulttempaddr:= par.ssad;
+//        end;
+    end;
+   end;
+  end;
+ end; //initvarresult
  
 var
  instancetype1: ptypedataty;
@@ -3701,8 +3726,6 @@ var
  isvararg: boolean;
  isllvmgetmem: boolean;
  constbufferref: segmentstatety;
- varresulttemp: tempaddressty;
- varresulttempaddr: int32;
  op1: popinfoty;
  adref1: addressrefty;
  landingpad1: landingpadty;
@@ -4045,19 +4068,7 @@ begin
     if hasresult then begin
      initfactcontext(destoffset); //set ssaindex
      if hasvarresult then begin
-      include(d.dat.fact.flags,faf_varsubres);
-      d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
-      varresulttemp:= alloctempvar(asub^.resulttype.typeele,
-                                     d.dat.fact.varsubres.tempvar).tempaddress;
-      d.dat.fact.varsubres.ssaindex:= varresulttemp.ssaindex;
-      if co_llvm in o.compileoptions then begin
-       with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-        par.tempaddr.a:= varresulttemp;
-//        if co_llvm in o.compileoptions then begin
-         varresulttempaddr:= par.ssad;
-//        end;
-       end;
-      end;
+      initvarresult();
      end;
      if dsf_instanceonstack in aflags then begin
       d.dat.fact.ssaindex:= instancessa; 

@@ -1,86 +1,25 @@
 program test;
-uses
- rtl_base,rtl_streaming;
 
 type
- ppointer = ^pointer;
-
- TComponent = class;
-
- componentlistty = object [nozeroinit]
-  method add(const acomponent: Tcomponent);
-  method remove(const acomponent: Tcomponent);
-  private
-   fcount: int32;
-   fcapacity: int32;
-   fdata: ppointer;
-   method ini() [ini];
-   method fini() [fini];
-   method grow();
+ recty = record
+  a: int32;
+  b: int32;
  end;
- 
- Ccomponents = class(Cbase)
-  private
-   fcomponents: componentlistty;
- end;
-
- tcomponent = class
-  method insertcomponent(acomponent: tcomponent);
-  private
-   fowner: Tcomponent;
-   fcomponents: Ccomponents;
-   fname: string8;
- end;
-
-method componentlistty.ini();
+ precty = ^recty;
+var
+ r1: recty;
+ po1: precty;
 begin
 {
- fcount:= 0;
- fcapacity:= 0;
- fdata:= nil;
-}
-end;
-
-method componentlistty.fini();
-begin
-{
- if fdata <> nil then
-  freemem(fdata);
+ po1:= @r1;
+ if po1 = @r1 then
+  po1^.a:= 1;
+  po1^.b:= 122;
  end;
 }
-end;
-
-method componentlistty.grow();
-begin
-// reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
-end;
-
-method componentlistty.add(const acomponent: Tcomponent);
-begin
-{
- if fcount >= fcapacity then
-  grow();
- end;
-}
+// r1.a:= 1;
 {$internaldebug on}
- fdata[fcount]:= pointer(acomponent);
-// inc(fcount);
-end;
-
-method componentlistty.remove(const acomponent: Tcomponent);
-begin
-end;
-
-method Tcomponent.insertcomponent(acomponent: tcomponent);
-begin
- if (acomponent.fowner <> self) then
-  if fcomponents = nil then
-   fcomponents:= Ccomponents.create();
-  end;
-  fcomponents.fcomponents.add(acomponent);
- end;  
-end;
-
-
-begin
+ r1.b:= 122;
+//writeln(r1.a,' ',r1.b);
+// exitcode:= r1.a+r1.b;
 end.

@@ -4327,7 +4327,11 @@ begin
      with additem(oc_pop)^ do begin
       setimmsize(getbytesize(dat.fact.opdatatype),par.imm); //todo: alignment
 //      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
-     end;    
+     end;
+     if faf_field in dat.fact.flags then begin
+      errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
+      goto endlab;
+     end;
     end;
     ck_space,ck_subcall,ck_controltoken: begin
     end;

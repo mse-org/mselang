@@ -2233,7 +2233,6 @@ var
 var
  idents: identvecty;
  firstnotfound: integer;
- po1: pelementinfoty;
  po2: pointer;
  isinherited: boolean;
  isgetfact: boolean;
@@ -2242,7 +2241,8 @@ var
  poind,pob,potop: pcontextitemty;
   
  procedure donotfound(const adatacontext: pcontextitemty;
-                           const atype: elementoffsetty);
+                           const atype: elementoffsetty;
+                           const startelement: pelementinfoty);
 
   procedure pushclassdef(const atyp: ptypedataty);
   begin
@@ -2276,9 +2276,11 @@ var
   typ1: ptypedataty;
   i2: int32;
   isclassof: boolean;
+  po1: pelementinfoty;
 
  begin //donotfond()
   if firstnotfound <= idents.high then begin
+   po1:= startelement;
    ele1:= basetype(atype);
    offs1:= 0;
    with info do begin
@@ -2303,8 +2305,23 @@ var
           if (typ1^.h.kind = dk_class) then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
-          end; //todo: handle indirection with existing offset
+          end;
           d.dat.ref.offset:= d.dat.ref.offset + offset;
+{
+          if d.dat.datatyp.indirectlevel > 0 then begin
+           if not getvalue(adatacontext,das_none) then begin
+            exit;
+           end;
+           if (typ1^.h.kind = dk_class) then begin
+            dec(d.dat.indirection);
+            dec(d.dat.datatyp.indirectlevel);
+           end;
+           offs1:= offset;
+          end
+          else begin
+           d.dat.ref.offset:= d.dat.ref.offset + offset;
+          end;
+}
          end;
          ck_fact: begin     //todo: check indirection
           offs1:= offs1 + offset;
@@ -2526,6 +2543,7 @@ var
        exit;
       end;
      end;
+//     po1:= datatoele(po4); //new parentelement
     end;
     if offs1 <> 0 then begin
      offsetad(-1,offs1);
@@ -2567,6 +2585,7 @@ var
  end; //checcknoclassmethod
   
 var
+ po1: pelementinfoty;
  po3: ptypedataty;
  po4: pointer;
  po5: pelementoffsetty;
@@ -2794,7 +2813,7 @@ begin //handlevalueident
        end;
       end;
      end;
-     donotfound(pob,pob^.d.dat.datatyp.typedata);
+     donotfound(pob,pob^.d.dat.datatyp.typedata,po1);
     end;
     ek_var,ek_field: begin
      if po1^.header.kind in [ek_field] then begin
@@ -2846,12 +2865,22 @@ begin //handlevalueident
            d.dat.ref.c.varele:= 0;
           end;
           ck_fact,ck_subres: begin
-           if (faf_varsubres in d.dat.fact.flags) and 
-                                      (co_llvm in o.compileoptions) then begin
-            with insertitem(oc_pushtempaddr,-1,-1)^ do begin
-             par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
+           include(d.dat.fact.flags,faf_field);
+           if co_llvm in o.compileoptions then begin
+            if (faf_varsubres in d.dat.fact.flags) then begin
+             with insertitem(oc_pushtempaddr,-1,-1)^ do begin
+              par.tempaddr.a.ssaindex:= d.dat.fact.varsubres.ssaindex;
+             end;
+             exclude(d.dat.fact.flags,faf_varsubres);
+            end
+            else begin
+//             internalerror1(ie_handler,'20181031A');
+            {
+             if not getaddress(pob,true) then begin
+              goto endlab;
+             end;
+            }
             end;
-            exclude(d.dat.fact.flags,faf_varsubres);
            end;
            if offset <> 0 then begin
             ssabefore:= d.dat.fact.ssaindex;
@@ -2874,7 +2903,7 @@ begin //handlevalueident
         end;
                   //todo: no double copy by handlefact
        end;
-       donotfound(pocontext1,pocontext1^.d.dat.datatyp.typedata);
+       donotfound(pocontext1,pocontext1^.d.dat.datatyp.typedata,po1);
       end;
      end
      else begin //ek_var
@@ -2895,7 +2924,7 @@ begin //handlevalueident
       if pvardataty(po2)^.vf.typ <= 0 then begin
        goto endlab; //todo: stop error earlier
       end;
-      donotfound(pocontext1,pvardataty(po2)^.vf.typ);
+      donotfound(pocontext1,pvardataty(po2)^.vf.typ,po1);
      end;
      if (stf_params in s.currentstatementflags) and
                           (pocontext1^.d.kind in datacontexts) then begin
@@ -3032,7 +3061,7 @@ begin //handlevalueident
       end;
      end
      else begin
-      donotfound(poind,ele.eleinforel(po1));
+      donotfound(poind,ele.eleinforel(po1),po1);
      end;
     end;
     ek_labeldef: begin
