@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,address
+   a=0,664,4,address
    c=5
     (
     kind=2
@@ -276,8 +276,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classfield llvm
-    teststate=2
+    a=0,648,1,classfield llvm
+    teststate=1
     path=classfield.mla
     comment=
     cc=${mlc_llvm}
@@ -293,10 +293,10 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=address/
    comment=
    cc=
@@ -4312,7 +4312,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,exception
+   a=0,664,4,exception
    c=17
     (
     kind=2
@@ -4603,7 +4603,7 @@ c=3
     (
     kind=2
     a=0,648,2,except7 llvm
-    teststate=2
+    teststate=1
     path=except7.mla
     comment=
     cc=${mlc_llvm}
@@ -4618,8 +4618,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 15238 Segmentation fault      $2
-    aec=139
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4688,7 +4688,7 @@ c=3
     aec=217
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -6625,7 +6625,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=42
+   c=43
     (
     kind=1
     a=0,664,4,managed
@@ -8816,6 +8816,28 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,recsubres llvm
+    teststate=1
+    path=recsubres.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
    teststate=1
    path=sub/
    comment=
@@ -9879,7 +9901,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -9897,11 +9919,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,object
+  a=0,664,4,object
   c=28
    (
    kind=1
-   a=0,665,5,methods
+   a=0,665,4,methods
    c=13
     (
     kind=2
@@ -10170,7 +10192,7 @@ c=3
     (
     kind=2
     a=0,648,2,paramname llvm
-    teststate=2
+    teststate=1
     path=paramname.mla
     comment=
     cc=${mlc_llvm}
@@ -10185,11 +10207,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=methods/
    comment=
    cc=
@@ -11237,7 +11259,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=object/
   comment=
   cc=
@@ -11255,11 +11277,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,class
+  a=0,664,4,class
   c=36
    (
    kind=1
-   a=0,665,5,properties
+   a=0,665,4,properties
    c=32
     (
     kind=2
@@ -11307,8 +11329,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,classprop2
-    teststate=2
+    a=0,648,2,classprop2
+    teststate=1
     path=classprop2.mla
     comment=
     cc=${mlc}
@@ -11324,13 +11346,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=104
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,classprop2 llvm
-    teststate=2
+    a=0,648,2,classprop2 llvm
+    teststate=1
     path=classprop2.mla
     comment=
     cc=${mlc_llvm}
@@ -11345,11 +11367,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=Instruction does not dominate all uses!
-    +  %15 = bitcast { i8*, i32 }* %1 to i8**
-    +  %29 = bitcast i8** %15 to i8*
-    +/home/mse/packs/standard/git/llvm/build_release/bin/llc: /home/mse/packs/standard/git/mselang/mselang/test/class/properties/classprop2.bc: error: input module is broken!
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -11618,8 +11637,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,arrayparam2 llvm
-    teststate=2
+    a=0,648,2,arrayparam2 llvm
+    teststate=1
     path=arrayparam2.mla
     comment=
     cc=${mlc_llvm}
@@ -11634,11 +11653,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=Instruction does not dominate all uses!
-    +  %15 = bitcast { i8*, i32 }* %1 to i8**
-    +  %19 = bitcast i8** %15 to i8*
-    +/home/mse/packs/standard/git/llvm/build_release/bin/llc: /home/mse/packs/standard/git/mselang/mselang/test/class/properties/arrayparam2.bc: error: input module is broken!
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -11971,7 +11987,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=properties/
    comment=
    cc=
@@ -12619,7 +12635,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,interface
+   a=0,665,4,interface
    c=10
     (
     kind=2
@@ -12711,8 +12727,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,classinterfacevirt
-    teststate=2
+    a=0,648,2,classinterfacevirt
+    teststate=1
     path=classinterfacevirt.mla
     comment=
     cc=${mlc}
@@ -12728,13 +12744,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=2
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,classinterfacevirt llvm
-    teststate=2
+    a=0,648,2,classinterfacevirt llvm
+    teststate=1
     path=classinterfacevirt.mla
     comment=
     cc=${mlc_llvm}
@@ -12750,7 +12766,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=2
+    aec=123
     ie=0
     )
     (
@@ -12799,8 +12815,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,classinhinterface1
-    teststate=2
+    a=0,648,2,classinhinterface1
+    teststate=1
     path=classinhinterface1.mla
     comment=
     cc=${mlc}
@@ -12816,13 +12832,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=19
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,classinhinterface1 llvm
-    teststate=2
+    a=0,648,2,classinhinterface1 llvm
+    teststate=1
     path=classinhinterface1.mla
     comment=
     cc=${mlc_llvm}
@@ -12837,11 +12853,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=interface/
    comment=
    cc=
@@ -13167,8 +13183,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classfield
-   teststate=2
+   a=0,648,2,classfield
+   teststate=1
    path=classfield.mla
    comment=
    cc=${mlc}
@@ -13184,13 +13200,13 @@ c=3
    cr=0
    ao=
    ae=
-   aec=222
+   aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classfield llvm
-   teststate=2
+   a=0,648,2,classfield llvm
+   teststate=1
    path=classfield.mla
    comment=
    cc=${mlc_llvm}
@@ -13205,8 +13221,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=error: Invalid cast
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
    (
@@ -13497,8 +13513,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classparam llvm
-   teststate=2
+   a=0,648,2,classparam llvm
+   teststate=1
    path=classparam.mla
    comment=
    cc=${mlc_llvm}
@@ -13513,11 +13529,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=error: Invalid record
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -13663,7 +13679,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,intrinsics
+  a=0,664,4,intrinsics
   c=4
    (
    kind=1
@@ -13885,7 +13901,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,managed
+   a=0,665,4,managed
    c=13
     (
     kind=2
@@ -13978,7 +13994,7 @@ c=3
     (
     kind=2
     a=0,648,2,initclass llvm
-    teststate=2
+    teststate=1
     path=initclass.mla
     comment=
     cc=${mlc_llvm}
@@ -13993,14 +14009,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
     kind=2
     a=0,648,2,initclass1 llvm
-    teststate=2
+    teststate=1
     path=initclass1.mla
     comment=
     cc=${mlc_llvm}
@@ -14015,8 +14031,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -14173,7 +14189,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=managed/
    comment=
    cc=
@@ -14211,7 +14227,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=intrinsics/
   comment=
   cc=
@@ -15177,7 +15193,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,rtl
+  a=0,665,4,rtl
   c=7
    (
    kind=1
@@ -15567,7 +15583,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,typeinfo
+   a=0,665,4,typeinfo
    c=4
     (
     kind=2
@@ -15593,8 +15609,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,getordprop1 llvm
-    teststate=2
+    a=0,648,1,getordprop1 llvm
+    teststate=1
     path=getordprop1.mla
     comment=
     cc=${mlc_llvm}
@@ -15609,8 +15625,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -15657,7 +15673,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=typeinfo/
    comment=
    cc=
@@ -15675,12 +15691,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,streaming
+   a=0,665,4,streaming
    c=1
     (
     kind=2
-    a=0,648,2,streaming1 llvm
-    teststate=2
+    a=0,648,1,streaming1 llvm
+    teststate=1
     path=streaming1.mla
     comment=
     cc=${mlc_llvm}
@@ -15695,11 +15711,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=streaming/
    comment=
    cc=
@@ -15801,7 +15817,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=rtl/
   comment=
   cc=
@@ -15881,7 +15897,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -16004,7 +16020,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=105
+rowstate=106
+ 0 0
  0 0
  0 0
  0 0

@@ -3689,20 +3689,32 @@ var
  varresulttemp: tempaddressty;
  varresulttempaddr: int32;
 
- procedure initvarresult();
+ procedure initvarresult(const copy: boolean);
+ var
+  i1: int32;
  begin
   with info,contextstack[adestindex] do begin
+   i1:= d.dat.fact.ssaindex;
    include(d.dat.fact.flags,faf_varsubres);
    d.dat.fact.varsubres.startopoffset:= getcontextopcount(destoffset);
    varresulttemp:= alloctempvar(asub^.resulttype.typeele,
                                   d.dat.fact.varsubres.tempvar).tempaddress;
    d.dat.fact.varsubres.ssaindex:= varresulttemp.ssaindex;
    if co_llvm in o.compileoptions then begin
-    with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
-     par.tempaddr.a:= varresulttemp;
-//        if co_llvm in o.compileoptions then begin
+    if copy then begin
+     with insertitem(oc_poploc,topoffset,-1)^ do begin
+      par.ssas1:= i1;
+      par.memop.t:= getopdatatype(d.dat.datatyp.typedata,0);
+      include(par.memop.t.flags,af_tempvar);
+      par.memop.tempdataaddress.a:= varresulttemp;
+      par.memop.tempdataaddress.offset:= 0;
+     end;
+    end
+    else begin
+     with insertitem(oc_pushtempaddr,destoffset,-1)^ do begin
+      par.tempaddr.a:= varresulttemp;
       varresulttempaddr:= par.ssad;
-//        end;
+     end;
     end;
    end;
   end;
@@ -4068,7 +4080,7 @@ begin
     if hasresult then begin
      initfactcontext(destoffset); //set ssaindex
      if hasvarresult then begin
-      initvarresult();
+      initvarresult(false);
      end;
      if dsf_instanceonstack in aflags then begin
       d.dat.fact.ssaindex:= instancessa; 
@@ -4544,7 +4556,6 @@ begin
      end;
     end;
     if co_mlaruntime in o.compileoptions then begin
-//     releasetempaddress(tempsize);
      if hasvarresult then begin
       with insertitem(oc_pushtemp,topoffset,-1)^ do begin
        par.tempaddr.a.address:= varresulttemp.address;
@@ -4560,18 +4571,13 @@ begin
       locdatapo:= locdatapo - resultsize;
      end;
     end
-    else begin
-    {
-     if varresulttempaddr >= 0 then begin
-      with insertitem(oc_pushtemp,topoffset,-1)^ do begin
-       par.tempaddr.a.ssaindex:= varresulttemp.ssaindex;
-       d.dat.fact.ssaindex:= par.ssad;
-      end;
-      d.dat.fact.varsubres.endopoffset:= 
-                   contextstack[topoffset+s.stackindex].opmark.address +
-                                  getcontextopcount(topoffset) - opmark.address;
+    else begin //llvm
+     if hasresult and not hasvarresult and 
+              (asub^.resulttype.indirectlevel = 0) and
+                     (resulttype1^.h.kind in [dk_record,dk_object]) then begin
+                           //size < pointersize
+      initvarresult(true); //copy value to temp
      end;
-    }
     end;
     if (sf_constructor in asub^.flags) and 
                             not (dsf_isinherited in aflags) then begin

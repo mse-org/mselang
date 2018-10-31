@@ -1,0 +1,14 @@
+program subresfield;
+type
+ recty = record
+  a,b,c: int32;
+ end;
+
+procedure tes(): recty;
+begin
+ result.c:= 123;
+end;
+
+begin
+ exitcode:= tes().c;
+end.

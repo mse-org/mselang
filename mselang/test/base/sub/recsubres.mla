@@ -1,21 +1,15 @@
-program test;
+program recsubres;
 
 type
  recty = record
   a: int32;
  end;
 
-var
- r1: recty;
-
 procedure test(): recty;
 begin
  result.a:= 123;
-// result:= r1;
 end;
 
 begin
-{$internaldebug on}
- test();
-// exitcode:= test().a;
+ exitcode:= test().a;
 end.
