@@ -7,12 +7,12 @@ type
   destructor destroy();
   f1,f2: int32;
  end;
- 
+{$internaldebug on} 
  Ctest = class
   constructor create();
   destructor destroy();
   f1,f2: int32;
-  f3: Ctest1;
+  f2: Ctest1;
  end;
 
 constructor ctest1.create();

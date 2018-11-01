@@ -492,7 +492,7 @@ begin
   {$endif}
    if not ele.addelementduplicatedata(contextstack[i1].d.ident.ident,
                                             ek_field,avisibility,po1) then begin
-    identerror(2,err_duplicateidentifier);
+    identerror(i1-s.stackindex,err_duplicateidentifier);
    end;
    po1^.flags:= aflags;
    po1^.offset:= aoffset;
