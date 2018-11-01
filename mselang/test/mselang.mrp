@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -4602,7 +4602,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,except7 llvm
+    a=0,648,1,except7 llvm
     teststate=1
     path=except7.mla
     comment=
@@ -10191,7 +10191,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,paramname llvm
+    a=0,648,1,paramname llvm
     teststate=1
     path=paramname.mla
     comment=
@@ -11277,11 +11277,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
-  c=36
+  a=0,665,5,class
+  c=37
    (
    kind=1
-   a=0,665,4,properties
+   a=0,665,5,properties
    c=32
     (
     kind=2
@@ -11329,7 +11329,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classprop2
+    a=0,648,1,classprop2
     teststate=1
     path=classprop2.mla
     comment=
@@ -11351,7 +11351,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classprop2 llvm
+    a=0,648,1,classprop2 llvm
     teststate=1
     path=classprop2.mla
     comment=
@@ -11637,7 +11637,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparam2 llvm
+    a=0,648,1,arrayparam2 llvm
     teststate=1
     path=arrayparam2.mla
     comment=
@@ -11987,7 +11987,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=properties/
    comment=
    cc=
@@ -12005,7 +12005,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,calls
+   a=0,664,4,calls
    c=4
     (
     kind=2
@@ -12243,7 +12243,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,methods
+   a=0,664,4,methods
    c=15
     (
     kind=2
@@ -12635,7 +12635,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,interface
+   a=0,664,4,interface
    c=10
     (
     kind=2
@@ -12727,7 +12727,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt
+    a=0,648,1,classinterfacevirt
     teststate=1
     path=classinterfacevirt.mla
     comment=
@@ -12749,7 +12749,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinterfacevirt llvm
+    a=0,648,1,classinterfacevirt llvm
     teststate=1
     path=classinterfacevirt.mla
     comment=
@@ -12815,7 +12815,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface1
+    a=0,648,1,classinhinterface1
     teststate=1
     path=classinhinterface1.mla
     comment=
@@ -12837,7 +12837,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classinhinterface1 llvm
+    a=0,648,1,classinhinterface1 llvm
     teststate=1
     path=classinhinterface1.mla
     comment=
@@ -13183,7 +13183,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classfield
+   a=0,648,1,classfield
    teststate=1
    path=classfield.mla
    comment=
@@ -13205,7 +13205,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classfield llvm
+   a=0,648,1,classfield llvm
    teststate=1
    path=classfield.mla
    comment=
@@ -13513,7 +13513,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classparam llvm
+   a=0,648,1,classparam llvm
    teststate=1
    path=classparam.mla
    comment=
@@ -13533,7 +13533,29 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+   (
+   kind=2
+   a=0,648,1,field1 llvm
+   teststate=1
+   path=field1.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=2
   path=class/
   comment=
   cc=
@@ -13993,7 +14015,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,initclass llvm
+    a=0,648,1,initclass llvm
     teststate=1
     path=initclass.mla
     comment=
@@ -14015,7 +14037,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,initclass1 llvm
+    a=0,648,1,initclass1 llvm
     teststate=1
     path=initclass1.mla
     comment=
@@ -15897,7 +15919,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=

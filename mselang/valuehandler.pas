@@ -2277,6 +2277,8 @@ var
   i2: int32;
   isclassof: boolean;
   po1: pelementinfoty;
+ label
+  fieldendlab;
 
  begin //donotfond()
   if firstnotfound <= idents.high then begin
@@ -2303,25 +2305,19 @@ var
         case d.kind of
          ck_ref,ck_refprop: begin
           if (typ1^.h.kind = dk_class) then begin
+           if d.dat.ref.offset <> 0 then begin
+            if not getvalue(adatacontext,das_none) then begin
+             exit;
+            end;
+            offs1:= offset;
+            dec(d.dat.indirection);
+            dec(d.dat.datatyp.indirectlevel);
+            goto fieldendlab;
+           end;
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end;
           d.dat.ref.offset:= d.dat.ref.offset + offset;
-{
-          if d.dat.datatyp.indirectlevel > 0 then begin
-           if not getvalue(adatacontext,das_none) then begin
-            exit;
-           end;
-           if (typ1^.h.kind = dk_class) then begin
-            dec(d.dat.indirection);
-            dec(d.dat.datatyp.indirectlevel);
-           end;
-           offs1:= offset;
-          end
-          else begin
-           d.dat.ref.offset:= d.dat.ref.offset + offset;
-          end;
-}
          end;
          ck_fact: begin     //todo: check indirection
           offs1:= offs1 + offset;
@@ -2338,6 +2334,7 @@ var
          end;
         {$endif}
         end;
+fieldendlab:
         if d.dat.datatyp.indirectlevel <> 0 then begin
          errormessage(err_illegalqualifier,[],
                             s.stacktop-s.stackindex + int1-idents.high);
@@ -2543,10 +2540,11 @@ var
        exit;
       end;
      end;
-//     po1:= datatoele(po4); //new parentelement
+     po1:= datatoele(po4); //new parentelement
     end;
     if offs1 <> 0 then begin
-     offsetad(-1,offs1);
+     offsetad(adatacontext,offs1);
+//     offsetad(-1,offs1);
     end;
     firstcall:= false;
    end;

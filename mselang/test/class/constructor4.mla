@@ -1,0 +1,31 @@
+program constructor4;
+type
+ ttest = class
+  constructor create(const p1: string8);
+  constructor create1(const p1: string8; const p2: array of const);
+  destructor destroy();
+  private
+   f1: int32;
+ end;
+
+constructor ttest.create(const p1: string8);
+begin
+ create1(p1,[]);
+end;
+
+constructor ttest.create1(const p1: string8; const p2: array of const);
+begin
+ f1:= 123;
+end;
+
+destructor ttest.destroy();
+begin
+ exitcode:= f1;
+end;
+
+var
+ t1: ttest;
+begin
+ t1:= ttest.create('abc');
+ t1.destroy();
+end.

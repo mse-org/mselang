@@ -1,4 +1,4 @@
-program test;
+program field1;
 
 type
 
@@ -38,9 +38,7 @@ var
  c1: Ctest;
 
 begin
-{$internaldebug on}
  c1:= Ctest.create();
- writeln(c1.f3);
  exitcode:= c1.f3.f2;
  c1.destroy();
 end.
