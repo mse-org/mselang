@@ -245,9 +245,19 @@ begin
   if fcomponents = nil then
    fcomponents:= Ccomponents.create();
   end;
-//  fcomponents.fcomponents.add(acomponent);
+  fcomponents.fcomponents.add(acomponent);
  end;  
 end;
+
+
+method Tcomponent.removecomponent(acomponent: tcomponent);
+begin
+ if acomponent.fowner = self then
+  acomponent.fowner:= nil;
+  fcomponents.fcomponents.remove(acomponent);
+ end;
+end;
+
 
 method Tcomponent.componentcount(): int32;
 begin
@@ -604,14 +614,6 @@ begin
  except
   raise; //todo: error handling
  end;
-end;
-
-method Tcomponent.removecomponent(acomponent: tcomponent);
-begin
-// if acomponent.fowner = self then
-//  acomponent.fowner:= nil;
-//  fcomponents.fcomponents.remove(acomponent);
-// end;
 end;
 
 end.

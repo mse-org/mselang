@@ -1,5 +1,6 @@
 program test;
-
+uses
+ rtl_streaming;
 type
 
  Ctest1 = class
@@ -12,7 +13,7 @@ type
   constructor create();
   destructor destroy();
   f1,f2: int32;
-  f2: Ctest1;
+  f3: Ctest1;
  end;
 
 constructor ctest1.create();

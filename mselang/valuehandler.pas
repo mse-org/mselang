@@ -2269,7 +2269,7 @@ var
  var
   offs1: dataoffsty;
   ele1,ele2: elementoffsetty;
-  pvar1: pvardataty;
+//  pvar1: pvardataty;
   int1: integer;
   po4: pointer;
   subflags1: subflagsty;
@@ -2277,6 +2277,10 @@ var
   i2: int32;
   isclassof: boolean;
   po1: pelementinfoty;
+  p1: pointer;
+  indilev1: int32;
+  flags1: addressflagsty;
+  
  label
   fieldendlab;
 
@@ -2399,19 +2403,26 @@ fieldendlab:
           include(subflags1,sf_class);
          end
          else begin
-          pvar1:= eletodata(po1);
-          typ1:= ele.eledataabs(pvar1^.vf.typ); //ek_var and ek_field
+//          pvar1:= eletodata(po1);
+          p1:= eletodata(po1);
+          if po1^.header.kind = ek_var then begin
+           with pvardataty(p1)^ do begin
+            indilev1:= address.indirectlevel;
+            flags1:= address.flags;
+           end;
+          end
+          else begin
+           with pfielddataty(p1)^ do begin
+            indilev1:= indirectlevel;
+            flags1:= flags;
+           end;
+          end;
+          typ1:= ele.eledataabs(pvardataty(p1)^.vf.typ); //ek_var and ek_field
           if typ1^.h.kind = dk_class then begin
            include(subflags1,sf_class);
           end;
           if [sf_class,sf_interface] * subflags1 <> [] then begin
-           if po1^.header.kind = ek_var then begin
-            i2:= pvar1^.address.indirectlevel;
-           end
-           else begin
-            i2:= pfielddataty(pvar1)^.indirectlevel;
-           end;
-           if i2 <> 1 then begin
+           if indilev1 <> 1 then begin
             if sf_class in subflags1 then begin
              errormessage(err_classinstanceexpected,[]);
             end
@@ -2438,7 +2449,7 @@ fieldendlab:
             subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
            end
            else begin
-            if af_classele in pvar1^.address.flags then begin
+            if af_classele in flags1 then begin
              errormessage(err_onlyclassmethod,[],adatacontext);
              exit;
             end;
@@ -2451,7 +2462,7 @@ fieldendlab:
           else begin
            if subflags1 * [sf_destructor,sf_class] = 
                                             [sf_destructor,sf_class] then begin
-            if pvar1^.address.indirectlevel <> 1 then begin
+            if indilev1 <> 1 then begin
              errormessage(err_classinstanceexpected,[]);
             end;
             if not getvalue(adatacontext,das_none) then begin 
@@ -2461,14 +2472,14 @@ fieldendlab:
            end
            else begin
             if (sf_destructor in subflags1) and 
-                 (pvar1^.address.indirectlevel = 1) then begin //object pointer
+                 (indilev1 = 1) then begin //object pointer
              if not getvalue(adatacontext,das_none) then begin 
                                                //get object pointer
               exit;
              end;
             end
             else begin
-             if pvar1^.address.indirectlevel <> 0 then begin
+             if indilev1 <> 0 then begin
               errormessage(err_objectexpected,[]);
              end;
              if sf_classmethod in subflags1 then begin
