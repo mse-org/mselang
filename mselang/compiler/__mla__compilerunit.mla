@@ -1190,7 +1190,7 @@ var
  ps,pd: pstringheaderty;
  i1: int32;
 begin
- p1:= strings;
+ p1:= pointer(strings);
  pe:= p1+count;
  i1:= 0;
  while p1 < pe do
@@ -1207,7 +1207,7 @@ begin
   inc(pd);
   result:= pd;
   (pcard8(pointer(pd))+i1)^:= 0; //terminator
-  p1:= strings;
+  p1:= pointer(strings);
   while p1 < pe do
    ps:= p1^;
    if ps <> nil then
@@ -1229,7 +1229,7 @@ var
  ps,pd: pstringheaderty;
  i1: int32;
 begin
- p1:= strings;
+ p1:= pointer(strings);
  pe:= p1+count;
  i1:= 0;
  while p1 < pe do
@@ -1246,7 +1246,7 @@ begin
   inc(pd);
   result:= pd;
   (pcard16(pointer(pd))+i1)^:= 0; //terminator
-  p1:= strings;
+  p1:= pointer(strings);
   while p1 < pe do
    ps:= p1^;
    if ps <> nil then
@@ -1268,7 +1268,7 @@ var
  ps,pd: pstringheaderty;
  i1: int32;
 begin
- p1:= strings;
+ p1:= pointer(strings);
  pe:= p1+count;
  i1:= 0;
  while p1 < pe do
@@ -1285,7 +1285,7 @@ begin
   inc(pd);
   result:= pd;
   (pcard16(pointer(pd))+i1)^:= 0; //terminator
-  p1:= strings;
+  p1:= pointer(strings);
   while p1 < pe do
    ps:= p1^;
    if ps <> nil then

@@ -90,7 +90,7 @@ type
 
  TComponent = class;
 
- componentlistty = object [nozeroinit]
+ Ocomponentlist = object [nozeroinit]
   method add(const acomponent: Tcomponent);
   method remove(const acomponent: Tcomponent);
   private
@@ -104,7 +104,7 @@ type
  
  Ccomponents = class(Cbase)
   private
-   fcomponents: componentlistty;
+   fcomponents: Ocomponentlist;
  end;
  
  Tcomponent = class(Tpersistent)
@@ -122,7 +122,8 @@ type
    method setname(const avalue: string8);
    method setowner(const avalue: Tcomponent);
  end;
-
+ pcomponent = ^Tcomponent;
+ 
 implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format,
@@ -158,28 +159,31 @@ begin
  readererror(sinvalidproptype,[getenumname(typeinfo(avalue),ord(avalue))]);
 end;
 
-{ componentlistty }
+{ Ocomponentlist }
 
-method componentlistty.ini();
+method Ocomponentlist.ini();
 begin
+writeln('1 ',self);
  fcount:= 0;
  fcapacity:= 0;
  fdata:= nil;
 end;
 
-method componentlistty.fini();
+method Ocomponentlist.fini();
 begin
  if fdata <> nil then
   freemem(fdata);
  end;
 end;
 
-method componentlistty.grow();
+method Ocomponentlist.grow();
 begin
- reallocmem(fdata,(fcount*2+16)*sizeof(pointer));
+writeln('3 ',self,' ',fcount);
+ fcapacity:= fcount*2+16;
+ reallocmem(fdata,fcapacity*sizeof(pointer));
 end;
 
-method componentlistty.add(const acomponent: Tcomponent);
+method Ocomponentlist.add(const acomponent: Tcomponent);
 begin
  if fcount >= fcapacity then
   grow();
@@ -188,8 +192,24 @@ begin
  inc(fcount);
 end;
 
-method componentlistty.remove(const acomponent: Tcomponent);
+method Ocomponentlist.remove(const acomponent: Tcomponent);
+var
+ p1,pe: pcomponent;
 begin
+ p1:= pointer(fdata);
+ pe:= p1 + fcount;
+ while p1 < pe do
+  if p1^ = acomponent then
+   dec(fcount);
+   dec(pe);
+   while p1 < pe do
+    p1^:= (p1+1)^
+    inc(p1);
+   end;
+   break;
+  end;
+  inc(p1);
+ end;
 end;
 
 { Tpersistent }
@@ -244,8 +264,10 @@ begin
  if (acomponent.fowner <> self) then
   if fcomponents = nil then
    fcomponents:= Ccomponents.create();
+writeln('2 ',fcomponents);
   end;
   fcomponents.fcomponents.add(acomponent);
+  acomponent.fowner:= self;
  end;  
 end;
 

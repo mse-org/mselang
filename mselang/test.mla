@@ -2,46 +2,18 @@ program test;
 uses
  rtl_streaming;
 type
-
- Ctest1 = class
-  constructor create();
-  destructor destroy();
-  f1,f2: int32;
- end;
-{$internaldebug on} 
- Ctest = class
-  constructor create();
-  destructor destroy();
-  f1,f2: int32;
-  f3: Ctest1;
- end;
-
-constructor ctest1.create();
-begin
- f2:= 123;
-end;
-
-destructor ctest1.destroy();
-begin
-end;
-
-constructor Ctest.create();
-begin
- f3:= Ctest1.create();
-end;
-
-destructor Ctest.destroy();
-begin
- f3.destroy();
-end;
-
+ ppointer = ^pointer;
 var
- c1: Ctest;
-
+ c1,c2:  Tcomponent;
+ p1: pcomponent;
+ p2: ppointer;
 begin
-{$internaldebug on}
- c1:= Ctest.create();
- writeln(c1.f3);
- exitcode:= c1.f3.f2;
+ p1:= p2;
+ exitcode:= c1.fcomponents.fcomponents.fcount;
+ c1:= tcomponent.create(nil);
+ c2:= tcomponent.create(nil);
+ c1.insertcomponent(c2);
+ c1.removecomponent(c2);
  c1.destroy();
+ c2.destroy();
 end.

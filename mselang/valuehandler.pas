@@ -1650,7 +1650,7 @@ begin
        end;
       end
       else begin
-       if (destindirectlevel > 0) and 
+       if (destindirectlevel = 1) and 
            ((((dest^.h.kind = dk_pointer) or 
                             (source1^.h.kind = dk_pointer))) or //untyped pointer
             (coo_type in aoptions) and (source1^.h.indirectlevel > 0)) then begin

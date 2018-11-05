@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -1952,7 +1952,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,array
+   a=0,665,4,array
    c=8
     (
     kind=2
@@ -9919,7 +9919,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,object
+  a=0,665,4,object
   c=28
    (
    kind=1
@@ -11277,11 +11277,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,664,4,class
   c=37
    (
    kind=1
-   a=0,665,5,properties
+   a=0,664,4,properties
    c=32
     (
     kind=2
@@ -11987,7 +11987,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=properties/
    comment=
    cc=
@@ -13555,7 +13555,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -14463,12 +14463,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
    a=0,665,4,error check
-   c=10
+   c=11
     (
     kind=1
     a=0,665,4,address
@@ -15030,7 +15030,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,objects
+    a=0,664,4,objects
     c=1
      (
      kind=2
@@ -15057,6 +15057,49 @@ c=3
      )
     teststate=1
     path=objects/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,pointer
+    c=1
+     (
+     kind=2
+     a=0,648,1,assignment1
+     teststate=1
+     path=assignment1.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=assignment1.mla(13,9) Error: Incompatible types: got "^^ppointer" expected "^^dk_class"
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=assignment1.mla(13,9) Error: Incompatible types: got "^^ppointer" expected "^^dk_class"
+     aec=1
+     ie=0
+     )
+    teststate=1
+    path=pointer/
     comment=
     cc=
     cd=
@@ -15919,7 +15962,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -16042,7 +16085,87 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=106
+rowstate=186
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
