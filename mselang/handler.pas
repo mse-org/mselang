@@ -3774,6 +3774,7 @@ var
  sourcessa1: int32;
  sourcetyp,desttyp: ptypedataty;
  b1: boolean;
+ prop1: ppropertydataty;
 label
  endlab;
 begin
@@ -3801,13 +3802,25 @@ begin
     concatterms(dest,source);
    end;
    with dest^ do begin
-    if d.kind = ck_refprop then begin
+    if d.kind in [ck_refprop,ck_factprop] then begin
      desttyp:= ele.eledataabs(dest^.d.dat.datatyp.typedata);
      indilev1:= dest^.d.dat.datatyp.indirectlevel;
-     with ppropertydataty(ele.eledataabs(d.dat.refprop.propele))^ do begin
+     if d.kind = ck_refprop then begin
+      prop1:= ele.eledataabs(d.dat.refprop.propele);
+     end
+     else begin
+      prop1:= ele.eledataabs(d.dat.factprop.propele);
+     end;
+     with prop1^ do begin
       if pof_writefield in flags then begin
-       d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
-       d.kind:= ck_ref;
+       if d.kind = ck_refprop then begin
+        d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
+        d.kind:= ck_ref;
+       end
+       else begin
+        offsetad(dest,writeoffset);
+        d.kind:= ck_fact;
+       end;
       end
       else begin
        if pof_writesub in flags then begin
@@ -4079,6 +4092,18 @@ begin
      if not getvalue(source,datasi1) then begin //todo: conversion operator
                                                 //without loading of the object
       goto endlab;
+     end;
+     if (co_llvm in o.compileoptions) and (source^.d.kind = ck_subres) and
+              (faf_varsubres in source^.d.dat.fact.flags) then begin
+      if canvarresult(source,dest,indilev1) then begin
+       directvarresult(source,dest); //remove temp variable
+       goto endlab;
+      end
+      else begin
+       if not getvalue(source,datasi1) then begin //get copy from temp var
+        goto endlab;
+       end;
+      end;
      end;
      if faf_classele in source^.d.dat.fact.flags then begin
       errormessage(err_cannotaccessinclassmethod,[],source);

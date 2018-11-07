@@ -163,10 +163,11 @@ end;
 
 method Ocomponentlist.ini();
 begin
-writeln('1 ',self);
  fcount:= 0;
  fcapacity:= 0;
  fdata:= nil;
+writeln('1 ',self);
+fcount:= 123;
 end;
 
 method Ocomponentlist.fini();
@@ -178,8 +179,8 @@ end;
 
 method Ocomponentlist.grow();
 begin
-writeln('3 ',self,' ',fcount);
  fcapacity:= fcount*2+16;
+writeln('3 ',self,' ',fcount,' ',fcapacity);
  reallocmem(fdata,fcapacity*sizeof(pointer));
 end;
 

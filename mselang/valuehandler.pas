@@ -2280,7 +2280,7 @@ var
   p1: pointer;
   indilev1: int32;
   flags1: addressflagsty;
-  
+  k1: elementkindty;
  label
   fieldendlab;
 
@@ -2297,7 +2297,24 @@ var
       ele1:= basetype(typ1^.infoclassof.classtyp);
      end;
      ele2:= ele1; //parent backup
-     case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
+     k1:= ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4);
+     if not firstcall and (typ1^.h.kind = dk_class) and 
+                                     (po1^.header.kind <> ek_type) then begin
+      with adatacontext^ do begin
+       if (d.kind in factcontexts) and (d.dat.indirection = -1) then begin
+        offsetad(adatacontext,offs1);
+       end;
+       if not getvalue(adatacontext,das_none) then begin
+        exit;
+       end;
+       offs1:= 0;
+       if k1 = ek_field then begin
+        dec(d.dat.indirection);
+        dec(d.dat.datatyp.indirectlevel);
+       end;
+      end;
+     end;
+     case k1 of
       ek_none: begin
        identerror(1+int1,err_identifiernotfound);
        exit;
@@ -2308,6 +2325,7 @@ var
         typ1:= ele.eledataabs(ele2);
         case d.kind of
          ck_ref,ck_refprop: begin
+         {
           if (typ1^.h.kind = dk_class) then begin
            if d.dat.ref.offset <> 0 then begin
             if not getvalue(adatacontext,das_none) then begin
@@ -2321,9 +2339,10 @@ var
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end;
+         }
           d.dat.ref.offset:= d.dat.ref.offset + offset;
          end;
-         ck_fact: begin     //todo: check indirection
+         ck_fact,ck_factprop: begin     //todo: check indirection
           offs1:= offs1 + offset;
          end;
         {$ifdef mse_checkinternalerror}
@@ -2553,10 +2572,7 @@ fieldendlab:
      end;
      po1:= datatoele(po4); //new parentelement
     end;
-    if offs1 <> 0 then begin
-     offsetad(adatacontext,offs1);
-//     offsetad(-1,offs1);
-    end;
+    offsetad(adatacontext,offs1);
     firstcall:= false;
    end;
   end; 
@@ -2616,7 +2632,7 @@ var
  
 label
  endlab;
-begin //handlevalueident
+begin //handlevalueident 
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;

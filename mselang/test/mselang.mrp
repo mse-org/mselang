@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
@@ -1952,7 +1952,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,array
+   a=0,664,4,array
    c=8
     (
     kind=2
@@ -6624,7 +6624,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=43
     (
     kind=1
@@ -9919,7 +9919,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,object
+  a=0,664,4,object
   c=28
    (
    kind=1
@@ -11277,7 +11277,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,665,5,class
   c=37
    (
    kind=1
@@ -12006,7 +12006,7 @@ c=3
    (
    kind=1
    a=0,664,4,calls
-   c=4
+   c=5
     (
     kind=2
     a=0,648,1,ownsub
@@ -12078,6 +12078,28 @@ c=3
     a=0,648,1,inheritedfunc llvm
     teststate=1
     path=inheritedfunc.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,fieldclass1 llvm
+    teststate=1
+    path=fieldclass1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -13535,8 +13557,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,field1 llvm
-   teststate=1
+   a=0,648,2,field1 llvm
+   teststate=2
    path=field1.mla
    comment=
    cc=${mlc_llvm}
@@ -13551,11 +13573,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 10031 Segmentation fault      $2
+   aec=139
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -15798,7 +15820,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,stream
+   a=0,665,4,stream
    c=1
     (
     kind=2
@@ -15962,7 +15984,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -16085,87 +16107,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=186
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=106
  0 0
  0 0
  0 0
