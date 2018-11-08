@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
@@ -11277,7 +11277,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=37
    (
    kind=1
@@ -13557,8 +13557,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,field1 llvm
-   teststate=2
+   a=0,648,1,field1 llvm
+   teststate=1
    path=field1.mla
    comment=
    cc=${mlc_llvm}
@@ -13573,11 +13573,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5: 10031 Segmentation fault      $2
-   aec=139
+   ae=
+   aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -15984,7 +15984,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

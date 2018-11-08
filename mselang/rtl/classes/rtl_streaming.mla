@@ -186,6 +186,7 @@ end;
 
 method Ocomponentlist.add(const acomponent: Tcomponent);
 begin
+writeln('4 ',self,' ',fcount,' ',fcapacity);
  if fcount >= fcapacity then
   grow();
  end;

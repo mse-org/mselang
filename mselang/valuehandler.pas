@@ -2281,6 +2281,7 @@ var
   indilev1: int32;
   flags1: addressflagsty;
   k1: elementkindty;
+  isaddress: boolean;
  label
   fieldendlab;
 
@@ -2293,22 +2294,33 @@ var
     for int1:= firstnotfound to idents.high do begin //fields
      typ1:= ele.eledataabs(ele1);
      isclassof:= (typ1^.h.kind = dk_classof) and (typ1^.h.indirectlevel = 1);
+     isaddress:= false;
      if isclassof then begin
       ele1:= basetype(typ1^.infoclassof.classtyp);
      end;
      ele2:= ele1; //parent backup
      k1:= ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4);
-     if not firstcall and (typ1^.h.kind = dk_class) and 
-                                     (po1^.header.kind <> ek_type) then begin
-      with adatacontext^ do begin
+     with adatacontext^ do begin
+      if not firstcall and (po1^.header.kind <> ek_type) and
+       ((typ1^.h.kind = dk_class) and (d.dat.datatyp.indirectlevel = 1) or 
+        (typ1^.h.kind = dk_object) and (d.dat.datatyp.indirectlevel = 0))
+                                                                    then begin
        if (d.kind in factcontexts) and (d.dat.indirection = -1) then begin
         offsetad(adatacontext,offs1);
        end;
-       if not getvalue(adatacontext,das_none) then begin
-        exit;
-       end;
        offs1:= 0;
-       if k1 = ek_field then begin
+       if typ1^.h.kind = dk_class then begin 
+        if not getvalue(adatacontext,das_none) then begin
+         exit;
+        end;
+       end
+       else begin //dk_object
+        if not getaddress(adatacontext,true) then begin
+         exit;
+        end;
+        isaddress:= true;
+       end;
+       if k1 in [ek_field,ek_property] then begin
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;
@@ -2380,10 +2392,12 @@ fieldendlab:
            d.kind:= ck_factprop;
            d.dat.factprop.propele:= ele.eledatarel(po4);
           end;
+         {
           if (pof_class in flags) and not firstcall then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
           end;
+         }
           d.dat.datatyp.typedata:= typ;
           d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
@@ -2503,7 +2517,7 @@ fieldendlab:
              end;
              if sf_classmethod in subflags1 then begin
               if icf_virtual in typ1^.infoclass.flags then begin
-               if not getaddress(adatacontext,true) then begin
+               if not isaddress and not getaddress(adatacontext,true) then begin
                 exit;
                end;
                offsetad(adatacontext,typ1^.infoclass.virttaboffset);
@@ -2518,7 +2532,7 @@ fieldendlab:
               subflags:= subflags + [dsf_instanceonstack,dsf_classdefonstack];
              end
              else begin
-              if not getaddress(adatacontext,true) then begin
+              if not isaddress and not getaddress(adatacontext,true) then begin
                                                  //get object address
                exit;
               end;

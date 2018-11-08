@@ -1205,7 +1205,7 @@ begin
          end
          else begin
           d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
-          if (p1+1)^.d.kind = ck_const then begin
+          if (p1 < pe) and ((p1+1)^.d.kind = ck_const) then begin
            inc(p1);
            getstringident(getstackindex(p1),d.subdef.libname);
 //           d.subdef.libname:= p1^.d.ident.ident;
@@ -1214,7 +1214,7 @@ begin
         end;
         tk_name: begin
          d.subdef.flags:= d.subdef.flags + [{sf_external,}sf_header];
-         if (p1+1)^.d.kind = ck_const then begin
+         if (p1 < pe) and ((p1+1)^.d.kind = ck_const) then begin
           inc(p1);
           getstringident(getstackindex(p1),d.subdef.funcname);
 //          d.subdef.funcname:= p1^.d.ident.ident;
