@@ -45,6 +45,7 @@ const
   (name: '__mla__personality'; flags: []),
   (name: '__mla__malloc'; flags: []),
   (name: '__mla__calloc'; flags: []),
+  (name: '__mla__realloc'; flags: []),
   (name: '__mla__free'; flags: []),
   (name: '__mla__zeropointerar'; flags: []),
   (name: '__mla__increfsize'; flags: []),

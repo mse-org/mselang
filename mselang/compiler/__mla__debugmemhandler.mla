@@ -16,10 +16,12 @@ type
  
 procedure __mla__malloc(size: size_t): pointer;
 procedure __mla__calloc(nmemb: size_t; size: size_t): pointer;
+procedure __mla__realloc(ptr: pointer; size: size_t): pointer;
 procedure __mla__free(ptr: pointer);
 
 procedure malloc(size: size_t): pointer [external];
 procedure calloc(nmemb: size_t; size: size_t): pointer [external];
+procedure realloc(ptr: pointer; size: size_t): pointer [external];
 procedure free(ptr: pointer) [external];
 
 implementation
@@ -36,6 +38,17 @@ procedure __mla__calloc(nmemb: size_t; size: size_t): pointer [noexception];
 begin
  result:= calloc(nmemb,size);
  inc(alloccount);
+end;
+
+procedure __mla__realloc(ptr: pointer; size: size_t): pointer;
+begin
+ if (ptr = nil) and (size > 0) then
+  inc(alloccount)
+ end;
+ result:= realloc(ptr,size);
+ if (ptr <> nil) and (size = 0) then
+  dec(alloccount)
+ end;
 end;
 
 procedure __mla__free(ptr: pointer) [noexception];

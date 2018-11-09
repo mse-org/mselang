@@ -26,6 +26,7 @@ type
   cs_personality,
   cs_malloc,
   cs_calloc,
+  cs_realloc,
   cs_free,
   cs_zeropointerar,
   cs_increfsize,

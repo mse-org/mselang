@@ -5044,6 +5044,7 @@ procedure getmemop();
 begin
  with pc^.par do begin
   callcompilersub(cs_malloc,true,[bcstream.ssaval(ssas1)]); //1ssa
+                   //todo: debugcall on demand only
 //  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
 //  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
@@ -5061,6 +5062,7 @@ begin
  with pc^.par do begin
   callcompilersub(cs_calloc,true,[bcstream.ssaval(ssas1),
                                          bcstream.constval(i32consts[1])]);
+                   //todo: debugcall on demand only
 //  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
 //  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
@@ -5078,6 +5080,7 @@ procedure freememop();
 begin
  with pc^.par do begin
   callcompilersub(cs_free,false,[bcstream.ssaval(ssas1)]);
+                   //todo: debugcall on demand only
 //  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
 //                                                    [bcstream.ssaval(ssas1)]);
  end;
@@ -5088,7 +5091,9 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
-  callinternalfunc(if_realloc,[bcstream.relval(0),bcstream.ssaval(ssas2)]);
+  callcompilersub(cs_realloc,true,[bcstream.relval(0),bcstream.ssaval(ssas2)]);
+                   //todo: debugcall on demand only
+//  callinternalfunc(if_realloc,[bcstream.relval(0),bcstream.ssaval(ssas2)]);
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;

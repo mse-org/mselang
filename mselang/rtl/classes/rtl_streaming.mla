@@ -166,8 +166,6 @@ begin
  fcount:= 0;
  fcapacity:= 0;
  fdata:= nil;
-writeln('1 ',self);
-fcount:= 123;
 end;
 
 method Ocomponentlist.fini();
@@ -180,13 +178,11 @@ end;
 method Ocomponentlist.grow();
 begin
  fcapacity:= fcount*2+16;
-writeln('3 ',self,' ',fcount,' ',fcapacity);
  reallocmem(fdata,fcapacity*sizeof(pointer));
 end;
 
 method Ocomponentlist.add(const acomponent: Tcomponent);
 begin
-writeln('4 ',self,' ',fcount,' ',fcapacity);
  if fcount >= fcapacity then
   grow();
  end;
@@ -266,7 +262,6 @@ begin
  if (acomponent.fowner <> self) then
   if fcomponents = nil then
    fcomponents:= Ccomponents.create();
-writeln('2 ',fcomponents);
   end;
   fcomponents.fcomponents.add(acomponent);
   acomponent.fowner:= self;
