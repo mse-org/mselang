@@ -840,9 +840,15 @@ var                     //todo: optimize, use tables, complete
   op1: opcodety;
   i1: int32;
  begin
+  result:= false;
+  if acontext^.d.dat.indirection <> 0 then begin
+   if not getvalue(acontext,das_none) then begin
+    exit;
+   end;
+  end;
   if (coo_notrunk in aoptions) and (intbits[source1^.h.datasize] >
                                            intbits[dest^.h.datasize]) then begin
-   result:= false;
+   exit;
   end
   else begin
    result:= true;
