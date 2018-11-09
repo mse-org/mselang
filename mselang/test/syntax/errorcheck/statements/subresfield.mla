@@ -1,0 +1,13 @@
+program subresfield;
+type
+ recty = record
+  c: int32;
+ end;
+
+procedure tes(): recty;
+begin
+end;
+
+begin
+ tes().c;
+end.

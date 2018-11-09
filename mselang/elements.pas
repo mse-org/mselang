@@ -1492,6 +1492,7 @@ var
  po1: pelementhashdataty;
  po2,po3: pelementinfoty;
  recursioncount: int32;
+ vis1: visikindsty;
 label
  next;
 begin
@@ -1518,7 +1519,11 @@ begin
      else begin
       element:= po1^.data.data;
      end;
-     result:= (po2^.header.visibility*avislevel <> []) and
+     vis1:= po2^.header.visibility*avislevel;
+     if po2^.header.defunit <> info.s.unitinfo then begin
+      exclude(vis1,vik_sameunit);
+     end;
+     result:= (vis1 <> []) and
                  ((akinds = []) or (po2^.header.kind in akinds));
      exit;
     end;

@@ -197,9 +197,13 @@ begin
    internalerror(ie_handler,'20140325D');
   end;
  {$endif}
+  currentfieldvisibility:= classpublicvisi;
   if isclass then begin
    s.currentstatementflags:= s.currentstatementflags + [stf_objdef,stf_class];
    currentfieldflags:= [af_classfield];
+   if s.dialect = dia_pas then begin
+    currentfieldvisibility:= classpublishedvisi;
+   end;
   end
   else begin
    s.currentstatementflags:= s.currentstatementflags + [stf_objdef];
@@ -220,15 +224,9 @@ begin
    d.cla.propertychain:= 0;
    include(d.handlerflags,hf_initvariant);
    d.cla.intfindex:= 0;
+   d.cla.flags:= [];
    if isclass then begin
     d.cla.flags:= [obf_class{,obf_zeroed,obf_virtual}];
-    d.cla.visibility:= classpublishedvisi;
-//    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
-   end
-   else begin
-    d.cla.flags:= [];
-    d.cla.visibility:= classpublicvisi;
-//    d.cla.fieldoffset:= 0;
    end;
    d.cla.virtualindex:= 0;
   end;
@@ -1029,9 +1027,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPRIVATE');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.cla.visibility:= classprivatevisi;
- end;
+ info.currentfieldvisibility:= classprivatevisi;
 end;
 
 procedure handleclassprotected();
@@ -1039,9 +1035,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROTECTED');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.cla.visibility:= classprotectedvisi;
- end;
+ info.currentfieldvisibility:= classprotectedvisi;
 end;
 
 procedure handleclasspublic();
@@ -1049,9 +1043,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLIC');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.cla.visibility:= classpublicvisi;
- end;
+ info.currentfieldvisibility:= classpublicvisi;
 end;
 
 procedure handleclasspublished();
@@ -1059,9 +1051,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLISHED');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.cla.visibility:= classpublishedvisi;
- end;
+ info.currentfieldvisibility:= classpublishedvisi;
 end;
 (*
 procedure handleclassfield();

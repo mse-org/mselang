@@ -1,13 +1,19 @@
 program test;
 uses
- rtl_streaming;
+ unit1;
+// rtl_streaming;
 
 type
-
+ tcomponent = class
+  public
+{$internaldebug on}
+   f1: int32;
+ end;
 var
  c1,c2: Tcomponent;
  s1: string8;
 begin
+{$internaldebug on}
  s1:= c1.fname;
 {
  c1:= Tcomponent.create(nil);

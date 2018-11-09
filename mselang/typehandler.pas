@@ -420,6 +420,7 @@ begin
    internalerror(ie_type,'20140325D');
   end;
  {$endif}
+  info.currentfieldvisibility:= allvisi;
   with contextstack[s.stackindex] do begin
    b.eleparent:= ele.elementparent;
    d.kind:= ck_recorddef;
@@ -548,7 +549,8 @@ begin
    if d.kind <> ck_recordcase then begin
     d.rec.fieldoffset:= d.rec.fieldoffsetmax;
    end;
-   checkrecordfield(allvisi,currentfieldflags,d.rec.fieldoffset,f1);
+   checkrecordfield(info.currentfieldvisibility,currentfieldflags,
+                                                   d.rec.fieldoffset,f1);
    i1:= s.stackindex-2;
    if d.kind = ck_recordcase then begin
     dec(i1);

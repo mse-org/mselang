@@ -1,0 +1,9 @@
+program classfield1;
+uses
+ rtl_streaming;
+var
+ c1: Tcomponent;
+ s1: string8;
+begin
+ s1:= c1.fname;
+end.

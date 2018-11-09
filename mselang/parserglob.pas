@@ -429,7 +429,7 @@ type
   propertychain: elementoffsetty;
 //  temps: segmentstatety;
   flags: objflagsty;
-  visibility: visikindsty;
+//  visibility: visikindsty;
   intfindex: integer;
 //  fieldoffset: dataoffsty;
 //  fieldoffsetmax: dataoffsty;
@@ -965,6 +965,7 @@ type
   currentclassvislevel: visikindsty;
   currentoperator,currentoperatorright: elementoffsetty;
   currentfieldflags: addressflagsty;
+  currentfieldvisibility: visikindsty;
   currenttypedef: elementoffsetty;
   currentparamupdatechain: dataoffsty;
 //  currentoperators: objectoperatorsty;
