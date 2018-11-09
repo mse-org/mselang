@@ -6,11 +6,14 @@ type
 
 var
  c1,c2: Tcomponent;
-
+ s1: string8;
 begin
+ s1:= c1.fname;
+{
  c1:= Tcomponent.create(nil);
  c2:= Tcomponent.create(nil);
  c1.insertcomponent(c2);
  c1.destroy();
  c2.destroy();
+}
 end.
