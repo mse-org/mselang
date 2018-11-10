@@ -1,4 +1,4 @@
-program test;
+program assign1;
 uses
  rtl_base,__mla__internaltypes;
 

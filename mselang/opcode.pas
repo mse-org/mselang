@@ -445,7 +445,7 @@ begin
       typ1:= ele.eledataabs(dat.datatyp.typedata);
      end;
      else begin
-      notimplementederror('');
+      notimplementederror('20181109A');
      end;
     end;
    end;

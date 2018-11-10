@@ -31,22 +31,26 @@ var
 procedure __mla__malloc(size: size_t): pointer [noexception];
 begin
  result:= malloc(size);
- inc(alloccount);
+ if result <> nil then
+  inc(alloccount);
+ end;
 end;
 
 procedure __mla__calloc(nmemb: size_t; size: size_t): pointer [noexception];
 begin
  result:= calloc(nmemb,size);
- inc(alloccount);
+ if result <> nil then
+  inc(alloccount);
+ end;
 end;
 
 procedure __mla__realloc(ptr: pointer; size: size_t): pointer;
 begin
- if (ptr = nil) and (size > 0) then
+ if (ptr = nil) then
   inc(alloccount)
  end;
  result:= realloc(ptr,size);
- if (ptr <> nil) and (size = 0) then
+ if (result = nil) then
   dec(alloccount)
  end;
 end;
@@ -54,7 +58,9 @@ end;
 procedure __mla__free(ptr: pointer) [noexception];
 begin
  free(ptr);
- dec(alloccount);
+ if ptr <> nil then
+  dec(alloccount);
+ end;
 end;
 
 finalization

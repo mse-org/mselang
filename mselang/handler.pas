@@ -3776,7 +3776,7 @@ var
  b1: boolean;
  prop1: ppropertydataty;
 label
- endlab;
+ endlab,restartlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('ASSIGNMENT');
@@ -4033,6 +4033,12 @@ begin
       goto endlab;
      end;
      if needsmanage then begin
+restartlab:
+      if source^.d.kind = ck_factprop then begin
+       if not getvalue(source,das_none) then begin
+        goto endlab;
+       end;
+      end;
       if source^.d.kind in factcontexts then begin
        sourcessa1:= source^.d.dat.fact.ssaindex;
       end;
@@ -4066,6 +4072,25 @@ begin
          end
          else begin
           ad1.offset:= -destvar.typ^.h.bytesize;
+         end;
+         if source^.d.kind = ck_factprop then begin
+          prop1:= ele.eledataabs(source^.d.dat.factprop.propele);
+          if pof_readsub in prop1^.flags then begin
+           if not getvalue(source,das_none) then begin
+            goto endlab;
+           end;
+           goto restartlab;
+          end
+          else begin
+         {$ifdef mse_checkinternalerror}
+           if not (pof_readfield in prop1^.flags) then begin
+            internalerror(ie_handler,'20181110A');
+           end;
+         {$endif}
+           offsetad(source,prop1^.readoffset);
+           source^.d.kind:= ck_fact;
+           sourcessa1:= source^.d.dat.fact.ssaindex;
+          end;
          end;
          ad1.ssaindex:= source^.d.dat.fact.ssaindex;
          writemanagedtypeop(mo_incref,destvar.typ,ad1);
