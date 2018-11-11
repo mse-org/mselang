@@ -23,6 +23,8 @@ resourcestring
  sunknownproperty = 'Unknown property "%s0"';
  sinvalidpropvalue = 'Invalid property value "%s0"';
  sinvalidproptype = 'Invalid property type "%s0"';
+
+ sinvalidname = '"%s" is not a valid component name';
  
 implementation
 end.

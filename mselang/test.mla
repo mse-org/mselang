@@ -1,40 +1,11 @@
 program test;
 uses
- rtl_base,__mla__internaltypes;
 
 type
-
- Tcomponent = class(Cbase)
-  property name: string8 read fname write setname;
-  private
-   fname: string8;
-   method setname(const avalue: string8);
-   method getname1(): string8;
-  public
-   property name1: string8 read getname1;
- end;
-
-method Tcomponent.setname(const avalue: string8);
-begin
- fname:= avalue;
-end;
-
-method Tcomponent.getname1(): string8;
-begin
- result:= fname+'123';
-end;
-
+ bigset = set of 0..3;
+{$dumpelements}
 var
- c1,c2: Tcomponent;
- s1: string8;
- s2: string8;
+ s1: bigset;
 begin
- c1:= Tcomponent.create();
- c1.fname:= 'abc';
- s1:= c1.name;
- s2:= c1.name1;
- c1.destroy();
- if (s1 = 'abc') and (s2 = 'abc123') then
-  exitcode:= 123;
- end;
+ include(bigset,2);
 end.

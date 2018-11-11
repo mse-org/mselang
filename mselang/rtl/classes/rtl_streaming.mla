@@ -18,9 +18,10 @@ uses
 type
  tpersistent = class;
 
- efilererror = class(exception) end;
- ereadererror = class(efilererror) end;
- ewritererror = class(ereadererror) end;
+ Efilererror = class(exception) end;
+ Ereadererror = class(Efilererror) end;
+ Ewritererror = class(Efilererror) end;
+ Ecomponent = class(exception) end;
 
  valuety = (va_none,va_null,va_list,
             va_int1,va_int8,va_int16,va_int32,va_int64,
@@ -115,12 +116,16 @@ type
   property name: string8 read fname write setname;
   property owner: Tcomponent read fowner write setowner;
   method componentcount(): int32;
+
   private
    fowner: Tcomponent;
    fcomponents: Ccomponents;
    fname: string8;
    method setname(const avalue: string8);
    method setowner(const avalue: Tcomponent);
+  protected
+   method error(const message: string8; const args: array of const);
+                   //raises an Ecomponenterror
  end;
  pcomponent = ^Tcomponent;
  
@@ -128,7 +133,36 @@ implementation
 uses
  rtl_rtlconsts,rtl_classutils,rtl_sysexceptions,rtl_rttiutils,rtl_format,
  rtl_system;
- 
+
+procedure isvalidident(const ident: string8): boolean;
+begin
+ result:= false;
+end;
+{
+procedure isvalidident(const ident: string8): boolean;
+const
+ startchars = ['_','A'..'Z','a'..'z'];
+ allowedchars = startchars + ['0']..['9'];
+var
+ p1,pe: pchar8;
+begin
+ result:= false;
+ p1:= pointer(ident);
+ if p1 <> nil then
+  if p1^ in startchars then
+   pe:= p1 + high(ident);
+   inc(p1);
+   while p1 <= pe do
+    if not (p1^ in allowedchars) then
+     exit;
+    end;
+    inc(p1);
+   end;
+   result:= true;
+  end;  
+ end;
+end;
+} 
 procedure writererror(const amessage: string8);
 begin
  raise ewritererror.create(amessage);
@@ -253,6 +287,9 @@ end;
 
 destructor Tcomponent.destroy();
 begin
+ if fowner <> nil then
+  fowner.removecomponent(self);
+ end;
  fcomponents.free();
  inherited;
 end;
@@ -288,12 +325,26 @@ end;
 
 method Tcomponent.setname(const avalue: string8);
 begin
- fname:= avalue;
+ if avalue <> fname then
+  if (avalue <> '') and not isvalidident(avalue) then
+   error(sinvalidname,[avalue]);
+  end;
+  fname:= avalue;
+ end;
 end;
 
 method Tcomponent.setowner(const avalue: Tcomponent);
 begin
  fowner:= avalue;
+end;
+
+method Tcomponent.error(const message: string8; const args: array of const);
+begin
+ if fname = '' then
+  raise Ecomponent.createfmt(message,args);
+ else
+  raise Ecomponent.createfmt(fname+': '+message,args);
+ end;
 end;
 
 { Tfiler }
