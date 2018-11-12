@@ -32,6 +32,7 @@ const
 
  maxidentlen = 256;
  includemax = 31;
+ maxsetelementcount = 256;
 
  bitoptypes: array[databitsizety] of typeallocinfoty = (
   (kind: das_none; size: 0; listindex: -1; flags: []),

@@ -25,8 +25,8 @@ macros.sta=9
  visible=1
 memodialog.sta=8
  [msememodialogfo]
- x=507
- y=359
+ x=778
+ y=380
  cx=432
  cy=295
  wsize=0
@@ -116,11 +116,11 @@ c=3
  c=10
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=26
    (
    kind=1
-   a=0,664,4,conditon
+   a=0,665,4,conditon
    c=2
     (
     kind=2
@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=39
     (
     kind=1
@@ -14507,7 +14507,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
@@ -14893,7 +14893,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,procedure
+    a=0,665,4,procedure
     c=4
      (
      kind=2
@@ -15007,8 +15007,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,sets
-    c=2
+    a=0,665,4,sets
+    c=3
      (
      kind=2
      a=0,648,1,set1 llvm
@@ -15054,6 +15054,35 @@ c=3
      ao=
      ae=
      aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,setrange
+     teststate=1
+     path=setrange.mla
+     comment=
+     cc=
+     cd=
+     rc=
+     rd=
+     in=
+     eo=
+     ao=1
+     ee=setrange.mla(4,6) Error: High range limit < low range limit
+     +setrange.mla(5,17) Error: Set elements must be positive
+     +setrange.mla(6,18) Error: High range limit < low range limit
+     +setrange.mla(7,18) Error: High range limit < low range limit
+     ae=0
+     eec=1
+     cr=0
+     ao=MSElang Compiler version 0.0
+     +Copyright (c) 2013-2018 by Martin Schreiber
+     ae=setrange.mla(4,6) Error: High range limit < low range limit
+     +setrange.mla(5,17) Error: Set elements must be positive
+     +setrange.mla(6,18) Error: High range limit < low range limit
+     +setrange.mla(7,18) Error: High range limit < low range limit
+     aec=1
      ie=0
      )
     teststate=1
@@ -15345,7 +15374,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,rtl
+  a=0,664,4,rtl
   c=7
    (
    kind=1
@@ -16175,47 +16204,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=78
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=38
  0 0
  0 0
  0 0

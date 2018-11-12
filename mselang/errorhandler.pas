@@ -98,7 +98,8 @@ type
             err_cannotgettypeinfo,err_wrongarrayitemtype,
             err_cannotassigntoconst,err_stringconstantexpected,
             err_attachnotallowed,err_invalidattachmentvalue,
-            err_setvarexpected,err_invaliddefault);
+            err_setvarexpected,err_invaliddefault,err_setelemustbepositive,
+            err_maxseteleallowed,err_highrangelower);
             
  errorinfoty = record
   level: errorlevelty;
@@ -365,7 +366,10 @@ const
   (level: erl_error; message: 'Attachments are not allowed here'),
   (level: erl_error; message: 'Invalid attachment value'),
   (level: erl_error; message: 'Set variable expected'),
-  (level: erl_error; message: 'Invalid default')
+  (level: erl_error; message: 'Invalid default'),
+  (level: erl_error; message: 'Set elements must be positive'),
+  (level: erl_error; message: 'Maximal %d set elements allowed'),
+  (level: erl_error; message: 'High range limit < low range limit')
  );
 
 procedure message1(const atext: string; const values: array of const); 

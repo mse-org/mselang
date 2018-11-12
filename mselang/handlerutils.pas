@@ -4553,8 +4553,14 @@ begin
       range.max:= infocard16.max;
      end
      else begin
-      range.min:= infocard32.min;
-      range.max:= infocard32.max;
+      if h.datasize <= das_32 then begin
+       range.min:= infocard32.min;
+       range.max:= infocard32.max;
+      end
+      else begin
+       range.min:= infocard64.min;
+       range.max:= infocard64.max;
+      end;
      end;
     end;
    end;
@@ -4569,8 +4575,14 @@ begin
       range.max:= infoint16.max;
      end
      else begin
-      range.min:= infoint32.min;
-      range.max:= infoint32.max;
+      if h.datasize <= das_32 then begin
+       range.min:= infoint32.min;
+       range.max:= infoint32.max;
+      end
+      else begin
+       range.min:= infoint64.min;
+       range.max:= infoint64.max;
+      end;
      end;
     end;
    end;

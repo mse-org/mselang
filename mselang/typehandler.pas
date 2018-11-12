@@ -317,6 +317,7 @@ var
  id1: identty;
  po1: ptypedataty;
  poa,pob: pcontextitemty;
+ si1: databitsizety;
 label
  endlab;
 begin
@@ -358,30 +359,163 @@ begin
     end;
    end;
    with contextstack[s.stackindex-1] do begin
+    si1:= das_64;
+    case poa^.d.dat.constval.kind of
+     dk_integer: begin
+      if poa^.d.dat.constval.vinteger > pob^.d.dat.constval.vinteger then begin
+       errormessage(err_highrangelower,[],poa);
+       goto endlab;
+      end;
+      if (poa^.d.dat.constval.vinteger >= -$80) and
+         (poa^.d.dat.constval.vinteger <= $7f) and
+         (pob^.d.dat.constval.vinteger >= -$80) and
+         (pob^.d.dat.constval.vinteger <= $7f) then begin
+       si1:= das_8;
+      end
+      else begin
+       if (poa^.d.dat.constval.vinteger >= -$8000) and
+          (poa^.d.dat.constval.vinteger <= $7fff) and
+          (pob^.d.dat.constval.vinteger >= -$8000) and
+          (pob^.d.dat.constval.vinteger <= $7fff) then begin
+        si1:= das_16;
+       end
+       else begin
+        if (poa^.d.dat.constval.vinteger >= -$80000000) and
+           (poa^.d.dat.constval.vinteger <= $7fffffff) and
+           (pob^.d.dat.constval.vinteger >= -$80000000) and
+           (pob^.d.dat.constval.vinteger <= $7fffffff) then begin
+         si1:= das_32;
+        end;
+       end;
+      end;
+     end;
+     dk_cardinal: begin
+      if poa^.d.dat.constval.vcardinal > pob^.d.dat.constval.vcardinal then begin
+       errormessage(err_highrangelower,[],poa);
+       goto endlab;
+      end;
+      if (poa^.d.dat.constval.vcardinal <= $ff) and
+         (pob^.d.dat.constval.vcardinal <= $ff) then begin
+       si1:= das_8;
+      end
+      else begin
+       if (poa^.d.dat.constval.vcardinal <= $ffff) and
+          (pob^.d.dat.constval.vcardinal <= $ffff) then begin
+        si1:= das_16;
+       end
+       else begin
+        if (poa^.d.dat.constval.vcardinal <= $ffffffff) and
+           (pob^.d.dat.constval.vcardinal <= $ffffffff) then begin
+         si1:= das_32;
+        end;
+       end;
+      end;
+     end;
+     dk_character: begin
+      if poa^.d.dat.constval.vcharacter > 
+                             pob^.d.dat.constval.vcharacter then begin
+       errormessage(err_highrangelower,[],poa);
+       goto endlab;
+      end;
+      si1:= das_32;
+      if (poa^.d.dat.constval.vcharacter <= $ff) and
+         (pob^.d.dat.constval.vcharacter <= $ff) then begin
+       si1:= das_8;
+      end
+      else begin
+       if (poa^.d.dat.constval.vcharacter <= $ffff) and
+          (pob^.d.dat.constval.vcharacter <= $ffff) then begin
+        si1:= das_16;
+       end;
+      end;
+     end;
+     else begin
+      internalerror1(ie_handler,'20181112A');
+     end;
+    end;
     if not ele.addelementduplicatedata(id1,ek_type,allvisi,po1) then begin
      identerror(-1,err_duplicateidentifier);
     end;
     d.typ.typedata:= ele.eledatarel(po1);
-    inittypedatasize(po1^,poa^.d.dat.constval.kind,d.typ.indirectlevel,das_32);
-                                                       //todo: other datasizes
+    inittypedatasize(po1^,poa^.d.dat.constval.kind,d.typ.indirectlevel,si1);
     include(po1^.h.flags,tf_subrange);
     case poa^.d.dat.constval.kind of
      dk_integer: begin
-      with po1^.infoint32 do begin  
-       min:= poa^.d.dat.constval.vinteger;
-       max:= pob^.d.dat.constval.vinteger;
+      case si1 of
+       das_8: begin
+        with po1^.infoint8 do begin  
+         min:= poa^.d.dat.constval.vinteger;
+         max:= pob^.d.dat.constval.vinteger;
+        end;
+       end;
+       das_16: begin
+        with po1^.infoint16 do begin  
+         min:= poa^.d.dat.constval.vinteger;
+         max:= pob^.d.dat.constval.vinteger;
+        end;
+       end;
+       das_32: begin
+        with po1^.infoint32 do begin  
+         min:= poa^.d.dat.constval.vinteger;
+         max:= pob^.d.dat.constval.vinteger;
+        end;
+       end;
+       das_64: begin
+        with po1^.infoint64 do begin  
+         min:= poa^.d.dat.constval.vinteger;
+         max:= pob^.d.dat.constval.vinteger;
+        end;
+       end;
       end;
      end;
      dk_cardinal: begin
-      with po1^.infocard32 do begin  
-       min:= poa^.d.dat.constval.vcardinal;
-       max:= pob^.d.dat.constval.vcardinal;
+      case si1 of
+       das_8: begin
+        with po1^.infocard8 do begin  
+         min:= poa^.d.dat.constval.vcardinal;
+         max:= pob^.d.dat.constval.vcardinal;
+        end;
+       end;
+       das_16: begin
+        with po1^.infocard16 do begin  
+         min:= poa^.d.dat.constval.vcardinal;
+         max:= pob^.d.dat.constval.vcardinal;
+        end;
+       end;
+       das_32: begin
+        with po1^.infocard32 do begin  
+         min:= poa^.d.dat.constval.vcardinal;
+         max:= pob^.d.dat.constval.vcardinal;
+        end;
+       end;
+       das_64: begin
+        with po1^.infocard64 do begin  
+         min:= poa^.d.dat.constval.vcardinal;
+         max:= pob^.d.dat.constval.vcardinal;
+        end;
+       end;
       end;
      end;
      dk_character: begin
-      with po1^.infochar32 do begin  
-       min:= poa^.d.dat.constval.vcharacter;
-       max:= pob^.d.dat.constval.vcharacter;
+      case si1 of
+       das_8: begin
+        with po1^.infochar8 do begin  
+         min:= poa^.d.dat.constval.vcharacter;
+         max:= pob^.d.dat.constval.vcharacter;
+        end;
+       end;
+       das_16: begin
+        with po1^.infochar16 do begin  
+         min:= poa^.d.dat.constval.vcharacter;
+         max:= pob^.d.dat.constval.vcharacter;
+        end;
+       end;
+       das_32: begin
+        with po1^.infochar32 do begin  
+         min:= poa^.d.dat.constval.vcharacter;
+         max:= pob^.d.dat.constval.vcharacter;
+        end;
+       end;
       end;
      end;
     end;
@@ -1172,6 +1306,7 @@ procedure handlesettype();
 var
  po1: ptypedataty;
  ele1: elementoffsetty;
+ ra1: ordrangety;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETTYPE');
@@ -1183,6 +1318,15 @@ begin
    if d.typ.indirectlevel = 0 then begin
     case po1^.h.kind of        //todo: check size and offset
      dk_boolean,dk_integer,dk_cardinal: begin
+      getordrange(po1,ra1);
+      if (ra1.min < 0) or (ra1.max < 0) then begin
+       errormessage(err_setelemustbepositive,[],1);
+       exit;
+      end;
+      if ra1.max >= maxsetelementcount then begin
+       errormessage(err_maxseteleallowed,[maxsetelementcount],1);
+       exit;
+      end;
      end;
      dk_enum: begin
       if not (enf_contiguous in po1^.infoenum.flags) then begin

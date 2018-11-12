@@ -2,10 +2,15 @@ program test;
 uses
 
 type
- bigset = set of 0..3;
-{$dumpelements}
+{$internaldebug on}
+ rangety = 1..1110;
+ set1ty = set of rangety;
 var
- s1: bigset;
+ s1: set1ty;
 begin
- include(bigset,2);
+ include(s1,2);
+ writeln(int32(s1));
+ if 2 in s1 then begin
+  exitcode:= 123;
+ end;
 end.
