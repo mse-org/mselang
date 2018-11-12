@@ -3322,7 +3322,7 @@ procedure handleinsimpexp();
 var
 // baseoffset: int32;
  poa,pob: pcontextitemty;
- typ1: ptypedataty;
+ typ1,typ2: ptypedataty;
 label
  errlab,endlab;
 begin
@@ -3337,16 +3337,15 @@ begin
  {$ifdef mse_checkinternalerror}
  {$endif}
 //  baseoffset:= s.stacktop-s.stackindex-2;
-  if getvalue(poa,das_32,true) and getvalue(pob,das_none,true) and 
-                   (pob^.d.dat.datatyp.indirectlevel = 0) then begin
+  if getvalue(pob,das_none,true) and 
+                  (pob^.d.dat.datatyp.indirectlevel = 0) then begin
    typ1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
    if typ1^.h.kind = dk_set then begin
-    if basetype(poa^.d.dat.datatyp.typedata) <> 
-              basetype(typ1^.infoset.itemtype) then begin
-     goto errlab;
+    typ2:= ele.eledataabs(typ1^.infoset.itemtype);
+    if tryconvert(poa,typ2,0,[]) then begin
+     setinop1(poa,pob,false);
+     goto endlab;
     end;
-    setinop1(poa,pob,false);
-    goto endlab;
    end;
   end;
 errlab:
