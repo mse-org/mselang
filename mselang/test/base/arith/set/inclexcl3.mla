@@ -1,0 +1,23 @@
+program inclexcl3;
+uses
+type
+ enuty = 0..2;
+ enusty = set of enuty;
+ penusty = ^enusty;
+ enu2ty = (en2_0,en2_1);
+
+var
+ set1,set2: enusty;
+ b1: boolean;
+ ar1: array[enuty] of int32;
+ i1: int32;
+begin
+ set1[2]:= true;
+ set1[1]:= true;
+ set2:= set1;
+ set2[1]:= false;
+ b1:= 1 in set1;
+ if b1 and (int32(set1) = 6) and (int32(set2) = 4) then
+  exitcode:= 123;
+ end;
+end.
