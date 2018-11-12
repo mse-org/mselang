@@ -194,6 +194,7 @@ const
 type 
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
+                  das_bigint,
                   das_sub,das_meta);
  systypety = (st_none,st_nil,st_forward,
               st_pointer,{st_method,}st_bool1,
@@ -243,10 +244,10 @@ const
  intbits: array[databitsizety] of intbitsizety = (
   //das_none, das_1,   das_2_7, das_8,das_9_15,das_16,das_17_31,
     ibs_none, ibs_none,ibs_none,ibs_8,ibs_none,ibs_16,ibs_none,
-  //das_32,das_33_63,das_64,             
+  //das_32,das_33_63,das_64,
     ibs_32,ibs_none, ibs_64,
-  //das_pointer,das_f16, das_f32, das_f64, das_sub, das_meta);
-    ibs_none,   ibs_none,ibs_none,ibs_none,ibs_none,ibs_none
+  //das_pointer,das_f16, das_f32, das_f64,das_bigint, das_sub, das_meta);
+    ibs_none,   ibs_none,ibs_none,ibs_none,ibs_none,  ibs_none,ibs_none
  );
 
 type

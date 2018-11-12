@@ -619,16 +619,16 @@ const
  bitsizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      7,    8,      15,    16,       31,    32,
-//das_33_63,das_64,das_pointer,         das_f16,das_f32,das_f64,
-         63,    64,targetpointerbitsize,     16,     32,     64,
+//das_33_63,das_64,das_pointer,         das_f16,das_f32,das_f64,das_bigint,
+         63,    64,targetpointerbitsize,     16,     32,     64,    0,
 //das_sub,             das_meta
   targetpointerbitsize,0);
          
  bytesizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      1,    1,       2,     2,        4,     4,
-//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
-          8,     8,targetpointersize,2,      4,      8,
+//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,das_bigint,
+          8,     8,targetpointersize,2,      4,      8,    0,
 //das_sub,          das_meta
   targetpointersize,0);
  

@@ -50,6 +50,7 @@ const
   (kind: das_f16; size: 16; listindex: ord(das_f16); flags: []),
   (kind: das_f32; size: 32; listindex: ord(das_f32); flags: []),
   (kind: das_f64; size: 64; listindex: ord(das_f64); flags: []),
+  (kind: das_bigint; size: 0; listindex: -1; flags: []),
   (kind: das_sub; size: targetpointerbitsize; listindex: -1; flags: []),
   (kind: das_meta; size: 0; listindex: -1; flags: [])
  );
@@ -69,6 +70,7 @@ const
   16,                  //das_f16
   32,                  //das_f32
   64,                  //das_f64
+  0,                   //das_bigint
   targetpointerbitsize,//das_sub
   0                    //das_meta
  );

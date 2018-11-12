@@ -1307,6 +1307,7 @@ var
  po1: ptypedataty;
  ele1: elementoffsetty;
  ra1: ordrangety;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETTYPE');
@@ -1315,18 +1316,18 @@ begin
   if (s.stacktop-s.stackindex = 1) and (d.typ.typedata <> 0) then begin
    ele1:= d.typ.typedata;
    po1:= ele.eledataabs(ele1);
+   getordrange(po1,ra1);
+   if (ra1.min < 0) or (ra1.max < 0) then begin
+    errormessage(err_setelemustbepositive,[],1);
+    exit;
+   end;
+   if ra1.max >= maxsetelementcount then begin
+    errormessage(err_maxseteleallowed,[maxsetelementcount],1);
+    exit;
+   end;
    if d.typ.indirectlevel = 0 then begin
     case po1^.h.kind of        //todo: check size and offset
      dk_boolean,dk_integer,dk_cardinal: begin
-      getordrange(po1,ra1);
-      if (ra1.min < 0) or (ra1.max < 0) then begin
-       errormessage(err_setelemustbepositive,[],1);
-       exit;
-      end;
-      if ra1.max >= maxsetelementcount then begin
-       errormessage(err_maxseteleallowed,[maxsetelementcount],1);
-       exit;
-      end;
      end;
      dk_enum: begin
       if not (enf_contiguous in po1^.infoenum.flags) then begin
@@ -1348,8 +1349,19 @@ begin
      exit;
     end;
     currenttypedef:= ele.eledatarel(po1);
-    inittypedatasize(po1^,dk_set,
-           contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
+    i1:= int32(ra1.max);
+    if i1 < 32 then begin
+     inittypedatasize(po1^,dk_set,
+            contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
+    end
+    else begin
+     inittypedatasize(po1^,dk_set,
+            contextstack[s.stackindex-1].d.typ.indirectlevel,das_none);
+     with po1^ do begin
+      h.bytesize:= (i1+7) div 8;
+      h.bitsize:= h.bytesize * 8;
+     end;
+    end;
     with po1^ do begin
      infoset.itemtype:= ele1;
      resolveforwardtype(po1);

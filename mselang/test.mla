@@ -1,26 +1,12 @@
 program test;
 uses
+{$internaldebug on}
 type
- enuty = (en_0,en_1,en_2);
- enusty = set of enuty;
- penusty = ^enusty;
- enu2ty = (en2_0,en2_1);
+ setty = set of 0..31;
 
 var
- set1,set2: enusty;
- b1: boolean;
- ar1: array[enuty] of int32;
- i1: int32;
+ set1: setty;
 begin
- include(set1,en_2);
-writeln(int32(set1));
-{
- include(set1,en_1);
- set2:= set1;
- exclude(set2,en_1);
- b1:= en_1 in set1;
- if b1 and (int32(set1) = 6) and (int32(set2) = 4) then
-  exitcode:= 123;
- end;
-}
+// include(set1,1);
+// writeln(int32(set1));
 end.

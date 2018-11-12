@@ -227,6 +227,7 @@ type
   public
    constructor create();
    procedure clear(); override; //automatic entries for bitsize optypes...
+   function addintvalue(const abitsize: int32): int32; //returns listid
    function addbitvalue(const asize: databitsizety): integer; //returns listid
    function addbytevalue(const asize: integer): integer; //returns listid
    function addpointerarrayvalue(const asize: int32): integer;
@@ -937,32 +938,32 @@ const
  nullconsts: array[databitsizety] of nullconstty = (
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   nco_none,nco_i1,nco_none,nco_i8,nco_none, nco_i16,nco_none, nco_i32,               
-//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  nco_none, nco_i64,nco_none,   nco_none,nco_f32,nco_f64,
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,das_bigint
+  nco_none, nco_i64,nco_none,   nco_none,nco_f32,nco_f64, nco_none,
 //das_sub, das_meta
   nco_none,nco_none);
 
  oneconsts: array[databitsizety] of oneconstty = (
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   oco_none,oco_i1,oco_none,oco_i8,oco_none, oco_i16,oco_none, oco_i32,               
-//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  oco_none, oco_i64,oco_none,   oco_none,oco_f32,oco_f64,
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,das_bigint,
+  oco_none, oco_i64,oco_none,   oco_none,oco_f32,oco_f64, oco_none,
 //das_sub, das_meta
   oco_none,oco_none);
 
  maxconsts: array[databitsizety] of maxconstty = (
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   mco_none,mco_i1,mco_none,mco_i8,mco_none, mco_i16,mco_none, mco_i32,               
-//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  mco_none, mco_i64,mco_none,   mco_none,mco_none,mco_none,
+//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,das_bigint,
+  mco_none, mco_i64,mco_none,   mco_none,mco_none,mco_none,mco_none,
 //das_sub, das_meta
   mco_none,mco_none);
 
  ashrconsts: array[databitsizety] of ashrconstty = (
 //das_none,das_1, das_2_7, das_8, das_9_15, das_16, das_17_31,das_32,
   asco_none,asco_i1,asco_none,asco_i8,asco_none, asco_i16,asco_none, asco_i32,               
-//das_33_63,das_64, das_pointer,das_f16, das_f32, das_f64,
-  asco_none, asco_i64,asco_none,   asco_none,asco_none,asco_none,
+//das_33_63, das_64,das_pointer,das_f16,  das_f32, das_f64,   das_bigint,
+  asco_none, asco_i64,asco_none,asco_none,asco_none,asco_none,asco_none,
 //das_sub, das_meta
   asco_none,asco_none);
 
@@ -1473,6 +1474,18 @@ begin
  if addunique(bufferallocdataty((@avalue)^),pointer(result)) then begin
   result^.data.kind:= avalue.kind;
  end;
+end;
+
+function ttypehashdatalist.addintvalue(const abitsize: int32): int32;
+var
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
+begin
+ t1.header.size:= -1;
+ t1.header.data:= pointer(ptruint(abitsize));
+ t1.kind:= das_bigint;
+ po1:= addvalue(t1);
+ result:= po1^.data.header.listindex;
 end;
 
 function ttypehashdatalist.addbitvalue(const asize: databitsizety): integer;
@@ -3003,8 +3016,8 @@ const
  datasizetorttisize: array[databitsizety] of bitsizety = (
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
    bs_none, bs_1, bs_8,   bs_8,   bs_16, bs_16,    bs_32, bs_32,
-//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
-      bs_64, bs_64, bs_po,      bs_16,   bs_32, bs_64,
+//das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,das_bigint,
+      bs_64, bs_64, bs_po,      bs_16,   bs_32, bs_64, bs_none,
 //das_sub,das_meta 
    bs_none,bs_none
  );
