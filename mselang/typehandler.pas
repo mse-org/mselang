@@ -1350,14 +1350,7 @@ begin
     currenttypedef:= ele.eledatarel(po1);
     inittypedatasize(po1^,dk_set,
            contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
-    with {contextstack[s.stackindex-1],}po1^ do begin
-    {
-     kind:= dk_set; //fieldchain set in handlerecorddefstart()
-     datasize:= das_32;
-     bytesize:= 4;
-     bitsize:= 32;
-     indirectlevel:= d.typ.indirectlevel;
-    }
+    with po1^ do begin
      infoset.itemtype:= ele1;
      resolveforwardtype(po1);
     end;

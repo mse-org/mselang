@@ -969,8 +969,8 @@ begin
     t1:= ele.eledataabs(p1^.d.dat.datatyp.typedata);
     if (t1^.h.kind = dk_set) and
                     (p1^.d.dat.datatyp.indirectlevel = 0) then begin
-     if getaddress(p1,true) and 
-             tryconvert(p2,ptypedataty(ele.eledataabs(t1^.infoset.itemtype)),0,
+     t2:= ele.eledataabs(t1^.infoset.itemtype);
+     if getaddress(p1,true) and tryconvert(p2,t2,0,
                [coo_enum,coo_errormessage]) and getvalue(p2,das_none) then begin
       op1:= oc_include;
       if excl then begin
@@ -979,6 +979,11 @@ begin
       with additem(op1)^ do begin
        par.ssas1:= p1^.d.dat.fact.ssaindex;
        par.ssas2:= p2^.d.dat.fact.ssaindex;
+       par.stackop.t:= getopdatatype(p1^.d.dat.datatyp.typedata,0);
+       par.stackop.setflags:= [];
+       if t1^.h.datasize = t2^.h.datasize then begin
+        include(par.stackop.setflags,osf_noextension);
+       end;
       end;
      end;
      exit;

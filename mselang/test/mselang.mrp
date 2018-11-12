@@ -116,7 +116,7 @@ c=3
  c=10
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -840,7 +840,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,set
+    a=0,665,4,set
     c=3
      (
      kind=2
@@ -15073,6 +15073,7 @@ c=3
      +setrange.mla(5,17) Error: Set elements must be positive
      +setrange.mla(6,18) Error: High range limit < low range limit
      +setrange.mla(7,18) Error: High range limit < low range limit
+     +setrange.mla(8,17) Error: Maximal 256 set elements allowed
      ae=0
      eec=1
      cr=0
@@ -15082,6 +15083,7 @@ c=3
      +setrange.mla(5,17) Error: Set elements must be positive
      +setrange.mla(6,18) Error: High range limit < low range limit
      +setrange.mla(7,18) Error: High range limit < low range limit
+     +setrange.mla(8,17) Error: Maximal 256 set elements allowed
      aec=1
      ie=0
      )
@@ -16204,7 +16206,96 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=38
+rowstate=127
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

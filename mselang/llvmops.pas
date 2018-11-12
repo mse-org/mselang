@@ -2781,36 +2781,81 @@ begin
 end;
 
 procedure includeop();
+var
+ cast1: castopcodes;
 begin
  with pc^.par do begin
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //1
+                    //1-mask
+  cast1:= CAST_ZEXT;
+  if osf_noextension in stackop.setflags then begin
+   cast1:= CAST_BITCAST;
+  end;
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+            bcstream.typeval(stackop.t.listindex),cast1);          //2
+                    //shift count
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
+                                            bcstream.relval(0));       //3
+                    //mask
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                   bcstream.ptypeval(stackop.t.listindex));            //4
+                                     //address
+{
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                            bcstream.ssaval(ssas2));   //1
+                                            bcstream.ssaval(ssas2));   
                                      //mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                               bcstream.ptypeval(ord(das_32)));        //2
+                               bcstream.ptypeval(ord(das_32)));        
                                      //address
-  bcstream.emitloadop(bcstream.relval(0));                             //3
+}
+  bcstream.emitloadop(bcstream.relval(0));                             //5
                                      //value
-  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //4
+  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //6
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;
 
 procedure excludeop();
+var
+ cast1: castopcodes;
 begin
  with pc^.par do begin
+  bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //1
+                    //0-mask
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //2
+                    //1-mask
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(1),bcstream.relval(0)); //3
+                    //ffffff-mask
+  cast1:= CAST_ZEXT;
+  if osf_noextension in stackop.setflags then begin
+   cast1:= CAST_BITCAST;
+  end;
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+            bcstream.typeval(stackop.t.listindex),cast1);          //4
+                    //shift count
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(2),
+                                            bcstream.relval(0));       //5
+                    //mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(2),bcstream.relval(0)); //6
+                    //inverted mask
+
+{
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                            bcstream.ssaval(ssas2));   //1
+                                            bcstream.ssaval(ssas2));   
                                      //mask
   bcstream.emitbinop(BINOP_XOR,bcstream.relval(0),
-                           bcstream.constval(ord(mco_i32)));           //2
+                           bcstream.constval(ord(mco_i32)));           
                                      //not mask
+}
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                               bcstream.ptypeval(ord(das_32)));        //3
+                               bcstream.ptypeval(ord(das_32)));        //7
                                      //address
-  bcstream.emitloadop(bcstream.relval(0));                             //4
+  bcstream.emitloadop(bcstream.relval(0));                             //8
                                      //value
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0));  //5
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0)); //9
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;
@@ -5499,8 +5544,8 @@ const
   setcontainsssa = 3;
   setinssa = 3;
   setsetelessa = 8;
-  includessa = 4;
-  excludessa = 5;
+  includessa = 6;
+  excludessa = 9;
   
   getclassdefssa = 1;
   getclassrttissa = 1;

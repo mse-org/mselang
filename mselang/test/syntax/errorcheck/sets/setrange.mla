@@ -5,6 +5,7 @@ type
  set1ty = set of -1..5;
  set1ty = set of 1..-5;
  set1ty = set of 5..1;
+ set1ty = set of 5..1000;
 
 begin
 end.

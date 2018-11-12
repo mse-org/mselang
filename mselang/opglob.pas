@@ -1064,11 +1064,17 @@ type
  end;
  compopkindty = (cok_eq,cok_ne,cok_gt,cok_lt,cok_ge,cok_le);
 
+ opsetflagty = (osf_noextension);
+ opsetflagsty = set of opsetflagty;
+ 
  stackopty = record
   t: typeallocinfoty;
   case opcodety of
    oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,oc_cmpstring:(
     compkind: compopkindty;
+   );
+   oc_include,oc_exclude:(
+    setflags: opsetflagsty;
    );
  end;
  {
@@ -1623,7 +1629,7 @@ type
    oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64,
    }
-   oc_setcontains,oc_setin: (
+   oc_setcontains,oc_setin,oc_include,oc_exclude: (
     stackop: stackopty;
    );
 {
