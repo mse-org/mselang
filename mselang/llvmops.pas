@@ -2765,21 +2765,20 @@ begin
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));          //3
                     //mask
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                            bcstream.typeval(stackop.setinfo.listindex)); //4
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(1));    //5
+  bcstream.emitalloca(bcstream.ptypeval(stackop.t.listindex));            //4
+   //todo: don't use data copy, use compilersub
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+                    //byte array
+  bcstream.emitbitcast(bcstream.relval(0),
+                           bcstream.ptypeval(stackop.setinfo.listindex)); //5
+  bcstream.emitloadop(bcstream.relval(0));                                //6
+                    //int bits
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(3));    //7
   bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //6
+            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //8
                     //0-mask
-  bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //7
+  bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //9
 
-{
-  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                               bcstream.ssaval(ssas1));   //1
-  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));//2
-  bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),
-                                         bcstream.constval(ord(nco_i32)));//3
-}
  end;
 end;
 
@@ -5581,7 +5580,7 @@ const
   cmpstringssa = 1;
 
   setcontainsssa = 3;
-  setinssa = 7;
+  setinssa = 9;
   setsetelessa = 11;
   includessa = 6;
   excludessa = 8;
