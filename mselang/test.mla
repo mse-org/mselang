@@ -1,15 +1,22 @@
 program test;
 uses
-{$internaldebug on}
+ rtl_ctypes,rtl_libc;
 type
- setty = set of 0..63;
- ar5ty = array[0..4] of card8;
+ __time_t = int32;
+ __suseconds_t = int32;
 
-var
- set1: setty;
- ar1: ar5ty;
- b1: bool1;
+ timezone = record
+  tz_minuteswest: int32;
+  tz_dsttime: int32;
+ end;
+ ptimezone = ^timezone;
+
+ timeval = record
+  tv_sec : __time_t;
+  tv_usec : __suseconds_t;
+ end;
+ ptimeval = ^timeval;
+
+procedure gettimeofday(__tv: ptimeval; __tz: ptimezone): cint [external];
 begin
-// b1:= 1 in set1;
- include(set1,1);
 end.

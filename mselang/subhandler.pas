@@ -831,6 +831,8 @@ begin
   kind:= ck_subdef;
   subdef.flags:= po1^.subdef.flags;
   subdef.flags1:= po1^.subdef.flags1;
+  subdef.libname:= po1^.subdef.libname;
+  subdef.funcname:= po1^.subdef.funcname;
   po1^.kind:= akind;//ck_none;
  end;
 end;
