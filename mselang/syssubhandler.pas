@@ -980,6 +980,8 @@ begin
        par.ssas1:= p1^.d.dat.fact.ssaindex;
        par.ssas2:= p2^.d.dat.fact.ssaindex;
        par.stackop.t:= getopdatatype(p1^.d.dat.datatyp.typedata,0);
+       updatesetstackop(par,t1,t2);
+      {
        par.stackop.setflags:= [];
        if t1^.h.datasize = das_none then begin
         if co_llvm in o.compileoptions then begin
@@ -1005,6 +1007,7 @@ begin
          end;
         end;
        end;
+      }
       end;
      end;
      exit;

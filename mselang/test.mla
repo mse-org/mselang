@@ -2,24 +2,14 @@ program test;
 uses
 {$internaldebug on}
 type
- setty = set of 0..32;
+ setty = set of 0..63;
  ar5ty = array[0..4] of card8;
 
 var
  set1: setty;
  ar1: ar5ty;
+ b1: bool1;
 begin
- include(set1,32);
+// b1:= 1 in set1;
  include(set1,1);
- include(set1,0);
- include(set1,8);
- include(set1,9);
- exclude(set1,8);
- exclude(set1,0);
- ar1:= ar5ty(set1);
- writeln(sizeof(set1),': ',ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
- if (sizeof(set1) = 5) and (ar1[0] = 2) and (ar1[1] = 2) and (ar1[2] = 0) and
-        (ar1[3] = 0) and (ar1[4] = 2) then
-  exitcode:= 123;
- end;
 end.

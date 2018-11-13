@@ -3255,34 +3255,50 @@ end;
 
 function setinop1(poa,pob: pcontextitemty;
                                const pobisresult: boolean): boolean;
+var
+ p1,p2: ptypedataty;
 begin
- result:= tryconvert(poa,st_card32,[coo_enum,coo_errormessage]);
+ p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+{$ifdef mse_checkinternalerror}
+ if p1^.h.kind <> dk_set then begin
+  internalerror(ie_handler,'20181113B');
+ end;
+{$endif}
+ p2:= ele.eledataabs(p1^.infoset.itemtype);
+ result:= tryconvert(poa,p2,0,[coo_enum,coo_errormessage,coo_notrunc]);
  if result then begin
   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
+   if p1^.h.datasize = das_none then begin
+    notimplementederror('20181113C');
+   end;
    poa^.d.dat.constval.kind:= dk_boolean;
    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+   
    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
                    tintegerset(pob^.d.dat.constval.vset);
   end
   else begin
-   result:= getvalue(poa,das_32);
+   result:= getvalue(poa,das_none);
    if result then begin
     if pobisresult and (pob^.d.kind in refcontexts) then begin
      include(pob^.d.dat.flags,df_setelement);
      pob^.d.dat.ssa1:= poa^.d.dat.fact.ssaindex; 
                               //todo: ssa shift by op insert?
+     pob^.d.dat.typebackup:= pob^.d.dat.datatyp.typedata;
      pob^.d.dat.datatyp:= sysdatatypes[st_bool1];
     end
     else begin
      result:= getvalue(pob,das_none);
      if result then begin
-      addfactbinop(poa,pob,oc_setin);
-      if pobisresult then begin
-       setsysfacttype(pob^.d,st_bool1);
-       pob^.d.dat.fact.ssaindex:= poa^.d.dat.fact.ssaindex;
+      with addfactbinop(pob,poa,oc_setin)^ do begin
+       updatesetstackop(par,p1,p2);
+      end;
+      if not pobisresult then begin
+       setsysfacttype(poa^.d,st_bool1);
+       poa^.d.dat.fact.ssaindex:= pob^.d.dat.fact.ssaindex;
       end
       else begin
-       setsysfacttype(poa^.d,st_bool1);
+       setsysfacttype(pob^.d,st_bool1);
       end;
      end;
     end;
@@ -3294,20 +3310,35 @@ end;
 function setinop2(pob: pcontextitemty): boolean;
 var
  i1,i2: int32;
+ p1,p2: ptypedataty;
 begin
  result:= true;
  if pob^.d.kind in refcontexts then begin
   i1:= pob^.d.dat.ssa1;
   exclude(pob^.d.dat.flags,df_setelement);
-  pob^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
+  with pob^.d.dat.datatyp do begin
+   typedata:= pob^.d.dat.typebackup; //restore original value
+   flags:= [];
+   indirectlevel:= 0;
+   forwardident:= 0;
+  end;
   result:= getvalue(pob,das_none);
   if result then begin
    i2:= pob^.d.dat.fact.ssaindex;
+   p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if p1^.h.kind <> dk_set then begin
+    internalerror(ie_handler,'20181113C');
+   end;
+  {$endif}
+   p2:= ele.eledataabs(p1^.infoset.itemtype);
    with insertitem(oc_setin,pob,-1)^ do begin
-    par.ssas1:= i1;
-    par.ssas2:= i2;
+    par.ssas1:= i2; //set
+    par.ssas2:= i1; //index
     par.stackop.t:= getopdatatype(pob^.d.dat.datatyp.typedata,
                                     pob^.d.dat.datatyp.indirectlevel);
+    updatesetstackop(par,p1,p2);
+
     pob^.d.kind:= ck_fact;
     pob^.d.dat.fact.ssaindex:= par.ssad;
     pob^.d.dat.indirection:= 0;
@@ -3320,19 +3351,35 @@ end;
 function assignsetitem(const source,dest: pcontextitemty): boolean;
 var
  i1,i2: int32;
+ p1,p2: ptypedataty;
 begin
  result:= false;
  if checkassigncontext(dest) and
         tryconvert(source,st_bool1,[coo_enum,coo_errormessage]) then begin
   i1:= dest^.d.dat.ssa1; //item index
   exclude(dest^.d.dat.flags,df_setelement);
-  dest^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
+  with dest^.d.dat.datatyp do begin
+   typedata:= dest^.d.dat.typebackup; //restore original value
+   flags:= [];
+   indirectlevel:= 0;
+   forwardident:= 0;
+  end;
+//  dest^.d.dat.datatyp:= sysdatatypes[st_int32]; //restore original value
   if getaddress(dest,true) and getvalue(source,das_none) then begin
    i2:= dest^.d.dat.fact.ssaindex;
+   p1:= ele.eledataabs(dest^.d.dat.datatyp.typedata);
+  {$ifdef mse_checkinternalerror}
+   if p1^.h.kind <> dk_set then begin
+    internalerror(ie_handler,'20181113C');
+   end;
+  {$endif}
+   p2:= ele.eledataabs(p1^.infoset.itemtype);
    with additem(oc_setsetele)^ do begin
     par.ssas1:= i2;                           //set address
     par.ssas2:= i1;                           //item index
     par.ssas3:= source^.d.dat.fact.ssaindex;  //boolean value
+    par.stackop.t:= getopdatatype(dest^.d.dat.datatyp.typedata,0);
+    updatesetstackop(par,p1,p2);
    end;
   end;
  end;

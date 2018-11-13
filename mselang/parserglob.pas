@@ -555,6 +555,7 @@ type
   indirection: int32; //pending
   flags: dataflagsty;
   datatyp: typeinfoty;
+  typebackup: elementoffsetty; //used by df_setelement
   ssa1: int32;        //for set item index
   case contextkindty of
    ck_const:(

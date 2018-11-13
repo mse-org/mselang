@@ -144,6 +144,7 @@ procedure decrefsize(const arop: aropty;{ const atype: ptypedataty;}
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
+procedure updatesetstackop(var par: opparamty; const aset,aindex: ptypedataty);
 
 procedure setoptable(const aoptable: poptablety);
 {
@@ -206,7 +207,37 @@ begin
  pushsegaddrssaar[seg_classdef]:= optable^[ocssa_pushsegaddrclassdef].ssa;
  
 end;
- 
+
+procedure updatesetstackop(var par: opparamty; const aset,aindex: ptypedataty);
+begin
+ par.stackop.setinfo.flags:= [];
+ par.stackop.setinfo.listindex:= par.stackop.t.listindex;
+ if aset^.h.datasize = das_none then begin
+  if co_llvm in info.o.compileoptions then begin
+   par.stackop.setinfo.listindex:= 
+          info.s.unitinfo^.llvmlists.typelist.addintvalue(aset^.h.bitsize);
+  end;
+  if aindex^.h.bitsize < aset^.h.bitsize then begin
+   include(par.stackop.setinfo.flags,osf_extend);  //indexsize < setsize
+  end
+  else begin
+   if aindex^.h.bitsize > aset^.h.bitsize then begin
+    include(par.stackop.setinfo.flags,osf_trunc); //indexsize > setsize
+   end;
+  end;
+ end
+ else begin
+  if aindex^.h.datasize < aset^.h.datasize then begin
+   include(par.stackop.setinfo.flags,osf_extend);  //indexsize < setsize
+  end
+  else begin
+   if aindex^.h.datasize > aset^.h.datasize then begin
+    include(par.stackop.setinfo.flags,osf_trunc); //indexsize > setsize
+   end;
+  end;
+ end;
+end;
+
 const
  storenilops: aropadsty = (
   (    //aro_none

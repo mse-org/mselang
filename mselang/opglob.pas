@@ -1066,6 +1066,10 @@ type
 
  opsetflagty = (osf_extend,osf_trunc);
  opsetflagsty = set of opsetflagty;
+ setopinfoty = record
+  flags: opsetflagsty;
+  listindex: int32; //llvm type index for set int bits
+ end;
  
  stackopty = record
   t: typeallocinfoty;
@@ -1074,7 +1078,7 @@ type
     compkind: compopkindty;
    );
    oc_include,oc_exclude:(
-    setflags: opsetflagsty;
+    setinfo: setopinfoty;
    );
  end;
  {

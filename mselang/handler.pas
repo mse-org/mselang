@@ -3342,7 +3342,7 @@ begin
    typ1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
    if typ1^.h.kind = dk_set then begin
     typ2:= ele.eledataabs(typ1^.infoset.itemtype);
-    if tryconvert(poa,typ2,0,[]) then begin
+    if tryconvert(poa,typ2,0,[coo_errormessage,coo_notrunc]) then begin
      setinop1(poa,pob,false);
      goto endlab;
     end;
