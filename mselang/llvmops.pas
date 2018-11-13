@@ -2788,9 +2788,12 @@ begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
             bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //1
                     //1-mask
-  cast1:= CAST_ZEXT;
-  if osf_noextension in stackop.setflags then begin
-   cast1:= CAST_BITCAST;
+  cast1:= CAST_BITCAST;
+  if osf_extend in stackop.setflags then begin
+   cast1:= CAST_ZEXT;
+  end;
+  if osf_trunc in stackop.setflags then begin
+   cast1:= CAST_TRUNC;
   end;
   bcstream.emitcastop(bcstream.ssaval(ssas2),
             bcstream.typeval(stackop.t.listindex),cast1);          //2
@@ -2829,9 +2832,12 @@ begin
                     //1-mask
   bcstream.emitbinop(BINOP_SUB,bcstream.relval(1),bcstream.relval(0)); //3
                     //ffffff-mask
-  cast1:= CAST_ZEXT;
-  if osf_noextension in stackop.setflags then begin
-   cast1:= CAST_BITCAST;
+  cast1:= CAST_BITCAST;
+  if osf_extend in stackop.setflags then begin
+   cast1:= CAST_ZEXT;
+  end;
+  if osf_trunc in stackop.setflags then begin
+   cast1:= CAST_TRUNC;
   end;
   bcstream.emitcastop(bcstream.ssaval(ssas2),
             bcstream.typeval(stackop.t.listindex),cast1);          //4
@@ -2851,7 +2857,7 @@ begin
                                      //not mask
 }
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                               bcstream.ptypeval(ord(das_32)));        //7
+                  bcstream.ptypeval(ord(stackop.t.listindex)));        //7
                                      //address
   bcstream.emitloadop(bcstream.relval(0));                             //8
                                      //value

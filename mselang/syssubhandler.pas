@@ -971,7 +971,7 @@ begin
                     (p1^.d.dat.datatyp.indirectlevel = 0) then begin
      t2:= ele.eledataabs(t1^.infoset.itemtype);
      if getaddress(p1,true) and tryconvert(p2,t2,0,
-               [coo_enum,coo_errormessage]) and getvalue(p2,das_none) then begin
+               [coo_enum,coo_errormessage,coo_notrunc]) and getvalue(p2,das_none) then begin
       op1:= oc_include;
       if excl then begin
        op1:= oc_exclude;
@@ -981,8 +981,29 @@ begin
        par.ssas2:= p2^.d.dat.fact.ssaindex;
        par.stackop.t:= getopdatatype(p1^.d.dat.datatyp.typedata,0);
        par.stackop.setflags:= [];
-       if t1^.h.datasize = t2^.h.datasize then begin
-        include(par.stackop.setflags,osf_noextension);
+       if t1^.h.datasize = das_none then begin
+        if co_llvm in o.compileoptions then begin
+         par.stackop.t.listindex:= 
+                s.unitinfo^.llvmlists.typelist.addintvalue(t1^.h.bitsize);
+        end;
+        if t2^.h.bitsize < t1^.h.bitsize then begin
+         include(par.stackop.setflags,osf_extend);  //indexsize < setsize
+        end
+        else begin
+         if t2^.h.bitsize > t1^.h.bitsize then begin
+          include(par.stackop.setflags,osf_trunc); //indexsize > setsize
+         end;
+        end;
+       end
+       else begin
+        if t2^.h.datasize < t1^.h.datasize then begin
+         include(par.stackop.setflags,osf_extend);  //indexsize < setsize
+        end
+        else begin
+         if t2^.h.datasize > t1^.h.datasize then begin
+          include(par.stackop.setflags,osf_trunc); //indexsize > setsize
+         end;
+        end;
        end;
       end;
      end;

@@ -1064,7 +1064,7 @@ type
  end;
  compopkindty = (cok_eq,cok_ne,cok_gt,cok_lt,cok_ge,cok_le);
 
- opsetflagty = (osf_noextension);
+ opsetflagty = (osf_extend,osf_trunc);
  opsetflagsty = set of opsetflagty;
  
  stackopty = record

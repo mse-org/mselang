@@ -2660,6 +2660,9 @@ begin
      33..64: begin
       opsize1:= ops_64;
      end;
+     else begin
+      internalerror1(ie_handler,'20181113A');
+     end;
     end;
    end; 
   end;
@@ -4377,12 +4380,12 @@ begin
    else begin   
     if pta^.h.kind = dk_object then begin //try to convert from object
      po1:= ptb;
-     if not tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
+     if not tryconvert(poa,po1,indilev1,[coo_notrunc]) then begin
       with poa^ do begin
        po1:= ele.eledataabs(d.dat.datatyp.typedata);
        indilev1:= d.dat.datatyp.indirectlevel;
       end;
-      if tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
+      if tryconvert(pob,po1,indilev1,[coo_notrunc]) then begin
        bo1:= true;
       end;
      end
@@ -4392,12 +4395,12 @@ begin
     end
     else begin
      po1:= pta;
-     if not tryconvert(pob,po1,indilev1,[coo_notrunk]) then begin
+     if not tryconvert(pob,po1,indilev1,[coo_notrunc]) then begin
       with pob^ do begin
        po1:= ele.eledataabs(d.dat.datatyp.typedata);
        indilev1:= d.dat.datatyp.indirectlevel;
       end;
-      if tryconvert(poa,po1,indilev1,[coo_notrunk]) then begin
+      if tryconvert(poa,po1,indilev1,[coo_notrunc]) then begin
        bo1:= true;
       end;
      end

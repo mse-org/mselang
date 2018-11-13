@@ -22,7 +22,7 @@ uses
 
 type
  convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,coo_set,
-                    coo_notrunk,coo_errormessage,coo_paramindirect);
+                    coo_notrunc,coo_errormessage,coo_paramindirect);
  convertoptionsty = set of convertoptionty;
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
@@ -75,7 +75,7 @@ uses
  subhandler,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,handler,managedtypes,elementcache,
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
- parser,compilerunit;
+ parser,compilerunit,mseformatstr;
 
 function listtoset(const acontext: pcontextitemty;
                                out lastitem: pcontextitemty): boolean;
@@ -846,7 +846,7 @@ var                     //todo: optimize, use tables, complete
     exit;
    end;
   end;
-  if (coo_notrunk in aoptions) and (intbits[source1^.h.datasize] >
+  if (coo_notrunc in aoptions) and (intbits[source1^.h.datasize] >
                                            intbits[dest^.h.datasize]) then begin
    exit;
   end
@@ -940,6 +940,7 @@ var
  var1: pvardataty;
  lastitem: pcontextitemty;
  fl1: stringflagsty;
+ ra1: ordrangety;
 label
  endlab; 
 begin
@@ -1191,6 +1192,35 @@ begin
     result:= (dest^.h.kind = source1^.h.kind) and 
                            (dest^.h.datasize = source1^.h.datasize);
     if result then begin
+     if (coo_notrunc in aoptions) and (d.kind = ck_const) then begin
+      case source1^.h.kind of
+       dk_integer: begin
+        getordrange(dest,ra1);
+        if (ra1.min > d.dat.constval.vinteger) or 
+                (ra1.max < d.dat.constval.vinteger) then begin
+         if coo_errormessage in aoptions then begin
+          errormessage(err_valuerange,[inttostr(ra1.min),inttostr(ra1.max)],
+                                                                     acontext);
+         end;
+         result:= false;
+         exit;
+        end;
+       end;
+       dk_cardinal: begin
+        getordrange(dest,ra1);
+        if (card64(ra1.min) > d.dat.constval.vcardinal) or 
+                (card64(ra1.max) < d.dat.constval.vcardinal) then begin
+         if coo_errormessage in aoptions then begin
+          errormessage(err_valuerange,[inttostr(card64(ra1.min)),
+                                                  inttostr(card64(ra1.max))],
+                                                                     acontext);
+         end;
+         result:= false;
+         exit;
+        end;
+       end;
+      end;
+     end;
      if dest^.h.kind = dk_string then begin
       result:= dest^.itemsize = source1^.itemsize;
      end
