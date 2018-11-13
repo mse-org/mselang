@@ -1,22 +1,11 @@
 program test;
 uses
- rtl_ctypes,rtl_libc;
 type
- __time_t = int32;
- __suseconds_t = int32;
-
- timezone = record
-  tz_minuteswest: int32;
-  tz_dsttime: int32;
- end;
- ptimezone = ^timezone;
-
- timeval = record
-  tv_sec : __time_t;
-  tv_usec : __suseconds_t;
- end;
- ptimeval = ^timeval;
-
-procedure gettimeofday(__tv: ptimeval; __tz: ptimezone): cint [external];
+ setty = set of 0..31;
+var
+ s1: setty;
 begin
+// s1[1]:= true;
+ exclude(s1,1);
+ writeln(int32(s1));
 end.

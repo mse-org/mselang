@@ -2875,37 +2875,26 @@ end;
 procedure excludeop();
 begin
  with pc^.par do begin
-  bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);    //1
-                    //0-mask
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);    //2
+            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);    //1
                     //1-mask
-  bcstream.emitbinop(BINOP_SUB,bcstream.relval(1),bcstream.relval(0)); //3
-                    //ffffff-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast()); //4
+            bcstream.typeval(stackop.setinfo.listindex),getsetcast()); //2
                     //shift count
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(2),
-                                            bcstream.relval(0));       //5
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
+                                            bcstream.relval(0));       //3
                     //mask
-  bcstream.emitbinop(BINOP_XOR,bcstream.relval(2),bcstream.relval(0)); //6
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.setinfo.listindex),CAST_SEXT);    //4
+                    //all 1-mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(1),bcstream.relval(0)); //5
                     //inverted mask
-
-{
-  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                            bcstream.ssaval(ssas2));   
-                                     //mask
-  bcstream.emitbinop(BINOP_XOR,bcstream.relval(0),
-                           bcstream.constval(ord(mco_i32)));           
-                                     //not mask
-}
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                  bcstream.ptypeval(ord(stackop.setinfo.listindex)));  //7
-                                     //address
-  bcstream.emitloadop(bcstream.relval(0));                             //8
-                                     //value
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0)); //9
+                  bcstream.ptypeval(ord(stackop.setinfo.listindex)));  //6
+                    //address
+  bcstream.emitloadop(bcstream.relval(0));                             //7
+                    //value
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0)); //8
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;
@@ -5595,7 +5584,7 @@ const
   setinssa = 7;
   setsetelessa = 11;
   includessa = 6;
-  excludessa = 9;
+  excludessa = 8;
   
   getclassdefssa = 1;
   getclassrttissa = 1;
