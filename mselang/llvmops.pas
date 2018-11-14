@@ -2765,6 +2765,7 @@ begin
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));          //3
                     //mask
+{
   bcstream.emitalloca(bcstream.ptypeval(stackop.t.listindex));            //4
    //todo: don't use data copy, use compilersub
   bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
@@ -2773,11 +2774,12 @@ begin
                            bcstream.ptypeval(stackop.setinfo.listindex)); //5
   bcstream.emitloadop(bcstream.relval(0));                                //6
                     //int bits
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(3));    //7
+}
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(3));    //4
   bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //8
+            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //5
                     //0-mask
-  bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //9
+  bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //6
 
  end;
 end;
@@ -5580,7 +5582,7 @@ const
   cmpstringssa = 1;
 
   setcontainsssa = 3;
-  setinssa = 9;
+  setinssa = 6;
   setsetelessa = 11;
   includessa = 6;
   excludessa = 8;

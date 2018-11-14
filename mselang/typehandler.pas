@@ -1356,7 +1356,7 @@ begin
     end
     else begin
      inittypedatasize(po1^,dk_set,
-            contextstack[s.stackindex-1].d.typ.indirectlevel,das_none);
+            contextstack[s.stackindex-1].d.typ.indirectlevel,das_bigint{das_none});
      with po1^ do begin
       h.bytesize:= (i1+8) div 8; //round up to next byte
       h.bitsize:= h.bytesize * 8;

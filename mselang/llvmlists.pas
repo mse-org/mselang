@@ -229,6 +229,8 @@ type
    procedure clear(); override; //automatic entries for bitsize optypes...
    function addintvalue(const abitsize: int32): int32; //returns listid
    function addbitvalue(const asize: databitsizety): integer; //returns listid
+   function addbigintvalue(const asize: int32): int32; //returns listid
+                                   //bits
    function addbytevalue(const asize: integer): integer; //returns listid
    function addpointerarrayvalue(const asize: int32): integer;
    function addaggregatearrayvalue(const asize: int32;
@@ -466,6 +468,10 @@ type
    function addalias(const aliasee: int32; const name: identty): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety; const alinkage: linkagety; 
+                                     const externunit: boolean): int32;
+                                                            //returns listid
+   function addbigintvalue(const asize: integer; //bits
+                               const alinkage: linkagety; 
                                      const externunit: boolean): int32;
                                                             //returns listid
    function addbytevalue(const asize: integer;
@@ -1493,9 +1499,26 @@ var
  t1: typeallocdataty;
  po1: ptypelisthashdataty;
 begin
+{$ifdef mse_checkinternalerror}
+ if asize = das_bigint then begin
+  internalerror(ie_llvmlist,'20181114A');
+ end;
+{$endif}
  t1.header.size:= -1;
  t1.header.data:= pointer(ptruint(bitopsizes[asize]));
  t1.kind:= asize;
+ po1:= addvalue(t1);
+ result:= po1^.data.header.listindex;
+end;
+
+function ttypehashdatalist.addbigintvalue(const asize: int32): integer;
+var
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
+begin
+ t1.header.size:= -1;
+ t1.header.data:= pointer(ptruint(asize));
+ t1.kind:= das_bigint;
  po1:= addvalue(t1);
  result:= po1^.data.header.listindex;
 end;
@@ -2678,6 +2701,13 @@ begin
   debuginfo:= dummymeta;
   kind:= gak_alias;
  end;
+end;
+
+function tgloballocdatalist.addbigintvalue(const asize: integer; 
+                                       const alinkage: linkagety; 
+                                     const externunit: boolean): int32;
+begin 
+ result:= addnoinit(ftypelist.addbigintvalue(asize),alinkage,externunit);
 end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer; 

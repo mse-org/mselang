@@ -222,6 +222,9 @@ begin
        if not ispointervar and (address.indirectlevel = 0) or 
               ispointervar and (address.indirectlevel = 1) then begin
         size1:= h.bytesize;
+        if datasize1 = das_bigint then begin
+         size1:= h.bitsize;
+        end;
         vf.flags:= vf.flags + 
                     h.flags * [tf_needsmanage,tf_needsini,tf_needsfini];
         if tf_needsmanage in h.flags then begin

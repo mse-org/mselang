@@ -1135,10 +1135,18 @@ begin
   result:= bitoptypes[das_pointer];
  end
  else begin
-  if (atypedata^.h.datasize = das_none) and 
-                             (co_llvm in info.o.compileoptions) then begin
-   result.listindex:= info.s.unitinfo^.llvmlists.typelist.
-                                    addbytevalue(atypedata^.h.bytesize);
+  result.listindex:= ord(atypedata^.h.datasize); //default
+  if co_llvm in info.o.compileoptions then begin
+   case atypedata^.h.datasize  of
+    das_none: begin
+     result.listindex:= info.s.unitinfo^.llvmlists.typelist.
+                                     addbytevalue(atypedata^.h.bytesize);
+    end;
+    das_bigint: begin
+     result.listindex:= info.s.unitinfo^.llvmlists.typelist.
+                                     addbigintvalue(atypedata^.h.bitsize);
+    end;
+   end;
   end
   else begin
    result.listindex:= ord(atypedata^.h.datasize);
@@ -3268,7 +3276,7 @@ begin
  result:= tryconvert(poa,p2,0,[coo_enum,coo_errormessage,coo_notrunc]);
  if result then begin
   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
-   if p1^.h.datasize = das_none then begin
+   if p1^.h.datasize in [das_none,das_bigint] then begin
     notimplementederror('20181113C');
    end;
    poa^.d.dat.constval.kind:= dk_boolean;
@@ -4779,13 +4787,19 @@ begin
                                                      allockind,llvminitid,li1);
    end
    else begin
-    if adatasize = das_none then begin
-     address.address:= info.s.unitinfo^.llvmlists.globlist.
-                               addbytevalue(asize,li1,aexternal);
-    end
-    else begin
-     address.address:= info.s.unitinfo^.llvmlists.globlist.
-                            addbitvalue(adatasize,li1,aexternal);
+    case adatasize of
+     das_none: begin
+      address.address:= info.s.unitinfo^.llvmlists.globlist.
+                                addbytevalue(asize,li1,aexternal);
+     end;
+     das_bigint: begin
+      address.address:= info.s.unitinfo^.llvmlists.globlist.
+                              addbigintvalue(asize,li1,aexternal);
+     end;
+     else begin
+      address.address:= info.s.unitinfo^.llvmlists.globlist.
+                             addbitvalue(adatasize,li1,aexternal);
+     end;
     end;
    end;
   end;

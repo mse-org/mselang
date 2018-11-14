@@ -1,15 +1,29 @@
 program test;
 uses
+{$internaldebug on}
 type
  setty = set of 0..32;
  arty = array[0..4] of card8;
 var
+ b1: boolean;
+{
+procedure test();
+var
+ s1: setty;
+begin
+ exclude(s1,2);
+ include(s1,2);
+ b1:= 2 in s1;
+end;
+}
+var
  s1,s2,s3: setty;
  ar1: arty;
- b1: boolean;
 begin
-{$internaldebug on}
+// test();
+// writeln(ord(b1));
  b1:= 2 in s1;
+ writeln(ord(b1));
 {
  s1[2]:= true;
  s2[1]:= true;
