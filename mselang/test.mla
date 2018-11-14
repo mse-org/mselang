@@ -8,12 +8,15 @@ var
  ar1: arty;
  b1: boolean;
 begin
+{$internaldebug on}
+ b1:= 2 in s1;
+{
  s1[2]:= true;
  s2[1]:= true;
-{$internaldebug on}
  b1:= s1[2];
  writeln(ord(b1));
 // s3:= s1+s2;
  ar1:= arty(s1);
  writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
+}
 end.

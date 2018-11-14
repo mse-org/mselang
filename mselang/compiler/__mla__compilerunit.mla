@@ -152,6 +152,8 @@ procedure __mla__inttostr(const value: int32): string8;
 
 procedure __mla__frac64(value: flo64): flo64;
 
+//procedure __mla__inset(const value: pcard8; const index: int32): bool1;
+
 type
  conversionprocty = procedure(source: pointer): pointer;
  exceptionhandlerty = procedure(const exception: pointer);
@@ -2186,7 +2188,12 @@ begin
 // __mla__decrefsizeref(@result);
  result:= source;
 end;
-
+{
+procedure __mla__inset(const value: pcard8; const index: int32): bool1;
+begin
+ 
+end;
+}
 initialization
  bytestostring8:= @stringcopy;
  string8tobytes:= @stringcopy;

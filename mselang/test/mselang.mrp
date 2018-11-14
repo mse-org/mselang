@@ -35,8 +35,8 @@ memodialog.sta=8
 testedit.sta=9
  [testeditfo]
  stackedunder=
- x=1103
- y=221
+ x=1166
+ y=164
  cx=628
  cy=595
  wsize=0
@@ -10007,7 +10007,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,object
+  a=0,665,4,object
   c=28
    (
    kind=1
@@ -15088,14 +15088,16 @@ c=3
      in=
      eo=
      ao=1
-     ee=set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
+     ee=set1.mla(10,5) Error: Incompatible types: got "enu2ty" expected "enuty"
+     +set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
      +set1.mla(10,5) Error: Boolean expression expected
      ae=0
      eec=1
      cr=0
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
-     ae=set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
+     ae=set1.mla(10,5) Error: Incompatible types: got "enu2ty" expected "enuty"
+     +set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
      +set1.mla(10,5) Error: Boolean expression expected
      aec=1
      ie=0
@@ -15442,7 +15444,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,rtl
+  a=0,665,4,rtl
   c=7
    (
    kind=1
@@ -16272,7 +16274,71 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=125
+rowstate=189
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
