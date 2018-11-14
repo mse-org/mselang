@@ -237,6 +237,8 @@
   (ssa: pushimmf32ssa; proc: @pushimmf32op; flags: []), 
 //oc_pushimmf64
   (ssa: pushimmf64ssa; proc: @pushimmf64op; flags: []), 
+//oc_pushimmbigint
+  (ssa: pushimmbigintssa; proc: @pushimmbigintop; flags: []), 
 //oc_pushimmdatakind
   (ssa: pushimmdatakindssa; proc: @pushimmdatakindop; flags: []), 
   
@@ -977,6 +979,8 @@
   (ssa: popsegf32ssa; proc: @popsegf32op; flags: [of_relocseg]), 
 //oc_popsegf64
   (ssa: popsegf64ssa; proc: @popsegf64op; flags: [of_relocseg]), 
+//oc_popsegbigint
+  (ssa: popsegbigintssa; proc: @popsegbigintop; flags: [of_relocseg]), 
 //oc_popseg
   (ssa: popsegssa; proc: @popsegop; flags: [of_relocseg]), 
 
@@ -996,6 +1000,8 @@
   (ssa: poplocf32ssa; proc: @poplocf32op; flags: []), 
 //oc_poplocf64
   (ssa: poplocf64ssa; proc: @poplocf64op; flags: []), 
+//oc_poplocbigint
+  (ssa: poplocbigintssa; proc: @poplocbigintop; flags: []), 
 //oc_poploc
   (ssa: poplocssa; proc: @poplocop; flags: []), 
 
@@ -1037,6 +1043,8 @@
   (ssa: popparf32ssa; proc: @popparf32op; flags: []), 
 //oc_popparf64
   (ssa: popparf64ssa; proc: @popparf64op; flags: []), 
+//oc_popparbigint
+  (ssa: popparbigintssa; proc: @popparbigintop; flags: []), 
 //oc_poppar
   (ssa: popparssa; proc: @popparop; flags: []), 
 
@@ -1056,6 +1064,8 @@
   (ssa: popparindif32ssa; proc: @popparindif32op; flags: []), 
 //oc_popparindif64
   (ssa: popparindif64ssa; proc: @popparindif64op; flags: []), 
+//oc_popparindibigint
+  (ssa: popparindibigintssa; proc: @popparindibigintop; flags: []), 
 //oc_popparindi
   (ssa: popparindissa; proc: @popparindiop; flags: []), 
 

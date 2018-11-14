@@ -1218,6 +1218,13 @@ begin
  end;
 end;
 
+procedure pushimmbigintop();
+begin
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
+end;
+
 procedure pushimmdatakindop();
 begin
  notimplemented();
@@ -3540,6 +3547,11 @@ begin
  storeseg();
 end;
 
+procedure popsegbigintop();
+begin
+ storeseg();
+end;
+
 procedure popsegop();
 begin
  storeseg();
@@ -3581,6 +3593,11 @@ begin
 end;
 
 procedure poplocf64op();
+begin
+ storeloc();
+end;
+
+procedure poplocbigintop();
 begin
  storeloc();
 end;
@@ -3680,6 +3697,11 @@ begin
  storeloc();
 end;
 
+procedure popparbigintop();
+begin
+ storeloc();
+end;
+
 procedure popparop();
 begin
  storeloc();
@@ -3721,6 +3743,11 @@ begin
 end;
 
 procedure popparindif64op();
+begin
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
+end;
+
+procedure popparindibigintop();
 begin
  storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
@@ -5356,6 +5383,7 @@ const
   pushimm64ssa = 1;
   pushimmf32ssa = 1;
   pushimmf64ssa = 1;
+  pushimmbigintssa = 1;
   pushimmdatakindssa = 1;
   
   card8toflo32ssa = 1;
@@ -5705,6 +5733,7 @@ const
   popsegf16ssa = 0;
   popsegf32ssa = 0;
   popsegf64ssa = 0;
+  popsegbigintssa = 0;
   popsegssa = 0;
 
   poploc8ssa = 0;
@@ -5715,6 +5744,7 @@ const
   poplocf16ssa = 0;
   poplocf32ssa = 0;
   poplocf64ssa = 0;
+  poplocbigintssa = 0;
   poplocssa = 0;
 
   storelocpossa = 0;
@@ -5737,6 +5767,7 @@ const
   popparf16ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparf32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparf64ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparbigintssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
 
   popparindi8ssa = 2;
@@ -5747,6 +5778,7 @@ const
   popparindif16ssa = 2;
   popparindif32ssa = 2;
   popparindif64ssa = 2;
+  popparindibigintssa = 2;
   popparindissa = 2;
 
   pushnilssa = 1;

@@ -60,7 +60,7 @@ procedure handlevalueinherited();
 
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty;
-                               out lastitem: pcontextitemty): boolean;
+          out lastitem: pcontextitemty; datasize: databitsizety): boolean;
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
                                   out lastitem: pcontextitemty;
@@ -78,7 +78,7 @@ uses
  parser,compilerunit,mseformatstr;
 
 function listtoset(const acontext: pcontextitemty;
-                               out lastitem: pcontextitemty): boolean;
+          out lastitem: pcontextitemty; datasize: databitsizety): boolean;
 var
  i1,i2: int32;
  po1,po2: ptypedataty;
@@ -86,9 +86,15 @@ var
  op1: popinfoty;
  poe,poitem: pcontextitemty;
 begin
+ if datasize = das_none then begin
+  datasize:= das_32; //todo: variable size
+ end;
 {$ifdef mse_checkinternalerrror}
  if acontext^.d.kind <> ck_list then begin
   internalerror(ie_handler,'20160610A');
+ end;
+ if not (datasize in [das_set,das_bigset] then begin
+  internalerror(ie_handler,'20181114E');
  end;
 {$endif}
  result:= false;
@@ -98,8 +104,17 @@ begin
   initdatacontext(acontext^.d,ck_const);
   with acontext^ do begin
    d.dat.datatyp:= emptyset;
-   d.dat.constval.kind:= dk_set;
-   d.dat.constval.vset.value:= 0;
+   if datasize = das_bigint then begin
+    d.dat.constval.kind:= dk_bigset;
+    with d.dat.constval.vbigset do begin
+     offset:= 0;
+     flags:= [strf_empty]
+    end;
+   end
+   else begin
+    d.dat.constval.kind:= dk_set;
+    d.dat.constval.vset.value:= 0;
+   end;
   end;
  end
  else begin
@@ -954,7 +969,7 @@ begin
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
-     listtoset(acontext,lastitem);
+     listtoset(acontext,lastitem,dest^.h.datasize);
     end;
     else begin
      goto endlab;

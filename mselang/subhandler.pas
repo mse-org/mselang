@@ -3430,7 +3430,7 @@ var
     if context1^.d.kind = ck_list then begin
      case desttype^.h.kind of
       dk_set: begin
-       if not listtoset(context1,lastitem) then begin
+       if not listtoset(context1,lastitem,desttype^.h.datasize) then begin
         exit;
        end;
        conversioncost1:= 0;

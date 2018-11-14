@@ -19,7 +19,7 @@ unit opcode;
 interface
 uses
  msetypes,parserglob,globtypes,opglob,handlerglob,__mla__internaltypes,
- llvmlists;
+ llvmlists,msestrings;
  
 type
  loopinfoty = record
@@ -80,6 +80,7 @@ procedure setimmint32(const value: int32; var aimm: immty);
 procedure setimmint64(const value: int64; var aimm: immty);
 procedure setimmfloat32(const value: flo32; var aimm: immty);
 procedure setimmfloat64(const value: flo64; var aimm: immty);
+procedure setimmbigint(const value: stringvaluety; var aimm: immty);
 procedure setimmsize(const value: datasizety; var aimm: immty);
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
@@ -939,6 +940,17 @@ begin
  end
  else begin
   aimm.vflo64:= value;
+ end;
+end;
+
+procedure setimmbigint(const value: stringvaluety; var aimm: immty);
+begin
+ aimm.datasize:= das_bigint;
+ if co_llvm in info.o.compileoptions then begin
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addbigint(value);
+ end
+ else begin
+  notimplementederror('20181114F');
  end;
 end;
 

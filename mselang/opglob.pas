@@ -305,6 +305,7 @@ type
   oc_pushimm64,
   oc_pushimmf32,
   oc_pushimmf64,
+  oc_pushimmbigint,
   oc_pushimmdatakind,
   
   oc_card8toflo32,
@@ -633,6 +634,7 @@ type
   oc_popsegf16,
   oc_popsegf32,
   oc_popsegf64,
+  oc_popsegbigint,
   oc_popseg,
 
   oc_poploc8,
@@ -643,6 +645,7 @@ type
   oc_poplocf16,
   oc_poplocf32,
   oc_poplocf64,
+  oc_poplocbigint,
   oc_poploc,
   
   oc_storelocpo,
@@ -665,6 +668,7 @@ type
   oc_popparf16,
   oc_popparf32,
   oc_popparf64,
+  oc_popparbigint,
   oc_poppar,
 
   oc_popparindi8,
@@ -675,6 +679,7 @@ type
   oc_popparindif16,
   oc_popparindif32,
   oc_popparindif64,
+  oc_popparindibigint,
   oc_popparindi,
 
   oc_pushnil,

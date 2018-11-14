@@ -71,8 +71,8 @@ const
     sdk_none, sdk_none,   sdk_none,sdk_none,    sdk_none,
   //dk_sub,     dk_method
     sdk_pointer,sdk_none,
-  //dk_enum,dk_enumitem, dk_set,   dk_character,dk_data
-    sdk_none,   sdk_none, sdk_none,sdk_cardinal,  sdk_none);
+  //dk_enum,dk_enumitem, dk_set,   dk_bigset,dk_character,dk_data
+    sdk_none,   sdk_none, sdk_none,sdk_none, sdk_cardinal,  sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool,sdk_cardinal,sdk_integer,sdk_float,
@@ -228,7 +228,7 @@ procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                          const adatasize: databitsizety;
                                          const paramindirect: boolean = false);
                                                          //for dk_openarray
-procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
+procedure pushinsertconst(const stackoffset: int32; var constval: dataty;
                        const aopoffset: int32; const adatasize: databitsizety;
                                          const paramindirect: boolean = false);
 
@@ -1287,7 +1287,7 @@ begin
 end;
 
 procedure pushinsertconst(const stackoffset: int32;
-                          const constval: dataty;
+                          var constval: dataty;
                           const aopoffset: int32;
                           const adatasize: databitsizety;
                           const paramindirect: boolean = false);
@@ -1298,6 +1298,7 @@ var                                    //for dk_openarray
  si1: databitsizety;
  i1,i2: int32;
  op1: opcodety;
+ typ1: ptypedataty;
 begin
  with info do begin
 //  po1:= @contextstack[s.stackindex+stackoffset];
@@ -1359,9 +1360,42 @@ begin
     end;
    end;
    dk_set: begin
-    si1:= das_32;           //todo: arbitrary size
-    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-     setimmint32(constval.vset.value,par.imm);
+    case adatasize of
+     das_8: begin
+      with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
+       setimmint8(constval.vset.value,par.imm);
+      end;
+     end;
+     das_16: begin
+      with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
+       setimmint16(constval.vset.value,par.imm);
+      end;
+     end;
+     das_32: begin
+      with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
+       setimmint32(constval.vset.value,par.imm);
+      end;
+     end;
+     das_bigint: begin
+      if strf_empty in constval.vbigset.flags then begin
+       with contextstack[s.stackindex+stackoffset] do begin
+       {$ifdef mse_checkinternalerror}
+        if not (d.kind in datacontexts) then begin
+         internalerror(ie_handler,'20181114G');
+        end; 
+       {$endif}
+        typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+        constval.vbigset.offset:= typ1^.h.bitsize;
+       end;
+      end;
+      with insertitem(oc_pushimmbigint,stackoffset,aopoffset)^ do begin
+//       setimmbigint(constval.vset.value,par.imm);
+       setimmbigint(constval.vbigset,par.imm);
+      end;
+     end;
+     else begin
+      internalerror1(ie_handler,'20181114D');
+     end;
     end;
    end;
    dk_float: begin
@@ -3069,7 +3103,7 @@ begin
   end;
   acontext:= getpreviousnospace(acontext);
   if acontext^.d.kind = ck_list then begin
-   result:= listtoset(acontext,lastitem);
+   result:= listtoset(acontext,lastitem,das_none);
   end;
  end;
 end;
@@ -3480,7 +3514,7 @@ begin                    //todo: optimize
    goto errlab;
   end;
   if d.kind = ck_list then begin
-   if not listtoset(acontext,lastitem) then begin
+   if not listtoset(acontext,lastitem,adatasize) then begin
     goto errlab;
    end;
   end;

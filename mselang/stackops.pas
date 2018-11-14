@@ -1072,6 +1072,11 @@ begin
  pflo64(stackpush(8))^:= cpu.pc^.par.imm.vflo64; 
 end;
 
+procedure pushimmbigintop();
+begin
+ notimplemented();
+end;
+
 procedure pushimmdatakindop();
 begin
  vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= 
@@ -4792,6 +4797,11 @@ begin
                                                       puint64(stackpop(8))^;
 end;
 
+procedure popsegbigintop();
+begin
+ notimplemented();
+end;
+
 procedure popsegop();
 var
  i1: integer;
@@ -4906,6 +4916,11 @@ begin
  pv64ty(getlocaddress(cpu.pc^.par.memop))^:= pv64ty(stackpop(8))^;
 end;
 
+procedure poplocbigintop();
+begin
+ notimplemented();
+end;
+
 procedure poplocop();
 var
  i1: int32;
@@ -5009,6 +5024,11 @@ begin
  poploc64op();
 end;
 
+procedure popparbigintop();
+begin
+ notimplemented();
+end;
+
 procedure popparop();
 begin
  poplocop();
@@ -5052,6 +5072,11 @@ end;
 procedure popparindif64op();
 begin
  poplocindi64op();
+end;
+
+procedure popparindibigintop();
+begin
+ notimplemented();
 end;
 
 procedure popparindiop();
@@ -7181,6 +7206,7 @@ const
   pushimm64ssa = 0;
   pushimmf32ssa = 0;
   pushimmf64ssa = 0;
+  pushimmbigintssa = 0;
   pushimmdatakindssa = 0;
   
   card8toflo32ssa = 0;
@@ -7530,6 +7556,7 @@ const
   popsegf16ssa = 0;
   popsegf32ssa = 0;
   popsegf64ssa = 0;
+  popsegbigintssa = 0;
   popsegssa = 0;
 
   poploc8ssa = 0;
@@ -7540,6 +7567,7 @@ const
   poplocf16ssa = 0;
   poplocf32ssa = 0;
   poplocf64ssa = 0;
+  poplocbigintssa = 0;
   poplocssa = 0;
   
   storelocpossa = 0;
@@ -7562,6 +7590,7 @@ const
   popparf16ssa = 0;
   popparf32ssa = 0;
   popparf64ssa = 0;
+  popparbigintssa = 0;
   popparssa = 0;
 
   popparindi8ssa = 0;
@@ -7572,6 +7601,7 @@ const
   popparindif16ssa = 0;
   popparindif32ssa = 0;
   popparindif64ssa = 0;
+  popparindibigintssa = 0;
   popparindissa = 0;
 
   pushnilssa = 0;

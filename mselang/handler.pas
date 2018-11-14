@@ -1624,8 +1624,8 @@ const
    oc_none, oc_none,  oc_none,    oc_none, oc_none,
  //dk_classof,dk_sub, dk_method
    oc_none,   oc_none,oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
-   oc_none,oc_none,    oc_none,oc_none,     oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_bigset,dk_character,dk_data
+   oc_none,oc_none,    oc_none,oc_none,  oc_none,     oc_none
  );
 
  notops: array[datakindty] of opcodety = (
@@ -1637,8 +1637,8 @@ const
    oc_none, oc_none,  oc_none,    oc_none, oc_none,
  //dk_classof,dk_sub,  dk_method
    oc_none,   oc_none, oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
-   oc_none,oc_none,    oc_none,oc_none,     oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_bigset,dk_character,dk_data
+   oc_none,oc_none,    oc_none,oc_none,  oc_none,     oc_none
  );
 
 procedure handlefact1();
@@ -2525,7 +2525,7 @@ begin
  {$endif}
   poa:= getnextnospace(@contextstack[s.stackindex+2]);
   if poa^.d.kind = ck_list then begin
-   listtoset(poa,p1);
+   listtoset(poa,p1,das_none);
    s.stacktop:= getstackindex(poa);
   end;
   with contextstack[s.stacktop] do begin
@@ -3598,7 +3598,7 @@ const                //todo: segment and local indirect
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
    oc_popseg64,oc_popseg64,oc_popsegpo,oc_popsegf16,oc_popsegf32,oc_popsegf64,
  //das_bigint,
-   oc_none,
+   oc_popsegbigint,
  //das_sub,    das_meta
    oc_popsegpo,oc_none), 
  //das_none, das_1,     das_2_7,   das_8,                  //mdv_local
@@ -3608,7 +3608,7 @@ const                //todo: segment and local indirect
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
    oc_poploc64,oc_poploc64,oc_poplocpo,oc_poplocf16,oc_poplocf32,oc_poplocf64,
  //das_bigint,
-   oc_none,
+   oc_poplocbigint,
  //das_sub,   ,das_meta
    oc_poplocpo,oc_none), 
  //das_none, das_1,     das_2_7,   das_8,                  //mdv_param
@@ -3618,7 +3618,7 @@ const                //todo: segment and local indirect
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
    oc_poppar64,oc_poppar64,oc_popparpo,oc_popparf16,oc_popparf32,oc_popparf64,
  //das_bigint,
-   oc_none,
+   oc_popparbigint,
  //das_sub,    das_meta
    oc_popparpo,oc_none
    ), 
@@ -3631,7 +3631,7 @@ const                //todo: segment and local indirect
  //das_f16,         das_f32,          das_f64
    oc_popparindif16,oc_popparindif32,oc_popparindif64,
  //das_bigint,
-   oc_none,
+   oc_popparindibigint,
  //das_sub,        das_meta
    oc_popparindipo,oc_none
    ) 

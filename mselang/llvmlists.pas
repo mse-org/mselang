@@ -344,6 +344,7 @@ type
    function addipo(const avalue: int64): llvmvaluety;
    function addf32(const avalue: flo32): llvmvaluety;
    function addf64(const avalue: flo64): llvmvaluety;
+   function addbigint(const avalue: stringvaluety): llvmvaluety;
    function adddataoffs(const avalue: dataoffsty): llvmvaluety;
    function addvalue(const avalue; const asize: int32): llvmvaluety;
    function addvalue(const avalue: segaddressty;
@@ -2015,6 +2016,16 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
+function tconsthashdatalist.addbigint(const avalue: stringvaluety): llvmvaluety;
+begin
+ if strf_empty in avalue.flags then begin
+  result:= addnullvalue(ftypelist.addbigintvalue(avalue.offset));
+ end
+ else begin
+  notimplementederror('20181114G');
+ end;
+end;
+
 function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmvaluety;
 begin
  if info.target64bit then begin
@@ -3037,8 +3048,8 @@ const
   rtk_none,
 // dk_sub, dk_method,
   rtk_none,rtk_none,
-// dk_enum, dk_enumitem, dk_set, dk_character,
-  rtk_enum,rtk_enumitem,rtk_set,rtk_character,
+// dk_enum, dk_enumitem, dk_set,dk_bigset,dk_character,
+  rtk_enum,rtk_enumitem,rtk_set,rtk_set,  rtk_character,
 // dk_data
   rtk_none
  );
