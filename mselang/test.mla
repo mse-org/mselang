@@ -20,8 +20,8 @@ var
  s1,s2,s3: setty;
  ar1: arty;
 begin
- s1:= [];
- s2:= s1;
+ s1:= [-1];
+// s2:= s1;
 {
  s1[2]:= true;
  s2[1]:= true;

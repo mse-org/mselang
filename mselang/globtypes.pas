@@ -359,8 +359,14 @@ type
  end; 
 
  setvaluety = record
-  value: int32;  //todo: use arbitrary size
- // settype: elementoffsetty; //0 for empty set
+  min,max: int32;
+  case datakindty of
+   dk_set:(
+    setvalue: int32;
+   );
+   dk_bigset:(
+    bigsetvalue: stringvaluety; //strf_empty -> empty set, offset = bitcount
+   );
  end; 
 
  openarrayvaluety = record
@@ -406,11 +412,8 @@ type
    dk_enum:(
     venum: enumvaluety;
    );
-   dk_set:(
+   dk_set,dk_bigset:(
     vset: setvaluety;
-   );
-   dk_bigset:(
-    vbigset: stringvaluety; //strf_empty -> empty set, offset = bitcount
    );
    dk_openarray:(
     vopenarray: openarrayvaluety;

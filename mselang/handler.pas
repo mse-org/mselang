@@ -3085,8 +3085,8 @@ begin
                                              pob^.d.dat.constval.vaddress) = 0;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
-                                         tintegerset(pob^.d.dat.constval.vset);
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) =
+                                tintegerset(pob^.d.dat.constval.vset.setvalue);
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
@@ -3112,8 +3112,8 @@ begin
                                                   pob^.d.dat.constval.vboolean;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
-                                         tintegerset(pob^.d.dat.constval.vset);
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <>
+                                 tintegerset(pob^.d.dat.constval.vset.setvalue);
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
@@ -3201,8 +3201,8 @@ begin
                                                   pob^.d.dat.constval.vboolean;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
-                                         tintegerset(pob^.d.dat.constval.vset);
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <=
+                                 tintegerset(pob^.d.dat.constval.vset.setvalue);
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,

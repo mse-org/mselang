@@ -85,15 +85,16 @@ var
  ca1,ca2: card32;
  op1: popinfoty;
  poe,poitem: pcontextitemty;
+ min1,max1: int32;
 begin
  if datasize = das_none then begin
-  datasize:= das_32; //todo: variable size
+  datasize:= das_32; //todo: $packset
  end;
-{$ifdef mse_checkinternalerrror}
+{$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
   internalerror(ie_handler,'20160610A');
  end;
- if not (datasize in [das_set,das_bigset] then begin
+ if not (datasize in [das_8,das_16,das_32,das_bigint]) then begin
   internalerror(ie_handler,'20181114E');
  end;
 {$endif}
@@ -104,22 +105,28 @@ begin
   initdatacontext(acontext^.d,ck_const);
   with acontext^ do begin
    d.dat.datatyp:= emptyset;
-   if datasize = das_bigint then begin
-    d.dat.constval.kind:= dk_bigset;
-    with d.dat.constval.vbigset do begin
-     offset:= 0;
-     flags:= [strf_empty]
+   with d.dat.constval do begin
+    vset.min:= 0;
+    vset.max:= -1;
+    if datasize = das_bigint then begin
+     kind:= dk_bigset;
+     with d.dat.constval.vset.bigsetvalue do begin
+      offset:= 0;
+      flags:= [strf_empty]
+     end;
+    end
+    else begin
+     kind:= dk_set;
+     vset.setvalue:= 0;
     end;
-   end
-   else begin
-    d.dat.constval.kind:= dk_set;
-    d.dat.constval.vset.value:= 0;
    end;
   end;
  end
  else begin
   po2:= nil;
   ca1:= 0;          //todo: arbitrary size, ranges
+  min1:= maxint;
+  max1:= -1;
   poitem:= acontext+1;
   while poitem < poe do begin
    with poitem^ do begin
@@ -135,20 +142,36 @@ begin
      end;
      if not (po1^.h.kind in ordinaldatakinds) or 
                                   (po1^.h.indirectlevel <> 0) then begin
-      errormessage(err_ordinalexpexpected,[],getstackoffset(poitem));
+      errormessage(err_ordinalexpexpected,[],poitem);
       exit;
      end
      else begin
       if (po1 <> po2) then begin //todo: try to convert ordinals
-       incompatibletypeserror(po2,po1,getstackoffset(poitem));
+       incompatibletypeserror(po2,po1,poitem);
        exit;
       end;
      end;
      case d.kind of 
       ck_const: begin
-       ca2:= 1 shl d.dat.constval.vcardinal;
+       if (d.dat.constval.kind = dk_integer) and 
+                            (d.dat.constval.vinteger < 0) then begin
+        errormessage(err_setelemustbepositive,[],poitem);
+        exit;
+       end;
+       if d.dat.constval.vcardinal > maxsetelementcount then begin
+        errormessage(err_maxseteleallowed,[maxsetelementcount],poitem);
+        exit;
+       end;
+       i1:= d.dat.constval.vcardinal;
+       if i1 < min1 then begin
+        min1:= i1;
+       end;
+       if i1 > max1 then begin
+        max1:= i1;
+       end;
+       ca2:= 1 shl i1;
        if ca1 and ca2 <> 0 then begin
-        errormessage(err_duplicatesetelement,[],getstackoffset(poitem));
+        errormessage(err_duplicatesetelement,[],poitem);
         exit;
        end;
        ca1:= ca1 or ca2;
@@ -170,14 +193,16 @@ begin
   end;
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
-   with acontext^ do begin
-    d.dat.constval.kind:= dk_set;
-    d.dat.constval.vset.value:= ca1;
+   with acontext^.d.dat.constval do begin
+    kind:= dk_set;
+    vset.min:= min1;
+    vset.max:= max1;
+    vset.setvalue:= ca1;
    end;
   end
   else begin
    initdatacontext(acontext^.d,ck_fact); //wrong opmark?
-   with insertitem(oc_pushimm32,getstackoffset(acontext)+1,0)^ do begin 
+   with insertitem(oc_pushimm32,acontext+1,0)^ do begin 
                                                                //first op
     setimmint32(ca1,par.imm);
     i2:= par.ssad;
@@ -185,7 +210,7 @@ begin
    poitem:= acontext+1;
    while poitem < poe do begin
     if not (poitem^.d.kind in [ck_space,ck_const]) then begin
-     op1:= insertitem(oc_setbit,getstackoffset(poitem),-1);
+     op1:= insertitem(oc_setbit,poitem,-1);
      with op1^ do begin //last op
       par.ssas1:= i2;
       par.ssas2:= (op1-1)^.par.ssad;
@@ -1392,7 +1417,7 @@ begin
               dk_set: begin //todo: arbitrary size
                if coo_set in aoptions then begin
                 result:= true;
-                vcardinal:= vset.value;
+                vcardinal:= vset.setvalue;
                end;
               end;
              end;
@@ -1433,7 +1458,7 @@ begin
               dk_set: begin //todo: arbitrary size
                if coo_set in aoptions then begin
                 result:= true;
-                vinteger:= vset.value;
+                vinteger:= vset.setvalue;
                end;
               end;
              end;
@@ -1441,7 +1466,7 @@ begin
             dk_set: begin
              case source1^.h.kind of
               dk_set: begin
-               if vset.value = 0 then begin //empty set
+               if vset.setvalue = 0 then begin //empty set
                 result:= true; 
                end;
               end;

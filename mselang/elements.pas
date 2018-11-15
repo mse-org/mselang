@@ -1828,7 +1828,7 @@ var
      result:= result + inttostrmse(venum.value);
     end;
     dk_set: begin
-     result:= result + hextostrmse(card32(vset.value)); 
+     result:= result + hextostrmse(card32(vset.setvalue)); 
                //todo: arbitrary size, set format
     end;
     dk_string{8,dk_string16,dk_string32}: begin

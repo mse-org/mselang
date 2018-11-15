@@ -432,6 +432,8 @@ procedure incompatibletypeserror(const expected: string;
                                                    const astackoffset: int32);
 procedure incompatibletypeserror(const expected,got: ptypedataty; 
                                           const astackoffset: int32 = minint);
+procedure incompatibletypeserror(const expected,got: ptypedataty; 
+                                          const acontext: pcontextitemty);
 procedure incompatibletypeserror(const expected,got: elementoffsetty;
                                           const astackoffset: int32 = minint);
 procedure incompatibletypeserror(const sourcepos: sourceinfoty;
@@ -467,7 +469,7 @@ function errorcount(const alevel: errorlevelty): integer;
 implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys,
- identutils,grammarglob,__mla__internaltypes;
+ identutils,grammarglob,__mla__internaltypes,handlerutils;
  
 function typename(const ainfo: contextdataty;
                                     const aindirection: int32=0): string;
@@ -898,6 +900,12 @@ procedure incompatibletypeserror(const expected,got: ptypedataty;
 begin
  errormessage(err_incompatibletypes,[typeinfoname(got),typeinfoname(expected)],
                                                                   astackoffset);
+end;
+
+procedure incompatibletypeserror(const expected,got: ptypedataty; 
+                                          const acontext: pcontextitemty);
+begin
+ incompatibletypeserror(expected,got,getstackoffset(acontext));
 end;
 
 procedure incompatibletypeserror(const expected,got: elementoffsetty;

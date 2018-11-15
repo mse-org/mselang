@@ -1363,21 +1363,21 @@ begin
     case adatasize of
      das_8: begin
       with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-       setimmint8(constval.vset.value,par.imm);
+       setimmint8(constval.vset.setvalue,par.imm);
       end;
      end;
      das_16: begin
       with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
-       setimmint16(constval.vset.value,par.imm);
+       setimmint16(constval.vset.setvalue,par.imm);
       end;
      end;
      das_32: begin
       with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-       setimmint32(constval.vset.value,par.imm);
+       setimmint32(constval.vset.setvalue,par.imm);
       end;
      end;
      das_bigint: begin
-      if strf_empty in constval.vbigset.flags then begin
+      if strf_empty in constval.vset.bigsetvalue.flags then begin
        with contextstack[s.stackindex+stackoffset] do begin
        {$ifdef mse_checkinternalerror}
         if not (d.kind in datacontexts) then begin
@@ -1385,12 +1385,12 @@ begin
         end; 
        {$endif}
         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
-        constval.vbigset.offset:= typ1^.h.bitsize;
+        constval.vset.bigsetvalue.offset:= typ1^.h.bitsize;
        end;
       end;
       with insertitem(oc_pushimmbigint,stackoffset,aopoffset)^ do begin
 //       setimmbigint(constval.vset.value,par.imm);
-       setimmbigint(constval.vbigset,par.imm);
+       setimmbigint(constval.vset.bigsetvalue,par.imm);
       end;
      end;
      else begin
@@ -3317,7 +3317,7 @@ begin
    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
    
    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
-                   tintegerset(pob^.d.dat.constval.vset);
+                   tintegerset(pob^.d.dat.constval.vset.setvalue);
   end
   else begin
    result:= getvalue(poa,das_none);
@@ -5147,7 +5147,7 @@ begin
          write(d.dat.constval.venum.value,' ');
         end;
         dk_set: begin
-         write(hextostr(card32(d.dat.constval.vset.value)),' '); 
+         write(hextostr(card32(d.dat.constval.vset.setvalue)),' '); 
                    //todo: arbitrary size, set format
         end;
         dk_openarray: begin
