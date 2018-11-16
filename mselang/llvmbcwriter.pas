@@ -116,8 +116,8 @@ type
    procedure emit8(const avalue: card8);
    procedure emitvbr4(avalue: int32);
    procedure emitvbr5(avalue: int32);
-   procedure emitvbr6(avalue: int32);
-   procedure emitvbr6(avalue: int64);
+   procedure emitvbr6(avalue: int32;const signed: boolean = false);
+   procedure emitvbr6(avalue: int64;const signed: boolean = false);
    procedure emitvbr8(avalue: int32);
    procedure emitcode(const avalue: int32);
    procedure emitdata(const avalue: bcdataty);
@@ -304,10 +304,10 @@ type
    property debugloc: debuglocty read fdebugloc write fdebugloc;
    property nodebugloc: boolean read fnodebugloc write fnodebugloc;
  end;
-
+{
 function signedvbr(const avalue: integer): integer; inline;
 function signedvbr(const avalue: int64): int64; inline;
- 
+} 
 implementation
 uses
  errorhandler,msesys,sysutils,msebits,mseformatstr,identutils,msearrayutils,
@@ -392,6 +392,13 @@ function signedvbr(const avalue: integer): integer; inline;
 begin
  if avalue < 0 then begin
   result:= (-avalue shl 1) or 1;
+(*
+ {$ifdef mse_checkinternalerror}
+  if result = 1 then begin
+   internalerror(ie_llvm,'20181116A');
+  end;
+ {$endif}
+*)
  end
  else begin
   result:= avalue shl 1;
@@ -402,6 +409,13 @@ function signedvbr(const avalue: int64): int64; inline;
 begin
  if avalue < 0 then begin
   result:= (-avalue shl 1) or 1;
+(*
+ {$ifdef mse_checkinternalerror}
+  if result = 1 then begin
+   internalerror(ie_llvm,'20181116B');
+  end;
+ {$endif}
+*)
  end
  else begin
   result:= avalue shl 1;
@@ -1063,35 +1077,81 @@ end;
 procedure tllvmbcwriter.emitvbr4(avalue: int32);
 var
  i1: int32;
-begin
- repeat
-  i1:= avalue and $7;
-  if card32(avalue) - i1 <> 0 then begin
-   i1:= i1 or $80;
-  end;
-  emit4(i1);
-  avalue:= card32(avalue) shr 3;
- until avalue = 0;
+begin                             //32 28 24 20 16 12  8  4
+{
+ if avalue = 1 then begin //-0 -> -$ 8  0  0  0  0  0  0  0
+  emit4($1+$8); //3
+  emit4($0+$8); //6
+  emit4($0+$8); //9
+  emit4($0+$8); //12
+  emit4($0+$8); //15
+  emit4($0+$8); //18
+  emit4($0+$8); //21
+  emit4($0+$8); //24
+  emit4($0+$8); //27
+  emit4($0+$8); //30
+  emit4($2);    //33
+ end
+ else begin
+}
+  repeat
+   i1:= avalue and $7;
+   if card32(avalue) - i1 <> 0 then begin
+    i1:= i1 or $8;
+   end;
+   emit4(i1);
+   avalue:= card32(avalue) shr 3;
+  until avalue = 0;
+// end;
 end;
 
 procedure tllvmbcwriter.emitvbr5(avalue: int32);
 var
  i1: int32;
-begin
- repeat
-  i1:= avalue and $f;
-  if card32(avalue) - i1 <> 0 then begin
-   i1:= i1 or $10;
-  end;
-  emit5(i1);
-  avalue:= card32(avalue) shr 4;
- until avalue = 0;
+begin                             //32 28 24 20 16 12  8  4
+{
+ if avalue = 1 then begin //-0 -> -$ 8  0  0  0  0  0  0  0
+  emit5($1+$10); //4 sign
+  emit5($0+$10); //8
+  emit5($0+$10); //12
+  emit5($0+$10); //16
+  emit5($0+$10); //20
+  emit5($0+$10); //24
+  emit5($0+$10); //28
+  emit5($8);     //32
+ end
+ else begin
+}
+  repeat
+   i1:= avalue and $f;
+   if card32(avalue) - i1 <> 0 then begin
+    i1:= i1 or $10;
+   end;
+   emit5(i1);
+   avalue:= card32(avalue) shr 4;
+  until avalue = 0;
+// end;
 end;
 
-procedure tllvmbcwriter.emitvbr6(avalue: int32);
+procedure tllvmbcwriter.emitvbr6(avalue: int32; const signed: boolean = false);
 var
  i1: int32;
-begin
+begin                             
+ if signed then begin
+  avalue:= signedvbr(avalue);
+  if avalue = 1 then begin
+  //32 28 24 20 16 12  8  4
+  //-0 -> -$ 8  0  0  0  0  0  0  0
+   emit6($1+$20); //5 sign
+   emit6($0+$20); //10
+   emit6($0+$20); //15
+   emit6($0+$20); //20
+   emit6($0+$20); //25
+   emit6($0+$20); //30
+   emit6($4);     //35
+   exit;
+  end;
+ end;
  repeat
   i1:= avalue and $1f;
   if card32(avalue) - i1 <> 0 then begin
@@ -1102,10 +1162,31 @@ begin
  until avalue = 0;
 end;
 
-procedure tllvmbcwriter.emitvbr6(avalue: int64);
+procedure tllvmbcwriter.emitvbr6(avalue: int64; const signed: boolean = false);
 var
  i1: int64;
-begin
+begin                             
+ if signed then begin
+  avalue:= signedvbr(avalue);
+  if avalue = 1 then begin 
+          //64 60 56 52 48 44 40 36 32 28 24 20 16 12  8  4
+  //-0 -> -$ 8  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+   emit6($1+$20); //5 sign
+   emit6($0+$20); //10
+   emit6($0+$20); //15
+   emit6($0+$20); //20
+   emit6($0+$20); //25
+   emit6($0+$20); //30
+   emit6($0+$20); //35
+   emit6($0+$20); //40
+   emit6($0+$20); //45
+   emit6($0+$20); //50
+   emit6($0+$20); //55
+   emit6($0+$20); //60
+   emit6($10);    //65
+   exit
+  end;
+ end;
  repeat
   i1:= avalue and $1f;
   if card64(avalue) - i1 <> 0 then begin
@@ -1438,14 +1519,14 @@ procedure tllvmbcwriter.emitintconst(const avalue: int32);
 begin
  emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
- emitvbr6(signedvbr(avalue));
+ emitvbr6(avalue,true);
 end;
 
 procedure tllvmbcwriter.emitintconst(const avalue: int64);
 begin
  emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
- emitvbr6(signedvbr(avalue));
+ emitvbr6(avalue,true);
 end;
 
 procedure tllvmbcwriter.emitfloatconst(const avalue: flo32);
@@ -2208,6 +2289,7 @@ begin
   emitrec(ord(METADATA_SUBRANGE),[0,   //distinct
    range.max-range.min+1,              //count
    signedvbr(range.min)                //lowerbound
+                  //-$8000000000000000???
   ]);
  end;
 end;
@@ -2217,6 +2299,7 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_ENUMERATOR),[0, //distinct
    signedvbr(value),                   //value
+                  //-$80000000???
    name.id+1                           //name
   ]);
  end;

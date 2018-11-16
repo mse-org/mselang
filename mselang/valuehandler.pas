@@ -195,7 +195,7 @@ begin
        if i1 > max1 then begin
         max1:= i1;
        end;
-       if i1 < sizeof(ca2) then begin
+       if i1 < sizeof(ca2)*8 then begin
         ca2:= 1 shl i1;
         if ca1 and ca2 <> 0 then begin
          errormessage(err_duplicatesetelement,[],poitem);
@@ -1526,6 +1526,8 @@ begin
               if vset.setvalue = 0 then begin //empty set
                result:= true; 
               end;
+             end;
+             if not result then begin
              end;
             end;
             dk_character: begin
