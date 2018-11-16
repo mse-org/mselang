@@ -283,7 +283,8 @@ type
                dk_object,dk_objectpo,dk_class,dk_interface,
                dk_classof,
                dk_sub,dk_method,
-               dk_enum,dk_enumitem,dk_set,dk_bigset,dk_character,
+               dk_enum,dk_enumitem,dk_set,dk_bigset,
+               dk_character,
                dk_data);
  pdatakindty = ^datakindty;
 

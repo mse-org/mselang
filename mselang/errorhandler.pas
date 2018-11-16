@@ -99,7 +99,7 @@ type
             err_cannotassigntoconst,err_stringconstantexpected,
             err_attachnotallowed,err_invalidattachmentvalue,
             err_setvarexpected,err_invaliddefault,err_setelemustbepositive,
-            err_maxseteleallowed,err_highrangelower);
+            err_maxseteleallowed,err_highrangelower,err_invalidsetele);
             
  errorinfoty = record
   level: errorlevelty;
@@ -369,7 +369,8 @@ const
   (level: erl_error; message: 'Invalid default'),
   (level: erl_error; message: 'Set elements must be positive'),
   (level: erl_error; message: 'Maximal %d set elements allowed'),
-  (level: erl_error; message: 'High range limit < low range limit')
+  (level: erl_error; message: 'High range limit < low range limit'),
+  (level: erl_error; message: 'Invalid set element')
  );
 
 procedure message1(const atext: string; const values: array of const); 

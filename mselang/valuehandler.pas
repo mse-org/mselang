@@ -77,6 +77,11 @@ uses
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
  parser,compilerunit,mseformatstr;
 
+const                              //0        1         2         3  
+ bytebits: array[0..7] of card8 = (%00000001,%00000010,%00000100,%00001000,
+                                   //4        5         6         7       
+                                   %00010000,%00100000,%01000000,%10000000);
+
 function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 var
@@ -87,12 +92,23 @@ var
  poe,poitem: pcontextitemty;
  min1,max1: int32;
  datasize1: databitsizety;
+ bigset1: bigsetbufferty;
+ maxitemindex1: int32;
+ ra1: ordrangety;
+ b1: boolean;
 begin
  if (adest = nil) or (adest^.h.datasize = das_none) then begin
   datasize1:= das_32; //todo: $packset
+  maxitemindex1:= maxsetelementcount-1;
  end
  else begin
+ {$ifdef mse_checkinternalerror}
+  if not (adest^.h.kind in [dk_set,dk_bigset]) then begin
+   internalerror(ie_handler,'20181116A');
+  end;
+ {$endif}
   datasize1:= adest^.h.datasize;
+  maxitemindex1:= adest^.infoset.itemcount-1;
  end;
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
@@ -131,6 +147,7 @@ begin
   ca1:= 0;          //todo: arbitrary size, ranges
   min1:= maxint;
   max1:= -1;
+  fillchar(bigset1[4],sizeof(bigset1)-4,0);
   poitem:= acontext+1;
   while poitem < poe do begin
    with poitem^ do begin
@@ -148,12 +165,14 @@ begin
                                   (po1^.h.indirectlevel <> 0) then begin
       errormessage(err_ordinalexpexpected,[],poitem);
       exit;
-     end
-     else begin
-      if (po1 <> po2) then begin //todo: try to convert ordinals
-       incompatibletypeserror(po2,po1,poitem);
-       exit;
-      end;
+     end;
+     if po1^.h.datasize = das_64 then begin
+      errormessage(err_invalidsetele,[],poitem);
+      exit;
+     end;
+     if (po1 <> po2) then begin //todo: try to convert ordinals
+      incompatibletypeserror(po2,po1,poitem);
+      exit;
      end;
      case d.kind of 
       ck_const: begin
@@ -162,8 +181,8 @@ begin
         errormessage(err_setelemustbepositive,[],poitem);
         exit;
        end;
-       if d.dat.constval.vcardinal > maxsetelementcount then begin
-        errormessage(err_maxseteleallowed,[maxsetelementcount],poitem);
+       if d.dat.constval.vcardinal > maxitemindex1 then begin
+        errormessage(err_maxseteleallowed,[maxitemindex1+1],poitem);
         exit;
        end;
        i1:= d.dat.constval.vcardinal;
@@ -173,16 +192,28 @@ begin
        if i1 > max1 then begin
         max1:= i1;
        end;
-       ca2:= 1 shl i1;
-       if ca1 and ca2 <> 0 then begin
-        errormessage(err_duplicatesetelement,[],poitem);
-        exit;
+       if i1 < sizeof(ca2) then begin
+        ca2:= 1 shl i1;
+        if ca1 and ca2 <> 0 then begin
+         errormessage(err_duplicatesetelement,[],poitem);
+         exit;
+        end;
+        ca1:= ca1 or ca2;
+       end
+       else begin
+        bigset1[ca1 div 8]:= bigset1[ca1 div 8] or bytebits[ca1 and $7];
        end;
-       ca1:= ca1 or ca2;
       end
       else begin
        if not getvalue(poitem,das_32) then begin
         exit;
+       end;
+       getordrange(po1,ra1);
+       if int32(ra1.min) < min1 then begin
+        min1:= int32(ra1.min);
+       end;
+       if int32(ra1.max) > max1 then begin
+        max1:= int32(ra1.max);
        end;
       end;
      end; 
@@ -191,17 +222,29 @@ begin
    inc(poitem);
   end;
   po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
-  inittypedatasize(po1^,dk_set,0,das_32);
+  b1:= max1 >= 32;
+  if b1 then begin
+   inittypedatasize(po1^,dk_bigset,0,das_bigint);
+  end
+  else begin
+   inittypedatasize(po1^,dk_set,0,das_32);
+  end;
   with po1^ do begin
    infoset.itemtype:= ele.eledatarel(po2);
   end;
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
    with acontext^.d.dat.constval do begin
-    kind:= dk_set;
+    if b1 then begin
+     kind:= dk_bigset;
+     notimplementederror('');
+    end
+    else begin
+     kind:= dk_set;
+     vset.setvalue:= ca1;
+    end;
     vset.min:= min1;
     vset.max:= max1;
-    vset.setvalue:= ca1;
    end;
   end
   else begin
@@ -997,7 +1040,7 @@ begin
   needsmanagedtemp:= false;
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
-    dk_set: begin
+    dk_set,dk_bigset: begin
      listtoset(acontext,dest,lastitem);
     end;
     else begin
@@ -1273,7 +1316,7 @@ begin
        dk_enum: begin
         result:= issametype(dest,source1);
        end;
-       dk_set: begin
+       dk_set,dk_bigset: begin
         result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
        end;
        dk_sub: begin
@@ -1467,7 +1510,7 @@ begin
               end;
              end;
             end;
-            dk_set: begin
+            dk_set,dk_bigset: begin
              case kind of
               dk_set: begin
                if vset.setvalue = 0 then begin //empty set
@@ -1683,9 +1726,10 @@ begin
             end;
            end;
           end;
-          dk_set: begin
-           if (source1^.h.kind = dk_set) and 
+          dk_set,dk_bigset: begin
+           if (source1^.h.kind in [dk_set,dk_bigset]) and 
                 (d.dat.datatyp.typedata = emptyset.typedata) then begin
+                                     //????
             result:= true;
            end;
           end;
@@ -1996,7 +2040,7 @@ begin
    addr1.flags:= [af_listitem];
    i1:= conversioncost;
    case dest^.h.kind of
-    dk_set: begin
+    dk_set,dk_bigset: begin
      if sourcecontext^.d.list.itemcount = 0 then begin
       result:= true; //empty set
       exit;

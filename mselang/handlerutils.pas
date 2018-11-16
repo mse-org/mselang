@@ -1359,7 +1359,7 @@ begin
      end;
     end;
    end;
-   dk_set: begin
+   dk_set,dk_bigset: begin
     case adatasize of
      das_8: begin
       with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
@@ -1526,7 +1526,7 @@ begin
   end;
   with contextstack[stackoffset+s.stackindex] do begin
    if not (constval.kind in 
-                 [dk_enum,dk_set,dk_string,dk_openarray,dk_method]) then begin
+        [dk_enum,dk_set,dk_bigset,dk_string,dk_openarray,dk_method]) then begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);

@@ -1350,12 +1350,12 @@ begin
     end;
     currenttypedef:= ele.eledatarel(po1);
     i1:= int32(ra1.max);
-    if i1 < 32 then begin
+    if i1 < 32 then begin           //todo: $packset
      inittypedatasize(po1^,dk_set,
             contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
     end
     else begin
-     inittypedatasize(po1^,dk_set,
+     inittypedatasize(po1^,dk_bigset,
             contextstack[s.stackindex-1].d.typ.indirectlevel,das_bigint{das_none});
      with po1^ do begin
       h.bytesize:= (i1+8) div 8; //round up to next byte
@@ -1364,6 +1364,7 @@ begin
     end;
     with po1^ do begin
      infoset.itemtype:= ele1;
+     infoset.itemcount:= i1+1;
      resolveforwardtype(po1);
     end;
    end

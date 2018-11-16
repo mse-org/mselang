@@ -216,6 +216,7 @@ type
  
  infosetty = record
   itemtype: elementoffsetty;
+  itemcount: int32;
  end;
 
  infoaddressty = record
@@ -382,7 +383,7 @@ type
    dk_enumitem:(
     infoenumitem: infoenumitemty;
    );
-   dk_set:(
+   dk_set,dk_bigset:(
     infoset: infosetty;
    );
  end;

@@ -33,7 +33,12 @@ const
  maxidentlen = 256;
  includemax = 31;
  maxsetelementcount = 256;
-
+ maxbigsetsize = (maxsetelementcount + 7) div 8;
+ 
+type
+ bigsetbufferty = array[0..maxbigsetsize-1] of card8;
+ 
+const
  bitoptypes: array[databitsizety] of typeallocinfoty = (
   (kind: das_none; size: 0; listindex: -1; flags: []),
   (kind: das_1; size: 1; listindex: ord(das_1); flags: []),
