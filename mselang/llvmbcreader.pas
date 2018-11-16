@@ -1418,6 +1418,9 @@ begin
          intconst:= rec1[2] shr 1;
          if odd(rec1[2]) then begin
           intconst:= -intconst;
+          if intconst = 0 then begin
+           intconst:= -$8000000000000000;
+          end;
          end;
          outconst([inttostr(intconst)]);
         end;
