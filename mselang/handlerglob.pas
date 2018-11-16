@@ -383,7 +383,7 @@ type
    dk_enumitem:(
     infoenumitem: infoenumitemty;
    );
-   dk_set,dk_bigset:(
+   dk_set{,dk_bigset}:(
     infoset: infosetty;
    );
  end;

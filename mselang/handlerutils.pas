@@ -71,8 +71,8 @@ const
     sdk_none, sdk_none,   sdk_none,sdk_none,    sdk_none,
   //dk_sub,     dk_method
     sdk_pointer,sdk_none,
-  //dk_enum,dk_enumitem, dk_set,   dk_bigset,dk_character,dk_data
-    sdk_none,   sdk_none, sdk_none,sdk_none, sdk_cardinal,  sdk_none);
+  //dk_enum,dk_enumitem, dk_set,   {dk_bigset,}dk_character,dk_data
+    sdk_none,   sdk_none, sdk_none,{sdk_none,} sdk_cardinal,  sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool,sdk_cardinal,sdk_integer,sdk_float,
@@ -1359,7 +1359,7 @@ begin
      end;
     end;
    end;
-   dk_set,dk_bigset: begin
+   dk_set{,dk_bigset}: begin
     case adatasize of
      das_8: begin
       with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
@@ -1377,7 +1377,9 @@ begin
       end;
      end;
      das_bigint: begin
-      if strf_empty in constval.vset.bigsetvalue.flags then begin
+      if (constval.vset.kind = das_bigint) and 
+           (strf_empty in constval.vset.bigsetvalue.flags) or
+                                 (constval.vset.setvalue = 0) then begin
        with contextstack[s.stackindex+stackoffset] do begin
        {$ifdef mse_checkinternalerror}
         if not (d.kind in datacontexts) then begin
@@ -1385,6 +1387,8 @@ begin
         end; 
        {$endif}
         typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+        constval.vset.kind:= das_bigint;
+        constval.vset.bigsetvalue.flags:= [strf_empty];
         constval.vset.bigsetvalue.offset:= typ1^.h.bitsize;
        end;
       end;
@@ -1526,7 +1530,7 @@ begin
   end;
   with contextstack[stackoffset+s.stackindex] do begin
    if not (constval.kind in 
-        [dk_enum,dk_set,dk_bigset,dk_string,dk_openarray,dk_method]) then begin
+      [dk_enum,dk_set,{dk_bigset,}dk_string,dk_openarray,dk_method]) then begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);
@@ -3315,9 +3319,14 @@ begin
    end;
    poa^.d.dat.constval.kind:= dk_boolean;
    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
-   
-   poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
+
+   if pob^.d.dat.constval.vset.kind = das_bigint then begin
+    notimplementederror('');
+   end
+   else begin
+    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
                    tintegerset(pob^.d.dat.constval.vset.setvalue);
+   end;
   end
   else begin
    result:= getvalue(poa,das_none);
@@ -5147,8 +5156,13 @@ begin
          write(d.dat.constval.venum.value,' ');
         end;
         dk_set: begin
-         write(hextostr(card32(d.dat.constval.vset.setvalue)),' '); 
+         if d.dat.constval.vset.kind = das_bigint then begin
+          write('bigint');
+         end
+         else begin
+          write(hextostr(card32(d.dat.constval.vset.setvalue)),' '); 
                    //todo: arbitrary size, set format
+         end;
         end;
         dk_openarray: begin
          write('size:',inttostrmse(d.dat.constval.vopenarray.size),

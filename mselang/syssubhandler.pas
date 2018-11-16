@@ -967,7 +967,7 @@ begin
    p1:= getpreviousnospace(p2-1);
    if p1^.d.kind in datacontexts then begin
     t1:= ele.eledataabs(p1^.d.dat.datatyp.typedata);
-    if (t1^.h.kind in [dk_set,dk_bigset]) and
+    if (t1^.h.kind = dk_set) and
                     (p1^.d.dat.datatyp.indirectlevel = 0) then begin
      t2:= ele.eledataabs(t1^.infoset.itemtype);
      if getaddress(p1,true) and tryconvert(p2,t2,0,

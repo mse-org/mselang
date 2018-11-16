@@ -1624,8 +1624,8 @@ const
    oc_none, oc_none,  oc_none,    oc_none, oc_none,
  //dk_classof,dk_sub, dk_method
    oc_none,   oc_none,oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_bigset,dk_character,dk_data
-   oc_none,oc_none,    oc_none,oc_none,  oc_none,     oc_none
+ //dk_enum,dk_enumitem,dk_set, {dk_bigset,}dk_character,dk_data
+   oc_none,oc_none,    oc_none,{oc_none,}  oc_none,     oc_none
  );
 
  notops: array[datakindty] of opcodety = (
@@ -1637,8 +1637,8 @@ const
    oc_none, oc_none,  oc_none,    oc_none, oc_none,
  //dk_classof,dk_sub,  dk_method
    oc_none,   oc_none, oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_bigset,dk_character,dk_data
-   oc_none,oc_none,    oc_none,oc_none,  oc_none,     oc_none
+ //dk_enum,dk_enumitem,dk_set, {dk_bigset,}dk_character,dk_data
+   oc_none,oc_none,    oc_none,{oc_none,}  oc_none,     oc_none
  );
 
 procedure handlefact1();
@@ -3085,8 +3085,13 @@ begin
                                              pob^.d.dat.constval.vaddress) = 0;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) =
-                                tintegerset(pob^.d.dat.constval.vset.setvalue);
+        if d.dat.constval.vset.kind = das_bigint then begin
+         notimplementederror('');
+        end
+        else begin
+         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) =
+                               tintegerset(pob^.d.dat.constval.vset.setvalue);
+        end;
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
@@ -3112,8 +3117,13 @@ begin
                                                   pob^.d.dat.constval.vboolean;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <>
-                                 tintegerset(pob^.d.dat.constval.vset.setvalue);
+        if d.dat.constval.vset.kind = das_bigint then begin
+         notimplementederror('');
+        end
+        else begin
+         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <>
+                                tintegerset(pob^.d.dat.constval.vset.setvalue);
+        end;
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
@@ -3201,8 +3211,13 @@ begin
                                                   pob^.d.dat.constval.vboolean;
        end;
        sdk_set: begin
-        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <=
-                                 tintegerset(pob^.d.dat.constval.vset.setvalue);
+        if d.dat.constval.vset.kind = das_bigint then begin
+         notimplementederror('');
+        end
+        else begin
+         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <=
+                                tintegerset(pob^.d.dat.constval.vset.setvalue);
+        end;
        end;
        sdk_string: begin
         d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,

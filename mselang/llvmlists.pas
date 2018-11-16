@@ -3048,8 +3048,8 @@ const
   rtk_none,
 // dk_sub, dk_method,
   rtk_none,rtk_none,
-// dk_enum, dk_enumitem, dk_set,dk_bigset,dk_character,
-  rtk_enum,rtk_enumitem,rtk_set,rtk_set,  rtk_character,
+// dk_enum, dk_enumitem, dk_set,{dk_bigset,}dk_character,
+  rtk_enum,rtk_enumitem,rtk_set,{rtk_set,}  rtk_character,
 // dk_data
   rtk_none
  );

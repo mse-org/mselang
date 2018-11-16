@@ -283,7 +283,7 @@ type
                dk_object,dk_objectpo,dk_class,dk_interface,
                dk_classof,
                dk_sub,dk_method,
-               dk_enum,dk_enumitem,dk_set,dk_bigset,
+               dk_enum,dk_enumitem,dk_set,{dk_bigset,}
                dk_character,
                dk_data);
  pdatakindty = ^datakindty;
@@ -361,11 +361,11 @@ type
 
  setvaluety = record
   min,max: int32;
-  case datakindty of
-   dk_set:(
+  case kind: databitsizety of
+   das_8,das_16,das_32:(
     setvalue: int32;
    );
-   dk_bigset:(
+   das_bigint:(
     bigsetvalue: stringvaluety; //strf_empty -> empty set, offset = bitcount
    );
  end; 
@@ -413,7 +413,7 @@ type
    dk_enum:(
     venum: enumvaluety;
    );
-   dk_set,dk_bigset:(
+   dk_set{,dk_bigset}:(
     vset: setvaluety;
    );
    dk_openarray:(

@@ -103,7 +103,7 @@ begin
  end
  else begin
  {$ifdef mse_checkinternalerror}
-  if not (adest^.h.kind in [dk_set,dk_bigset]) then begin
+  if adest^.h.kind <> dk_set then begin
    internalerror(ie_handler,'20181116A');
   end;
  {$endif}
@@ -126,19 +126,22 @@ begin
   with acontext^ do begin
    d.dat.datatyp:= emptyset;
    with d.dat.constval do begin
+    kind:= dk_set;
     vset.min:= 0;
     vset.max:= -1;
+   {
     if datasize1 = das_bigint then begin
-     kind:= dk_bigset;
-     with d.dat.constval.vset.bigsetvalue do begin
+     vset.kind:= das_bigint;
+     with d.dat.constval.vset.bigsetvaluex do begin
       offset:= 0;
       flags:= [strf_empty]
      end;
     end
     else begin
-     kind:= dk_set;
+   }
+     vset.kind:= das_32;
      vset.setvalue:= 0;
-    end;
+//    end;
    end;
   end;
  end
@@ -224,7 +227,7 @@ begin
   po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
   b1:= max1 >= 32;
   if b1 then begin
-   inittypedatasize(po1^,dk_bigset,0,das_bigint);
+   inittypedatasize(po1^,dk_set,0,das_bigint);
   end
   else begin
    inittypedatasize(po1^,dk_set,0,das_32);
@@ -235,16 +238,17 @@ begin
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
    with acontext^.d.dat.constval do begin
+    kind:= dk_set;
+    vset.min:= min1;
+    vset.max:= max1;
     if b1 then begin
-     kind:= dk_bigset;
+     vset.kind:= das_bigint;
      notimplementederror('');
     end
     else begin
-     kind:= dk_set;
+     vset.kind:= das_32;
      vset.setvalue:= ca1;
     end;
-    vset.min:= min1;
-    vset.max:= max1;
    end;
   end
   else begin
@@ -1040,7 +1044,7 @@ begin
   needsmanagedtemp:= false;
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
-    dk_set,dk_bigset: begin
+    dk_set{,dk_bigset}: begin
      listtoset(acontext,dest,lastitem);
     end;
     else begin
@@ -1316,7 +1320,7 @@ begin
        dk_enum: begin
         result:= issametype(dest,source1);
        end;
-       dk_set,dk_bigset: begin
+       dk_set{,dk_bigset}: begin
         result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
        end;
        dk_sub: begin
@@ -1462,9 +1466,10 @@ begin
                end;
               end;
               dk_set: begin //todo: arbitrary size
-               if coo_set in aoptions then begin
+               if (coo_set in aoptions) and (vset.kind = dest^.h.datasize) and 
+                                         (vset.kind <> das_bigint) then begin
                 result:= true;
-                vcardinal:= vset.setvalue;
+                vcardinal:= card32(vset.setvalue);
                end;
               end;
              end;
@@ -1503,24 +1508,23 @@ begin
                end;
               end;
               dk_set: begin //todo: arbitrary size
-               if coo_set in aoptions then begin
+               if (coo_set in aoptions) and (vset.kind = dest^.h.datasize) and 
+                                         (vset.kind <> das_bigint) then begin
                 result:= true;
-                vinteger:= vset.setvalue;
+                vinteger:= int32(vset.setvalue);
                end;
               end;
              end;
             end;
-            dk_set,dk_bigset: begin
-             case kind of
-              dk_set: begin
-               if vset.setvalue = 0 then begin //empty set
-                result:= true; 
-               end;
+            dk_set{,dk_bigset}: begin
+             if vset.kind = das_bigint then begin
+              if strf_empty in vset.bigsetvalue.flags then begin //empty set
+               result:= true; 
               end;
-              dk_bigset: begin
-               if strf_empty in vset.bigsetvalue.flags then begin //empty set
-                result:= true; 
-               end;
+             end
+             else begin
+              if vset.setvalue = 0 then begin //empty set
+               result:= true; 
               end;
              end;
             end;
@@ -1726,8 +1730,8 @@ begin
             end;
            end;
           end;
-          dk_set,dk_bigset: begin
-           if (source1^.h.kind in [dk_set,dk_bigset]) and 
+          dk_set{,dk_bigset}: begin
+           if (source1^.h.kind = dk_set) and 
                 (d.dat.datatyp.typedata = emptyset.typedata) then begin
                                      //????
             result:= true;
@@ -2040,7 +2044,7 @@ begin
    addr1.flags:= [af_listitem];
    i1:= conversioncost;
    case dest^.h.kind of
-    dk_set,dk_bigset: begin
+    dk_set{,dk_bigset}: begin
      if sourcecontext^.d.list.itemcount = 0 then begin
       result:= true; //empty set
       exit;

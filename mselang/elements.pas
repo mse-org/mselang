@@ -1828,8 +1828,13 @@ var
      result:= result + inttostrmse(venum.value);
     end;
     dk_set: begin
-     result:= result + hextostrmse(card32(vset.setvalue)); 
+     if vset.kind = das_bigint then begin
+      result:= result+'bigint';
+     end
+     else begin
+      result:= result + hextostrmse(card32(vset.setvalue)); 
                //todo: arbitrary size, set format
+     end;
     end;
     dk_string{8,dk_string16,dk_string32}: begin
      if not (strf_ele in vstring.flags) then begin
