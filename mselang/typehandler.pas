@@ -1326,7 +1326,7 @@ begin
     exit;
    end;
    if d.typ.indirectlevel = 0 then begin
-    case po1^.h.kind of        //todo: check size and offset
+    case po1^.h.kind of
      dk_boolean,dk_integer,dk_cardinal: begin
      end;
      dk_enum: begin

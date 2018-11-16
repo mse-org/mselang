@@ -4,6 +4,7 @@ uses
 type
  setty = set of 0..32;
  arty = array[0..4] of card8;
+ set1ty = set of 0..32;
 var
  b1: boolean;
 {
@@ -18,9 +19,10 @@ end;
 }
 var
  s1,s2,s3: setty;
+ s4: set1ty;
  ar1: arty;
 begin
- s1:= [];
+ s1:= [1];
 // s2:= s1;
 {
  s1[2]:= true;

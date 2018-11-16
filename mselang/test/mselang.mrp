@@ -40,7 +40,7 @@ testedit.sta=9
  cx=628
  cy=595
  wsize=0
- active=1
+ active=0
  visible=1
 edit.sta=9
  [groupeditfo]
@@ -6060,7 +6060,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,set
+   a=0,665,4,set
    c=12
     (
     kind=2
@@ -16274,7 +16274,19 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=211
+rowstate=223
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
