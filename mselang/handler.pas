@@ -2525,7 +2525,7 @@ begin
  {$endif}
   poa:= getnextnospace(@contextstack[s.stackindex+2]);
   if poa^.d.kind = ck_list then begin
-   listtoset(poa,p1,das_none);
+   listtoset(poa,nil,p1);
    s.stacktop:= getstackindex(poa);
   end;
   with contextstack[s.stacktop] do begin

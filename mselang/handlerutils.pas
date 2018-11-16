@@ -3103,7 +3103,7 @@ begin
   end;
   acontext:= getpreviousnospace(acontext);
   if acontext^.d.kind = ck_list then begin
-   result:= listtoset(acontext,lastitem,das_none);
+   result:= listtoset(acontext,nil,lastitem);
   end;
  end;
 end;
@@ -3514,7 +3514,7 @@ begin                    //todo: optimize
    goto errlab;
   end;
   if d.kind = ck_list then begin
-   if not listtoset(acontext,lastitem,adatasize) then begin
+   if not listtoset(acontext,nil,lastitem) then begin
     goto errlab;
    end;
   end;

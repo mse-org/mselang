@@ -59,8 +59,8 @@ procedure handlevaluepath2();
 procedure handlevalueinherited();
 
 function getselfvar(out aele: elementoffsetty): boolean;
-function listtoset(const acontext: pcontextitemty;
-          out lastitem: pcontextitemty; datasize: databitsizety): boolean;
+function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
+          out lastitem: pcontextitemty): boolean;
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
                                   out lastitem: pcontextitemty;
@@ -77,8 +77,8 @@ uses
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
  parser,compilerunit,mseformatstr;
 
-function listtoset(const acontext: pcontextitemty;
-          out lastitem: pcontextitemty; datasize: databitsizety): boolean;
+function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
+          out lastitem: pcontextitemty): boolean;
 var
  i1,i2: int32;
  po1,po2: ptypedataty;
@@ -86,15 +86,19 @@ var
  op1: popinfoty;
  poe,poitem: pcontextitemty;
  min1,max1: int32;
+ datasize1: databitsizety;
 begin
- if datasize = das_none then begin
-  datasize:= das_32; //todo: $packset
+ if (adest = nil) or (adest^.h.datasize = das_none) then begin
+  datasize1:= das_32; //todo: $packset
+ end
+ else begin
+  datasize1:= adest^.h.datasize;
  end;
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
   internalerror(ie_handler,'20160610A');
  end;
- if not (datasize in [das_8,das_16,das_32,das_bigint]) then begin
+ if not (datasize1 in [das_8,das_16,das_32,das_bigint]) then begin
   internalerror(ie_handler,'20181114E');
  end;
 {$endif}
@@ -108,7 +112,7 @@ begin
    with d.dat.constval do begin
     vset.min:= 0;
     vset.max:= -1;
-    if datasize = das_bigint then begin
+    if datasize1 = das_bigint then begin
      kind:= dk_bigset;
      with d.dat.constval.vset.bigsetvalue do begin
       offset:= 0;
@@ -994,7 +998,7 @@ begin
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
-     listtoset(acontext,lastitem,dest^.h.datasize);
+     listtoset(acontext,dest,lastitem);
     end;
     else begin
      goto endlab;
@@ -1464,9 +1468,14 @@ begin
              end;
             end;
             dk_set: begin
-             case source1^.h.kind of
+             case kind of
               dk_set: begin
                if vset.setvalue = 0 then begin //empty set
+                result:= true; 
+               end;
+              end;
+              dk_bigset: begin
+               if strf_empty in vset.bigsetvalue.flags then begin //empty set
                 result:= true; 
                end;
               end;
