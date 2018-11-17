@@ -246,6 +246,8 @@ type
             //first item can be result type, returns listid
    function first: ptypelistdataty;
    function next: ptypelistdataty;
+   function getkind(const aindex: int32): databitsizety;
+   
    property classdef: int32 read fclassdef;
    property openarray: int32 read fopenarray;
 //   property method: int32 read fmethod;
@@ -1761,6 +1763,16 @@ end;
 function ttypehashdatalist.next: ptypelistdataty;
 begin
  result:= @ptypelisthashdataty(internalnextx())^.data;
+end;
+
+function ttypehashdatalist.getkind(const aindex: int32): databitsizety;
+begin
+{$ifdef mse_checkinternalerror}
+ if (aindex < 0) or (aindex >= count) then begin
+  internalerror(ie_llvmlist,'20191117B');
+ end;
+{$endif}
+ result:= ptypelisthashdataty(fdata)[aindex+1].data.kind;
 end;
 
 { tconsthashdatalist }

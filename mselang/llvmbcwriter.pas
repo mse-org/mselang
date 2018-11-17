@@ -114,6 +114,7 @@ type
    procedure emit5(const avalue: card8);
    procedure emit6(const avalue: card8);
    procedure emit8(const avalue: card8);
+   procedure emit9(const avalue: card16);
    procedure emitvbr4(avalue: int32);
    procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32;const signed: boolean = false);
@@ -132,6 +133,7 @@ type
    procedure emitintconst(const avalue: int64);
    procedure emitfloatconst(const avalue: flo32);
    procedure emitfloatconst(const avalue: flo64);
+   procedure emitbigintconst(const avalue; const asize: int32);
    procedure emitdataconst(const avalue; const asize: int32);
    procedure emitpointercastconst(const avalue: int32; const atype: int32);
    procedure emitgepconst(const avalue: int32; const aoffset: int32);
@@ -326,11 +328,12 @@ const
 type
  mabconstty = (
   mabconst_int = 4, //id (vbr 6), value (vbr 6)
+  mabconst_bigint, //id (vbr 6), value (vbr 9)
   mabconst_data //id (vbr 6), array (array), data (vbr 8)
  );
 const
- mabconstsdat: array[0..6] of card8 = (18,100,200,104,144,49,66);
- mabconsts: bcdataty = (bitsize: 56; data: @mabconstsdat);
+ mabconstsdat: array[0..10] of card8 = (18,100,200,72,144,161,164,65,198,8,1);
+ mabconsts: bcdataty = (bitsize: 82; data: @mabconstsdat);
 
 type
  mabtypety = (
@@ -832,8 +835,14 @@ begin
         internalerror(ie_bcwriter,'20141220A');
        end;
       {$endif}
-       emitdataconst(consts.absdata(pc2^.data.header.buffer)^,
+       if consts.typelist.getkind(pc2^.data.typeid) = das_bigint then begin
+        emitbigintconst(consts.absdata(pc2^.data.header.buffer)^,
                                                 pc2^.data.header.buffersize);
+       end
+       else begin
+        emitdataconst(consts.absdata(pc2^.data.header.buffer)^,
+                                                pc2^.data.header.buffersize);
+       end;
       end;
      end;
     end;
@@ -1072,6 +1081,12 @@ begin
  fbufpos:= fbufpos + 1;
  fbitbuf:= fbitbuf shr 8;
  fbitpos:= fbitpos - 8;
+end;
+
+procedure tllvmbcwriter.emit9(const avalue: card16);
+begin
+ emit8(avalue);
+ emit1(avalue shr 8);
 end;
 
 procedure tllvmbcwriter.emitvbr4(avalue: int32);
@@ -1579,6 +1594,28 @@ begin
  while po1 < pe do begin
   emitvbr8(po1^+fconststart);  //todo: better encoding
   inc(po1);
+ end;
+end;
+
+procedure tllvmbcwriter.emitbigintconst(const avalue; const asize: int32);
+var
+ po1,pe: pcard8;
+ i1: int32;
+ ca1: card8
+begin
+ emitcode(ord(mabconst_bigint)); 
+ emitvbr6(ord(CST_CODE_INTEGER));
+ po1:= @avalue;
+ pe:= po1+asize-1;
+ if pe^ and $80 <> 0 then begin //negative
+  srd greg wtwr
+ end
+ else begin
+  while po1 < pe do begin
+   emit9((po1^ shl 1) or ((po1+1)^ shr 7) or $100);
+   inc(po1);
+  end;
+  emit9(po1^ shl 1);
  end;
 end;
 

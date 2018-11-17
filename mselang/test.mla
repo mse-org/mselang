@@ -33,10 +33,12 @@ const
  ar1: arty = (1,2,3,4,5);
 begin
 {$internaldebug on}
- s5:= [en_0,en_31];
+ s5:= [en_0,en_1{,en_31}];
 // ar1:= arty(s5);
 // ar1[1]:= 123;
+{
  writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
+}
 {
  if en_0 in s5 then
   exitcode:= 123;
