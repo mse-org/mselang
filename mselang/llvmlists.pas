@@ -2017,12 +2017,24 @@ begin
 end;
 
 function tconsthashdatalist.addbigint(const avalue: stringvaluety): llvmvaluety;
+var
+ s1: lstringty;
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
 begin
  if strf_empty in avalue.flags then begin
   result:= addnullvalue(ftypelist.addbigintvalue(avalue.offset));
  end
  else begin
-  notimplementederror('20181114G');
+  s1:= getstringconst(avalue);
+  alloc1.header.size:= s1.len;
+  alloc1.header.data:= s1.po;
+  alloc1.typeid:= ftypelist.addbigintvalue(s1.len*8);
+  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+   po1^.data.typeid:= alloc1.typeid;
+  end;
+  result.listid:= po1^.data.header.listindex;
+  result.typeid:= po1^.data.typeid;
  end;
 end;
 

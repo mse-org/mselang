@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 var
  i1,i2: int32;
- po1,po2: ptypedataty;
+ type1,type2: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
  poe,poitem: pcontextitemty;
@@ -96,6 +96,8 @@ var
  maxitemindex1: int32;
  ra1: ordrangety;
  b1: boolean;
+ p1: pcard8;
+ m1: card8;
 begin
  if (adest = nil) or (adest^.h.datasize = das_none) then begin
   datasize1:= das_32; //todo: $packset
@@ -146,7 +148,7 @@ begin
   end;
  end
  else begin
-  po2:= nil;
+  type2:= nil;
   ca1:= 0;          //todo: arbitrary size, ranges
   min1:= maxint;
   max1:= -1;
@@ -160,21 +162,21 @@ begin
       internalerror(ie_handler,'20151007A');
      end;
     {$endif}
-     po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
-     if po2 = nil then begin
-      po2:= po1;
+     type1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+     if type2 = nil then begin
+      type2:= type1;
      end;
-     if not (po1^.h.kind in ordinaldatakinds) or 
-                                  (po1^.h.indirectlevel <> 0) then begin
+     if not (type1^.h.kind in ordinaldatakinds) or 
+                                  (type1^.h.indirectlevel <> 0) then begin
       errormessage(err_ordinalexpexpected,[],poitem);
       exit;
      end;
-     if po1^.h.datasize = das_64 then begin
+     if type1^.h.datasize = das_64 then begin
       errormessage(err_invalidsetele,[],poitem);
       exit;
      end;
-     if (po1 <> po2) then begin //todo: try to convert ordinals
-      incompatibletypeserror(po2,po1,poitem);
+     if (type1 <> type2) then begin //todo: try to convert ordinals
+      incompatibletypeserror(type2,type1,poitem);
       exit;
      end;
      case d.kind of 
@@ -204,14 +206,20 @@ begin
         ca1:= ca1 or ca2;
        end
        else begin
-        bigset1[ca1 div 8]:= bigset1[ca1 div 8] or bytebits[ca1 and $7];
+        p1:= @bigset1[ca1 div 8];
+        m1:= bytebits[ca1 and $7];
+        if p1^ and m1 <> 0 then begin
+         errormessage(err_duplicatesetelement,[],poitem);
+         exit;
+        end;
+        p1^:= p1^ or m1;
        end;
       end
       else begin
        if not getvalue(poitem,das_32) then begin
         exit;
        end;
-       getordrange(po1,ra1);
+       getordrange(type1,ra1);
        if int32(ra1.min) < min1 then begin
         min1:= int32(ra1.min);
        end;
@@ -224,16 +232,16 @@ begin
    end;
    inc(poitem);
   end;
-  po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
+  type1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
   b1:= max1 >= 32;
   if b1 then begin
-   inittypedatasize(po1^,dk_set,0,das_bigint);
+   inittypedatasize(type1^,dk_set,0,das_bigint);
   end
   else begin
-   inittypedatasize(po1^,dk_set,0,das_32);
+   inittypedatasize(type1^,dk_set,0,das_32);
   end;
-  with po1^ do begin
-   infoset.itemtype:= ele.eledatarel(po2);
+  with type1^ do begin
+   infoset.itemtype:= ele.eledatarel(type2);
   end;
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
@@ -274,7 +282,7 @@ begin
   end;
   with acontext^ do begin
    d.dat.datatyp.flags:= [];
-   d.dat.datatyp.typedata:= ele.eledatarel(po1);
+   d.dat.datatyp.typedata:= ele.eledatarel(type1);
    d.dat.datatyp.indirectlevel:= 0;
   end;
  end;
@@ -1032,6 +1040,8 @@ var
  lastitem: pcontextitemty;
  fl1: stringflagsty;
  ra1: ordrangety;
+ bigset1: bigsetbufferty;
+ 
 label
  endlab; 
 begin
@@ -1321,7 +1331,7 @@ begin
         result:= issametype(dest,source1);
        end;
        dk_set{,dk_bigset}: begin
-        result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+        result:= issametype(dest^.infoset.itemtype,source1^.infoset.itemtype);
        end;
        dk_sub: begin
         result:= checkcompatiblesub(source1,dest);
@@ -1528,6 +1538,18 @@ begin
               end;
              end;
              if not result then begin
+              if issametype(dest^.infoset.itemtype,
+                                 source1^.infoset.itemtype) then begin
+                                          //todo: cardinal subrange
+               if dest^.h.datasize = das_bigint then begin
+                fillchar(bigset1[4],sizeof(bigset1)-4,0);
+                pcard32(@bigset1)^:= vset.setvalue;
+                vset.bigsetvalue:= newbigintconst(@bigset1,dest^.h.bitsize);
+                vset.kind:= das_bigint;
+                                    //min,max?
+                result:= true;
+               end;
+              end;
              end;
             end;
             dk_character: begin

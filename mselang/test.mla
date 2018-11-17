@@ -8,8 +8,10 @@ type
  enuty = (en_0,en_1,en_2,en_3,en_4,en_5,en_6,en_7,
           en_8,en_9,en_10,en_11,en_12,en_13,en_14,en_15,
           en_16,en_17,en_18,en_19,en_20,en_21,en_22,en_23,
-          en_24,en_25,en_26,en_27,en_28,en_29,en_30,en_31{,en_32});
+          en_24,en_25,en_26,en_27,en_28,en_29,en_30,en_31,en_32);
  enusty = set of enuty;
+ enu2ty = (en2_0,en2_1);
+ enus2ty = set of enu2ty;
 var
  b1: boolean;
 {
@@ -26,14 +28,23 @@ var
  s1,s2,s3: setty;
  s4: set1ty;
  s5: enusty;
- ar1: arty;
+// ar1: arty;
+const
+ ar1: arty = (1,2,3,4,5);
 begin
 {$internaldebug on}
- s5:= [en_31];
- writeln(int32(s5),' ',int64(-$8000000000000000));
- if en_31 in s5 then
+ s5:= [en_0,en_31];
+// ar1:= arty(s5);
+// ar1[1]:= 123;
+ writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
+{
+ if en_0 in s5 then
   exitcode:= 123;
  end;
+}
+{
+ writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
+}
 // s1:= [1];
 // s2:= s1;
 {

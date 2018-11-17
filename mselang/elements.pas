@@ -392,6 +392,8 @@ function eletodata(const aele: pelementinfoty): pointer; inline;
 function datatoele(const adata: pointer): pelementinfoty; inline;
 
 //todo: code unit sizes
+function newbigintconst(const buffer: pointer;
+                                    const bitsize: int32): stringvaluety;
 function newstringconst(): stringvaluety; //save info.unitinfo^.stringbuffer
 function newstringconst(const avalue: lstringty): stringvaluety;
 function getstringconst(const astring: stringvaluety): lstringty;
@@ -537,6 +539,16 @@ begin
                                        gak_const,i1,info.s.globlinkage);
   end;
  end;
+end;
+
+function newbigintconst(const buffer: pointer;
+                                const bitsize: int32): stringvaluety;
+var
+ ls1: lstringty;
+begin
+ ls1.po:= buffer;
+ ls1.len:= (bitsize+7) div 8;
+ result:= newstringconst(ls1);
 end;
 
 function newstringconst(): stringvaluety;
