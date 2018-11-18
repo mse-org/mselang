@@ -149,7 +149,7 @@ begin
  end
  else begin
   type2:= nil;
-  ca1:= 0;          //todo: arbitrary size, ranges
+  ca1:= 0;          //todo: ranges
   min1:= maxint;
   max1:= -1;
   fillchar(bigset1[4],sizeof(bigset1)-4,0);
@@ -206,8 +206,8 @@ begin
         ca1:= ca1 or ca2;
        end
        else begin
-        p1:= @bigset1[ca1 div 8];
-        m1:= bytebits[ca1 and $7];
+        p1:= @bigset1[i1 div 8];
+        m1:= bytebits[i1 and $7];
         if p1^ and m1 <> 0 then begin
          errormessage(err_duplicatesetelement,[],poitem);
          exit;
@@ -250,8 +250,9 @@ begin
     vset.min:= min1;
     vset.max:= max1;
     if b1 then begin
+     pcard32(@bigset1)^:= ca1;
+     vset.bigsetvalue:= newbigintconst(@bigset1,max1);
      vset.kind:= das_bigint;
-     notimplementederror('');
     end
     else begin
      vset.kind:= das_32;

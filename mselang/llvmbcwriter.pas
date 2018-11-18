@@ -1599,23 +1599,59 @@ end;
 
 procedure tllvmbcwriter.emitbigintconst(const avalue; const asize: int32);
 var
- po1,pe: pcard8;
+ p1,pe: pcard8;
  i1: int32;
- ca1: card8
+ c1,c2: card8;
+ carry1: boolean;
 begin
+{$ifdef mse_checkinternalerror}
+ if asize = 0 then begin
+  internalerror(ie_llvmwriter,'20181117A');
+ end;
+{$endif}
  emitcode(ord(mabconst_bigint)); 
  emitvbr6(ord(CST_CODE_INTEGER));
- po1:= @avalue;
- pe:= po1+asize-1;
+ p1:= @avalue;
+ pe:= p1+asize-1;
  if pe^ and $80 <> 0 then begin //negative
-  srd greg wtwr
+  if asize = 1 then begin
+   emit9(((not(p1^)+1) shl 1) or 1);
+  end
+  else begin
+   c1:= not(p1^) + 1;
+   carry1:= c1 = 0; //carry
+   emit9((c1 shl 1) or $01 or $100);
+   inc(p1);
+   while p1 < pe do begin
+    c2:= not(p1^);
+    if carry1 then begin
+     inc(c2);
+     carry1:= c2 = 0;
+    end;
+    emit9((c2 shl 1) or (c1 shr 7) or $100);
+    c1:= c2;
+    inc(p1);
+   end;
+   c2:= not(p1^);
+   if carry1 then begin
+    inc(c2);
+   end;
+   emit9(card8(c2 shl 1) or (c1 shr 7));
+  end;
  end
  else begin
-  while po1 < pe do begin
-   emit9((po1^ shl 1) or ((po1+1)^ shr 7) or $100);
-   inc(po1);
+  if asize = 1 then begin
+   emit9((p1^ shl 1) or (c1 shr 7));
+  end
+  else begin
+   emit9((p1^ shl 1) or $100);
+   inc(p1);
+   while p1 < pe do begin
+    emit9((p1^ shl 1) or ((p1-1)^ shr 7) or $100);
+    inc(p1);
+   end;
+   emit9(card8(p1^ shl 1) or ((p1-1)^ shr 7));
   end;
-  emit9(po1^ shl 1);
  end;
 end;
 

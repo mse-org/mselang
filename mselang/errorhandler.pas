@@ -107,25 +107,26 @@ type
  end;
  
  internalerrorkindty = (ie_none,ie_notimplemented,//todo
-                        ie_parser,   //error in parser
-                        ie_handler,  //error in handler function
-                        ie_error,    //invalid error message
-                        ie_unit,     //error in unithandler
-                        ie_type,     //error in type handler
-                        ie_managed,  //error in managed types handler
-                        ie_sub,      //error in subhadler
-                        ie_value,    //error in value handler
-                        ie_idents,   //error in ident generator
-                        ie_elements, //error in element list
-                        ie_rtti,     //error in rtti handler
-                        ie_segment,  //error in segment handler
-                        ie_bcwriter, //error in llvm bc writer
-                        ie_llvm,     //error in llvm code generator
-                        ie_llvmlist, //error in llvm lists
-                        ie_llvmmeta, //error in llvm metadata
-                        ie_module,   //error in modular compilation
-                        ie_dialect,  //unknown dialect
-                        ie_opcode    //error in code generator
+                        ie_parser,    //error in parser
+                        ie_handler,   //error in handler function
+                        ie_error,     //invalid error message
+                        ie_unit,      //error in unithandler
+                        ie_type,      //error in type handler
+                        ie_managed,   //error in managed types handler
+                        ie_sub,       //error in subhadler
+                        ie_value,     //error in value handler
+                        ie_idents,    //error in ident generator
+                        ie_elements,  //error in element list
+                        ie_rtti,      //error in rtti handler
+                        ie_segment,   //error in segment handler
+                        ie_bcwriter,  //error in llvm bc writer
+                        ie_llvm,      //error in llvm code generator
+                        ie_llvmlist,  //error in llvm lists
+                        ie_llvmmeta,  //error in llvm metadata
+                        ie_llvmwriter,//error in llvm bc writer
+                        ie_module,    //error in modular compilation
+                        ie_dialect,   //unknown dialect
+                        ie_opcode     //error in code generator
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -135,8 +136,8 @@ const
      'T',    'M',
  //ie_sub,ie_value,ie_idents,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
      'SUB',   'V',   'I',       'E',        'I',    'SEG',     'BC',     'LLVM',
- //ie_llvmlist,ie_llvmmeta,ie_module,ie_dialect,ie_opcode
-     'LLVML',  'LLVMME',   'MO',     'DIA',     'OP'
+ //ie_llvmlist,ie_llvmmeta,ie_llvmwriter,ie_module,ie_dialect,ie_opcode
+     'LLVML',  'LLVMME',   'LLVMW',      'MO',     'DIA',     'OP'
  );
  
  stoperrorlevel = erl_fatal;
