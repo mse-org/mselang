@@ -40,7 +40,7 @@ testedit.sta=9
  cx=628
  cy=595
  wsize=0
- active=0
+ active=1
  visible=1
 edit.sta=9
  [groupeditfo]
@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=39
     (
     kind=1
@@ -4772,7 +4772,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=22
     (
     kind=2
@@ -6061,7 +6061,7 @@ c=3
    (
    kind=1
    a=0,665,4,set
-   c=12
+   c=13
     (
     kind=2
     a=0,648,1,setconstructor1
@@ -6309,6 +6309,28 @@ c=3
     a=0,648,1,set2 llvm
     teststate=1
     path=set2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,bigset1 llvm
+    teststate=1
+    path=bigset1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -16261,7 +16283,7 @@ y=143
 cx=775
 cy=660
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=669
@@ -16274,73 +16296,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=223
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=157
  0 0
  0 0
  0 0

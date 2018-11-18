@@ -1,0 +1,30 @@
+program bigset1;
+uses
+type
+ setty = set of 0..32;
+ arty = array[0..4] of card8;
+ set1ty = set of 0..32;
+ enuty = (en_0,en_1,en_2,en_3,en_4,en_5,en_6,en_7,
+          en_8,en_9,en_10,en_11,en_12,en_13,en_14,en_15,
+          en_16,en_17,en_18,en_19,en_20,en_21,en_22,en_23,
+          en_24,en_25,en_26,en_27,en_28,en_29,en_30,en_31,
+          en_32,en_33,en_34,en_35,en_36,en_37,en_38,en_39);
+ enusty = set of enuty;
+ enu2ty = (en2_0,en2_1);
+ enus2ty = set of enu2ty;
+var
+ b1: boolean;
+var
+ s1,s2,s3: setty;
+ s4: set1ty;
+ s5: enusty;
+ ar1: arty;
+begin
+ s5:= [en_0,en_1,en_7,en_8,en_15,en_31,en_32,en_39];
+ ar1:= arty(s5);
+ if (ar1[0] = %10000011) and (ar1[1] = %10000001) and (ar1[2] = %00000000) and
+    (ar1[3] = %10000000) and (ar1[4] = %10000001) and (en_0 in s5) and 
+    (en_39 in s5) and not(en_37 in s5) then
+  exitcode:= 123;
+ end;
+end.
