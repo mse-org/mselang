@@ -1,60 +1,28 @@
 program test;
 uses
-{$internaldebug on}
 type
- setty = set of 0..32;
- arty = array[0..4] of card8;
- set1ty = set of 0..32;
- enuty = (en_0,en_1,en_2,en_3,en_4,en_5,en_6,en_7,
-          en_8,en_9,en_10,en_11,en_12,en_13,en_14,en_15,
-          en_16,en_17,en_18,en_19,en_20,en_21,en_22,en_23,
-          en_24,en_25,en_26,en_27,en_28,en_29,en_30,en_31,
-          en_32,en_33,en_34,en_35,en_36,en_37,en_38,en_39);
- enusty = set of enuty;
- enu2ty = (en2_0,en2_1);
- enus2ty = set of enu2ty;
+ setty = set of char8;
+ arty = array[0..256 div 8 - 1] of card8;
+ ar2ty = array[0..5] of card8;
 var
- b1: boolean;
-{
-procedure test();
-var
- s1: setty;
-begin
- exclude(s1,2);
- include(s1,2);
- b1:= 2 in s1;
-end;
-}
-var
- s1,s2,s3: setty;
- s4: set1ty;
- s5: enusty;
- ar1: arty;
-begin
 {$internaldebug on}
- s5:= [en_0,en_1,en_31,en_38];
- ar1:= arty(s5);
-// ar1[1]:= 123;
+ s2: set of 2..40;
+ s1: setty;
+ ar1: arty;
+ ar2: ar2ty;
 
- writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
-
-{
- if en_0 in s5 then
-  exitcode:= 123;
- end;
-}
-{
- writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
-}
-// s1:= [1];
-// s2:= s1;
-{
- s1[2]:= true;
- s2[1]:= true;
- b1:= s1[2];
- writeln(ord(b1));
-// s3:= s1+s2;
+begin
+ s2:= [2,32];
+ ar2:= ar2ty(s2);
+ writeln(ar2[0],' ',ar2[1],' ',ar2[2],' ',ar2[3],' ',ar2[4]);
+(*
+ s1:= [#0,#1];
  ar1:= arty(s1);
- writeln(ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4]);
-}
+{$internaldebug off}
+ writeln(
+  ar1[0],' ',ar1[1],' ',ar1[2],' ',ar1[3],' ',ar1[4],' ',ar1[5],' ',ar1[6],' ',ar1[7],' ',
+  ar1[8],' ',ar1[9],' ',ar1[10],' ',ar1[11],' ',ar1[12],' ',ar1[13],' ',ar1[14],' ',ar1[15],' ',
+  ar1[16],' ',ar1[17],' ',ar1[18],' ',ar1[19],' ',ar1[20],' ',ar1[21],' ',ar1[22],' ',ar1[23],' ',
+  ar1[24],' ',ar1[25],' ',ar1[26],' ',ar1[27],' ',ar1[28],' ',ar1[29],' ',ar1[30],' ',ar1[31]);
+*)
 end.

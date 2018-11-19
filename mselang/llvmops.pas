@@ -3804,6 +3804,11 @@ begin
  loadseg();
 end;
 
+procedure pushsegbigintop();
+begin
+ loadseg();
+end;
+
 procedure pushsegf16op();
 begin
  loadseg();
@@ -3864,6 +3869,11 @@ begin
  loadloc(false);
 end;
 
+procedure pushlocbigintop();
+begin
+ loadloc(false);
+end;
+
 procedure pushlocop();
 begin
  loadloc(false);
@@ -3909,6 +3919,11 @@ begin
  loadloc(false);
 end;
 
+procedure pushparbigintop();
+begin
+ loadloc(false);
+end;
+
 procedure pushparop();
 begin
  loadloc(false);
@@ -3950,6 +3965,11 @@ begin
 end;
 
 procedure pushlocindif64op();
+begin
+ loadlocindi();
+end;
+
+procedure pushlocindibigintop();
 begin
  loadlocindi();
 end;
@@ -5790,6 +5810,7 @@ const
   pushseg32ssa = 1;
   pushseg64ssa = 1;
   pushsegpossa = 1;
+  pushsegbigintssa = 1;
   pushsegf16ssa = 1;
   pushsegf32ssa = 1;
   pushsegf64ssa = 1;
@@ -5804,6 +5825,7 @@ const
   pushlocf16ssa = 1;
   pushlocf32ssa = 1;
   pushlocf64ssa = 1;
+  pushlocbigintssa = 1;
   pushlocssa = 1;
 
   pushlocindi8ssa = 2;
@@ -5814,6 +5836,7 @@ const
   pushlocindif16ssa = 2;
   pushlocindif32ssa = 2;
   pushlocindif64ssa = 2;
+  pushlocindibigintssa = 2;
   pushlocindissa = 2;
 
   pushpar8ssa = 1;
@@ -5824,6 +5847,7 @@ const
   pushparf16ssa = 1;
   pushparf32ssa = 1;
   pushparf64ssa = 1;
+  pushparbigintssa = 1;
   pushparssa = 1;
 
   pushaddrssa = 1;

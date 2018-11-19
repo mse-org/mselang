@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2017 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2018 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -705,6 +705,7 @@ type
   oc_pushsegf16,
   oc_pushsegf32,
   oc_pushsegf64,
+  oc_pushsegbigint,
   oc_pushseg,
 //  oc_pushsegopenar,
   
@@ -716,6 +717,7 @@ type
   oc_pushlocf16,
   oc_pushlocf32,
   oc_pushlocf64,
+  oc_pushlocbigint,
   oc_pushloc,
 
   oc_pushlocindi8,
@@ -726,6 +728,7 @@ type
   oc_pushlocindif16,
   oc_pushlocindif32,
   oc_pushlocindif64,
+  oc_pushlocindibigint,
   oc_pushlocindi,
 
   oc_pushpar8,
@@ -736,6 +739,7 @@ type
   oc_pushparf16,
   oc_pushparf32,
   oc_pushparf64,
+  oc_pushparbigint,
   oc_pushpar,
 
   oc_pushaddr,

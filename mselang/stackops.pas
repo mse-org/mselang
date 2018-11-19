@@ -4866,6 +4866,12 @@ begin
  move(getsegaddress(cpu.pc^.par.memop.segdataaddress)^,
                   stackpush(i1)^,i1);
 end;
+
+procedure pushsegbigintop();
+begin
+ pushsegop();
+end;
+
 {
 procedure pushsegopenarop();
 begin
@@ -5133,6 +5139,11 @@ begin
  move(getlocaddress(cpu.pc^.par.memop)^,stackpush(int1)^,int1);
 end;
 
+procedure pushlocbigintop();
+begin
+ pushlocop();
+end;
+
 procedure pushpar8op();
 begin
  pushloc8op();
@@ -5176,6 +5187,11 @@ end;
 procedure pushparop();
 begin
  pushlocop();
+end;
+
+procedure pushparbigintop();
+begin
+ pushparop();
 end;
 
 procedure pushlocindi8op();
@@ -5225,6 +5241,11 @@ var
 begin
  int1:= cpu.pc^.par.memop.t.size;
  move(getlocaddressindi(cpu.pc^.par.memop)^,stackpush(int1)^,int1);
+end;
+
+procedure pushlocindibigintop();
+begin
+ pushlocindiop();
 end;
 
 procedure pushaddrop();
@@ -7613,6 +7634,7 @@ const
   pushseg32ssa = 0;
   pushseg64ssa = 0;
   pushsegpossa = 0;
+  pushsegbigintssa = 0;
   pushsegf16ssa = 0;
   pushsegf32ssa = 0;
   pushsegf64ssa = 0;
@@ -7627,6 +7649,7 @@ const
   pushlocf16ssa = 0;
   pushlocf32ssa = 0;
   pushlocf64ssa = 0;
+  pushlocbigintssa = 0;
   pushlocssa = 0;
 
   pushlocindi8ssa = 0;
@@ -7637,6 +7660,7 @@ const
   pushlocindif16ssa = 0;
   pushlocindif32ssa = 0;
   pushlocindif64ssa = 0;
+  pushlocindibigintssa = 0;
   pushlocindissa = 0;
 
   pushpar8ssa = 0;
@@ -7647,6 +7671,7 @@ const
   pushparf16ssa = 0;
   pushparf32ssa = 0;
   pushparf64ssa = 0;
+  pushparbigintssa = 0;
   pushparssa = 0;
 
   pushaddrssa = 0;

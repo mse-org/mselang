@@ -163,10 +163,15 @@ begin
      end;
     {$endif}
      type1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+     if (d.kind = ck_const) and (type1^.h.kind = dk_string) then begin
+      if tryconvert(poitem,st_char32) then begin
+       type1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+      end;
+     end;
      if type2 = nil then begin
       type2:= type1;
      end;
-     if not (type1^.h.kind in ordinaldatakinds) or 
+     if not (type1^.h.kind in (ordinaldatakinds+[dk_character])) or 
                                   (type1^.h.indirectlevel <> 0) then begin
       errormessage(err_ordinalexpexpected,[],poitem);
       exit;
@@ -181,16 +186,27 @@ begin
      end;
      case d.kind of 
       ck_const: begin
-       if (d.dat.constval.kind = dk_integer) and 
-                            (d.dat.constval.vinteger < 0) then begin
-        errormessage(err_setelemustbepositive,[],poitem);
-        exit;
+       if d.dat.constval.kind = dk_character then begin
+        i1:= d.dat.constval.vcharacter;
+        if i1 < 0 then begin
+         i1:= bigint;
+        end;
+       end
+       else begin
+        if (d.dat.constval.kind = dk_integer) and 
+                             (d.dat.constval.vinteger < 0) then begin
+         errormessage(err_setelemustbepositive,[],poitem);
+         exit;
+        end;
+        i1:= d.dat.constval.vcardinal;
+        if d.dat.constval.vcardinal > maxitemindex1 then begin
+         i1:= bigint;
+        end;
        end;
-       if d.dat.constval.vcardinal > maxitemindex1 then begin
+       if i1 > maxitemindex1 then begin
         errormessage(err_maxseteleallowed,[maxitemindex1+1],poitem);
         exit;
        end;
-       i1:= d.dat.constval.vcardinal;
        if i1 < min1 then begin
         min1:= i1;
        end;
@@ -251,7 +267,7 @@ begin
     vset.max:= max1;
     if b1 then begin
      pcard32(@bigset1)^:= ca1;
-     vset.bigsetvalue:= newbigintconst(@bigset1,max1);
+     vset.bigsetvalue:= newbigintconst(@bigset1,max1+1);
      vset.kind:= das_bigint;
     end
     else begin
@@ -914,6 +930,50 @@ begin
  end;
 end;
 
+function checkcompatibleset(const acontext: pcontextitemty;
+                            const source,dest: ptypedataty): boolean;
+var
+ source1,dest1: ptypedataty;
+ ra1: ordrangety;
+ buf1: bigsetbufferty;
+ s1: lstringty;
+begin
+{$ifdef mse_checkinternalerror}
+ if (source^.h.kind <> dk_set) or (dest^.h.kind <> dk_set) then begin
+  internalerror(ie_handler,'20181119B');
+ end;
+{$endif}
+ source1:= ele.eledataabs(source^.infoset.itemtype);
+ dest1:= ele.eledataabs(dest^.infoset.itemtype);
+{$ifdef mse_checkinternalerror}
+ if dest1^.h.bytesize > sizeof(buf1) then begin
+  internalerror(ie_handler,'20181119C');
+ end;
+{$endif}
+ result:= issametype(source1,dest1);
+ if not result then begin
+  case dest1^.h.kind of
+   dk_cardinal,dk_integer: begin
+    if (acontext^.d.kind = ck_const) and 
+                       (source1^.h.kind in [dk_cardinal,dk_integer]) then begin
+     getordrange(dest1,ra1);
+     with acontext^.d.dat.constval.vset do begin
+      result:= (min >= ra1.min) and (max <= ra1.max);
+      if result and (source^.h.datasize = das_bigint) and 
+                          (dest^.h.datasize = das_bigint) and 
+                             (dest^.h.bytesize > source^.h.bytesize) then begin
+       s1:= getstringconst(bigsetvalue);
+       move(s1.po^,buf1,s1.len);
+       fillchar(buf1[s1.len],dest^.h.bytesize-s1.len,0);
+       bigsetvalue:= newbigintconst(@buf1,dest^.h.bitsize);
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
 const                                  // 0  1  2  3  4
  stringsizeindex: array[0..4] of card8 = (0, 0, 1, 0, 2);
  stringconvops: array[card8(0)..card8(2),card8(0)..card8(2)] of opcodety = (
@@ -1332,7 +1392,8 @@ begin
         result:= issametype(dest,source1);
        end;
        dk_set{,dk_bigset}: begin
-        result:= issametype(dest^.infoset.itemtype,source1^.infoset.itemtype);
+        result:= checkcompatibleset(acontext,source1,dest);
+//        result:= issametype(dest^.infoset.itemtype,source1^.infoset.itemtype);
        end;
        dk_sub: begin
         result:= checkcompatiblesub(source1,dest);
@@ -1539,9 +1600,7 @@ begin
               end;
              end;
              if not result then begin
-              if issametype(dest^.infoset.itemtype,
-                                 source1^.infoset.itemtype) then begin
-                                          //todo: cardinal subrange
+              if checkcompatibleset(acontext,source1,dest) then begin
                if dest^.h.datasize = das_bigint then begin
                 fillchar(bigset1[4],sizeof(bigset1)-4,0);
                 pcard32(@bigset1)^:= vset.setvalue;
@@ -1966,8 +2025,7 @@ begin
  end;
 end;
 *)
-function tryconvert(const acontext: pcontextitemty;
-                                               const dest: systypety;
+function tryconvert(const acontext: pcontextitemty; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
 begin
  with sysdatatypes[dest] do begin

@@ -1090,6 +1090,8 @@
   (ssa: pushsegf32ssa; proc: @pushsegf32op; flags: [of_relocseg]),
 //oc_pushsegf64
   (ssa: pushsegf64ssa; proc: @pushsegf64op; flags: [of_relocseg]),
+//oc_pushsegbigint
+  (ssa: pushsegbigintssa; proc: @pushsegbigintop; flags: [of_relocseg]),
 //oc_pushseg
   (ssa: pushsegssa; proc: @pushsegop; flags: [of_relocseg]),
 {
@@ -1112,6 +1114,8 @@
   (ssa: pushlocf32ssa; proc: @pushlocf32op; flags: []), 
 //oc_pushlocf64
   (ssa: pushlocf64ssa; proc: @pushlocf64op; flags: []), 
+//oc_pushlocbigint
+  (ssa: pushlocbigintssa; proc: @pushlocbigintop; flags: []), 
 //oc_pushloc
   (ssa: pushlocssa; proc: @pushlocop; flags: []), 
 
@@ -1127,10 +1131,12 @@
   (ssa: pushlocindipossa; proc: @pushlocindipoop; flags: []), 
 //oc_pushlocindi16
   (ssa: pushlocindi16ssa; proc: @pushlocindi16op; flags: []), 
-//oc_pushlocindi32
-  (ssa: pushlocindi32ssa; proc: @pushlocindi32op; flags: []), 
-//oc_pushlocindi64
-  (ssa: pushlocindi64ssa; proc: @pushlocindi64op; flags: []), 
+//oc_pushlocindif32
+  (ssa: pushlocindif32ssa; proc: @pushlocindif32op; flags: []), 
+//oc_pushlocindif64
+  (ssa: pushlocindif64ssa; proc: @pushlocindif64op; flags: []), 
+//oc_pushlocindibigint
+  (ssa: pushlocindibigintssa; proc: @pushlocindibigintop; flags: []), 
 //oc_pushlocindi
   (ssa: pushlocindi64ssa; proc: @pushlocindi64op; flags: []), 
 
@@ -1150,6 +1156,8 @@
   (ssa: pushparf32ssa; proc: @pushparf32op; flags: []), 
 //oc_pushparf64
   (ssa: pushparf64ssa; proc: @pushparf64op; flags: []), 
+//oc_pushparbigint
+  (ssa: pushparbigintssa; proc: @pushparbigintop; flags: []), 
 //oc_pushpar
   (ssa: pushparssa; proc: @pushparop; flags: []), 
 

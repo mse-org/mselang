@@ -1316,6 +1316,10 @@ begin
   if (s.stacktop-s.stackindex = 1) and (d.typ.typedata <> 0) then begin
    ele1:= d.typ.typedata;
    po1:= ele.eledataabs(ele1);
+   if not (po1^.h.kind in (ordinaldatakinds+[dk_character])) then begin
+    errormessage(err_illegalsetele,[],1);
+    exit;
+   end;
    getordrange(po1,ra1);
    if (ra1.min < 0) or (ra1.max < 0) then begin
     errormessage(err_setelemustbepositive,[],1);
@@ -1327,7 +1331,7 @@ begin
    end;
    if d.typ.indirectlevel = 0 then begin
     case po1^.h.kind of
-     dk_boolean,dk_integer,dk_cardinal: begin
+     dk_boolean,dk_integer,dk_cardinal,dk_character: begin
      end;
      dk_enum: begin
       if not (enf_contiguous in po1^.infoenum.flags) then begin
@@ -1349,6 +1353,7 @@ begin
      exit;
     end;
     currenttypedef:= ele.eledatarel(po1);
+    d.typ.typedata:= currenttypedef;
     i1:= int32(ra1.max);
     if i1 < 32 then begin           //todo: $packset
      inittypedatasize(po1^,dk_set,
@@ -1366,6 +1371,15 @@ begin
      infoset.itemtype:= ele1;
      infoset.itemcount:= i1+1;
      resolveforwardtype(po1);
+    end;
+    with contextstack[s.stackindex-1] do begin
+    {$ifdef mse_checkinternalerror}
+     if not (d.kind in [ck_typetype,ck_fieldtype]) then begin
+      internalerror(ie_handler,'20181119A');
+     end;
+    {$endif}
+     d.typ.indirectlevel:= 0;
+     d.typ.typedata:= ele.eledatarel(po1);
     end;
    end
    else begin

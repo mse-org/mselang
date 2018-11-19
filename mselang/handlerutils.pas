@@ -2643,21 +2643,22 @@ begin
 end;
 
 type
- opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64,ops_po);
+ opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64,ops_po,ops_bigint);
 
 const
  pushseg: array[opsizety] of opcodety =
            (oc_pushseg,oc_pushseg8,oc_pushseg16,
-            oc_pushseg32,oc_pushseg64,oc_pushsegpo);
+            oc_pushseg32,oc_pushseg64,oc_pushsegpo,oc_pushsegbigint);
  pushloc: array[opsizety] of opcodety =
            (oc_pushloc,oc_pushloc8,oc_pushloc16,
-            oc_pushloc32,oc_pushloc64,oc_pushlocpo);
+            oc_pushloc32,oc_pushloc64,oc_pushlocpo,oc_pushlocbigint);
  pushlocindi: array[opsizety] of opcodety =
            (oc_pushlocindi,oc_pushlocindi8,oc_pushlocindi16,
-            oc_pushlocindi32,oc_pushlocindi64,oc_pushlocindipo);
+            oc_pushlocindi32,oc_pushlocindi64,oc_pushlocindipo,
+            oc_pushlocindibigint);
  pushpar: array[opsizety] of opcodety =
            (oc_pushpar,oc_pushpar8,oc_pushpar16,
-            oc_pushpar32,oc_pushpar64,oc_pushparpo);
+            oc_pushpar32,oc_pushpar64,oc_pushparpo,oc_pushparbigint);
  
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const aopoffset: int32;
@@ -2707,7 +2708,7 @@ begin
       opsize1:= ops_64;
      end;
      else begin
-      internalerror1(ie_handler,'20181113A');
+      opsize1:= ops_bigint;
      end;
     end;
    end; 
