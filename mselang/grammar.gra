@@ -1577,11 +1577,13 @@ notfact,,,handlenotfact
 listfact,listfact1,,       
  ${whitespace}
  ']',listfact3-     //empty list
+listfact1a,listfact1,listfact1aentry,
 listfact1,listfact2,,
  '',exp^*
 listfact2,,,
  ${whitespace}
  ',',listfact1-
+ '..',listfact1a-
  ']',listfact3-
 listfact3,,,handlelistfact
 
@@ -1772,7 +1774,7 @@ valuepath0a,valuepath1a,,
 valuepath1a,valuepath1,handlevaluepath1a, //set ident
 valuepath1,,,^                            //finish
  ${whitespace}
-// '..',*
+ '..',!*
  '.',valuepath2a+-
 valuepath2a,valuepath2,handlevaluepath2a, //set continue flag
 valuepath2,,,handlevaluepath2^            //error

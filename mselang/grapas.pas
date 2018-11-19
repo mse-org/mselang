@@ -2103,6 +2103,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'listfact');
+ listfact1aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'listfact1a');
  listfact1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -12338,7 +12343,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blistfact2: array[0..7] of branchty = (
+ blistfact2: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -12357,6 +12362,13 @@ const
      dest: (context: @linecomment0co); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['/']),
     (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @listfact1aco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['.']),
+    (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
@@ -13580,7 +13592,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bvaluepath1: array[0..6] of branchty = (
+ bvaluepath1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -13599,6 +13611,13 @@ const
      dest: (context: @linecomment0co); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['/']),
     (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_handler,bf_push];
+     dest: (handler: nil); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['.']),
+    (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
@@ -14606,6 +14625,9 @@ begin
  notfactco.handleexit:= @handlenotfact;
  listfactco.branch:= @blistfact;
  listfactco.next:= @listfact1co;
+ listfact1aco.branch:= nil;
+ listfact1aco.next:= @listfact1co;
+ listfact1aco.handleentry:= @listfact1aentry;
  listfact1co.branch:= @blistfact1;
  listfact1co.next:= @listfact2co;
  listfact2co.branch:= @blistfact2;

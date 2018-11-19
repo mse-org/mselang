@@ -63,7 +63,7 @@ CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]
  '-' -> eat token
  CONTEXT'^' -> set parent
  CONTEXT'*' -> push context
- ['!'HANDLER]'*' -> terminate context
+ ['!'[HANDLER]]'*' -> terminate context
  '>' -> continue context after return
 STRINGDEF -> PASCALSTRING['.']
  '.' -> keyword

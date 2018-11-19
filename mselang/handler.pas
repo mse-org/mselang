@@ -131,6 +131,7 @@ procedure handlemulfact();
 procedure handledivfact();
 procedure handlemodfact();
 procedure handledivisionfact();
+procedure listfact1aentry();
 procedure handlelistfact();
 
 procedure fact1entry();
@@ -2042,6 +2043,26 @@ errlab:
    contextstack[s.stackindex].d.kind:= ck_space;
    dec(s.stackindex);
   end;
+ end;
+end;
+
+procedure listfact1aentry();
+var
+ p1,pe: pcontextitemty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('LISTFACT1AENTRY');
+{$endif}
+ with info do begin
+  p1:= @contextstack[s.stacktop-1];
+  while p1^.d.kind = ck_space do begin
+   dec(p1);
+  end;
+  if (p1 > @contextstack[s.stackindex]) and 
+                           (hf_range in p1^.d.handlerflags) then begin
+   errormessage(err_tokenexpected,[',']);
+  end;
+  include(contextstack[s.stacktop].d.handlerflags,hf_range);
  end;
 end;
 

@@ -4,17 +4,23 @@ type
  setty = set of char8;
  arty = array[0..256 div 8 - 1] of card8;
  ar2ty = array[0..5] of card8;
+ enuty = (en_0,en_1,en_2,en_3,en_4);
+ enusty = set of enuty;
 var
 {$internaldebug on}
+ i1: int32;
+ a1: array[0..1,2..2] of int32;
  s2: set of 2..40;
  s1: setty;
+ s3: enusty;
  ar1: arty;
  ar2: ar2ty;
 
 begin
- s2:= [2,32];
+ s3:= [en_0..en_1..en_2];
+// s2:= [2..3];
  ar2:= ar2ty(s2);
- writeln(ar2[0],' ',ar2[1],' ',ar2[2],' ',ar2[3],' ',ar2[4]);
+ writeln(ar2[0],' ',ar2[1],' ',ar2[2],' ',ar2[3],' ',ar2[4],' ',ar2[5]);
 (*
  s1:= [#0,#1];
  ar1:= arty(s1);
