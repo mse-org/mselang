@@ -6712,7 +6712,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
+   a=0,665,4,sub
    c=43
     (
     kind=1
@@ -16283,7 +16283,7 @@ y=143
 cx=775
 cy=660
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=669
@@ -16296,7 +16296,50 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=157
+rowstate=200
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

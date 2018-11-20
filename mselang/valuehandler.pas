@@ -99,7 +99,8 @@ var
  b1: boolean;
  p1: pcard8;
  m1: card8;
- constbefore: int32;
+ lastconst: int32;
+ rangestart: pcontextitemty;
  sv1: stringvaluety;
  mark1: opmarkty;
 begin
@@ -158,7 +159,7 @@ begin
   ca1:= 0;
   min1:= maxint;
   max1:= -1;
-  constbefore:= -1;
+  rangestart:= nil;
   fillchar(bigset1[4],sizeof(bigset1)-4,0);
   poitem:= acontext+1;
   while poitem < poe do begin
@@ -227,47 +228,64 @@ begin
         max1:= i1;
        end;
        if hf_range in d.handlerflags then begin
-        constbefore:= i1;
+        rangestart:= poitem;
+        lastconst:= i1;
        end
        else begin
-        if i1 < sizeof(ca2)*8 then begin
-         ca2:= 1 shl i1;
-         if ca1 and ca2 <> 0 then begin
-          errormessage(err_duplicatesetelement,[],poitem);
-          exit;
+        i2:= i1;
+        if rangestart <> nil then begin
+         if rangestart^.d.kind = ck_const then begin
+          i2:= lastconst;
+         end
+         else begin
+          if not getvalue(rangestart,das_none) then begin
+           exit;
+          end;
+          i2:= bigint; //handle in variable loop
          end;
-         ca1:= ca1 or ca2;
-        end
-        else begin
-         if i1 < sizeof(bigset1)*8 then begin
-          p1:= @bigset1[i1 div 8];
-          m1:= bytebits[i1 and $7];
-          if p1^ and m1 <> 0 then begin
+        end;
+        for i1:= i2 to i1 do begin
+         if i1 < sizeof(ca2)*8 then begin
+          ca2:= 1 shl i1;
+          if ca1 and ca2 <> 0 then begin
            errormessage(err_duplicatesetelement,[],poitem);
            exit;
           end;
-          p1^:= p1^ or m1;
+          ca1:= ca1 or ca2;
+         end
+         else begin
+          if i1 < sizeof(bigset1)*8 then begin
+           p1:= @bigset1[i1 div 8];
+           m1:= bytebits[i1 and $7];
+           if p1^ and m1 <> 0 then begin
+            errormessage(err_duplicatesetelement,[],poitem);
+            exit;
+           end;
+           p1^:= p1^ or m1;
+          end;
          end;
         end;
+        rangestart:= nil;
        end;
-       constbefore:= -1;
       end
       else begin
-      {
        if not getvalue(poitem,das_32) then begin
         exit;
        end;
-      }
-       if not getvalue(poitem,das_32) then begin
-        exit;
+       if rangestart <> nil then begin
+        if not getvalue(rangestart,das_none) then begin
+         exit;
+        end;
        end;
-       constbefore:= -1;
        getordrange(type1,ra1);
        if int32(ra1.min) < min1 then begin
         min1:= int32(ra1.min);
        end;
        if int32(ra1.max) > max1 then begin
         max1:= int32(ra1.max);
+       end;
+       if hf_range in d.handlerflags then begin
+        rangestart:= poitem;
        end;
       end;
       if min1 < minitemindex1 then begin
