@@ -979,35 +979,8 @@ begin
       with additem(op1)^ do begin
        par.ssas1:= p1^.d.dat.fact.ssaindex;
        par.ssas2:= p2^.d.dat.fact.ssaindex;
-       par.stackop.t:= getopdatatype(p1^.d.dat.datatyp.typedata,0);
+       par.stackop.t:= getopdatatype(t1,0);
        updatesetstackop(par,t1,t2);
-      {
-       par.stackop.setflags:= [];
-       if t1^.h.datasize = das_none then begin
-        if co_llvm in o.compileoptions then begin
-         par.stackop.t.listindex:= 
-                s.unitinfo^.llvmlists.typelist.addintvalue(t1^.h.bitsize);
-        end;
-        if t2^.h.bitsize < t1^.h.bitsize then begin
-         include(par.stackop.setflags,osf_extend);  //indexsize < setsize
-        end
-        else begin
-         if t2^.h.bitsize > t1^.h.bitsize then begin
-          include(par.stackop.setflags,osf_trunc); //indexsize > setsize
-         end;
-        end;
-       end
-       else begin
-        if t2^.h.datasize < t1^.h.datasize then begin
-         include(par.stackop.setflags,osf_extend);  //indexsize < setsize
-        end
-        else begin
-         if t2^.h.datasize > t1^.h.datasize then begin
-          include(par.stackop.setflags,osf_trunc); //indexsize > setsize
-         end;
-        end;
-       end;
-      }
       end;
      end;
      exit;

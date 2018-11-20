@@ -57,7 +57,7 @@ CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]
  '>' -> continue with calling context
  STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
         ([CONTEXT] ['+']['-']['+'] [['^']['*'] | ['*']['^']] [ '>']) |
-                                                      (['!'HANDLER][-][*][^])
+                                                      (['!'[HANDLER]][-][*][^])
         [',' (PUSHEDCONTEXT | (PARENTCONTEXT'^'))]
  '+' -> do not set start source pointer
  '-' -> eat token

@@ -518,7 +518,8 @@ type
 }
   oc_setcontains,
   oc_setin,
-  oc_setsetele,  
+  oc_setsetele,
+  oc_setexpand,
   oc_include,
   oc_exclude,
   
@@ -1086,7 +1087,7 @@ type
    oc_cmppo,oc_cmpbool,oc_cmpcard,oc_cmpint,oc_cmpflo,oc_cmpstring:(
     compkind: compopkindty;
    );
-   oc_include,oc_exclude:(
+   oc_include,oc_exclude,oc_setbit:(
     setinfo: setopinfoty;
    );
  end;
@@ -1642,7 +1643,8 @@ type
    oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64,
    }
-   oc_setcontains,oc_setin,oc_include,oc_exclude: (
+   oc_setcontains,oc_setin,oc_include,oc_exclude,
+   oc_setsetele,oc_setexpand,oc_setbit: (
     stackop: stackopty;
    );
 {

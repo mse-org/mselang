@@ -8,7 +8,7 @@ type
  enusty = set of enuty;
 var
 {$internaldebug on}
- i1: int32;
+ i1: 2..40;
  a1: array[0..1,2..2] of int32;
  s2: set of 2..40;
  s1: setty;
@@ -17,8 +17,10 @@ var
  ar2: ar2ty;
 
 begin
- s3:= [en_0..en_1..en_2];
-// s2:= [2..3];
+// s3:= [en_0..en_1,en_2];
+// writeln(int32(s3));
+ i1:= 32;
+ s2:= [2,i1];
  ar2:= ar2ty(s2);
  writeln(ar2[0],' ',ar2[1],' ',ar2[2],' ',ar2[3],' ',ar2[4],' ',ar2[5]);
 (*

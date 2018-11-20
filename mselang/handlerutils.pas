@@ -250,6 +250,7 @@ function getdatabitsize(const avalue: int64): databitsizety;
 
 function getcontextssa(const stackoffset: int32): int32;
 function getcontextopmark(const stackoffset: int32): opmarkty;
+function getcontextopmark(const acontext: pcontextitemty): opmarkty;
 
 function getstackindex(const acontext: pcontextitemty): int32;
 function getstackoffset(const acontext: pcontextitemty): int32;
@@ -2859,6 +2860,18 @@ begin
   end
   else begin
    result:= contextstack[i1].opmark;
+  end;
+ end;
+end;
+
+function getcontextopmark(const acontext: pcontextitemty): opmarkty;
+begin
+ with info do begin
+  if acontext > @contextstack[s.stacktop] then begin
+   result.address:= opcount;
+  end
+  else begin
+   result:= acontext^.opmark;
   end;
  end;
 end;

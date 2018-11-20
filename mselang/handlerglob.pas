@@ -216,6 +216,7 @@ type
  
  infosetty = record
   itemtype: elementoffsetty;
+  itemstart: int32;
   itemcount: int32;
  end;
 

@@ -3191,9 +3191,9 @@ procedure setbitop(); //todo: arbitrary size
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^) or (1 shl vintegerty(po1^));
+ po2:= stackpop(sizeof(vintegerty));
+ po1:= po2-alignsize(sizeof(vintegerty));
+ vintegerty(po1^):= vintegerty(po2^) or (1 shl vintegerty(po1^));
 end;
 
 procedure card8tocard16op();
@@ -4305,6 +4305,11 @@ begin
 end;
 
 procedure setseteleop();
+begin
+ notimplemented();
+end;
+
+procedure setexpandop();
 begin
  notimplemented();
 end;
@@ -7364,6 +7369,7 @@ const
   listtoarrayofconstadssa = 0;
   
   setsetelessa = 0;
+  setexpandssa = 0;
   includessa = 0;
   excludessa = 0;
   

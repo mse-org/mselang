@@ -1369,6 +1369,7 @@ begin
     end;
     with po1^ do begin
      infoset.itemtype:= ele1;
+     infoset.itemstart:= ra1.min;
      infoset.itemcount:= i1+1;
      resolveforwardtype(po1);
     end;

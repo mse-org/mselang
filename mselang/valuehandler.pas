@@ -59,7 +59,7 @@ procedure handlevaluepath2();
 procedure handlevalueinherited();
 
 function getselfvar(out aele: elementoffsetty): boolean;
-function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
+function listtoset(const acontext: pcontextitemty; adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 function listtoopenarray(const acontext: pcontextitemty;
                           const aitemtype: ptypedataty; 
@@ -82,7 +82,7 @@ const                              //0        1         2         3
                                    //4        5         6         7       
                                    %00010000,%00100000,%01000000,%10000000);
 
-function listtoset(const acontext: pcontextitemty; const adest: ptypedataty;
+function listtoset(const acontext: pcontextitemty; adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 var
  i1,i2: int32;
@@ -94,13 +94,19 @@ var
  datasize1: databitsizety;
  bigset1: bigsetbufferty;
  maxitemindex1: int32;
+ minitemindex1: int32;
  ra1: ordrangety;
  b1: boolean;
  p1: pcard8;
  m1: card8;
+ constbefore: int32;
+ sv1: stringvaluety;
+ mark1: opmarkty;
 begin
+ ele.checkcapacity(ek_type,2,adest);
  if (adest = nil) or (adest^.h.datasize = das_none) then begin
   datasize1:= das_32; //todo: $packset
+  minitemindex1:= 0;
   maxitemindex1:= maxsetelementcount-1;
  end
  else begin
@@ -110,6 +116,7 @@ begin
   end;
  {$endif}
   datasize1:= adest^.h.datasize;
+  minitemindex1:= adest^.infoset.itemstart;
   maxitemindex1:= adest^.infoset.itemcount-1;
  end;
 {$ifdef mse_checkinternalerror}
@@ -122,7 +129,6 @@ begin
 {$endif}
  result:= false;
  poe:= acontext + acontext^.d.list.contextcount; //??? ck_space?
- ele.checkcapacity(ek_type);
  if acontext^.d.list.itemcount = 0 then begin //empty set
   initdatacontext(acontext^.d,ck_const);
   with acontext^ do begin
@@ -149,9 +155,10 @@ begin
  end
  else begin
   type2:= nil;
-  ca1:= 0;          //todo: ranges
+  ca1:= 0;
   min1:= maxint;
   max1:= -1;
+  constbefore:= -1;
   fillchar(bigset1[4],sizeof(bigset1)-4,0);
   poitem:= acontext+1;
   while poitem < poe do begin
@@ -180,32 +187,38 @@ begin
       errormessage(err_invalidsetele,[],poitem);
       exit;
      end;
-     if (type1 <> type2) then begin //todo: try to convert ordinals
+     if (type1 <> type2) and not 
+      ((type1^.h.kind in [dk_cardinal,dk_integer]) and 
+                    (type2^.h.kind in [dk_cardinal,dk_integer]) or
+        (type1^.h.kind = dk_character) and 
+                    (type1^.h.kind = dk_character)) then begin
       incompatibletypeserror(type2,type1,poitem);
       exit;
      end;
      case d.kind of 
       ck_const: begin
-       if d.dat.constval.kind = dk_character then begin
-        i1:= d.dat.constval.vcharacter;
-        if i1 < 0 then begin
-         i1:= bigint;
+       case d.dat.constval.kind of
+        dk_character: begin
+         i1:= d.dat.constval.vcharacter;
+         if i1 < 0 then begin
+          i1:= bigint;
+         end;
         end;
-       end
-       else begin
-        if (d.dat.constval.kind = dk_integer) and 
-                             (d.dat.constval.vinteger < 0) then begin
-         errormessage(err_setelemustbepositive,[],poitem);
-         exit;
+        dk_cardinal: begin
+         i1:= d.dat.constval.vcardinal;
+         if i1 < 0 then begin
+          i1:= bigint;
+         end;
         end;
-        i1:= d.dat.constval.vcardinal;
-        if d.dat.constval.vcardinal > maxitemindex1 then begin
-         i1:= bigint;
+        dk_integer: begin
+         i1:= d.dat.constval.vinteger;
         end;
-       end;
-       if i1 > maxitemindex1 then begin
-        errormessage(err_maxseteleallowed,[maxitemindex1+1],poitem);
-        exit;
+        dk_enum: begin
+         i1:= d.dat.constval.venum.value;
+        end;
+        else begin
+         internalerror1(ie_handler,'20181120A');
+        end;
        end;
        if i1 < min1 then begin
         min1:= i1;
@@ -213,28 +226,42 @@ begin
        if i1 > max1 then begin
         max1:= i1;
        end;
-       if i1 < sizeof(ca2)*8 then begin
-        ca2:= 1 shl i1;
-        if ca1 and ca2 <> 0 then begin
-         errormessage(err_duplicatesetelement,[],poitem);
-         exit;
-        end;
-        ca1:= ca1 or ca2;
+       if hf_range in d.handlerflags then begin
+        constbefore:= i1;
        end
        else begin
-        p1:= @bigset1[i1 div 8];
-        m1:= bytebits[i1 and $7];
-        if p1^ and m1 <> 0 then begin
-         errormessage(err_duplicatesetelement,[],poitem);
-         exit;
+        if i1 < sizeof(ca2)*8 then begin
+         ca2:= 1 shl i1;
+         if ca1 and ca2 <> 0 then begin
+          errormessage(err_duplicatesetelement,[],poitem);
+          exit;
+         end;
+         ca1:= ca1 or ca2;
+        end
+        else begin
+         if i1 < sizeof(bigset1)*8 then begin
+          p1:= @bigset1[i1 div 8];
+          m1:= bytebits[i1 and $7];
+          if p1^ and m1 <> 0 then begin
+           errormessage(err_duplicatesetelement,[],poitem);
+           exit;
+          end;
+          p1^:= p1^ or m1;
+         end;
         end;
-        p1^:= p1^ or m1;
        end;
+       constbefore:= -1;
       end
       else begin
+      {
        if not getvalue(poitem,das_32) then begin
         exit;
        end;
+      }
+       if not getvalue(poitem,das_32) then begin
+        exit;
+       end;
+       constbefore:= -1;
        getordrange(type1,ra1);
        if int32(ra1.min) < min1 then begin
         min1:= int32(ra1.min);
@@ -243,21 +270,48 @@ begin
         max1:= int32(ra1.max);
        end;
       end;
+      if min1 < minitemindex1 then begin
+       errormessage(err_minseteleallowed,[minitemindex1],poitem);
+       exit;
+      end;
+      if max1 > maxitemindex1 then begin
+       errormessage(err_maxseteleallowed,[maxitemindex1+1],poitem);
+       exit;
+      end;
      end; 
     end;
    end;
    inc(poitem);
   end;
+  if type2^.h.kind in [dk_cardinal,dk_integer] then begin
+   getordrange(type2,ra1);
+   if (ra1.min <> min1) or (ra1.max <> max1) then begin
+    type2:= ele.addelementdata(getident(),ek_type,[]); //anonymous item type
+    inittypedatasize(type2^,dk_integer,0,das_32);
+    with type2^.infoint32 do begin
+     min:= min1;
+     max:= max1;
+    end;
+   end;
+  end;
   type1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
   b1:= max1 >= 32;
   if b1 then begin
    inittypedatasize(type1^,dk_set,0,das_bigint);
+   type1^.h.bytesize:= (max1+8) div 8;
+   type1^.h.bitsize:= type1^.h.bytesize * 8;
   end
   else begin
    inittypedatasize(type1^,dk_set,0,das_32);
   end;
-  with type1^ do begin
-   infoset.itemtype:= ele.eledatarel(type2);
+  with type1^.infoset do begin
+   itemtype:= ele.eledatarel(type2);
+   itemstart:= min1;
+   itemcount:= max1+1;
+  end;
+  if b1 then begin
+   pcard32(@bigset1)^:= ca1;
+   sv1:= newbigintconst(@bigset1,max1+1);
   end;
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
@@ -266,8 +320,7 @@ begin
     vset.min:= min1;
     vset.max:= max1;
     if b1 then begin
-     pcard32(@bigset1)^:= ca1;
-     vset.bigsetvalue:= newbigintconst(@bigset1,max1+1);
+     vset.bigsetvalue:= sv1;
      vset.kind:= das_bigint;
     end
     else begin
@@ -277,24 +330,41 @@ begin
    end;
   end
   else begin
-   initdatacontext(acontext^.d,ck_fact); //wrong opmark?
-   with insertitem(oc_pushimm32,acontext+1,0)^ do begin 
-                                                               //first op
-    setimmint32(ca1,par.imm);
-    i2:= par.ssad;
+   if b1 then begin
+    with insertitem(oc_pushimmbigint,poe,-1)^ do begin
+     setimmbigint(sv1,par.imm);
+     i2:= par.ssad;
+    end;
+   end
+   else begin
+    with insertitem(oc_pushimm32,poe,-1)^ do begin 
+     setimmint32(ca1,par.imm);
+     i2:= par.ssad;
+    end;
    end;
    poitem:= acontext+1;
    while poitem < poe do begin
     if not (poitem^.d.kind in [ck_space,ck_const]) then begin
-     op1:= insertitem(oc_setbit,poitem,-1);
+    {$ifdef mse_cehckinternalerror}
+     if not (poitem^.d.kind in factcontexts) then begin
+      internalerror(ie_handler,'20181120C');
+     end;
+    {$endif}
+     i1:= poitem^.d.dat.fact.ssaindex;
+     op1:= insertitem(oc_setbit,poe,-1);
      with op1^ do begin //last op
+      par.stackop.t:= getopdatatype(type1,0);
+      updatesetstackop(par,type1,ele.eledataabs(
+                                         poitem^.d.dat.datatyp.typedata));
       par.ssas1:= i2;
-      par.ssas2:= (op1-1)^.par.ssad;
+      par.ssas2:= i1;
       i2:= par.ssad;
      end;
+     mark1:= poitem^.opmark;
     end;
     inc(poitem);
    end;
+   initdatacontext(acontext^.d,ck_fact);
    acontext^.d.dat.fact.ssaindex:= i2;
   end;
   with acontext^ do begin
@@ -303,8 +373,10 @@ begin
    d.dat.datatyp.indirectlevel:= 0;
   end;
  end;
+ mark1:= getcontextopmark(poe);
  poitem:= acontext+1;
  while poitem < poe do begin
+  poitem^.opmark:= mark1;    //move ops to result context
   poitem^.d.kind:= ck_space;
   inc(poitem);
  end;
@@ -934,9 +1006,10 @@ function checkcompatibleset(const acontext: pcontextitemty;
                             const source,dest: ptypedataty): boolean;
 var
  source1,dest1: ptypedataty;
- ra1: ordrangety;
+ ra1,ra2: ordrangety;
  buf1: bigsetbufferty;
  s1: lstringty;
+ i1: int32;
 begin
 {$ifdef mse_checkinternalerror}
  if (source^.h.kind <> dk_set) or (dest^.h.kind <> dk_set) then begin
@@ -954,18 +1027,31 @@ begin
  if not result then begin
   case dest1^.h.kind of
    dk_cardinal,dk_integer: begin
-    if (acontext^.d.kind = ck_const) and 
-                       (source1^.h.kind in [dk_cardinal,dk_integer]) then begin
+    if source1^.h.kind in [dk_cardinal,dk_integer] then begin
      getordrange(dest1,ra1);
-     with acontext^.d.dat.constval.vset do begin
-      result:= (min >= ra1.min) and (max <= ra1.max);
-      if result and (source^.h.datasize = das_bigint) and 
-                          (dest^.h.datasize = das_bigint) and 
-                             (dest^.h.bytesize > source^.h.bytesize) then begin
-       s1:= getstringconst(bigsetvalue);
-       move(s1.po^,buf1,s1.len);
-       fillchar(buf1[s1.len],dest^.h.bytesize-s1.len,0);
-       bigsetvalue:= newbigintconst(@buf1,dest^.h.bitsize);
+     if acontext^.d.kind = ck_const then begin
+      with acontext^.d.dat.constval.vset do begin
+       result:= (min >= ra1.min) and (max <= ra1.max);
+       if result and (source^.h.datasize = das_bigint) and 
+                           (dest^.h.datasize = das_bigint) and 
+                              (dest^.h.bytesize > source^.h.bytesize) then begin
+        s1:= getstringconst(bigsetvalue);
+        move(s1.po^,buf1,s1.len);
+        fillchar(buf1[s1.len],dest^.h.bytesize-s1.len,0);
+        bigsetvalue:= newbigintconst(@buf1,dest^.h.bitsize);
+       end;
+      end;
+     end
+     else begin
+      getordrange(source1,ra2);
+      result:= (ra2.min >= ra1.min) and (ra2.max <= ra1.max);
+      if result and (ra2.max < ra1.max) and 
+                                    getvalue(acontext,das_none) then begin
+       i1:= acontext^.d.dat.fact.ssaindex;
+       with insertitem(oc_setexpand,acontext,-1)^ do begin
+        par.ssas1:= i1;
+        par.stackop.t:= getopdatatype(dest,0);
+       end;
       end;
      end;
     end;
@@ -1815,11 +1901,7 @@ begin
            end;
           end;
           dk_set{,dk_bigset}: begin
-           if (source1^.h.kind = dk_set) and 
-                (d.dat.datatyp.typedata = emptyset.typedata) then begin
-                                     //????
-            result:= true;
-           end;
+           result:= checkcompatibleset(acontext,source1,dest);
           end;
           dk_string: begin
            case source1^.h.kind of

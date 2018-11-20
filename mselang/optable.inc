@@ -719,6 +719,8 @@
   (ssa: setinssa; proc: @setinop; flags: []), 
 //oc_setsetele
   (ssa: setsetelessa; proc: @setseteleop;flags: []),
+//oc_setexpand
+  (ssa: setexpandssa; proc: @setexpandop;flags: []),
 //oc_include
   (ssa: includessa; proc: @includeop;flags: []), 
 //oc_exclude

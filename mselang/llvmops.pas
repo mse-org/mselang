@@ -1527,31 +1527,6 @@ begin
  outbinop(BINOP_SUB);
 end;
 
-procedure diffsetop(); //todo: arbitrary size
-begin
- with pc^.par do begin
-  bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mco_i32)),
-                                         bcstream.ssaval(ssas2)); //not
-  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
- end;
-end;
-
-procedure xorsetop(); //todo: arbitrary size
-begin
- with pc^.par do begin
-  bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
- end;
-end;
-
-procedure setbitop(); //todo: arbitrary size
-begin
- with pc^.par do begin
-  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                             bcstream.ssaval(ssas2));
-  bcstream.emitbinop(BINOP_OR,bcstream.ssaval(ssas1),bcstream.relval(0));
- end;
-end;
-
 procedure card8tocard16op();
 begin
  with pc^.par do begin
@@ -2750,6 +2725,38 @@ begin
  end;
 end;
 
+procedure diffsetop(); //todo: arbitrary size
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mco_i32)),
+                                         bcstream.ssaval(ssas2)); //not
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
+ end;
+end;
+
+procedure xorsetop(); //todo: arbitrary size
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
+ end;
+end;
+
+procedure setbitop();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //1
+                    //1-mask
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+            bcstream.typeval(stackop.setinfo.listindex),getsetcast());    //2
+                    //shift count
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
+                                            bcstream.relval(0));          //3
+                    //mask
+  bcstream.emitbinop(BINOP_OR,bcstream.ssaval(ssas1),bcstream.relval(0)); //4
+ end;
+end;
+
 procedure setcontainsop();
 begin
  with pc^.par do begin
@@ -2847,6 +2854,14 @@ begin
   bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //8
  }
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(5));
+ end;
+end;
+
+procedure setexpandop();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                        bcstream.typeval(stackop.t.listindex),CAST_ZEXT);
  end;
 end;
 
@@ -5571,7 +5586,7 @@ const
   diffsetssa = 2;
   xorsetssa = 1;
   
-  setbitssa = 2;
+  setbitssa = 4;
 
   addimmintssa = 1;
   mulimmintssa = 1;
@@ -5632,6 +5647,7 @@ const
   setcontainsssa = 3;
   setinssa = 6;
   setsetelessa = 11;
+  setexpandssa = 1;
   includessa = 6;
   excludessa = 8;
   
