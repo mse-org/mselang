@@ -212,12 +212,14 @@ end;
 procedure updatesetstackop(var par: opparamty; const aset,aindex: ptypedataty);
 begin
  par.stackop.setinfo.flags:= [];
- par.stackop.setinfo.listindex:= par.stackop.t.listindex;
+// par.stackop.setinfo.listindex:= par.stackop.t.listindex;
  if aset^.h.datasize = das_none then begin
+{
   if co_llvm in info.o.compileoptions then begin
    par.stackop.setinfo.listindex:= 
           info.s.unitinfo^.llvmlists.typelist.addintvalue(aset^.h.bitsize);
   end;
+}
   if aindex^.h.bitsize < aset^.h.bitsize then begin
    include(par.stackop.setinfo.flags,osf_extend);  //indexsize < setsize
   end

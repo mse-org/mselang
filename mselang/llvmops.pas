@@ -2745,10 +2745,10 @@ procedure setbitop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));          //3
@@ -2771,10 +2771,10 @@ procedure setinop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));          //3
@@ -2791,7 +2791,7 @@ begin
 }
   bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(3));    //4
   bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //5
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //5
                     //0-mask
   bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //6
 
@@ -2802,29 +2802,29 @@ procedure setseteleop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));          //3
                     //mask
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_SEXT);       //4
+            bcstream.typeval(stackop.t.listindex),CAST_SEXT);       //4
                     //all 1-mask
   bcstream.emitbinop(BINOP_XOR,bcstream.relval(1),
                            bcstream.relval(0));                           //5
                     //not mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                   bcstream.ptypeval(stackop.setinfo.listindex));         //6
+                   bcstream.ptypeval(stackop.t.listindex));         //6
                                      //address
   bcstream.emitloadop(bcstream.relval(0));                                //7
                                      //value
   bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(2));    //8
                                      //clear bit
   bcstream.emitcastop(bcstream.ssaval(ssas3),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);       //9
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //9
                                      //boolean value
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(0),
                                             bcstream.relval(7));          //10
@@ -2869,16 +2869,16 @@ procedure includeop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);    //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);    //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast()); //2
+            bcstream.typeval(stackop.t.listindex),getsetcast()); //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));       //3
                     //mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                   bcstream.ptypeval(stackop.setinfo.listindex));      //4
+                   bcstream.ptypeval(stackop.t.listindex));      //4
                                      //address
 {
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
@@ -2899,21 +2899,21 @@ procedure excludeop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_ZEXT);    //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);    //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.setinfo.listindex),getsetcast()); //2
+            bcstream.typeval(stackop.t.listindex),getsetcast()); //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));       //3
                     //mask
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.setinfo.listindex),CAST_SEXT);    //4
+            bcstream.typeval(stackop.t.listindex),CAST_SEXT);    //4
                     //all 1-mask
   bcstream.emitbinop(BINOP_XOR,bcstream.relval(1),bcstream.relval(0)); //5
                     //inverted mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                  bcstream.ptypeval(ord(stackop.setinfo.listindex)));  //6
+                  bcstream.ptypeval(ord(stackop.t.listindex)));  //6
                     //address
   bcstream.emitloadop(bcstream.relval(0));                             //7
                     //value

@@ -1078,7 +1078,7 @@ type
  opsetflagsty = set of opsetflagty;
  setopinfoty = record
   flags: opsetflagsty;
-  listindex: int32; //llvm type index for set int bits
+//  listindex: int32; //llvm type index for set int bits
  end;
  
  stackopty = record
