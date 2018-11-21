@@ -1204,7 +1204,7 @@ var                     //todo: optimize, use tables, complete
               getidentname(datatoele(ancestor)^.header.name),
               getidentname(datatoele(base)^.header.name)],acontext);
   end;
- end;
+ end; //checkancestorclass
   
 var
  pointerconv: boolean;
@@ -1225,8 +1225,8 @@ var
  bigset1: bigsetbufferty;
  
 label
- endlab; 
-begin
+ sizeconvlab,endlab; 
+begin //tryconvert
  result:= false;
  with info do begin
 //  if not checkreftypeconversion(acontext) then begin
@@ -1522,7 +1522,7 @@ begin
        dk_sub: begin
         result:= checkcompatiblesub(source1,dest);
        end;
-       dk_record: begin
+       dk_record,dk_array: begin
         result:= issamebasetype(dest,source1);
        end;
        dk_object,dk_class,dk_interface: begin
@@ -1557,7 +1557,7 @@ begin
        end;
       end;
       if not result then begin
-       goto endlab; //no conversion possible
+       goto sizeconvlab;
       end;
      end;
     end;
@@ -2098,6 +2098,7 @@ begin
      pointerconv:= result;
     end;
    end;
+sizeconvlab:
    if not result and (coo_type in aoptions) then begin
     result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
                               (dest^.h.bytesize = source1^.h.bytesize);
