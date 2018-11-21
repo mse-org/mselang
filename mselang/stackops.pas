@@ -3196,6 +3196,11 @@ begin
  vintegerty(po1^):= vintegerty(po2^) or (1 shl vintegerty(po1^));
 end;
 
+procedure setbitrangeop();
+begin
+ notimplemented();
+end;
+
 procedure card8tocard16op();
 var
  po1: pointer;
@@ -7406,6 +7411,7 @@ const
   xorsetssa = 0;
   
   setbitssa = 0;
+  setbitrangessa = 0;
 
   addimmintssa = 0;
   mulimmintssa = 0;

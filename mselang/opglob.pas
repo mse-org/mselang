@@ -426,6 +426,7 @@ type
   oc_xorset,
 
   oc_setbit,
+  oc_setbitrange,
   
   oc_addimmint,
   oc_mulimmint,

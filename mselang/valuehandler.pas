@@ -99,7 +99,7 @@ var
  b1: boolean;
  p1: pcard8;
  m1: card8;
- lastconst: int32;
+ lastvalue: int32;
  rangestart: pcontextitemty;
  sv1: stringvaluety;
  mark1: opmarkty;
@@ -229,16 +229,20 @@ begin
        end;
        if hf_range in d.handlerflags then begin
         rangestart:= poitem;
-        lastconst:= i1;
+        lastvalue:= i1;
        end
        else begin
         i2:= i1;
         if rangestart <> nil then begin
          if rangestart^.d.kind = ck_const then begin
-          i2:= lastconst;
+          i2:= lastvalue;
+          if i2 > i1 then begin
+           errormessage(err_highlowerlow,[],poitem);
+           exit;
+          end;
          end
          else begin
-          if not getvalue(rangestart,das_none) then begin
+          if not getvalue(poitem,das_none) then begin
            exit;
           end;
           i2:= bigint; //handle in variable loop
@@ -360,25 +364,38 @@ begin
      i2:= par.ssad;
     end;
    end;
+   lastvalue:= -1;
    poitem:= acontext+1;
    while poitem < poe do begin
-    if not (poitem^.d.kind in [ck_space,ck_const]) then begin
-    {$ifdef mse_cehckinternalerror}
-     if not (poitem^.d.kind in factcontexts) then begin
-      internalerror(ie_handler,'20181120C');
+    with poitem^ do begin
+     if not (poitem^.d.kind in [ck_space,ck_const]) then begin
+     {$ifdef mse_cehckinternalerror}
+      if not (poitem^.d.kind in factcontexts) then begin
+       internalerror(ie_handler,'20181120C');
+      end;
+     {$endif}
+      i1:= d.dat.fact.ssaindex;
+      if hf_range in d.handlerflags then begin
+       lastvalue:= i1;
+      end
+      else begin
+       if lastvalue >= 0 then begin
+        op1:= insertitem(oc_setbitrange,poe,-1);
+        op1^.par.ssas3:= lastvalue;
+        lastvalue:= -1;
+       end
+       else begin
+        op1:= insertitem(oc_setbit,poe,-1);
+       end;
+       with op1^ do begin //last op
+        par.stackop.t:= getopdatatype(type1,0);
+        updatesetstackop(par,type1,ele.eledataabs(d.dat.datatyp.typedata));
+        par.ssas1:= i2;
+        par.ssas2:= i1;
+        i2:= par.ssad;
+       end;
+      end;
      end;
-    {$endif}
-     i1:= poitem^.d.dat.fact.ssaindex;
-     op1:= insertitem(oc_setbit,poe,-1);
-     with op1^ do begin //last op
-      par.stackop.t:= getopdatatype(type1,0);
-      updatesetstackop(par,type1,ele.eledataabs(
-                                         poitem^.d.dat.datatyp.typedata));
-      par.ssas1:= i2;
-      par.ssas2:= i1;
-      i2:= par.ssad;
-     end;
-     mark1:= poitem^.opmark;
     end;
     inc(poitem);
    end;
@@ -1220,7 +1237,9 @@ begin
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set{,dk_bigset}: begin
-     listtoset(acontext,dest,lastitem);
+     if not listtoset(acontext,dest,lastitem) then begin
+      exit;
+     end;
     end;
     else begin
      goto endlab;

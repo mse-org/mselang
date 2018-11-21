@@ -2745,15 +2745,46 @@ procedure setbitop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);             //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());          //2
                     //shift count
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
-                                            bcstream.relval(0));          //3
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),bcstream.relval(0));    //3
                     //mask
   bcstream.emitbinop(BINOP_OR,bcstream.ssaval(ssas1),bcstream.relval(0)); //4
+ end;
+end;
+
+procedure setbitrangeop();
+begin
+ with pc^.par do begin
+                    //ex. 2..3
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);             //1
+                    //1-mask
+  bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
+            bcstream.typeval(stackop.t.listindex),CAST_SEXT);             //2
+                    //11111111 all 1-mask
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+            bcstream.typeval(stackop.t.listindex),getsetcast());          //3
+                    //msb shift count
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),bcstream.relval(0));    //4
+                    //11111000
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(0),bcstream.relval(3));    //5
+                    //11110000 not msb mask
+  bcstream.emitcastop(bcstream.ssaval(ssas3),
+            bcstream.typeval(stackop.t.listindex),getsetcast());          //6
+                    //lsb shift count
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(4),bcstream.relval(0));    //7
+                    //11111100 not lsb mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(5),bcstream.relval(0));    //8
+                    //00000011 lsb mask
+  bcstream.emitbinop(BINOP_OR,bcstream.relval(3),bcstream.relval(0));     //9
+                    //11110011 not mask
+  bcstream.emitbinop(BINOP_XOR,bcstream.relval(7),bcstream.relval(0));    //10
+                    //00001100 mask
+  bcstream.emitbinop(BINOP_OR,bcstream.ssaval(ssas1),bcstream.relval(0)); //11
  end;
 end;
 
@@ -2771,27 +2802,16 @@ procedure setinop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);             //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());          //2
                     //shift count
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
-                                            bcstream.relval(0));          //3
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),bcstream.relval(0));    //3
                     //mask
-{
-  bcstream.emitalloca(bcstream.ptypeval(stackop.t.listindex));            //4
-   //todo: don't use data copy, use compilersub
-  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
-                    //byte array
-  bcstream.emitbitcast(bcstream.relval(0),
-                           bcstream.ptypeval(stackop.setinfo.listindex)); //5
-  bcstream.emitloadop(bcstream.relval(0));                                //6
-                    //int bits
-}
   bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(3));    //4
   bcstream.emitcastop(bcstream.constval(ord(nco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //5
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);             //5
                     //0-mask
   bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //6
 
@@ -2802,57 +2822,33 @@ procedure setseteleop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);            //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.t.listindex),getsetcast());    //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());         //2
                     //shift count
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
-                                            bcstream.relval(0));          //3
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),bcstream.relval(0));   //3
                     //mask
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_SEXT);       //4
+            bcstream.typeval(stackop.t.listindex),CAST_SEXT);            //4
                     //all 1-mask
   bcstream.emitbinop(BINOP_XOR,bcstream.relval(1),
-                           bcstream.relval(0));                           //5
+                           bcstream.relval(0));                          //5
                     //not mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                   bcstream.ptypeval(stackop.t.listindex));         //6
+                   bcstream.ptypeval(stackop.t.listindex));              //6
                                      //address
-  bcstream.emitloadop(bcstream.relval(0));                                //7
+  bcstream.emitloadop(bcstream.relval(0));                               //7
                                      //value
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(2));    //8
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(2));   //8
                                      //clear bit
   bcstream.emitcastop(bcstream.ssaval(ssas3),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);       //9
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);            //9
                                      //boolean value
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(0),
-                                            bcstream.relval(7));          //10
+                                            bcstream.relval(7));         //10
                                      //mask
-  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));     //11
-
-{
-  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                            bcstream.ssaval(ssas2));   //1
-                                     //mask
-  bcstream.emitbinop(BINOP_XOR,bcstream.relval(0),
-                           bcstream.constval(ord(mco_i32)));           //2
-                                     //not mask
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                               bcstream.ptypeval(ord(das_32)));        //3
-                                     //address
-  bcstream.emitloadop(bcstream.relval(0));                             //4
-                                     //value
-  bcstream.emitbinop(BINOP_AND,bcstream.relval(0),bcstream.relval(2)); //5
-                                     //clear bit
-  bcstream.emitcastop(bcstream.ssaval(ssas3),
-                             bcstream.typeval(das_32),CAST_ZEXT);      //6
-                                     //boolean value
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(0),
-                                            bcstream.ssaval(ssas2));   //7
-                                     //mask
-  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //8
- }
+  bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));    //11
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(5));
  end;
 end;
@@ -2869,25 +2865,17 @@ procedure includeop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);    //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.t.listindex),getsetcast()); //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());       //2
                     //shift count
   bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
                                             bcstream.relval(0));       //3
                     //mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                   bcstream.ptypeval(stackop.t.listindex));      //4
+                   bcstream.ptypeval(stackop.t.listindex));            //4
                                      //address
-{
-  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oco_i32)),
-                                            bcstream.ssaval(ssas2));   
-                                     //mask
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                               bcstream.ptypeval(ord(das_32)));        
-                                     //address
-}
   bcstream.emitloadop(bcstream.relval(0));                             //5
                                      //value
   bcstream.emitbinop(BINOP_OR,bcstream.relval(2),bcstream.relval(0));  //6
@@ -2899,21 +2887,20 @@ procedure excludeop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);    //1
+            bcstream.typeval(stackop.t.listindex),CAST_ZEXT);          //1
                     //1-mask
   bcstream.emitcastop(bcstream.ssaval(ssas2),
-            bcstream.typeval(stackop.t.listindex),getsetcast()); //2
+            bcstream.typeval(stackop.t.listindex),getsetcast());       //2
                     //shift count
-  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),
-                                            bcstream.relval(0));       //3
+  bcstream.emitbinop(BINOP_SHL,bcstream.relval(1),bcstream.relval(0)); //3
                     //mask
   bcstream.emitcastop(bcstream.constval(ord(oco_i1)),
-            bcstream.typeval(stackop.t.listindex),CAST_SEXT);    //4
+            bcstream.typeval(stackop.t.listindex),CAST_SEXT);          //4
                     //all 1-mask
   bcstream.emitbinop(BINOP_XOR,bcstream.relval(1),bcstream.relval(0)); //5
                     //inverted mask
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
-                  bcstream.ptypeval(ord(stackop.t.listindex)));  //6
+                  bcstream.ptypeval(ord(stackop.t.listindex)));        //6
                     //address
   bcstream.emitloadop(bcstream.relval(0));                             //7
                     //value
@@ -5587,6 +5574,7 @@ const
   xorsetssa = 1;
   
   setbitssa = 4;
+  setbitrangessa =11;
 
   addimmintssa = 1;
   mulimmintssa = 1;

@@ -556,6 +556,8 @@
 
 //oc_setbit
   (ssa: setbitssa; proc: @setbitop; flags: []), 
+//oc_setbitrange
+  (ssa: setbitrangessa; proc: @setbitrangeop; flags: []), 
 
 //oc_addimmint
   (ssa: addimmintssa; proc: @addimmintop; flags: []), 
