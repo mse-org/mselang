@@ -189,7 +189,7 @@ procedure reset();
 implementation
 uses
  elements,errorhandler,handlerglob,identutils;
- 
+var testvar,testvar1: psubdataty;
 procedure initcompilersubs(const aunit: punitinfoty);
 var
  s1,se: compilersubty;
@@ -244,6 +244,8 @@ begin
      internalerror1(ie_parser,'20141031A');
     end
     else begin
+testvar:= ele.eledataabs(compilersubs[s1]);
+testvar1:= ele.eledataabs(testvar^.impl);
      compilersubids[s1]:= psubdataty(ele.eledataabs(
          psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
     end;

@@ -6,23 +6,62 @@ type
  ar2ty = array[0..5] of card8;
  enuty = (en_0,en_1,en_2,en_3,en_4);
  enusty = set of enuty;
+ ar3ty = array[0..ord('z') div 8] of card8;
+ set5ty = set of 0..127;
+ ar5ty = array[0..sizeof(set5ty)-1] of card8;
 var
-{$internaldebug on}
  i1: 2..40;
  a1: array[0..1,2..2] of int32;
  s2: set of 2..40;
  s1: setty;
  s3: enusty;
+ s4: set of #0..'z';
+ s5: set5ty;
+// ar5: array[0..7] of card8; !!!!!
+ ar5: ar5ty;
+ ar3: ar3ty;
  ar1: arty;
  ar2: ar2ty;
-
+ i2: int32;
+ i3: 0..ord('z');
+ c1: card64;
 begin
 // s3:= [en_0..en_1,en_2];
 // writeln(int32(s3));
- i1:= 4;
- s2:= [2..3];
+{$internaldebug on}
+ s5:= [0..127];
+// writeln(sizeof(s5,' ',sizeof(ar5));
+ ar5:= ar5ty(s5);
+
+ for i2:= 0 to high(ar5) do
+  write(ar5[i2],' ');
+ end;
+
+// i1:= 47;
+// i3:= 120;
+// s4:= [{#0,#1,}'z'];
+{
+ ar3:= ar3ty(s4);
+ for i2:= 0 to high(ar3) do
+  write(ar3[i2],' ');
+ end;
+ writeln(ord('z'),':',length(ar3),':',length(ar3)*8);
+}
+// writeln(ar3[0],' ',ar3[high(ar3)]);
+// writeln(int32(s4));
+{
+ if (#0 in s4) and s4['a'] then
+  exitcode:= 123;
+ end;
+}
+{
+ i1:= 2;
+ if 2 in [i1..3] then
+  exitcode:= 123;
+ end;
  ar2:= ar2ty(s2);
  writeln(ar2[0],' ',ar2[1],' ',ar2[2],' ',ar2[3],' ',ar2[4],' ',ar2[5]);
+}
 (*
  s1:= [#0,#1];
  ar1:= arty(s1);

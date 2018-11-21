@@ -4,39 +4,43 @@ value=mabconst
 value=4
 [mainfo.grid]
 propcolwidthref=208
-values0=7
+values0=8
  int
  
  bigint
+ 
  
  data
  
  
 sortdescend0=0
-values1=7
+values1=8
  2
  2
  2
+ 3
  2
  2
  3
  2
 values1_ci=-1
 sortdescend1=0
-values2=7
+values2=8
  6
  6
  6
+ 0
  9
  6
  0
  8
 values2_ci=-1
 sortdescend2=0
-values3=7
+values3=8
  id
  value
  id
+ array
  value
  id
  array

@@ -305,7 +305,7 @@ begin
    end;
    inc(poitem);
   end;
-  if type2^.h.kind in [dk_cardinal,dk_integer] then begin
+  if type2^.h.kind in [dk_cardinal,dk_integer,dk_character] then begin
    getordrange(type2,ra1);
    if (ra1.min <> min1) or (ra1.max <> max1) then begin
     type2:= ele.addelementdata(getident(),ek_type,[]); //anonymous item type
@@ -1061,8 +1061,8 @@ begin
  result:= issametype(source1,dest1);
  if not result then begin
   case dest1^.h.kind of
-   dk_cardinal,dk_integer: begin
-    if source1^.h.kind in [dk_cardinal,dk_integer] then begin
+   dk_cardinal,dk_integer,dk_character: begin
+    if source1^.h.kind in [dk_cardinal,dk_integer,dk_character] then begin
      getordrange(dest1,ra1);
      if acontext^.d.kind = ck_const then begin
       with acontext^.d.dat.constval.vset do begin
@@ -1477,7 +1477,8 @@ begin
     result:= (dest^.h.kind = source1^.h.kind) and 
                            (dest^.h.datasize = source1^.h.datasize);
     if result then begin
-     if (coo_notrunc in aoptions) and (d.kind = ck_const) then begin
+     if (d.kind = ck_const) and 
+        ((coo_notrunc in aoptions) or (tf_subrange in dest^.h.flags)) then begin
       case source1^.h.kind of
        dk_integer: begin
         getordrange(dest,ra1);

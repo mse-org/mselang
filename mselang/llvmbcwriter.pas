@@ -328,12 +328,12 @@ const
 type
  mabconstty = (
   mabconst_int = 4, //id (vbr 6), value (vbr 6)
-  mabconst_bigint, //id (vbr 6), value (vbr 9)
+  mabconst_bigint, //id (vbr 6), array (array), value (vbr 9)
   mabconst_data //id (vbr 6), array (array), data (vbr 8)
  );
 const
- mabconstsdat: array[0..10] of card8 = (18,100,200,72,144,161,164,65,198,8,1);
- mabconsts: bcdataty = (bitsize: 82; data: @mabconstsdat);
+ mabconstsdat: array[0..10] of card8 = (18,100,200,104,144,49,74,26,100,140,16);
+ mabconsts: bcdataty = (bitsize: 86; data: @mabconstsdat);
 
 type
  mabtypety = (
@@ -1599,7 +1599,7 @@ end;
 
 procedure tllvmbcwriter.emitbigintconst(const avalue; const asize: int32);
 var
- p1,pe: pcard8;
+ p1,pe,pee: pcard8;
  i1: int32;
  c1,c2: card8;
  carry1: boolean;
@@ -1610,47 +1610,63 @@ begin
  end;
 {$endif}
  emitcode(ord(mabconst_bigint)); 
- emitvbr6(ord(CST_CODE_INTEGER));
+ emitvbr6(ord(CST_CODE_WIDE_INTEGER));
+ emitvbr6((asize+7) div 8); //64 bit word count
  p1:= @avalue;
- pe:= p1+asize-1;
- if pe^ and $80 <> 0 then begin //negative
-  if asize = 1 then begin
-   emit9(((not(p1^)+1) shl 1) or 1);
-  end
-  else begin
-   c1:= not(p1^) + 1;
-   carry1:= c1 = 0; //carry
-   emit9((c1 shl 1) or $01 or $100);
-   inc(p1);
-   while p1 < pe do begin
+ pee:= p1+asize-1;
+ pe:= p1 + 7;       //first word
+ if pe > pee then begin
+  pe:= pee;
+ end;
+ while true do begin
+  if pe^ and $80 <> 0 then begin //negative
+   if asize = 1 then begin
+    emit9(((not(p1^)+1) shl 1) or 1);
+   end
+   else begin
+    c1:= not(p1^) + 1;
+    carry1:= c1 = 0; //carry
+    emit9((c1 shl 1) or $01 or $100);
+    inc(p1);
+    while p1 < pe do begin
+     c2:= not(p1^);
+     if carry1 then begin
+      inc(c2);
+      carry1:= c2 = 0;
+     end;
+     emit9((c2 shl 1) or (c1 shr 7) or $100);
+     c1:= c2;
+     inc(p1);
+    end;
     c2:= not(p1^);
     if carry1 then begin
      inc(c2);
      carry1:= c2 = 0;
     end;
-    emit9((c2 shl 1) or (c1 shr 7) or $100);
-    c1:= c2;
-    inc(p1);
+    emit9(card8(c2 shl 1) or (c1 shr 7));
+    if carry1 then begin
+     emit9(1);
+    end;
    end;
-   c2:= not(p1^);
-   if carry1 then begin
-    inc(c2);
-   end;
-   emit9(card8(c2 shl 1) or (c1 shr 7));
-  end;
- end
- else begin
-  if asize = 1 then begin
-   emit9((p1^ shl 1) or (c1 shr 7));
   end
   else begin
-   emit9((p1^ shl 1) or $100);
-   inc(p1);
-   while p1 < pe do begin
-    emit9((p1^ shl 1) or ((p1-1)^ shr 7) or $100);
+   if asize = 1 then begin
+    emit9((p1^ shl 1) or (c1 shr 7));
+   end
+   else begin
+    emit9((p1^ shl 1) or $100);
     inc(p1);
+    while p1 < pe do begin
+     emit9((p1^ shl 1) or ((p1-1)^ shr 7) or $100);
+     inc(p1);
+    end;
+    emit9(card8(p1^ shl 1) or ((p1-1)^ shr 7));
    end;
-   emit9(card8(p1^ shl 1) or ((p1-1)^ shr 7));
+  end;
+  inc(p1);
+  pe:= pe + 8;
+  if pe > pee then begin
+   break;
   end;
  end;
 end;
