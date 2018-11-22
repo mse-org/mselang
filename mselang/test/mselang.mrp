@@ -6061,7 +6061,7 @@ c=3
    (
    kind=1
    a=0,665,4,set
-   c=13
+   c=14
     (
     kind=2
     a=0,648,1,setconstructor1
@@ -6331,6 +6331,28 @@ c=3
     a=0,648,1,bigset1 llvm
     teststate=1
     path=bigset1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,bigset2 llvm
+    teststate=1
+    path=bigset2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -16296,7 +16318,8 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=200
+rowstate=201
+ 0 0
  0 0
  0 0
  0 0

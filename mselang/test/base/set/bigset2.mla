@@ -1,4 +1,4 @@
-program test;
+program bigset2;
 uses
 type
  set5ty = set of 0..129;

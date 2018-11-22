@@ -76,6 +76,7 @@ type
    procedure checkvalidindex(const aindex: int32);
    function item(const aindex: int32): ptypeinfoty;
    function typename(const aindex: int32): string;
+   function typename(const aindex: int32; out asize: int32): string;
    function iskind(const aindex: int32; const akind: typecodes): boolean;
    function ispointer(const aindex: int32): boolean;
    function sametype(const a,b: int32): boolean;
@@ -97,6 +98,9 @@ type
     case constkind: constantscodes of
      CST_CODE_INTEGER: (
       intconst: valuety;
+     );
+     CST_CODE_WIDE_INTEGER: (
+      bigintconst: int32; //index in fstringbuffer
      );
      CST_CODE_FLOAT: (
       case floatsize: databitsizety of
@@ -124,6 +128,7 @@ type
   protected
    ftypelist: ttypelist;
    fsettype: int32;
+   fstringbuffer: stringarty;
   public
    constructor create(const typelist: ttypelist);
    procedure checkvalidindex(const aindex: int32);
@@ -650,12 +655,13 @@ begin
  inherited create(sizeof(typeinfoty));
 end;
 
-function ttypelist.typename(const aindex: int32): string;
+function ttypelist.typename(const aindex: int32; out asize: int32): string;
 var
  i1: int32;
 begin
+ asize:= 0;
  if aindex and pointermask <> 0 then begin
-  result:= '^'+typename(aindex and not pointermask);
+  result:= '^'+typename(aindex and not pointermask,i1);
  end
  else begin
   if invalidindex(aindex) then begin
@@ -673,6 +679,7 @@ begin
      result:= 'array['+inttostr(arraysize)+'] of '+typename(arraytype);
     end;
     TYPE_CODE_INTEGER: begin
+     asize:= size;
      result:= typecodenames[kind]+':'+inttostr(size);
     end;
     TYPE_CODE_FUNCTION: begin
@@ -693,6 +700,13 @@ begin
   end;
   result:= inttostr(aindex)+'.'+result;
  end;
+end;
+
+function ttypelist.typename(const aindex: int32): string;
+var
+ i1: int32;
+begin
+ result:= typename(aindex,i1);
 end;
 
 function ttypelist.sametype(const a,b: int32): boolean;
@@ -1380,6 +1394,9 @@ var
  countbefore: int32; 
  s1: string;
  isflo32: boolean;
+ p2: pvaluety;
+ v1: valuety;
+ i1,si1: int32;
 begin
  output(ok_begin,blockidnames[CONSTANTS_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1395,7 +1412,7 @@ begin
     if constantscodes(rec1[1]) = CST_CODE_SETTYPE then begin
      checkdatalen(rec1,2);
      alist.fsettype:= rec1[2];
-     s1:= ftypelist.typename(alist.fsettype);
+     s1:= ftypelist.typename(alist.fsettype,si1);
      if pos('FLOAT',s1) > 0 then begin
       isflo32:= true;
      end;
@@ -1423,6 +1440,30 @@ begin
           end;
          end;
          outconst([inttostr(intconst)]);
+        end;
+        CST_CODE_WIDE_INTEGER: begin
+         s1:= '';
+         i1:= length(rec1)-2;
+         if i1 > 0 then begin
+          setlength(s1,i1*sizeof(valuety));
+          p2:= pointer(s1);
+          fillchar(p2^,length(s1),0);
+          for i1:= 2 to 2 + (i1 - 1) do begin
+           v1:= rec1[i1] shr 1;
+           if odd(rec1[i1]) then begin
+            v1:= -v1;
+            if v1 = 0 then begin
+             v1:= -$8000000000000000;
+            end;
+           end;
+           p2^:= v1;
+           inc(p2);
+          end;
+         end;
+         setlength(s1,(si1+7)div 8);
+         outconst([bytestrtostr(s1,nb_hex,' ')]);
+         bigintconst:= length(alist.fstringbuffer);
+         additem(alist.fstringbuffer,s1);
         end;
         CST_CODE_FLOAT: begin
          if isflo32 then begin
@@ -1922,6 +1963,9 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
     case constkind of
      CST_CODE_INTEGER: begin
       result:= result+inttostr(intconst);
+     end;
+     CST_CODE_WIDE_INTEGER: begin
+      result:= result+bytestrtostr(alist.fstringbuffer[bigintconst],nb_hex,' ');
      end;
      CST_CODE_FLOAT: begin              //todo: size
       case floatsize of

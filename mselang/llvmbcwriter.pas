@@ -133,7 +133,7 @@ type
    procedure emitintconst(const avalue: int64);
    procedure emitfloatconst(const avalue: flo32);
    procedure emitfloatconst(const avalue: flo64);
-   procedure emitbigintconst(const avalue; const asize: int32);
+   procedure emitbigintconst(const avalue; asize: int32);
    procedure emitdataconst(const avalue; const asize: int32);
    procedure emitpointercastconst(const avalue: int32; const atype: int32);
    procedure emitgepconst(const avalue: int32; const aoffset: int32);
@@ -1597,7 +1597,7 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emitbigintconst(const avalue; const asize: int32);
+procedure tllvmbcwriter.emitbigintconst(const avalue; asize: int32);
 var
  p1,pe,pee: pcard8;
  i1: int32;
@@ -1613,12 +1613,12 @@ begin
  emitvbr6(ord(CST_CODE_WIDE_INTEGER));
  emitvbr6((asize+7) div 8); //64 bit word count
  p1:= @avalue;
- pee:= p1+asize-1;
+ pee:= p1+asize;
  pe:= p1 + 7;       //first word
- if pe > pee then begin
-  pe:= pee;
- end;
- while true do begin
+ while p1 < pee do begin
+  if pe >= pee then begin
+   pe:= pee-1;
+  end;
   if pe^ and $80 <> 0 then begin //negative
    if asize = 1 then begin
     emit9(((not(p1^)+1) shl 1) or 1);
@@ -1663,11 +1663,9 @@ begin
     emit9(card8(p1^ shl 1) or ((p1-1)^ shr 7));
    end;
   end;
-  inc(p1);
   pe:= pe + 8;
-  if pe > pee then begin
-   break;
-  end;
+  inc(p1);
+  asize:= asize - 8;
  end;
 end;
 
