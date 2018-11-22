@@ -77,16 +77,11 @@ uses
  __mla__internaltypes,exceptionhandler,listutils,llvmlists,grammarglob,
  parser,compilerunit,mseformatstr;
 
-const                              //0        1         2         3  
- bytebits: array[0..7] of card8 = (%00000001,%00000010,%00000100,%00001000,
-                                   //4        5         6         7       
-                                   %00010000,%00100000,%01000000,%10000000);
-
 function listtoset(const acontext: pcontextitemty; adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 var
  i1,i2: int32;
- type1,type2: ptypedataty;
+ type1,type2,type3: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
  poe,poitem: pcontextitemty;
@@ -308,12 +303,22 @@ begin
   if type2^.h.kind in [dk_cardinal,dk_integer,dk_character] then begin
    getordrange(type2,ra1);
    if (ra1.min <> min1) or (ra1.max <> max1) then begin
-    type2:= ele.addelementdata(getident(),ek_type,[]); //anonymous item type
-    inittypedatasize(type2^,dk_integer,0,das_32);
-    with type2^.infoint32 do begin
-     min:= min1;
-     max:= max1;
+    type3:= ele.addelementdata(getident(),ek_type,[]);
+    if type2^.h.kind = dk_character then begin
+     inittypedatasize(type3^,dk_character,0,das_32);
+     with type3^.infochar32 do begin
+      min:= min1;
+      max:= max1;
+     end;
+    end
+    else begin
+     inittypedatasize(type3^,dk_integer,0,das_32);
+     with type3^.infoint32 do begin
+      min:= min1;
+      max:= max1;
+     end;
     end;
+    type2:= type3;  //anonymous item type
    end;
   end;
   type1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type

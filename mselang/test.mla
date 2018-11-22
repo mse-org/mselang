@@ -30,9 +30,14 @@ begin
 // s3:= [en_0..en_1,en_2];
 // writeln(int32(s3));
 {$internaldebug on}
-// s5:= [0..127];
+ s4:= ['a'..'z'];
+// if 'a' in s4 then
+ if 'a' in ['a'..'z'] then
+  exitcode:= 123;
+ end;
+ s5:= [62];
 // writeln(sizeof(s5,' ',sizeof(ar5));
-// ar5:= ar5ty(s5);
+ ar5:= ar5ty(s5);
 
  for i2:= 0 to high(ar5) do
   write(ar5[i2],' ');

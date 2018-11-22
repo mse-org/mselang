@@ -98,6 +98,12 @@ const
  //das_sub,         das_meta
    oc_popindirectpo,oc_none
    );
+
+                                   //0        1         2         3  
+ bytebits: array[0..7] of card8 = (%00000001,%00000010,%00000100,%00001000,
+                                   //4        5         6         7       
+                                   %00010000,%00100000,%01000000,%10000000);
+
  
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
@@ -3317,6 +3323,8 @@ function setinop1(poa,pob: pcontextitemty;
                                const pobisresult: boolean): boolean;
 var
  p1,p2: ptypedataty;
+ ra1: ordrangety;
+ i1: int64;
 begin
  p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
 {$ifdef mse_checkinternalerror}
@@ -3328,19 +3336,25 @@ begin
  result:= tryconvert(poa,p2,0,[coo_enum,coo_errormessage,coo_notrunc]);
  if result then begin
   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
-   if p1^.h.datasize in [das_none,das_bigint] then begin
-    notimplementederror('20181113C');
+   i1:= getordconst(poa^.d.dat.constval);
+   with pob^.d.dat.constval.vset do begin
+    if kind = das_bigint then begin
+     poa^.d.dat.constval.vboolean:= false;
+     if not (strf_empty in bigsetvalue.flags) then begin
+      getordrange(p1,ra1);
+      if (i1 >= ra1.min) and (i1 <= ra1.max) then begin
+       poa^.d.dat.constval.vboolean:= 
+                  pcard8(getstringconst(bigsetvalue).po)[i1 div 8] and
+                                                   bytebits[i1 and $7] <> 0;
+      end;
+     end;
+    end
+    else begin
+     poa^.d.dat.constval.vboolean:= i1 in tintegerset(setvalue);
+    end;
    end;
    poa^.d.dat.constval.kind:= dk_boolean;
    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
-
-   if pob^.d.dat.constval.vset.kind = das_bigint then begin
-    notimplementederror('');
-   end
-   else begin
-    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
-                   tintegerset(pob^.d.dat.constval.vset.setvalue);
-   end;
   end
   else begin
    result:= getvalue(poa,das_none);
@@ -4736,6 +4750,10 @@ begin
       internalerror1(ie_handler,'20171120A');
      end;
     end;
+   end;
+   dk_set: begin
+    range.min:= infoset.itemstart;
+    range.max:= infoset.itemstart+infoset.itemcount-1;
    end;
   {$ifdef mse_checkinternalerror}
    else begin
