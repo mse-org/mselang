@@ -1202,6 +1202,8 @@ var
  india,indib: int32;
  op1: opcodety;
  pta,ptb: ptypedataty;
+ sa,sb: lstringty;
+ p1,p2,pe: pcard8;
 label
  errlab,endlab;
 begin
@@ -1235,6 +1237,46 @@ begin
                              pob^.d.dat.constval.vfloat;
       end;
      end;
+     sdk_set: begin
+      if d.dat.constval.vset.kind = das_bigint then begin
+       sa:= getstringconst(d.dat.constval.vset.bigsetvalue);
+       sb:= getstringconst(pob^.d.dat.constval.vset.bigsetvalue);
+      {$ifdef mse_checkinternalerror}
+       if sa.len <> sb.len then begin
+        internalerror(ie_handler,'20181123A');
+       end;
+      {$endif}
+       p1:= pointer(sa.po);
+       pe:= p1+sa.len;
+       p2:= pointer(sb.po);
+       if issub then begin
+        while p1 < pe do begin
+         p1^:= p1^ and (p1^ xor p2^);
+         inc(p1);
+         inc(p2);
+        end;
+       end
+       else begin
+        while p1 < pe do begin
+         p1^:= p1^ or p2^;
+         inc(p1);
+         inc(p2);
+        end;
+       end;
+      end
+      else begin
+       if issub then begin
+        tintegerset(d.dat.constval.vset.setvalue):=
+         tintegerset(d.dat.constval.vset.setvalue) - 
+                   tintegerset(pob^.d.dat.constval.vset.setvalue);
+       end
+       else begin
+        tintegerset(d.dat.constval.vset.setvalue):=
+         tintegerset(d.dat.constval.vset.setvalue) +
+                   tintegerset(pob^.d.dat.constval.vset.setvalue);
+       end;
+      end;
+     end;
      sdk_string: begin
       concatstringconsts(d.dat.constval.vstring,pob^.d.dat.constval.vstring);
       if poa^.d.dat.termgroupstart <> 0 then begin
@@ -1244,26 +1286,17 @@ begin
        s.stackindex:= getpreviousnospace(poa^.d.dat.termgroupstart)-2;
        goto endlab; //for concatmulti
       end;
-{
-      if poa^.d.dat.termgroupstart = 0 then begin
-       poa^.d.dat.termgroupstart:= poa-pcontextitemty(pointer(contextstack));
-                                        //init
-      end;
-      pob^.d.dat.termgroupstart:= poa^.d.dat.termgroupstart;
-      contextstack[s.stackindex].d.kind:= ck_space;
-      s.stacktop:= s.stackindex-1;
-      s.stackindex:= getpreviousnospace(poa^.d.dat.termgroupstart)-2;
-      goto endlab; //for concatmulti
-}
      end;
      else begin
       opnotsupported();
      end;
     end;
+    s.stackindex:= getstackindex(getpreviousnospace(poa-1));
+    s.stacktop:= getstackindex(poa);
+   {
     s.stacktop:= s.stackindex-1;
     s.stackindex:= getpreviousnospace(s.stackindex-2);
-//    dec(s.stacktop,2);
-//    s.stackindex:= s.stacktop-1;
+   }
    end
    else begin
     if (d.kind in [ck_none,ck_error,ck_space]) or

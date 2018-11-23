@@ -72,7 +72,7 @@ const
   //dk_sub,     dk_method
     sdk_pointer,sdk_none,
   //dk_enum,dk_enumitem, dk_set,   {dk_bigset,}dk_character,dk_data
-    sdk_none,   sdk_none, sdk_none,{sdk_none,} sdk_cardinal,  sdk_none);
+    sdk_none,   sdk_none, sdk_set,{sdk_none,} sdk_cardinal,  sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool,sdk_cardinal,sdk_integer,sdk_float,
@@ -2332,8 +2332,8 @@ end;
 
 function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
                 //convert s.stacktop, s.stacktop-2
-//var
-// poa,pob: pcontextitemty;
+var
+ typa,typb: ptypedataty;
 begin
  with info do begin
 //  poa:= @contextstack[s.stacktop-2];
@@ -2380,23 +2380,34 @@ begin
   else begin
    case poa^.d.dat.constval.kind of
     dk_enum: begin
-     if poa^.d.dat.datatyp.typedata = pob^.d.dat.datatyp.typedata then begin
+     if issametype(poa^.d.dat.datatyp.typedata,
+                               pob^.d.dat.datatyp.typedata) then begin
       result:= sdk_integer; //todo: different sizes
      end;
     end;
     dk_set: begin                          //todo: basetype?
-     if ptypedataty(ele.eledataabs(
-            poa^.d.dat.datatyp.typedata))^.infoset.itemtype = 
+     typa:= ele.eledataabs(poa^.d.dat.datatyp.typedata);
+     typb:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
+     if not checkcompatibleset(pob,typb,typa,true) and 
+                        not checkcompatibleset(poa,typa,typb,true) then begin
+      result:= sdk_none;
+     end;
+    {
+     if issametype(ptypedataty(ele.eledataabs(
+            poa^.d.dat.datatyp.typedata))^.infoset.itemtype,
             ptypedataty(ele.eledataabs(
-                      pob^.d.dat.datatyp.typedata))^.infoset.itemtype then begin
+                    pob^.d.dat.datatyp.typedata))^.infoset.itemtype) then begin
       result:= sdk_set; //todo: different sizes
      end;
+    }
     end;
    end;
   end;
+ {
   if result = sdk_none then begin
    incompatibletypeserror(poa^.d,pob^.d);
   end;
+ }
  end;
 end;
 

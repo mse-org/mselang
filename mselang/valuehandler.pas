@@ -27,6 +27,18 @@ type
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
  
+procedure handlevalueidentifier();
+procedure handlefactcallentry();
+//procedure handlefactcallentry1(); //nohandlevalueident call
+procedure handlefactcall();
+procedure handlevaluepathstart();
+procedure handlevaluepath1a();
+procedure handlevaluepath2a();
+procedure handlevaluepath2();
+procedure handlevalueinherited();
+
+function getselfvar(out aele: elementoffsetty): boolean;
+
 function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
@@ -48,17 +60,7 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
             out conversioncost: int32; out destindirectlevel: int32): boolean;
 function getbasevalue(const acontext: pcontextitemty;
                              const dest: databitsizety): boolean;
-procedure handlevalueidentifier();
-procedure handlefactcallentry();
-//procedure handlefactcallentry1(); //nohandlevalueident call
-procedure handlefactcall();
-procedure handlevaluepathstart();
-procedure handlevaluepath1a();
-procedure handlevaluepath2a();
-procedure handlevaluepath2();
-procedure handlevalueinherited();
 
-function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty; adest: ptypedataty;
           out lastitem: pcontextitemty): boolean;
 function listtoopenarray(const acontext: pcontextitemty;
@@ -68,6 +70,9 @@ function listtoopenarray(const acontext: pcontextitemty;
 function listtoarrayofconst(const acontext: pcontextitemty;
                                   out lastitem: pcontextitemty;
                                   const paramindirect: boolean): boolean;
+function checkcompatibleset(const asourcecontext: pcontextitemty;
+                            const source,dest: ptypedataty;
+                                   const nomincheck: boolean = false): boolean;
 
 implementation
 uses
@@ -113,7 +118,7 @@ begin
  {$endif}
   datasize1:= adest^.h.datasize;
   minitemindex1:= adest^.infoset.itemstart;
-  maxitemindex1:= adest^.infoset.itemcount-1;
+  maxitemindex1:= minitemindex1+adest^.infoset.itemcount-1;
  end;
 {$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
@@ -124,7 +129,7 @@ begin
  end;
 {$endif}
  result:= false;
- poe:= acontext + acontext^.d.list.contextcount; //??? ck_space?
+ poe:= acontext + acontext^.d.list.contextcount;
  if acontext^.d.list.itemcount = 0 then begin //empty set
   initdatacontext(acontext^.d,ck_const);
   with acontext^ do begin
@@ -133,19 +138,8 @@ begin
     kind:= dk_set;
     vset.min:= 0;
     vset.max:= -1;
-   {
-    if datasize1 = das_bigint then begin
-     vset.kind:= das_bigint;
-     with d.dat.constval.vset.bigsetvaluex do begin
-      offset:= 0;
-      flags:= [strf_empty]
-     end;
-    end
-    else begin
-   }
-     vset.kind:= das_32;
-     vset.setvalue:= 0;
-//    end;
+    vset.kind:= das_32;
+    vset.setvalue:= 0;
    end;
   end;
  end
@@ -422,6 +416,9 @@ begin
  end;
  lastitem:= poitem-1;
  result:= true;
+{$ifdef mse_debugparser}
+ outhandle('after LISTTOSET');
+{$endif}
 end;
 
 function listtoopenarray(const acontext: pcontextitemty;
@@ -1042,43 +1039,74 @@ begin
  end;
 end;
 
-function checkcompatibleset(const acontext: pcontextitemty;
-                            const source,dest: ptypedataty): boolean;
+function checkcompatibleset(const asourcecontext: pcontextitemty;
+                                    const source,dest: ptypedataty; 
+                                   const nomincheck: boolean = false): boolean;
 var
  source1,dest1: ptypedataty;
  ra1,ra2: ordrangety;
  buf1: bigsetbufferty;
  s1: lstringty;
  i1: int32;
+label
+ nocopylab;
 begin
 {$ifdef mse_checkinternalerror}
  if (source^.h.kind <> dk_set) or (dest^.h.kind <> dk_set) then begin
   internalerror(ie_handler,'20181119B');
  end;
 {$endif}
- source1:= ele.eledataabs(source^.infoset.itemtype);
+ if dest^.infoset.itemtype = 0 then begin
+  result:= source^.infoset.itemtype = 0;
+  exit; //empty set
+ end;
  dest1:= ele.eledataabs(dest^.infoset.itemtype);
+ if source^.infoset.itemtype = 0 then begin
+  source1:= nil; //empty set
+ end
+ else begin
+  source1:= ele.eledataabs(source^.infoset.itemtype);
+ end;
 {$ifdef mse_checkinternalerror}
  if dest1^.h.bytesize > sizeof(buf1) then begin
   internalerror(ie_handler,'20181119C');
  end;
 {$endif}
- result:= issametype(source1,dest1);
+ result:= (source1 <> nil) and issametype(source1,dest1);
  if not result then begin
   case dest1^.h.kind of
    dk_cardinal,dk_integer,dk_character: begin
-    if source1^.h.kind in [dk_cardinal,dk_integer,dk_character] then begin
+    if (source1 = nil) or
+          (source1^.h.kind in [dk_cardinal,dk_integer,dk_character]) then begin
      getordrange(dest1,ra1);
-     if acontext^.d.kind = ck_const then begin
-      with acontext^.d.dat.constval.vset do begin
-       result:= (min >= ra1.min) and (max <= ra1.max);
-       if result and (source^.h.datasize = das_bigint) and 
-                           (dest^.h.datasize = das_bigint) and 
-                              (dest^.h.bytesize > source^.h.bytesize) then begin
-        s1:= getstringconst(bigsetvalue);
-        move(s1.po^,buf1,s1.len);
-        fillchar(buf1[s1.len],dest^.h.bytesize-s1.len,0);
-        bigsetvalue:= newbigintconst(@buf1,dest^.h.bitsize);
+     if asourcecontext^.d.kind = ck_const then begin
+      with asourcecontext^.d.dat.constval.vset do begin
+       result:= (nomincheck or (min >= ra1.min)) and (max <= ra1.max);
+       if result then begin
+        if dest^.h.datasize = das_bigint then begin
+         if source^.h.datasize = das_bigint then begin
+          if (dest^.h.bytesize > source^.h.bytesize) then begin
+           s1:= getstringconst(bigsetvalue);
+           move(s1.po^,buf1,s1.len);
+           fillchar(buf1[s1.len],dest^.h.bytesize-s1.len,0);
+          end
+          else begin
+           goto nocopylab;
+          end;
+         end
+         else begin //source is not das_bigint
+          kind:= das_bigint;
+          pint32(@buf1)^:= setvalue;
+          fillchar(buf1[sizeof(int32)],dest^.h.bytesize-sizeof(int32),0);
+         end;
+         bigsetvalue:= newbigintconst(@buf1,dest^.h.bitsize);
+        end;
+nocopylab:
+        max:= ra1.max;
+        if min > ra1.min then begin
+         min:= ra1.min;
+        end;
+        asourcecontext^.d.dat.datatyp.typedata:= ele.eledatarel(dest);
        end;
       end;
      end
@@ -1086,9 +1114,9 @@ begin
       getordrange(source1,ra2);
       result:= (ra2.min >= ra1.min) and (ra2.max <= ra1.max);
       if result and (ra2.max < ra1.max) and 
-                                    getvalue(acontext,das_none) then begin
-       i1:= acontext^.d.dat.fact.ssaindex;
-       with insertitem(oc_setexpand,acontext,-1)^ do begin
+                          getvalue(asourcecontext,das_none) then begin
+       i1:= asourcecontext^.d.dat.fact.ssaindex;
+       with insertitem(oc_setexpand,asourcecontext,-1)^ do begin
         par.ssas1:= i1;
         par.stackop.t:= getopdatatype(dest,0);
        end;
@@ -1730,6 +1758,8 @@ begin //tryconvert
              end;
              if not result then begin
               if checkcompatibleset(acontext,source1,dest) then begin
+               result:= true;
+              {
                if dest^.h.datasize = das_bigint then begin
                 fillchar(bigset1[4],sizeof(bigset1)-4,0);
                 pcard32(@bigset1)^:= vset.setvalue;
@@ -1738,6 +1768,7 @@ begin //tryconvert
                                     //min,max?
                 result:= true;
                end;
+}
               end;
              end;
             end;

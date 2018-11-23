@@ -8,15 +8,18 @@ var
  ar5: ar5ty;
  i2: int32;
 begin
- s5:= [7..8,127..128,120];
+{$internaldebug on}
+ s5:= {[7..8]+}[128,129];//[127..128,120];
+
+// include(s5,128);
+
  ar5:= ar5ty(s5);
  if (ar5[0] = $80) and (ar5[15] = $81) and (ar5[16] = 1) and 
         (8 in s5) and (7 in s5) and (128 in s5) and not (30 in s5) then
   exitcode:= 123;
  end;
-{
  for i2:= 0 to high(ar5) do
   write(ar5[i2],' ');
  end;
-}
+
 end.
