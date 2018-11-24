@@ -501,6 +501,7 @@ const
 type
  forinfoty = record
   alloc: typeallocinfoty;
+  loopcmpop: opcodety;
   varad: addressvaluety; //temp vars
   start: addressvaluety;
   stop: addressvaluety;

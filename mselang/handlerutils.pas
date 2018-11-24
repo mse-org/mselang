@@ -3337,6 +3337,7 @@ var
  p1,p2: ptypedataty;
  ra1: ordrangety;
  i1: int64;
+ p3: pcontextitemty;
 begin
  p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
 {$ifdef mse_checkinternalerror}
@@ -3344,6 +3345,20 @@ begin
   internalerror(ie_handler,'20181113B');
  end;
 {$endif}
+ if pob^.d.dat.datatyp.typedata = emptyset.typedata then begin
+  result:= true;
+  if pobisresult then begin
+   p3:= pob;
+  end
+  else begin
+   p3:= poa;
+  end;
+  initdatacontext(p3^.d,ck_const);
+  p3^.d.dat.constval.kind:= dk_boolean;
+  p3^.d.dat.datatyp:= sysdatatypes[st_bool1];
+  p3^.d.dat.constval.vboolean:= false;
+  exit;
+ end;
  p2:= ele.eledataabs(p1^.infoset.itemtype);
  result:= tryconvert(poa,p2,0,[coo_enum,coo_errormessage,coo_notrunc]);
  if result then begin

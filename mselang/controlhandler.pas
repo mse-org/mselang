@@ -458,7 +458,6 @@ var
  initcheckad: int32;
  po1: ptypedataty;
  cok1: compopkindty;
- op2: opcodety;
  po2: popinfoty;
  step: int32;
  i1,i2: int32;
@@ -508,7 +507,11 @@ begin
       cok1:= cok_le;
       step:= 1;
      end;
-     with additem(oc_cmpint)^.par do begin
+     loopcmpop:= oc_cmpint;
+     if typ1^.h.kind in [dk_cardinal,dk_character] then begin
+      loopcmpop:= oc_cmpcard;
+     end;
+     with additem(loopcmpop)^.par do begin
       ssas1:= start.tempaddress.ssaindex;
       ssas2:= stop.tempaddress.ssaindex;
       i1:= ssad;
@@ -580,7 +583,7 @@ begin
      linkresolveopad(linkscontinue,opcount-1);
      i1:= pushtempindi(forinfo.varad,forinfo.alloc);
      i2:= pushtemp(forinfo.stop,forinfo.alloc);
-     with additem(oc_cmpint)^.par do begin
+     with additem(forinfo.loopcmpop)^.par do begin
       ssas1:= i1;
       ssas2:= i2;
       i1:= ssad;
