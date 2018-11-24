@@ -21,7 +21,8 @@ uses
  globtypes,parserglob,handlerglob,msetypes;
 
 type
- convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,coo_set,
+ convertoptionty = (coo_type,coo_enum,{coo_boolean,}coo_character,
+                    coo_set,coo_nomincheck,
                     coo_notrunc,coo_errormessage,coo_paramindirect);
  convertoptionsty = set of convertoptionty;
  compatibilitycheckoptionty = (cco_novarconversion);
@@ -1757,7 +1758,8 @@ begin //tryconvert
               end;
              end;
              if not result then begin
-              if checkcompatibleset(acontext,source1,dest) then begin
+              if checkcompatibleset(acontext,source1,dest,
+                                     coo_nomincheck in aoptions) then begin
                result:= true;
               {
                if dest^.h.datasize = das_bigint then begin

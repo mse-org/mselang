@@ -3095,12 +3095,29 @@ procedure handlecomparison(const aop: compopkindty);
 
 var
  poa,pob: pcontextitemty;
-
+ p1,pe,p2: pcard8;
+ 
  procedure notsupported();
  begin
   with info,poa^ do begin
    operationnotsupportederror(d,pob^.d,cmpops[aop].opname);
   end;
+ end;
+
+ procedure getbigsetdata();
+ var
+  ls1: lstringty;
+ begin
+  ls1:= getstringconst(poa^.d.dat.constval.vset.bigsetvalue);
+  p1:= pointer(ls1.po);
+  pe:= p1+ls1.len;
+  ls1:= getstringconst(pob^.d.dat.constval.vset.bigsetvalue);
+  p2:= pointer(ls1.po);
+ {$ifdef mse_checkinternalerror}
+  if pe-p1 <> ls1.len then begin
+   internalerror(ie_handler,'20181124B');
+  end;
+ {$endif}
  end;
 
 var
@@ -3140,7 +3157,16 @@ begin
        end;
        sdk_set: begin
         if d.dat.constval.vset.kind = das_bigint then begin
-         notimplementederror('');
+         getbigsetdata();
+         d.dat.constval.vboolean:= true;
+         while p1 < pe do begin
+          if p1^ <> p2^ then begin
+           d.dat.constval.vboolean:= false;
+           break;
+          end;
+          inc(p1);
+          inc(p2);
+         end;
         end
         else begin
          d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) =

@@ -4358,7 +4358,28 @@ function updateop(const opsinfo: opsinfoty): popinfoty;
    errormessage(err_div0,[],s.stacktop-s.stackindex);
   end;
  end; //div0error
+
+var
+ p1,pe,p2: pcard8;
+ po2: pointer;
+ poa,pob: pcontextitemty;
  
+ procedure getbigsetdata();
+ var
+  ls1: lstringty;
+ begin
+  ls1:= getstringconst(poa^.d.dat.constval.vset.bigsetvalue);
+  p1:= pointer(ls1.po);
+  pe:= p1+ls1.len;
+  ls1:= getstringconst(psetvaluety(po2)^.bigsetvalue);
+  p2:= pointer(ls1.po);
+ {$ifdef mse_checkinternalerror}
+  if pe-p1 <> ls1.len then begin
+   internalerror(ie_handler,'20181124A');
+  end;
+ {$endif}
+ end;
+  
 var
  kinda,kindb: datakindty;
  indilev1: integer;
@@ -4367,8 +4388,6 @@ var
  po1: ptypedataty;
  bo1,bo2: boolean;
  si1: databitsizety;
- po2: pointer;
- poa,pob: pcontextitemty;
  opera1: poperatordataty;
  sub1: psubdataty;
  pta,ptb: ptypedataty;
@@ -4532,7 +4551,7 @@ begin
     end
     else begin
      po1:= pta;
-     if not tryconvert(pob,po1,indilev1,[coo_notrunc]) then begin
+     if not tryconvert(pob,po1,indilev1,[coo_notrunc,coo_nomincheck]) then begin
       with pob^ do begin
        po1:= ele.eledataabs(d.dat.datatyp.typedata);
        indilev1:= d.dat.datatyp.indirectlevel;
@@ -4562,7 +4581,7 @@ begin
        sd1:= stackdatakinds[dk_integer];
       end;
       dk_set: begin
-       sd1:= sdk_set; //todo: arbitrary size
+       sd1:= sdk_set;
       end;
       else begin
        sd1:= stackdatakinds[po1^.h.kind];
@@ -4624,8 +4643,26 @@ begin
         d.dat.constval.vfloat:= d.dat.constval.vfloat / pflo64(po2)^;
        end;
        oc_and: begin
-        d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) and
-                                                         int64(pint64(po2)^);
+        if d.dat.constval.kind = dk_set then begin
+         with psetvaluety(po2)^ do begin
+          if kind = das_bigint then begin
+           getbigsetdata();
+           while p1 < pe do begin
+            p1^:= p1^ and p2^;
+            inc(p1);
+            inc(p2);
+           end;
+          end
+          else begin
+           d.dat.constval.vset.setvalue:= d.dat.constval.vset.setvalue and
+                                                                      setvalue;
+          end;
+         end;
+        end
+        else begin
+         d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) and
+                                                        int64(pint64(po2)^);
+        end;
        end;
        oc_or: begin
         d.dat.constval.vinteger:= int64(d.dat.constval.vinteger) or

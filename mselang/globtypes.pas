@@ -368,7 +368,8 @@ type
    das_bigint:(
     bigsetvalue: stringvaluety; //strf_empty -> empty set, offset = bitcount
    );
- end; 
+ end;
+ psetvaluety = ^setvaluety;
 
  openarrayvaluety = record
   address: segaddressty;
