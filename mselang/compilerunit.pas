@@ -246,8 +246,9 @@ begin
     else begin
 testvar:= ele.eledataabs(compilersubs[s1]);
 testvar1:= ele.eledataabs(testvar^.impl);
-     compilersubids[s1]:= psubdataty(ele.eledataabs(
-         psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
+     compilersubids[s1]:= psubdataty(ele.eledataabs(compilersubs[s1]))^.globid;
+//     compilersubids[s1]:= psubdataty(ele.eledataabs(
+//         psubdataty(ele.eledataabs(compilersubs[s1]))^.impl))^.globid;
     end;
    end;
    ele.popelementparent();
