@@ -386,7 +386,7 @@ begin
    with ptop^.d.dat do begin
     po1:= ele.eledataabs(datatyp.typedata);
     if (datatyp.indirectlevel <> 1) or 
-        not (po1^.h.kind in ordinaldatakinds) then begin
+        not (po1^.h.kind in ordinaldatakinds+[dk_character]) then begin
      err(err_ordinalexpexpected);
      exit;
     end;

@@ -1463,6 +1463,30 @@ procedure handlelowhigh(const paramco: int32; const ahigh: boolean);
       d.dat.constval.vcardinal:= card64(range.min);
      end;
     end;
+    dk_character: begin
+     getordrange(po1,range);
+     d.dat.constval.kind:= dk_character;
+     case po1^.h.datasize of  
+      das_8: begin
+       d.dat.datatyp:= sysdatatypes[st_char8];
+      end;
+      das_16: begin
+       d.dat.datatyp:= sysdatatypes[st_char16];
+      end;
+      das_32: begin
+       d.dat.datatyp:= sysdatatypes[st_char32];
+      end;
+      else begin
+       internalerror1(ie_handler,'20181114C');
+      end;
+     end;
+     if ahigh then begin
+      d.dat.constval.vcharacter:= card32(range.max);
+     end
+     else begin
+      d.dat.constval.vcharacter:= card32(range.min);
+     end;
+    end;
     dk_enum: begin
      if ahigh then begin
       po1:= ele.eledataabs(po1^.infoenum.max);
