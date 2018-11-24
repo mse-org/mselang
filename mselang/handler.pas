@@ -3198,7 +3198,16 @@ begin
        end;
        sdk_set: begin
         if d.dat.constval.vset.kind = das_bigint then begin
-         notimplementederror('');
+         getbigsetdata();
+         d.dat.constval.vboolean:= false;
+         while p1 < pe do begin
+          if p1^ <> p2^ then begin
+           d.dat.constval.vboolean:= true;
+           break;
+          end;
+          inc(p1);
+          inc(p2);
+         end;
         end
         else begin
          d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <>
@@ -3292,7 +3301,16 @@ begin
        end;
        sdk_set: begin
         if d.dat.constval.vset.kind = das_bigint then begin
-         notimplementederror('');
+         getbigsetdata();
+         d.dat.constval.vboolean:= true;
+         while p1 < pe do begin
+          if (p1^ and p2^) <> p1^ then begin
+           d.dat.constval.vboolean:= false;
+           break;
+          end;
+          inc(p1);
+          inc(p2);
+         end;
         end
         else begin
          d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset.setvalue) <=
