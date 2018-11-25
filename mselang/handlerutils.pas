@@ -250,6 +250,8 @@ procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 function getordrange(const typedata: ptypedataty): ordrangety; inline;
+function getordmax(const typedata: ptypedataty): int32;
+function getordmax(const typedata: elementoffsetty): int32;
 function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
@@ -3331,14 +3333,69 @@ begin
  end;
 end;
 
+function expandset(const acontext: pcontextitemty;
+                                 const aindextype: elementoffsetty): boolean;
+                                        //returns true if limitation neded
+var
+ buf1: bigsetbufferty;
+ s1: lstringty;
+ typ1,typ2: ptypedataty;
+ bitsize1,bytesize1: int32;
+begin
+ result:= false;
+ typ1:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
+{$ifdef mse_checkinternalerror}
+ if typ1^.h.kind <> dk_set then begin
+  internalerror(ie_handler,'20181125A');
+ end;
+{$endif}
+ bitsize1:= getordmax(aindextype);
+ if bitsize1 > typ1^.infoset.itemstart + typ1^.infoset.itemcount then begin
+  if acontext^.d.kind = ck_const then begin
+   with acontext^.d.dat.constval.vset do begin
+    if bitsize1 >= maxsetelementcount then begin
+     bitsize1:= maxsetelementcount - 1;
+    end;
+    if bitsize1 > 32 then begin
+     bytesize1:= (bitsize1+7) div 8;
+     if kind = das_bigint then begin
+      s1:= getstringconst(bigsetvalue);
+      move(s1.po^,buf1,s1.len);
+      fillchar(buf1[s1.len],bytesize1-s1.len,0);
+     end
+     else begin
+      kind:= das_bigint;
+      pint32(@buf1)^:= setvalue;
+      fillchar(buf1[sizeof(int32)],bytesize1-sizeof(int32),0);
+     end;
+     bigsetvalue:= newbigintconst(@buf1,bitsize1);
+     ele.checkcapacity(ek_type,1,typ1);
+     typ2:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
+     inittypedatasize(typ2^,dk_set,0,das_bigint);
+     typ2^.h.bytesize:= (bitsize1+8) div 8;
+     typ2^.h.bitsize:= typ2^.h.bytesize * 8;
+     typ2^.infoset:= typ1^.infoset;
+     acontext^.d.dat.datatyp.typedata:= ele.eledatarel(typ2);
+    end;
+   end;
+  end
+  else begin
+   result:= true;
+  end;
+ end;
+end;
+
 function setinop1(poa,pob: pcontextitemty;
                                const pobisresult: boolean): boolean;
 var
+ i1: int32;
  p1,p2: ptypedataty;
  ra1: ordrangety;
- i1: int64;
  p3: pcontextitemty;
+ typebefore: elementoffsetty;
+ b1: boolean;
 begin
+ ele.checkcapacity(ek_type); //expandset can create type
  p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
 {$ifdef mse_checkinternalerror}
  if p1^.h.kind <> dk_set then begin
@@ -3359,6 +3416,7 @@ begin
   p3^.d.dat.constval.vboolean:= false;
   exit;
  end;
+ typebefore:= poa^.d.dat.datatyp.typedata;
  p2:= ele.eledataabs(p1^.infoset.itemtype);
  result:= tryconvert(poa,p2,0,[coo_enum,coo_errormessage,coo_notrunc]);
  if result then begin
@@ -3394,6 +3452,7 @@ begin
      pob^.d.dat.datatyp:= sysdatatypes[st_bool1];
     end
     else begin
+     b1:= expandset(pob,typebefore);
      result:= getvalue(pob,das_none);
      if result then begin
       with addfactbinop(pob,poa,oc_setin)^ do begin
@@ -4831,6 +4890,31 @@ end;
 function getordrange(const typedata: ptypedataty): ordrangety; inline;
 begin
  getordrange(typedata,result);
+end;
+
+function getordmax(const typedata: ptypedataty): int32;
+var
+ ra1: ordrangety;
+begin
+ getordrange(typedata,ra1);
+ result:= maxint;
+ if (ra1.min >= 0) and (ra1.max >= 0) and (ra1.max < maxint) and 
+                                              (ra1.max >= ra1.min) then begin
+  result:= ra1.max;
+ end;
+end;
+
+function getordmax(const typedata: elementoffsetty): int32;
+var
+ p1: pelementinfoty;
+begin
+ p1:= ele.eleinfoabs(typedata);
+{$ifdef mse_checkinternalerror}
+ if p1^.header.kind <> ek_type then begin
+  internalerror(ie_handler,'20181125B');
+ end;
+{$endif}
+ result:= getordmax(eletodata(p1));
 end;
 
 function getordcount(const typedata: ptypedataty): int64;

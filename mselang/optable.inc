@@ -473,6 +473,10 @@
   
 //oc_chartostring8
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: [of_bbinc1]),
+//oc_chartostring16
+  (ssa: chartostring16ssa; proc: @chartostring16op; flags: [of_bbinc1]),
+//oc_chartostring32
+  (ssa: chartostring32ssa; proc: @chartostring32op; flags: [of_bbinc1]),
 //oc_arraytoopenar
   (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: [of_bbinc1]), 
 //oc_arraytoopenarad

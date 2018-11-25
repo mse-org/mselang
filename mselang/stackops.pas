@@ -4192,16 +4192,26 @@ end;
 
 procedure chartostring8op();
 var
- char1: card8;
+ char1: card32;
  po1: pstringheaderty;
 begin
- char1:= pcard8(stackpop(sizeof(card8)))^;
+ char1:= pcard32(stackpop(sizeof(card32)))^;
  po1:= getmem1(1*1 + string8allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  pcard8(@po1^.data)^:= char1;
  (pcard8(@po1^.data)+1)^:= 0;
  ppointer(stackpush(sizeof(pointer)))^:= po1+1; //-> data
+end;
+
+procedure chartostring16op();
+begin
+ notimplemented();
+end;
+
+procedure chartostring32op();
+begin
+ notimplemented();
 end;
 
 procedure arraytoopenarop();
@@ -7364,6 +7374,9 @@ const
   concatstring32ssa = 0;
     
   chartostring8ssa = 0;
+  chartostring16ssa = 0;
+  chartostring32ssa = 0;
+  
   arraytoopenarssa = 0;
   arraytoopenaradssa = 0;
   dynarraytoopenarssa = 0;

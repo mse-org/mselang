@@ -3435,7 +3435,7 @@ procedure handleinsimpexp();
 var
 // baseoffset: int32;
  poa,pob: pcontextitemty;
- typ1,typ2: ptypedataty;
+ typ1{,typ2}: ptypedataty;
 label
  errlab,endlab;
 begin
@@ -3454,7 +3454,7 @@ begin
                   (pob^.d.dat.datatyp.indirectlevel = 0) then begin
    typ1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
    if typ1^.h.kind = dk_set then begin
-    typ2:= ele.eledataabs(typ1^.infoset.itemtype);
+//    typ2:= ele.eledataabs(typ1^.infoset.itemtype);
     if setinop1(poa,pob,false) then begin
      goto endlab;
     end;

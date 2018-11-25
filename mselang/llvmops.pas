@@ -2086,6 +2086,20 @@ begin
  end;
 end;
 
+procedure chartostring16op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_chartostring16,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure chartostring32op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_chartostring32,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure arraytoopenaradop();
 var
  i1: int32;
@@ -5532,6 +5546,9 @@ const
   concatstring32ssa = 3;
   
   chartostring8ssa = 1;
+  chartostring16ssa = 1;
+  chartostring32ssa = 1;
+  
   arraytoopenarssa = 3;
   arraytoopenaradssa = 2;
   dynarraytoopenarssa = 3;

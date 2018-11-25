@@ -2013,8 +2013,23 @@ begin //tryconvert
           dk_string: begin
            case source1^.h.kind of
             dk_character: begin
-             convert(oc_chartostring8); //todo: sizes !!!!!!!!!!!!!!!!!!!
-             result:= true;
+             if tryconvert(acontext,st_card32,[coo_character]) then begin
+              case dest^.itemsize of
+               1: begin
+                convert(oc_chartostring8);
+               end;
+               2: begin
+                convert(oc_chartostring16);
+               end;
+               4: begin
+                convert(oc_chartostring32);
+               end;
+               else begin
+                internalerror1(ie_handler,'20181125C');
+               end;
+              end;
+              result:= true;
+             end;
             end;
             dk_string: begin
              fl1:= source1^.infostring.flags >< dest^.infostring.flags;

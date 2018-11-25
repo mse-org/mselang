@@ -382,6 +382,8 @@ type
   oc_concatstring8,oc_concatstring16,oc_concatstring32,
 
   oc_chartostring8,
+  oc_chartostring16,
+  oc_chartostring32,
   oc_arraytoopenar,
   oc_arraytoopenarad,
   oc_dynarraytoopenar,

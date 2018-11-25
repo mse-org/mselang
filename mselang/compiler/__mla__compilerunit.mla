@@ -96,9 +96,10 @@ procedure __mla__compstring32lt(a,b: pointer): bool1;
 procedure __mla__compstring32ge(a,b: pointer): bool1;
 procedure __mla__compstring32le(a,b: pointer): bool1;
 
-procedure __mla__chartostring8(achar: card8): pointer;
-procedure __mla__chartostring16(achar: card16): pointer;
+procedure __mla__chartostring8(achar: card32): pointer;
+procedure __mla__chartostring16(achar: card32): pointer;
 procedure __mla__chartostring32(achar: card32): pointer;
+
 procedure __mla__arraytoopenar(ahigh: int32; adata: pointer;
                                       out result: openarrayty);
 procedure __mla__dynarraytoopenar(ref: pointer; out result: openarrayty);
@@ -1610,28 +1611,34 @@ begin
  end;
 end;
 
-procedure __mla__chartostring8(achar: card8): pointer [noexception];
+procedure __mla__chartostring8(achar: card32): pointer [noexception];
 var
  po1: pstringheaderty;
 begin
+ result:= string32to8(@achar,1);
+{
  po1:= getmem(1*1+string8allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  result:= po1+1; //data
  pcard8(result)^:= achar;
  (pcard8(result)+1)^:= 0; //terminator
+}
 end;
 
-procedure __mla__chartostring16(achar: card16): pointer [noexception];
+procedure __mla__chartostring16(achar: card32): pointer [noexception];
 var
  po1: pstringheaderty;
 begin
+result:= string32to16(@achar,1);
+{
  po1:= getmem(1*2+string16allocsize);
  po1^.len:= 1;
  po1^.ref.count:= 1;
  result:= po1+1; //data
  pcard16(result)^:= achar;
  (pcard16(result)+1)^:= 0; //terminator
+}
 end;
 
 procedure __mla__chartostring32(achar: card32): pointer [noexception];
