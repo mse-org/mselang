@@ -422,13 +422,13 @@ begin
 {$endif}
  with info do begin
   with info,contextstack[s.stackindex] do begin
-   if getvalue(@contextstack[s.stacktop],
-                                     d.control.forinfo.alloc.kind) then begin
+//   if getvalue(@contextstack[s.stacktop],
+//                                     d.control.forinfo.alloc.kind) then begin
     d.control.forinfo.start:= gettempaddress(d.control.forinfo.alloc.kind);
-   end
-   else begin
-    sethandlererror();
-   end;
+//   end
+//   else begin
+//    sethandlererror();
+//   end;
   end;
  end;
 end;

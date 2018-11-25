@@ -3452,7 +3452,7 @@ begin
      pob^.d.dat.datatyp:= sysdatatypes[st_bool1];
     end
     else begin
-     b1:= expandset(pob,typebefore);
+     b1:= expandset(pob,typebefore); //todo: limit index operand
      result:= getvalue(pob,das_none);
      if result then begin
       with addfactbinop(pob,poa,oc_setin)^ do begin

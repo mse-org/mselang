@@ -43,16 +43,19 @@ const
 // startchars = ['1'];
  allowedchars = startchars + ['0'..'9'];
 var
- ch1: char16;
+ ch1: char8;
  b1: bool1;
  s1: string8;
 begin
 {$internaldebug on}
- for card16(ch1):= 0 to 255 do
+// ch1:= #255;
+
+ for ch1:= #0 to #255 do
   if ch1 in startchars then
    write(ord(ch1),':',string8(ch1),' ');
   end;
  end;
+
 {
  if isvalidident('1abc') then
   exitcode:= 123;

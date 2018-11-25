@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=10
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=26
    (
    kind=1
@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=39
     (
     kind=1
@@ -2018,7 +2018,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,array
+   a=0,665,4,array
    c=8
     (
     kind=2
@@ -2176,8 +2176,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,chararrayindex llvm
-    teststate=2
+    a=0,648,1,chararrayindex llvm
+    teststate=1
     path=chararrayindex.mla
     comment=
     cc=${mlc_llvm}
@@ -2192,11 +2192,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid cast
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=array/
    comment=
    cc=
@@ -4624,7 +4624,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,except5 llvm
+    a=0,648,1,except5 llvm
     teststate=1
     path=except5.mla
     comment=
@@ -4646,7 +4646,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,except6 llvm
+    a=0,648,1,except6 llvm
     teststate=1
     path=except6.mla
     comment=
@@ -10055,7 +10055,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -14651,7 +14651,7 @@ c=3
     c=1
      (
      kind=2
-     a=0,648,2,deref1
+     a=0,648,1,deref1
      teststate=1
      path=deref1.mla
      comment=
@@ -14694,7 +14694,7 @@ c=3
     c=2
      (
      kind=2
-     a=0,648,2,caserror1
+     a=0,648,1,caserror1
      teststate=1
      path=caseerror1.mla
      comment=
@@ -14717,7 +14717,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,caserror2
+     a=0,648,1,caserror2
      teststate=1
      path=caseerror2.mla
      comment=
@@ -14760,7 +14760,7 @@ c=3
     c=1
      (
      kind=2
-     a=0,648,2,subresfield
+     a=0,648,1,subresfield
      teststate=1
      path=subresfield.mla
      comment=
@@ -14803,7 +14803,7 @@ c=3
     c=4
      (
      kind=2
-     a=0,648,2,pointertostring1
+     a=0,648,1,pointertostring1
      teststate=1
      path=pointertostring1.mla
      comment=
@@ -14826,7 +14826,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointertostring2
+     a=0,648,1,pointertostring2
      teststate=1
      path=pointertostring2.mla
      comment=
@@ -14849,7 +14849,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointertostring3
+     a=0,648,1,pointertostring3
      teststate=1
      path=pointertostring3.mla
      comment=
@@ -14872,7 +14872,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,constparam
+     a=0,648,1,constparam
      teststate=1
      path=constparam.mla
      comment=
@@ -14915,7 +14915,7 @@ c=3
     c=4
      (
      kind=2
-     a=0,648,2,constpar llvm
+     a=0,648,1,constpar llvm
      teststate=1
      path=constpar.mla
      comment=
@@ -14938,7 +14938,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,constpar1 llvm
+     a=0,648,1,constpar1 llvm
      teststate=1
      path=constpar1.mla
      comment=
@@ -14961,7 +14961,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,constpar2 llvm
+     a=0,648,1,constpar2 llvm
      teststate=1
      path=constpar2.mla
      comment=
@@ -14984,7 +14984,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,missingpar llvm
+     a=0,648,1,missingpar llvm
      teststate=1
      path=missingpar.mla
      comment=
@@ -16214,7 +16214,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -16340,7 +16340,52 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=210
+rowstate=255
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

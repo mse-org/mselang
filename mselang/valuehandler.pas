@@ -104,6 +104,7 @@ var
  rangestart: pcontextitemty;
  sv1: stringvaluety;
  mark1: opmarkty;
+ si1: databitsizety;
 begin
  ele.checkcapacity(ek_type,2,adest);
  if (adest = nil) or (adest^.h.datasize = das_none) then begin
@@ -299,18 +300,59 @@ begin
    getordrange(type2,ra1);
    if (ra1.min <> min1) or (ra1.max <> max1) then begin
     type3:= ele.addelementdata(getident(),ek_type,[]);
+    si1:= das_32;
+    if max1 <= $100 then begin
+     si1:= das_8;
+    end
+    else begin
+     if max1 < $10000 then begin
+      si1:= das_16;
+     end;
+    end;
     if type2^.h.kind = dk_character then begin
-     inittypedatasize(type3^,dk_character,0,das_32);
-     with type3^.infochar32 do begin
-      min:= min1;
-      max:= max1;
+     inittypedatasize(type3^,dk_character,0,si1);
+     case si1 of
+      das_8: begin
+       with type3^.infochar8 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
+      das_16: begin
+       with type3^.infochar16 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
+      das_32: begin
+       with type3^.infochar32 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
      end;
     end
     else begin
-     inittypedatasize(type3^,dk_integer,0,das_32);
-     with type3^.infoint32 do begin
-      min:= min1;
-      max:= max1;
+     inittypedatasize(type3^,dk_cardinal,0,si1);
+     case si1 of
+      das_8: begin
+       with type3^.infocard8 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
+      das_16: begin
+       with type3^.infocard16 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
+      das_32: begin
+       with type3^.infocard32 do begin
+        min:= min1;
+        max:= max1;
+       end;
+      end;
      end;
     end;
     type2:= type3;  //anonymous item type
