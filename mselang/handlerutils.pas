@@ -217,7 +217,7 @@ procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
 function pushinsertvar(const stackoffset: int32; const aopoffset: int32;
               const indirectlevel: int32; const atype: ptypedataty): integer;
 procedure pushinsertsegaddresspo(const stackoffset: integer;
-                            const aopoffset: int32; const address: segaddressty);
+                           const aopoffset: int32; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
@@ -5009,6 +5009,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
    if po1^.h.kind = dk_string then begin
     write(po1^.itemsize*8);
    end;
+   write(' ',getenumname(typeinfo(databitsizety),ord(po1^.h.datasize)));
    if po1^.h.kind <> dk_none then begin
     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.h.flags),true),

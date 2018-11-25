@@ -40,13 +40,14 @@ end;
 
 const
 // startchars = ['_','A'..'Z','a'..'z'];
- startchars = [];
+ startchars = ['1'];
  allowedchars = startchars + ['0'..'9'];
 var
  ch1: char8;
  b1: bool1;
 begin
  b1:= ch1 in startchars;
+
  if b1 then
   exitcode:= 123;
  end;

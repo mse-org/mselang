@@ -1239,7 +1239,26 @@ var                     //todo: optimize, use tables, complete
               getidentname(datatoele(base)^.header.name)],acontext);
   end;
  end; //checkancestorclass
-  
+
+ function checkcharacterrange(): boolean;
+ var
+  ra1: ordrangety;
+ begin
+  result:= true;
+  getordrange(dest,ra1);
+  with acontext^ do begin
+   if (ra1.min > d.dat.constval.vcharacter) or 
+           (ra1.max < d.dat.constval.vcharacter) then begin
+    result:= false;
+    if coo_errormessage in aoptions then begin
+     errormessage(err_valuerange,
+               [hextostr(card64(ra1.min),0),hextostr(card64(ra1.max),0)],
+                                                                   acontext);
+    end;
+   end;
+  end;
+ end; //checkcharacterrange 
+ 
 var
  pointerconv: boolean;
  needsmanagedtemp: boolean;
@@ -1539,6 +1558,12 @@ begin //tryconvert
          exit;
         end;
        end;
+       dk_character: begin
+        if not checkcharacterrange() then begin
+         result:= false;
+         exit;
+        end;
+       end;
       end;
      end;
      if dest^.h.kind = dk_string then begin
@@ -1782,6 +1807,10 @@ begin //tryconvert
                 p1:= pointer(lstr1.po);
                 p2:= p1 + lstr1.len;
                 if getcodepoint(p1,p2,vcharacter) and (p1 = p2) then begin
+                                //single character
+                 if not checkcharacterrange() then begin
+                  exit;
+                 end;
                  result:= true;
                 end;
                end;
@@ -1827,9 +1856,11 @@ begin //tryconvert
             end;
            end;
           end;
+         {
           if result then begin
            d.dat.datatyp.typedata:= ele.eledatarel(dest);
           end;
+         }
          end;
         end;
         ck_ref: begin

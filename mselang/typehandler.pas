@@ -1890,10 +1890,13 @@ pointerlab:
      end;
      
     end;
-    getvalue(ptop,das_32);
+//    getvalue(ptop,das_32);
     if not tryconvert(ptop,st_int32,[coo_enum,coo_character]) then begin  
                                                    //pointer size?
      errormessage(err_illegalqualifier,[],topoffset);
+     goto errorlab;
+    end;
+    if not getvalue(ptop,das_none) then begin
      goto errorlab;
     end;
     if range.min <> 0 then begin

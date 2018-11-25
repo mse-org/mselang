@@ -2018,7 +2018,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,array
+   a=0,665,5,array
    c=8
     (
     kind=2
@@ -2176,8 +2176,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,chararrayindex llvm
-    teststate=1
+    a=0,648,2,chararrayindex llvm
+    teststate=2
     path=chararrayindex.mla
     comment=
     cc=${mlc_llvm}
@@ -2192,11 +2192,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=error: Invalid cast
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=array/
    comment=
    cc=
@@ -4378,7 +4378,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,exception
+   a=0,664,4,exception
    c=17
     (
     kind=2
@@ -4625,7 +4625,7 @@ c=3
     (
     kind=2
     a=0,648,2,except5 llvm
-    teststate=2
+    teststate=1
     path=except5.mla
     comment=
     cc=${mlc_llvm}
@@ -4640,14 +4640,14 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
     kind=2
     a=0,648,2,except6 llvm
-    teststate=2
+    teststate=1
     path=except6.mla
     comment=
     cc=${mlc_llvm}
@@ -4662,8 +4662,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=error: Invalid record
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -4754,7 +4754,7 @@ c=3
     aec=217
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -9098,12 +9098,6 @@ c=3
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2018 by Martin Schreiber
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +Heap dump by heaptrc unit
-    +7181 memory blocks allocated : 2924980/2946480
-    +7181 memory blocks freed     : 2924980/2946480
-    +0 unfreed memory blocks : 0
-    +True heap size : 425984
-    +True free heap : 425984
     aec=1
     ie=0
     )
@@ -14645,20 +14639,20 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
-   a=0,665,5,error check
+   a=0,665,4,error check
    c=12
     (
     kind=1
-    a=0,664,5,address
+    a=0,664,4,address
     c=1
      (
      kind=2
-     a=0,648,1,deref1
-     teststate=2
+     a=0,648,2,deref1
+     teststate=1
      path=deref1.mla
      comment=
      cc=
@@ -14675,16 +14669,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=deref1.mla(12,16) Error: Illegal qualifier
-     +Heap dump by heaptrc unit
-     +7194 memory blocks allocated : 2939615/2961496
-     +7194 memory blocks freed     : 2939615/2961496
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=address/
     comment=
     cc=
@@ -14702,12 +14690,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,control
+    a=0,664,4,control
     c=2
      (
      kind=2
-     a=0,648,1,caserror1
-     teststate=2
+     a=0,648,2,caserror1
+     teststate=1
      path=caseerror1.mla
      comment=
      cc=
@@ -14724,19 +14712,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=caseerror1.mla(16,4) Fatal: Syntax error,":" expected
-     +Heap dump by heaptrc unit
-     +7195 memory blocks allocated : 2940197/2962096
-     +7195 memory blocks freed     : 2940197/2962096
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,caserror2
-     teststate=2
+     a=0,648,2,caserror2
+     teststate=1
      path=caseerror2.mla
      comment=
      cc=
@@ -14753,16 +14735,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=caseerror2.mla(14,3) Error: Incompatible types: got "enuty" expected "int32"
-     +Heap dump by heaptrc unit
-     +7203 memory blocks allocated : 2940456/2962400
-     +7203 memory blocks freed     : 2940456/2962400
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=control/
     comment=
     cc=
@@ -14780,12 +14756,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,statements
+    a=0,664,4,statements
     c=1
      (
      kind=2
-     a=0,648,1,subresfield
-     teststate=2
+     a=0,648,2,subresfield
+     teststate=1
      path=subresfield.mla
      comment=
      cc=
@@ -14802,16 +14778,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=subresfield.mla(12,6) Fatal: Illegal expression
-     +Heap dump by heaptrc unit
-     +7194 memory blocks allocated : 2940495/2962400
-     +7194 memory blocks freed     : 2940495/2962400
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=statements/
     comment=
     cc=
@@ -14829,12 +14799,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,conversions
+    a=0,664,4,conversions
     c=4
      (
      kind=2
-     a=0,648,1,pointertostring1
-     teststate=2
+     a=0,648,2,pointertostring1
+     teststate=1
      path=pointertostring1.mla
      comment=
      cc=
@@ -14851,19 +14821,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=pointertostring1.mla(5,10) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +Heap dump by heaptrc unit
-     +7201 memory blocks allocated : 2941578/2963344
-     +7201 memory blocks freed     : 2941578/2963344
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointertostring2
-     teststate=2
+     a=0,648,2,pointertostring2
+     teststate=1
      path=pointertostring2.mla
      comment=
      cc=
@@ -14880,19 +14844,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=pointertostring2.mla(5,19) Error: Illegal type conversion: "^pointer" to "dk_string"
-     +Heap dump by heaptrc unit
-     +7201 memory blocks allocated : 2941563/2963320
-     +7201 memory blocks freed     : 2941563/2963320
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointertostring3
-     teststate=2
+     a=0,648,2,pointertostring3
+     teststate=1
      path=pointertostring3.mla
      comment=
      cc=
@@ -14909,19 +14867,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=pointertostring3.mla(6,9) Error: Incompatible types: got "^pointer" expected "dk_string"
-     +Heap dump by heaptrc unit
-     +7201 memory blocks allocated : 2941589/2963360
-     +7201 memory blocks freed     : 2941589/2963360
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,constparam
-     teststate=2
+     a=0,648,2,constparam
+     teststate=1
      path=constparam.mla
      comment=
      cc=
@@ -14938,16 +14890,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=constparam.mla(11,6) Error: Variable identifier expected
-     +Heap dump by heaptrc unit
-     +7191 memory blocks allocated : 2928179/2950072
-     +7191 memory blocks freed     : 2928179/2950072
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=conversions/
     comment=
     cc=
@@ -14965,12 +14911,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,5,params
+    a=0,664,4,params
     c=4
      (
      kind=2
-     a=0,648,1,constpar llvm
-     teststate=2
+     a=0,648,2,constpar llvm
+     teststate=1
      path=constpar.mla
      comment=
      cc=
@@ -14987,19 +14933,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=constpar.mla(10,2) Error: Can't assign values to const variable
-     +Heap dump by heaptrc unit
-     +7194 memory blocks allocated : 2939718/2961544
-     +7194 memory blocks freed     : 2939718/2961544
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,constpar1 llvm
-     teststate=2
+     a=0,648,2,constpar1 llvm
+     teststate=1
      path=constpar1.mla
      comment=
      cc=
@@ -15016,19 +14956,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=constpar1.mla(5,2) Error: Can't assign values to const variable
-     +Heap dump by heaptrc unit
-     +7194 memory blocks allocated : 2939819/2961544
-     +7194 memory blocks freed     : 2939819/2961544
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,constpar2 llvm
-     teststate=2
+     a=0,648,2,constpar2 llvm
+     teststate=1
      path=constpar2.mla
      comment=
      cc=
@@ -15045,19 +14979,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=constpar2.mla(5,2) Error: Argument can't be assigned to
-     +Heap dump by heaptrc unit
-     +7194 memory blocks allocated : 2939791/2961520
-     +7194 memory blocks freed     : 2939791/2961520
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,1,missingpar llvm
-     teststate=2
+     a=0,648,2,missingpar llvm
+     teststate=1
      path=missingpar.mla
      comment=
      cc=
@@ -15076,16 +15004,10 @@ c=3
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=missingpar.mla(11,6) Error: Wrong number of parameters specified for call to "tt"
      +missingpar.mla(11,5) Fatal: Illegal expression
-     +Heap dump by heaptrc unit
-     +7202 memory blocks allocated : 2940352/2962088
-     +7202 memory blocks freed     : 2940352/2962088
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=params/
     comment=
     cc=
@@ -15103,12 +15025,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,procedure
+    a=0,665,4,procedure
     c=4
      (
      kind=2
-     a=0,648,2,bodyattachment
-     teststate=2
+     a=0,648,1,bodyattachment
+     teststate=1
      path=bodyattachment.mla
      comment=
      cc=
@@ -15127,19 +15049,13 @@ c=3
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=bodyattachment.mla(3,24) Error: Forward declaration not solved "t"
      +bodyattachment.mla(5,4) Fatal: Syntax error, "." expected
-     +Heap dump by heaptrc unit
-     +7202 memory blocks allocated : 2928865/2950600
-     +7202 memory blocks freed     : 2928865/2950600
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,2,impldupplicate
-     teststate=2
+     a=0,648,1,impldupplicate
+     teststate=1
      path=impldupplicate.mla
      comment=
      cc=
@@ -15156,19 +15072,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=impldupplicate.mla(12,17) Error: Overloaded functions have the same parameter list
-     +Heap dump by heaptrc unit
-     +7192 memory blocks allocated : 2929518/2951216
-     +7192 memory blocks freed     : 2929518/2951216
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,2,closingbracket1
-     teststate=2
+     a=0,648,1,closingbracket1
+     teststate=1
      path=closingbracket1.mla
      comment=
      cc=
@@ -15185,19 +15095,13 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=closingbracket1.mla(9,10) Fatal: Syntax error,")" expected
-     +Heap dump by heaptrc unit
-     +7196 memory blocks allocated : 2940937/2962552
-     +7196 memory blocks freed     : 2940937/2962552
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
      (
      kind=2
-     a=0,648,2,closingbracket2
-     teststate=2
+     a=0,648,1,closingbracket2
+     teststate=1
      path=closingbracket2.mla
      comment=
      cc=
@@ -15214,16 +15118,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=closingbracket2.mla(9,13) Fatal: Syntax error,")" expected
-     +Heap dump by heaptrc unit
-     +7196 memory blocks allocated : 2940942/2962552
-     +7196 memory blocks freed     : 2940942/2962552
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=procedure/
     comment=
     cc=
@@ -15241,12 +15139,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,sets
+    a=0,665,4,sets
     c=3
      (
      kind=2
-     a=0,648,2,set1 llvm
-     teststate=2
+     a=0,648,1,set1 llvm
+     teststate=1
      path=set1.mla
      comment=
      cc=
@@ -15267,12 +15165,6 @@ c=3
      ae=set1.mla(10,5) Error: Incompatible types: got "enu2ty" expected "enuty"
      +set1.mla(10,16) Error: Operation "in" not supported for "enu2ty" and "°"
      +set1.mla(10,5) Error: Boolean expression expected
-     +Heap dump by heaptrc unit
-     +7226 memory blocks allocated : 2940289/2961992
-     +7226 memory blocks freed     : 2940289/2961992
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
@@ -15300,8 +15192,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,setrange
-     teststate=2
+     a=0,648,1,setrange
+     teststate=1
      path=setrange.mla
      comment=
      cc=
@@ -15326,16 +15218,10 @@ c=3
      +setrange.mla(6,18) Error: High range limit < low range limit
      +setrange.mla(7,18) Error: High range limit < low range limit
      +setrange.mla(8,17) Error: Maximal 256 set elements allowed
-     +Heap dump by heaptrc unit
-     +7214 memory blocks allocated : 2928047/2949720
-     +7214 memory blocks freed     : 2928047/2949720
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=sets/
     comment=
     cc=
@@ -15353,12 +15239,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,objects
+    a=0,665,4,objects
     c=1
      (
      kind=2
-     a=0,648,2,doubleprop
-     teststate=2
+     a=0,648,1,doubleprop
+     teststate=1
      path=doubleprop.mla
      comment=
      cc=
@@ -15375,16 +15261,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=doubleprop.mla(8,13) Error: Duplicate identifier "i"
-     +Heap dump by heaptrc unit
-     +7199 memory blocks allocated : 2955939/2977848
-     +7199 memory blocks freed     : 2955939/2977848
-     +0 unfreed memory blocks : 0
-     +True heap size : 393216
-     +True free heap : 393216
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=objects/
     comment=
     cc=
@@ -15402,12 +15282,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,visibility
+    a=0,665,4,visibility
     c=1
      (
      kind=2
-     a=0,648,2,classfield1 llvm
-     teststate=2
+     a=0,648,1,classfield1 llvm
+     teststate=1
      path=classfield1.mla
      comment=
      cc=
@@ -15424,53 +15304,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=classfield1.mla(8,15) Error: Identifier not found "fname"
-     +Heap dump by heaptrc unit
-     +19938 memory blocks allocated : 8717858/8776784
-     +19934 memory blocks freed     : 8677114/8736032
-     +4 unfreed memory blocks : 40744
-     +True heap size : 1474560
-     +True free heap : 1433472
-     +Should be : 1433552
-     +Call trace for block $B7585280 size 2740
-     +  $0806F659  TRACEREALLOCMEM,  line 824 of ../inc/heaptrc.pp
-     +  $08063249  REALLOCMEM,  line 342 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/heap.inc
-     +  $081764CD  TSTRINGBUFFER__CHECKGROW,  line 2872 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08176582  TSTRINGBUFFER__ADD,  line 2896 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08176611  TSTRINGBUFFER__ADD,  line 2910 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08173463  NEWSTRINGCONST,  line 556 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08199EDC  HANDLEFACT1,  line 1699 of /home/mse/packs/standard/git/mselang/mselang/handler.pas
-     +  $08167BF9  PARSEUNIT,  line 898 of /home/mse/packs/standard/git/mselang/mselang/parser.pas
-     +Call trace for block $B7590250 size 4104
-     +  $0806F659  TRACEREALLOCMEM,  line 824 of ../inc/heaptrc.pp
-     +  $08063249  REALLOCMEM,  line 342 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/heap.inc
-     +  $0805CF9A  fpc_dynarray_setlength,  line 219 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/dynarr.inc
-     +  $0813A944  THASHDATALIST__SETCAPACITY,  line 963 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $0813AA30  THASHDATALIST__GROW,  line 1005 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $0813AA66  THASHDATALIST__INTERNALADDHASH,  line 1017 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $08176522  TSTRINGBUFFER__ADD,  line 2888 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08176611  TSTRINGBUFFER__ADD,  line 2910 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +Call trace for block $B729D7D0 size 33836
-     +  $0806F659  TRACEREALLOCMEM,  line 824 of ../inc/heaptrc.pp
-     +  $08063249  REALLOCMEM,  line 342 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/heap.inc
-     +  $0813A82C  THASHDATALIST__SETCAPACITY,  line 938 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $0813AA30  THASHDATALIST__GROW,  line 1005 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $0813AA66  THASHDATALIST__INTERNALADDHASH,  line 1017 of /home/mse/packs/standard/git/mseide-msegui/lib/common/container/msehash.pas
-     +  $08176522  TSTRINGBUFFER__ADD,  line 2888 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08176611  TSTRINGBUFFER__ADD,  line 2910 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08173463  NEWSTRINGCONST,  line 556 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +Call trace for block $B7560330 size 64
-     +  $080630C6  GETMEM,  line 276 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/heap.inc
-     +  $0805DDA7  TOBJECT__NEWINSTANCE,  line 355 of /home/mse/packs/standard/svn/fp/fixes_3_0/rtl/inc/objpas.inc
-     +  $081762BE  TSTRINGBUFFER__CREATE,  line 2819 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $08176F19  INITUNIT,  line 3190 of /home/mse/packs/standard/git/mselang/mselang/elements.pas
-     +  $0817A297  TUNITLIST__NEWUNIT,  line 1104 of /home/mse/packs/standard/git/mselang/mselang/unithandler.pas
-     +  $0817999F  NEWUNIT,  line 834 of /home/mse/packs/standard/git/mselang/mselang/unithandler.pas
-     +  $081685B2  PARSE,  line 1247 of /home/mse/packs/standard/git/mselang/mselang/parser.pas
-     +  $080994E2  TCOMPMO__EVENTLOOPEXE,  line 102 of compmodule.pas
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=visibility/
     comment=
     cc=
@@ -15488,12 +15325,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,5,pointer
+    a=0,665,4,pointer
     c=1
      (
      kind=2
-     a=0,648,2,assignment1
-     teststate=2
+     a=0,648,1,assignment1
+     teststate=1
      path=assignment1.mla
      comment=
      cc=
@@ -15510,16 +15347,10 @@ c=3
      ao=MSElang Compiler version 0.0
      +Copyright (c) 2013-2018 by Martin Schreiber
      ae=assignment1.mla(13,9) Error: Incompatible types: got "^^ppointer" expected "^^dk_class"
-     +Heap dump by heaptrc unit
-     +7202 memory blocks allocated : 2941743/2963560
-     +7202 memory blocks freed     : 2941743/2963560
-     +0 unfreed memory blocks : 0
-     +True heap size : 425984
-     +True free heap : 425984
      aec=1
      ie=0
      )
-    teststate=2
+    teststate=1
     path=pointer/
     comment=
     cc=
@@ -15555,19 +15386,13 @@ c=3
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2018 by Martin Schreiber
     ae=missingend.mla(6,4) Fatal: Illegal expression
-    +Heap dump by heaptrc unit
-    +7181 memory blocks allocated : 2938028/2959824
-    +7181 memory blocks freed     : 2938028/2959824
-    +0 unfreed memory blocks : 0
-    +True heap size : 393216
-    +True free heap : 393216
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,2,missingendok
-    teststate=2
+    a=0,648,1,missingendok
+    teststate=1
     path=missingendok.mla
     comment=
     cc=
@@ -15583,16 +15408,11 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2018 by Martin Schreiber
-    ae=Heap dump by heaptrc unit
-    +7209 memory blocks allocated : 2941474/2963184
-    +7209 memory blocks freed     : 2941474/2963184
-    +0 unfreed memory blocks : 0
-    +True heap size : 393216
-    +True free heap : 393216
+    ae=
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=errorcheck/
    comment=
    cc=
@@ -15608,7 +15428,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=syntax/
   comment=
   cc=
@@ -16520,7 +16340,15 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=202
+rowstate=210
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
