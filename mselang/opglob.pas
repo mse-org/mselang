@@ -108,7 +108,7 @@ type
   cs_string32tovarrecty,
 
 //  cs_setsetele,
-  cs_inset,
+  cs_setin,
   
   cs_halt,
   
@@ -304,9 +304,11 @@ type
   oc_pushimm16,
   oc_pushimm32,
   oc_pushimm64,
+  oc_pushimmpo,
   oc_pushimmf32,
   oc_pushimmf64,
   oc_pushimmbigint,
+  oc_pushimmbigintindi,
   oc_pushimmdatakind,
   
   oc_card8toflo32,
@@ -522,6 +524,7 @@ type
 }
   oc_setcontains,
   oc_setin,
+  oc_setinindi,
   oc_setsetele,
   oc_setexpand,
   oc_include,

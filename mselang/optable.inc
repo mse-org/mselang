@@ -233,12 +233,16 @@
   (ssa: pushimm32ssa; proc: @pushimm32op; flags: []), 
 //oc_pushimm64
   (ssa: pushimm64ssa; proc: @pushimm64op; flags: []), 
+//oc_pushimmpo
+  (ssa: pushimmpossa; proc: @pushimmpoop; flags: []), 
 //oc_pushimmf32
   (ssa: pushimmf32ssa; proc: @pushimmf32op; flags: []), 
 //oc_pushimmf64
   (ssa: pushimmf64ssa; proc: @pushimmf64op; flags: []), 
 //oc_pushimmbigint
   (ssa: pushimmbigintssa; proc: @pushimmbigintop; flags: []), 
+//oc_pushimmbigintindi
+  (ssa: pushimmbigintindissa; proc: @pushimmbigintindiop; flags: []), 
 //oc_pushimmdatakind
   (ssa: pushimmdatakindssa; proc: @pushimmdatakindop; flags: []), 
   
@@ -723,6 +727,8 @@
   (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 //oc_setin,
   (ssa: setinssa; proc: @setinop; flags: []), 
+//oc_setinindi,
+  (ssa: setinindissa; proc: @setinindiop; flags: [of_bbinc1]), 
 //oc_setsetele
   (ssa: setsetelessa; proc: @setseteleop;flags: []),
 //oc_setexpand

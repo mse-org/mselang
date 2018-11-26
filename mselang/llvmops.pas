@@ -1204,6 +1204,13 @@ begin
  end;
 end;
 
+procedure pushimmpoop();
+begin
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
+end;
+
 procedure pushimmf32op();
 begin
  with pc^.par do begin
@@ -1221,7 +1228,15 @@ end;
 procedure pushimmbigintop();
 begin
  with pc^.par do begin
-  bcstream.emitpushconst(imm.llvm);
+  bcstream.emitpushconst(imm.llvm);            //1
+ end;
+end;
+
+procedure pushimmbigintindiop();
+begin
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);            //1
+  bcstream.emitloadop(bcstream.relval(0));     //2
  end;
 end;
 
@@ -2829,6 +2844,15 @@ begin
                     //0-mask
   bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //6
 
+ end;
+end;
+
+procedure setinindiop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.pointertype);    //1
+  callcompilersub(cs_setin,true,
+                   [bcstream.relval(0),bcstream.ssaval(ssas2)]);        //2
  end;
 end;
 
@@ -5417,9 +5441,11 @@ const
   pushimm16ssa = 1;
   pushimm32ssa = 1;
   pushimm64ssa = 1;
+  pushimmpossa = 1;
   pushimmf32ssa = 1;
   pushimmf64ssa = 1;
   pushimmbigintssa = 1;
+  pushimmbigintindissa = 2;
   pushimmdatakindssa = 1;
   
   card8toflo32ssa = 1;
@@ -5651,6 +5677,7 @@ const
 
   setcontainsssa = 3;
   setinssa = 6;
+  setinindissa = 2;
   setsetelessa = 11;
   setexpandssa = 1;
   includessa = 6;

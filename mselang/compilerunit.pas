@@ -134,7 +134,7 @@ const
 
 //  (name: '__mla__setsetele'; flags: []),
 
-  (name: '__mla__inset'; flags: []),
+  (name: '__mla__setin'; flags: []),
 
   (name: '__mla__halt'; flags: []),
   

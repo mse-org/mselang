@@ -153,7 +153,7 @@ procedure __mla__inttostr(const value: int32): string8;
 
 procedure __mla__frac64(value: flo64): flo64;
 
-procedure __mla__inset(const value: pcard8; const index: card8): bool1;
+procedure __mla__setin(const value: pcard8; const index: card8): bool1;
 
 type
  conversionprocty = procedure(source: pointer): pointer;
@@ -2202,9 +2202,10 @@ const
                                    //4        5         6         7       
                                    %00010000,%00100000,%01000000,%10000000);
 
-procedure __mla__inset(const value: pcard8; const index: card8): bool1;
+procedure __mla__setin(const value: pcard8; const index: card8): bool1;
 begin
- result:= value[index div 8] and bytebits[index and $7] <> 0;
+// result:= value[index div 8] and bytebits[index and $7] <> 0;
+ result:= value[index div 8] and (1 shl (index and $7)) <> 0;
 end;
 
 initialization

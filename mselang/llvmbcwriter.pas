@@ -577,6 +577,9 @@ begin
   for i1:= consts.typelist.count - 1 downto 0 do begin
    if ord(pt1^.kind) < 0 then begin
     case aggregatekindty(-ord(pt1^.kind)) of
+     ak_pointer: begin
+      emitrec(ord(TYPE_CODE_POINTER),[typeval(ptrint(pt1^.header.buffer))]);
+     end;
      ak_pointerarray: begin
       emitrec(ord(TYPE_CODE_ARRAY),[pt1^.header.buffer,typeval(pointertype)]);
      end;

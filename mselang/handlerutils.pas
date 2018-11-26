@@ -1388,6 +1388,7 @@ begin
      das_bigint: begin
       if (constval.vset.kind = das_bigint) and 
            (strf_empty in constval.vset.bigsetvalue.flags) or
+           (constval.vset.kind <> das_bigint) and
                                  (constval.vset.setvalue = 0) then begin
        with contextstack[s.stackindex+stackoffset] do begin
        {$ifdef mse_checkinternalerror}
@@ -1401,9 +1402,14 @@ begin
         constval.vset.bigsetvalue.offset:= typ1^.h.bitsize;
        end;
       end;
-      with insertitem(oc_pushimmbigint,stackoffset,aopoffset)^ do begin
-//       setimmbigint(constval.vset.value,par.imm);
-       setimmbigint(constval.vset.bigsetvalue,par.imm);
+      if strf_address in constval.vset.bigsetvalue.flags then begin
+       op1:= oc_pushimmpo;
+      end
+      else begin
+       op1:= oc_pushimmbigintindi;
+      end;
+      with insertitem(op1,stackoffset,aopoffset)^ do begin
+       setimmbigintindi(constval.vset.bigsetvalue,par.imm);
       end;
      end;
      else begin
@@ -3394,6 +3400,7 @@ var
  p3: pcontextitemty;
  typebefore: elementoffsetty;
  b1: boolean;
+ op1: opcodety;
 begin
  ele.checkcapacity(ek_type); //expandset can create type
  p1:= ele.eledataabs(pob^.d.dat.datatyp.typedata);
@@ -3453,9 +3460,17 @@ begin
     end
     else begin
      b1:= expandset(pob,typebefore); //todo: limit index operand
+     if (pob^.d.kind = ck_const) and 
+                     (pob^.d.dat.constval.vset.kind = das_bigint) then begin
+      include(pob^.d.dat.constval.vset.bigsetvalue.flags,strf_address);
+      op1:= oc_setinindi;
+     end
+     else begin
+      op1:= oc_setin;
+     end;
      result:= getvalue(pob,das_none);
      if result then begin
-      with addfactbinop(pob,poa,oc_setin)^ do begin
+      with addfactbinop(pob,poa,op1)^ do begin
        updatesetstackop(par,p1,p2);
       end;
       if not pobisresult then begin
@@ -4460,7 +4475,7 @@ var
  procedure setbigsetdata();
  begin
   poa^.d.dat.constval.vset.bigsetvalue:= 
-                               newbigintconst(@buf1,(pointer(p3)-@buf1)*8);
+                               newbigintconst(@buf1,(p3-pcard8(@buf1))*8);
  end; //setbigsetdata
   
 var

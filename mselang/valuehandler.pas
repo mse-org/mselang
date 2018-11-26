@@ -395,8 +395,8 @@ begin
   end
   else begin
    if b1 then begin
-    with insertitem(oc_pushimmbigint,poe,-1)^ do begin
-     setimmbigint(sv1,par.imm);
+    with insertitem(oc_pushimmbigintindi,poe,-1)^ do begin
+     setimmbigintindi(sv1,par.imm);
      i2:= par.ssad;
     end;
    end

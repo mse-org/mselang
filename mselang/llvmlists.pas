@@ -151,7 +151,8 @@ type
  end;
  ptypelisthashdataty = ^typelisthashdataty;
 
- aggregatekindty = (ak_none,ak_pointerarray,ak_struct,ak_aggregatearray);
+ aggregatekindty = (ak_none,ak_pointer,
+                    ak_pointerarray,ak_struct,ak_aggregatearray);
  typeallocdataty = record
   header: bufferallocdataty; //header.data -> alloc size if size = -1
   kind: databitsizety; //aggregatekindty if negative
@@ -228,7 +229,8 @@ type
    constructor create();
    procedure clear(); override; //automatic entries for bitsize optypes...
    function addintvalue(const abitsize: int32): int32; //returns listid
-   function addbitvalue(const asize: databitsizety): integer; //returns listid
+   function addbitvalue(const asize: databitsizety): int32; //returns listid
+   function addpointervalue(const basetype: int32): int32;
    function addbigintvalue(const asize: int32): int32; //returns listid
                                    //bits
    function addbytevalue(const asize: integer): integer; //returns listid
@@ -268,6 +270,7 @@ type
  constlistdataty = record
   header: bufferdataty;
   typeid: integer; // < 0 -> consttypety
+  alloc: llvmvaluety;
  end;
  pconstlistdataty = ^constlistdataty;
  
@@ -357,7 +360,8 @@ type
    function addaggregatearray(const asize: int32; const atype: int32; 
                                               const ids: pint32): llvmvaluety;
                //ids[asize] used for type id not restored
-   function addpointercast(const aid: int32): llvmvaluety;
+   function addpointercast(const aid: int32;
+                             const adesttype: int32 = pointertype): llvmvaluety;
    function addaddress(const aid: int32; const aoffset: int32): llvmvaluety;
    function addaggregate(const avalue: paggregateconstty;
                                  const unique: boolean = true): llvmvaluety;
@@ -523,6 +527,8 @@ type
                                            //-1 -> unitnameid, returns listid
    function addidentconst(const aident: identty): llvmvaluety;
                                                     //string8 pointer
+   function addbigintconst(const avalue: stringvaluety): llvmvaluety;
+
    function addrtticonst(const atype: ptypedataty): llvmvaluety; //prtti
 //   function addclassdefconst(const atype: ptypedataty): llvmvaluety; 
                                                     //pclassdefinfoty
@@ -1497,7 +1503,7 @@ begin
  result:= po1^.data.header.listindex;
 end;
 
-function ttypehashdatalist.addbitvalue(const asize: databitsizety): integer;
+function ttypehashdatalist.addbitvalue(const asize: databitsizety): int32;
 var
  t1: typeallocdataty;
  po1: ptypelisthashdataty;
@@ -1510,6 +1516,18 @@ begin
  t1.header.size:= -1;
  t1.header.data:= pointer(ptruint(bitopsizes[asize]));
  t1.kind:= asize;
+ po1:= addvalue(t1);
+ result:= po1^.data.header.listindex;
+end;
+
+function ttypehashdatalist.addpointervalue(const basetype: int32): int32;
+var
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
+begin
+ t1.header.size:= -1;
+ t1.header.data:= pointer(ptruint(basetype));
+ t1.kind:= databitsizety(-(ord(ak_pointer)));
  po1:= addvalue(t1);
  result:= po1^.data.header.listindex;
 end;
@@ -2097,7 +2115,8 @@ begin
  result.typeid:= po1^.data.header.buffer;
 end;
 
-function tconsthashdatalist.addpointercast(const aid: int32): llvmvaluety;
+function tconsthashdatalist.addpointercast(const aid: int32;
+                             const adesttype: int32 = pointertype): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -2118,7 +2137,7 @@ begin
    po1^.data.typeid:= alloc1.typeid;
   end;
   result.listid:= po1^.data.header.listindex;
-  result.typeid:= pointertype;
+  result.typeid:= adesttype;
  end;
 end;
 
@@ -3045,6 +3064,40 @@ begin
   end;
  end;
 end;
+
+function tgloballocdatalist.addbigintconst(
+                              const avalue: stringvaluety): llvmvaluety;
+var
+ s1: lstringty;
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ with fconstlist do begin
+  if strf_empty in avalue.flags then begin
+  {$ifdef mse_checkinternalerror}
+   internalerror(ie_llvmlist,'20181126A');
+  {$endif}
+//   result:= addnullvalue(ftypelist.addbigintvalue(avalue.offset));
+  end
+  else begin
+   s1:= getstringconst(avalue);
+   alloc1.header.size:= s1.len;
+   alloc1.header.data:= s1.po;
+   alloc1.typeid:= ftypelist.addbigintvalue(s1.len*8);
+   if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+    po1^.data.typeid:= alloc1.typeid;
+    result:= addpointercast(
+         self.addinitvalue(gak_const,po1^.data.header.listindex,constlinkage),
+                                      ftypelist.addpointervalue(alloc1.typeid));
+    po1^.data.alloc:= result;
+   end
+   else begin
+    result:= po1^.data.alloc;
+   end;
+  end;
+ end;
+end;
+
 
 procedure initlistagloc(const constlist: tconsthashdatalist;
                    var agloc: aglocty; const count: int32; const asize: int32);

@@ -1062,6 +1062,11 @@ begin
  pint64(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
 end;
 
+procedure pushimmpoop();
+begin
+ notimplemented();
+end;
+
 procedure pushimmf32op();
 begin
  pflo32(stackpush(4))^:= cpu.pc^.par.imm.vflo32; 
@@ -1073,6 +1078,11 @@ begin
 end;
 
 procedure pushimmbigintop();
+begin
+ notimplemented();
+end;
+
+procedure pushimmbigintindiop();
 begin
  notimplemented();
 end;
@@ -3048,6 +3058,11 @@ begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= stackpop(sizeof(vintegerty));
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ in tintegerset(po1^);
+end;
+
+procedure setinindiop();
+begin
+ notimplemented();
 end;
 
 procedure getclassdefop();
@@ -7245,9 +7260,11 @@ const
   pushimm16ssa = 0;
   pushimm32ssa = 0;
   pushimm64ssa = 0;
+  pushimmpossa = 0;
   pushimmf32ssa = 0;
   pushimmf64ssa = 0;
   pushimmbigintssa = 0;
+  pushimmbigintindissa = 0;
   pushimmdatakindssa = 0;
   
   card8toflo32ssa = 0;
@@ -7484,6 +7501,7 @@ const
 
   setcontainsssa = 0;
   setinssa = 0;
+  setinindissa = 0;
   getclassdefssa = 0;
   getclassrttissa = 0;
   classisssa = 0;

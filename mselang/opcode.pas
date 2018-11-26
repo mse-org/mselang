@@ -81,6 +81,7 @@ procedure setimmint64(const value: int64; var aimm: immty);
 procedure setimmfloat32(const value: flo32; var aimm: immty);
 procedure setimmfloat64(const value: flo64; var aimm: immty);
 procedure setimmbigint(const value: stringvaluety; var aimm: immty);
+procedure setimmbigintindi(const value: stringvaluety; var aimm: immty);
 procedure setimmsize(const value: datasizety; var aimm: immty);
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
@@ -949,7 +950,18 @@ procedure setimmbigint(const value: stringvaluety; var aimm: immty);
 begin
  aimm.datasize:= das_bigint;
  if co_llvm in info.o.compileoptions then begin
-  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addbigint(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.globlist.addbigintconst(value);
+ end
+ else begin
+  notimplementederror('20181114F');
+ end;
+end;
+
+procedure setimmbigintindi(const value: stringvaluety; var aimm: immty);
+begin
+ aimm.datasize:= das_bigint;
+ if co_llvm in info.o.compileoptions then begin
+  aimm.llvm:= info.s.unitinfo^.llvmlists.globlist.addbigintconst(value);
  end
  else begin
   notimplementederror('20181114F');

@@ -174,7 +174,8 @@ begin
    llvmbindir:= defaultllvmbindir;
   end;
   
-  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link -only-needed');
+//  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link -only-needed');
+  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link');
   llccommand:= tosysfilepath(llvmbindir+'llc');
   if sysenv.defined[ord(pa_optimizeparams)] then begin
    s1:= ' '+sysenv.value[ord(pa_optimizeparams)];
