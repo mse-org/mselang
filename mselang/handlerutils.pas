@@ -4435,7 +4435,8 @@ function updateop(const opsinfo: opsinfoty): popinfoty;
  end; //div0error
 
 var
- p1,pe,p2: pcard8;
+ p1,pe,p2,p3: pcard8;
+ buf1: bigsetbufferty;
  po2: pointer;
  poa,pob: pcontextitemty;
  
@@ -4448,12 +4449,19 @@ var
   pe:= p1+ls1.len;
   ls1:= getstringconst(psetvaluety(po2)^.bigsetvalue);
   p2:= pointer(ls1.po);
+  p3:= @buf1;
  {$ifdef mse_checkinternalerror}
   if pe-p1 <> ls1.len then begin
    internalerror(ie_handler,'20181124A');
   end;
  {$endif}
  end;
+
+ procedure setbigsetdata();
+ begin
+  poa^.d.dat.constval.vset.bigsetvalue:= 
+                               newbigintconst(@buf1,(pointer(p3)-@buf1)*8);
+ end; //setbigsetdata
   
 var
  kinda,kindb: datakindty;
@@ -4723,10 +4731,12 @@ begin
           if kind = das_bigint then begin
            getbigsetdata();
            while p1 < pe do begin
-            p1^:= p1^ and p2^;
+            p3^:= p1^ and p2^;
             inc(p1);
             inc(p2);
+            inc(p3);
            end;
+           setbigsetdata();
           end
           else begin
            d.dat.constval.vset.setvalue:= d.dat.constval.vset.setvalue and

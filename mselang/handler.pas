@@ -1203,7 +1203,8 @@ var
  op1: opcodety;
  pta,ptb: ptypedataty;
  sa,sb: lstringty;
- p1,p2,pe: pcard8;
+ buf1: bigsetbufferty;
+ p1,pe,p2,p3: pcard8;
 label
  errlab,endlab;
 begin
@@ -1249,20 +1250,24 @@ begin
        p1:= pointer(sa.po);
        pe:= p1+sa.len;
        p2:= pointer(sb.po);
+       p3:= @buf1;
        if issub then begin
         while p1 < pe do begin
-         p1^:= p1^ and (p1^ xor p2^);
+         p3^:= p1^ and (p1^ xor p2^);
          inc(p1);
          inc(p2);
+         inc(p3);
         end;
        end
        else begin
         while p1 < pe do begin
-         p1^:= p1^ or p2^;
+         p3^:= p1^ or p2^;
          inc(p1);
          inc(p2);
+         inc(p3);
         end;
        end;
+       d.dat.constval.vset.bigsetvalue:= newbigintconst(@buf1,sa.len*8);
       end
       else begin
        if issub then begin

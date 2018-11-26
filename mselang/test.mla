@@ -39,23 +39,32 @@ end;
 *)
 
 const
+{$internaldebug on}
+// ar1: array[0..3] of card8 = (1,2,3,4);
+
  startchars = ['ä','_','A'..'Z','a'..'z','ü'];
+{
 // startchars = ['1'];
  allowedchars = startchars + ['0'..'9'];
+}
 var
+ set1: set of char8;
+{
  ch1: char8;
  b1: bool1;
  s1: string8;
+}
 begin
-{$internaldebug on}
-// ch1:= #255;
+ set1:= startchars;
+// b1:= ch1 in allowedchars;
+{
 
  for ch1:= #0 to #255 do
-  if ch1 in startchars then
-   write(ord(ch1),':',string8(ch1),' ');
+  if ch1 in allowedchars then
+   write(string8(ch1));
   end;
  end;
-
+}
 {
  if isvalidident('1abc') then
   exitcode:= 123;

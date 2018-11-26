@@ -108,6 +108,7 @@ type
   cs_string32tovarrecty,
 
 //  cs_setsetele,
+  cs_inset,
   
   cs_halt,
   

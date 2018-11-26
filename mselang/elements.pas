@@ -1841,7 +1841,7 @@ var
     end;
     dk_set: begin
      if vset.kind = das_bigint then begin
-      result:= result+'bigint';
+      result:= result+'bigint:'+inttostr(vset.bigsetvalue.offset);
      end
      else begin
       result:= result + hextostrmse(card32(vset.setvalue)); 
@@ -1869,7 +1869,7 @@ var
  function dumpconst(const avalue: datainfoty): msestring;
  begin
   with avalue do begin
-   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d);
+   result:= ' T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d);
   end; 
  end; //dumpconst
   
@@ -2032,7 +2032,7 @@ begin
    end;
    ek_const: begin
     po6:= pconstdataty(@po1^.data);
-    mstr1:= mstr1+' '+dumpconst(po6^.val);
+    mstr1:= mstr1+lineend+dumpconst(po6^.val);
    end;
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin

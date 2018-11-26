@@ -164,6 +164,7 @@ var
  ar1: msestringarty;
  i1: int32;
  llvmbindir: filenamety;
+ s1: msestring;
 begin
  with parserparams.buildoptions do begin
   if sysenv.defined[ord(pa_llvmbindir)] then begin
@@ -173,11 +174,12 @@ begin
    llvmbindir:= defaultllvmbindir;
   end;
   
-  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link');
+  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link -only-needed');
   llccommand:= tosysfilepath(llvmbindir+'llc');
   if sysenv.defined[ord(pa_optimizeparams)] then begin
-   llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +
-           ' '+sysenv.value[ord(pa_optimizeparams)];
+   s1:= ' '+sysenv.value[ord(pa_optimizeparams)];
+   llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +s1;
+   llccommand:= llccommand+s1;
   end
   else begin
    llvmoptcommand:= '';
