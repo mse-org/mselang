@@ -2843,10 +2843,29 @@ begin
             bcstream.typeval(stackop.t.listindex),CAST_ZEXT);             //5
                     //0-mask
   bcstream.emitcmpop(ICMP_NE,bcstream.relval(1),bcstream.relval(0));      //6
-
  end;
 end;
 
+procedure setinindiop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_LSHR,bcstream.ssaval(ssas2),
+                                      bcstream.constval(3)); //div 8      //1
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.relval(0));  //3
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(ord(das_8))); //4
+  bcstream.emitloadop(bcstream.relval(0)); //set byte                     //5
+
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),
+                                           bcstream.constval(7)); //mod 8 //6
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(1),
+                                         bcstream.relval(0)); //bit mask  //7
+
+  bcstream.emitbinop(BINOP_AND,bcstream.relval(2),bcstream.relval(0));    //8
+  bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),bcstream.constval(0));    //9
+ end;
+end;
+
+{
 procedure setinindiop();
 begin
  with pc^.par do begin
@@ -2855,7 +2874,7 @@ begin
                    [bcstream.relval(0),bcstream.ssaval(ssas2)]);        //2
  end;
 end;
-
+}
 procedure setseteleop();
 begin
  with pc^.par do begin
@@ -5677,7 +5696,7 @@ const
 
   setcontainsssa = 3;
   setinssa = 6;
-  setinindissa = 2;
+  setinindissa = 9;
   setsetelessa = 11;
   setexpandssa = 1;
   includessa = 6;

@@ -1,0 +1,19 @@
+program bigset3;
+uses
+type
+ set5ty = set of 0..129;
+ ar5ty = array[0..sizeof(set5ty)-1] of card8;
+var
+ s5,s6,s7: set5ty;
+ ar5: ar5ty;
+ i2: int32;
+begin
+ s7:= ([1]+[7..8,127..128,120,121]) * [7..8,127..128,120];
+ s5:= [7..8]+[127..128]+[120];
+ s6:= [1]+[7..8,127..128,120]-[1];
+ ar5:= ar5ty(s7);
+ if (ar5[0] = $80) and (ar5[15] = $81) and (ar5[16] = 1) and 
+        (8 in s5) and (7 in s5) and (128 in s5) and not (30 in s5) and (s5 = s6) and (s5 = s7) then
+  exitcode:= 123;
+ end;
+end.

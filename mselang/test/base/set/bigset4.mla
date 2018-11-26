@@ -1,0 +1,22 @@
+program bigset4;
+uses
+const
+ startchars = ['ä','_','A'..'Z','a'..'z','ü'];
+ allowedchars = startchars + ['0'..'9'];
+var
+ ch1: char8;
+ s1: set of char8;
+begin
+ s1:= s1+allowedchars;
+ for ch1:= #0 to #255 do
+  if ch1 in s1 then
+   write(string8(ch1));
+  end;
+ end;
+ writeln;
+ for ch1:= #0 to #255 do
+  if ch1 in startchars then
+   write(string8(ch1));
+  end;
+ end;
+end.

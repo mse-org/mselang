@@ -728,7 +728,7 @@
 //oc_setin,
   (ssa: setinssa; proc: @setinop; flags: []), 
 //oc_setinindi,
-  (ssa: setinindissa; proc: @setinindiop; flags: [of_bbinc1]), 
+  (ssa: setinindissa; proc: @setinindiop; flags: [{of_bbinc1}]), 
 //oc_setsetele
   (ssa: setsetelessa; proc: @setseteleop;flags: []),
 //oc_setexpand

@@ -43,10 +43,10 @@ const
 // ar1: array[0..3] of card8 = (1,2,3,4);
 
  startchars = ['ä','_','A'..'Z','a'..'z','ü'];
-{
+
 // startchars = ['1'];
  allowedchars = startchars + ['0'..'9'];
-}
+
 var
  set1: set of char8;
 
@@ -54,21 +54,17 @@ var
  b1: bool1;
 
 begin
- ch1:= '0';
+ ch1:= 'q';
  b1:= ch1 in ['a'..'z'];//startchars;
- b1:= ch1 in startchars;
  if b1 then
-  exitcode:= 123;
+  writeln('***');
  end;
-// b1:= ch1 in allowedchars;
-{
-
  for ch1:= #0 to #255 do
   if ch1 in allowedchars then
    write(string8(ch1));
   end;
  end;
-}
+
 {
  if isvalidident('1abc') then
   exitcode:= 123;
