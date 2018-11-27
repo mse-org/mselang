@@ -1,6 +1,6 @@
 program test;
 uses
- unit1;
+ unit1,rtl_streaming;
 type
 
 const
@@ -16,5 +16,8 @@ begin
   if ch1 in set1 then
    write(ch1);
   end;
+ end;
+ if isvalidident('abc') then
+  exitcode:= 123;
  end;
 end.

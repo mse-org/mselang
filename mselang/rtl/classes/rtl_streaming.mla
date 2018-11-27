@@ -128,6 +128,8 @@ type
                    //raises an Ecomponenterror
  end;
  pcomponent = ^Tcomponent;
+
+procedure isvalidident(const ident: string8): boolean;
  
 implementation
 uses
@@ -135,14 +137,9 @@ uses
  rtl_system;
 
 procedure isvalidident(const ident: string8): boolean;
-begin
- result:= false;
-end;
-{
-procedure isvalidident(const ident: string8): boolean;
 const
  startchars = ['_','A'..'Z','a'..'z'];
- allowedchars = startchars + ['0']..['9'];
+ allowedchars = startchars + ['0'..'9'];
 var
  p1,pe: pchar8;
 begin
@@ -150,9 +147,9 @@ begin
  p1:= pointer(ident);
  if p1 <> nil then
   if p1^ in startchars then
-   pe:= p1 + high(ident);
+   pe:= p1 + length(ident);
    inc(p1);
-   while p1 <= pe do
+   while p1 < pe do
     if not (p1^ in allowedchars) then
      exit;
     end;
@@ -162,7 +159,7 @@ begin
   end;  
  end;
 end;
-} 
+ 
 procedure writererror(const amessage: string8);
 begin
  raise ewritererror.create(amessage);
