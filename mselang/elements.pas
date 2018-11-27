@@ -1841,7 +1841,13 @@ var
     end;
     dk_set: begin
      if vset.kind = das_bigint then begin
-      result:= result+'bigint:'+inttostr(vset.bigsetvalue.offset);
+      if strf_ele in vset.bigsetvalue.flags then begin
+       result:= result+'bigint ele:'
+      end
+      else begin
+       result:= result+'bigint:';
+      end;
+      result:= result+inttostr(vset.bigsetvalue.offset);
      end
      else begin
       result:= result + hextostrmse(card32(vset.setvalue)); 
@@ -2032,7 +2038,7 @@ begin
    end;
    ek_const: begin
     po6:= pconstdataty(@po1^.data);
-    mstr1:= mstr1+lineend+dumpconst(po6^.val);
+    mstr1:= mstr1+lineend+' N:'+inttostrmse(po6^.nameid)+dumpconst(po6^.val);
    end;
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
@@ -3038,19 +3044,28 @@ begin
      len1:= len;
      p1:= @constoffset8;
      if p1^ = -1 then begin
-      result:= getglobconstaddress(sizeof(stringheaderty)+(len1+1),pd);
-      p8:= pd+sizeof(stringheaderty);
-      move((fbuffer+offset)^,p8^,len1);
-      p8[len1]:= 0;
+      if strf_set in astring.flags then begin
+       result:= getglobconstaddress(len1,pd);
+       p8:= pd;
+       move((fbuffer+offset)^,p8^,len1);
+      end
+      else begin
+       result:= getglobconstaddress(sizeof(stringheaderty)+(len1+1),pd);
+       p8:= pd+sizeof(stringheaderty);
+       move((fbuffer+offset)^,p8^,len1);
+       p8[len1]:= 0;
+      end;
      end;
     end;
    end;
    if p1^ = -1 then begin
     p1^:= result.address;
-    with info do begin    
-     po1:= getsegmentpo(result);
-     po1^.ref.count:= -1;
-     po1^.len:= len1;
+    if not (strf_set in astring.flags) then begin
+     with info do begin    
+      po1:= getsegmentpo(result);
+      po1^.ref.count:= -1;
+      po1^.len:= len1;
+     end;
     end;
     if co_llvm in info.o.compileoptions then begin
      i1:= info.s.unitinfo^.llvmlists.constlist.addvalue(po1^,
@@ -3081,14 +3096,19 @@ begin
  if strf_ele in astring.flags then begin
  {$ifdef mse_checkinternalerror}
   if (ele.eleinfoabs(astring.offset)^.header.kind <> ek_const) or
-     (pconstdataty(ele.eledataabs(astring.offset))^.val.d.kind <>
-                                                    dk_string) then begin
+     not (pconstdataty(ele.eledataabs(astring.offset))^.val.d.kind in
+                                               [dk_string,dk_set]) then begin
    internalerror(ie_elements,'20180903B');
   end;
  {$endif}
   p1:= ele.eledataabs(astring.offset);
   with tstringbuffer(datatoele(p1)^.header.defunit^.stringbuffer) do begin
-   result:= fdata+p1^.val.d.vstring.offset;
+   if p1^.val.d.kind = dk_set then begin
+    result:= fdata+p1^.val.d.vset.bigsetvalue.offset;
+   end
+   else begin
+    result:= fdata+p1^.val.d.vstring.offset;
+   end;
    datapo:= fbuffer+result^.data.offset;
   end;
  end

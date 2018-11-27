@@ -598,17 +598,34 @@ begin
        ek_const: begin
         with pconstdataty(po)^ do begin
          updateref(val.typ.typedata,id1);
-         if val.d.kind = dk_string then begin
-          if not getsegmentpo(seg_unitconstbuf,val.d.vstring.offset,
-                                                sizeof(int32),p1) then begin
-           goto errorlab;
+         case val.d.kind of
+          dk_string: begin
+           if not getsegmentpo(seg_unitconstbuf,val.d.vstring.offset,
+                                                 sizeof(int32),p1) then begin
+            goto errorlab;
+           end;
+           str1.len:= pint32(p1)^;
+           if not getsegmentpo(seg_unitconstbuf,
+                val.d.vstring.offset+sizeof(int32),str1.len,str1.po) then begin
+            goto errorlab;
+           end;
+           val.d.vstring:= newstringconst(str1);
           end;
-          str1.len:= pint32(p1)^;
-          if not getsegmentpo(seg_unitconstbuf,
-               val.d.vstring.offset+sizeof(int32),str1.len,str1.po) then begin
-           goto errorlab;
+          dk_set: begin
+           if val.d.vset.kind = das_bigint then begin
+            if not getsegmentpo(seg_unitconstbuf,val.d.vset.bigsetvalue.offset,
+                                                  sizeof(int32),p1) then begin
+             goto errorlab;
+            end;
+            str1.len:= pint32(p1)^;
+            if not getsegmentpo(seg_unitconstbuf,
+               val.d.vset.bigsetvalue.offset+sizeof(int32),
+                                                  str1.len,str1.po) then begin
+             goto errorlab;
+            end;
+            val.d.vset.bigsetvalue:= newstringconst(str1);
+           end;
           end;
-          val.d.vstring:= newstringconst(str1);
          end;
         end;
        end;

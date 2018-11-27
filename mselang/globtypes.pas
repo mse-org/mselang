@@ -343,7 +343,7 @@ type
  end;
  ptypeinfoty = ^typeinfoty;
 
- stringflagty = (strf_empty,strf_16,strf_32,strf_ele,strf_address);
+ stringflagty = (strf_empty,strf_16,strf_32,strf_set,strf_ele,strf_address);
  stringflagsty = set of stringflagty;
  
  stringvaluety = record

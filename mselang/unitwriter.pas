@@ -190,6 +190,7 @@ var
   sa1: objsubattachty;
   po: pointer;
   str1: lstringty;
+  b1: boolean;
  begin
   move(ps^,pd^,s1);
   deststart:= pd;
@@ -276,10 +277,24 @@ var
      ek_const: begin
       with pconstdataty(po)^ do begin
        updateref(val.typ.typedata);
-       if val.d.kind = dk_string then begin
-        str1:= getstringconst(val.d.vstring);
-        p1:= allocsegmentpo(seg_unitconstbuf,sizeof(int32)+str1.len);
-        val.d.vstring.offset:= getsegmentoffset(seg_unitconstbuf,p1);
+       b1:= false;
+       case val.d.kind of
+        dk_string: begin
+         str1:= getstringconst(val.d.vstring);
+         p1:= allocsegmentpo(seg_unitconstbuf,sizeof(int32)+str1.len);
+         val.d.vstring.offset:= getsegmentoffset(seg_unitconstbuf,p1);
+         b1:= true;
+        end;
+        dk_set: begin
+         if val.d.vset.kind = das_bigint then begin
+          str1:= getstringconst(val.d.vset.bigsetvalue);
+          p1:= allocsegmentpo(seg_unitconstbuf,sizeof(int32)+str1.len);
+          val.d.vset.bigsetvalue.offset:= getsegmentoffset(seg_unitconstbuf,p1);
+          b1:= true;
+         end;
+        end;
+       end;
+       if b1 then begin
         pint32(p1)^:= str1.len;
         inc(pint32(p1));
         move(str1.po^,p1^,str1.len);

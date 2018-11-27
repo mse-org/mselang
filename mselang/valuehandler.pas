@@ -3454,11 +3454,25 @@ begin //handlevalueident
         include(d.dat.flags,df_typeconversion);
        end;
        d.dat.constval:= val.d;
-       if (val.d.kind = dk_string) and modularllvm and (nameid >= 0) and
-               (datatoele(po2)^.header.defunit <> s.unitinfo) then begin
-                                   //other unit
-        d.dat.constval.vstring.offset:= ele.eledatarel(po2);
-        include(d.dat.constval.vstring.flags,strf_ele);
+       if (nameid >= 0) and (datatoele(po2)^.header.defunit <> s.unitinfo) and
+                                                          modularllvm then begin
+                                     //other unit
+        case val.d.kind of
+         dk_string: begin
+          with d.dat.constval.vstring do begin
+           offset:= ele.eledatarel(po2);
+           include(flags,strf_ele);
+          end;
+         end;
+         dk_set: begin
+          with d.dat.constval.vset do begin
+           if kind = das_bigint then begin
+            bigsetvalue.offset:= ele.eledatarel(po2);
+            include(bigsetvalue.flags,strf_ele);
+           end;
+          end;
+         end;
+        end;
        end;
       end;
      end;

@@ -1,73 +1,20 @@
 program test;
 uses
+ unit1;
 type
- pchar8 = ^char8;
-(*
-procedure isvalidident(const ident: string8): boolean;
-const
- startchars = ['_','A'..'Z','a'..'z'];
- allowedchars = startchars + ['0'..'9'];
-var
- p1,pe: pchar8;
- ch1: char8;
-begin
-{$internaldebug on}
-writeln(ord(low(ch1)),' ',ord(high(ch1)));
-for ch1:= low(ch1) to high(ch1) do
-  write(ch1);
- if ch1 in startchars then
-  write(ch1);
- end;
-end;
-
- result:= false;
- p1:= pointer(ident);
- if p1 <> nil then
-  if p1^ in startchars then
-   pe:= p1 + length(ident);
-   inc(p1);
-   while p1 < pe do
-    if not (p1^ in allowedchars) then
-     exit;
-    end;
-    inc(p1);
-   end;          
-   result:= true;
-  end;  
- end;
-end;
-*)
 
 const
 {$internaldebug on}
-// ar1: array[0..3] of card8 = (1,2,3,4);
-
- startchars = ['ä','_','A'..'Z','a'..'z','ü'];
-
-// startchars = ['1'];
- allowedchars = startchars + ['0'..'9'];
-
 var
  set1: set of char8;
-
+ s1: string8;
  ch1: char8;
- b1: bool1;
-
 begin
- ch1:= 'q';
- b1:= ch1 in ['a'..'z'];//startchars;
- if b1 then
-  writeln('***');
- end;
- for ch1:= #0 to #255 do
-  if ch1 in allowedchars then
-   write(string8(ch1));
+// s1:= stringconst+'x';
+ set1:= setconst+['1'..'2'];
+ for ch1:= low(ch1) to high(ch1) do
+  if ch1 in set1 then
+   write(ch1);
   end;
  end;
-
-{
- if isvalidident('1abc') then
-  exitcode:= 123;
- end;
-}
 end.

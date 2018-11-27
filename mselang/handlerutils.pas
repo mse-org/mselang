@@ -1368,6 +1368,20 @@ begin
      end;
     end;
    end;
+   dk_float: begin
+    if adatasize = das_f32 then begin
+     si1:= das_f32;
+     with insertitem(oc_pushimmf32,stackoffset,aopoffset)^ do begin
+      setimmfloat32(constval.vfloat,par.imm);
+     end;
+    end
+    else begin
+     si1:= das_f64;
+     with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
+      setimmfloat64(constval.vfloat,par.imm);
+     end;
+    end;
+   end;
    dk_set{,dk_bigset}: begin
     case adatasize of
      das_8: begin
@@ -1414,20 +1428,6 @@ begin
      end;
      else begin
       internalerror1(ie_handler,'20181114D');
-     end;
-    end;
-   end;
-   dk_float: begin
-    if adatasize = das_f32 then begin
-     si1:= das_f32;
-     with insertitem(oc_pushimmf32,stackoffset,aopoffset)^ do begin
-      setimmfloat32(constval.vfloat,par.imm);
-     end;
-    end
-    else begin
-     si1:= das_f64;
-     with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
-      setimmfloat64(constval.vfloat,par.imm);
      end;
     end;
    end;

@@ -27,7 +27,7 @@ memodialog.sta=8
  [msememodialogfo]
  x=778
  y=380
- cx=432
+ cx=487
  cy=295
  wsize=0
  active=1
@@ -314,7 +314,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=39
     (
     kind=1
@@ -6061,7 +6061,7 @@ c=3
    (
    kind=1
    a=0,665,4,set
-   c=15
+   c=16
     (
     kind=2
     a=0,648,1,setconstructor1
@@ -6390,6 +6390,30 @@ c=3
     ao=
     ae=
     aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,bigset4 llvm
+    teststate=1
+    path=bigset4.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzäü
+    +ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzäü
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzäü
+    +ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzäü
+    ae=
+    aec=0
     ie=0
     )
    teststate=1
@@ -16340,51 +16364,7 @@ sortdescend2=0
 width3=173
 sortdescend3=0
 sortdescend4=0
-rowstate=255
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=211
  0 0
  0 0
  0 0

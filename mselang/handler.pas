@@ -2566,6 +2566,21 @@ end;
 *)
 
 function addsimpleconst(): boolean;
+
+ procedure dostringref(const constpo: pconstdataty;
+                                      const astring: stringvaluety);
+ begin
+  with info do begin
+   trackstringref(astring);
+   if modularllvm and 
+                not (us_implementation in s.unitinfo^.state) then begin
+    allocstringconst(astring);
+    constpo^.nameid:= s.unitinfo^.nameid; 
+                        //defined in allocstringconst()
+   end;
+  end;
+ end;
+
 var
  po1: pconstdataty;
  var1: pvardataty;
@@ -2669,13 +2684,17 @@ begin
       if df_typeconversion in d.dat.flags then begin
        include(po1^.val.typ.flags,tf_typeconversion);
       end;
-      if d.dat.constval.kind = dk_string then begin
-       trackstringref(d.dat.constval.vstring);
-       if modularllvm and 
-                    not (us_implementation in s.unitinfo^.state) then begin
-        segad1:= allocstringconst(d.dat.constval.vstring);
-        po1^.nameid:= s.unitinfo^.nameid; 
-                            //defined in allocstringconst()
+      case d.dat.constval.kind of
+       dk_string: begin
+        dostringref(po1,d.dat.constval.vstring);
+       end;
+       dk_set: begin
+        with d.dat.constval.vset do begin
+         if kind = das_bigint then begin
+          include(bigsetvalue.flags,strf_set);
+          dostringref(po1,bigsetvalue);
+         end;
+        end;
        end;
       end;
       po1^.val.d:= d.dat.constval;
