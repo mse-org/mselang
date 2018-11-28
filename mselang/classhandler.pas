@@ -701,7 +701,7 @@ type
          getidentname(po1^.header.name)]);
     end
     else begin
-     include(po2^.flags,sf_intfcall);
+     include(po2^.flags1,sf1_intfcall);
      if sf_virtual in po2^.flags then begin
       if po2^.trampolineaddress = 0 then begin
        linkmark(po2^.trampolinelinks,seg{,sizeof(intfitemty.instanceshift)});

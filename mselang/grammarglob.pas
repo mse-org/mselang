@@ -72,133 +72,134 @@ const
  tk_rtti = $00000230;
  tk_nortti = $00000231;
  tk_virtual = $00000232;
- tk_except = $00000233;
- tk_end = $00000234;
- tk_new = $00000235;
- tk_dispose = $00000236;
- tk_afterconstruct = $00000237;
- tk_beforedestruct = $00000238;
- tk_ini = $00000239;
- tk_fini = $0000023A;
- tk_incref = $0000023B;
- tk_decref = $0000023C;
- tk_operator = $0000023D;
- tk_operatorright = $0000023E;
- tk_default = $0000023F;
- tk_streaming = $00000240;
- tk_noexception = $00000241;
- tk_pointer = $00000242;
- tk_bool1 = $00000243;
- tk_int8 = $00000244;
- tk_int16 = $00000245;
- tk_int32 = $00000246;
- tk_int64 = $00000247;
- tk_intpo = $00000248;
- tk_card8 = $00000249;
- tk_card16 = $0000024A;
- tk_card32 = $0000024B;
- tk_card64 = $0000024C;
- tk_cardpo = $0000024D;
- tk_flo32 = $0000024E;
- tk_flo64 = $0000024F;
- tk_char8 = $00000250;
- tk_char16 = $00000251;
- tk_char32 = $00000252;
- tk_bytestring = $00000253;
- tk_string8 = $00000254;
- tk_string16 = $00000255;
- tk_string32 = $00000256;
- tk_false = $00000257;
- tk_true = $00000258;
- tk_nil = $00000259;
- tk_unit = $0000025A;
- tk_program = $0000025B;
- tk_interface = $0000025C;
- tk_implementation = $0000025D;
- tk_uses = $0000025E;
- tk_type = $0000025F;
- tk_const = $00000260;
- tk_var = $00000261;
- tk_threadvar = $00000262;
- tk_resourcestring = $00000263;
- tk_procedure = $00000264;
- tk_method = $00000265;
- tk_label = $00000266;
- tk_class = $00000267;
- tk_initialization = $00000268;
- tk_finalization = $00000269;
- tk_sub = $0000026A;
- tk_constructor = $0000026B;
- tk_destructor = $0000026C;
- tk_begin = $0000026D;
- tk_mode = $0000026E;
- tk_dumpelements = $0000026F;
- tk_dumpopcode = $00000270;
- tk_abort = $00000271;
- tk_stoponerror = $00000272;
- tk_nop = $00000273;
- tk_include = $00000274;
- tk_define = $00000275;
- tk_undef = $00000276;
- tk_ifdef = $00000277;
- tk_ifndef = $00000278;
- tk_if = $00000279;
- tk_else = $0000027A;
- tk_endif = $0000027B;
- tk_ifend = $0000027C;
- tk_h = $0000027D;
- tk_inline = $0000027E;
- tk_on = $0000027F;
- tk_off = $00000280;
- tk_constref = $00000281;
- tk_out = $00000282;
- tk_name = $00000283;
- tk_finally = $00000284;
- tk_do = $00000285;
- tk_with = $00000286;
- tk_case = $00000287;
- tk_while = $00000288;
- tk_repeat = $00000289;
- tk_for = $0000028A;
- tk_try = $0000028B;
- tk_raise = $0000028C;
- tk_goto = $0000028D;
- tk_then = $0000028E;
- tk_until = $0000028F;
- tk_to = $00000290;
- tk_downto = $00000291;
- tk_of = $00000292;
- tk_set = $00000293;
- tk_packed = $00000294;
- tk_record = $00000295;
- tk_array = $00000296;
- tk_object = $00000297;
- tk_external = $00000298;
- tk_private = $00000299;
- tk_protected = $0000029A;
- tk_public = $0000029B;
- tk_published = $0000029C;
- tk_property = $0000029D;
- tk_read = $0000029E;
- tk_write = $0000029F;
- tk_div = $000002A0;
- tk_mod = $000002A1;
- tk_and = $000002A2;
- tk_shl = $000002A3;
- tk_shr = $000002A4;
- tk_or = $000002A5;
- tk_xor = $000002A6;
- tk_in = $000002A7;
- tk_is = $000002A8;
- tk_not = $000002A9;
- tk_as = $000002AA;
- tk_inherited = $000002AB;
- tk_function = $000002AC;
- tk_override = $000002AD;
- tk_overload = $000002AE;
- tk_forward = $000002AF;
+ tk_abstract = $00000233;
+ tk_except = $00000234;
+ tk_end = $00000235;
+ tk_new = $00000236;
+ tk_dispose = $00000237;
+ tk_afterconstruct = $00000238;
+ tk_beforedestruct = $00000239;
+ tk_ini = $0000023A;
+ tk_fini = $0000023B;
+ tk_incref = $0000023C;
+ tk_decref = $0000023D;
+ tk_operator = $0000023E;
+ tk_operatorright = $0000023F;
+ tk_default = $00000240;
+ tk_streaming = $00000241;
+ tk_noexception = $00000242;
+ tk_pointer = $00000243;
+ tk_bool1 = $00000244;
+ tk_int8 = $00000245;
+ tk_int16 = $00000246;
+ tk_int32 = $00000247;
+ tk_int64 = $00000248;
+ tk_intpo = $00000249;
+ tk_card8 = $0000024A;
+ tk_card16 = $0000024B;
+ tk_card32 = $0000024C;
+ tk_card64 = $0000024D;
+ tk_cardpo = $0000024E;
+ tk_flo32 = $0000024F;
+ tk_flo64 = $00000250;
+ tk_char8 = $00000251;
+ tk_char16 = $00000252;
+ tk_char32 = $00000253;
+ tk_bytestring = $00000254;
+ tk_string8 = $00000255;
+ tk_string16 = $00000256;
+ tk_string32 = $00000257;
+ tk_false = $00000258;
+ tk_true = $00000259;
+ tk_nil = $0000025A;
+ tk_unit = $0000025B;
+ tk_program = $0000025C;
+ tk_interface = $0000025D;
+ tk_implementation = $0000025E;
+ tk_uses = $0000025F;
+ tk_type = $00000260;
+ tk_const = $00000261;
+ tk_var = $00000262;
+ tk_threadvar = $00000263;
+ tk_resourcestring = $00000264;
+ tk_procedure = $00000265;
+ tk_method = $00000266;
+ tk_label = $00000267;
+ tk_class = $00000268;
+ tk_initialization = $00000269;
+ tk_finalization = $0000026A;
+ tk_sub = $0000026B;
+ tk_constructor = $0000026C;
+ tk_destructor = $0000026D;
+ tk_begin = $0000026E;
+ tk_mode = $0000026F;
+ tk_dumpelements = $00000270;
+ tk_dumpopcode = $00000271;
+ tk_abort = $00000272;
+ tk_stoponerror = $00000273;
+ tk_nop = $00000274;
+ tk_include = $00000275;
+ tk_define = $00000276;
+ tk_undef = $00000277;
+ tk_ifdef = $00000278;
+ tk_ifndef = $00000279;
+ tk_if = $0000027A;
+ tk_else = $0000027B;
+ tk_endif = $0000027C;
+ tk_ifend = $0000027D;
+ tk_h = $0000027E;
+ tk_inline = $0000027F;
+ tk_on = $00000280;
+ tk_off = $00000281;
+ tk_constref = $00000282;
+ tk_out = $00000283;
+ tk_name = $00000284;
+ tk_finally = $00000285;
+ tk_do = $00000286;
+ tk_with = $00000287;
+ tk_case = $00000288;
+ tk_while = $00000289;
+ tk_repeat = $0000028A;
+ tk_for = $0000028B;
+ tk_try = $0000028C;
+ tk_raise = $0000028D;
+ tk_goto = $0000028E;
+ tk_then = $0000028F;
+ tk_until = $00000290;
+ tk_to = $00000291;
+ tk_downto = $00000292;
+ tk_of = $00000293;
+ tk_set = $00000294;
+ tk_packed = $00000295;
+ tk_record = $00000296;
+ tk_array = $00000297;
+ tk_object = $00000298;
+ tk_external = $00000299;
+ tk_private = $0000029A;
+ tk_protected = $0000029B;
+ tk_public = $0000029C;
+ tk_published = $0000029D;
+ tk_property = $0000029E;
+ tk_read = $0000029F;
+ tk_write = $000002A0;
+ tk_div = $000002A1;
+ tk_mod = $000002A2;
+ tk_and = $000002A3;
+ tk_shl = $000002A4;
+ tk_shr = $000002A5;
+ tk_or = $000002A6;
+ tk_xor = $000002A7;
+ tk_in = $000002A8;
+ tk_is = $000002A9;
+ tk_not = $000002AA;
+ tk_as = $000002AB;
+ tk_inherited = $000002AC;
+ tk_function = $000002AD;
+ tk_override = $000002AE;
+ tk_overload = $000002AF;
+ tk_forward = $000002B0;
 
- tokens: array[0..175] of string = ('',
+ tokens: array[0..176] of string = ('',
   '.rootele','.void','.classes','.private','.protected','.public','.published',
   '.classintfname','.classintftype','.classimp','.objpotyp','.classoftyp',
   '.self','.units','.ancestors','.nestedvarref','.defines','.ini','.inizeroed',
@@ -206,13 +207,13 @@ const
   '.operatorsright','.system','.__mla__mainfini','._none','._nil','._forward',
   'mselang','pascal','system','result','exitcode','sizeof','defined','break',
   'continue','self','b','booleval','internaldebug','nozeroinit','zeroinit',
-  'rtti','nortti','virtual','except','end','new','dispose','afterconstruct',
-  'beforedestruct','ini','fini','incref','decref','operator','operatorright',
-  'default','streaming','noexception','pointer','bool1','int8','int16','int32',
-  'int64','intpo','card8','card16','card32','card64','cardpo','flo32','flo64',
-  'char8','char16','char32','bytestring','string8','string16','string32',
-  'false','true','nil','unit','program','interface','implementation','uses',
-  'type','const','var','threadvar','resourcestring','procedure','method',
+  'rtti','nortti','virtual','abstract','except','end','new','dispose',
+  'afterconstruct','beforedestruct','ini','fini','incref','decref','operator',
+  'operatorright','default','streaming','noexception','pointer','bool1','int8',
+  'int16','int32','int64','intpo','card8','card16','card32','card64','cardpo',
+  'flo32','flo64','char8','char16','char32','bytestring','string8','string16',
+  'string32','false','true','nil','unit','program','interface','implementation',
+  'uses','type','const','var','threadvar','resourcestring','procedure','method',
   'label','class','initialization','finalization','sub','constructor',
   'destructor','begin','mode','dumpelements','dumpopcode','abort','stoponerror',
   'nop','include','define','undef','ifdef','ifndef','if','else','endif','ifend',
@@ -223,7 +224,7 @@ const
   'or','xor','in','is','not','as','inherited','function','override','overload',
   'forward');
 
- tokenids: array[0..175] of identty = (
+ tokenids: array[0..176] of identty = (
   $00000000,$00000201,$00000202,$00000203,$00000204,$00000205,$00000206,
   $00000207,$00000208,$00000209,$0000020A,$0000020B,$0000020C,$0000020D,
   $0000020E,$0000020F,$00000210,$00000211,$00000212,$00000213,$00000214,
@@ -249,7 +250,7 @@ const
   $0000029A,$0000029B,$0000029C,$0000029D,$0000029E,$0000029F,$000002A0,
   $000002A1,$000002A2,$000002A3,$000002A4,$000002A5,$000002A6,$000002A7,
   $000002A8,$000002A9,$000002AA,$000002AB,$000002AC,$000002AD,$000002AE,
-  $000002AF);
+  $000002AF,$000002B0);
 
 implementation
 end.

@@ -1,7 +1,10 @@
 program test;
 uses
- unit1,rtl_streaming;
+// rtl_streaming;
 type
+ Ctest = class[virtual]
+  method test() [virtual,abstract];
+ end;
 
 const
 {$internaldebug on}
@@ -9,15 +12,12 @@ var
  set1: set of char8;
  s1: string8;
  ch1: char8;
+// co1: Tcomponent;
 begin
-// s1:= stringconst+'x';
- set1:= setconst+['1'..'2'];
- for ch1:= low(ch1) to high(ch1) do
-  if ch1 in set1 then
-   write(ch1);
-  end;
- end;
- if isvalidident('abc') then
-  exitcode:= 123;
- end;
+{
+ co1:= Tcomponent.create(nil);
+ co1.name:= 'abc';
+ writeln(co1.name);
+ co1.destroy();
+}
 end.

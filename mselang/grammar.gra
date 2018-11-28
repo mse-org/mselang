@@ -75,7 +75,7 @@
  'mselang','pascal','system'
  'result','exitcode','sizeof','defined','break','continue','self'
  'b','booleval','internaldebug'
- 'nozeroinit','zeroinit','rtti','nortti','virtual','except','end'
+ 'nozeroinit','zeroinit','rtti','nortti','virtual','abstract','except','end'
  'new','dispose','afterconstruct','beforedestruct'
  'ini','fini','incref','decref'
  'operator','operatorright'
@@ -456,6 +456,7 @@ clasubheader3,,,
  '[',clasubheaderattach-*>
 {$grapas}
  'virtual'.,!handlevirtual-
+ 'abstract'.,!handleabstract-
  'override'.,!handleoverride-
  'overload'.,!handleoverload-
 {$}
@@ -465,11 +466,13 @@ clasubheader4,,,*
  ${whitespace}
 {$grapas}
  'virtual'.,virtual-
+ 'abstract'.,abstract-
  'override'.,override-
  'overload'.,overload-
 {$}
  '',!handlesubheader*
 virtual,clasubheader3,handlevirtual,
+abstract,clasubheader3,handleabstract,
 override,clasubheader3,handleoverride,
 overload,clasubheader3,handleoverload, 
 clasubheaderattach,,,handleclasubheaderattach*

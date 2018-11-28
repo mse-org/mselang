@@ -119,6 +119,7 @@ procedure callclasubheaderentry();
 procedure checkfunctiontype();
 procedure handlesub1entry();
 procedure handlevirtual();
+procedure handleabstract();
 procedure handleoverride();
 procedure handleclasubheaderattach();
 procedure handlesubheaderattach();
@@ -1009,6 +1010,28 @@ begin
  end;
 end;
 
+procedure handleabstract();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ABSTRACT');
+{$endif}
+ if checkclassdef(info.s.stackindex-1,true) then begin
+  with info,contextstack[s.stackindex-1] do begin
+   if d.subdef.flags * [sf_virtual] = [] then begin
+    errormessage(err_novirtualforabstract,[]);
+   end
+   else begin
+    if d.subdef.flags * [sf_abstract] = [] then begin
+     errormessage(err_procdirectiveconflict,['abstract']);
+    end
+    else begin
+     include(d.subdef.flags,sf_abstract);
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure handleoverride();
 begin
 {$ifdef mse_debugparser}
@@ -1102,6 +1125,21 @@ begin
          end
          else begin
           include(d.subdef.flags,sf_virtual);
+         end;
+        end;
+       end;
+       tk_abstract: begin
+        if checkclassdef(subdefindex,true) then begin
+         if d.subdef.flags * [sf_abstract] <> [] then begin
+          errormessage(err_procdirectiveconflict,['abstract']);
+         end
+         else begin
+          if d.subdef.flags * [sf_virtual] = [] then begin
+           errormessage(err_novirtualforabstract,[]);
+          end
+          else begin
+           include(d.subdef.flags,sf_abstract);
+          end;
          end;
         end;
        end;
@@ -1820,6 +1858,8 @@ end;
 
 const
  attachmentnames: array[subflag1ty] of string = (
+ //sf1_intfcall,
+      '',
  //sf1_ini,sf1_fini,sf1_afterconstruct,sf1_new,sf1_dispose,sf1_beforedestruct,
       'ini',  'fini',  'afterconstruct',  'new',  'dispose',  'beforedestruct',
  //sf1_incref,sf1_decref,
@@ -2826,7 +2866,7 @@ begin
                                        //do not add to list in sub header
    end;
    if (po2^.flags * [sf_virtual,sf_override] <> []) and 
-                    (sf_intfcall in po2^.flags) then begin
+                    (sf1_intfcall in po2^.flags1) then begin
     po2^.trampolineaddress:= opcount;
     linkresolveopad(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin
