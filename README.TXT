@@ -1,6 +1,6 @@
 MSEpas/MSElang
 
-Copyright (c) 2013-2017 by Martin Schreiber
+Copyright (c) 2013-2018 by Martin Schreiber
 
 MSElang   2013-11-01 mse
 =======
