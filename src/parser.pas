@@ -1316,6 +1316,7 @@ begin
                                               [co_llvm,co_buildexe]) then begin
         if (co_modular in o.compileoptions) and 
                                  (us_program in unit1^.state) then begin
+          sleep(100);                       
          with info.buildoptions do begin
           fna2:= removefileext(exefile);
           if co_objmodules in o.compileoptions then begin

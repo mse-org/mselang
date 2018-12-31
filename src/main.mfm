@@ -1,16 +1,16 @@
 object mainfo: tmainfo
-  bounds_x = 69
-  bounds_y = 186
-  bounds_cx = 653
-  bounds_cy = 450
+  bounds_x = 377
+  bounds_y = 112
+  bounds_cx = 877
+  bounds_cy = 444
   anchors = [an_top, an_right]
   container.frame.localprops = []
   container.frame.localprops1 = []
   container.bounds = (
     0
     0
-    653
-    450
+    877
+    444
   )
   options = [fo_main, fo_terminateonclose, fo_autoreadstat, fo_delayedreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = statf
@@ -19,13 +19,14 @@ object mainfo: tmainfo
   oncreate = createev
   moduleclassname = 'tmainform'
   object tbutton1: tbutton
-    bounds_x = 585
-    bounds_y = 58
+    color = 16361727
+    bounds_x = 433
+    bounds_y = 66
     bounds_cx = 50
-    bounds_cy = 20
+    bounds_cy = 30
     anchors = [an_top, an_right]
     options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-    state = [as_localcaption, as_localonexecute]
+    state = [as_localcaption, as_localcolor, as_localonexecute]
     caption = '&parse'
     onexecute = parseev
   end
@@ -35,8 +36,8 @@ object mainfo: tmainfo
     taborder = 1
     bounds_x = 16
     bounds_y = 327
-    bounds_cx = 620
-    bounds_cy = 82
+    bounds_cx = 844
+    bounds_cy = 103
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
     font.xscale = 1
@@ -65,7 +66,7 @@ object mainfo: tmainfo
     taborder = 2
     bounds_x = 16
     bounds_y = 324
-    bounds_cx = 620
+    bounds_cx = 844
     bounds_cy = 3
     anchors = [an_left, an_top, an_right]
     options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
@@ -78,9 +79,9 @@ object mainfo: tmainfo
     frame.localprops1 = []
     taborder = 3
     bounds_x = 16
-    bounds_y = 128
-    bounds_cx = 620
-    bounds_cy = 196
+    bounds_y = 184
+    bounds_cx = 844
+    bounds_cy = 140
     anchors = [an_left, an_top, an_right]
     optionsgrid = [og_focuscellonenter, og_autofirstrow, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     fixcols.count = 1
@@ -127,18 +128,18 @@ object mainfo: tmainfo
     frame.localprops = []
     frame.localprops1 = []
     taborder = 4
-    bounds_x = 16
-    bounds_y = 8
-    bounds_cx = 52
+    bounds_x = 24
+    bounds_y = 24
+    bounds_cx = 44
     bounds_cy = 18
     reffontheight = 14
   end
   object tbutton5: tbutton
     taborder = 5
-    bounds_x = 537
-    bounds_y = 58
-    bounds_cx = 42
-    bounds_cy = 20
+    bounds_x = 433
+    bounds_y = 34
+    bounds_cx = 50
+    bounds_cy = 22
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
     caption = '&save'
@@ -146,16 +147,17 @@ object mainfo: tmainfo
   end
   object tbutton2: tbutton
     taborder = 6
-    bounds_x = 489
-    bounds_y = 58
-    bounds_cx = 42
-    bounds_cy = 20
+    bounds_x = 433
+    bounds_y = 10
+    bounds_cx = 50
+    bounds_cy = 22
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
     caption = '&load'
     onexecute = loadexe
   end
   object filena: tfilenameedit
+    frame.caption = 'Pascal file to compile'
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 1
@@ -164,220 +166,45 @@ object mainfo: tmainfo
         imagenr = 17
       end>
     frame.button.imagenr = 17
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
     taborder = 7
     bounds_x = 72
-    bounds_y = 7
-    bounds_cx = 189
+    bounds_y = 6
+    bounds_cx = 341
+    bounds_cy = 37
     anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
+    controller.lastdir = '/'
     controller.filterlist.data = (
       (
         'MSElang source'
         '*.mla'
       )
+      (
+        'Pascal'
+        '*.pas'
+      )
+      (
+        'Lazarus lpr'
+        '*.lpr'
+      )
+      (
+        'All'
+        '*.*'
+      )
     )
-    controller.options = [fdo_chdir, fdo_savelastdir]
+    controller.options = []
     reffontheight = 14
   end
-  object llvm: tbooleanedit
-    frame.caption = 'llvm'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      26
-      2
-    )
-    taborder = 8
-    bounds_x = 273
-    bounds_y = 1
-    bounds_cx = 39
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object norun: tbooleanedit
-    frame.caption = 'norun'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      40
-      2
-    )
-    taborder = 10
-    bounds_x = 273
-    bounds_y = 15
-    bounds_cx = 53
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object modulared: tbooleanedit
-    frame.caption = 'mod'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      30
-      2
-    )
-    taborder = 11
-    bounds_x = 433
-    bounds_y = 1
-    bounds_cx = 43
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object objed: tbooleanedit
-    frame.caption = 'obj'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      22
-      2
-    )
-    taborder = 12
-    bounds_x = 433
-    bounds_y = 15
-    bounds_cx = 35
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object builded: tbooleanedit
-    frame.caption = 'build'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      33
-      2
-    )
-    taborder = 13
-    bounds_x = 329
-    bounds_y = 1
-    bounds_cx = 46
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object proginfoed: tbooleanedit
-    frame.caption = 'prog'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      32
-      2
-    )
-    taborder = 14
-    bounds_x = 385
-    bounds_y = 1
-    bounds_cx = 45
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-    onsetvalue = proginfoset
-  end
-  object nameed: tbooleanedit
-    frame.caption = 'name'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      38
-      2
-    )
-    taborder = 15
-    bounds_x = 329
-    bounds_y = 15
-    bounds_cx = 51
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-    onsetvalue = nameset
-  end
-  object lineinfoed: tbooleanedit
-    frame.caption = 'line'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      25
-      2
-    )
-    taborder = 9
-    bounds_x = 385
-    bounds_y = 15
-    bounds_cx = 38
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-    onsetvalue = lineinfoset
-  end
-  object nocompilerunited: tbooleanedit
-    frame.caption = 'nocompilerunit'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      96
-      2
-    )
-    taborder = 16
-    bounds_x = 481
-    bounds_y = 1
-    bounds_cx = 109
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
-  object tbutton3: tbutton
-    taborder = 17
-    bounds_x = 577
-    bounds_y = 0
-    bounds_cx = 50
-    bounds_cy = 20
-    anchors = [an_top, an_right]
-    state = [as_localcaption, as_localonexecute]
-    caption = 'param'
-    onexecute = patheditev
-  end
-  object nortlunitsed: tbooleanedit
-    frame.caption = 'nortlunits'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      63
-      2
-    )
-    taborder = 18
-    bounds_x = 481
-    bounds_y = 17
-    bounds_cx = 76
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
-  end
   object opted: tmemodialoghistoryedit
-    frame.caption = 'opt'
     frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_right
+    frame.captionpos = cp_left
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 2
@@ -388,18 +215,14 @@ object mainfo: tmainfo
         imagenr = 17
       end>
     frame.buttondialog.imagenr = 17
-    frame.outerframe = (
-      0
-      0
-      24
-      0
-    )
-    taborder = 19
-    bounds_x = 16
-    bounds_y = 56
-    bounds_cx = 469
+    taborder = 8
+    hint = 'Options for llvm-opt'
+    bounds_x = 116
+    bounds_y = 104
+    bounds_cx = 709
     anchors = [an_left, an_top, an_right]
     statfile = statf
+    value = '-O2 -debugger-tune=gdb'
     dropdown.cols.count = 1
     dropdown.cols.items = <    
       item
@@ -407,9 +230,8 @@ object mainfo: tmainfo
     reffontheight = 14
   end
   object llced: tmemodialoghistoryedit
-    frame.caption = 'llc'
     frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_right
+    frame.captionpos = cp_left
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 2
@@ -420,16 +242,38 @@ object mainfo: tmainfo
         imagenr = 17
       end>
     frame.buttondialog.imagenr = 17
-    frame.outerframe = (
-      0
-      0
-      16
-      0
-    )
-    taborder = 20
-    bounds_x = 16
-    bounds_y = 80
-    bounds_cx = 461
+    taborder = 9
+    hint = 'Options for llvm-llc'
+    bounds_x = 116
+    bounds_y = 128
+    bounds_cx = 709
+    anchors = [an_left, an_top, an_right]
+    statfile = statf
+    value = '-O2 -debugger-tune=gdb'
+    dropdown.cols.count = 1
+    dropdown.cols.items = <    
+      item
+      end>
+    reffontheight = 14
+  end
+  object gcced: tmemodialoghistoryedit
+    frame.captiontextflags = [tf_ycentered]
+    frame.captionpos = cp_left
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.buttons.count = 2
+    frame.buttons.items = <    
+      item
+      end    
+      item
+        imagenr = 17
+      end>
+    frame.buttondialog.imagenr = 17
+    taborder = 10
+    hint = 'Options for gcc'
+    bounds_x = 116
+    bounds_y = 152
+    bounds_cx = 709
     anchors = [an_left, an_top, an_right]
     statfile = statf
     dropdown.cols.count = 1
@@ -438,55 +282,338 @@ object mainfo: tmainfo
       end>
     reffontheight = 14
   end
-  object keeptmped: tbooleanedit
-    frame.caption = 'keeptempfiles'
+  object llvmbindir: tfilenameedit
+    frame.caption = 'Directory of llvm binaries (opt and llc)'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.buttons.count = 1
+    frame.buttons.items = <    
+      item
+        imagenr = 17
+      end>
+    frame.button.imagenr = 17
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 11
+    hint = 'Directory of llc'
+    bounds_x = 72
+    bounds_y = 55
+    bounds_cx = 341
+    bounds_cy = 37
+    anchors = [an_left, an_top, an_right]
+    statfile = statf
+    textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
+    value = '/usr/bin/'
+    controller.filename = '/usr/bin/'
+    controller.lastdir = '/usr/bin/'
+    controller.filterlist.data = (
+      (
+        'MSElang source'
+        '*.mla'
+      )
+    )
+    controller.options = [fdo_directory, fdo_savelastdir]
+    reffontheight = 14
+  end
+  object tgroupbox1: tgroupbox
+    frame.caption = 'mlc Parameters'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      7
+      0
+      0
+    )
+    taborder = 12
+    bounds_x = 502
+    bounds_y = 1
+    bounds_cx = 365
+    bounds_cy = 94
+    anchors = [an_top, an_right]
+    object nameed: tbooleanedit
+      frame.caption = 'name info'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        63
+        2
+      )
+      hint = 'debug name info'
+      bounds_x = 91
+      bounds_y = 72
+      bounds_cx = 76
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+      onsetvalue = nameset
+    end
+    object builded: tbooleanedit
+      frame.caption = 'build'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        33
+        2
+      )
+      taborder = 1
+      hint = 'Build Pascal file with mlc'
+      bounds_x = 11
+      bounds_y = 25
+      bounds_cx = 46
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+      value = True
+    end
+    object norun: tbooleanedit
+      frame.caption = 'norun'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        39
+        2
+      )
+      taborder = 2
+      hint = 'Do not run the application at end'
+      bounds_x = 299
+      bounds_y = 67
+      bounds_cx = 52
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+    object llvm: tbooleanedit
+      frame.caption = 'llvm'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        28
+        2
+      )
+      taborder = 3
+      hint = 'Build result-mli file with llvm'
+      bounds_x = 11
+      bounds_y = 49
+      bounds_cx = 41
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+      value = True
+    end
+    object nortlunitsed: tbooleanedit
+      frame.caption = 'nortlunits'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        61
+        2
+      )
+      taborder = 4
+      bounds_x = 179
+      bounds_y = 35
+      bounds_cx = 74
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+    object nocompilerunited: tbooleanedit
+      frame.caption = 'nocompilerunit'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        94
+        2
+      )
+      taborder = 5
+      bounds_x = 179
+      bounds_y = 17
+      bounds_cx = 107
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+    object objed: tbooleanedit
+      frame.caption = 'obj'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        21
+        2
+      )
+      taborder = 6
+      bounds_x = 83
+      bounds_y = 49
+      bounds_cx = 34
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+    object modulared: tbooleanedit
+      frame.caption = 'modular'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        53
+        2
+      )
+      taborder = 7
+      bounds_x = 83
+      bounds_y = 25
+      bounds_cx = 66
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+    object lineinfoed: tbooleanedit
+      frame.caption = 'line info'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        50
+        2
+      )
+      taborder = 8
+      hint = 'debug line info'
+      bounds_x = 179
+      bounds_y = 72
+      bounds_cx = 63
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+      onsetvalue = lineinfoset
+    end
+    object proginfoed: tbooleanedit
+      frame.caption = 'prog info'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        57
+        2
+      )
+      taborder = 9
+      hint = 'debug prog info'
+      bounds_x = 11
+      bounds_y = 72
+      bounds_cx = 70
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+      onsetvalue = proginfoset
+    end
+    object tbutton3: tbutton
+      taborder = 10
+      hint = 'Custom parameters like -Fu/thedir/of/units'
+      bounds_x = 299
+      bounds_y = 18
+      bounds_cx = 50
+      bounds_cy = 36
+      anchors = [an_top, an_right]
+      state = [as_localcaption, as_localhint, as_localonexecute]
+      caption = 'param'
+      onexecute = patheditev
+    end
+    object keeptmped: tbooleanedit
+      frame.caption = 'keeptempfiles'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        87
+        2
+      )
+      taborder = 11
+      bounds_x = 179
+      bounds_y = 52
+      bounds_cx = 100
+      bounds_cy = 16
+      anchors = [an_top, an_right]
+      statfile = statf
+    end
+  end
+  object beopt: tbooleanedit
+    frame.caption = 'exec opt'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
       0
       1
-      91
+      55
       2
     )
-    taborder = 21
-    bounds_x = 433
-    bounds_y = 31
-    bounds_cx = 104
+    taborder = 13
+    hint = 'Execute opt'
+    bounds_x = 40
+    bounds_y = 106
+    bounds_cx = 68
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
+    value = True
   end
-  object gcced: tmemodialoghistoryedit
-    frame.caption = 'gcc'
-    frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_right
+  object bellc: tbooleanedit
+    frame.caption = 'exec llc'
     frame.localprops = []
     frame.localprops1 = []
-    frame.buttons.count = 2
-    frame.buttons.items = <    
-      item
-      end    
-      item
-        imagenr = 17
-      end>
-    frame.buttondialog.imagenr = 17
     frame.outerframe = (
       0
-      0
-      25
-      0
+      1
+      48
+      2
     )
-    taborder = 22
-    bounds_x = 16
-    bounds_y = 104
-    bounds_cx = 470
-    anchors = [an_left, an_top, an_right]
+    taborder = 14
+    hint = 'Execute llc'
+    bounds_x = 40
+    bounds_y = 128
+    bounds_cx = 61
+    bounds_cy = 16
+    anchors = [an_top, an_right]
     statfile = statf
-    dropdown.cols.count = 1
-    dropdown.cols.items = <    
-      item
-      end>
-    reffontheight = 14
+    value = True
+  end
+  object begcc: tbooleanedit
+    frame.caption = 'exec gcc'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      57
+      2
+    )
+    taborder = 15
+    hint = 'Execute gcc'
+    bounds_x = 40
+    bounds_y = 152
+    bounds_cx = 70
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
   end
   object statf: tstatfile
     filename = 'status.sta'
@@ -582,7 +709,7 @@ object mainfo: tmainfo
       '#  ''Q'' ''R'' ''S'' ''T'' ''U'' ''V'' ''W'' ''X'' ''Y'' ''Z'' ''_'' word'
       ''
     )
-    left = 232
-    top = 80
+    left = 248
+    top = 336
   end
 end

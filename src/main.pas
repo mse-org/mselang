@@ -26,11 +26,11 @@ uses
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
  msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode,mseact,
- msememodialog,msedropdownlist,parser;
+ msememodialog,msedropdownlist,parser,msedragglob,msegridsglob;
 
 const
- llvmbindir = 
- '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+ llvmbindir2 = 
+ '/usr/bin/';
 // llvmbindir = 
 //      '/home/mse/packs/standard/git/llvm/build_debug_3_7/Debug+Asserts/bin/';
 type
@@ -49,22 +49,27 @@ type
    tbutton5: tbutton;
    tbutton2: tbutton;
    filena: tfilenameedit;
-   llvm: tbooleanedit;
    tsyntaxpainter1: tsyntaxpainter;
-   lineinfoed: tbooleanedit;
-   norun: tbooleanedit;
-   modulared: tbooleanedit;
-   objed: tbooleanedit;
-   builded: tbooleanedit;
-   proginfoed: tbooleanedit;
-   nameed: tbooleanedit;
-   nocompilerunited: tbooleanedit;
-   tbutton3: tbutton;
-   nortlunitsed: tbooleanedit;
    opted: tmemodialoghistoryedit;
    llced: tmemodialoghistoryedit;
-   keeptmped: tbooleanedit;
    gcced: tmemodialoghistoryedit;
+   llvmbindir: tfilenameedit;
+   tgroupbox1: tgroupbox;
+   nameed: tbooleanedit;
+   builded: tbooleanedit;
+   norun: tbooleanedit;
+   llvm: tbooleanedit;
+   nortlunitsed: tbooleanedit;
+   nocompilerunited: tbooleanedit;
+   objed: tbooleanedit;
+   modulared: tbooleanedit;
+   lineinfoed: tbooleanedit;
+   proginfoed: tbooleanedit;
+   tbutton3: tbutton;
+   keeptmped: tbooleanedit;
+   beopt: tbooleanedit;
+   bellc: tbooleanedit;
+   begcc: tbooleanedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -82,6 +87,9 @@ type
    procedure statupdateev(const sender: TObject; const filer: tstatfiler);
    procedure patheditev(const sender: TObject);
    procedure createev(const sender: TObject);
+   procedure changopt(const sender: TObject);
+   procedure changgcc(const sender: TObject);
+   procedure changllc(const sender: TObject);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -115,12 +123,14 @@ var
  filename1,filename2,filename3,optname: filenamety;
  dirbefore: msestring;
  ar1: filenamearty;
- i1,i2: int32;
-  dt1,dt2: tdatetime;
+ i1,i2,x, er: int32;
+ //dt1,dt2: tdatetime;
 begin
 {$ifdef mse_debugparser}
  writeln('*****************************************');
 {$endif}
+ er := 0;
+
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
  resetinfo();
@@ -130,12 +140,16 @@ begin
 
  initparams(parserparams);
  parserparams.buildoptions.llvmlinkcommand:= 
-                                    tosysfilepath(llvmbindir+'llvm-link');
- parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir+'llc')+
-                                                            ' '+llced.value;
+                                    tosysfilepath(llvmbindir.value+'llvm-link');
+ parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir.value+'llc')+
+   ' '+llced.value;
+   
+ if beopt.value then                                                         
  if opted.value <> '' then begin
-  parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
+  parserparams.buildoptions.llvmoptcommand:= llvmbindir.value+'opt '+opted.value;
  end;
+ 
+ if begcc.value then  
  if gcced.value <> '' then begin
   parserparams.buildoptions.gcccommand:= 
                 parserparams.buildoptions.gcccommand+' '+gcced.value;
@@ -191,56 +205,96 @@ begin
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
+ 
   include(parserparams.compileoptions,co_nodeinit);
   bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
+  //  if bo1 then grid.appendrow(['*****mli file created from pascal file.*****']);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
    if bo1 then begin
     if llvm.value then begin
      try
-//      if not rrtued.value then begin
       filename1:= replacefileext(filena.value,'bc');
       if not (co_modular in parserparams.compileoptions) then begin
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
-       end
+       end 
        else begin
-        llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
+       grid.appendrow(['***' + filename(filename1) + ' created by mselang-mlc from ' +
+         filename(filena.value) +' ***']);
+          llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
                            getfullsegment(seg_op,0{startupoffset}));
        {$ifdef mse_debugparser}
-        writeln('***************** LLVM BC gen end ***********');
+        writeln('***************** LLVM BC gen ended ***********');
        {$endif}
         targetstream.destroy();
         optname:= filenamebase(filename1);
-        if opted.value <> '' then begin
+        if beopt.value then  
+        begin
+          grid.appendrow([]);
          optname:= optname+'_opt';
-         i2:= getprocessoutput(llvmbindir+'opt '+opted.value+
+         i2:= getprocessoutput(llvmbindir.value+'opt '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        {$ifdef mse_debugparser}
-         writeln('***************** LLVM OPT end ***********');
+         writeln('***************** LLVM OPT ended ***********');
        {$endif}
-        end
+          x := 0;
+           
+           while (x < grid.rowcount) and (er = 0) do begin
+            if system.pos('error',grid[0][x]) > 0 then er := 1;  
+            inc(x);
+            end;
+                   
+          if er = 0 then         
+         grid.appendrow(['***'+optname+'.bc created by llvm-opt from '+filename(filename1)+'***'])
+         else 
+          grid.appendrow(['***'+optname+'.bc not created...***']);
+            end
         else begin
          i2:= 0;
         end;
+               
         if i2 = 0 then begin
-         i2:= getprocessoutput(llvmbindir+'llc '+llced.value+' -o '+
+        
+        if bellc.value then begin  
+          i2:= getprocessoutput(llvmbindir.value+'llc '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        {$ifdef mse_debugparser}
-         writeln('***************** LLC end ***********');
+         writeln('***************** LLC ended ***********');
        {$endif}
+         grid.appendrow(['***'+filenamebase(filename1)+'.s created by llvm-llc from '+optname+'.bc***']);
+       
+        end;
+        
+         if begcc.value then begin 
          if i2 = 0 then begin
+          grid.appendrow([]);
           i2:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+           
+           x := 0;
+           
+           while (x < grid.rowcount) and (er = 0) do begin
+            if system.pos('Error',grid[0][x]) > 0 then er := 1;  
+            inc(x);
+            end;
+                   
+          if er = 0
+          then  grid.appendrow(['***'+filenamebase(filename1)+'.bin created by gcc from '+filenamebase(filename1)+'.s***'])
+          else  grid.appendrow(['***'+filenamebase(filename1)+'.bin failed to create***']);
+    
         {$ifdef mse_debugparser}
-          writeln('***************** gcc end ***********');
+          writeln('***************** gcc ended ***********');
         {$endif}
+           grid.appendrow([]);
+        end;
+        
         {
           if int1 = 0 then begin
            if not norun.value then begin
@@ -250,7 +304,12 @@ begin
            end;
           end;
         }
-         end;
+        end;
+         
+         if er = 0 then
+          grid.appendrow(['***All is OK. :) ***']) else
+          grid.appendrow(['***Some process failed***'])
+          
         end;
        end;
       end
@@ -294,7 +353,8 @@ begin
       end;
       if i2 = 0 then begin
        if not norun.value then begin
-        grid.appendrow;
+         grid.appendrow(['***Running '+filenamebase(filename1)+'.bin***']);
+         grid.appendrow;
         i2:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         grid.appendrow(['EXITCODE: '+inttostrmse(i2)]);
@@ -313,11 +373,17 @@ begin
                                                            storedsegments,now);
       finally
        mlistream.destroy();
-      end;      
+      end; 
+      grid.appendrow([filename(filename1)+ ' created from '+ filename(filena.value)]);
+  
      end;
      if not norun.value then begin
-      grid.appendrow(['EXITCODE: '+inttostrmse(stackops.run(1024))]);
-     end;
+        end;
+        
+      if (stackops.run(1024) = 0) and (er = 0) then grid.appendrow(['***Compilation is OK. :)***'])
+    else
+      grid.appendrow(['Error: EXITCODE= '+inttostrmse(stackops.run(1024))]);   
+    
     end;
    end;
   finally
@@ -347,12 +413,15 @@ end;
 
 procedure tmainfo.loadexe(const sender: TObject);
 begin
+if fileexists(filena.value) then
+begin
  try
   ed.loadfromfile(filena.value);
  except
   application.handleexception;
   application.terminated:= false;
  end;
+end; 
 end;
 
 procedure tmainfo.aftreadexe(const sender: TObject);
@@ -428,6 +497,21 @@ end;
 procedure tmainfo.createev(const sender: TObject);
 begin
  application.options:= application.options - [apo_terminateonexception];
+end;
+
+procedure tmainfo.changopt(const sender: TObject);
+begin
+opted.enabled := beopt.value;
+end;
+
+procedure tmainfo.changgcc(const sender: TObject);
+begin
+gcced.enabled := begcc.value;
+end;
+
+procedure tmainfo.changllc(const sender: TObject);
+begin
+llced.enabled := bellc.value;
 end;
 
 end.

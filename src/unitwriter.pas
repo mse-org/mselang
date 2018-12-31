@@ -539,7 +539,7 @@ begin
     {$endif}
     end;
    end;
-  end
+   end
   else begin
    filewriteerror(fna1);
   end;
