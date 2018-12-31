@@ -10,7 +10,7 @@
 }
 unit rtl_sysconsts;
 interface
-resourcestring
+const
  sinvalidformat = 'Invalid format specifier : "%s"';
  snotimplementederror = 'Not implemented error';
  srttierror = 'RTTI error';
