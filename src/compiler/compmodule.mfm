@@ -4,8 +4,8 @@ object compmo: tcompmo
   oncreate = createexe
   oneventloopstart = eventloopexe
   onterminated = terminatedexe
-  left = 153
-  top = 369
+  left = 397
+  top = 250
   moduleclassname = 'tmsedatamodule'
   object sysenv: tsysenvmanager
     options = [seo_appterminateonexception, seo_terminateonerror, seo_tooutput, seo_toerror]

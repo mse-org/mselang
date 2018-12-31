@@ -43,20 +43,23 @@ type
 
  procedure formaterror();
  begin
+  // TO FIX
   // raise econverterror.createfmt(sinvalidformat,[fmt]);
-  writeln(sinvalidformat); // fred
+  //  writeln(sinvalidformat); // fred
  end; //formaterror()
 
  procedure converterror(const itemindex: int32; const wantedtype: string8);
  begin
+  // TO FIX
   // raise econverterror.createfmt(stypeexpected,[itemindex,wantedtype]);
-  writeln(stypeexpected); // fred
+  // writeln(stypeexpected); // fred
  end; //converterror();
 
  procedure rangeerror(const itemindex: int32);
  begin
+  // TO FIX
   // raise econverterror.createfmt(srangeerror,[itemindex]);
-  writeln(srangeerror); // fred
+  // writeln(srangeerror); // fred
  end; //rangeerror();
  
  procedure getnum(var info: convertinfoty): bool1;

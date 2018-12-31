@@ -10,7 +10,9 @@
 }
 unit rtl_sysconsts;
 interface
-const
+// TO FIX
+// resourcestring
+const // fred
  sinvalidformat = 'Invalid format specifier : "%s"';
  snotimplementederror = 'Not implemented error';
  srttierror = 'RTTI error';

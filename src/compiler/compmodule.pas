@@ -61,11 +61,11 @@ uses
  
 const
  startupmessage =
-'MSElang Compiler version 0.0'+lineend+
-'Copyright (c) 2013-2018 by Martin Schreiber';
+'MSElang Compiler version 0.0.'+lineend+
+'Copyright (c) 2013-2018 by Martin Schreiber.';
 
- defaultllvmbindir =
- '/home/mse/packs/standard/git/llvm/build_release/bin/';
+ defaultllvmbindir = '/usr/bin/';
+//'/home/mse/packs/standard/git/llvm/build_release/bin/';
 // '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
 
 procedure tcompmo.createexe(const sender: TObject);
@@ -84,7 +84,10 @@ var
  llvmstream: tllvmbcwriter;
  parserparams: parserparamsty;
  seg1: subsegmentty;
+ nowtime :TTime;
+ ho, mi, se, ms: word;
 begin
+ nowtime := now;
  initparams(parserparams);
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -100,6 +103,7 @@ begin
    try
     include(parserparams.compileoptions,co_nodeinit);
     if parse(str1,filename1,parserparams) then begin
+     sysenv.printmessage('mlc process: OK.');
      if co_llvm in parserparams.compileoptions then begin
       if not (co_modular in parserparams.compileoptions) then begin
        filename1:= replacefileext(filename1,llvmbcextension);
@@ -115,6 +119,10 @@ begin
           exitcode:= 1;
          end;
         end;
+        if exitcode = 1 then
+         sysenv.printmessage('llvm process failed.')
+         else   sysenv.printmessage('llvm process is OK.');
+         
         unithandler.deinit(true); //destroy unitlist
         llvmstream.destroy();
        end;
@@ -144,6 +152,17 @@ begin
  if (errorcount(erl_error) > 0) and (exitcode = 0) then begin
   exitcode:= 1;
  end;
+ 
+ nowtime := now - nowtime;
+ 
+ DecodeTime(nowtime, ho, mi, se, ms);
+
+ sysenv.printmessage('Compilation duration: ' + format('%.2d:%.2d:%.2d.%.3d', [ho, mi, se, ms])+ '.') ;
+ 
+ if exitcode = 0 then
+  sysenv.printmessage('All is OK. :)')
+  else sysenv.printmessage('There are some errors, process failed...') ;
+   
  application.terminated:= true;
 end;
 
