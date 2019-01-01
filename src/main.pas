@@ -42,7 +42,6 @@ type
    tbutton1: tbutton;
    grid: tstringgrid;
    tpostscriptprinter1: tpostscriptprinter;
-   tsplitter1: tsplitter;
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
    coldi: tintegerdisp;
@@ -57,7 +56,6 @@ type
    tgroupbox1: tgroupbox;
    nameed: tbooleanedit;
    builded: tbooleanedit;
-   norun: tbooleanedit;
    llvm: tbooleanedit;
    nortlunitsed: tbooleanedit;
    nocompilerunited: tbooleanedit;
@@ -70,6 +68,11 @@ type
    beopt: tbooleanedit;
    bellc: tbooleanedit;
    begcc: tbooleanedit;
+   tsplitter1: tsplitter;
+   tmemodialoghistoryedit2: tmemodialoghistoryedit;
+   belink: tbooleanedit;
+   edexeex: tedit;
+   runend: tbooleanedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -124,13 +127,15 @@ var
  dirbefore: msestring;
  ar1: filenamearty;
  i1,i2,x, er: int32;
- //dt1,dt2: tdatetime;
+ dt1: tdatetime;
+ ho, mi, se, ms: word;
 begin
 {$ifdef mse_debugparser}
  writeln('*****************************************');
 {$endif}
  er := 0;
 
+ dt1:= now;
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
  resetinfo();
@@ -208,7 +213,6 @@ begin
  
   include(parserparams.compileoptions,co_nodeinit);
   bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
-  //  if bo1 then grid.appendrow(['*****mli file created from pascal file.*****']);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
@@ -222,7 +226,7 @@ begin
         grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
        end 
        else begin
-       grid.appendrow(['***' + filename(filename1) + ' created by mselang-mlc from ' +
+       grid.appendrow(['*** ' + filename(filename1) + ' created by mselang from ' +
          filename(filena.value) +' ***']);
           llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
                            getfullsegment(seg_op,0{startupoffset}));
@@ -249,10 +253,10 @@ begin
             end;
                    
           if er = 0 then         
-         grid.appendrow(['***'+optname+'.bc created by llvm-opt from '+filename(filename1)+'***'])
+         grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
          else 
-          grid.appendrow(['***'+optname+'.bc not created...***']);
-            end
+          grid.appendrow(['*** '+optname+'.bc not created... ***']);
+         end
         else begin
          i2:= 0;
         end;
@@ -267,14 +271,52 @@ begin
        {$ifdef mse_debugparser}
          writeln('***************** LLC ended ***********');
        {$endif}
-         grid.appendrow(['***'+filenamebase(filename1)+'.s created by llvm-llc from '+optname+'.bc***']);
+         grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '+optname+'.bc ***']);
        
         end;
+        
+          optname:= filenamebase(filename1);
+        
+     // llvm-link
+     if belink.value then begin 
+         if i2 = 0 then begin
+       
+         if beopt.value then  
+         optname:= removefileext(filena.value)+'_opt.bc' else
+         optname:= removefileext(filena.value)+'.bc';
+        
+        filename2:= removefileext(filena.value)+ edexeex.text ;
+      
+        i2:= getprocessoutput(llvmbindir.value+'llvm-link -o='+filename2+' '+
+                 optname,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
+        filename(optname)+' ***']);
+        end;
+        
+        {$ifdef unix}
+         if i2 = 0 then begin       
+         if beopt.value then  
+         optname:= removefileext(filena.value)+'_opt.bc' else
+         optname:= removefileext(filena.value)+'.bc';
+        
+        filename2:= removefileext(filena.value)+ edexeex.text ;
+      
+        i2:= getprocessoutput('chmod 0755 '+filename2,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        grid.appendrow(['*** chmod 0755 assigned to '+filename(filename2)+' ***']);
+        end;
+       {$endif}
+       
+      end;        
+      // ended link   
         
          if begcc.value then begin 
          if i2 = 0 then begin
           grid.appendrow([]);
-          i2:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
+          filename2:= removefileext(filena.value)+ edexeex.text ;
+      
+          i2:= getprocessoutput('gcc -lm -o '+ filename2+' '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
            
@@ -286,15 +328,14 @@ begin
             end;
                    
           if er = 0
-          then  grid.appendrow(['***'+filenamebase(filename1)+'.bin created by gcc from '+filenamebase(filename1)+'.s***'])
-          else  grid.appendrow(['***'+filenamebase(filename1)+'.bin failed to create***']);
+          then  grid.appendrow(['*** '+filename(filename2)+' created by gcc from '+filename(filename1)+'.s ***'])
+          else  grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
     
         {$ifdef mse_debugparser}
           writeln('***************** gcc ended ***********');
         {$endif}
-           grid.appendrow([]);
+           grid.appendrow;
         end;
-        
         {
           if int1 = 0 then begin
            if not norun.value then begin
@@ -305,15 +346,25 @@ begin
           end;
         }
         end;
+        
+         dt1 := now-dt1;
+         DecodeTime(dt1, ho, mi, se, ms);
+         
+         grid.appendrow;
+         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
+          [ho, mi, se, ms])+ ' ***']) ;
          
          if er = 0 then
-          grid.appendrow(['***All is OK. :) ***']) else
-          grid.appendrow(['***Some process failed***'])
+          grid.appendrow(['*** All is OK. :) ***']) else
+          grid.appendrow(['*** Some process failed ***']);
           
         end;
        end;
+       
       end
       else begin
+        if (co_modular in parserparams.compileoptions) then
+       grid.appendrow(['*** Modular compilation done ***']);
       {
        if co_objmodules in parserparams.compileoptions then begin
         ar1:= objfiles();
@@ -352,12 +403,16 @@ begin
        i2:= 0;
       end;
       if i2 = 0 then begin
-       if not norun.value then begin
-         grid.appendrow(['***Running '+filenamebase(filename1)+'.bin***']);
+       if runend.value then begin
          grid.appendrow;
-        i2:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+         grid.appendrow(['*** Running '+filenamebase(filename1)+ edexeex.text + ' ***']);
+         grid.appendrow;
+         grid.appendrow;
+        i2:= getprocessoutput('./'+filenamebase(filename1)+ edexeex.text ,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        grid.appendrow(['EXITCODE: '+inttostrmse(i2)]);
+        
+        if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
+        grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
        end;
       end;
      finally
@@ -374,19 +429,19 @@ begin
       finally
        mlistream.destroy();
       end; 
-      grid.appendrow([filename(filename1)+ ' created from '+ filename(filena.value)]);
+      grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
+      filename(filena.value)+' ***']);
   
      end;
-     if not norun.value then begin
-        end;
-        
-      if (stackops.run(1024) = 0) and (er = 0) then grid.appendrow(['***Compilation is OK. :)***'])
-    else
-      grid.appendrow(['Error: EXITCODE= '+inttostrmse(stackops.run(1024))]);   
+            
+      if (stackops.run(1024) = 0) and (er = 0) then grid.appendrow(['*** Compilation is OK. :) ***'])
+       else grid.appendrow(['*** Compilation EXITCODE: '+inttostrmse(i2)+ ' ***']);   
     
     end;
    end;
   finally
+    if (co_modular in parserparams.compileoptions) then
+       grid.appendrow(['*** Modular compilation done ***']);
    errstream.destroy();
    outstream.destroy();
    if not (co_mlaruntime in parserparams.compileoptions) then begin
