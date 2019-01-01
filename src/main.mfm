@@ -354,7 +354,7 @@ object mainfo: tmainfo
       taborder = 1
       hint = 'Build Pascal file with mlc'
       bounds_x = 11
-      bounds_y = 25
+      bounds_y = 49
       bounds_cx = 46
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -374,7 +374,7 @@ object mainfo: tmainfo
       taborder = 2
       hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
       bounds_x = 11
-      bounds_y = 49
+      bounds_y = 25
       bounds_cx = 41
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -392,8 +392,8 @@ object mainfo: tmainfo
         2
       )
       taborder = 3
-      bounds_x = 179
-      bounds_y = 43
+      bounds_x = 163
+      bounds_y = 49
       bounds_cx = 74
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -410,7 +410,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 4
-      bounds_x = 179
+      bounds_x = 163
       bounds_y = 25
       bounds_cx = 89
       bounds_cy = 16
@@ -418,19 +418,19 @@ object mainfo: tmainfo
       statfile = statf
     end
     object objed: tbooleanedit
-      frame.caption = 'obj'
+      frame.caption = 'object'
       frame.localprops = []
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        21
+        40
         2
       )
       taborder = 5
-      bounds_x = 83
+      bounds_x = 75
       bounds_y = 49
-      bounds_cx = 34
+      bounds_cx = 53
       bounds_cy = 16
       anchors = [an_top, an_right]
       statfile = statf
@@ -446,7 +446,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 6
-      bounds_x = 83
+      bounds_x = 75
       bounds_y = 25
       bounds_cx = 66
       bounds_cy = 16
@@ -669,7 +669,7 @@ object mainfo: tmainfo
     taborder = 19
     hint = 'Do not run the application at end'
     bounds_x = 28
-    bounds_y = 150
+    bounds_y = 166
     bounds_cx = 80
     bounds_cy = 16
     anchors = [an_top, an_right]
