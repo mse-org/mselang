@@ -1,6 +1,6 @@
 object mainfo: tmainfo
-  bounds_x = 308
-  bounds_y = 112
+  bounds_x = 260
+  bounds_y = 39
   bounds_cx = 877
   bounds_cy = 574
   anchors = [an_top, an_right]
@@ -18,18 +18,6 @@ object mainfo: tmainfo
   windowopacity = -Inf
   oncreate = createev
   moduleclassname = 'tmainform'
-  object tbutton1: tbutton
-    color = -1610612731
-    bounds_x = 433
-    bounds_y = 66
-    bounds_cx = 50
-    bounds_cy = 30
-    anchors = [an_top, an_right]
-    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-    state = [as_localcaption, as_localcolor, as_localonexecute]
-    caption = '&parse'
-    onexecute = parseev
-  end
   object grid: tstringgrid
     frame.localprops = []
     frame.localprops1 = []
@@ -115,36 +103,34 @@ object mainfo: tmainfo
     frame.localprops = []
     frame.localprops1 = []
     taborder = 3
-    bounds_x = 24
-    bounds_y = 24
-    bounds_cx = 44
+    bounds_x = 312
+    bounds_y = 21
+    bounds_cx = 36
     bounds_cy = 18
     reffontheight = 14
   end
   object tbutton5: tbutton
     taborder = 4
-    bounds_x = 433
-    bounds_y = 34
-    bounds_cx = 50
+    bounds_x = 398
+    bounds_y = 20
+    bounds_cx = 42
     bounds_cy = 22
-    anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
-    caption = '&save'
+    caption = '&Save'
     onexecute = saveexe
   end
   object tbutton2: tbutton
     taborder = 5
-    bounds_x = 433
-    bounds_y = 10
-    bounds_cx = 50
+    bounds_x = 353
+    bounds_y = 20
+    bounds_cx = 42
     bounds_cy = 22
-    anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
-    caption = '&load'
+    caption = '&Load'
     onexecute = loadexe
   end
   object filena: tfilenameedit
-    frame.caption = 'Pascal file to compile'
+    frame.caption = 'Input Pascal filename'
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 1
@@ -160,11 +146,10 @@ object mainfo: tmainfo
       0
     )
     taborder = 6
-    bounds_x = 72
-    bounds_y = 6
-    bounds_cx = 341
+    bounds_x = 16
+    bounds_y = 4
+    bounds_cx = 293
     bounds_cy = 37
-    anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
     controller.lastdir = '/'
@@ -189,88 +174,8 @@ object mainfo: tmainfo
     controller.options = []
     reffontheight = 14
   end
-  object opted: tmemodialoghistoryedit
-    frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_left
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.buttons.count = 2
-    frame.buttons.items = <    
-      item
-      end    
-      item
-        imagenr = 17
-      end>
-    frame.buttondialog.imagenr = 17
-    taborder = 7
-    hint = 'Options for llvm-opt'
-    bounds_x = 204
-    bounds_y = 104
-    bounds_cx = 650
-    anchors = [an_left, an_top, an_right]
-    statfile = statf
-    value = '-O2 -debugger-tune=gdb'
-    dropdown.cols.count = 1
-    dropdown.cols.items = <    
-      item
-      end>
-    reffontheight = 14
-  end
-  object llced: tmemodialoghistoryedit
-    frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_left
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.buttons.count = 2
-    frame.buttons.items = <    
-      item
-      end    
-      item
-        imagenr = 17
-      end>
-    frame.buttondialog.imagenr = 17
-    taborder = 8
-    hint = 'Options for llvm-llc'
-    bounds_x = 204
-    bounds_y = 160
-    bounds_cx = 650
-    anchors = [an_left, an_top, an_right]
-    statfile = statf
-    value = '-O2 -debugger-tune=gdb'
-    dropdown.cols.count = 1
-    dropdown.cols.items = <    
-      item
-      end>
-    reffontheight = 14
-  end
-  object gcced: tmemodialoghistoryedit
-    frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_left
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.buttons.count = 2
-    frame.buttons.items = <    
-      item
-      end    
-      item
-        imagenr = 17
-      end>
-    frame.buttondialog.imagenr = 17
-    taborder = 9
-    hint = 'Options for gcc'
-    bounds_x = 204
-    bounds_y = 184
-    bounds_cx = 650
-    anchors = [an_left, an_top, an_right]
-    statfile = statf
-    dropdown.cols.count = 1
-    dropdown.cols.items = <    
-      item
-      end>
-    reffontheight = 14
-  end
   object llvmbindir: tfilenameedit
-    frame.caption = 'Directory of llvm binaries (opt and llc)'
+    frame.caption = 'Directory of llvm binaries (opt, llc and llvm-link)'
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 1
@@ -285,13 +190,12 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 10
+    taborder = 7
     hint = 'Directory of llc'
-    bounds_x = 72
-    bounds_y = 55
-    bounds_cx = 349
+    bounds_x = 16
+    bounds_y = 79
+    bounds_cx = 421
     bounds_cy = 37
-    anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
     value = '/usr/bin/'
@@ -307,7 +211,7 @@ object mainfo: tmainfo
     reffontheight = 14
   end
   object tgroupbox1: tgroupbox
-    frame.caption = 'Mselang parameters'
+    frame.caption = 'MSElang parameters'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
@@ -316,12 +220,11 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 11
-    bounds_x = 502
-    bounds_y = 1
-    bounds_cx = 365
+    taborder = 8
+    bounds_x = 446
+    bounds_y = 9
+    bounds_cx = 413
     bounds_cy = 94
-    anchors = [an_top, an_right]
     object nameed: tbooleanedit
       frame.caption = 'name info'
       frame.localprops = []
@@ -333,7 +236,7 @@ object mainfo: tmainfo
         2
       )
       hint = 'debug name info'
-      bounds_x = 91
+      bounds_x = 115
       bounds_y = 72
       bounds_cx = 76
       bounds_cy = 16
@@ -352,8 +255,8 @@ object mainfo: tmainfo
         2
       )
       taborder = 1
-      hint = 'Build Pascal file with mlc'
-      bounds_x = 11
+      hint = 'Build'
+      bounds_x = 35
       bounds_y = 49
       bounds_cx = 46
       bounds_cy = 16
@@ -373,7 +276,7 @@ object mainfo: tmainfo
       )
       taborder = 2
       hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
-      bounds_x = 11
+      bounds_x = 35
       bounds_y = 25
       bounds_cx = 41
       bounds_cy = 16
@@ -392,7 +295,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 3
-      bounds_x = 163
+      bounds_x = 187
       bounds_y = 49
       bounds_cx = 74
       bounds_cy = 16
@@ -410,7 +313,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 4
-      bounds_x = 163
+      bounds_x = 187
       bounds_y = 25
       bounds_cx = 89
       bounds_cy = 16
@@ -428,7 +331,8 @@ object mainfo: tmainfo
         2
       )
       taborder = 5
-      bounds_x = 75
+      hint = 'Create object files'
+      bounds_x = 99
       bounds_y = 49
       bounds_cx = 53
       bounds_cy = 16
@@ -446,7 +350,8 @@ object mainfo: tmainfo
         2
       )
       taborder = 6
-      bounds_x = 75
+      hint = 'Modular compilation'
+      bounds_x = 99
       bounds_y = 25
       bounds_cx = 66
       bounds_cy = 16
@@ -465,7 +370,7 @@ object mainfo: tmainfo
       )
       taborder = 7
       hint = 'debug line info'
-      bounds_x = 179
+      bounds_x = 203
       bounds_y = 72
       bounds_cx = 63
       bounds_cy = 16
@@ -485,7 +390,7 @@ object mainfo: tmainfo
       )
       taborder = 8
       hint = 'debug prog info'
-      bounds_x = 11
+      bounds_x = 35
       bounds_y = 72
       bounds_cx = 70
       bounds_cy = 16
@@ -497,92 +402,37 @@ object mainfo: tmainfo
       color = -1610612731
       taborder = 9
       hint = 'Custom parameters for the compiler like -Fu/thedir/of/units'
-      bounds_x = 275
+      bounds_x = 307
       bounds_y = 26
       bounds_cx = 76
       bounds_cy = 28
       anchors = [an_top, an_right]
       state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'mlc param'
+      caption = 'mlc Param'
       onexecute = patheditev
     end
     object keeptmped: tbooleanedit
-      frame.caption = 'keeptempfiles'
+      frame.caption = 'Keep temp files'
       frame.localprops = []
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        87
+        96
         2
       )
       taborder = 10
-      bounds_x = 251
+      bounds_x = 291
       bounds_y = 64
-      bounds_cx = 100
+      bounds_cx = 109
       bounds_cy = 16
       anchors = [an_top, an_right]
       statfile = statf
     end
   end
-  object beopt: tbooleanedit
-    frame.caption = 'llvm-opt'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      52
-      2
-    )
-    taborder = 12
-    hint = 'Execute opt'
-    bounds_x = 128
-    bounds_y = 106
-    bounds_cx = 65
-    bounds_cy = 16
-    statfile = statf
-    value = True
-  end
-  object bellc: tbooleanedit
-    frame.caption = 'llvm-llc'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      45
-      2
-    )
-    taborder = 13
-    hint = 'Execute llc'
-    bounds_x = 128
-    bounds_y = 160
-    bounds_cx = 58
-    bounds_cy = 16
-    statfile = statf
-  end
-  object begcc: tbooleanedit
-    frame.caption = 'exec gcc'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      1
-      57
-      2
-    )
-    taborder = 14
-    hint = 'Execute gcc'
-    bounds_x = 128
-    bounds_y = 184
-    bounds_cx = 70
-    bounds_cy = 16
-    statfile = statf
-  end
   object tsplitter1: tsplitter
     color = -1879048189
-    taborder = 15
+    taborder = 9
     bounds_x = 16
     bounds_y = 450
     bounds_cx = 829
@@ -593,53 +443,45 @@ object mainfo: tmainfo
     linkbottom = grid
     statfile = statf
   end
-  object tmemodialoghistoryedit2: tmemodialoghistoryedit
-    frame.captiontextflags = [tf_ycentered]
-    frame.captionpos = cp_left
+  object edexeex: tedit
+    frame.caption = 'Exe Ext'
     frame.localprops = []
     frame.localprops1 = []
-    frame.buttons.count = 2
-    frame.buttons.items = <    
-      item
-      end    
-      item
-        imagenr = 17
-      end>
-    frame.buttondialog.imagenr = 17
-    taborder = 16
-    hint = 'Options for gcc'
-    bounds_x = 204
-    bounds_y = 132
-    bounds_cx = 650
-    anchors = [an_left, an_top, an_right]
+    frame.outerframe = (
+      0
+      17
+      4
+      0
+    )
+    taborder = 10
+    hint = 'File extension of the output executable'
+    bounds_x = 304
+    bounds_y = 42
+    bounds_cx = 48
+    bounds_cy = 35
     statfile = statf
-    dropdown.cols.count = 1
-    dropdown.cols.items = <    
-      item
-      end>
     reffontheight = 14
   end
-  object belink: tbooleanedit
-    frame.caption = 'llvm-link'
+  object runend: tbooleanedit
+    frame.caption = 'Run at end'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
       0
       1
-      53
+      70
       2
     )
-    taborder = 17
-    hint = 'Execute llvm-link'
-    bounds_x = 128
-    bounds_y = 132
-    bounds_cx = 66
+    taborder = 11
+    hint = 'Run the application at end'
+    bounds_x = 20
+    bounds_y = 180
+    bounds_cx = 83
     bounds_cy = 16
     statfile = statf
-    value = True
   end
-  object edexeex: tedit
-    frame.caption = 'Exe Ext'
+  object edexena: tedit
+    frame.caption = 'Output executable name'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
@@ -648,32 +490,249 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 18
-    hint = 'File extension of the output executable'
-    bounds_x = 40
-    bounds_y = 103
-    bounds_cx = 52
-    bounds_cy = 37
+    taborder = 12
+    hint = 'File name of the output executable. if empty Pascal filename will be used.'
+    bounds_x = 16
+    bounds_y = 42
+    bounds_cx = 286
+    bounds_cy = 35
+    statfile = statf
     reffontheight = 14
   end
-  object runend: tbooleanedit
-    frame.caption = 'run at end'
+  object tgroupbox2: tgroupbox
+    frame.caption = 'Linking'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
       0
-      1
-      67
-      2
+      7
+      0
+      0
     )
-    taborder = 19
-    hint = 'Do not run the application at end'
-    bounds_x = 28
-    bounds_y = 166
-    bounds_cx = 80
-    bounds_cy = 16
-    anchors = [an_top, an_right]
-    statfile = statf
+    taborder = 13
+    bounds_x = 486
+    bounds_y = 105
+    bounds_cx = 373
+    bounds_cy = 105
+    object gcced: tmemodialoghistoryedit
+      frame.captiontextflags = [tf_ycentered]
+      frame.captionpos = cp_left
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.buttons.count = 2
+      frame.buttons.items = <      
+        item
+        end      
+        item
+          imagenr = 17
+        end>
+      frame.buttondialog.imagenr = 17
+      hint = 'Options for gcc'
+      bounds_x = 94
+      bounds_y = 75
+      bounds_cx = 261
+      anchors = [an_left, an_top, an_right]
+      statfile = statf
+      dropdown.cols.count = 1
+      dropdown.cols.items = <      
+        item
+        end>
+      reffontheight = 14
+    end
+    object begcc: tbooleanedit
+      frame.caption = 'gcc'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        25
+        2
+      )
+      taborder = 1
+      hint = 'Execute gcc'
+      bounds_x = 22
+      bounds_y = 75
+      bounds_cx = 38
+      bounds_cy = 16
+      statfile = statf
+    end
+    object llced: tmemodialoghistoryedit
+      frame.captiontextflags = [tf_ycentered]
+      frame.captionpos = cp_left
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.buttons.count = 2
+      frame.buttons.items = <      
+        item
+        end      
+        item
+          imagenr = 17
+        end>
+      frame.buttondialog.imagenr = 17
+      taborder = 2
+      hint = 'Options for llvm-llc'
+      bounds_x = 94
+      bounds_y = 51
+      bounds_cx = 261
+      anchors = [an_left, an_top, an_right]
+      statfile = statf
+      value = '-O2 -debugger-tune=gdb'
+      dropdown.cols.count = 1
+      dropdown.cols.items = <      
+        item
+        end>
+      reffontheight = 14
+    end
+    object bellc: tbooleanedit
+      frame.caption = 'llvm-llc'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        45
+        2
+      )
+      taborder = 3
+      hint = 'Execute llc'
+      bounds_x = 22
+      bounds_y = 55
+      bounds_cx = 58
+      bounds_cy = 16
+      statfile = statf
+    end
+    object linked: tmemodialoghistoryedit
+      frame.captiontextflags = [tf_ycentered]
+      frame.captionpos = cp_left
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.buttons.count = 2
+      frame.buttons.items = <      
+        item
+        end      
+        item
+          imagenr = 17
+        end>
+      frame.buttondialog.imagenr = 17
+      taborder = 4
+      hint = 'Options for llvm-link'
+      bounds_x = 94
+      bounds_y = 19
+      bounds_cx = 261
+      anchors = [an_left, an_top, an_right]
+      statfile = statf
+      dropdown.cols.count = 1
+      dropdown.cols.items = <      
+        item
+        end>
+      reffontheight = 14
+    end
+    object belink: tbooleanedit
+      frame.caption = 'llvm-link'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        53
+        2
+      )
+      taborder = 5
+      hint = 'Execute llvm-link'
+      bounds_x = 22
+      bounds_y = 23
+      bounds_cx = 66
+      bounds_cy = 16
+      statfile = statf
+      value = True
+    end
+  end
+  object tgroupbox3: tgroupbox
+    frame.caption = 'Optimization'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      7
+      0
+      0
+    )
+    taborder = 14
+    bounds_x = 120
+    bounds_y = 129
+    bounds_cx = 362
+    bounds_cy = 65
+    object beopt: tbooleanedit
+      frame.caption = 'llvm-opt'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        1
+        52
+        2
+      )
+      hint = 'Execute opt'
+      bounds_x = 16
+      bounds_y = 26
+      bounds_cx = 65
+      bounds_cy = 16
+      statfile = statf
+      value = True
+    end
+    object opted: tmemodialoghistoryedit
+      frame.captiontextflags = [tf_ycentered]
+      frame.captionpos = cp_left
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.buttons.count = 2
+      frame.buttons.items = <      
+        item
+        end      
+        item
+          imagenr = 17
+        end>
+      frame.buttondialog.imagenr = 17
+      taborder = 1
+      hint = 'Options for llvm-opt'
+      bounds_x = 93
+      bounds_y = 26
+      bounds_cx = 250
+      anchors = [an_left, an_top, an_right]
+      statfile = statf
+      value = '-O2 -debugger-tune=gdb'
+      dropdown.cols.count = 1
+      dropdown.cols.items = <      
+        item
+        end>
+      reffontheight = 14
+    end
+  end
+  object tbutton1: tbutton
+    color = 14003680
+    hint = 'Parse and build all'
+    bounds_x = 20
+    bounds_y = 138
+    bounds_cx = 85
+    bounds_cy = 38
+    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
+    state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+    caption = '&Parse'
+    onexecute = parseev
+  end
+  object tbutton4: tbutton
+    color = -1610612731
+    taborder = 15
+    hint = 'Run the executable (if created)'
+    bounds_x = 372
+    bounds_y = 56
+    bounds_cx = 53
+    bounds_cy = 22
+    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
+    state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+    caption = '&Run'
+    onexecute = paraminfo
   end
   object statf: tstatfile
     filename = 'status.sta'

@@ -49,9 +49,6 @@ type
    tbutton2: tbutton;
    filena: tfilenameedit;
    tsyntaxpainter1: tsyntaxpainter;
-   opted: tmemodialoghistoryedit;
-   llced: tmemodialoghistoryedit;
-   gcced: tmemodialoghistoryedit;
    llvmbindir: tfilenameedit;
    tgroupbox1: tgroupbox;
    nameed: tbooleanedit;
@@ -65,14 +62,21 @@ type
    proginfoed: tbooleanedit;
    tbutton3: tbutton;
    keeptmped: tbooleanedit;
-   beopt: tbooleanedit;
-   bellc: tbooleanedit;
-   begcc: tbooleanedit;
    tsplitter1: tsplitter;
-   tmemodialoghistoryedit2: tmemodialoghistoryedit;
-   belink: tbooleanedit;
    edexeex: tedit;
    runend: tbooleanedit;
+   edexena: tedit;
+   tgroupbox2: tgroupbox;
+   gcced: tmemodialoghistoryedit;
+   begcc: tbooleanedit;
+   llced: tmemodialoghistoryedit;
+   bellc: tbooleanedit;
+   linked: tmemodialoghistoryedit;
+   belink: tbooleanedit;
+   tgroupbox3: tgroupbox;
+   beopt: tbooleanedit;
+   opted: tmemodialoghistoryedit;
+   tbutton4: tbutton;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -93,6 +97,7 @@ type
    procedure changopt(const sender: TObject);
    procedure changgcc(const sender: TObject);
    procedure changllc(const sender: TObject);
+   procedure paraminfo(const sender: TObject);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -113,9 +118,8 @@ uses
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
-//const
-// llcopt = '-debugger-tune=gdb ';
 var
+ 
  errstream,outstream: ttextstream;
  mlistream: tmsefilestream;
  targetstream: tllvmbcwriter;
@@ -124,7 +128,7 @@ var
  str1: string;
  int1: integer;
  filename1,filename2,filename3,optname: filenamety;
- dirbefore: msestring;
+ dirbefore,mlipath: msestring;
  ar1: filenamearty;
  i1,i2,x, er: int32;
  dt1: tdatetime;
@@ -134,7 +138,11 @@ begin
  writeln('*****************************************');
 {$endif}
  er := 0;
-
+{$ifdef windows}
+ mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter\mli.exe';
+{$else}
+ mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter/mli';
+{$endif}
  dt1:= now;
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
@@ -162,7 +170,7 @@ begin
  
 // parserparams.buildoptions.ascommand:= tosysfilepath('as');
  parserparams.buildoptions.exefile:= tosysfilepath(
-                                        replacefileext(filena.value,'bin'));
+                                        replacefileext(filena.value,edexeex.text));
  if llvm.value then begin
   parserparams.compileoptions:= (parserparams.compileoptions -
                                      mlaruntimecompileoptions) + 
@@ -284,10 +292,12 @@ begin
          if beopt.value then  
          optname:= removefileext(filena.value)+'_opt.bc' else
          optname:= removefileext(filena.value)+'.bc';
-        
-        filename2:= removefileext(filena.value)+ edexeex.text ;
-      
-        i2:= getprocessoutput(llvmbindir.value+'llvm-link -o='+filename2+' '+
+ 
+         if edexena.text <> '' then
+         filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+         filename2:= removefileext(filena.value)+ edexeex.text ;
+ 
+        i2:= getprocessoutput(llvmbindir.value+'llvm-link ' +linked.value+ ' -o='+filename2+' '+
                  optname,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
@@ -296,11 +306,10 @@ begin
         
         {$ifdef unix}
          if i2 = 0 then begin       
-         if beopt.value then  
-         optname:= removefileext(filena.value)+'_opt.bc' else
-         optname:= removefileext(filena.value)+'.bc';
-        
-        filename2:= removefileext(filena.value)+ edexeex.text ;
+            
+          if edexena.text <> '' then
+           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+           filename2:= removefileext(filena.value)+ edexeex.text ;
       
         i2:= getprocessoutput('chmod 0755 '+filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -408,7 +417,12 @@ begin
          grid.appendrow(['*** Running '+filenamebase(filename1)+ edexeex.text + ' ***']);
          grid.appendrow;
          grid.appendrow;
-        i2:= getprocessoutput('./'+filenamebase(filename1)+ edexeex.text ,'',str1);
+         
+         if edexena.text <> '' then
+           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+           filename2:= removefileext(filena.value)+ edexeex.text ;
+ 
+        i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
         if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
@@ -435,8 +449,26 @@ begin
      end;
             
       if (stackops.run(1024) = 0) and (er = 0) then grid.appendrow(['*** Compilation is OK. :) ***'])
-       else grid.appendrow(['*** Compilation EXITCODE: '+inttostrmse(i2)+ ' ***']);   
-    
+       else grid.appendrow(['*** Compilation EXITCODE: '+inttostrmse(i2)+ ' ***']);
+   
+        dt1 := now-dt1;
+         DecodeTime(dt1, ho, mi, se, ms);
+         
+         grid.appendrow;
+         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
+          [ho, mi, se, ms])+ ' ***']) ;  
+       
+     if runend.value then 
+     begin
+        grid.appendrow;
+        grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+       i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         
+       if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
+        grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+   
+     end;
     end;
    end;
   finally
@@ -567,6 +599,26 @@ end;
 procedure tmainfo.changllc(const sender: TObject);
 begin
 llced.enabled := bellc.value;
+end;
+
+procedure tmainfo.paraminfo(const sender: TObject);
+var
+filename2, str1 : string;
+i2 : integer;
+begin
+         if edexena.text <> '' then
+           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+           filename2:= removefileext(filena.value)+ edexeex.text ;
+         grid.clear;
+         grid.appendrow(['*** Running '+filename(filename2) + ' ***']);
+         grid.appendrow;
+         grid.appendrow;
+         
+         i2:= getprocessoutput(filename2,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        
+        if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
+        grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
 end;
 
 end.
