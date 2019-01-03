@@ -604,7 +604,6 @@ object mainfo: tmainfo
     bounds_y = 106
     bounds_cx = 48
     bounds_cy = 16
-    anchors = [an_top, an_right]
     statfile = statf
     onchange = changellvm
     value = True
