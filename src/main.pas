@@ -455,7 +455,8 @@ begin
   
      end;
             
-      if (stackops.run(1024) = 0) and (er = 0) then grid.appendrow(['*** Compilation is OK. :) ***'])
+     if {$ifdef linux} (stackops.run(1024) = 0) and {$endif} 
+      (er = 0) then grid.appendrow(['*** Compilation is OK. :) ***'])
        else grid.appendrow(['*** Compilation EXITCODE: '+inttostrmse(i2)+ ' ***']);
    
         dt1 := now-dt1;
