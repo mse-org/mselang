@@ -61,7 +61,10 @@ uses
  
 const
  startupmessage =
-'MSElang Compiler version 0.0.'+lineend+
+ 'MSElang Compiler version 0.0' +
+ {$ifdef win32}' win32'{$endif}
+ {$ifdef linux}' lin32'{$endif}
+ +lineend+
 'Copyright (c) 2013-2018 by Martin Schreiber.';
 
  defaultllvmbindir = '/usr/bin/';
