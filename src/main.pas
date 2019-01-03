@@ -470,6 +470,7 @@ begin
      begin
         grid.appendrow;
         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+        grid.appendrow;
        i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          
