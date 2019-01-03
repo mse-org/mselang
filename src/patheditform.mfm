@@ -1,22 +1,25 @@
 object patheditfo: tpatheditfo
-  bounds_x = 177
-  bounds_y = 275
-  bounds_cx = 495
-  bounds_cy = 391
+  hint = 'Right-click to add row, (like -Fu/home/theproj)'
+  bounds_x = 476
+  bounds_y = 176
+  bounds_cx = 491
+  bounds_cy = 406
   container.frame.localprops = []
   container.frame.localprops1 = []
   container.bounds = (
     0
     0
-    495
-    391
+    491
+    406
   )
   options = [fo_freeonclose, fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
+  caption = 'Units Path Editor '
+  windowopacity = -Inf
   onloaded = loadedev
   onclosequery = closequerydef
   moduleclassname = 'tmseform'
   object twidgetgrid1: twidgetgrid
-    frame.caption = 'Compiler params'
+    frame.caption = 'Compiler parameters'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
@@ -27,15 +30,15 @@ object patheditfo: tpatheditfo
     )
     taborder = 1
     bounds_x = 0
-    bounds_y = 7
-    bounds_cx = 490
-    bounds_cy = 347
+    bounds_y = 6
+    bounds_cx = 488
+    bounds_cy = 397
     anchors = [an_left, an_top, an_right, an_bottom]
     optionsgrid = [og_rowinserting, og_rowdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     datacols.count = 1
     datacols.items = <    
       item[fuvalues]
-        width = 485
+        width = 483
         options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
         widgetname = 'fuvalues'
         dataclass = tgridmsestringdatalist
@@ -49,30 +52,50 @@ object patheditfo: tpatheditfo
       visible = False
       bounds_x = 0
       bounds_y = 0
-      bounds_cx = 485
+      bounds_cx = 483
       bounds_cy = 16
       reffontheight = 14
     end
   end
   object tbutton1: tbutton
     taborder = 2
-    bounds_x = 336
-    bounds_y = 360
+    bounds_x = 364
+    bounds_y = 2
     bounds_cx = 50
     bounds_cy = 20
-    anchors = [an_right, an_bottom]
+    anchors = [an_top, an_right]
     state = [as_default, as_localdefault, as_localcaption]
     caption = 'OK'
     modalresult = mr_ok
   end
   object tbutton2: tbutton
-    bounds_x = 416
-    bounds_y = 360
+    bounds_x = 420
+    bounds_y = 2
     bounds_cx = 50
     bounds_cy = 20
-    anchors = [an_right, an_bottom]
+    anchors = [an_top, an_right]
     state = [as_localcaption]
     caption = 'Cancel'
     modalresult = mr_cancel
+  end
+  object tbutton3: tbutton
+    taborder = 3
+    bounds_x = 136
+    bounds_y = 2
+    bounds_cx = 66
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute, as_localonafterexecute]
+    caption = 'Add row'
+    onexecute = addrow
+  end
+  object tbutton4: tbutton
+    taborder = 4
+    bounds_x = 208
+    bounds_y = 2
+    bounds_cx = 66
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute, as_localonafterexecute]
+    caption = 'Del row'
+    onexecute = delrow
   end
 end
