@@ -44,16 +44,11 @@ type
    tpostscriptprinter1: tpostscriptprinter;
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
-   coldi: tintegerdisp;
-   tbutton5: tbutton;
-   tbutton2: tbutton;
-   filena: tfilenameedit;
    tsyntaxpainter1: tsyntaxpainter;
    llvmbindir: tfilenameedit;
    tgroupbox1: tgroupbox;
    nameed: tbooleanedit;
    builded: tbooleanedit;
-   llvm: tbooleanedit;
    nortlunitsed: tbooleanedit;
    nocompilerunited: tbooleanedit;
    objed: tbooleanedit;
@@ -63,9 +58,7 @@ type
    tbutton3: tbutton;
    keeptmped: tbooleanedit;
    tsplitter1: tsplitter;
-   edexeex: tedit;
    runend: tbooleanedit;
-   edexena: tedit;
    tgroupbox2: tgroupbox;
    gcced: tmemodialoghistoryedit;
    begcc: tbooleanedit;
@@ -76,7 +69,16 @@ type
    tgroupbox3: tgroupbox;
    beopt: tbooleanedit;
    opted: tmemodialoghistoryedit;
+   llvm: tbooleanedit;
+   tgroupbox4: tgroupbox;
+   tbutton6: tbutton;
    tbutton4: tbutton;
+   tbutton5: tbutton;
+   tbutton2: tbutton;
+   coldi: tintegerdisp;
+   edexeex: tedit;
+   edexena: tedit;
+   filena: tfilenameedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -97,7 +99,9 @@ type
    procedure changopt(const sender: TObject);
    procedure changgcc(const sender: TObject);
    procedure changllc(const sender: TObject);
-   procedure paraminfo(const sender: TObject);
+   procedure runexe(const sender: TObject);
+   procedure changellvm(const sender: TObject);
+   procedure runmli(const sender: TObject);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -130,7 +134,7 @@ var
  filename1,filename2,filename3,optname: filenamety;
  dirbefore,mlipath: msestring;
  ar1: filenamearty;
- i1,i2,x, er: int32;
+ i1,i2, x, er: int32;
  dt1: tdatetime;
  ho, mi, se, ms: word;
 begin
@@ -246,6 +250,7 @@ begin
         if beopt.value then  
         begin
           grid.appendrow([]);
+          x := grid.rowcount;
          optname:= optname+'_opt';
          i2:= getprocessoutput(llvmbindir.value+'opt '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
@@ -253,14 +258,8 @@ begin
        {$ifdef mse_debugparser}
          writeln('***************** LLVM OPT ended ***********');
        {$endif}
-          x := 0;
-           
-           while (x < grid.rowcount) and (er = 0) do begin
-            if system.pos('error',grid[0][x]) > 0 then er := 1;  
-            inc(x);
-            end;
-                   
-          if er = 0 then         
+                         
+          if  x = grid.rowcount  then         
          grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
          else 
           grid.appendrow(['*** '+optname+'.bc not created... ***']);
@@ -272,6 +271,7 @@ begin
         if i2 = 0 then begin
         
         if bellc.value then begin  
+           grid.appendrow;
           i2:= getprocessoutput(llvmbindir.value+'llc '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
@@ -296,6 +296,8 @@ begin
          if edexena.text <> '' then
          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
          filename2:= removefileext(filena.value)+ edexeex.text ;
+         
+         grid.appendrow;
  
         i2:= getprocessoutput(llvmbindir.value+'llvm-link ' +linked.value+ ' -o='+filename2+' '+
                  optname,'',str1);
@@ -323,6 +325,9 @@ begin
          if begcc.value then begin 
          if i2 = 0 then begin
           grid.appendrow([]);
+       
+         if edexena.text <> '' then
+          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
           filename2:= removefileext(filena.value)+ edexeex.text ;
       
           i2:= getprocessoutput('gcc -lm -o '+ filename2+' '+
@@ -413,15 +418,17 @@ begin
       end;
       if i2 = 0 then begin
        if runend.value then begin
+       
+            if edexena.text <> '' then
+         filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+         filename2:= removefileext(filena.value)+ edexeex.text ;
+ 
          grid.appendrow;
-         grid.appendrow(['*** Running '+filenamebase(filename1)+ edexeex.text + ' ***']);
+         grid.appendrow(['*** Running '+filenamebase(filename2)+ edexeex.text + ' ***']);
          grid.appendrow;
          grid.appendrow;
          
-         if edexena.text <> '' then
-           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
-           filename2:= removefileext(filena.value)+ edexeex.text ;
- 
+       
         i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
@@ -601,7 +608,7 @@ begin
 llced.enabled := bellc.value;
 end;
 
-procedure tmainfo.paraminfo(const sender: TObject);
+procedure tmainfo.runexe(const sender: TObject);
 var
 filename2, str1 : string;
 i2 : integer;
@@ -619,6 +626,33 @@ begin
         
         if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
+end;
+
+procedure tmainfo.changellvm(const sender: TObject);
+begin
+tgroupbox2.enabled := llvm.value;
+tgroupbox3.enabled := llvm.value;
+end;
+
+procedure tmainfo.runmli(const sender: TObject);
+var
+filename1, str1, mlipath : string;
+i2 : integer;
+begin
+ {$ifdef windows}
+ mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter\mli.exe';
+ {$else}
+  mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter/mli';
+ {$endif} 
+ filename1:= replacefileext(filena.value,'mli');
+ 
+ grid.clear;
+ grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+ i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
+ grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         
+ if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
+ grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
 end;
 
 end.

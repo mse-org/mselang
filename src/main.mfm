@@ -1,6 +1,6 @@
 object mainfo: tmainfo
-  bounds_x = 260
-  bounds_y = 39
+  bounds_x = 290
+  bounds_y = 105
   bounds_cx = 877
   bounds_cy = 574
   anchors = [an_top, an_right]
@@ -99,81 +99,6 @@ object mainfo: tmainfo
       reffontheight = 14
     end
   end
-  object coldi: tintegerdisp
-    frame.localprops = []
-    frame.localprops1 = []
-    taborder = 3
-    bounds_x = 312
-    bounds_y = 21
-    bounds_cx = 36
-    bounds_cy = 18
-    reffontheight = 14
-  end
-  object tbutton5: tbutton
-    taborder = 4
-    bounds_x = 398
-    bounds_y = 20
-    bounds_cx = 42
-    bounds_cy = 22
-    state = [as_localcaption, as_localonexecute]
-    caption = '&Save'
-    onexecute = saveexe
-  end
-  object tbutton2: tbutton
-    taborder = 5
-    bounds_x = 353
-    bounds_y = 20
-    bounds_cx = 42
-    bounds_cy = 22
-    state = [as_localcaption, as_localonexecute]
-    caption = '&Load'
-    onexecute = loadexe
-  end
-  object filena: tfilenameedit
-    frame.caption = 'Input Pascal filename'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.buttons.count = 1
-    frame.buttons.items = <    
-      item
-        imagenr = 17
-      end>
-    frame.button.imagenr = 17
-    frame.outerframe = (
-      0
-      17
-      0
-      0
-    )
-    taborder = 6
-    bounds_x = 16
-    bounds_y = 4
-    bounds_cx = 293
-    bounds_cy = 37
-    statfile = statf
-    textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
-    controller.lastdir = '/'
-    controller.filterlist.data = (
-      (
-        'MSElang source'
-        '*.mla'
-      )
-      (
-        'Pascal'
-        '*.pas'
-      )
-      (
-        'Lazarus lpr'
-        '*.lpr'
-      )
-      (
-        'All'
-        '*.*'
-      )
-    )
-    controller.options = []
-    reffontheight = 14
-  end
   object llvmbindir: tfilenameedit
     frame.caption = 'Directory of llvm binaries (opt, llc and llvm-link)'
     frame.localprops = []
@@ -190,11 +115,11 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 7
+    taborder = 3
     hint = 'Directory of llc'
-    bounds_x = 16
-    bounds_y = 79
-    bounds_cx = 421
+    bounds_x = 128
+    bounds_y = 103
+    bounds_cx = 341
     bounds_cy = 37
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -220,11 +145,11 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 8
+    taborder = 4
     bounds_x = 446
-    bounds_y = 9
+    bounds_y = 4
     bounds_cx = 413
-    bounds_cy = 94
+    bounds_cy = 100
     object nameed: tbooleanedit
       frame.caption = 'name info'
       frame.localprops = []
@@ -237,7 +162,7 @@ object mainfo: tmainfo
       )
       hint = 'debug name info'
       bounds_x = 115
-      bounds_y = 72
+      bounds_y = 76
       bounds_cx = 76
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -256,29 +181,9 @@ object mainfo: tmainfo
       )
       taborder = 1
       hint = 'Build'
-      bounds_x = 35
-      bounds_y = 49
+      bounds_x = 19
+      bounds_y = 33
       bounds_cx = 46
-      bounds_cy = 16
-      anchors = [an_top, an_right]
-      statfile = statf
-      value = True
-    end
-    object llvm: tbooleanedit
-      frame.caption = 'llvm'
-      frame.localprops = []
-      frame.localprops1 = []
-      frame.outerframe = (
-        0
-        1
-        28
-        2
-      )
-      taborder = 2
-      hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
-      bounds_x = 35
-      bounds_y = 25
-      bounds_cx = 41
       bounds_cy = 16
       anchors = [an_top, an_right]
       statfile = statf
@@ -294,7 +199,7 @@ object mainfo: tmainfo
         61
         2
       )
-      taborder = 3
+      taborder = 2
       bounds_x = 187
       bounds_y = 49
       bounds_cx = 74
@@ -312,7 +217,7 @@ object mainfo: tmainfo
         76
         2
       )
-      taborder = 4
+      taborder = 3
       bounds_x = 187
       bounds_y = 25
       bounds_cx = 89
@@ -330,9 +235,9 @@ object mainfo: tmainfo
         40
         2
       )
-      taborder = 5
+      taborder = 4
       hint = 'Create object files'
-      bounds_x = 99
+      bounds_x = 91
       bounds_y = 49
       bounds_cx = 53
       bounds_cy = 16
@@ -349,9 +254,9 @@ object mainfo: tmainfo
         53
         2
       )
-      taborder = 6
+      taborder = 5
       hint = 'Modular compilation'
-      bounds_x = 99
+      bounds_x = 91
       bounds_y = 25
       bounds_cx = 66
       bounds_cy = 16
@@ -368,10 +273,10 @@ object mainfo: tmainfo
         50
         2
       )
-      taborder = 7
+      taborder = 6
       hint = 'debug line info'
       bounds_x = 203
-      bounds_y = 72
+      bounds_y = 76
       bounds_cx = 63
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -388,10 +293,10 @@ object mainfo: tmainfo
         57
         2
       )
-      taborder = 8
+      taborder = 7
       hint = 'debug prog info'
       bounds_x = 35
-      bounds_y = 72
+      bounds_y = 76
       bounds_cx = 70
       bounds_cy = 16
       anchors = [an_top, an_right]
@@ -400,15 +305,15 @@ object mainfo: tmainfo
     end
     object tbutton3: tbutton
       color = -1610612731
-      taborder = 9
-      hint = 'Custom parameters for the compiler like -Fu/thedir/of/units'
+      taborder = 8
+      hint = 'Path of units used by the program'
       bounds_x = 307
       bounds_y = 26
       bounds_cx = 76
       bounds_cy = 28
       anchors = [an_top, an_right]
       state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'mlc Param'
+      caption = 'Units'
       onexecute = patheditev
     end
     object keeptmped: tbooleanedit
@@ -421,7 +326,7 @@ object mainfo: tmainfo
         96
         2
       )
-      taborder = 10
+      taborder = 9
       bounds_x = 291
       bounds_y = 64
       bounds_cx = 109
@@ -432,7 +337,7 @@ object mainfo: tmainfo
   end
   object tsplitter1: tsplitter
     color = -1879048189
-    taborder = 9
+    taborder = 5
     bounds_x = 16
     bounds_y = 450
     bounds_cx = 829
@@ -442,25 +347,6 @@ object mainfo: tmainfo
     linktop = edgrid
     linkbottom = grid
     statfile = statf
-  end
-  object edexeex: tedit
-    frame.caption = 'Exe Ext'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      17
-      4
-      0
-    )
-    taborder = 10
-    hint = 'File extension of the output executable'
-    bounds_x = 304
-    bounds_y = 42
-    bounds_cx = 48
-    bounds_cy = 35
-    statfile = statf
-    reffontheight = 14
   end
   object runend: tbooleanedit
     frame.caption = 'Run at end'
@@ -472,32 +358,13 @@ object mainfo: tmainfo
       70
       2
     )
-    taborder = 11
+    taborder = 6
     hint = 'Run the application at end'
-    bounds_x = 20
+    bounds_x = 22
     bounds_y = 180
     bounds_cx = 83
     bounds_cy = 16
     statfile = statf
-  end
-  object edexena: tedit
-    frame.caption = 'Output executable name'
-    frame.localprops = []
-    frame.localprops1 = []
-    frame.outerframe = (
-      0
-      17
-      0
-      0
-    )
-    taborder = 12
-    hint = 'File name of the output executable. if empty Pascal filename will be used.'
-    bounds_x = 16
-    bounds_y = 42
-    bounds_cx = 286
-    bounds_cy = 35
-    statfile = statf
-    reffontheight = 14
   end
   object tgroupbox2: tgroupbox
     frame.caption = 'Linking'
@@ -509,7 +376,7 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 13
+    taborder = 7
     bounds_x = 486
     bounds_y = 105
     bounds_cx = 373
@@ -658,9 +525,9 @@ object mainfo: tmainfo
       0
       0
     )
-    taborder = 14
+    taborder = 8
     bounds_x = 120
-    bounds_y = 129
+    bounds_y = 145
     bounds_cx = 362
     bounds_cy = 65
     object beopt: tbooleanedit
@@ -713,26 +580,188 @@ object mainfo: tmainfo
     color = 14003680
     hint = 'Parse and build all'
     bounds_x = 20
-    bounds_y = 138
+    bounds_y = 126
     bounds_cx = 85
-    bounds_cy = 38
+    bounds_cy = 46
     options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
     caption = '&Parse'
     onexecute = parseev
   end
-  object tbutton4: tbutton
-    color = -1610612731
-    taborder = 15
-    hint = 'Run the executable (if created)'
-    bounds_x = 372
-    bounds_y = 56
-    bounds_cx = 53
-    bounds_cy = 22
-    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-    state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-    caption = '&Run'
-    onexecute = paraminfo
+  object llvm: tbooleanedit
+    frame.caption = 'LLVM'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      35
+      2
+    )
+    taborder = 9
+    hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
+    bounds_x = 38
+    bounds_y = 106
+    bounds_cx = 48
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
+    onchange = changellvm
+    value = True
+  end
+  object tgroupbox4: tgroupbox
+    frame.caption = 'Input/Otput'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      7
+      0
+      0
+    )
+    taborder = 10
+    bounds_x = 24
+    bounds_y = 4
+    bounds_cx = 410
+    bounds_cy = 98
+    object tbutton6: tbutton
+      color = -1610612731
+      hint = 'Run the mli Interpretable (if created)'
+      bounds_x = 352
+      bounds_y = 119
+      bounds_cx = 37
+      bounds_cy = 20
+      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
+      state = [as_invisible, as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+      caption = 'Run mli'
+      onexecute = runmli
+    end
+    object tbutton4: tbutton
+      color = -1610612731
+      taborder = 1
+      hint = 'Run the executable (if created)'
+      bounds_x = 354
+      bounds_y = 72
+      bounds_cx = 42
+      bounds_cy = 20
+      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
+      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+      caption = '&Run'
+      onexecute = runexe
+    end
+    object tbutton5: tbutton
+      taborder = 2
+      bounds_x = 354
+      bounds_y = 41
+      bounds_cx = 42
+      bounds_cy = 20
+      state = [as_localcaption, as_localonexecute]
+      caption = '&Save'
+      onexecute = saveexe
+    end
+    object tbutton2: tbutton
+      taborder = 3
+      bounds_x = 354
+      bounds_y = 17
+      bounds_cx = 42
+      bounds_cy = 20
+      state = [as_localcaption, as_localonexecute]
+      caption = '&Load'
+      onexecute = loadexe
+    end
+    object coldi: tintegerdisp
+      frame.localprops = []
+      frame.localprops1 = []
+      taborder = 4
+      bounds_x = 308
+      bounds_y = 33
+      bounds_cx = 36
+      bounds_cy = 18
+      reffontheight = 14
+    end
+    object edexeex: tedit
+      frame.caption = 'Exe Ext'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        17
+        4
+        0
+      )
+      taborder = 5
+      hint = 'File extension of the output executable'
+      bounds_x = 300
+      bounds_y = 56
+      bounds_cx = 48
+      bounds_cy = 35
+      statfile = statf
+      reffontheight = 14
+    end
+    object edexena: tedit
+      frame.caption = 'Output executable name'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.outerframe = (
+        0
+        17
+        0
+        0
+      )
+      taborder = 6
+      hint = 'File name of the output executable. if empty Pascal filename will be used.'
+      bounds_x = 12
+      bounds_y = 56
+      bounds_cx = 286
+      bounds_cy = 35
+      statfile = statf
+      reffontheight = 14
+    end
+    object filena: tfilenameedit
+      frame.caption = 'Input Pascal filename'
+      frame.localprops = []
+      frame.localprops1 = []
+      frame.buttons.count = 1
+      frame.buttons.items = <      
+        item
+          imagenr = 17
+        end>
+      frame.button.imagenr = 17
+      frame.outerframe = (
+        0
+        17
+        0
+        0
+      )
+      taborder = 7
+      bounds_x = 12
+      bounds_y = 16
+      bounds_cx = 293
+      bounds_cy = 37
+      statfile = statf
+      textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
+      controller.lastdir = '/'
+      controller.filterlist.data = (
+        (
+          'MSElang source'
+          '*.mla'
+        )
+        (
+          'Pascal'
+          '*.pas'
+        )
+        (
+          'Lazarus lpr'
+          '*.lpr'
+        )
+        (
+          'All'
+          '*.*'
+        )
+      )
+      controller.options = []
+      reffontheight = 14
+    end
   end
   object statf: tstatfile
     filename = 'status.sta'
