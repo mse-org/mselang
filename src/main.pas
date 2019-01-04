@@ -221,10 +221,12 @@ begin
   include(parserparams.compileoptions,co_nortlunits);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
+ grid.clear;
  try
  
   include(parserparams.compileoptions,co_nodeinit);
   bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
+  if not bo1 then grid.appendrow(['*** Parser error ***']) else
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
@@ -249,7 +251,7 @@ begin
         optname:= filenamebase(filename1);
         if beopt.value then  
         begin
-          grid.appendrow([]);
+          grid.appendrow;
           x := grid.rowcount;
          optname:= optname+'_opt';
          i2:= getprocessoutput(llvmbindir.value+'opt '+opted.value+
@@ -471,12 +473,11 @@ begin
         grid.appendrow;
         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
         grid.appendrow;
-       i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
+        i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         
-       if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
+         if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
         grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
-   
+       
      end;
     end;
    end;
