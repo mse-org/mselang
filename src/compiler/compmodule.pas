@@ -51,6 +51,7 @@ type
 
 var
  compmo: tcompmo;
+ bcout : boolean = false;
 
 implementation
 
@@ -108,8 +109,18 @@ begin
 //   initparams(parserparams);
    try
     include(parserparams.compileoptions,co_nodeinit);
+   
+   if bcout then
+   begin
+   include(parserparams.compileoptions,co_llvm);
+    
+   parserparams.compileoptions:= (parserparams.compileoptions -
+                                     mlaruntimecompileoptions) + 
+                                llvmcompileoptions + [co_buildexe];
+    end;
+        
     if parse(str1,filename1,parserparams) then begin
-     sysenv.printmessage('mlc process: OK.');
+      sysenv.printmessage('mlc process: OK.');
      if co_llvm in parserparams.compileoptions then begin
       if not (co_modular in parserparams.compileoptions) then begin
        filename1:= replacefileext(filename1,llvmbcextension);
@@ -127,7 +138,7 @@ begin
         end;
         if exitcode = 1 then
          sysenv.printmessage('llvm process failed.')
-         else   sysenv.printmessage('llvm process is OK.');
+         else   sysenv.printmessage('llvm process: OK.');
          
         unithandler.deinit(true); //destroy unitlist
         llvmstream.destroy();
@@ -160,14 +171,13 @@ begin
  end;
  
  nowtime := now - nowtime;
- 
  DecodeTime(nowtime, ho, mi, se, ms);
-
- sysenv.printmessage('Compilation duration: ' + format('%.2d:%.2d:%.2d.%.3d', [ho, mi, se, ms])+ '.') ;
+ sysenv.printmessage('Compilation duration: ' + format('%.2d:%.2d:%.2d.%.3d',
+    [ho, mi, se, ms])+ '.') ;
  
  if exitcode = 0 then
-  sysenv.printmessage('All is OK. :)')
-  else sysenv.printmessage('There are some errors, process failed...') ;
+   sysenv.printmessage('All process: OK. :)')
+  else sysenv.printmessage('Some process failed...') ;
    
  application.terminated:= true;
 end;
@@ -243,10 +253,10 @@ begin
   parserparams.compileoptions:= parserparams.compileoptions +
                                       [co_buildexe,co_modular,co_objmodules];
  end;
- if sysenv.defined[ord(pa_makebc)] then begin
+if sysenv.defined[ord(pa_makebc)] then begin
   parserparams.compileoptions:= parserparams.compileoptions - 
-                                            [co_buildexe,co_modular];
- end;
+                                           [co_buildexe,co_modular];
+  end;
  if sysenv.defined[ord(pa_showcompilefile)] then begin
   parserparams.compileoptions:= parserparams.compileoptions +
                                                         [co_compilefileinfo];

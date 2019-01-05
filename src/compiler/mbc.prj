@@ -18,7 +18,7 @@ order15=0
 order16=0
 [projectoptions]
 projectdir=/home/fred/mselangmoi/compiler
-projectfilename=/home/fred/mselangmoi/compiler/mlc.prj
+projectfilename=/home/fred/mselangmoi/compiler/mbc.prj
 findinfiledialog=56
  [findinfileadialogfo.subdirs]
  value=1
@@ -463,7 +463,7 @@ modulefiles=1
 befcommandon=0
 makeoptionson=9
  4095
- 4095
+ 3968
  255
  0
  4095
@@ -769,15 +769,15 @@ findhistory=1
  initparams
 findoptions=1
 editpos=2
- 0,6
- 0,0
+ 0,-1073741823
+ 0,258
 bookmarks0=0
 bookmarks1=0
 sourcefiles=2
- ${PROJECTDIR}/mlc.pas
- ${PROJECTDIR}/compmodule.pas
+ ${PROJECTDIR}/mbc.pas
+ /home/fred/mselangmoi/compiler/compmodule.pas
 relpaths=2
- mlc.pas
+ mbc.pas
  compmodule.pas
 ismoduletexts=2
  0
@@ -792,7 +792,7 @@ nomenumodules=1
  0
 [sourcefo.files_tab]
 firsttab=0
-index=0
+index=1
 [layout]
 windowlayout=574
  [mainfo.basedock]
@@ -1020,7 +1020,7 @@ windowlayout=574
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1269,8 +1269,9 @@ windowlayout=574
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/compiler/mlc.pas
+ value=/home/fred/mselangmoi/compiler/compmodule.pas
  history=20
+  /home/fred/mselangmoi/compiler/compmodule.pas
   /home/fred/mselangmoi/compiler/mbc.pas
   /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
   /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
@@ -1290,7 +1291,6 @@ windowlayout=574
   /home/fred/mselang/rtl/system/rtl_sysconsts.mla
   /home/fred/mselang/rtl/system/rtl_rtlconsts.mla
   /home/fred/mlctest/hellomlc.mli
-  /home/fred/strumpract/src/config.pas
  [debuggerfo.project_options]
  value=1
  [debuggerfo.hints]
@@ -1313,12 +1313,12 @@ windowlayout=574
  rcy=0
  [sourcefo.files_tab]
  firsttab=0
- index=0
+ index=1
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_compmo_mse_
+ stackedunder=objectinspectorfo
  parent=
  mdistate=0
  nx=0
