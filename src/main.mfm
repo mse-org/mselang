@@ -100,7 +100,7 @@ object mainfo: tmainfo
     end
   end
   object llvmbindir: tfilenameedit
-    frame.caption = 'Directory of llvm binaries (opt, llc and llvm-link)'
+    frame.caption = 'Directory of llvm binaries (opt, llc, llvm-link and clang)'
     frame.localprops = []
     frame.localprops1 = []
     frame.buttons.count = 1
@@ -132,7 +132,7 @@ object mainfo: tmainfo
         '*.mla'
       )
     )
-    controller.options = [fdo_directory, fdo_savelastdir]
+    controller.options = [fdo_sysfilename, fdo_directory, fdo_savelastdir]
     reffontheight = 14
   end
   object tgroupbox1: tgroupbox
@@ -361,7 +361,7 @@ object mainfo: tmainfo
     taborder = 6
     hint = 'Run the application at end'
     bounds_x = 22
-    bounds_y = 188
+    bounds_y = 172
     bounds_cx = 83
     bounds_cy = 16
     statfile = statf
@@ -627,9 +627,9 @@ object mainfo: tmainfo
     color = 14737632
     hint = 'Parse and build all'
     bounds_x = 20
-    bounds_y = 134
+    bounds_y = 128
     bounds_cx = 85
-    bounds_cy = 46
+    bounds_cy = 38
     options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
     caption = '&Parse'
@@ -715,16 +715,6 @@ object mainfo: tmainfo
       caption = '&Load'
       onexecute = loadexe
     end
-    object coldi: tintegerdisp
-      frame.localprops = []
-      frame.localprops1 = []
-      taborder = 4
-      bounds_x = 308
-      bounds_y = 33
-      bounds_cx = 36
-      bounds_cy = 18
-      reffontheight = 14
-    end
     object edexeex: tedit
       frame.caption = 'Exe Ext'
       frame.localprops = []
@@ -735,7 +725,7 @@ object mainfo: tmainfo
         4
         0
       )
-      taborder = 5
+      taborder = 4
       hint = 'File extension of the output executable'
       bounds_x = 300
       bounds_y = 56
@@ -754,7 +744,7 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 6
+      taborder = 5
       hint = 'File name of the output executable. if empty Pascal filename will be used.'
       bounds_x = 12
       bounds_y = 56
@@ -779,10 +769,10 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 7
+      taborder = 6
       bounds_x = 12
       bounds_y = 16
-      bounds_cx = 293
+      bounds_cx = 333
       bounds_cy = 37
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -805,9 +795,20 @@ object mainfo: tmainfo
           '*.*'
         )
       )
-      controller.options = []
+      controller.options = [fdo_sysfilename]
       reffontheight = 14
     end
+  end
+  object coldi: tintegerdisp
+    frame.localprops = []
+    frame.localprops1 = []
+    taborder = 11
+    hint = 'Column number'
+    bounds_x = 17
+    bounds_y = 196
+    bounds_cx = 40
+    bounds_cy = 18
+    reffontheight = 14
   end
   object statf: tstatfile
     filename = 'status.sta'

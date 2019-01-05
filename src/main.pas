@@ -75,12 +75,12 @@ type
    tbutton4: tbutton;
    tbutton5: tbutton;
    tbutton2: tbutton;
-   coldi: tintegerdisp;
    edexeex: tedit;
    edexena: tedit;
    filena: tfilenameedit;
    clanged: tmemodialoghistoryedit;
    beclang: tbooleanedit;
+   coldi: tintegerdisp;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -98,9 +98,6 @@ type
    procedure statupdateev(const sender: TObject; const filer: tstatfiler);
    procedure patheditev(const sender: TObject);
    procedure createev(const sender: TObject);
-   procedure changopt(const sender: TObject);
-   procedure changgcc(const sender: TObject);
-   procedure changllc(const sender: TObject);
    procedure runexe(const sender: TObject);
    procedure changellvm(const sender: TObject);
    procedure runmli(const sender: TObject);
@@ -161,13 +158,13 @@ begin
  
  initparams(parserparams);
  parserparams.buildoptions.llvmlinkcommand:= 
-                                    tosysfilepath(llvmbindir.value+'llvm-link');
- parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir.value+'llc')+
+                                    tosysfilepath(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif});
+ parserparams.buildoptions.llccommand:= tosysfilepath(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif})+
    ' '+llced.value;
    
  if beopt.value then                                                         
  if opted.value <> '' then begin
-  parserparams.buildoptions.llvmoptcommand:= llvmbindir.value+'opt '+opted.value;
+  parserparams.buildoptions.llvmoptcommand:= llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}+ ' '+opted.value;
  end;
  
  if begcc.value then  
@@ -259,7 +256,7 @@ begin
           grid.appendrow;
           x := grid.rowcount;
          optname:= optname+'_opt';
-         i2:= getprocessoutput(llvmbindir.value+'opt '+opted.value+
+         i2:= getprocessoutput(llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}+' '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        {$ifdef mse_debugparser}
@@ -279,7 +276,7 @@ begin
         
         if bellc.value then begin  
            grid.appendrow;
-          i2:= getprocessoutput(llvmbindir.value+'llc '+llced.value+' -o '+
+          i2:= getprocessoutput(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}+' '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -307,7 +304,7 @@ begin
          
          grid.appendrow;
  
-        i2:= getprocessoutput(llvmbindir.value+'llvm-link ' +linked.value+ ' -o='+filename2+' '+
+        i2:= getprocessoutput(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}+' ' +linked.value+ ' -o='+filename2+' '+
                  optname,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
@@ -347,7 +344,7 @@ begin
          grid.appendrow(['*** Linking with Clang ***']);
          grid.appendrow;
  
-        i2:= getprocessoutput('clang ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
+        i2:= getprocessoutput(llvmbindir.value+ 'clang'{$ifdef windows}+'.exe'{$endif}+' ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
                  
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
@@ -363,7 +360,7 @@ begin
           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
           filename2:= removefileext(filena.value)+ edexeex.text ;
       
-          i2:= getprocessoutput('gcc -lm -o '+ filename2+' '+
+          i2:= getprocessoutput('gcc'{$ifdef windows}+'.exe'{$endif}+' -lm -o '+ filename2+' '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
            
@@ -625,21 +622,6 @@ end;
 procedure tmainfo.createev(const sender: TObject);
 begin
  application.options:= application.options - [apo_terminateonexception];
-end;
-
-procedure tmainfo.changopt(const sender: TObject);
-begin
-opted.enabled := beopt.value;
-end;
-
-procedure tmainfo.changgcc(const sender: TObject);
-begin
-gcced.enabled := begcc.value;
-end;
-
-procedure tmainfo.changllc(const sender: TObject);
-begin
-llced.enabled := bellc.value;
 end;
 
 procedure tmainfo.runexe(const sender: TObject);
