@@ -177,7 +177,7 @@ begin
  
  nowtime := now - nowtime;
  DecodeTime(nowtime, ho, mi, se, ms);
- sysenv.printmessage('Compilation duration: ' + format('%.2d:%.2d:%.2d.%.3d',
+ sysenv.printmessage('All process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
     [ho, mi, se, ms])+ '.') ;
  
  if exitcode = 0 then
