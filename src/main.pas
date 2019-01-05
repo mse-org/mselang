@@ -79,6 +79,8 @@ type
    edexeex: tedit;
    edexena: tedit;
    filena: tfilenameedit;
+   clanged: tmemodialoghistoryedit;
+   beclang: tbooleanedit;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -102,6 +104,8 @@ type
    procedure runexe(const sender: TObject);
    procedure changellvm(const sender: TObject);
    procedure runmli(const sender: TObject);
+   procedure onchangelink(const sender: TObject; var avalue: Boolean;
+                   var accept: Boolean);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -154,7 +158,7 @@ begin
  initio(outstream,errstream);
  system.finalize(parserparams);
  fillchar(parserparams,sizeof(parserparams),0);
-
+ 
  initparams(parserparams);
  parserparams.buildoptions.llvmlinkcommand:= 
                                     tosysfilepath(llvmbindir.value+'llvm-link');
@@ -223,9 +227,10 @@ begin
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  grid.clear;
  try
- 
+
   include(parserparams.compileoptions,co_nodeinit);
-  bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
+  bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
+   
   if not bo1 then grid.appendrow(['*** Parser error ***']) else
   try
    errstream.position:= 0;
@@ -281,8 +286,9 @@ begin
        {$ifdef mse_debugparser}
          writeln('***************** LLC ended ***********');
        {$endif}
-         grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '+optname+'.bc ***']);
-       
+       if i2 = 0 then  grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
+       +optname+'.bc ***']) else 
+        grid.appendrow(['*** lcc failed ***']) ;
         end;
         
           optname:= filenamebase(filename1);
@@ -304,8 +310,9 @@ begin
         i2:= getprocessoutput(llvmbindir.value+'llvm-link ' +linked.value+ ' -o='+filename2+' '+
                  optname,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
-        filename(optname)+' ***']);
+       if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
+        filename(optname)+' ***']) else
+        grid.appendrow(['*** llvm-link failed ***']) ;
         end;
         
         {$ifdef unix}
@@ -323,8 +330,32 @@ begin
        
       end;        
       // ended link   
-        
-         if begcc.value then begin 
+      
+      // mselang
+     if beclang.value then begin 
+         if i2 = 0 then begin
+       
+         if beopt.value then  
+         optname:= removefileext(filena.value)+'_opt.bc' else
+         optname:= removefileext(filena.value)+'.bc';
+ 
+         if edexena.text <> '' then
+         filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
+         filename2:= removefileext(filena.value)+ edexeex.text ;
+         
+         grid.appendrow;
+         grid.appendrow(['*** Linking with Clang ***']);
+         grid.appendrow;
+ 
+        i2:= getprocessoutput('clang ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
+                 
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
+        filename(optname)+' ***']) else  grid.appendrow(['*** Clang-link failed ***']) ; ;
+        end;
+       end; 
+     
+        if begcc.value then begin 
          if i2 = 0 then begin
           grid.appendrow([]);
        
@@ -656,6 +687,29 @@ begin
          
  if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
  grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+end;
+
+procedure tmainfo.onchangelink(const sender: TObject; var avalue: Boolean;
+               var accept: Boolean);
+begin
+if (tbooleanedit(sender).tag = 0) and  avalue then
+begin
+begcc.value := false;
+beclang.value := false;
+end;
+
+if (tbooleanedit(sender).tag = 1) and  avalue then
+begin
+begcc.value := false;
+belink.value := false;
+end;
+
+if (tbooleanedit(sender).tag = 2) and  avalue then
+begin
+beclang.value := false;
+belink.value := false;
+end;
+
 end;
 
 end.

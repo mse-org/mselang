@@ -67,7 +67,10 @@ const
  +lineend+
 'Copyright (c) 2013-2018 by Martin Schreiber.';
 
- defaultllvmbindir = '/usr/bin/';
+ defaultllvmbindir = 
+ {$ifdef unix}'/usr/bin/';{$endif}
+ {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
+ 
 //'/home/mse/packs/standard/git/llvm/build_release/bin/';
 // '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
 
@@ -197,22 +200,25 @@ begin
   end;
   
 //  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link -only-needed');
-  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link');
-  llccommand:= tosysfilepath(llvmbindir+'llc');
+  
+
+  llvmlinkcommand:= tosysfilepath(llvmbindir+'llvm-link'{$ifdef windows}+'.exe'{$endif});
+  llccommand:= tosysfilepath(llvmbindir+'llc'{$ifdef windows}+'.exe'{$endif});
+  
   if sysenv.defined[ord(pa_optimizeparams)] then begin
    s1:= ' '+sysenv.value[ord(pa_optimizeparams)];
-   llvmoptcommand:= tosysfilepath(llvmbindir+'opt') +s1;
+   llvmoptcommand:= tosysfilepath(llvmbindir+'opt'{$ifdef windows}+'.exe'{$endif} +s1);
    llccommand:= llccommand+s1;
   end
   else begin
    llvmoptcommand:= '';
   end;
  //   parserparams.buildoptions.llvmoptcommand:= llvmbindir+'opt '+opted.value;
-  gcccommand:= tosysfilepath('gcc');
+  gcccommand:= tosysfilepath('gcc'{$ifdef windows}+'.exe'{$endif});
   if sysenv.defined[ord(pa_gcc)] then begin
    gcccommand:= sysenv.value[ord(pa_gcc)];
   end;
-  parserparams.buildoptions.ascommand:= tosysfilepath('as');
+  parserparams.buildoptions.ascommand:= tosysfilepath('as'{$ifdef windows}+'.exe'{$endif});
   if sysenv.defined[ord(pa_as)] then begin
    ascommand:= sysenv.value[ord(pa_as)];
   end;
