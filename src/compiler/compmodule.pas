@@ -112,15 +112,14 @@ begin
    
    if bcout then
    begin
-   include(parserparams.compileoptions,co_llvm);
-    
-   parserparams.compileoptions:= (parserparams.compileoptions -
+    include(parserparams.compileoptions,co_llvm);
+    parserparams.compileoptions:= (parserparams.compileoptions -
                                      mlaruntimecompileoptions) + 
                                 llvmcompileoptions + [co_buildexe];
-    end;
+   end;
         
-    if parse(str1,filename1,parserparams) then begin
-      sysenv.printmessage('mlc process: OK.');
+   if parse(str1,filename1,parserparams) then begin
+    sysenv.printmessage('mlc process: OK.');
      if co_llvm in parserparams.compileoptions then begin
       if not (co_modular in parserparams.compileoptions) then begin
        filename1:= replacefileext(filename1,llvmbcextension);
@@ -137,8 +136,14 @@ begin
          end;
         end;
         if exitcode = 1 then
-         sysenv.printmessage('llvm process failed.')
-         else   sysenv.printmessage('llvm process: OK.');
+         begin
+         sysenv.printmessage('llvm process failed.');
+         sysenv.printmessage('mbc process failed.');
+         end else
+         begin
+         sysenv.printmessage('llvm process: OK.');
+         sysenv.printmessage('mbc process: OK.');
+         end;
          
         unithandler.deinit(true); //destroy unitlist
         llvmstream.destroy();

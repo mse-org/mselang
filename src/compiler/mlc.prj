@@ -769,12 +769,12 @@ findhistory=1
  initparams
 findoptions=1
 editpos=2
- 0,6
- 0,0
+ 0,3
+ 0,-1073741823
 bookmarks0=0
 bookmarks1=0
 sourcefiles=2
- ${PROJECTDIR}/mlc.pas
+ /home/fred/mselangmoi/compiler/mlc.pas
  ${PROJECTDIR}/compmodule.pas
 relpaths=2
  mlc.pas
@@ -1020,7 +1020,7 @@ windowlayout=574
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=
+ stackedunder=stackfo
  parent=
  mdistate=0
  nx=0
@@ -1271,6 +1271,7 @@ windowlayout=574
  [debuggerfo.file_history]
  value=/home/fred/mselangmoi/compiler/mlc.pas
  history=20
+  /home/fred/mselangmoi/compiler/mlc.pas
   /home/fred/mselangmoi/compiler/mbc.pas
   /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
   /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
@@ -1290,9 +1291,8 @@ windowlayout=574
   /home/fred/mselang/rtl/system/rtl_sysconsts.mla
   /home/fred/mselang/rtl/system/rtl_rtlconsts.mla
   /home/fred/mlctest/hellomlc.mli
-  /home/fred/strumpract/src/config.pas
  [debuggerfo.project_options]
- value=1
+ value=5
  [debuggerfo.hints]
  value=1
  [sourcefo]
@@ -1318,7 +1318,7 @@ windowlayout=574
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_compmo_mse_
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0

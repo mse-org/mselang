@@ -768,18 +768,23 @@ finddtext=initparams
 findhistory=1
  initparams
 findoptions=1
-editpos=2
+editpos=3
  0,-1073741823
- 0,258
+ 0,-1073741823
+ 0,12
 bookmarks0=0
 bookmarks1=0
-sourcefiles=2
+bookmarks2=0
+sourcefiles=3
  ${PROJECTDIR}/mbc.pas
- /home/fred/mselangmoi/compiler/compmodule.pas
-relpaths=2
+ ${PROJECTDIR}/compiler/compmodule.pas
+ ${PROJECTDIR}/mbc.pas
+relpaths=3
  mbc.pas
  compmodule.pas
-ismoduletexts=2
+ mbc.pas
+ismoduletexts=3
+ 0
  0
  0
 modules=1
@@ -792,7 +797,7 @@ nomenumodules=1
  0
 [sourcefo.files_tab]
 firsttab=0
-index=1
+index=2
 [layout]
 windowlayout=574
  [mainfo.basedock]
@@ -1020,7 +1025,7 @@ windowlayout=574
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=targetconsolefo
+ stackedunder=stackfo
  parent=
  mdistate=0
  nx=0
@@ -1269,10 +1274,10 @@ windowlayout=574
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/compiler/compmodule.pas
+ value=/home/fred/mselangmoi/compiler/mbc.pas
  history=20
-  /home/fred/mselangmoi/compiler/compmodule.pas
   /home/fred/mselangmoi/compiler/mbc.pas
+  /home/fred/mselangmoi/compiler/compmodule.pas
   /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
   /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
   /home/fred/mselangmoi/rtl/system/rtl_strings.mla
@@ -1292,7 +1297,7 @@ windowlayout=574
   /home/fred/mselang/rtl/system/rtl_rtlconsts.mla
   /home/fred/mlctest/hellomlc.mli
  [debuggerfo.project_options]
- value=1
+ value=5
  [debuggerfo.hints]
  value=1
  [sourcefo]
@@ -1313,12 +1318,12 @@ windowlayout=574
  rcy=0
  [sourcefo.files_tab]
  firsttab=0
- index=1
+ index=2
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=objectinspectorfo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
