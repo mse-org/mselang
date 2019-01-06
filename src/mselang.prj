@@ -17,9 +17,9 @@ order14=0
 order15=0
 order16=0
 [projectoptions]
-projectdir=/home/fred/mselang
-projectfilename=/home/fred/mselang/mselang.prj
-findinfiledialog=63
+projectdir=/home/fred/mselangmoi
+projectfilename=/home/fred/mselangmoi/mselang.prj
+findinfiledialog=66
  [findinfileadialogfo.subdirs]
  value=1
  [findinfileadialogfo.incurrentfile]
@@ -42,23 +42,37 @@ findinfiledialog=63
   "*.pas" "*.pp" "*.inc"
  [findinfileadialogfo.dir]
  filenames=1
-  /home/fred/ideu/
+  /home/fred/mselang/
  filecolwidth=174
  x=0
  y=0
  cx=0
  cy=0
- filehistory=3
+ filehistory=6
+  /home/fred/mselang/
+  /home/fred/mselangmoi/compiler/
   /home/fred/ideu/
+  /home/fred/msegui/
   /home/fred/strumpract/
   /home/fred/mselang/compiler/
  filefilterindex=0
  filefilter="*.pas" "*.pp" "*.inc" "*.mla"
  [findinfileadialogfo.findtext]
- value=co_modular
+ value=llvmlinkcommand
  history=20
-  co_modular
+  llvmlinkcommand
+  llvm-link
+  total
+  'bc'
+  replacefileext
+  file not open
+  sleep(100)
+  dk_char
+  mlaruntime
   modulared
+  now
+  chmod
+  co_modular
   compunit
   compunitextension
   mcu
@@ -66,17 +80,6 @@ findinfiledialog=63
   assembler
   co_proginfo
   opted
-  llvm
-  EXITCODE
-  martin
-  martin screiber
-  Fu
-  divdi3
-  __divdi3
-  filena.
-  filena
-  /compiler
-  compparams
  [findinfileadialogfo]
  stackedunder=
  x=272
@@ -179,7 +182,7 @@ options=114
  value=
  [projectoptionsfo.makegroupbox]
  firsttab=0
- index=2
+ index=3
  [projectoptionsfo.exceptionsgrid]
  propcolwidthref=772
  width0=47
@@ -197,7 +200,7 @@ options=114
  sortdescend1=0
  [projectoptionsfo.ttabwidget2]
  firsttab=0
- index=0
+ index=1
  [projectoptionsfo.setting_tab]
  firsttab=0
  index=2
@@ -233,10 +236,15 @@ targetfile=${PROJECTNAME}${EXEEXT}
 messageoutputfile=
 makecommand=${COMPILER}
 makedir=
-unitdirs=5
- /home/fred/mselang/compiler
- ${MSEDIR}lib/addon/*/
- ${MSELIBDIR}kernel/$TARGETOSDIR/
+unitdirs=10
+ ${MSELANGDIR}rtl/system/windows
+ ${MSELANGDIR}rtl/system/unix
+ ${MSELANGDIR}*/*
+ ${MSELANGDIR}*
+ ..
+ .
+ ${MSELIBDIR}kernel/linux
+ ${MSELIBDIR}kernel/windows
  ${MSELIBDIR}kernel/
  ${MSELIBDIR}*/
 unitpref=-Fu
@@ -246,14 +254,16 @@ objpref=-Fo
 targpref=-o
 befcommand=0
 aftcommand=0
-makeoptions=6
+makeoptions=7
  -l -Mobjfpc -Sh -Fcutf8
  -gl 
  -dmse_compiler
  -B
+ -dmse_debugparser
  -FUunits
  -O2 -XX -Xs -CX
-makeoptpurpose=6
+makeoptpurpose=7
+ 
  
  
  
@@ -402,8 +412,8 @@ closemessages=0
 enablepurpose=0
 enablesource=0
 checkmethods=1
-colorerror=-1610612712
-colorwarning=-1610612717
+colorerror=-1610612717
+colorwarning=-1610612712
 colornote=-1610612716
 usercolors=30
  0
@@ -476,25 +486,32 @@ settingsstorage=0
 settingsprojecttree=0
 settingsautoload=0
 settingsautosave=0
-modulenames=1
+modulenames=3
+ COMPMO
+ COMPDEBUGMO
  MAINFO
-moduletypes=1
+moduletypes=3
+ TCOMPMO
+ TCOMPDEBUGMO
  TMAINFO
-modulefiles=1
- /home/fred/mselang/main.mfm
+modulefiles=3
+ /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselangmoi/compmoduledebug.mfm
+ /home/fred/mselangmoi/main.mfm
 befcommandon=0
-makeoptionson=6
- 63
- 29
+makeoptionson=7
+ 127
+ 0
  4095
- 2
+ 14
+ 3840
  4095
- 32
+ 96
 compilerusedon=29
- 4032
+ 3840
  0
  63
- 0
+ 192
  0
  0
  0
@@ -521,16 +538,16 @@ compilerusedon=29
  0
  0
 debuggerusedon=6
- 4034
+ 3840
  0
  0
  0
  0
- 61
+ 255
 exeusedon=15
- 4095
+ 3903
  0
- 0
+ 192
  0
  0
  0
@@ -563,12 +580,17 @@ project_time=
 project_date=02:34:37 PM 12/28/2018
 project_comment=
 aftcommandon=0
-unitdirson=5
+unitdirson=10
+ 200640
  196671
- 196671
+ 200703
+ 200703
+ 196863
+ 196863
  65599
- 196671
- 65599
+ 196800
+ 196863
+ 65791
 macroon=0
 macronames=0
 macrovalues=0
@@ -619,7 +641,7 @@ newinheritedforms=11
  -1
 uid=0
 sourcefilemasks=3
- "*.pas" "*.dpr" "*.lpr" "*.pp" "*.inc"
+ "*.pas" "*.dpr" "*.lpr" "*.pp" "*.inc" "*.mla"
  "*.c" "*.cc" "*.h"
  "*.mfm"
 syntaxdeffiles=3
@@ -631,7 +653,7 @@ filemasknames=3
  Forms
  All Files
 filemasks=3
- "*.pp" "*.pas" "*.inc" "*.dpr" "*.lpr"
+ "*.pp" "*.pas" "*.inc" "*.dpr" "*.lpr" "*.mla 
  *.mfm
  *
 showgrid=1
@@ -685,7 +707,9 @@ beforeload=
 afterload=
 beforerun=
 sourcebase=
-sourcedirs=4
+sourcedirs=6
+ ./*/
+ ./*/*/
  ${MSEDIR}lib/addon/*/
  ${MSEDIR}lib/common/kernel/$TARGETOSDIR/
  ${MSEDIR}lib/common/*/
@@ -700,7 +724,7 @@ stoponexception=0
 valuehints=1
 activateonbreak=1
 raiseonbreak=1
-showconsole=0
+showconsole=1
 externalconsole=0
 settty=1
 gdbdownload=0
@@ -795,44 +819,40 @@ envvarons=0
 [edit]
 hintwidth=314
 hintheight=214
-finddtext=modulared
-findhistory=19
- modulared
+finddtext=parse(
+findhistory=20
+ parse(
+ mlipath
  llvmlinkcommand
- bin
- proginfoed
- llvmoptcommand
- opted
- opt
- norun
- dt1
- resetinfo
- llvm.v
- llvm
- compiler
- grid
+ link
  llvmbindir
- builded
- loadexe
- exce
- raise
+ llvm-link
+ tllvmbcwriter
+ llvmbcextension
+ mliextension
+ parser
+ parse(const 
+ parse
+ sleep
+ writeln
+ wrteln
+ result
+ llvm
+ compparams
+ proginfoed
+ belink
 findoptions=1
-editpos=15
- 0,29
- 0,178
- 0,0
+editpos=10
  0,-1073741823
- 0,1318
- 0,0
+ 24,13
  0,-1073741823
- 0,0
- 0,319
- 0,206
- 0,0
- 0,111
- 0,868
- 0,533
- 0,332
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
 bookmarks0=0
 bookmarks1=0
 bookmarks2=0
@@ -843,44 +863,29 @@ bookmarks6=0
 bookmarks7=0
 bookmarks8=0
 bookmarks9=0
-bookmarks10=0
-bookmarks11=0
-bookmarks12=0
-bookmarks13=0
-bookmarks14=0
-sourcefiles=15
+sourcefiles=10
  ${PROJECTDIR}/mselang.pas
  ${PROJECTDIR}/main.pas
- ${PROJECTDIR}/patheditform.pas
- ${PROJECTDIR}/filehandler.pas
  ${PROJECTDIR}/parser.pas
- /home/fred/msegui/lib/common/editwidgets/msetextedit.pas
- ${PROJECTDIR}/main.pas
- ${PROJECTDIR}/llvmbcwriter.pas
- ${PROJECTDIR}/compiler/__mla__internaltypes.pas
- ${PROJECTDIR}/compiler/compmodule.pas
- /home/fred/ideu/src/actionsmodule.mfm
+ ${PROJECTDIR}/parserglob.pas
+ ${PROJECTDIR}/mselang.pas
+ /home/fred/mselang/src/parser.pas
+ ${PROJECTDIR}/typehandler.pas
  ${PROJECTDIR}/filehandler.pas
- ${PROJECTDIR}/unithandler.pas
- ${PROJECTDIR}/unitwriter.pas
- ${PROJECTDIR}/unitreader.pas
-relpaths=15
+ ${PROJECTDIR}/compmodule.pas
+ ${PROJECTDIR}/compmoduledebug.pas
+relpaths=10
  mselang.pas
  main.pas
- patheditform.pas
- filehandler.pas
  parser.pas
- msegui/lib/common/editwidgets/msetextedit.pas
- main.pas
- llvmbcwriter.pas
- compiler/__mla__internaltypes.pas
- compiler/compmodule.pas
- ideu/src/actionsmodule.mfm
+ parserglob.pas
+ mselang.pas
+ mselang/src/parser.pas
+ typehandler.pas
  filehandler.pas
- unithandler.pas
- unitwriter.pas
- unitreader.pas
-ismoduletexts=15
+ compiler/compmodule.pas
+ compmoduledebug.pas
+ismoduletexts=10
  0
  0
  0
@@ -891,40 +896,38 @@ ismoduletexts=15
  0
  0
  0
+modules=3
+ /home/fred/mselangmoi/main.mfm
+ /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselangmoi/compmoduledebug.mfm
+moduleoptions=3
  0
  0
  0
- 0
- 0
-modules=1
- /home/fred/mselang/main.mfm
-moduleoptions=1
- 0
-visiblemodules=1
+visiblemodules=3
  -1
-nomenumodules=1
+ -1
+ -1
+nomenumodules=3
+ 0
+ 0
  0
 [sourcefo.files_tab]
-order=15
+order=10
  0
  1
- 11
- 13
- 14
- 12
- 9
- 10
- 8
  2
- 3
- 4
- 5
- 6
  7
+ 4
+ 3
+ 6
+ 5
+ 8
+ 9
 firsttab=0
-index=7
+index=1
 [layout]
-windowlayout=567
+windowlayout=619
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -956,8 +959,8 @@ windowlayout=567
  ny=0
  ncx=0
  ncy=0
- x=493
- y=171
+ x=432
+ y=236
  cx=497
  cy=314
  rcx=0
@@ -1032,16 +1035,16 @@ windowlayout=567
  [findinfilefo]
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_mainfo_mse_
+ stackedunder=
  parent=
  mdistate=0
  nx=0
  ny=0
  ncx=0
  ncy=0
- x=0
+ x=3
  y=29
- cx=1366
+ cx=1360
  cy=706
  rcx=0
  rcy=0
@@ -1088,7 +1091,7 @@ windowlayout=567
  rcy=0
  wsize=0
  active=0
- visible=0
+ visible=1
  [watchpointsfo]
  splitdir=0
  useroptions=268451945
@@ -1154,27 +1157,27 @@ windowlayout=567
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=findinfilefo
+ stackedunder=_mse_mainfo_mse_
  parent=
  mdistate=0
  nx=0
  ny=0
  ncx=0
  ncy=0
- x=685
- y=161
- cx=495
+ x=828
+ y=226
+ cx=454
  cy=484
  rcx=0
  rcy=0
  wsize=0
  active=0
- visible=1
+ visible=0
  [objectinspectorfo.grid]
- propcolwidthref=485
- width0=152
+ propcolwidthref=444
+ width0=197
  sortdescend0=0
- width1=327
+ width1=241
  sortdescend1=0
  [symbolfo]
  splitdir=0
@@ -1395,11 +1398,30 @@ windowlayout=567
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/ideu/src/actionsmodule.mfm
- history=1
-  /home/fred/mselang/compiler/
+ value=/home/fred/mselangmoi/main.pas
+ history=20
+  /home/fred/mselangmoi/main.pas
+  /home/fred/mselangmoi/compiler/compmodule.pas
+  /home/fred/mselangmoi/compmoduledebug.pas
+  /home/fred/mselangmoi/compiler/mbc.pas
+  /home/fred/mselangmoi/rtl/system/rtl_sysexceptions.mla
+  /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
+  /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
+  /home/fred/mselangmoi/rtl/system/rtl_strings.mla
+  /home/fred/msegui/lib/common/kernel/windows/msesysintf.pas
+  /home/fred/mselangmoi/rtl/system/system.mla
+  /home/fred/uos/src/uos.pas
+  /home/fred/ideu/src/confcompiler.pas
+  /home/fred/strumpract/src/drums.pas
+  /home/fred/Downloads/mselang-master/mselang/rtl/system/rtl_sysconsts.mla
+  /home/fred/Downloads/mselang-master/mselang/rtl/stringutils/rtl_format.mla
+  /home/fred/mselangmoi/rtl/stringutils/rtl_format.mla
+  /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
+  /home/fred/mlctest/hellomlc.mla
+  /home/fred/mselang/mselang.pas
+  /home/fred/mselang/rtl/stringutils/rtl_format.mla
  [debuggerfo.project_options]
- value=B
+ value=1
  [debuggerfo.hints]
  value=1
  [sourcefo]
@@ -1419,24 +1441,19 @@ windowlayout=567
  rcx=0
  rcy=0
  [sourcefo.files_tab]
- order=15
+ order=10
   0
   1
-  11
-  13
-  14
-  12
-  9
-  10
-  8
   2
-  3
-  4
-  5
-  6
   7
+  4
+  3
+  6
+  5
+  8
+  9
  firsttab=0
- index=7
+ index=1
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
@@ -1476,17 +1493,55 @@ windowlayout=567
  [_mse_mainfo_mse_]
  splitdir=0
  useroptions=268451963
- stackedunder=mainfo
+ stackedunder=_mse_compmo_mse_
  parent=
  mdistate=3
  nx=0
  ny=0
  ncx=0
  ncy=0
- x=377
- y=112
+ x=253
+ y=48
  cx=887
- cy=444
+ cy=644
+ rcx=0
+ rcy=0
+ wsize=0
+ active=0
+ visible=1
+ [_mse_compmo_mse_]
+ splitdir=0
+ useroptions=268451963
+ stackedunder=_mse_compdebugmo_mse_
+ parent=
+ mdistate=3
+ nx=0
+ ny=0
+ ncx=0
+ ncy=0
+ x=397
+ y=250
+ cx=341
+ cy=255
+ rcx=0
+ rcy=0
+ wsize=0
+ active=0
+ visible=1
+ [_mse_compdebugmo_mse_]
+ splitdir=0
+ useroptions=268451963
+ stackedunder=stackfo
+ parent=
+ mdistate=3
+ nx=0
+ ny=0
+ ncx=0
+ ncy=0
+ x=397
+ y=250
+ cx=341
+ cy=255
  rcx=0
  rcy=0
  wsize=0

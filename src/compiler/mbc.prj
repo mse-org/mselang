@@ -19,7 +19,7 @@ order16=0
 [projectoptions]
 projectdir=/home/fred/mselangmoi/compiler
 projectfilename=/home/fred/mselangmoi/compiler/mbc.prj
-findinfiledialog=56
+findinfiledialog=52
  [findinfileadialogfo.subdirs]
  value=1
  [findinfileadialogfo.incurrentfile]
@@ -56,19 +56,15 @@ findinfiledialog=56
  filefilterindex=0
  filefilter="*.pas" "*.pp" "*.inc" "*.mla"
  [findinfileadialogfo.findtext]
- value=0.0
- history=12
-  0.0
-  compmo
-  parse
-  TTime
-  startupmessage
-  martin
-  unitdirs
-  coff
-  magic
-  coff magic
-  windows
+ value=compileoptionsty
+ history=8
+  compileoptionsty
+  co_llvm
+  paramty
+  param
+  Fu
+  -Fu
+  parameter
   
  [findinfileadialogfo]
  stackedunder=
@@ -172,7 +168,7 @@ options=114
  value=
  [projectoptionsfo.makegroupbox]
  firsttab=0
- index=2
+ index=3
  [projectoptionsfo.exceptionsgrid]
  propcolwidthref=882
  width0=47
@@ -181,7 +177,7 @@ options=114
  sortdescend1=0
  [projectoptionsfo.ttabwidget1]
  firsttab=0
- index=2
+ index=1
  [projectoptionsfo.filefiltergrid]
  propcolwidthref=790
  width0=112
@@ -220,15 +216,16 @@ targetfile=${PROJECTNAME}${EXEEXT}
 messageoutputfile=
 makecommand=${COMPILER}
 makedir=
-unitdirs=8
+unitdirs=9
+ ${MSELANGDIR}rtl/system/windows
+ ${MSELANGDIR}rtl/system/linux
+ ${MSELANGDIR}*/*
+ ${MSELANGDIR}*
+ ${MSELANGDIR}
  ${MSELIBDIR}kernel/windows
- /home/fred/mselangmoi/*/*
- /home/fred/mselangmoi/*
  ${MSELIBDIR}kernel/linux
- ${MSELIBDIR}kernel/
- ${MSELIBDIR}*/
- ..
- .
+ ${MSELIBDIR}*
+ ${MSELIBDIR}
 unitpref=-Fu
 incpref=-Fi
 libpref=-Fl
@@ -236,19 +233,15 @@ objpref=-Fo
 targpref=-o
 befcommand=0
 aftcommand=0
-makeoptions=9
+makeoptions=7
  -dmse_compiler
- -dmse_bitcode
  -l -Mobjfpc -Sh -Fcutf8
  -gl -O-
- 
  -B
  -FUunits
  -WG
  -O2 -XX -Xs -CX
-makeoptpurpose=9
- 
- 
+makeoptpurpose=7
  
  
  
@@ -461,16 +454,14 @@ moduletypes=1
 modulefiles=1
  /home/fred/mselangmoi/compiler/compmodule.mfm
 befcommandon=0
-makeoptionson=9
+makeoptionson=7
  4095
- 3968
  255
  0
- 4095
- 226
+ 255
  4095
  0
- 4064
+ 4095
 compilerusedon=29
  3840
  0
@@ -544,15 +535,16 @@ project_time=
 project_date=02:52:41 PM 12/27/2018
 project_comment=
 aftcommandon=0
-unitdirson=8
- 196800
- 987135
- 987135
- 196863
- 196863
- 65791
- 983295
- 983295
+unitdirson=9
+ 200640
+ 196671
+ 200703
+ 200703
+ 200703
+ 200640
+ 196671
+ 200703
+ 200703
 macroon=0
 macronames=0
 macrovalues=0
@@ -658,13 +650,11 @@ beforeload=
 afterload=
 beforerun=
 sourcebase=
-sourcedirs=7
- ${MSEDIR}lib/addon/*/
- 
- /home/fred/mselangmoi/*/*/
- /home/fred/mselangmoi/*/
- /home/fred/msegui/lib/common/kernel/$TARGETOSDIR/
- /home/fred/msegui/lib/common/*/
+sourcedirs=5
+ ${MSELANGDIR}*/*/
+ ${MSELANGDIR}*/
+ ${MSELANGDIR}/
+ ${MSEDIR}*/*/
  ./
 defines=0
 progparameters=
@@ -768,22 +758,62 @@ finddtext=initparams
 findhistory=1
  initparams
 findoptions=1
-editpos=3
+editpos=11
+ 0,7
  0,-1073741823
  0,-1073741823
- 0,12
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
+ 0,-1073741823
 bookmarks0=0
 bookmarks1=0
 bookmarks2=0
-sourcefiles=3
+bookmarks3=0
+bookmarks4=0
+bookmarks5=0
+bookmarks6=0
+bookmarks7=0
+bookmarks8=0
+bookmarks9=0
+bookmarks10=0
+sourcefiles=11
+ /home/fred/mselangmoi/compiler/mbc.pas
+ ${PROJECTDIR}/compmodule.pas
  ${PROJECTDIR}/mbc.pas
- ${PROJECTDIR}/compiler/compmodule.pas
- ${PROJECTDIR}/mbc.pas
-relpaths=3
+ /home/fred/mselangmoi/classhandler.pas
+ /home/fred/mselangmoi/gramse.pas
+ /home/fred/mselangmoi/grammarglob.pas
+ /home/fred/mselangmoi/valuehandler.pas
+ /home/fred/mselangmoi/grammargen/grammargen.pas
+ /home/fred/mselangmoi/parser.pas
+ /home/fred/mselangmoi/opglob.pas
+ /home/fred/mselangmoi/parserglob.pas
+relpaths=11
  mbc.pas
  compmodule.pas
  mbc.pas
-ismoduletexts=3
+ classhandler.pas
+ gramse.pas
+ grammarglob.pas
+ valuehandler.pas
+ grammargen/grammargen.pas
+ parser.pas
+ opglob.pas
+ parserglob.pas
+ismoduletexts=11
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
  0
  0
  0
@@ -796,10 +826,22 @@ visiblemodules=1
 nomenumodules=1
  0
 [sourcefo.files_tab]
+order=11
+ 0
+ 1
+ 8
+ 10
+ 4
+ 6
+ 7
+ 2
+ 3
+ 9
+ 5
 firsttab=0
-index=2
+index=0
 [layout]
-windowlayout=574
+windowlayout=586
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -914,8 +956,8 @@ windowlayout=574
  ny=0
  ncx=0
  ncy=0
- x=285
- y=198
+ x=178
+ y=180
  cx=678
  cy=414
  rcx=0
@@ -1025,7 +1067,7 @@ windowlayout=574
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=stackfo
+ stackedunder=
  parent=
  mdistate=0
  nx=0
@@ -1277,9 +1319,18 @@ windowlayout=574
  value=/home/fred/mselangmoi/compiler/mbc.pas
  history=20
   /home/fred/mselangmoi/compiler/mbc.pas
-  /home/fred/mselangmoi/compiler/compmodule.pas
-  /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
+  /home/fred/mselangmoi/rtl/system/rtl_sysintf.mla
+  /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
+  /home/fred/mselangmoi/rtl/system/rtl_ctypes.mla
+  /home/fred/mselangmoi/rtl/system/rtl_fpccompatibility.mla
+  /home/fred/mselangmoi/rtl/system/rtl_base.mla
+  /home/fred/mselangmoi/rtl/system/rtl_libc.mla
   /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
+  /home/fred/mselangmoi/compiler/__mla__system.mla
+  /home/fred/mselangmoi/compiler/__mla__personality.pas
+  /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
+  /home/fred/mselangmoi/compmoduledebug.pas
+  /home/fred/mselangmoi/rtl/system/rtl_sysexceptions.mla
   /home/fred/mselangmoi/rtl/system/rtl_strings.mla
   /home/fred/msegui/lib/common/kernel/windows/msesysintf.pas
   /home/fred/mselangmoi/rtl/system/system.mla
@@ -1287,15 +1338,6 @@ windowlayout=574
   /home/fred/ideu/src/confcompiler.pas
   /home/fred/strumpract/src/drums.pas
   /home/fred/Downloads/mselang-master/mselang/rtl/system/rtl_sysconsts.mla
-  /home/fred/Downloads/mselang-master/mselang/rtl/stringutils/rtl_format.mla
-  /home/fred/mselangmoi/rtl/stringutils/rtl_format.mla
-  /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
-  /home/fred/mlctest/hellomlc.mla
-  /home/fred/mselang/mselang.pas
-  /home/fred/mselang/rtl/stringutils/rtl_format.mla
-  /home/fred/mselang/rtl/system/rtl_sysconsts.mla
-  /home/fred/mselang/rtl/system/rtl_rtlconsts.mla
-  /home/fred/mlctest/hellomlc.mli
  [debuggerfo.project_options]
  value=5
  [debuggerfo.hints]
@@ -1317,13 +1359,25 @@ windowlayout=574
  rcx=0
  rcy=0
  [sourcefo.files_tab]
+ order=11
+  0
+  1
+  8
+  10
+  4
+  6
+  7
+  2
+  3
+  9
+  5
  firsttab=0
- index=2
+ index=0
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=targetconsolefo
+ stackedunder=_mse_compmo_mse_
  parent=
  mdistate=0
  nx=0

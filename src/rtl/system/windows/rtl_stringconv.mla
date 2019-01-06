@@ -1,0 +1,136 @@
+//rtl_stringconv windows
+{ MSElang Copyright (c) 2018 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+//{$internaldebug on}
+unit rtl_stringconv;
+interface
+uses
+ __mla__internaltypes;
+ 
+procedure string8to16(const source: pchar8; const len: int32): string16;
+procedure string8to32(const source: pchar8; const len: int32): string32;
+procedure string16to8(const source: pchar16; const len: int32): string8;
+procedure string16to32(const source: pchar16; const len: int32): string32;
+procedure string32to8(const source: pchar32; const len: int32): string8;
+procedure string32to16(const source: pchar32; const len: int32): string16;
+
+procedure inttostring8(const value: int32): string8;
+procedure inttostring16(const value: int32): string16;
+
+const
+  upperchars: array[char8] of char8 = (
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,#$41,#$42,#$43,#$44,#$45,#$46,#$47,#$48,#$49,#$4a,#$4b,#$4c,#$4d,#$4e,#$4f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$60,'A' ,'B' ,'C' ,'D' ,'E' ,'F' ,'G' ,'H' ,'I' ,'J' ,'K' ,'L' ,'M' ,'N' ,'O' ,
+  'P' ,'Q' ,'R' ,'S' ,'T' ,'U' ,'V' ,'W' ,'X' ,'Y' ,'Z' ,#$7b,#$7c,#$7d,#$7e,#$7f,
+  #$80,#$80,#$82,#$83,#$84,#$85,#$86,#$87,#$88,#$89,#$8a,#$8b,#$8c,#$8c,#$8e,#$8e,
+  #$80,#$91,#$92,#$93,#$94,#$95,#$96,#$97,#$98,#$99,#$9a,#$9b,#$9c,#$9c,#$9e,#$9f,
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,#$41,#$42,#$43,#$44,#$45,#$46,#$47,#$48,#$49,#$4a,#$4b,#$4c,#$4d,#$4e,#$4f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f);
+
+ lowerchars: array[char8] of char8 = (
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,'a' ,'b' ,'c' ,'d' ,'e' ,'f' ,'g' ,'h' ,'i' ,'j' ,'k' ,'l' ,'m' ,'n' ,'o' ,
+  'p' ,'q' ,'r' ,'s' ,'t' ,'u' ,'v' ,'w' ,'x' ,'y' ,'z' ,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$80,#$80,#$82,#$83,#$84,#$85,#$86,#$87,#$88,#$89,#$8a,#$8b,#$8c,#$8c,#$8e,#$8e,
+  #$80,#$91,#$92,#$93,#$94,#$95,#$96,#$97,#$98,#$99,#$9a,#$9b,#$9c,#$9c,#$9e,#$9f,
+  #$00,#$01,#$02,#$03,#$04,#$05,#$06,#$07,#$08,#$09,#$0a,#$0b,#$0c,#$0d,#$0e,#$0f,
+  #$10,#$11,#$12,#$13,#$14,#$15,#$16,#$17,#$18,#$19,#$1a,#$1b,#$1c,#$1d,#$1e,#$1f,
+  #$20,#$21,#$22,#$23,#$24,#$25,#$26,#$27,#$28,#$29,#$2a,#$2b,#$2c,#$2d,#$2e,#$2f,
+  #$30,#$31,#$32,#$33,#$34,#$35,#$36,#$37,#$38,#$39,#$3a,#$3b,#$3c,#$3d,#$3e,#$3f,
+  #$40,#$41,#$42,#$43,#$44,#$45,#$46,#$47,#$48,#$49,#$4a,#$4b,#$4c,#$4d,#$4e,#$4f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f,
+  #$50,#$51,#$52,#$53,#$54,#$55,#$56,#$57,#$58,#$59,#$5a,#$5b,#$5c,#$5d,#$5e,#$5f);
+ 
+implementation
+uses
+ __mla__compilerunit;
+ 
+procedure string8to16(const source: pchar8; const len: int32): string16;
+begin
+ result:= '';
+ pointer(result):= __mla__string8to16a(pointer(source),len);
+end;
+
+procedure string8to32(const source: pchar8; const len: int32): string32;
+begin
+ result:= '';
+ pointer(result):= __mla__string8to32a(pointer(source),len);
+end;
+
+procedure string16to8(const source: pchar16; const len: int32): string8;
+begin
+ result:= '';
+ pointer(result):= __mla__string16to8a(pointer(source),len);
+end;
+
+procedure string16to32(const source: pchar16; const len: int32): string32;
+begin
+ result:= '';
+ pointer(result):= __mla__string16to32a(pointer(source),len);
+end;
+
+procedure string32to8(const source: pchar32; const len: int32): string8;
+begin
+ result:= '';
+ pointer(result):= __mla__string32to8a(pointer(source),len);
+end;
+
+procedure string32to16(const source: pchar32; const len: int32): string16;
+begin
+ result:= '';
+ pointer(result):= __mla__string32to16a(pointer(source),len);
+end;
+
+procedure inttostring8(const value: int32): string8;
+begin
+ result:= __mla__inttostr(value);
+end;
+
+procedure inttostring16(const value: int32): string16;
+var
+ buffer: array[0..22] of char16;
+ i1,i2: int32;
+ ca1,ca2: card32;
+begin
+ ca1:= abs(value);
+ if ca1 = 0 then
+  result:= '0';
+  exit;
+ end;
+ i1:= high(buffer);
+ while ca1 > 0 do
+  ca2:= ca1 div 10;
+  buffer[i1]:= char16(card16(ca1 - ca2 * 10 + ord('0')));
+  ca1:= ca2;
+  dec(i1);
+ end;
+ if value < 0 then
+  buffer[i1]:= '-';
+  dec(i1);
+ end;
+ i2:= (high(buffer))-i1;
+ setlength(result,i2);
+ memcpy(pointer(result),@buffer[i1+1],i2*sizeof(char16));
+end;
+
+end.
