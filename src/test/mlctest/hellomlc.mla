@@ -1,0 +1,13 @@
+{$mode pascal}
+{$define linux}
+
+program hellomlc;
+begin
+{$ifdef linux}
+writeln( 'Hello MSElang in unix world' );
+{$endif}
+{$ifdef windows}
+writeln( 'Hello MSElang in windows world' );
+{$endif}
+
+end.
