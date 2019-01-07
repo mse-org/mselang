@@ -795,7 +795,7 @@ object mainfo: tmainfo
           '*.*'
         )
       )
-      controller.options = [fdo_sysfilename]
+      controller.options = [fdo_chdir, fdo_savelastdir]
       reffontheight = 14
     end
   end

@@ -226,7 +226,7 @@ begin
  try
 
   include(parserparams.compileoptions,co_nodeinit);
-  bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
+  bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
    
   if not bo1 then grid.appendrow(['*** Parser error ***']) else
   try
