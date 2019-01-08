@@ -62,11 +62,8 @@ uses
  
 const
  startupmessage =
- 'MSElang Compiler version 0.0' +
- {$ifdef win32}' win32'{$endif}
- {$ifdef linux}' lin32'{$endif}
- +lineend+
-'Copyright (c) 2013-2018 by Martin Schreiber.';
+ 'MSElang Compiler version 0.0' +lineend+
+'Copyright (c) 2013-2018 by Martin Schreiber';
 
  defaultllvmbindir = 
  {$ifdef unix}'/usr/bin/';{$endif}
@@ -77,7 +74,7 @@ const
 
 procedure tcompmo.createexe(const sender: TObject);
 begin
- sysenv.printmessage(startupmessage);
+ sysenv.printmessage(startupmessage +lineend+ 'Target OS: '+platformtext);
 end;
 
 procedure tcompmo.eventloopexe(const sender: TObject);
@@ -119,7 +116,7 @@ begin
    end;
         
    if parse(str1,filename1,parserparams) then begin
-    sysenv.printmessage('mlc process: OK.');
+    sysenv.printmessage('mlc process: OK');
      if co_llvm in parserparams.compileoptions then begin
       if not (co_modular in parserparams.compileoptions) then begin
        filename1:= replacefileext(filename1,llvmbcextension);
@@ -137,12 +134,12 @@ begin
         end;
         if exitcode = 1 then
          begin
-         sysenv.printmessage('llvm process failed.');
-         sysenv.printmessage('mbc process failed.');
+         sysenv.printmessage('llvm process failed');
+         sysenv.printmessage('mbc process failed');
          end else
          begin
-         sysenv.printmessage('llvm process: OK.');
-         sysenv.printmessage('mbc process: OK.');
+         sysenv.printmessage('llvm process: OK');
+         sysenv.printmessage('mbc process: OK');
          end;
          
         unithandler.deinit(true); //destroy unitlist
@@ -178,10 +175,10 @@ begin
  nowtime := now - nowtime;
  DecodeTime(nowtime, ho, mi, se, ms);
  sysenv.printmessage('All process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
-    [ho, mi, se, ms])+ '.') ;
+    [ho, mi, se, ms])) ;
  
  if exitcode = 0 then
-   sysenv.printmessage('All process: OK. :)')
+   sysenv.printmessage('All process: OK :)')
   else sysenv.printmessage('Some process failed...') ;
    
  application.terminated:= true;

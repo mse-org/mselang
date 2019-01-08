@@ -17,8 +17,8 @@ order14=0
 order15=0
 order16=0
 [projectoptions]
-projectdir=/home/fred/mselangmoi/compiler
-projectfilename=/home/fred/mselangmoi/compiler/mbc.prj
+projectdir=/home/fred/mselang/src/compiler
+projectfilename=/home/fred/mselang/src/compiler/mbc.prj
 findinfiledialog=52
  [findinfileadialogfo.subdirs]
  value=1
@@ -452,7 +452,7 @@ modulenames=1
 moduletypes=1
  TCOMPMO
 modulefiles=1
- /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
 befcommandon=0
 makeoptionson=7
  4095
@@ -782,7 +782,7 @@ bookmarks8=0
 bookmarks9=0
 bookmarks10=0
 sourcefiles=11
- /home/fred/mselangmoi/compiler/mbc.pas
+ /home/fred/mselang/src/compiler/mbc.pas
  ${PROJECTDIR}/compmodule.pas
  ${PROJECTDIR}/mbc.pas
  /home/fred/mselangmoi/classhandler.pas
@@ -818,7 +818,7 @@ ismoduletexts=11
  0
  0
 modules=1
- /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
 moduleoptions=1
  0
 visiblemodules=1
@@ -829,15 +829,15 @@ nomenumodules=1
 order=11
  0
  1
- 8
- 10
+ 3
+ 5
  4
- 6
  7
  2
- 3
+ 8
+ 10
  9
- 5
+ 6
 firsttab=0
 index=0
 [layout]
@@ -903,7 +903,7 @@ windowlayout=586
  [memoryfo]
  splitdir=0
  useroptions=268451963
- stackedunder=dialogfilesfo
+ stackedunder=about_form
  parent=
  mdistate=0
  nx=0
@@ -1067,7 +1067,7 @@ windowlayout=586
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=
+ stackedunder=stackfo
  parent=
  mdistate=0
  nx=0
@@ -1316,8 +1316,9 @@ windowlayout=586
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/compiler/mbc.pas
+ value=/home/fred/mselang/src/compiler/mbc.pas
  history=20
+  /home/fred/mselang/src/compiler/mbc.pas
   /home/fred/mselangmoi/compiler/mbc.pas
   /home/fred/mselangmoi/rtl/system/rtl_sysintf.mla
   /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
@@ -1337,9 +1338,8 @@ windowlayout=586
   /home/fred/uos/src/uos.pas
   /home/fred/ideu/src/confcompiler.pas
   /home/fred/strumpract/src/drums.pas
-  /home/fred/Downloads/mselang-master/mselang/rtl/system/rtl_sysconsts.mla
  [debuggerfo.project_options]
- value=5
+ value=1
  [debuggerfo.hints]
  value=1
  [sourcefo]
@@ -1362,22 +1362,22 @@ windowlayout=586
  order=11
   0
   1
-  8
-  10
+  3
+  5
   4
-  6
   7
   2
-  3
+  8
+  10
   9
-  5
+  6
  firsttab=0
  index=0
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_compmo_mse_
+ stackedunder=objectinspectorfo
  parent=
  mdistate=0
  nx=0

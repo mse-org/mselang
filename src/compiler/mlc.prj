@@ -17,8 +17,8 @@ order14=0
 order15=0
 order16=0
 [projectoptions]
-projectdir=/home/fred/mselangmoi/compiler
-projectfilename=/home/fred/mselangmoi/compiler/mlc.prj
+projectdir=/home/fred/mselang/src/compiler
+projectfilename=/home/fred/mselang/src/compiler/mlc.prj
 findinfiledialog=52
  [findinfileadialogfo.subdirs]
  value=1
@@ -168,7 +168,7 @@ options=114
  value=
  [projectoptionsfo.makegroupbox]
  firsttab=0
- index=0
+ index=2
  [projectoptionsfo.exceptionsgrid]
  propcolwidthref=882
  width0=47
@@ -453,7 +453,7 @@ modulenames=1
 moduletypes=1
  TCOMPMO
 modulefiles=1
- /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
 befcommandon=0
 makeoptionson=7
  4095
@@ -784,17 +784,17 @@ bookmarks8=0
 bookmarks9=0
 bookmarks10=0
 sourcefiles=11
- ${PROJECTDIR}/mlc.pas
+ /home/fred/mselang/src/compiler/mlc.pas
  ${PROJECTDIR}/compmodule.pas
  ${PROJECTDIR}/mlc.pas
- /home/fred/mselangmoi/classhandler.pas
- /home/fred/mselangmoi/gramse.pas
- /home/fred/mselangmoi/grammarglob.pas
- /home/fred/mselangmoi/valuehandler.pas
- /home/fred/mselangmoi/grammargen/grammargen.pas
- /home/fred/mselangmoi/parser.pas
- /home/fred/mselangmoi/opglob.pas
- /home/fred/mselangmoi/parserglob.pas
+ ${PROJECTDIR}/classhandler.pas
+ ${PROJECTDIR}/gramse.pas
+ ${PROJECTDIR}/grammarglob.pas
+ ${PROJECTDIR}/valuehandler.pas
+ ${PROJECTDIR}/grammargen/grammargen.pas
+ ${PROJECTDIR}/parser.pas
+ ${PROJECTDIR}/opglob.pas
+ ${PROJECTDIR}/parserglob.pas
 relpaths=11
  mlc.pas
  compmodule.pas
@@ -820,7 +820,7 @@ ismoduletexts=11
  0
  0
 modules=1
- /home/fred/mselangmoi/compiler/compmodule.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
 moduleoptions=1
  0
 visiblemodules=1
@@ -1318,8 +1318,9 @@ windowlayout=586
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/compiler/mlc.pas
+ value=/home/fred/mselang/src/compiler/mlc.pas
  history=20
+  /home/fred/mselang/src/compiler/mlc.pas
   /home/fred/mselangmoi/compiler/mlc.pas
   /home/fred/mselangmoi/rtl/system/rtl_sysintf.mla
   /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
@@ -1339,9 +1340,8 @@ windowlayout=586
   /home/fred/uos/src/uos.pas
   /home/fred/ideu/src/confcompiler.pas
   /home/fred/strumpract/src/drums.pas
-  /home/fred/Downloads/mselang-master/mselang/rtl/system/rtl_sysconsts.mla
  [debuggerfo.project_options]
- value=5
+ value=1
  [debuggerfo.hints]
  value=1
  [sourcefo]
