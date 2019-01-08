@@ -114,10 +114,10 @@ begin
                                      mlaruntimecompileoptions) + 
                                 llvmcompileoptions + [co_buildexe];
    end;
-        
+    sysenv.printmessage('Compiling ' + filename1 + ' ...');    
    if parse(str1,filename1,parserparams) then begin
-    sysenv.printmessage('mlc process: OK');
-     if co_llvm in parserparams.compileoptions then begin
+      sysenv.printmessage('mlc process: OK');
+       if co_llvm in parserparams.compileoptions then begin
       if not (co_modular in parserparams.compileoptions) then begin
        filename1:= replacefileext(filename1,llvmbcextension);
        if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
@@ -135,11 +135,10 @@ begin
         if exitcode = 1 then
          begin
          sysenv.printmessage('llvm process failed');
-         sysenv.printmessage('mbc process failed');
-         end else
+          end else
          begin
          sysenv.printmessage('llvm process: OK');
-         sysenv.printmessage('mbc process: OK');
+         sysenv.printmessage('Output file: ' + filename1);
          end;
          
         unithandler.deinit(true); //destroy unitlist
@@ -149,14 +148,15 @@ begin
      end
      else begin
       filename1:= replacefileext(filename1,mliextension);
-      if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
+       if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
                               err_cannotcreatetargetfile,[filename1]) then begin
        try
         writesegmentdata(targetstream,getfilekind(mlafk_rtprogram),
                                                             storedsegments,now);
        finally
         targetstream.destroy();
-       end;      
+       end; 
+        sysenv.printmessage('Output file: ' + filename1);     
       end;
      end;
     end
