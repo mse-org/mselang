@@ -14,7 +14,7 @@ interface
 uses
  rtl_ctypes;
  
-{$define linux}
+{$define windows}
 //{$internaldebug on}
 type
  __time_t = int32;
@@ -35,33 +35,6 @@ type
  off64_t = int64;
 
 const
-{$ifdef linux}   
-   O_ACCMODE  = $00003;
-   O_RDONLY   = $00000;
-   O_WRONLY   = $00001;
-   O_RDWR     = $00002;
-   O_CREAT    = $00040;//&00100;
-   O_EXCL     = $00080;//&00200;
-   O_NOCTTY   = $00100;//&00400;
-   O_TRUNC    = $00200;//&01000;
-   O_APPEND   = $00400;//&02000;
-   O_NONBLOCK = $00800;//&04000;
-   O_NDELAY   = O_NONBLOCK;
-   O_SYNC     = $01000;//&010000;
-   O_FSYNC    = O_SYNC;
-   O_ASYNC    = $02000;//&020000;
-   O_CLOEXEC  = $80000;
-
-   O_DIRECT    = $04000;//&0040000;
-   O_DIRECTORY = $10000;//&0200000;
-   O_NOFOLLOW  = $20000;//&0400000;
-
-   O_DSYNC = O_SYNC;
-   O_RSYNC = O_SYNC;
-
-   O_LARGEFILE = $08000;//&0100000;
-
-{$else}
    O_RDONLY = $0000;   //* open for reading only */
    O_WRONLY = $0001;   //* open for writing only */
    O_RDWR = $0002;     //* open for reading and writing */
@@ -94,8 +67,6 @@ const
 
    O_CLOEXEC = $00100000;
 
-{$endif}
-
 //* The possibilities for the third argument to `fseek'.
 //   These values should not be changed.  */
  SEEK_SET = 0; //* Seek from beginning of file.  */
@@ -113,9 +84,8 @@ procedure read(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
 procedure lseek64(fd: cint; offset: off64_t; whence: cint): off64_t [external]; 
 
 procedure __error(): pcint   [external];
-
-procedure strerror_r(__errnum: cint; __buf: pcchar;
-                                    __buflen: size_t): pcchar [external];
+                        
+procedure strerror_s(__buf: pcchar; __buflen: size_t ;__errnum: cint):  pcchar [external];   
 
 implementation
 end.

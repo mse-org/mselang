@@ -52,7 +52,7 @@ var
  po1: pchar8;
 begin
  result:= ''; //compilerwarning
- po1:= strerror_r(aerror,pcchar(@buffer),buflen);
+ po1:= strerror_s(pcchar(@buffer),buflen, aerror);
  setstring(result,po1,strlen(po1));
 end;
 
