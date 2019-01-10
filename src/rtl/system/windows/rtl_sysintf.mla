@@ -41,7 +41,9 @@ uses
 
 procedure sys_getlasterror(): int32;
 begin
- result:= __error()^;
+result := 0;
+// to fix 
+//result:= GetLastError()^;
 end;
 
 procedure sys_geterrortext(const aerror: int32): string8;

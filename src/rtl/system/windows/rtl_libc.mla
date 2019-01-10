@@ -83,7 +83,8 @@ procedure read(fd: cint; buffer: pointer; count: size_t): ssize_t [external];
 
 procedure lseek64(fd: cint; offset: off64_t; whence: cint): off64_t [external]; 
 
-procedure __error(): pcint   [external];
+// to fix
+// procedure getlasterror(): pcint [external];
                         
 procedure strerror_s(__buf: pcchar; __buflen: size_t ;__errnum: cint):  pcchar [external];   
 
