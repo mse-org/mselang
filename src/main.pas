@@ -472,23 +472,21 @@ begin
     end
     else begin
      filename1:= replacefileext(filena.value,'mli');
-     if checksysok(tmsefilestream.trycreate(mlistream,filename1,fm_create),
-                             err_cannotcreatetargetfile,[filename1]) then begin
+    
+      if checksysok(tmsefilestream.trycreate(mlistream,tosysfilepath(filename1),fm_create),
+                             err_cannotcreatetargetfile,[tosysfilepath(filename1)]) then begin
       try
        writesegmentdata(mlistream,getfilekind(mlafk_rtprogram),
                                                            storedsegments,now);
       finally
        mlistream.destroy();
       end; 
-      grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
-      filename(filena.value)+' ***']);
-  
-     end;
+      
+       if  (er = 0) then grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
+      filename(filena.value)+' ***']) else grid.appendrow(['*** Compilation process fail ***']) 
             
-     if {$ifdef linux} (stackops.run(1024) = 0) and {$endif} 
-      (er = 0) then grid.appendrow(['*** Compilation is OK. :) ***'])
-       else grid.appendrow(['*** Compilation EXITCODE: '+inttostrmse(i2)+ ' ***']);
-   
+      end;
+      
         dt1 := now-dt1;
          DecodeTime(dt1, ho, mi, se, ms);
          
@@ -498,15 +496,28 @@ begin
        
      if runend.value then 
      begin
+       {$ifdef unix} stackops.run(1024); 
+        grid.appendrow;
+        grid.appendrow(['*** Interpreted without errors ***']) ;
+       {$else} 
+        if fileexists((mlipath)) then begin
+               
         grid.appendrow;
         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
         grid.appendrow;
-        i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
+        grid.appendrow;
+        i2:= getprocessoutput((mlipath) +' '+ (filename1),'',str1);
+       // sleep(100);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
-        grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        // if i2 = 0 then
+          grid.appendrow(['*** Interpreted without errors ***']) ;
+        // else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        
+        end else grid.appendrow(['*** Interpreter '+ (mlipath) + ' does not exist ***']);
+        {$endif} 
        
      end;
+     
     end;
    end;
   finally

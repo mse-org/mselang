@@ -17,8 +17,8 @@ order14=0
 order15=0
 order16=0
 [projectoptions]
-projectdir=/home/fred/mselangmoi
-projectfilename=/home/fred/mselangmoi/mselang.prj
+projectdir=/home/fred/mselang/src
+projectfilename=/home/fred/mselang/src/mselang.prj
 findinfiledialog=66
  [findinfileadialogfo.subdirs]
  value=1
@@ -495,9 +495,9 @@ moduletypes=3
  TCOMPDEBUGMO
  TMAINFO
 modulefiles=3
- /home/fred/mselangmoi/compiler/compmodule.mfm
- /home/fred/mselangmoi/compmoduledebug.mfm
- /home/fred/mselangmoi/main.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
+ /home/fred/mselang/src/compmoduledebug.mfm
+ /home/fred/mselang/src/main.mfm
 befcommandon=0
 makeoptionson=7
  127
@@ -844,7 +844,7 @@ findhistory=20
 findoptions=1
 editpos=10
  0,-1073741823
- 0,2
+ 0,461
  0,-1073741823
  0,-1073741823
  0,-1073741823
@@ -865,11 +865,11 @@ bookmarks8=0
 bookmarks9=0
 sourcefiles=10
  ${PROJECTDIR}/mselang.pas
- ${PROJECTDIR}/main.pas
+ /home/fred/mselang/src/main.pas
  ${PROJECTDIR}/parser.pas
  ${PROJECTDIR}/parserglob.pas
  ${PROJECTDIR}/mselang.pas
- /home/fred/mselang/src/parser.pas
+ ${PROJECTDIR}/parser.pas
  ${PROJECTDIR}/typehandler.pas
  ${PROJECTDIR}/filehandler.pas
  ${PROJECTDIR}/compmodule.pas
@@ -897,15 +897,15 @@ ismoduletexts=10
  0
  0
 modules=3
- /home/fred/mselangmoi/main.mfm
- /home/fred/mselangmoi/compiler/compmodule.mfm
- /home/fred/mselangmoi/compmoduledebug.mfm
+ /home/fred/mselang/src/main.mfm
+ /home/fred/mselang/src/compiler/compmodule.mfm
+ /home/fred/mselang/src/compmoduledebug.mfm
 moduleoptions=3
  0
  0
  0
 visiblemodules=3
- -1
+ 0
  -1
  -1
 nomenumodules=3
@@ -967,7 +967,7 @@ windowlayout=619
  rcy=0
  wsize=0
  active=0
- visible=0
+ visible=1
  [threadsfo]
  splitdir=0
  useroptions=268451945
@@ -1157,7 +1157,7 @@ windowlayout=619
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_mainfo_mse_
+ stackedunder=
  parent=
  mdistate=0
  nx=0
@@ -1398,8 +1398,9 @@ windowlayout=619
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/main.pas
+ value=/home/fred/mselang/src/main.pas
  history=20
+  /home/fred/mselang/src/main.pas
   /home/fred/mselangmoi/main.pas
   /home/fred/mselangmoi/compiler/compmodule.pas
   /home/fred/mselangmoi/compmoduledebug.pas
@@ -1419,7 +1420,6 @@ windowlayout=619
   /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
   /home/fred/mlctest/hellomlc.mla
   /home/fred/mselang/mselang.pas
-  /home/fred/mselang/rtl/stringutils/rtl_format.mla
  [debuggerfo.project_options]
  value=1
  [debuggerfo.hints]
@@ -1458,7 +1458,7 @@ windowlayout=619
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=objectinspectorfo
+ stackedunder=_mse_compmo_mse_
  parent=
  mdistate=0
  nx=0
@@ -1493,7 +1493,7 @@ windowlayout=619
  [_mse_mainfo_mse_]
  splitdir=0
  useroptions=268451963
- stackedunder=_mse_compmo_mse_
+ stackedunder=
  parent=
  mdistate=3
  nx=0
@@ -1508,7 +1508,7 @@ windowlayout=619
  rcy=0
  wsize=0
  active=0
- visible=1
+ visible=0
  [_mse_compmo_mse_]
  splitdir=0
  useroptions=268451963
