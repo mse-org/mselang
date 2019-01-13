@@ -103,6 +103,7 @@ type
    procedure runmli(const sender: TObject);
    procedure onchangelink(const sender: TObject; var avalue: Boolean;
                    var accept: Boolean);
+   procedure createdev(const sender: TObject);
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -704,6 +705,13 @@ beclang.value := false;
 belink.value := false;
 end;
 
+end;
+
+procedure tmainfo.createdev(const sender: TObject);
+begin
+if trim(llvmbindir.value) = '' then llvmbindir.value :=
+ {$ifdef unix}'/usr/bin/';{$endif}
+ {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
 end;
 
 end.
