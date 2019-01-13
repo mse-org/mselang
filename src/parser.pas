@@ -19,6 +19,7 @@ unit parser;
 {$ifdef mse_debugparser}
  {$define mse_debugparser1}
 {$endif}
+
 interface
 uses
  globtypes,msetypes,msestream,parserglob,opglob,msestrings;
@@ -74,7 +75,8 @@ uses
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
- identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse,
+ identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse, 
+ {$ifdef mse_gui} main, {$endif}
  __mla__internaltypes,msedate;
   
 //
@@ -1190,7 +1192,7 @@ var
 begin
  result:= false;
 // init();
- with info do begin
+  with info do begin
   fillchar(compileinfo,sizeof(compileinfo),0);
   compileinfo.start:= nowutc();
   try
@@ -1253,7 +1255,7 @@ begin
     unit1^.filepath:= afilename; //todo: file reading
     if not initunitfileinfo(unit1) then begin
      //todo: error message
-    end;
+      end;
 //    getunitfile(unit1,afilename);
     s.unitinfo:= unit1;
     scopemetaindex:= 0;
@@ -1262,7 +1264,8 @@ begin
     setlength(contextstack,stackdepth);
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
-    if co_llvm in o.compileoptions then begin
+   
+   if co_llvm in o.compileoptions then begin
      opcount:= 0;
     end
     else begin
@@ -1279,6 +1282,7 @@ begin
     result:= parsecompilerunit(rtlunitnames[rtl_system],
                                           info.rtlunits[rtl_system]);
     if result then begin
+ 
 //     po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= info.rtlunits[rtl_system];
@@ -1286,6 +1290,7 @@ begin
       for cu1:= succ(low(cu1)) to high(cu1) do begin
        result:= parsecompilerunit(compilerunitdefs[cu1].name,
                                              compilerunits[cu1].unitpo);
+                                       
        if not result then begin
         break;
        end;
@@ -1297,20 +1302,28 @@ begin
       end;
       }
      end;
-     if result and not (co_nortlunits in o.compileoptions)then begin
+   
+      if result and not (co_nortlunits in o.compileoptions)then begin
       rtlunit1:= rtl_system;
       inc(rtlunit1);
       for rtlunit1:= rtlunit1 to high(rtlunits) do begin
        result:= parsecompilerunit(rtlunitnames[rtlunit1],unit2);
-       if not result then begin
+        if not result then begin
         break;
        end;
        msearrayutils.additem(pointerarty(unit1^.interfaceuses),pointer(unit2));
       end;
      end;
+     
+     {$ifdef mse_gui} 
+      if not result then mainfo.grid.appendrow(['*** Path of some units not found ***']) ; 
+     {$endif}  
      if result then begin
       include(unit1^.state,us_invalidunitfile); //force compilation of main unit
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
+     {$ifdef mse_gui} 
+      if not result then mainfo.grid.appendrow(['*** Error in code please check your source  ***']) ; 
+     {$endif}
       if result then begin
        if (o.compileoptions * [co_llvm,co_buildexe] = 
                                               [co_llvm,co_buildexe]) then begin
