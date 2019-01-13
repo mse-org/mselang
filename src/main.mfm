@@ -669,13 +669,13 @@ object mainfo: tmainfo
     bounds_cy = 98
     object tbutton6: tbutton
       color = -1610612731
-      hint = 'Run the mli Interpretable (if created)'
-      bounds_x = 352
-      bounds_y = 119
-      bounds_cx = 37
-      bounds_cy = 20
+      hint = 'Interprete the mli file (if created)'
+      bounds_x = 346
+      bounds_y = 76
+      bounds_cx = 60
+      bounds_cy = 18
       options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-      state = [as_invisible, as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
       caption = 'Run mli'
       onexecute = runmli
     end
@@ -683,31 +683,31 @@ object mainfo: tmainfo
       color = -1610612731
       taborder = 1
       hint = 'Run the executable (if created)'
-      bounds_x = 354
-      bounds_y = 72
-      bounds_cx = 42
-      bounds_cy = 20
+      bounds_x = 346
+      bounds_y = 56
+      bounds_cx = 60
+      bounds_cy = 18
       options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
       state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = '&Run'
+      caption = '&Run exe'
       onexecute = runexe
     end
     object tbutton5: tbutton
       taborder = 2
-      bounds_x = 354
-      bounds_y = 41
-      bounds_cx = 42
-      bounds_cy = 20
+      bounds_x = 346
+      bounds_y = 33
+      bounds_cx = 60
+      bounds_cy = 18
       state = [as_localcaption, as_localonexecute]
       caption = '&Save'
       onexecute = saveexe
     end
     object tbutton2: tbutton
       taborder = 3
-      bounds_x = 354
-      bounds_y = 17
-      bounds_cx = 42
-      bounds_cy = 20
+      bounds_x = 346
+      bounds_y = 12
+      bounds_cx = 60
+      bounds_cy = 18
       state = [as_localcaption, as_localonexecute]
       caption = '&Load'
       onexecute = loadexe
@@ -724,7 +724,7 @@ object mainfo: tmainfo
       )
       taborder = 4
       hint = 'File extension of the output executable'
-      bounds_x = 300
+      bounds_x = 292
       bounds_y = 56
       bounds_cx = 48
       bounds_cy = 35
@@ -745,7 +745,7 @@ object mainfo: tmainfo
       hint = 'File name of the output executable. if empty Pascal filename will be used.'
       bounds_x = 12
       bounds_y = 56
-      bounds_cx = 286
+      bounds_cx = 278
       bounds_cy = 35
       statfile = statf
       reffontheight = 14
@@ -768,8 +768,8 @@ object mainfo: tmainfo
       )
       taborder = 6
       bounds_x = 12
-      bounds_y = 16
-      bounds_cx = 333
+      bounds_y = 14
+      bounds_cx = 325
       bounds_cy = 37
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]

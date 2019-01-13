@@ -498,8 +498,10 @@ begin
        
      if runend.value then 
      begin
-       {$ifdef unix} stackops.run(1024); 
+       {$ifdef unix}
         grid.appendrow;
+        if stackops.run(1024) = 0 then 
+        grid.appendrow(['*** Interpreted without errors ***']) else
         grid.appendrow(['*** Interpreted without errors ***']) ;
        {$else} 
         if fileexists((mlipath)) then begin
@@ -642,9 +644,12 @@ var
 filename2, str1 : string;
 i2 : integer;
 begin
-         if edexena.text <> '' then
+      if edexena.text <> '' then
            filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
-           filename2:= removefileext(filena.value)+ edexeex.text ;
+           filename2:= tosysfilepath(removefileext(filena.value)+ edexeex.text) ;
+
+       if fileexists(filename2) then begin         
+           
          grid.clear;
          grid.appendrow(['*** Running '+filename(filename2) + ' ***']);
          grid.appendrow;
@@ -655,6 +660,8 @@ begin
         
         if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
+       end else grid.appendrow(['*** File ' + filename2 + ' does not exist! ***']) ; 
+        
 end;
 
 procedure tmainfo.changellvm(const sender: TObject);
@@ -673,15 +680,19 @@ begin
  {$else}
   mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter/mli';
  {$endif} 
- filename1:= replacefileext(filena.value,'mli');
+ filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
  
+if fileexists(filename1) then begin
  grid.clear;
  grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+ grid.appendrow;
+ grid.appendrow;
  i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
  grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          
  if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
  grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+end else  grid.appendrow(['*** File ' + filename1 + ' does not exist! ***']) ;
 end;
 
 procedure tmainfo.onchangelink(const sender: TObject; var avalue: Boolean;
