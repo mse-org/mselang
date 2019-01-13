@@ -221,12 +221,13 @@ begin
  if nortlunitsed.value then begin
   include(parserparams.compileoptions,co_nortlunits);
  end;
- dirbefore:= setcurrentdirmse(filedir(filena.value));
+ dirbefore:= tosysfilepath((setcurrentdirmse(filedir(filena.value))));
  grid.clear;
  try
-
+  
+  grid.appendrow([tosysfilepath(filena.value)]);
   include(parserparams.compileoptions,co_nodeinit);
-  bo1:= parser.parse(ansistring(ed.gettext),filena.value,parserparams);
+  bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
    
   if not bo1 then grid.appendrow(['*** Parser error ***']) else
   try
@@ -235,7 +236,7 @@ begin
    if bo1 then begin
     if llvm.value then begin
      try
-      filename1:= replacefileext(filena.value,'bc');
+      filename1:= tosysfilepath(replacefileext(filena.value,'bc'));
       if not (co_modular in parserparams.compileoptions) then begin
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
@@ -549,10 +550,10 @@ end;
 
 procedure tmainfo.loadexe(const sender: TObject);
 begin
-if fileexists(filena.value) then
+if fileexists(tosysfilepath(filena.value)) then
 begin
  try
-  ed.loadfromfile(filena.value);
+  ed.loadfromfile(tosysfilepath(filena.value));
  except
   application.handleexception;
   application.terminated:= false;

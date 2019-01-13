@@ -1,8 +1,8 @@
 object mainfo: tmainfo
-  bounds_x = 253
-  bounds_y = 48
+  bounds_x = 317
+  bounds_y = 105
   bounds_cx = 877
-  bounds_cy = 644
+  bounds_cy = 521
   anchors = [an_top, an_right]
   container.frame.localprops = []
   container.frame.localprops1 = []
@@ -10,7 +10,7 @@ object mainfo: tmainfo
     0
     0
     877
-    644
+    521
   )
   options = [fo_main, fo_terminateonclose, fo_autoreadstat, fo_delayedreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = statf
@@ -25,7 +25,7 @@ object mainfo: tmainfo
     bounds_x = 16
     bounds_y = 454
     bounds_cx = 844
-    bounds_cy = 182
+    bounds_cy = 59
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
     font.xscale = 1
@@ -77,9 +77,9 @@ object mainfo: tmainfo
         dataclass = tgridrichstringdatalist
       end>
     datarowlinewidth = 0
-    datarowheight = 14
+    datarowheight = 15
     statfile = statf
-    reffontheight = 14
+    reffontheight = 13
     object ed: tsyntaxedit
       optionsskin = [osk_framebuttononly]
       taborder = 1
@@ -87,7 +87,7 @@ object mainfo: tmainfo
       bounds_x = 0
       bounds_y = 0
       bounds_cx = 1656
-      bounds_cy = 14
+      bounds_cy = 15
       font.height = 12
       font.name = 'stf_fixed'
       font.xscale = 1
@@ -96,7 +96,7 @@ object mainfo: tmainfo
       options = [seo_defaultsyntax]
       oneditnotifcation = editnotiexe
       syntaxpainter = tsyntaxpainter1
-      reffontheight = 14
+      reffontheight = 15
     end
   end
   object llvmbindir: tfilenameedit
@@ -111,20 +111,20 @@ object mainfo: tmainfo
     frame.button.imagenr = 17
     frame.outerframe = (
       0
-      17
+      16
       0
       0
     )
     taborder = 3
     hint = 'Directory of llc'
     bounds_x = 128
-    bounds_y = 103
+    bounds_y = 104
     bounds_cx = 341
-    bounds_cy = 37
+    bounds_cy = 35
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
     value = '/usr/bin/'
-    controller.filename = '/usr/bin/'
+    controller.filename = '\usr\bin\'
     controller.lastdir = '/usr/bin/'
     controller.filterlist.data = (
       (
@@ -133,7 +133,7 @@ object mainfo: tmainfo
       )
     )
     controller.options = [fdo_sysfilename, fdo_directory, fdo_savelastdir]
-    reffontheight = 14
+    reffontheight = 13
   end
   object tgroupbox1: tgroupbox
     frame.caption = 'MSElang parameters'
@@ -157,14 +157,14 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        63
-        2
+        50
+        1
       )
       hint = 'debug name info'
       bounds_x = 91
       bounds_y = 52
-      bounds_cx = 76
-      bounds_cy = 16
+      bounds_cx = 63
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
       onsetvalue = nameset
@@ -176,15 +176,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        33
-        2
+        25
+        1
       )
       taborder = 1
       hint = 'Build'
       bounds_x = 19
       bounds_y = 25
-      bounds_cx = 46
-      bounds_cy = 16
+      bounds_cx = 38
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
       value = True
@@ -196,14 +196,14 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        61
-        2
+        48
+        1
       )
       taborder = 2
       bounds_x = 187
       bounds_y = 33
-      bounds_cx = 74
-      bounds_cy = 16
+      bounds_cx = 61
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
     end
@@ -214,14 +214,14 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        76
-        2
+        58
+        1
       )
       taborder = 3
       bounds_x = 187
       bounds_y = 17
-      bounds_cx = 89
-      bounds_cy = 16
+      bounds_cx = 71
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
     end
@@ -232,15 +232,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        40
-        2
+        33
+        1
       )
       taborder = 4
       hint = 'Create object files'
       bounds_x = 91
       bounds_y = 33
-      bounds_cx = 53
-      bounds_cy = 16
+      bounds_cx = 46
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
     end
@@ -251,15 +251,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        53
-        2
+        41
+        1
       )
       taborder = 5
       hint = 'Modular compilation'
       bounds_x = 91
       bounds_y = 17
-      bounds_cx = 66
-      bounds_cy = 16
+      bounds_cx = 54
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
     end
@@ -270,15 +270,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        50
-        2
+        40
+        1
       )
       taborder = 6
       hint = 'debug line info'
       bounds_x = 179
       bounds_y = 52
-      bounds_cx = 63
-      bounds_cy = 16
+      bounds_cx = 53
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
       onsetvalue = lineinfoset
@@ -290,15 +290,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        57
-        2
+        46
+        1
       )
       taborder = 7
       hint = 'debug prog info'
       bounds_x = 11
       bounds_y = 52
-      bounds_cx = 70
-      bounds_cy = 16
+      bounds_cx = 59
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
       onsetvalue = proginfoset
@@ -323,14 +323,14 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        96
-        2
+        76
+        1
       )
       taborder = 9
       bounds_x = 283
       bounds_y = 48
-      bounds_cx = 109
-      bounds_cy = 16
+      bounds_cx = 89
+      bounds_cy = 15
       anchors = [an_top, an_right]
       statfile = statf
     end
@@ -355,15 +355,15 @@ object mainfo: tmainfo
     frame.outerframe = (
       0
       1
-      70
-      2
+      56
+      1
     )
     taborder = 6
     hint = 'Run the application at end'
     bounds_x = 22
     bounds_y = 172
-    bounds_cx = 83
-    bounds_cy = 16
+    bounds_cx = 69
+    bounds_cy = 15
     statfile = statf
   end
   object tgroupbox2: tgroupbox
@@ -398,13 +398,14 @@ object mainfo: tmainfo
       bounds_x = 78
       bounds_y = 98
       bounds_cx = 286
+      bounds_cy = 19
       anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
         item
         end>
-      reffontheight = 14
+      reffontheight = 13
     end
     object begcc: tbooleanedit
       Tag = 2
@@ -414,15 +415,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        25
-        2
+        19
+        1
       )
       taborder = 1
       hint = 'Execute gcc to link assembler code from llc'
       bounds_x = 10
       bounds_y = 98
-      bounds_cx = 38
-      bounds_cy = 16
+      bounds_cx = 32
+      bounds_cy = 15
       statfile = statf
       onsetvalue = onchangelink
     end
@@ -444,13 +445,14 @@ object mainfo: tmainfo
       bounds_x = 78
       bounds_y = 76
       bounds_cx = 286
+      bounds_cy = 19
       anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
         item
         end>
-      reffontheight = 14
+      reffontheight = 13
     end
     object bellc: tbooleanedit
       frame.caption = 'llvm-llc'
@@ -459,15 +461,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        45
-        2
+        34
+        1
       )
       taborder = 3
       hint = 'Execute llc to produce assembler code'
       bounds_x = 10
       bounds_y = 76
-      bounds_cx = 58
-      bounds_cy = 16
+      bounds_cx = 47
+      bounds_cy = 15
       statfile = statf
     end
     object linked: tmemodialoghistoryedit
@@ -488,13 +490,14 @@ object mainfo: tmainfo
       bounds_x = 78
       bounds_y = 48
       bounds_cx = 286
+      bounds_cy = 19
       anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
         item
         end>
-      reffontheight = 14
+      reffontheight = 13
     end
     object belink: tbooleanedit
       frame.caption = 'llvm-link'
@@ -503,15 +506,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        53
-        2
+        40
+        1
       )
       taborder = 5
       hint = 'Execute llvm-link'
       bounds_x = 10
       bounds_y = 48
-      bounds_cx = 66
-      bounds_cy = 16
+      bounds_cx = 53
+      bounds_cy = 15
       statfile = statf
       onsetvalue = onchangelink
       value = True
@@ -534,13 +537,14 @@ object mainfo: tmainfo
       bounds_x = 78
       bounds_y = 19
       bounds_cx = 286
+      bounds_cy = 19
       anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
         item
         end>
-      reffontheight = 14
+      reffontheight = 13
     end
     object beclang: tbooleanedit
       Tag = 1
@@ -550,15 +554,15 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        36
-        2
+        28
+        1
       )
       taborder = 7
       hint = 'Execute Clang linking'
       bounds_x = 10
       bounds_y = 19
-      bounds_cx = 49
-      bounds_cy = 16
+      bounds_cx = 41
+      bounds_cy = 15
       statfile = statf
       onsetvalue = onchangelink
     end
@@ -585,14 +589,14 @@ object mainfo: tmainfo
       frame.outerframe = (
         0
         1
-        52
-        2
+        41
+        1
       )
       hint = 'Execute opt'
       bounds_x = 16
       bounds_y = 26
-      bounds_cx = 65
-      bounds_cy = 16
+      bounds_cx = 54
+      bounds_cy = 15
       statfile = statf
       value = True
     end
@@ -614,13 +618,14 @@ object mainfo: tmainfo
       bounds_x = 93
       bounds_y = 26
       bounds_cx = 250
+      bounds_cy = 19
       anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
         item
         end>
-      reffontheight = 14
+      reffontheight = 13
     end
   end
   object tbutton1: tbutton
@@ -642,15 +647,15 @@ object mainfo: tmainfo
     frame.outerframe = (
       0
       1
-      35
-      2
+      27
+      1
     )
     taborder = 9
     hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
     bounds_x = 38
     bounds_y = 110
-    bounds_cx = 48
-    bounds_cy = 16
+    bounds_cx = 40
+    bounds_cy = 15
     statfile = statf
     onchange = changellvm
     value = True
@@ -721,18 +726,18 @@ object mainfo: tmainfo
       frame.localprops1 = []
       frame.outerframe = (
         0
-        17
-        4
+        16
+        0
         0
       )
       taborder = 4
       hint = 'File extension of the output executable'
       bounds_x = 300
-      bounds_y = 56
-      bounds_cx = 48
-      bounds_cy = 35
+      bounds_y = 57
+      bounds_cx = 44
+      bounds_cy = 33
       statfile = statf
-      reffontheight = 14
+      reffontheight = 13
     end
     object edexena: tedit
       frame.caption = 'Output executable name'
@@ -740,18 +745,18 @@ object mainfo: tmainfo
       frame.localprops1 = []
       frame.outerframe = (
         0
-        17
+        16
         0
         0
       )
       taborder = 5
       hint = 'File name of the output executable. if empty Pascal filename will be used.'
       bounds_x = 12
-      bounds_y = 56
+      bounds_y = 57
       bounds_cx = 286
-      bounds_cy = 35
+      bounds_cy = 33
       statfile = statf
-      reffontheight = 14
+      reffontheight = 13
     end
     object filena: tfilenameedit
       frame.caption = 'Input Pascal filename'
@@ -765,15 +770,15 @@ object mainfo: tmainfo
       frame.button.imagenr = 17
       frame.outerframe = (
         0
-        17
+        16
         0
         0
       )
       taborder = 6
       bounds_x = 12
-      bounds_y = 16
+      bounds_y = 17
       bounds_cx = 333
-      bounds_cy = 37
+      bounds_cy = 35
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
       controller.lastdir = '/'
@@ -795,8 +800,8 @@ object mainfo: tmainfo
           '*.*'
         )
       )
-      controller.options = [fdo_chdir, fdo_savelastdir]
-      reffontheight = 14
+      controller.options = [fdo_sysfilename, fdo_chdir, fdo_savelastdir]
+      reffontheight = 13
     end
   end
   object coldi: tintegerdisp
@@ -807,8 +812,8 @@ object mainfo: tmainfo
     bounds_x = 17
     bounds_y = 196
     bounds_cx = 40
-    bounds_cy = 18
-    reffontheight = 14
+    bounds_cy = 17
+    reffontheight = 13
   end
   object statf: tstatfile
     filename = 'status.sta'
