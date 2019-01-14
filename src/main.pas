@@ -62,6 +62,7 @@ type
    tgroupbox2: tgroupbox;
    gcced: tmemodialoghistoryedit;
    begcc: tbooleanedit;
+   extcomp: tbooleanedit;
    llced: tmemodialoghistoryedit;
    bellc: tbooleanedit;
    linked: tmemodialoghistoryedit;
@@ -114,7 +115,6 @@ type
  end;
 var
  mainfo: tmainfo;
-
 //procedure test(); virtual;
   
 implementation
@@ -131,10 +131,10 @@ var
  targetstream: tllvmbcwriter;
  bo1: boolean;
  parserparams: parserparamsty;
- str1: string;
+ str1 : string;
  int1: integer;
  filename1,filename2,filename3,optname: filenamety;
- dirbefore,mlipath: msestring;
+ dirbefore,mlipath, mlcpath, mbcpath, str2: msestring;
  ar1: filenamearty;
  i1,i2, x, er: int32;
  dt1: tdatetime;
@@ -146,8 +146,12 @@ begin
  er := 0;
 {$ifdef windows}
  mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter\mli.exe';
+ mlcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler\mlc.exe';
+ mbcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler\mbc.exe';
 {$else}
  mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter/mli';
+ mlcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler/mlc';
+ mbcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler/mbc';
 {$endif}
  dt1:= now;
  errstream:= ttextstream.create;
@@ -226,14 +230,64 @@ begin
  grid.clear;
  try
   
-  grid.appendrow([tosysfilepath(filena.value)]);
   include(parserparams.compileoptions,co_nodeinit);
+  
+  // grid.appendrow([tosysfilepath(filena.value)]);
+  if (extcomp.value = false) or (llvm.value) then
+  begin
   bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
+  end else
+  begin
+       
+  if fileexists(mlcpath) then begin
+  str2 := '';
+   
+  ed.savetofile(filena.value);
+  
+   if assigned(compparams) then
+  for x := 0 to length(compparams) -1
+  do str2 := str2 + ' ' + compparams[x];
+  
+  if lineinfoed.value then str2 := str2 + ' -l';
+  if builded.value then str2 := str2 + ' -B';
+  
+  str1 := '';
+ 
+    grid.appendrow;
+    i2:= getprocessoutput((mlcpath) +' '+ str2 +' '+ tosysfilepath(filena.value),'',str1);
+    grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+  
+     x := 0;
+     er := 0; 
+     while (x < grid.rowcount) do begin
+      if (system.pos('Some process failed',grid[0][x]) >0) or (system.pos('Error',grid[0][x]) > 0)
+       or (system.pos('Fatal',grid[0][x]) > 0) then
+      begin
+       er := 1;
+       grid[0][x] := '*** ' + grid[0][x] + ' ***';
+      end;   
+      
+      {
+      if (system.pos('Error',grid[0][x]) > 0) or (system.pos('Fatal',grid[0][x]) > 0) then
+       grid.rowcolorstate[0]:= cl_ltred;
+      if (system.pos('Warning',grid[0][x]) > 0) then
+       grid.rowcolorstate[x]:= cl_ltyellow;
+      }
+      inc(x);
+    
+      end;
+      end else 
+      begin
+         grid.appendrow(['*** mlc compiler '+ mlcpath+ ' does not exists ***']) ;
+       end;
+     
+   if er = 0 then bo1 := true else bo1 := false;
+   end;
    
   if not bo1 then grid.appendrow(['*** Parser error ***']) else
   try
    errstream.position:= 0;
-   grid[0].datalist.loadfromstream(errstream);
+  // grid[0].datalist.loadfromstream(errstream);
    if bo1 then begin
     if llvm.value then begin
      try
@@ -396,8 +450,7 @@ begin
          dt1 := now-dt1;
          DecodeTime(dt1, ho, mi, se, ms);
          
-         grid.appendrow;
-         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
+          grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
           [ho, mi, se, ms])+ ' ***']) ;
          
          if er = 0 then
@@ -460,7 +513,6 @@ begin
          grid.appendrow;
          grid.appendrow;
          
-       
         i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
@@ -473,6 +525,9 @@ begin
      end;
     end
     else begin
+    
+     if (extcomp.value = false) then
+  begin
      filename1:= replacefileext(filena.value,'mli');
     
       if checksysok(tmsefilestream.trycreate(mlistream,tosysfilepath(filename1),fm_create),
@@ -488,36 +543,58 @@ begin
       filename(filena.value)+' ***']) else grid.appendrow(['*** Compilation process fail ***']) 
             
       end;
-      
+    end;   
+
+       if extcomp.value = false then 
+       begin
         dt1 := now-dt1;
-         DecodeTime(dt1, ho, mi, se, ms);
-         
-         grid.appendrow;
-         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
-          [ho, mi, se, ms])+ ' ***']) ;  
-       
+        DecodeTime(dt1, ho, mi, se, ms);
+        grid.appendrow;
+        grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d', [ho, mi, se, ms])+ ' ***']) ;  
+       end;
+     
      if runend.value then 
      begin
        {$ifdef unix}
+       if (extcomp.value = false) and (llvm.value = false) then
+        begin
         grid.appendrow;
-        if stackops.run(1024) = 0 then 
-        grid.appendrow(['*** Interpreted without errors ***']) else
-        grid.appendrow(['*** Interpreted without errors ***']) ;
+        i2 := stackops.run(1024);
+        if i2 = 0 then 
+        grid.appendrow(['*** Interpreted without errors ***']) 
+        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        end;
        {$else} 
-        if fileexists((mlipath)) then begin
+         if (extcomp.value = false) and (llvm.value = false) then
+        begin
+        filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
+        if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
                
         grid.appendrow;
         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
         grid.appendrow;
         grid.appendrow;
-        i2:= getprocessoutput((mlipath) +' '+ (filename1),'',str1);
-       // sleep(100);
-        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        // if i2 = 0 then
-          grid.appendrow(['*** Interpreted without errors ***']) ;
-        // else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        application.processmessages;
+       
+        x:= 0;
         
-        end else grid.appendrow(['*** Interpreter '+ (mlipath) + ' does not exist ***']);
+      //  while (i2 <> 0) and (x < 4) do
+      //  begin
+        i2:= getprocessoutput((mlipath) +' '+ (filename1),'',str1);
+      //  inc(x);
+       // end;
+              
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        if i2 = 0 then
+          grid.appendrow(['*** Interpreted without errors ***']) 
+        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        
+        end else
+        begin
+          if not (fileexists((mlipath))) then
+            grid.appendrow(['*** Interpreter '+ (mlipath) + ' does not exist ***']);
+         end;
+         
         {$endif} 
        
      end;
@@ -668,6 +745,7 @@ procedure tmainfo.changellvm(const sender: TObject);
 begin
 tgroupbox2.enabled := llvm.value;
 tgroupbox3.enabled := llvm.value;
+extcomp.enabled := not llvm.value;
 end;
 
 procedure tmainfo.runmli(const sender: TObject);
@@ -682,7 +760,7 @@ begin
  {$endif} 
  filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
  
-if fileexists(filename1) then begin
+if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  grid.clear;
  grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
  grid.appendrow;

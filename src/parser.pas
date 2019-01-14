@@ -1316,8 +1316,12 @@ begin
      end;
      
      {$ifdef mse_gui} 
-      if not result then mainfo.grid.appendrow(['*** Path of some units not found ***']) ; 
-     {$endif}  
+      if not result then 
+      begin
+      mainfo.grid.appendrow(['*** Path of some units not found ***']) ; 
+      end;
+     {$endif} 
+         
      if result then begin
       include(unit1^.state,us_invalidunitfile); //force compilation of main unit
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
