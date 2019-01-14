@@ -154,13 +154,15 @@ begin
  mbcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler/mbc';
 {$endif}
  dt1:= now;
+ grid.datacols[0].color := cl_white;
+ grid.clear;
+ grid.invalidate;
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
  resetinfo();
  initio(outstream,errstream);
  system.finalize(parserparams);
  fillchar(parserparams,sizeof(parserparams),0);
- 
  initparams(parserparams);
  parserparams.buildoptions.llvmlinkcommand:= 
                                     tosysfilepath(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif});
@@ -235,6 +237,7 @@ begin
   // grid.appendrow([tosysfilepath(filena.value)]);
   if (extcomp.value = false) or (llvm.value) then
   begin
+  grid.datacols[0].color := cl_white;
   bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
   end else
   begin
@@ -266,16 +269,13 @@ begin
        er := 1;
        grid[0][x] := '*** ' + grid[0][x] + ' ***';
       end;   
-      
-      {
-      if (system.pos('Error',grid[0][x]) > 0) or (system.pos('Fatal',grid[0][x]) > 0) then
-       grid.rowcolorstate[0]:= cl_ltred;
-      if (system.pos('Warning',grid[0][x]) > 0) then
-       grid.rowcolorstate[x]:= cl_ltyellow;
-      }
+             
       inc(x);
     
       end;
+       if er = 0 then grid.datacols[0].color := $F0FFF0
+       else  grid.datacols[0].color := $FFDEDE;
+      
       end else 
       begin
          grid.appendrow(['*** mlc compiler '+ mlcpath+ ' does not exists ***']) ;
@@ -284,7 +284,10 @@ begin
    if er = 0 then bo1 := true else bo1 := false;
    end;
    
-  if not bo1 then grid.appendrow(['*** Parser error ***']) else
+  if not bo1 then
+  begin
+  grid.datacols[0].color := $FFDEDE;
+   grid.appendrow(['*** Parser error ***']); end else
   try
    errstream.position:= 0;
   // grid[0].datalist.loadfromstream(errstream);
@@ -321,8 +324,11 @@ begin
                          
           if  x = grid.rowcount  then         
          grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
-         else 
-          grid.appendrow(['*** '+optname+'.bc not created... ***']);
+         else begin
+          grid.datacols[0].color := $FFDEDE;
+          grid.appendrow(['*** Error: '+optname+'.bc not created... ***']);
+          er := 1;
+          end;
          end
         else begin
          i2:= 0;
@@ -340,8 +346,11 @@ begin
          writeln('***************** LLC ended ***********');
        {$endif}
        if i2 = 0 then  grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
-       +optname+'.bc ***']) else 
+       +optname+'.bc ***']) else begin
+        grid.datacols[0].color := $FFDEDE;
         grid.appendrow(['*** lcc failed ***']) ;
+        er := 1;
+        end;
         end;
         
           optname:= filenamebase(filename1);
@@ -365,7 +374,11 @@ begin
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
         filename(optname)+' ***']) else
+        begin
         grid.appendrow(['*** llvm-link failed ***']) ;
+        grid.datacols[0].color := $FFDEDE;
+        er := 1;
+        end;
         end;
         
         {$ifdef unix}
@@ -384,7 +397,7 @@ begin
       end;        
       // ended link   
       
-      // mselang
+      // clang
      if beclang.value then begin 
          if i2 = 0 then begin
        
@@ -404,7 +417,12 @@ begin
                  
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
-        filename(optname)+' ***']) else  grid.appendrow(['*** Clang-link failed ***']) ; ;
+        filename(optname)+' ***']) else
+        begin
+          er := 1;
+          grid.appendrow(['*** Clang-link failed ***']) ;
+          grid.datacols[0].color := $FFDEDE;
+        end;
         end;
        end; 
      
@@ -429,8 +447,11 @@ begin
                    
           if er = 0
           then  grid.appendrow(['*** '+filename(filename2)+' created by gcc from '+filename(filename1)+'.s ***'])
-          else  grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
-    
+          else
+          begin
+           grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
+           grid.datacols[0].color := $FFDEDE;
+          end;
         {$ifdef mse_debugparser}
           writeln('***************** gcc ended ***********');
         {$endif}
@@ -454,9 +475,14 @@ begin
           [ho, mi, se, ms])+ ' ***']) ;
          
          if er = 0 then
-          grid.appendrow(['*** All is OK. :) ***']) else
+         begin
+          grid.appendrow(['*** All is OK. :) ***']);
+          grid.datacols[0].color := $F0FFF0;
+           end else begin
           grid.appendrow(['*** Some process failed ***']);
-          
+          grid.datacols[0].color := $FFDEDE;
+          end;
+              
         end;
        end;
        
@@ -539,11 +565,15 @@ begin
        mlistream.destroy();
       end; 
       
-       if  (er = 0) then grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
-      filename(filena.value)+' ***']) else grid.appendrow(['*** Compilation process fail ***']) 
-            
+      grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
+      filename(filena.value)+' ***']);
+      grid.datacols[0].color := $F0FFF0     
+      end else
+      begin
+       grid.datacols[0].color := $FFDEDE;
+       grid.appendrow(['*** Compilation process fail ***']) ;
       end;
-    end;   
+       end;   
 
        if extcomp.value = false then 
        begin
