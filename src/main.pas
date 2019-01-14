@@ -574,8 +574,7 @@ begin
         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
         grid.appendrow;
         grid.appendrow;
-        application.processmessages;
-       
+      
         x:= 0;
         
       //  while (i2 <> 0) and (x < 4) do
@@ -801,6 +800,10 @@ begin
 if trim(llvmbindir.value) = '' then llvmbindir.value :=
  {$ifdef unix}'/usr/bin/';{$endif}
  {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
+
+ {$ifdef unix}
+  if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
+ {$endif}
 end;
 
 end.
