@@ -51,7 +51,7 @@ type
 
 var
  compmo: tcompmo;
- bcout : boolean = false;
+ // bcout : boolean = false;
 
 implementation
 
@@ -106,7 +106,8 @@ begin
 //   initparams(parserparams);
    try
     include(parserparams.compileoptions,co_nodeinit);
-   
+
+{   
    if bcout then
    begin
     include(parserparams.compileoptions,co_llvm);
@@ -114,7 +115,8 @@ begin
                                      mlaruntimecompileoptions) + 
                                 llvmcompileoptions + [co_buildexe];
    end;
-    sysenv.printmessage('Compiling ' + filename1 + ' ...');    
+ }
+  //  sysenv.printmessage('Compiling ' + filename1 + ' ...');    
    if parse(str1,filename1,parserparams) then begin
       sysenv.printmessage('mlc process: OK');
        if co_llvm in parserparams.compileoptions then begin

@@ -1,6 +1,6 @@
 object mainfo: tmainfo
-  bounds_x = 415
-  bounds_y = 225
+  bounds_x = 287
+  bounds_y = 135
   bounds_cx = 851
   bounds_cy = 540
   anchors = [an_top, an_right]
@@ -749,7 +749,7 @@ object mainfo: tmainfo
       taborder = 4
       hint = 'If enabled use external compiler mlc else use built-in mselang parser.'
       bounds_x = 214
-      bounds_y = 48
+      bounds_y = 32
       bounds_cx = 75
       bounds_cy = 16
       statfile = statf
@@ -768,7 +768,7 @@ object mainfo: tmainfo
       taborder = 5
       hint = 'Run the application at end'
       bounds_x = 214
-      bounds_y = 64
+      bounds_y = 48
       bounds_cx = 83
       bounds_cy = 16
       statfile = statf
@@ -787,7 +787,7 @@ object mainfo: tmainfo
       taborder = 6
       hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
       bounds_x = 214
-      bounds_y = 32
+      bounds_y = 16
       bounds_cx = 67
       bounds_cy = 16
       statfile = statf
@@ -833,7 +833,7 @@ object mainfo: tmainfo
     end
     object filena: tfilenameedit
       frame.levelo = -1
-      frame.caption = 'Input Pascal filename'
+      frame.caption = 'Input filename'
       frame.localprops = [frl_levelo]
       frame.localprops1 = []
       frame.template = tframecomp2
@@ -885,13 +885,13 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       taborder = 9
       hint = 'Interprete the mli file (if created)'
-      bounds_x = 257
+      bounds_x = 97
       bounds_y = 11
-      bounds_cx = 40
+      bounds_cx = 56
       bounds_cy = 18
       options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
       state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'Load'
+      caption = 'Reload'
       onexecute = loadexe
     end
     object btnsave: tbutton
@@ -901,7 +901,7 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       taborder = 10
       hint = 'Run the executable (if created)'
-      bounds_x = 209
+      bounds_x = 161
       bounds_y = 11
       bounds_cx = 40
       bounds_cy = 18
@@ -921,9 +921,9 @@ object mainfo: tmainfo
       taborder = 11
       hint = 'Parse and build all'
       bounds_x = 220
-      bounds_y = 81
+      bounds_y = 70
       bounds_cx = 66
-      bounds_cy = 20
+      bounds_cy = 28
       state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
       caption = 'Parse'
       imagenr = 27
