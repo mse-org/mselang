@@ -39,13 +39,11 @@ type
 
  tmainfo = class(tmainform)
    statf: tstatfile;
-   tbutton1: tbutton;
    grid: tstringgrid;
    tpostscriptprinter1: tpostscriptprinter;
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
    tsyntaxpainter1: tsyntaxpainter;
-   llvmbindir: tfilenameedit;
    tgroupbox1: tgroupbox;
    nameed: tbooleanedit;
    builded: tbooleanedit;
@@ -58,11 +56,9 @@ type
    tbutton3: tbutton;
    keeptmped: tbooleanedit;
    tsplitter1: tsplitter;
-   runend: tbooleanedit;
    tgroupbox2: tgroupbox;
    gcced: tmemodialoghistoryedit;
    begcc: tbooleanedit;
-   extcomp: tbooleanedit;
    llced: tmemodialoghistoryedit;
    bellc: tbooleanedit;
    linked: tmemodialoghistoryedit;
@@ -70,7 +66,6 @@ type
    tgroupbox3: tgroupbox;
    beopt: tbooleanedit;
    opted: tmemodialoghistoryedit;
-   llvm: tbooleanedit;
    tgroupbox4: tgroupbox;
    tbutton6: tbutton;
    tbutton4: tbutton;
@@ -81,7 +76,12 @@ type
    filena: tfilenameedit;
    clanged: tmemodialoghistoryedit;
    beclang: tbooleanedit;
-   coldi: tintegerdisp;
+   llvmbindir: tfilenameedit;
+   extcomp: tbooleanedit;
+   runend: tbooleanedit;
+   tbutton1: tbutton;
+   llvm: tbooleanedit;
+   coldi: tstringdisp;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -590,12 +590,12 @@ begin
         begin
         grid.appendrow;
         i2 := stackops.run(1024);
-        if i2 = 0 then 
+        if (i2 = 0) or  (i2 = 217) then 
         grid.appendrow(['*** Interpreted without errors ***']) 
-        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***'])
         end;
        {$else} 
-         if (extcomp.value = false) and (llvm.value = false) then
+         if (llvm.value = false) then
         begin
         filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
         if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
@@ -614,7 +614,7 @@ begin
        // end;
               
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        if i2 = 0 then
+         if (i2 = 0) or  (i2 = 217) then 
           grid.appendrow(['*** Interpreted without errors ***']) 
         else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
         
@@ -623,7 +623,7 @@ begin
           if not (fileexists((mlipath))) then
             grid.appendrow(['*** Interpreter '+ (mlipath) + ' does not exist ***']);
          end;
-         
+         end;
         {$endif} 
        
      end;
@@ -649,7 +649,9 @@ end;
 procedure tmainfo.editnotiexe(const sender: TObject;
                var info: editnotificationinfoty);
 begin
- coldi.value:= ed.col+1;
+if (ed.col > 0) and (ed.col < 3000) and (ed.row > 0) and (ed.row < 3000)
+then
+ coldi.text:= 'Col: ' + inttostr(ed.col+1) + '  Row: ' + inttostr(ed.row) ;
 end;
 
 procedure tmainfo.saveexe(const sender: TObject);
@@ -750,6 +752,7 @@ var
 filename2, str1 : string;
 i2 : integer;
 begin
+grid.datacols[0].color := cl_white; 
       if edexena.text <> '' then
            filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
            filename2:= tosysfilepath(removefileext(filena.value)+ edexeex.text) ;
@@ -764,7 +767,7 @@ begin
          i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
-        if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
+         if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Executable ended without errors ***']) else
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
        end else grid.appendrow(['*** File ' + filename2 + ' does not exist! ***']) ; 
         
@@ -788,7 +791,7 @@ begin
   mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter/mli';
  {$endif} 
  filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
- 
+grid.datacols[0].color := cl_white; 
 if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  grid.clear;
  grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
@@ -797,7 +800,7 @@ if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
  grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          
- if i2 = 0 then grid.appendrow(['*** Interpreted without errors ***']) else
+ if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Interpreted without errors ***']) else
  grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
 end else  grid.appendrow(['*** File ' + filename1 + ' does not exist! ***']) ;
 end;
