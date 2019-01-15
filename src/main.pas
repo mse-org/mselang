@@ -33,6 +33,10 @@ const
  '/usr/bin/';
 // llvmbindir = 
 //      '/home/mse/packs/standard/git/llvm/build_debug_3_7/Debug+Asserts/bin/';
+
+  colorer = $FFF0F0;
+  colorok = $E6FFE6;
+
 type
  it = interface(ievent)
  end;
@@ -269,14 +273,15 @@ begin
        or (system.pos('Fatal',grid[0][x]) > 0) then
       begin
        er := 1;
+       grid.rowcolorstate[x]:= 0 ;
        grid[0][x] := '*** ' + grid[0][x] + ' ***';
       end;   
              
       inc(x);
     
       end;
-       if er = 0 then grid.datacols[0].color := $F0FFF0
-       else  grid.datacols[0].color := $FFDEDE;
+       if er = 0 then grid.datacols[0].color :=  colorok
+       else  grid.datacols[0].color :=  colorer;
       
       end else 
       begin
@@ -288,7 +293,7 @@ begin
    
   if not bo1 then
   begin
-  grid.datacols[0].color := $FFDEDE;
+  grid.datacols[0].color := colorer;
    grid.appendrow(['*** Parser error ***']); end else
   try
    errstream.position:= 0;
@@ -327,7 +332,7 @@ begin
           if  x = grid.rowcount  then         
          grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
          else begin
-          grid.datacols[0].color := $FFDEDE;
+          grid.datacols[0].color :=  colorer;
           grid.appendrow(['*** Error: '+optname+'.bc not created... ***']);
           er := 1;
           end;
@@ -349,7 +354,7 @@ begin
        {$endif}
        if i2 = 0 then  grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
        +optname+'.bc ***']) else begin
-        grid.datacols[0].color := $FFDEDE;
+        grid.datacols[0].color := colorer;
         grid.appendrow(['*** lcc failed ***']) ;
         er := 1;
         end;
@@ -378,7 +383,7 @@ begin
         filename(optname)+' ***']) else
         begin
         grid.appendrow(['*** llvm-link failed ***']) ;
-        grid.datacols[0].color := $FFDEDE;
+        grid.datacols[0].color := colorer;
         er := 1;
         end;
         end;
@@ -423,7 +428,7 @@ begin
         begin
           er := 1;
           grid.appendrow(['*** Clang-link failed ***']) ;
-          grid.datacols[0].color := $FFDEDE;
+          grid.datacols[0].color := colorer;
         end;
         end;
        end; 
@@ -452,7 +457,7 @@ begin
           else
           begin
            grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
-           grid.datacols[0].color := $FFDEDE;
+           grid.datacols[0].color := colorer;
           end;
         {$ifdef mse_debugparser}
           writeln('***************** gcc ended ***********');
@@ -479,10 +484,10 @@ begin
          if er = 0 then
          begin
           grid.appendrow(['*** All is OK. :) ***']);
-          grid.datacols[0].color := $F0FFF0;
+          grid.datacols[0].color := colorok;
            end else begin
           grid.appendrow(['*** Some process failed ***']);
-          grid.datacols[0].color := $FFDEDE;
+          grid.datacols[0].color := colorer;
           end;
               
         end;
@@ -569,10 +574,10 @@ begin
       
       grid.appendrow(['*** '+filename(filename1)+ ' created by MSElang from '+ 
       filename(filena.value)+' ***']);
-      grid.datacols[0].color := $F0FFF0     
+      grid.datacols[0].color := colorok     
       end else
       begin
-       grid.datacols[0].color := $FFDEDE;
+       grid.datacols[0].color := colorer;
        grid.appendrow(['*** Compilation process fail ***']) ;
       end;
        end;   

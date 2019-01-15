@@ -49,6 +49,11 @@ object mainfo: tmainfo
         numstart = 1
         numstep = 1
       end>
+    rowcolors.count = 2
+    rowcolors.items = (
+      16744576
+      -1610612717
+    )
     datarowheight = 16
     reffontheight = 14
   end
@@ -362,7 +367,7 @@ object mainfo: tmainfo
       frame.frameimage_bottom = -4
       frame.captiontextflags = [tf_ycentered]
       frame.captionpos = cp_left
-      frame.localprops = [frl_levelo]
+      frame.localprops = [frl_levelo, frl_frameimagelist]
       frame.localprops1 = []
       frame.buttons.count = 2
       frame.buttons.items = <      
@@ -417,7 +422,7 @@ object mainfo: tmainfo
       frame.frameimage_bottom = -4
       frame.captiontextflags = [tf_ycentered]
       frame.captionpos = cp_left
-      frame.localprops = [frl_levelo]
+      frame.localprops = [frl_levelo, frl_frameimagelist]
       frame.localprops1 = []
       frame.buttons.count = 2
       frame.buttons.items = <      
@@ -471,7 +476,7 @@ object mainfo: tmainfo
       frame.frameimage_bottom = -4
       frame.captiontextflags = [tf_ycentered]
       frame.captionpos = cp_left
-      frame.localprops = [frl_levelo]
+      frame.localprops = [frl_levelo, frl_frameimagelist]
       frame.localprops1 = []
       frame.buttons.count = 2
       frame.buttons.items = <      
@@ -526,7 +531,7 @@ object mainfo: tmainfo
       frame.frameimage_bottom = -4
       frame.captiontextflags = [tf_ycentered]
       frame.captionpos = cp_left
-      frame.localprops = [frl_levelo]
+      frame.localprops = [frl_levelo, frl_frameimagelist]
       frame.localprops1 = []
       frame.buttons.count = 2
       frame.buttons.items = <      
@@ -619,7 +624,7 @@ object mainfo: tmainfo
       frame.frameimage_bottom = -4
       frame.captiontextflags = [tf_ycentered]
       frame.captionpos = cp_left
-      frame.localprops = [frl_levelo]
+      frame.localprops = [frl_levelo, frl_frameimagelist]
       frame.localprops1 = []
       frame.buttons.count = 2
       frame.buttons.items = <      
