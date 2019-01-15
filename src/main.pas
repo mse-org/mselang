@@ -7,7 +7,7 @@
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    MERCHANTABIL5ITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
@@ -649,9 +649,9 @@ end;
 procedure tmainfo.editnotiexe(const sender: TObject;
                var info: editnotificationinfoty);
 begin
-if (ed.col > 0) and (ed.col < 3000) and (ed.row > 0) and (ed.row < 3000)
+if (ed.col > -1) and (ed.col < 3000) and (ed.row > -1) and (ed.row < 3000)
 then
- coldi.text:= 'Col: ' + inttostr(ed.col+1) + '  Row: ' + inttostr(ed.row) ;
+ coldi.text:= 'Col: ' + inttostr(ed.col+1) + '  Row: ' + inttostr(ed.row+1) ;
 end;
 
 procedure tmainfo.saveexe(const sender: TObject);
@@ -665,6 +665,7 @@ if fileexists(tosysfilepath(filena.value)) then
 begin
  try
   ed.loadfromfile(tosysfilepath(filena.value));
+  caption := 'MSElang ' + tosysfilepath(filena.value);
  except
   application.handleexception;
   application.terminated:= false;
@@ -837,6 +838,8 @@ if trim(llvmbindir.value) = '' then llvmbindir.value :=
  {$ifdef unix}
   if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
  {$endif}
+ 
+ caption := 'MSElang ' + tosysfilepath(filena.value);
 end;
 
 end.

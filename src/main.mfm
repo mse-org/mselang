@@ -1,7 +1,7 @@
 object mainfo: tmainfo
   bounds_x = 317
   bounds_y = 105
-  bounds_cx = 873
+  bounds_cx = 851
   bounds_cy = 540
   anchors = [an_top, an_right]
   container.frame.localprops = []
@@ -9,7 +9,7 @@ object mainfo: tmainfo
   container.bounds = (
     0
     0
-    873
+    851
     540
   )
   options = [fo_main, fo_terminateonclose, fo_autoreadstat, fo_delayedreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
@@ -24,7 +24,7 @@ object mainfo: tmainfo
     frame.localprops1 = []
     bounds_x = 4
     bounds_y = 454
-    bounds_cx = 864
+    bounds_cx = 844
     bounds_cy = 80
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
@@ -41,8 +41,11 @@ object mainfo: tmainfo
         valuetrue = '1'
       end>
     fixcols.count = 1
+    fixcols.width = 40
     fixcols.items = <    
       item
+        color = 14013909
+        width = 40
         numstart = 1
         numstep = 1
       end>
@@ -55,15 +58,16 @@ object mainfo: tmainfo
     taborder = 1
     bounds_x = 4
     bounds_y = 134
-    bounds_cx = 864
+    bounds_cx = 844
     bounds_cy = 316
     anchors = [an_left, an_top, an_right, an_bottom]
     optionsgrid = [og_focuscellonenter, og_autofirstrow, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     fixcols.count = 1
-    fixcols.width = 30
+    fixcols.width = 40
     fixcols.items = <    
       item
-        width = 30
+        color = 14013909
+        width = 40
         numstart = 1
         numstep = 1
       end>
@@ -77,7 +81,7 @@ object mainfo: tmainfo
         dataclass = tgridrichstringdatalist
       end>
     datarowlinewidth = 0
-    datarowheight = 14
+    datarowheight = 16
     statfile = statf
     reffontheight = 14
     object ed: tsyntaxedit
@@ -87,16 +91,16 @@ object mainfo: tmainfo
       bounds_x = 0
       bounds_y = 0
       bounds_cx = 1656
-      bounds_cy = 14
-      font.height = 12
+      bounds_cy = 16
+      font.height = 14
       font.name = 'stf_fixed'
       font.xscale = 1
-      font.localprops = [flp_xscale]
+      font.localprops = [flp_xscale, flp_height]
       optionsedit1 = [oe1_autopopupmenu, oe1_keyexecute, oe1_savestate, oe1_checkvalueafterstatread]
       options = [seo_defaultsyntax]
       oneditnotifcation = editnotiexe
       syntaxpainter = tsyntaxpainter1
-      reffontheight = 14
+      reffontheight = 16
     end
   end
   object tgroupbox1: tgroupbox
@@ -110,9 +114,9 @@ object mainfo: tmainfo
       0
     )
     taborder = 2
-    bounds_x = 274
+    bounds_x = 314
     bounds_y = 4
-    bounds_cx = 304
+    bounds_cx = 284
     bounds_cy = 76
     object nameed: tbooleanedit
       frame.caption = 'name info'
@@ -152,36 +156,38 @@ object mainfo: tmainfo
       value = True
     end
     object nortlunitsed: tbooleanedit
-      frame.caption = 'nortlunits'
+      frame.caption = 'no rtl'
       frame.localprops = []
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        61
+        35
         2
       )
       taborder = 2
+      hint = 'Do not use rtl units'
       bounds_x = 162
       bounds_y = 37
-      bounds_cx = 74
+      bounds_cx = 48
       bounds_cy = 16
       statfile = statf
     end
     object nocompilerunited: tbooleanedit
-      frame.caption = 'nocompunit'
+      frame.caption = 'no comp'
       frame.localprops = []
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        76
+        56
         2
       )
       taborder = 3
+      hint = 'Do not use compilers units'
       bounds_x = 162
       bounds_y = 21
-      bounds_cx = 89
+      bounds_cx = 69
       bounds_cy = 16
       statfile = statf
     end
@@ -263,8 +269,8 @@ object mainfo: tmainfo
       color = -1610612731
       taborder = 8
       hint = 'Path of units used by the program'
-      bounds_x = 256
-      bounds_y = 32
+      bounds_x = 238
+      bounds_y = 26
       bounds_cx = 38
       bounds_cy = 24
       state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
@@ -272,19 +278,20 @@ object mainfo: tmainfo
       onexecute = patheditev
     end
     object keeptmped: tbooleanedit
-      frame.caption = 'Keep temp'
+      frame.caption = 'keep temp'
       frame.localprops = []
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        69
+        68
         2
       )
       taborder = 9
+      hint = 'Keep temp files after compilation'
       bounds_x = 162
       bounds_y = 53
-      bounds_cx = 82
+      bounds_cx = 81
       bounds_cy = 16
       statfile = statf
     end
@@ -294,9 +301,8 @@ object mainfo: tmainfo
     taborder = 3
     bounds_x = 4
     bounds_y = 450
-    bounds_cx = 864
+    bounds_cx = 844
     bounds_cy = 4
-    anchors = [an_left, an_top, an_right]
     options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
     linktop = edgrid
     linkbottom = grid
@@ -313,9 +319,9 @@ object mainfo: tmainfo
       0
     )
     taborder = 4
-    bounds_x = 582
+    bounds_x = 600
     bounds_y = 4
-    bounds_cx = 285
+    bounds_cx = 246
     bounds_cy = 126
     object gcced: tmemodialoghistoryedit
       frame.captiontextflags = [tf_ycentered]
@@ -333,7 +339,7 @@ object mainfo: tmainfo
       hint = 'Extra options for gcc'
       bounds_x = 80
       bounds_y = 98
-      bounds_cx = 200
+      bounds_cx = 160
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -378,7 +384,7 @@ object mainfo: tmainfo
       hint = 'extra options for llvm-llc'
       bounds_x = 80
       bounds_y = 76
-      bounds_cx = 200
+      bounds_cx = 160
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -421,7 +427,7 @@ object mainfo: tmainfo
       hint = 'Extra options for llvm-link'
       bounds_x = 80
       bounds_y = 48
-      bounds_cx = 200
+      bounds_cx = 160
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -465,7 +471,7 @@ object mainfo: tmainfo
       hint = 'Extra options for Clang'
       bounds_x = 80
       bounds_y = 19
-      bounds_cx = 200
+      bounds_cx = 160
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -506,9 +512,9 @@ object mainfo: tmainfo
       0
     )
     taborder = 5
-    bounds_x = 274
+    bounds_x = 314
     bounds_y = 84
-    bounds_cx = 304
+    bounds_cx = 284
     bounds_cy = 46
     object beopt: tbooleanedit
       frame.caption = 'llvm-opt'
@@ -544,7 +550,7 @@ object mainfo: tmainfo
       hint = 'Extra options for llvm-opt'
       bounds_x = 93
       bounds_y = 18
-      bounds_cx = 200
+      bounds_cx = 184
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -566,12 +572,12 @@ object mainfo: tmainfo
     taborder = 6
     bounds_x = 4
     bounds_y = 4
-    bounds_cx = 266
+    bounds_cx = 308
     bounds_cy = 126
     object tbutton6: tbutton
       color = -1610612731
       hint = 'Interprete the mli file (if created)'
-      bounds_x = 218
+      bounds_x = 258
       bounds_y = 104
       bounds_cx = 40
       bounds_cy = 18
@@ -584,7 +590,7 @@ object mainfo: tmainfo
       color = -1610612731
       taborder = 1
       hint = 'Run the executable (if created)'
-      bounds_x = 170
+      bounds_x = 210
       bounds_y = 104
       bounds_cx = 40
       bounds_cy = 18
@@ -595,7 +601,7 @@ object mainfo: tmainfo
     end
     object tbutton5: tbutton
       taborder = 2
-      bounds_x = 218
+      bounds_x = 258
       bounds_y = 12
       bounds_cx = 40
       bounds_cy = 18
@@ -605,7 +611,7 @@ object mainfo: tmainfo
     end
     object tbutton2: tbutton
       taborder = 3
-      bounds_x = 170
+      bounds_x = 210
       bounds_y = 12
       bounds_cx = 40
       bounds_cy = 18
@@ -625,7 +631,7 @@ object mainfo: tmainfo
       )
       taborder = 4
       hint = 'File extension of the output executable'
-      bounds_x = 132
+      bounds_x = 170
       bounds_y = 48
       bounds_cx = 28
       bounds_cy = 35
@@ -646,7 +652,7 @@ object mainfo: tmainfo
       hint = 'File name of the output executable. if empty Pascal filename will be used.'
       bounds_x = 4
       bounds_y = 48
-      bounds_cx = 127
+      bounds_cx = 165
       bounds_cy = 35
       statfile = statf
       reffontheight = 14
@@ -671,7 +677,7 @@ object mainfo: tmainfo
       hint = 'Filename of main Pascal source'
       bounds_x = 4
       bounds_y = 14
-      bounds_cx = 160
+      bounds_cx = 196
       bounds_cy = 35
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -717,7 +723,7 @@ object mainfo: tmainfo
       hint = 'Directory of LLVM binaries'
       bounds_x = 4
       bounds_y = 84
-      bounds_cx = 160
+      bounds_cx = 196
       bounds_cy = 35
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -743,7 +749,7 @@ object mainfo: tmainfo
       )
       taborder = 8
       hint = 'If enabled use external compiler mlc else use built-in mselang parser.'
-      bounds_x = 175
+      bounds_x = 215
       bounds_y = 48
       bounds_cx = 75
       bounds_cy = 16
@@ -761,8 +767,8 @@ object mainfo: tmainfo
       )
       taborder = 9
       hint = 'Run the application at end'
-      bounds_x = 174
-      bounds_y = 86
+      bounds_x = 215
+      bounds_y = 64
       bounds_cx = 83
       bounds_cy = 16
       statfile = statf
@@ -771,10 +777,10 @@ object mainfo: tmainfo
       color = 13945302
       taborder = 10
       hint = 'Parse and build all'
-      bounds_x = 180
-      bounds_y = 64
+      bounds_x = 220
+      bounds_y = 81
       bounds_cx = 65
-      bounds_cy = 20
+      bounds_cy = 18
       options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
       state = [as_localcaption, as_localcolor, as_localhint, as_localonexecute]
       caption = '&Parse'
@@ -792,7 +798,7 @@ object mainfo: tmainfo
       )
       taborder = 11
       hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
-      bounds_x = 175
+      bounds_x = 215
       bounds_y = 32
       bounds_cx = 67
       bounds_cy = 16
@@ -804,9 +810,9 @@ object mainfo: tmainfo
     frame.localprops = []
     frame.localprops1 = []
     taborder = 7
-    bounds_x = 724
+    bounds_x = 722
     bounds_y = 136
-    bounds_cx = 142
+    bounds_cx = 125
     bounds_cy = 18
     anchors = [an_top, an_right]
     text = 'Col: 0   Row: 0'
