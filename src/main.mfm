@@ -721,6 +721,7 @@ object mainfo: tmainfo
       bounds_cx = 75
       bounds_cy = 16
       statfile = statf
+      onchange = changellvm
     end
     object runend: tbooleanedit
       frame.levelo = -1
@@ -936,7 +937,7 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       taborder = 11
       visible = False
-      bounds_x = 204
+      bounds_x = 108
       bounds_y = 13
       bounds_cy = 108
       textflags = [tf_xcentered, tf_ycentered]

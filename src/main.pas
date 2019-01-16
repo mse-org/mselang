@@ -243,14 +243,16 @@ application.processmessages;
   include(parserparams.compileoptions,co_nodeinit);
   
   // grid.appendrow([tosysfilepath(filena.value)]);
-  if (extcomp.value = false) or (llvm.value) then
+  if (extcomp.value = false) and (llvm.value) then
   begin
   grid.datacols[0].color := cl_white;
   bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
   end else
   begin
+  
+ // parserparams.compileoptions:= (parserparams.compileoptions - co_llvm) ;
        
-  if fileexists(mlcpath) then begin
+  if (fileexists(mbcpath)) and (fileexists(mlcpath)) then begin
   str2 := '';
    
   ed.savetofile(filena.value);
@@ -270,6 +272,10 @@ application.processmessages;
    //grid.appendrow([str2]) ;
  
     grid.appendrow;
+    
+   if (llvm.value) then
+    i2:= getprocessoutput((mbcpath) +' '+ str2 +' '+ tosysfilepath(filena.value),'',str1)
+    else
     i2:= getprocessoutput((mlcpath) +' '+ str2 +' '+ tosysfilepath(filena.value),'',str1);
     
     grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -293,7 +299,7 @@ application.processmessages;
       
       end else 
       begin
-         grid.appendrow(['*** mlc compiler '+ mlcpath+ ' does not exists ***']) ;
+         grid.appendrow(['*** Compilers does not exists ***']) ;
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
        end;
            
@@ -310,7 +316,7 @@ application.processmessages;
    errstream.position:= 0;
   // grid[0].datalist.loadfromstream(errstream);
    if bo1 then begin
-    if llvm.value then begin
+    if (extcomp.value = false) and (llvm.value) then begin
      try
       filename1:= tosysfilepath(replacefileext(filena.value,'bc'));
       if not (co_modular in parserparams.compileoptions) then begin
@@ -879,9 +885,15 @@ grid.datacols[0].color := cl_white;
 
 procedure tmainfo.changellvm(const sender: TObject);
 begin
+if (extcomp.value) then begin
+tgroupbox2.enabled := false;
+tgroupbox3.enabled := false;
+end else
+begin
 tgroupbox2.enabled := llvm.value;
 tgroupbox3.enabled := llvm.value;
-extcomp.enabled := not llvm.value;
+end;
+//extcomp.enabled := not llvm.value;
 end;
 
 procedure tmainfo.runmli(const sender: TObject);
