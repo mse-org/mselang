@@ -29,11 +29,6 @@ uses
  msememodialog,msedropdownlist,parser,msedragglob,msegridsglob;
 
 const
- llvmbindir2 = 
- '/usr/bin/';
-// llvmbindir = 
-//      '/home/mse/packs/standard/git/llvm/build_debug_3_7/Debug+Asserts/bin/';
-
   colorer = $FFF0F0;
   colorok = $E6FFE6;
 
@@ -83,12 +78,12 @@ type
    llvmbindir: tfilenameedit;
    filena: tfilenameedit;
    btnload: tbutton;
-   btnsave: tbutton;
    proginfoed: tbooleanedit;
    tbutton2: tbutton;
    tbutton3: tbutton;
    tbutton4: tbutton;
    workpan: tstringdisp;
+   tbutton5: tbutton;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);

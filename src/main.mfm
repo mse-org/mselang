@@ -1,6 +1,6 @@
 object mainfo: tmainfo
-  bounds_x = 231
-  bounds_y = 225
+  bounds_x = 266
+  bounds_y = 73
   bounds_cx = 851
   bounds_cy = 540
   anchors = [an_top, an_right]
@@ -160,7 +160,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 1
-      hint = 'Build'
+      hint = 'Build all'
       bounds_x = 9
       bounds_y = 21
       bounds_cx = 46
@@ -292,9 +292,9 @@ object mainfo: tmainfo
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
       taborder = 8
-      hint = ' Load and Start Player '
+      hint = 'Path of units used'
       bounds_x = 235
-      bounds_y = 18
+      bounds_y = 26
       bounds_cx = 42
       bounds_cy = 24
       state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
@@ -849,11 +849,11 @@ object mainfo: tmainfo
     end
     object btnload: tbutton
       color = -1610612731
-      frame.localprops = [frl_levelo, frl_leveli]
+      frame.localprops = [frl_optionsskin]
       frame.localprops1 = []
       frame.template = tframecomp2
       taborder = 7
-      hint = 'Interprete the mli file (if created)'
+      hint = 'Reload file'
       bounds_x = 97
       bounds_y = 11
       bounds_cx = 56
@@ -863,22 +863,6 @@ object mainfo: tmainfo
       caption = 'Reload'
       onexecute = loadexe
     end
-    object btnsave: tbutton
-      color = -1610612731
-      frame.localprops = [frl_levelo, frl_leveli]
-      frame.localprops1 = []
-      frame.template = tframecomp2
-      taborder = 8
-      hint = 'Run the executable (if created)'
-      bounds_x = 161
-      bounds_y = 11
-      bounds_cx = 40
-      bounds_cy = 18
-      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'Save'
-      onexecute = saveexe
-    end
     object tbutton2: tbutton
       Tag = 2
       color = 15129320
@@ -887,7 +871,7 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
-      taborder = 9
+      taborder = 8
       hint = 'Parse and build all'
       bounds_x = 220
       bounds_y = 68
@@ -907,7 +891,7 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
-      taborder = 10
+      taborder = 9
       hint = 'Run the executable (if created)'
       bounds_x = 212
       bounds_y = 101
@@ -927,7 +911,7 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
-      taborder = 11
+      taborder = 10
       hint = 'Interprete the mli file (if created)'
       bounds_x = 256
       bounds_y = 101
@@ -945,7 +929,7 @@ object mainfo: tmainfo
       frame.localprops = [frl_levelo, frl_hiddenedges, frl_colorclient]
       frame.localprops1 = []
       frame.template = tframecomp2
-      taborder = 12
+      taborder = 11
       visible = False
       bounds_x = 204
       bounds_y = 13
@@ -953,6 +937,22 @@ object mainfo: tmainfo
       textflags = [tf_xcentered, tf_ycentered]
       value = 'Working...'
       reffontheight = 14
+    end
+    object tbutton5: tbutton
+      color = -1610612731
+      frame.localprops = [frl_optionsskin]
+      frame.localprops1 = []
+      frame.template = tframecomp2
+      taborder = 12
+      hint = 'Save file'
+      bounds_x = 156
+      bounds_y = 11
+      bounds_cx = 42
+      bounds_cy = 18
+      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
+      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
+      caption = 'Save'
+      onexecute = saveexe
     end
   end
   object coldi: tstringdisp
