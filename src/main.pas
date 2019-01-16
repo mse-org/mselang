@@ -840,7 +840,8 @@ end;
 
 procedure tmainfo.createev(const sender: TObject);
 begin
- statf.filedir := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0)));
+ statf.filedir := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0)))
+ + directoryseparator + 'config' ;
  application.options:= application.options - [apo_terminateonexception];
 end;
 
@@ -951,23 +952,29 @@ if trim(llvmbindir.value) = '' then llvmbindir.value :=
 if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
  {$endif}
   
-  msepath := tosysfilepath(IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))));
-  
-if trim(filena.value) = '' then
+ if trim(filena.value) = '' then
 begin
- filena.value := tosysfilepath(msepath + 
+ msepath := (ExtractFilePath(ParamStr(0)));
+ 
+ filena.value := 
  {$ifdef windows}
-'test\hellomselang\hellomselang.mla');
+'.\test\hellomeslang\hellomselang.pas';
  {$else}
- 'test/hellomeslang/hellomselang.mla');
+  tosysfilepath(msepath +
+ 'test/hellomeslang/hellomselang.pas');
 {$endif}
  loadexe(nil);
 end;
 
  if length(tmpcompparams) < 2 then begin
-  setlength(tmpcompparams,2);
+  setlength(tmpcompparams,3);
   tmpcompparams[0] := '-Fu' + msepath + '*';
   tmpcompparams[1] := '-Fu' + msepath + '*'+directoryseparator+'*';
+  {$ifdef windows}
+  tmpcompparams[2] := '-Fu' + msepath + '*'+directoryseparator+'*'+directoryseparator+'windows' ;
+  {$else}
+  tmpcompparams[2] := '-Fu' + msepath + '*'+directoryseparator+'*'+directoryseparator+'unix' ;
+  {$endif}
   compparams := tmpcompparams;
   end;
   
