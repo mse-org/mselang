@@ -114,6 +114,7 @@ type
   protected
    procedure initparams(var parserparams: parserparamsty);
   public
+   
    property compparams: msestringarty read fcompparams write setcompparams;
  end;
 var
@@ -616,7 +617,10 @@ application.processmessages;
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
         if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
+        begin
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+        end;
        end;
       end;
      finally
@@ -668,7 +672,11 @@ application.processmessages;
         i2 := stackops.run(1024);
         if (i2 = 0) or  (i2 = 217) then 
         grid.appendrow(['*** Interpreted without errors ***']) 
-        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***'])
+        else
+        begin
+         grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+         grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+         end;
         end;
        {$else} 
          if (llvm.value = false) then
@@ -692,12 +700,19 @@ application.processmessages;
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if (i2 = 0) or  (i2 = 217) then 
           grid.appendrow(['*** Interpreted without errors ***']) 
-        else grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+        else
+        begin
+         grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
+         grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+         end;
         
         end else
         begin
           if not (fileexists((mlipath))) then
+          begin
             grid.appendrow(['*** Interpreter '+ (mlipath) + ' does not exist ***']);
+            grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          end;  
          end;
          end;
         {$endif} 
@@ -825,6 +840,7 @@ end;
 
 procedure tmainfo.createev(const sender: TObject);
 begin
+ statf.filedir := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0)));
  application.options:= application.options - [apo_terminateonexception];
 end;
 
@@ -849,10 +865,16 @@ grid.datacols[0].color := cl_white;
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
          if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Executable ended without errors ***']) else
+         begin
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
-       end else grid.appendrow(['*** File ' + filename2 + ' does not exist! ***']) ; 
-        
-end;
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+         end;
+       end else
+       begin
+        grid.appendrow(['*** File ' + filename2 + ' does not exist! ***']) ; 
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+       end;  
+ end;
 
 procedure tmainfo.changellvm(const sender: TObject);
 begin
@@ -882,8 +904,15 @@ if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          
  if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Interpreted without errors ***']) else
+ begin
  grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
-end else  grid.appendrow(['*** File ' + filename1 + ' does not exist! ***']) ;
+ grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+ end;
+end else 
+begin
+ grid.appendrow(['*** File ' + filename1 + ' does not exist! ***']) ;
+  grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+end; 
 end;
 
 procedure tmainfo.onchangelink(const sender: TObject; var avalue: Boolean;
@@ -910,16 +939,38 @@ end;
 end;
 
 procedure tmainfo.createdev(const sender: TObject);
+var
+tmpcompparams: msestringarty;
+msepath : string;
 begin
 if trim(llvmbindir.value) = '' then llvmbindir.value :=
  {$ifdef unix}'/usr/bin/';{$endif}
  {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
 
  {$ifdef unix}
-  if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
+if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
  {$endif}
- 
- caption := 'MSElang ' + tosysfilepath(filena.value);
+  
+  msepath := tosysfilepath(IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))));
+  
+if trim(filena.value) = '' then
+begin
+ filena.value := tosysfilepath(msepath + 
+ {$ifdef windows}
+'test\hellomselang\hellomselang.mla');
+ {$else}
+ 'test/hellomeslang/hellomselang.mla');
+{$endif}
+ loadexe(nil);
+end;
+
+ if length(tmpcompparams) < 2 then begin
+  setlength(tmpcompparams,2);
+  tmpcompparams[0] := '-Fu' + msepath + '*';
+  tmpcompparams[1] := '-Fu' + msepath + '*'+directoryseparator+'*';
+  compparams := tmpcompparams;
+  end;
+  
 end;
 
 end.

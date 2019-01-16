@@ -51,7 +51,7 @@ object mainfo: tmainfo
       end>
     rowcolors.count = 2
     rowcolors.items = (
-      16744576
+      16754342
       -1610612717
     )
     datarowheight = 16
@@ -787,8 +787,6 @@ object mainfo: tmainfo
       bounds_cy = 35
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
-      value = '/usr/bin/'
-      controller.filename = '/usr/bin/'
       controller.lastdir = '/usr/bin/'
       controller.filterlist.data = (
         (
@@ -844,7 +842,7 @@ object mainfo: tmainfo
           '*.*'
         )
       )
-      controller.options = [fdo_chdir, fdo_savelastdir]
+      controller.options = [fdo_sysfilename, fdo_chdir, fdo_savelastdir]
       reffontheight = 14
     end
     object btnload: tbutton
