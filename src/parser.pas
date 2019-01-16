@@ -1319,6 +1319,7 @@ begin
       if not result then 
       begin
       mainfo.grid.appendrow(['*** Path of some units not found ***']) ; 
+      mainfo.grid.rowcolorstate[mainfo.grid.rowcount -1]:= 0 ; 
       end;
      {$endif} 
          
@@ -1326,7 +1327,11 @@ begin
       include(unit1^.state,us_invalidunitfile); //force compilation of main unit
       result:= parseunit(input,defaultdialect(afilename),unit1,false);
      {$ifdef mse_gui} 
-      if not result then mainfo.grid.appendrow(['*** Error in code please check your source  ***']) ; 
+      if not result then
+      begin
+      mainfo.grid.appendrow(['*** Error in code, please check your source  ***']) ; 
+      mainfo.grid.rowcolorstate[mainfo.grid.rowcount -1]:= 0 ; 
+      end;
      {$endif}
       if result then begin
        if (o.compileoptions * [co_llvm,co_buildexe] = 

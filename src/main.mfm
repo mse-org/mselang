@@ -1,6 +1,6 @@
 object mainfo: tmainfo
-  bounds_x = 287
-  bounds_y = 135
+  bounds_x = 231
+  bounds_y = 225
   bounds_cx = 851
   bounds_cy = 540
   anchors = [an_top, an_right]
@@ -664,37 +664,6 @@ object mainfo: tmainfo
     bounds_y = 3
     bounds_cx = 308
     bounds_cy = 127
-    object tbutton6: tbutton
-      color = -1610612731
-      frame.localprops = []
-      frame.localprops1 = []
-      frame.template = tframecomp2
-      hint = 'Interprete the mli file (if created)'
-      bounds_x = 257
-      bounds_y = 104
-      bounds_cx = 40
-      bounds_cy = 18
-      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'Inter'
-      onexecute = runmli
-    end
-    object tbutton4: tbutton
-      color = -1610612731
-      frame.localprops = []
-      frame.localprops1 = []
-      frame.template = tframecomp2
-      taborder = 1
-      hint = 'Run the executable (if created)'
-      bounds_x = 209
-      bounds_y = 104
-      bounds_cx = 40
-      bounds_cy = 18
-      options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-      state = [as_localinvisible, as_localcaption, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'Exec'
-      onexecute = runexe
-    end
     object edexeex: tedit
       frame.levelo = -1
       frame.caption = 'Ext'
@@ -706,7 +675,6 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 2
       hint = 'File extension of the output executable'
       bounds_x = 169
       bounds_y = 50
@@ -726,7 +694,7 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 3
+      taborder = 1
       hint = 'File name of the output executable. if empty Pascal filename will be used.'
       bounds_x = 3
       bounds_y = 50
@@ -746,7 +714,7 @@ object mainfo: tmainfo
         62
         2
       )
-      taborder = 4
+      taborder = 2
       hint = 'If enabled use external compiler mlc else use built-in mselang parser.'
       bounds_x = 214
       bounds_y = 32
@@ -765,7 +733,7 @@ object mainfo: tmainfo
         70
         2
       )
-      taborder = 5
+      taborder = 3
       hint = 'Run the application at end'
       bounds_x = 214
       bounds_y = 48
@@ -784,7 +752,7 @@ object mainfo: tmainfo
         54
         2
       )
-      taborder = 6
+      taborder = 4
       hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
       bounds_x = 214
       bounds_y = 16
@@ -811,7 +779,7 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 7
+      taborder = 5
       hint = 'Directory of llc'
       bounds_x = 3
       bounds_y = 86
@@ -849,13 +817,14 @@ object mainfo: tmainfo
         0
         0
       )
-      taborder = 8
+      taborder = 6
       bounds_x = 3
       bounds_y = 15
       bounds_cx = 196
       bounds_cy = 35
       statfile = statf
       textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
+      onchange = loadexe
       controller.lastdir = '/'
       controller.filterlist.data = (
         (
@@ -883,7 +852,7 @@ object mainfo: tmainfo
       frame.localprops = [frl_levelo, frl_leveli]
       frame.localprops1 = []
       frame.template = tframecomp2
-      taborder = 9
+      taborder = 7
       hint = 'Interprete the mli file (if created)'
       bounds_x = 97
       bounds_y = 11
@@ -899,7 +868,7 @@ object mainfo: tmainfo
       frame.localprops = [frl_levelo, frl_leveli]
       frame.localprops1 = []
       frame.template = tframecomp2
-      taborder = 10
+      taborder = 8
       hint = 'Run the executable (if created)'
       bounds_x = 161
       bounds_y = 11
@@ -918,17 +887,72 @@ object mainfo: tmainfo
       frame.template = tframecomp2
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
-      taborder = 11
+      taborder = 9
       hint = 'Parse and build all'
       bounds_x = 220
-      bounds_y = 70
+      bounds_y = 68
       bounds_cx = 66
       bounds_cy = 28
-      state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
+      state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonbeforeexecute, as_localonexecute, as_localonafterexecute]
       caption = 'Parse'
       imagenr = 27
       focusrectdist = 0
       onexecute = parseev
+    end
+    object tbutton3: tbutton
+      Tag = 2
+      color = 14277081
+      frame.localprops = [frl_optionsskin]
+      frame.localprops1 = []
+      frame.template = tframecomp2
+      face.fade_direction = gd_down
+      face.localprops = [fal_fadirection]
+      taborder = 10
+      hint = 'Run the executable (if created)'
+      bounds_x = 212
+      bounds_y = 101
+      bounds_cx = 42
+      bounds_cy = 20
+      state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
+      caption = 'Run'
+      imagenr = 27
+      focusrectdist = 0
+      onexecute = runexe
+    end
+    object tbutton4: tbutton
+      Tag = 2
+      color = 14277081
+      frame.localprops = [frl_optionsskin]
+      frame.localprops1 = []
+      frame.template = tframecomp2
+      face.fade_direction = gd_down
+      face.localprops = [fal_fadirection]
+      taborder = 11
+      hint = 'Interprete the mli file (if created)'
+      bounds_x = 256
+      bounds_y = 101
+      bounds_cx = 42
+      bounds_cy = 20
+      state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
+      caption = 'Inter'
+      imagenr = 27
+      focusrectdist = 0
+      onexecute = runmli
+    end
+    object workpan: tstringdisp
+      frame.hiddenedges = [edg_right, edg_top, edg_left, edg_bottom]
+      frame.colorclient = 13477846
+      frame.localprops = [frl_levelo, frl_hiddenedges, frl_colorclient]
+      frame.localprops1 = []
+      frame.template = tframecomp2
+      taborder = 12
+      visible = False
+      bounds_x = 204
+      bounds_y = 13
+      bounds_cy = 108
+      textflags = [tf_xcentered, tf_ycentered]
+      value = 'Working...'
+      reffontheight = 14
     end
   end
   object coldi: tstringdisp
@@ -938,7 +962,7 @@ object mainfo: tmainfo
     frame.localprops1 = []
     face.localprops = []
     taborder = 7
-    bounds_x = 722
+    bounds_x = 706
     bounds_y = 136
     bounds_cx = 125
     bounds_cy = 18

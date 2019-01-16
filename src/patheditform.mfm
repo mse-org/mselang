@@ -1,18 +1,20 @@
 object patheditfo: tpatheditfo
   hint = 'Right-click to add row, (like -Fu/home/theproj)'
-  bounds_x = 476
-  bounds_y = 176
-  bounds_cx = 491
-  bounds_cy = 406
+  visible = False
+  bounds_x = 536
+  bounds_y = 121
+  bounds_cx = 404
+  bounds_cy = 156
   container.frame.localprops = []
   container.frame.localprops1 = []
   container.bounds = (
     0
     0
-    491
-    406
+    404
+    156
   )
-  options = [fo_freeonclose, fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
+  options = [fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
+  statfile = mainfo.statf
   caption = 'Units Path Editor '
   windowopacity = -Inf
   onloaded = loadedev
@@ -31,19 +33,20 @@ object patheditfo: tpatheditfo
     taborder = 1
     bounds_x = 0
     bounds_y = 6
-    bounds_cx = 488
-    bounds_cy = 397
+    bounds_cx = 401
+    bounds_cy = 147
     anchors = [an_left, an_top, an_right, an_bottom]
     optionsgrid = [og_rowinserting, og_rowdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     datacols.count = 1
     datacols.items = <    
       item[fuvalues]
-        width = 483
+        width = 396
         options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
         widgetname = 'fuvalues'
         dataclass = tgridmsestringdatalist
       end>
     datarowheight = 16
+    statfile = mainfo.statf
     reffontheight = 14
     object fuvalues: tstringedit
       optionswidget1 = [ow1_fontglyphheight]
@@ -52,14 +55,17 @@ object patheditfo: tpatheditfo
       visible = False
       bounds_x = 0
       bounds_y = 0
-      bounds_cx = 483
+      bounds_cx = 396
       bounds_cy = 16
       reffontheight = 14
     end
   end
   object tbutton1: tbutton
+    frame.optionsskin = [fso_flat]
+    frame.localprops = [frl_optionsskin]
+    frame.localprops1 = []
     taborder = 2
-    bounds_x = 364
+    bounds_x = 285
     bounds_y = 2
     bounds_cx = 50
     bounds_cy = 20
@@ -69,9 +75,12 @@ object patheditfo: tpatheditfo
     modalresult = mr_ok
   end
   object tbutton2: tbutton
-    bounds_x = 420
+    frame.optionsskin = [fso_flat]
+    frame.localprops = [frl_optionsskin]
+    frame.localprops1 = []
+    bounds_x = 341
     bounds_y = 2
-    bounds_cx = 50
+    bounds_cx = 56
     bounds_cy = 20
     anchors = [an_top, an_right]
     state = [as_localcaption]
@@ -79,6 +88,9 @@ object patheditfo: tpatheditfo
     modalresult = mr_cancel
   end
   object tbutton3: tbutton
+    frame.optionsskin = [fso_flat]
+    frame.localprops = [frl_optionsskin]
+    frame.localprops1 = []
     taborder = 3
     bounds_x = 136
     bounds_y = 2
@@ -89,6 +101,9 @@ object patheditfo: tpatheditfo
     onexecute = addrow
   end
   object tbutton4: tbutton
+    frame.optionsskin = [fso_flat]
+    frame.localprops = [frl_optionsskin]
+    frame.localprops1 = []
     taborder = 4
     bounds_x = 208
     bounds_y = 2

@@ -69,8 +69,6 @@ type
    beopt: tbooleanedit;
    opted: tmemodialoghistoryedit;
    tgroupbox4: tgroupbox;
-   tbutton6: tbutton;
-   tbutton4: tbutton;
    edexeex: tedit;
    edexena: tedit;
    clanged: tmemodialoghistoryedit;
@@ -88,6 +86,9 @@ type
    btnsave: tbutton;
    proginfoed: tbooleanedit;
    tbutton2: tbutton;
+   tbutton3: tbutton;
+   tbutton4: tbutton;
+   workpan: tstringdisp;
    procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -111,6 +112,7 @@ type
    procedure onchangelink(const sender: TObject; var avalue: Boolean;
                    var accept: Boolean);
    procedure createdev(const sender: TObject);
+   
   private
    fcompparams: msestringarty;
    procedure setcompparams(const avalue: msestringarty);
@@ -142,10 +144,17 @@ var
  filename1,filename2,filename3,optname: filenamety;
  dirbefore,mlipath, mlcpath, mbcpath, str2: msestring;
  ar1: filenamearty;
- i1,i2, x, er: int32;
+ i1,i2, x, y, er: int32;
  dt1: tdatetime;
  ho, mi, se, ms: word;
 begin
+workpan.left := 204;
+workpan.top := 13;
+workpan.visible := true;
+grid.datacols[0].color := cl_white;
+grid.clear;
+application.processmessages;
+
 {$ifdef mse_debugparser}
  writeln('*****************************************');
 {$endif}
@@ -160,9 +169,6 @@ begin
  mbcpath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'compiler/mbc';
 {$endif}
  dt1:= now;
- grid.datacols[0].color := cl_white;
- grid.clear;
- grid.invalidate;
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
  resetinfo();
@@ -253,17 +259,23 @@ begin
    
   ed.savetofile(filena.value);
   
+  application.processmessages;
+  
    if assigned(compparams) then
   for x := 0 to length(compparams) -1
   do str2 := str2 + ' ' + compparams[x];
   
   if lineinfoed.value then str2 := str2 + ' -l';
   if builded.value then str2 := str2 + ' -B';
+  if (nameed.value) or (proginfoed.value) then str2 := str2 + ' -g';
   
   str1 := '';
+   //grid.appendrow([mlcpath]) ;
+   //grid.appendrow([str2]) ;
  
     grid.appendrow;
     i2:= getprocessoutput((mlcpath) +' '+ str2 +' '+ tosysfilepath(filena.value),'',str1);
+    
     grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
   
      x := 0;
@@ -286,15 +298,18 @@ begin
       end else 
       begin
          grid.appendrow(['*** mlc compiler '+ mlcpath+ ' does not exists ***']) ;
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
        end;
-     
+           
    if er = 0 then bo1 := true else bo1 := false;
    end;
    
   if not bo1 then
   begin
   grid.datacols[0].color := colorer;
-   grid.appendrow(['*** Parser error ***']); end else
+  grid.appendrow(['*** Parser error ***']);
+  grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+    end else
   try
    errstream.position:= 0;
   // grid[0].datalist.loadfromstream(errstream);
@@ -305,7 +320,9 @@ begin
       if not (co_modular in parserparams.compileoptions) then begin
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
-        grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
+        grid.appendrow(['***TARGET FILE WRITE ERROR***']);
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+        grid.datacols[0].color := colorer;  
        end 
        else begin
        grid.appendrow(['*** ' + filename(filename1) + ' created by mselang from ' +
@@ -320,20 +337,33 @@ begin
         if beopt.value then  
         begin
           grid.appendrow;
-          x := grid.rowcount;
+          y := grid.rowcount;
          optname:= optname+'_opt';
          i2:= getprocessoutput(llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}+' '+opted.value+
                                    ' -o '+optname+'.bc '+filename1,'',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-       {$ifdef mse_debugparser}
+         
+      {$ifdef mse_debugparser}
          writeln('***************** LLVM OPT ended ***********');
        {$endif}
+        
+           x := 0;
+           
+           while (x < grid.rowcount) do begin
+            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+            begin
+             er := 1; 
+             grid.rowcolorstate[x]:= 0 ;  
+             end;
+            inc(x);
+            end;
                          
-          if  x = grid.rowcount  then         
+          if  y = grid.rowcount  then         
          grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
          else begin
           grid.datacols[0].color :=  colorer;
           grid.appendrow(['*** Error: '+optname+'.bc not created... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           er := 1;
           end;
          end
@@ -352,10 +382,21 @@ begin
        {$ifdef mse_debugparser}
          writeln('***************** LLC ended ***********');
        {$endif}
+       
+        x := 0;
+         while (x < grid.rowcount) do begin
+            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+            begin
+            grid.rowcolorstate[x]:= 0 ;  
+             end;
+            inc(x);
+            end;
+       
        if i2 = 0 then  grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
        +optname+'.bc ***']) else begin
         grid.datacols[0].color := colorer;
         grid.appendrow(['*** lcc failed ***']) ;
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
         er := 1;
         end;
         end;
@@ -379,11 +420,22 @@ begin
         i2:= getprocessoutput(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}+' ' +linked.value+ ' -o='+filename2+' '+
                  optname,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        
+         x := 0;
+         while (x < grid.rowcount) do begin
+            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+            begin
+            grid.rowcolorstate[x]:= 0 ;  
+             end;
+            inc(x);
+            end;
+                
        if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
         filename(optname)+' ***']) else
         begin
         grid.appendrow(['*** llvm-link failed ***']) ;
         grid.datacols[0].color := colorer;
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
         er := 1;
         end;
         end;
@@ -423,12 +475,23 @@ begin
         i2:= getprocessoutput(llvmbindir.value+ 'clang'{$ifdef windows}+'.exe'{$endif}+' ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
                  
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+       
+         x := 0;
+         while (x < grid.rowcount) do begin
+            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+            begin
+            grid.rowcolorstate[x]:= 0 ;  
+             end;
+            inc(x);
+            end;
+             
         if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
         filename(optname)+' ***']) else
         begin
           er := 1;
           grid.appendrow(['*** Clang-link failed ***']) ;
           grid.datacols[0].color := colorer;
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
         end;
         end;
        end; 
@@ -447,8 +510,12 @@ begin
            
            x := 0;
            
-           while (x < grid.rowcount) and (er = 0) do begin
-            if system.pos('Error',grid[0][x]) > 0 then er := 1;  
+           while (x < grid.rowcount) do begin
+            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+            begin
+             er := 1; 
+             grid.rowcolorstate[x]:= 0 ;  
+             end;
             inc(x);
             end;
                    
@@ -458,6 +525,7 @@ begin
           begin
            grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
            grid.datacols[0].color := colorer;
+           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           end;
         {$ifdef mse_debugparser}
           writeln('***************** gcc ended ***********');
@@ -478,6 +546,8 @@ begin
          dt1 := now-dt1;
          DecodeTime(dt1, ho, mi, se, ms);
          
+         workpan.visible := false;
+         
           grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
           [ho, mi, se, ms])+ ' ***']) ;
          
@@ -488,6 +558,7 @@ begin
            end else begin
           grid.appendrow(['*** Some process failed ***']);
           grid.datacols[0].color := colorer;
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           end;
               
         end;
@@ -579,6 +650,7 @@ begin
       begin
        grid.datacols[0].color := colorer;
        grid.appendrow(['*** Compilation process fail ***']) ;
+       grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
       end;
        end;   
 
@@ -589,6 +661,8 @@ begin
         grid.appendrow;
         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d', [ho, mi, se, ms])+ ' ***']) ;  
        end;
+       
+       
      
      if runend.value then 
      begin
@@ -651,6 +725,7 @@ begin
  finally
   setcurrentdirmse(dirbefore);
  end;
+ workpan.visible := false;
 end;
 
 procedure tmainfo.editnotiexe(const sender: TObject;
@@ -735,7 +810,10 @@ end;
 
 procedure tmainfo.patheditev(const sender: TObject);
 begin
- tpatheditfo.create(nil);
+ //tpatheditfo.create(nil);
+ patheditfo.loadedev(sender);
+ patheditfo.activate;
+ 
 end;
 
 procedure tmainfo.setcompparams(const avalue: msestringarty);
