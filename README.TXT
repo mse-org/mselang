@@ -1,5 +1,7 @@
 MSEpas/MSElang
 
+https://gitlab.com/mseide-msegui/mselang
+
 Copyright (c) 2013-2018 by Martin Schreiber
 
 MSElang   2013-11-01 mse
