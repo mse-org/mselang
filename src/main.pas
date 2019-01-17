@@ -338,6 +338,8 @@ application.processmessages;
         optname:= filenamebase(filename1);
         if beopt.value then  
         begin
+        if fileexists(llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}) then
+         begin
           grid.appendrow;
           y := grid.rowcount;
          optname:= optname+'_opt';
@@ -360,11 +362,18 @@ application.processmessages;
             inc(x);
             end;
                          
-          if  y = grid.rowcount  then         
-         grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***'])
-         else begin
+          if  y = grid.rowcount  then begin
+          grid.appendrow(['*** '+optname+'.bc created by llvm-opt from '+filename(filename1)+' ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 1 ;
+         end else begin
           grid.datacols[0].color :=  colorer;
           grid.appendrow(['*** Error: '+optname+'.bc not created... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          er := 1;
+          end;
+          end else begin
+          grid.datacols[0].color :=  colorer;
+          grid.appendrow(['*** Error: '+llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           er := 1;
           end;
@@ -376,7 +385,10 @@ application.processmessages;
         if i2 = 0 then begin
         
         if bellc.value then begin  
-           grid.appendrow;
+        
+        if fileexists(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}) then
+         begin
+         grid.appendrow;
           i2:= getprocessoutput(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}+' '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
@@ -394,19 +406,34 @@ application.processmessages;
             inc(x);
             end;
        
-       if i2 = 0 then  grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
-       +optname+'.bc ***']) else begin
+       if i2 = 0 then 
+       begin
+       
+        grid.appendrow(['*** '+filename(filename1)+'.s created by llvm-llc from '
+       +optname+'.bc ***']);
+       grid.rowcolorstate[grid.rowcount -1]:= 1 ; 
+       
+       end else begin
         grid.datacols[0].color := colorer;
         grid.appendrow(['*** lcc failed ***']) ;
         grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
         er := 1;
         end;
+        end else begin
+          grid.datacols[0].color :=  colorer;
+          grid.appendrow(['*** Error: '+llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          er := 1;
+          end;
         end;
         
           optname:= filenamebase(filename1);
         
      // llvm-link
      if belink.value then begin 
+     
+       if fileexists(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}) then
+         begin
          if i2 = 0 then begin
        
          if beopt.value then  
@@ -432,8 +459,12 @@ application.processmessages;
             inc(x);
             end;
                 
-       if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
-        filename(optname)+' ***']) else
+       if i2 = 0 then
+        begin
+        grid.appendrow(['*** '+filename(filename2)+ ' created by llvm-link from '+ 
+        filename(optname)+' ***']);
+        grid.rowcolorstate[grid.rowcount -1]:= 1 ; 
+        end  else
         begin
         grid.appendrow(['*** llvm-link failed ***']) ;
         grid.datacols[0].color := colorer;
@@ -454,25 +485,38 @@ application.processmessages;
         grid.appendrow(['*** chmod 0755 assigned to '+filename(filename2)+' ***']);
         end;
        {$endif}
-       
+      
+       end else begin
+          grid.datacols[0].color :=  colorer;
+          grid.appendrow(['*** Error: '+llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          er := 1;
+          end;
       end;        
       // ended link   
       
       // clang
      if beclang.value then begin 
+       if fileexists(llvmbindir.value+'clang'{$ifdef windows}+'.exe'{$endif}) then
+         begin
          if i2 = 0 then begin
        
          if beopt.value then  
          optname:= removefileext(filena.value)+'_opt.bc' else
          optname:= removefileext(filena.value)+'.bc';
+         
+         optname := tosysfilepath(optname);
  
          if edexena.text <> '' then
          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
          filename2:= removefileext(filena.value)+ edexeex.text ;
          
+         filename2 := tosysfilepath(filename2);
+         
          grid.appendrow;
          grid.appendrow(['*** Linking with Clang ***']);
          grid.appendrow;
+          grid.appendrow;
  
         i2:= getprocessoutput(llvmbindir.value+ 'clang'{$ifdef windows}+'.exe'{$endif}+' ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
                  
@@ -480,15 +524,19 @@ application.processmessages;
        
          x := 0;
          while (x < grid.rowcount) do begin
-            if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
-            begin
-            grid.rowcolorstate[x]:= 0 ;  
-             end;
+           if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+               grid.rowcolorstate[x]:= 0 ;
+          //  if (system.pos('Warning',grid[0][x]) > 0) or (system.pos('warning',grid[0][x]) > 0) then                grid.rowcolorstate[x]:= 0 ;  
+          //       grid.rowcolorstate[x]:= 2 ;  
             inc(x);
             end;
              
-        if i2 = 0 then grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
-        filename(optname)+' ***']) else
+        if i2 = 0 then
+        begin
+         grid.appendrow(['*** '+filename(filename2)+ ' created by Clang from '+ 
+        filename(optname)+' ***']) ;
+        grid.rowcolorstate[grid.rowcount -1]:= 1 ; 
+        end else
         begin
           er := 1;
           grid.appendrow(['*** Clang-link failed ***']) ;
@@ -496,16 +544,27 @@ application.processmessages;
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
         end;
         end;
+        end else begin
+          grid.datacols[0].color :=  colorer;
+          grid.appendrow(['*** Error: '+llvmbindir.value+'clang'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          er := 1;
+          end;
        end; 
      
         if begcc.value then begin 
+        
+        if fileexists(llvmbindir.value+'gcc'{$ifdef windows}+'.exe'{$endif}) then
+         begin
          if i2 = 0 then begin
           grid.appendrow([]);
        
          if edexena.text <> '' then
           filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
           filename2:= removefileext(filena.value)+ edexeex.text ;
-      
+          
+           filename2 := tosysfilepath(filename2);
+              
           i2:= getprocessoutput('gcc'{$ifdef windows}+'.exe'{$endif}+' -lm -o '+ filename2+' '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -522,7 +581,12 @@ application.processmessages;
             end;
                    
           if er = 0
-          then  grid.appendrow(['*** '+filename(filename2)+' created by gcc from '+filename(filename1)+'.s ***'])
+          then 
+          begin
+           grid.appendrow(['*** '+filename(filename2)+' created by gcc from '+ 
+             filename(filename1)+'.s ***']);
+           grid.rowcolorstate[grid.rowcount -1]:= 1 ;
+          end   
           else
           begin
            grid.appendrow(['*** '+filename(filename2)+' failed to create ***']);
@@ -543,6 +607,13 @@ application.processmessages;
            end;
           end;
         }
+        
+        end else begin
+          grid.datacols[0].color :=  colorer;
+          grid.appendrow(['*** Error: '+llvmbindir.value+'gcc'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
+          er := 1;
+          end;
         end;
         
          dt1 := now-dt1;
@@ -557,7 +628,8 @@ application.processmessages;
          begin
           grid.appendrow(['*** All is OK. :) ***']);
           grid.datacols[0].color := colorok;
-           end else begin
+          grid.rowcolorstate[grid.rowcount -1]:= 1 ;
+                  end else begin
           grid.appendrow(['*** Some process failed ***']);
           grid.datacols[0].color := colorer;
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
@@ -620,13 +692,17 @@ application.processmessages;
          grid.appendrow;
          grid.appendrow(['*** Running '+filenamebase(filename2) + ' ***']);
          grid.appendrow;
+          grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
          grid.appendrow;
-         
-         
+          grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
+               
         i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-        
-        if i2 = 0 then grid.appendrow(['*** Executable ended without errors ***']) else
+         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
+        if i2 = 0 then
+        begin
+         grid.appendrow(['*** Executable ended without errors ***']) ;
+         grid.rowcolorstate[grid.rowcount -1]:= 1 ; end else
         begin
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
         grid.rowcolorstate[grid.rowcount -1]:= 0 ;
@@ -672,15 +748,13 @@ application.processmessages;
        
       } 
 
-       if extcomp.value = false then 
+       if llvm.value = true then 
        begin
         dt1 := now-dt1;
         DecodeTime(dt1, ho, mi, se, ms);
         grid.appendrow;
         grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d', [ho, mi, se, ms])+ ' ***']) ;  
        end;
-       
-       
      
      if runend.value then 
      begin
@@ -707,17 +781,21 @@ application.processmessages;
         if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
                  
          grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+         grid.appendrow;
+        grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
         grid.appendrow;
-        grid.appendrow;
+         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
       
         x:= 0;
       
         i2:= getprocessoutput((mlipath) +' '+ (filename1),'',str1);
      
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         if (i2 = 0) or  (i2 = 217) then 
-          grid.appendrow(['*** Interpreted without errors ***']) 
-        else
+        
+         if (i2 = 0) or  (i2 = 217) then begin
+         grid.appendrow(['*** Interpreted without errors ***']) ;
+         grid.rowcolorstate[grid.rowcount -1]:= 1 ;
+         end else
         begin
          grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
@@ -880,12 +958,16 @@ grid.datacols[0].color := cl_white;
            
          grid.appendrow(['*** Running '+filename(filename2) + ' ***']);
          grid.appendrow;
+         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
          grid.appendrow;
-         
+         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
          i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
-         if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Executable ended without errors ***']) else
+         if (i2 = 0) or  (i2 = 217) then
+         begin
+          grid.appendrow(['*** Executable ended without errors ***']);
+          grid.rowcolorstate[grid.rowcount -1]:= 1 ; end else
          begin
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
         grid.rowcolorstate[grid.rowcount -1]:= 0 ;
@@ -926,11 +1008,17 @@ if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  grid.clear;
  grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
  grid.appendrow;
+ grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
  grid.appendrow;
+ grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
  i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
  grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          
- if (i2 = 0) or  (i2 = 217) then grid.appendrow(['*** Interpreted without errors ***']) else
+ if (i2 = 0) or  (i2 = 217) then
+ begin
+  grid.appendrow(['*** Interpreted without errors ***']);
+  grid.rowcolorstate[grid.rowcount -1]:= 1 ;
+ end else
  begin
  grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
  grid.rowcolorstate[grid.rowcount -1]:= 0 ;

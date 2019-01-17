@@ -49,10 +49,12 @@ object mainfo: tmainfo
         numstart = 1
         numstep = 1
       end>
-    rowcolors.count = 2
+    rowcolors.count = 4
     rowcolors.items = (
       16754342
-      -1610612717
+      11984566
+      16770698
+      -1610612730
     )
     datarowheight = 16
     reffontheight = 14
@@ -446,20 +448,20 @@ object mainfo: tmainfo
     end
     object bellc: tbooleanedit
       frame.levelo = -1
-      frame.caption = 'llvm-llc'
+      frame.caption = 'llc'
       frame.localprops = [frl_levelo]
       frame.localprops1 = []
       frame.outerframe = (
         0
         1
-        45
+        16
         2
       )
       taborder = 3
       hint = 'Execute llc to produce assembler code'
       bounds_x = 9
       bounds_y = 76
-      bounds_cx = 58
+      bounds_cx = 29
       bounds_cy = 16
       statfile = statf
     end

@@ -637,7 +637,11 @@ begin
     end;
    end;
    if s1 <> '' then begin
-    writeln(s1+quotefilename(aunit^.filepath));
+     
+    {$ifdef mse_gui} 
+     mainfo.grid.appendrow([s1+quotefilename(aunit^.filepath)]) ; 
+    {$endif} 
+    
    end;
   end;
   if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
@@ -1348,7 +1352,11 @@ begin
             writeln(' ',ar1[i1]);
            end;
           {$endif}
-           writeln('Linking (gcc)');
+          // writeln('Linking (gcc)');
+            {$ifdef mse_gui} 
+          mainfo.grid.appendrow(['Linking (gcc)']) ; 
+           {$endif}
+          
            result:= execwaitmse(gcccommand+
                           ' -lm -o'+tosysfilepath(exefile)+' '+
                                quotefilename(tosysfilepath(ar1))) = 0;
@@ -1369,17 +1377,26 @@ begin
            end;
           {$else}
            if co_compilefileinfo in o.compileoptions then begin
-            writeln('Linking bc modules (llvm-link)');
-            for i1:= 0 to high(ar1) do begin
-             writeln(' ',quotefilename(ar1[i1]));
-            end;
+          //  writeln('Linking bc modules (llvm-link)');
+              {$ifdef mse_gui} 
+          mainfo.grid.appendrow(['Linking bc modules (llvm-link)']) ; 
+          for i1:= 0 to high(ar1) do begin
+            // writeln(' ',quotefilename(ar1[i1]));
+            mainfo.grid.appendrow([quotefilename(ar1[i1])]) ; 
            end;
+           end;
+           {$endif}
+                    
           {$endif}
            result:= execwaitmse(llvmlinkcommand+
                             ' -o='+fna1+' '+quotefilename(ar1)) = 0;
            if result then begin
             if llvmoptcommand <> '' then begin
-             writeln('Optimizing bc code (llvm-opt)');
+             // writeln('Optimizing bc code (llvm-opt)');
+                {$ifdef mse_gui} 
+              mainfo.grid.appendrow(['Optimizing bc code (llvm-opt)']) ; 
+               {$endif}
+             
              result:= execwaitmse(llvmoptcommand+' -o='+fna1no+' '+fna1) = 0;
              deletetempfile(fna1);
              if not result then begin
@@ -1387,11 +1404,19 @@ begin
              end;
              fna1:= fna1no;
             end;
-            writeln('Compiling bc code (llc)');
+            //writeln('Compiling bc code (llc)');
+             {$ifdef mse_gui} 
+              mainfo.grid.appendrow(['Compiling bc code (llc)']) ; 
+               {$endif}
             result:= execwaitmse(llccommand+' -o='+fna2+' '+fna1) = 0;
             deletetempfile(fna1);
             if result then begin
-             writeln('Assembling (gcc)');
+            // writeln('Assembling (gcc)');
+          
+            {$ifdef mse_gui} 
+              mainfo.grid.appendrow(['Assembling (gcc)']) ; 
+               {$endif}
+         
              result:= execwaitmse(gcccommand+
                             ' -lm -o'+tosysfilepath(exefile)+' '+fna2) = 0;
             end;
@@ -1405,13 +1430,24 @@ begin
         end;
         with compileinfo do begin
          t1:= nowutc() - start;
+         {
          writeln(inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+
           ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
           ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
               ' MSElang, '+
           ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest');
-        end;
+          }
+          
+          {$ifdef mse_gui} 
+           mainfo.grid.appendrow([inttostr(linecount)+' lines, '+
+          inttostr(unitcount)+' units, '+
+          ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
+          ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
+              ' MSElang, '+
+          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest']) ; 
+           {$endif}
+          end;
        end;
       end;
      end;
