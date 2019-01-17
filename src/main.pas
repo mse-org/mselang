@@ -135,7 +135,7 @@ var
  targetstream: tllvmbcwriter;
  bo1: boolean;
  parserparams: parserparamsty;
- str1 : string;
+ str1, strtemp : string;
  int1: integer;
  filename1,filename2,filename3,optname: filenamety;
  dirbefore,mlipath, mlcpath, mbcpath, str2: msestring;
@@ -336,6 +336,7 @@ application.processmessages;
        {$endif}
         targetstream.destroy();
         optname:= filenamebase(filename1);
+        filename1 := tosysfilepath(filename1);
         if beopt.value then  
         begin
         if fileexists(llvmbindir.value+'opt'{$ifdef windows}+'.exe'{$endif}) then
@@ -385,11 +386,19 @@ application.processmessages;
         if i2 = 0 then begin
         
         if bellc.value then begin  
+        {$ifdef windows}
+        strtemp := 'clang++.exe';
+        {$else}
+        strtemp := 'llc';
+        {$endif}
         
-        if fileexists(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}) then
+        if fileexists(llvmbindir.value+strtemp) then
          begin
          grid.appendrow;
-          i2:= getprocessoutput(llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}+' '+llced.value+' -o '+
+         filename1 := tosysfilepath(filename1);
+         
+         
+          i2:= getprocessoutput(llvmbindir.value+strtemp+' '+llced.value+' -o '+
                                       filenamebase(filename1)+'.s '+
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -421,7 +430,7 @@ application.processmessages;
         end;
         end else begin
           grid.datacols[0].color :=  colorer;
-          grid.appendrow(['*** Error: '+llvmbindir.value+'llc'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.appendrow(['*** Error: '+llvmbindir.value+strtemp+' does not exist... ***']);
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           er := 1;
           end;
@@ -432,7 +441,14 @@ application.processmessages;
      // llvm-link
      if belink.value then begin 
      
-       if fileexists(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}) then
+        {$ifdef windows}
+        strtemp := 'lld-link.exe';
+        {$else}
+        strtemp :='llvm-link';
+        {$endif}
+        
+      if fileexists(llvmbindir.value+strtemp) then   
+        
          begin
          if i2 = 0 then begin
        
@@ -444,10 +460,17 @@ application.processmessages;
          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
          filename2:= removefileext(filena.value)+ edexeex.text ;
          
+         filename2 := tosysfilepath(filename2);
+         optname := tosysfilepath(optname);
+         
          grid.appendrow;
  
-        i2:= getprocessoutput(llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}+' ' +linked.value+ ' -o='+filename2+' '+
-                 optname,'',str1);
+        i2:= getprocessoutput(llvmbindir.value+ strtemp +' ' +linked.value +
+        {$ifdef unix}
+        ' -o='+filename2+
+        {$endif}
+        ' '+    optname,'',str1);
+        
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
          x := 0;
@@ -488,7 +511,7 @@ application.processmessages;
       
        end else begin
           grid.datacols[0].color :=  colorer;
-          grid.appendrow(['*** Error: '+llvmbindir.value+'llvm-link'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.appendrow(['*** Error: '+llvmbindir.value+ strtemp +' does not exist... ***']);
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           er := 1;
           end;
@@ -497,7 +520,14 @@ application.processmessages;
       
       // clang
      if beclang.value then begin 
-       if fileexists(llvmbindir.value+'clang'{$ifdef windows}+'.exe'{$endif}) then
+    
+       {$ifdef windows}
+        strtemp := 'clang.exe';
+        {$else}
+        strtemp :='clang';
+        {$endif}
+      
+       if fileexists(llvmbindir.value+strtemp) then
          begin
          if i2 = 0 then begin
        
@@ -518,7 +548,7 @@ application.processmessages;
          grid.appendrow;
           grid.appendrow;
  
-        i2:= getprocessoutput(llvmbindir.value+ 'clang'{$ifdef windows}+'.exe'{$endif}+' ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
+        i2:= getprocessoutput(llvmbindir.value+ strtemp +' ' + optname + ' ' + clanged.value + ' -lm -o '+filename2,'',str1);;
                  
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
        
@@ -546,7 +576,7 @@ application.processmessages;
         end;
         end else begin
           grid.datacols[0].color :=  colorer;
-          grid.appendrow(['*** Error: '+llvmbindir.value+'clang'{$ifdef windows}+'.exe'{$endif}+' does not exist... ***']);
+          grid.appendrow(['*** Error: '+llvmbindir.value+strtemp+' does not exist... ***']);
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
           er := 1;
           end;
@@ -564,6 +594,7 @@ application.processmessages;
           filename2:= removefileext(filena.value)+ edexeex.text ;
           
            filename2 := tosysfilepath(filename2);
+           filename1 := tosysfilepath(filename1);
               
           i2:= getprocessoutput('gcc'{$ifdef windows}+'.exe'{$endif}+' -lm -o '+ filename2+' '+
                             filenamebase(filename1)+'.s','',str1);
@@ -778,6 +809,7 @@ application.processmessages;
          if (llvm.value = false) then
         begin
         filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
+        filename1 := tosysfilepath(filename1);
         if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
                  
          grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
@@ -1062,8 +1094,12 @@ if trim(llvmbindir.value) = '' then llvmbindir.value :=
  {$ifdef unix}'/usr/bin/';{$endif}
  {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
 
+if trim(clanged.value) = '' then clanged.value :=
  {$ifdef unix}
-if trim(clanged.value) = '' then clanged.value := '-target i386-pc-linux-gnu' ;
+ '-v -target i386-pc-linux-gnu' ;
+ {$endif}
+  {$ifdef windows}
+ '-v' ;
  {$endif}
   
  if trim(filena.value) = '' then
