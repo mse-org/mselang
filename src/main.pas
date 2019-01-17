@@ -243,7 +243,7 @@ application.processmessages;
   include(parserparams.compileoptions,co_nodeinit);
   
   // grid.appendrow([tosysfilepath(filena.value)]);
-  if (extcomp.value = false) and (llvm.value) then
+  if (extcomp.value = false) then
   begin
   grid.datacols[0].color := cl_white;
   bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
@@ -549,7 +549,7 @@ application.processmessages;
          DecodeTime(dt1, ho, mi, se, ms);
          
          workpan.visible := false;
-         
+        
           grid.appendrow(['*** Process duration: ' + format('%.2d:%.2d:%.2d.%.3d',
           [ho, mi, se, ms])+ ' ***']) ;
          
@@ -609,15 +609,19 @@ application.processmessages;
       end;
       if i2 = 0 then begin
        if runend.value then begin
-       
+        
             if edexena.text <> '' then
          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
          filename2:= removefileext(filena.value)+ edexeex.text ;
+         filename2 := tosysfilepath(filename2);
+        
+          if fileexists(filename2) then begin
  
          grid.appendrow;
-         grid.appendrow(['*** Running '+filenamebase(filename2)+ edexeex.text + ' ***']);
+         grid.appendrow(['*** Running '+filenamebase(filename2) + ' ***']);
          grid.appendrow;
          grid.appendrow;
+         
          
         i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
@@ -627,6 +631,12 @@ application.processmessages;
         grid.appendrow(['*** Executable EXITCODE: '+inttostrmse(i2)+ ' ***']);
         grid.rowcolorstate[grid.rowcount -1]:= 0 ;
         end;
+        end else 
+        begin
+        grid.appendrow(['*** Cannot run '+ (filename2)+ ' ... it does not exist ***']);
+        grid.rowcolorstate[grid.rowcount -1]:= 0 ;
+        end;  
+      
        end;
       end;
      finally
@@ -671,6 +681,7 @@ application.processmessages;
      
      if runend.value then 
      begin
+      
        {$ifdef unix}
        if (extcomp.value = false) and (llvm.value = false) then
         begin
@@ -683,26 +694,22 @@ application.processmessages;
          grid.appendrow(['*** Interpreted EXITCODE: '+inttostrmse(i2)+ ' ***']);
          grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
          end;
-        end;
-       {$else} 
+        end else if (extcomp.value = true)  then 
+       {$endif} 
+    
          if (llvm.value = false) then
         begin
         filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
         if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
-               
-        grid.appendrow;
-        grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
+                 
+         grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
         grid.appendrow;
         grid.appendrow;
       
         x:= 0;
-        
-      //  while (i2 <> 0) and (x < 4) do
-      //  begin
+      
         i2:= getprocessoutput((mlipath) +' '+ (filename1),'',str1);
-      //  inc(x);
-       // end;
-              
+     
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if (i2 = 0) or  (i2 = 217) then 
           grid.appendrow(['*** Interpreted without errors ***']) 
@@ -721,8 +728,7 @@ application.processmessages;
           end;  
          end;
          end;
-        {$endif} 
-       
+           
      end;
      
     end;
@@ -859,11 +865,15 @@ begin
 grid.datacols[0].color := cl_white; 
       if edexena.text <> '' then
            filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
-           filename2:= tosysfilepath(removefileext(filena.value)+ edexeex.text) ;
-
+           filename2:= (removefileext(filena.value)+ edexeex.text) ;
+           
+           filename2 :=  tosysfilepath(filename2);
+          
+          grid.clear;
+          application.processmessages;
+           
        if fileexists(filename2) then begin         
            
-         grid.clear;
          grid.appendrow(['*** Running '+filename(filename2) + ' ***']);
          grid.appendrow;
          grid.appendrow;
@@ -878,7 +888,7 @@ grid.datacols[0].color := cl_white;
          end;
        end else
        begin
-        grid.appendrow(['*** File ' + filename2 + ' does not exist! ***']) ; 
+        grid.appendrow(['*** Cannot run ' + filename2 + ' ... it does not exist! ***']) ; 
         grid.rowcolorstate[grid.rowcount -1]:= 0 ;
        end;  
  end;
