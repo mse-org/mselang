@@ -243,7 +243,7 @@ application.processmessages;
   include(parserparams.compileoptions,co_nodeinit);
   
   // grid.appendrow([tosysfilepath(filena.value)]);
-  if (extcomp.value = false) then
+  if (extcomp.value = false) and (llvm.value) then
   begin
   grid.datacols[0].color := cl_white;
   bo1:= parser.parse(ansistring(ed.gettext),tosysfilepath(filena.value),parserparams);
@@ -299,7 +299,7 @@ application.processmessages;
       
       end else 
       begin
-         grid.appendrow(['*** Compilers does not exists ***']) ;
+         grid.appendrow(['*** Compilers do not exist ***']) ;
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
        end;
            
@@ -644,7 +644,8 @@ application.processmessages;
      end;
     end
     else begin
-    
+     
+     { 
      if (extcomp.value = false) then
   begin
      filename1:= replacefileext(filena.value,'mli');
@@ -668,6 +669,8 @@ application.processmessages;
        grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
       end;
        end;   
+       
+      } 
 
        if extcomp.value = false then 
        begin
@@ -682,6 +685,7 @@ application.processmessages;
      if runend.value then 
      begin
       
+      {
        {$ifdef unix}
        if (extcomp.value = false) and (llvm.value = false) then
         begin
@@ -696,7 +700,7 @@ application.processmessages;
          end;
         end else if (extcomp.value = true)  then 
        {$endif} 
-    
+    }
          if (llvm.value = false) then
         begin
         filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
@@ -980,10 +984,10 @@ begin
  
  filena.value := 
  {$ifdef windows}
-'.\test\hellomeslang\hellomselang.pas';
+'.\test\hellomselang\hellomselang.pas';
  {$else}
   tosysfilepath(msepath +
- 'test/hellomeslang/hellomselang.pas');
+ 'test/hellomselang/hellomselang.pas');
 {$endif}
  loadexe(nil);
 end;
