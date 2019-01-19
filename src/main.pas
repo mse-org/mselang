@@ -1097,14 +1097,11 @@ if trim(llvmbindir.value) = '' then llvmbindir.value :=
  {$ifdef unix}'/usr/bin/';{$endif}
  {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
 
-if trim(clanged.value) = '' then clanged.value :=
  {$ifdef unix}
- '-v -target i386-pc-linux-gnu' ;
+ if trim(clanged.value) = '' then clanged.value :=
+ '-target i386-pc-linux-gnu' ;
  {$endif}
-  {$ifdef windows}
- '-v' ;
- {$endif}
-  
+   
  if trim(filena.value) = '' then
 begin
  msepath := (ExtractFilePath(ParamStr(0)));
@@ -1119,7 +1116,7 @@ begin
  loadexe(nil);
 end;
 
- if length(tmpcompparams) < 2 then begin
+ if length(compparams) < 2 then begin
   setlength(tmpcompparams,3);
   tmpcompparams[0] := '-Fu' + msepath + '*';
   tmpcompparams[1] := '-Fu' + msepath + '*'+directoryseparator+'*';

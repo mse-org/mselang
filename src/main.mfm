@@ -356,6 +356,7 @@ object mainfo: tmainfo
     bounds_y = 3
     bounds_cx = 246
     bounds_cy = 127
+    anchors = [an_left, an_top, an_right]
     object gcced: tmemodialoghistoryedit
       frame.levelo = -1
       frame.framei_left = 4
@@ -383,6 +384,7 @@ object mainfo: tmainfo
       bounds_x = 79
       bounds_y = 98
       bounds_cx = 160
+      anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -439,6 +441,7 @@ object mainfo: tmainfo
       bounds_x = 79
       bounds_y = 76
       bounds_cx = 160
+      anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -493,6 +496,7 @@ object mainfo: tmainfo
       bounds_x = 79
       bounds_y = 48
       bounds_cx = 160
+      anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -548,6 +552,7 @@ object mainfo: tmainfo
       bounds_x = 79
       bounds_y = 19
       bounds_cx = 160
+      anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
@@ -641,6 +646,7 @@ object mainfo: tmainfo
       bounds_x = 92
       bounds_y = 18
       bounds_cx = 184
+      anchors = [an_left, an_top, an_right]
       statfile = statf
       dropdown.cols.count = 1
       dropdown.cols.items = <      
