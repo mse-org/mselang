@@ -6,11 +6,14 @@ Copyright (c) 2013-2018 by Martin Schreiber
 
 MSElang   2013-11-01 mse
 =======
-In the beginning of 2013 I decided to make an own compiler for the MSEide+MSEgui project and started to experiment. The reason is the development direction of Delphi since Delphi 7 which makes it less suitable for my tasks and knowing that Free Pascal is closely following the same direction.
+In the beginning of 2013 I decided to make an own compiler for the MSEide+MSEgui project and started to experiment.
+ The reason is the development direction of Delphi since Delphi 7 which makes it less suitable for my tasks and
+ knowing that Free Pascal is closely following the same direction.
 
 The design goals
 ----------------
-Ultimate goal is to build the most productive universal programming environment, usable from programming of microcontrollers to MSEgui projects.
+Ultimate goal is to build the most productive universal programming environment,
+ usable from programming of microcontrollers to MSEgui projects.
 
 1. Simple.
 Reduce the language concepts one has to learn to the minimum, make them as orthogonal as possible.
@@ -33,8 +36,11 @@ While defining the language keep in mind how it can be implemented efficiently.
 
 The Steps
 ---------
-At the beginning MSElang will be the language currently used in MSEgui project, a subset of Delphi 7 and FPC 2.6.2. Later syntax changes are possible.
-In order to develop and test the front-end there first will be an intermediate code interpreter which can be used in MSEifi projects and in MSEgui report generator. Most likely there will be not much effort invested to make it fast at runtime but compiletime must be lightning fast.
+At the beginning MSElang will be the language currently used in MSEgui project, a subset of Delphi 7 and FPC 2.6.2.
+ Later syntax changes are possible.
+In order to develop and test the front-end there first will be an intermediate code interpreter which can be used in MSEifi projects
+ and in MSEgui report generator. Most likely there will be not much effort invested to make it fast at runtime
+ but compiletime must be lightning fast.
 Later native code back-ends and a simple RTL will be added.
 
 The time frame
@@ -258,15 +264,21 @@ const
    );
 ...
 
-- There is a small language independent kernel function in compiler which parses the source based on the above language data structure and calls the language specific handler procedures. Because it is small, the kernel can be highly optimised, even coding it in assembler or implementing in an FPGA should be possible.
+- There is a small language independent kernel function in compiler which parses the source based on the above language data structure
+  and calls the language specific handler procedures.
+  Because it is small, the kernel can be highly optimised, even coding it in assembler or implementing in an FPGA should be possible.
 
-- There is a central element hash list where the data and function structure of the program is stored. Hierarchy is handled by storing the sum of the element ID's up to the root, possible collisions must be handled by checking the path ID's.
+- There is a central element hash list where the data and function structure of the program is stored. 
+  Hierarchy is handled by storing the sum of the element ID's up to the root, possible collisions must be handled 
+  by checking the path ID's.
 
 - The data of unit implementation sections can be released with a mark/release mechanism in order to free not anymore used elements.
 
-- Text tokens and keywords get a hash and a unique ID while reading the source. The ID is a random number in order to minimize conflicts in the central element hash list.
+- Text tokens and keywords get a hash and a unique ID while reading the source.
+  The ID is a random number in order to minimize conflicts in the central element hash list.
 
-- The compiler kernel maintains a single context stack, the context handler procedures use the stack to store intermediate information and the central element hash list for persistent data.
+- The compiler kernel maintains a single context stack, the context handler procedures use the stack to store intermediate information
+  and the central element hash list for persistent data.
 
 Thoughts for a future syntax
 ----------------------------

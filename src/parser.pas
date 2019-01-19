@@ -1384,8 +1384,8 @@ begin
             // writeln(' ',quotefilename(ar1[i1]));
             mainfo.grid.appendrow([quotefilename(ar1[i1])]) ; 
            end;
-           end;
            {$endif}
+           end;
                     
           {$endif}
            result:= execwaitmse(llvmlinkcommand+
@@ -1430,15 +1430,7 @@ begin
         end;
         with compileinfo do begin
          t1:= nowutc() - start;
-         {
-         writeln(inttostr(linecount)+' lines, '+
-          inttostr(unitcount)+' units, '+
-          ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
-          ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
-              ' MSElang, '+
-          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest');
-          }
-          
+             
           {$ifdef mse_gui} 
            mainfo.grid.appendrow([inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+
@@ -1446,6 +1438,13 @@ begin
           ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
               ' MSElang, '+
           ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest']) ; 
+           {$else}
+            writeln(inttostr(linecount)+' lines, '+
+          inttostr(unitcount)+' units, '+
+          ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
+          ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
+              ' MSElang, '+
+          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest');
            {$endif}
           end;
        end;

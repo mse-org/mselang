@@ -299,12 +299,14 @@ application.processmessages;
       
       end else 
       begin
-         grid.appendrow(['*** Compilers do not exist ***']) ;
+         grid.appendrow(['*** Compiler does not exist ***']) ;
           grid.rowcolorstate[grid.rowcount -1]:= 0 ; 
        end;
            
    if er = 0 then bo1 := true else bo1 := false;
    end;
+   
+   application.processmessages;
    
   if not bo1 then
   begin
@@ -712,7 +714,7 @@ application.processmessages;
       end;
       if i2 = 0 then begin
        if runend.value then begin
-        
+          application.processmessages;
             if edexena.text <> '' then
          filename2:= filedir(filena.value)+ edexena.text + edexeex.text else
          filename2:= removefileext(filena.value)+ edexeex.text ;
@@ -808,6 +810,7 @@ application.processmessages;
     }
          if (llvm.value = false) then
         begin
+          application.processmessages;
         filename1:= tosysfilepath(replacefileext(filena.value,'mli'));
         filename1 := tosysfilepath(filename1);
         if (fileexists((mlipath))) and  (fileexists((filename1)))  then begin
@@ -1108,10 +1111,10 @@ begin
  
  filena.value := 
  {$ifdef windows}
-'.\test\hellomselang\hellomselang.pas';
+'.\test\helloworld\hellomselang.pas';
  {$else}
   tosysfilepath(msepath +
- 'test/hellomselang/hellomselang.pas');
+ 'test/helloworld/hellomselang.pas');
 {$endif}
  loadexe(nil);
 end;
