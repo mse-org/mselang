@@ -188,6 +188,7 @@ object mainfo: tmainfo
       bounds_cx = 48
       bounds_cy = 16
       statfile = statf
+      enabled = False
     end
     object nocompilerunited: tbooleanedit
       frame.levelo = -1
@@ -207,6 +208,7 @@ object mainfo: tmainfo
       bounds_cx = 69
       bounds_cy = 16
       statfile = statf
+      enabled = False
     end
     object objed: tbooleanedit
       frame.levelo = -1
@@ -226,6 +228,7 @@ object mainfo: tmainfo
       bounds_cx = 53
       bounds_cy = 16
       statfile = statf
+      enabled = False
     end
     object modulared: tbooleanedit
       frame.levelo = -1
@@ -245,6 +248,7 @@ object mainfo: tmainfo
       bounds_cx = 66
       bounds_cy = 16
       statfile = statf
+      enabled = False
     end
     object lineinfoed: tbooleanedit
       frame.levelo = -1
@@ -284,6 +288,7 @@ object mainfo: tmainfo
       bounds_cx = 81
       bounds_cy = 16
       statfile = statf
+      enabled = False
     end
     object btnPath: tbutton
       Tag = 2
@@ -294,13 +299,13 @@ object mainfo: tmainfo
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
       taborder = 8
-      hint = 'Path of units used'
+      hint = 'Units used (-Fu...) and Defines (-d...)'
       bounds_x = 235
       bounds_y = 26
       bounds_cx = 42
       bounds_cy = 24
       state = [as_localcaption, as_localimagelist, as_localimagenr, as_localimagenrdisabled, as_localcolor, as_localhint, as_localonexecute]
-      caption = 'Path'
+      caption = 'Para'
       imagenr = 27
       focusrectdist = 0
       onexecute = patheditev

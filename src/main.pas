@@ -1019,10 +1019,20 @@ begin
 if (extcomp.value) then begin
 tgroupbox2.enabled := false;
 tgroupbox3.enabled := false;
+modulared.enabled := false;
+objed.enabled := false;
+nocompilerunited.enabled := false;
+nortlunitsed.enabled := false;
+keeptmped.enabled := false;
 end else
 begin
 tgroupbox2.enabled := llvm.value;
 tgroupbox3.enabled := llvm.value;
+modulared.enabled := llvm.value;
+objed.enabled := llvm.value;
+nocompilerunited.enabled := llvm.value;
+nortlunitsed.enabled := llvm.value;
+keeptmped.enabled := llvm.value;
 end;
 //extcomp.enabled := not llvm.value;
 end;

@@ -1,5 +1,5 @@
 object patheditfo: tpatheditfo
-  hint = 'Right-click to add row, (like -Fu/home/theproj)'
+  hint = 'Right-click to add row, (like -Fu/home/theproj or -othedefine)'
   visible = False
   bounds_x = 536
   bounds_y = 121
@@ -15,7 +15,7 @@ object patheditfo: tpatheditfo
   )
   options = [fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = mainfo.statf
-  caption = 'Units Path Editor '
+  caption = 'Units Path and Define Editor '
   windowopacity = -Inf
   onloaded = loadedev
   onclosequery = closequerydef
