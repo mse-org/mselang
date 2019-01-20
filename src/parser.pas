@@ -76,7 +76,7 @@ uses
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
  subhandler,listutils,llvmbitcodes,llvmlists,unitwriter,unitreader,
  identutils,compilerunit,msearrayutils,grammarglob,grapas,gramse, 
- {$ifdef mse_gui} main, {$endif}
+ {$ifdef mse_gui} main, compmodule, {$endif}
  __mla__internaltypes,msedate;
   
 //
@@ -1268,7 +1268,13 @@ begin
     setlength(contextstack,stackdepth);
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
-   
+    
+    {$ifdef mse_gui} 
+     mainfo.grid.appendrow([startupmessage]) ; 
+      //mainfo.grid.rowcolorstate[mainfo.grid.rowcount -1]:= 1 ;  
+    {$endif} 
+  
+      
    if co_llvm in o.compileoptions then begin
      opcount:= 0;
     end
@@ -1432,12 +1438,14 @@ begin
          t1:= nowutc() - start;
              
           {$ifdef mse_gui} 
+            
            mainfo.grid.appendrow([inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+
           ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
           ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
               ' MSElang, '+
-          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest']) ; 
+          ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest']) ;
+          mainfo.grid.appendrow; 
            {$else}
             writeln(inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+

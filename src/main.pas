@@ -330,9 +330,10 @@ application.processmessages;
        end 
        else begin
        grid.appendrow(['*** ' + filename(filename1) + ' created by mselang from ' +
-         filename(filena.value) +' ***']);
-          llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
-                           getfullsegment(seg_op,0{startupoffset}));
+          filename(filena.value) +' ***']);
+       grid.rowcolorstate[grid.rowcount -1]:= 1 ;   
+       llvmops.run(targetstream,true,info.s.unitinfo^.mainfini,
+                         getfullsegment(seg_op,0{startupoffset}));
        {$ifdef mse_debugparser}
         writeln('***************** LLVM BC gen ended ***********');
        {$endif}
@@ -556,12 +557,25 @@ application.processmessages;
        
          x := 0;
          while (x < grid.rowcount) do begin
-           if (system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0) then
+           if ((system.pos('Error',grid[0][x]) > 0) or (system.pos('error',grid[0][x]) > 0)) and not 
+           (system.pos('-ferror',grid[0][x]) > 0) then
                grid.rowcolorstate[x]:= 0 ;
           //  if (system.pos('Warning',grid[0][x]) > 0) or (system.pos('warning',grid[0][x]) > 0) then                grid.rowcolorstate[x]:= 0 ;  
           //       grid.rowcolorstate[x]:= 2 ;  
+         if (trim(grid[0][x]) = '') and (x>5) then grid.deleterow(x);
             inc(x);
-            end;
+               end;
+            
+         for y := 0 to 1 do
+         begin
+          x := 0;
+          while (x < grid.rowcount) do begin
+           if (trim(grid[0][x]) = '') and (x>5) then grid.deleterow(x);
+            inc(x);            
+            end;  
+          end;
+       
+       application.processmessages;
              
         if i2 = 0 then
         begin
@@ -724,14 +738,18 @@ application.processmessages;
  
          grid.appendrow;
          grid.appendrow(['*** Running '+filenamebase(filename2) + ' ***']);
+         grid.rowcolorstate[grid.rowcount -1]:= 1;
+        
+         y := grid.rowcount;
+         
          grid.appendrow;
-          grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
          grid.appendrow;
-          grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
-               
+             
         i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
+         
+        for x := y to grid.rowcount -1 do grid.rowcolorstate[x]:= 3 ; 
+         
         if i2 = 0 then
         begin
          grid.appendrow(['*** Executable ended without errors ***']) ;
