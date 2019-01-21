@@ -910,12 +910,18 @@ begin
 end;
 
 procedure tmainfo.loadexe(const sender: TObject);
+const
+mselg =
+ {$if defined(cpu86) and defined(linux)} 'MSElang lin32 ' ;{$endif}
+ {$if defined(cpu86) and defined(bsd)} 'MSElang bsd32 ' ;{$endif}
+ {$if defined(cpuarm)} 'MSElang arm32 ' ;{$endif}
+ {$if defined(windows)} 'MSElang win32 ' ;{$endif}
 begin
 if fileexists(tosysfilepath(filena.value)) then
 begin
  try
   ed.loadfromfile(tosysfilepath(filena.value));
-  caption := 'MSElang ' + tosysfilepath(filena.value);
+  caption := mselg + tosysfilepath(filena.value);
  except
   application.handleexception;
   application.terminated:= false;
