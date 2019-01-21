@@ -8,6 +8,10 @@ uses
 const
  mliextension = 'mli';
  llvmbcextension = 'bc'; 
+ startupmessage =
+ 'MSElang Compiler version 0.0' +lineend+
+'Copyright (c) 2013-2018 by Martin Schreiber';
+
 type
  paramty = (pa_source,                  //0
             pa_llvm,                    //1
@@ -51,7 +55,7 @@ type
 
 var
  compmo: tcompmo;
- // bcout : boolean = false;
+ bcout : boolean = false;
 
 implementation
 
@@ -61,20 +65,13 @@ uses
  msearrayutils,identutils,opglob;
  
 const
- startupmessage =
- 'MSElang Compiler version 0.0' +lineend+
-'Copyright (c) 2013-2018 by Martin Schreiber';
-
- defaultllvmbindir = 
+  defaultllvmbindir = 
  {$ifdef unix}'/usr/bin/';{$endif}
  {$ifdef windows}'C:\Program Files (x86)\LLVM\bin\';{$endif}
  
-//'/home/mse/packs/standard/git/llvm/build_release/bin/';
-// '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
-
 procedure tcompmo.createexe(const sender: TObject);
 begin
- sysenv.printmessage(startupmessage +lineend+ 'Target OS: '+platformtext);
+ sysenv.printmessage(startupmessage +lineend+ 'Host OS: '+platformtext);
 end;
 
 procedure tcompmo.eventloopexe(const sender: TObject);
@@ -107,7 +104,7 @@ begin
    try
     include(parserparams.compileoptions,co_nodeinit);
 
-{   
+   
    if bcout then
    begin
     include(parserparams.compileoptions,co_llvm);
@@ -115,7 +112,7 @@ begin
                                      mlaruntimecompileoptions) + 
                                 llvmcompileoptions + [co_buildexe];
    end;
- }
+
   //  sysenv.printmessage('Compiling ' + filename1 + ' ...');    
    if parse(str1,filename1,parserparams) then begin
       sysenv.printmessage('mlc process: OK');

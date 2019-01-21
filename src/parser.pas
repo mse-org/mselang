@@ -1271,7 +1271,7 @@ begin
     
     {$ifdef mse_gui} 
      mainfo.grid.appendrow([startupmessage]) ; 
-      //mainfo.grid.rowcolorstate[mainfo.grid.rowcount -1]:= 1 ;  
+     mainfo.grid.rowcolorstate[mainfo.grid.rowcount -1]:= 1 ;  
     {$endif} 
   
       
@@ -1438,15 +1438,13 @@ begin
          t1:= nowutc() - start;
              
           {$ifdef mse_gui} 
-            
-           mainfo.grid.appendrow([inttostr(linecount)+' lines, '+
+          mainfo.grid.appendrow([inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+
           ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+
           ansistring(formatfloatmse((t1-llvmtime)*24*60*60,'0.000s'))+
               ' MSElang, '+
           ansistring(formatfloatmse(llvmtime*24*60*60,'0.000s'))+' rest']) ;
-          mainfo.grid.appendrow; 
-           {$else}
+             {$else}
             writeln(inttostr(linecount)+' lines, '+
           inttostr(unitcount)+' units, '+
           ansistring(formatfloatmse(t1*24*60*60,'0.000s'))+' total, '+

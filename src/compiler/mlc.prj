@@ -761,7 +761,7 @@ findhistory=1
  initparams
 findoptions=1
 editpos=11
- 0,11
+ 0,10
  0,-1073741823
  0,-1073741823
  0,-1073741823
@@ -831,15 +831,15 @@ nomenumodules=1
 order=11
  0
  1
- 8
- 10
- 4
- 6
- 7
- 2
- 3
- 9
  5
+ 7
+ 4
+ 8
+ 3
+ 10
+ 6
+ 9
+ 2
 firsttab=0
 index=0
 [layout]
@@ -1069,7 +1069,7 @@ windowlayout=586
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=stackfo
+ stackedunder=_mse_compmo_mse_
  parent=
  mdistate=0
  nx=0
@@ -1364,22 +1364,22 @@ windowlayout=586
  order=11
   0
   1
-  8
-  10
-  4
-  6
-  7
-  2
-  3
-  9
   5
+  7
+  4
+  8
+  3
+  10
+  6
+  9
+  2
  firsttab=0
  index=0
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=objectinspectorfo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0

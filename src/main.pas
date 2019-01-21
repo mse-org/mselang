@@ -738,7 +738,7 @@ application.processmessages;
  
          grid.appendrow;
          grid.appendrow(['*** Running '+filenamebase(filename2) + ' ***']);
-         grid.rowcolorstate[grid.rowcount -1]:= 1;
+      //   grid.rowcolorstate[grid.rowcount -1]:= 1;
         
          y := grid.rowcount;
          
@@ -882,7 +882,18 @@ application.processmessages;
  finally
   setcurrentdirmse(dirbefore);
  end;
+         
+ for y := 0 to 2 do
+ begin
+  x := 0; 
+  while (x < grid.rowcount) do begin
+    if (trim(grid[0][x]) = '') then grid.deleterow(x);
+         inc(x);
+            end;
+  grid.rowcolorstate[0]:= 3 ;   
+ if (llvm.value = false) or (extcomp.value) then grid.rowcolorstate[1]:= 3 ;   
  workpan.visible := false;
+ end;
 end;
 
 procedure tmainfo.editnotiexe(const sender: TObject;
@@ -1012,8 +1023,6 @@ grid.datacols[0].color := cl_white;
          grid.appendrow(['*** Running '+filename(filename2) + ' ***']);
          grid.appendrow;
          grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
-         grid.appendrow;
-         grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
          i2:= getprocessoutput(filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         
@@ -1030,6 +1039,9 @@ grid.datacols[0].color := cl_white;
         grid.appendrow(['*** Cannot run ' + filename2 + ' ... it does not exist! ***']) ; 
         grid.rowcolorstate[grid.rowcount -1]:= 0 ;
        end;  
+       if grid.rowcount > 2 then
+       if trim(grid[0][grid.rowcount-2]) = '' then grid.deleterow(grid.rowcount-2);
+
  end;
 
 procedure tmainfo.changellvm(const sender: TObject);
@@ -1058,7 +1070,7 @@ end;
 procedure tmainfo.runmli(const sender: TObject);
 var
 filename1, str1, mlipath : string;
-i2 : integer;
+i2, x, y : integer;
 begin
  {$ifdef windows}
  mlipath := IncludeTrailingBackslash(ExtractFilePath(ParamStr(0))) + 'interpreter\mli.exe';
@@ -1070,8 +1082,6 @@ grid.datacols[0].color := cl_white;
 if (fileexists(filename1)) and (fileexists(mlipath))  then begin
  grid.clear;
  grid.appendrow(['*** Interpreting '+ filename(filename1) + ' ***']);
- grid.appendrow;
- grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
  grid.appendrow;
  grid.rowcolorstate[grid.rowcount -1]:= 3 ; 
  i2:= getprocessoutput(mlipath +' '+ filename1,'',str1);
@@ -1091,6 +1101,9 @@ begin
  grid.appendrow(['*** File ' + filename1 + ' does not exist! ***']) ;
   grid.rowcolorstate[grid.rowcount -1]:= 0 ;
 end; 
+if grid.rowcount > 2 then
+if trim(grid[0][grid.rowcount-2]) = '' then grid.deleterow(grid.rowcount-2);
+      
 end;
 
 procedure tmainfo.onchangelink(const sender: TObject; var avalue: Boolean;

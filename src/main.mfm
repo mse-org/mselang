@@ -794,7 +794,7 @@ object mainfo: tmainfo
         0
       )
       taborder = 5
-      hint = 'Directory of llc'
+      hint = 'Directory of LLVM suite'
       bounds_x = 3
       bounds_y = 86
       bounds_cx = 196
