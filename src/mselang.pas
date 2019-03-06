@@ -21,9 +21,27 @@ program mselang;
 {$endif}
 uses
  {$ifdef FPC}{$ifdef unix}cthreads,{$endif}{$endif}
- msegui,mseforms,main,compmoduledebug, patheditform;
+ 
+ {$ifdef mse_i18n}
+  gettext,msei18nutils,mseconsts,mseconsts_ru,mseconsts_uzcyr,
+  mseconsts_de,mseconsts_es,mseconsts_zh,mseconsts_id,mseconsts_fr,
+ {$endif}
+ 
+  msegui,mseforms,main,compmoduledebug, patheditform;
+
+{$ifdef mse_i18n}
+var
+  MSELanguage,MSEFallbacklang:string;
+  {$endif}
 
 begin
+ {$ifdef mse_i18n}
+ Gettext.GetLanguageIDs(MSELanguage,MSEFallbackLang);
+ if loadlangunit('.' + directoryseparator + 'languages' + directoryseparator +
+  'mselang_i18n_'+ MSEFallbackLang,true) then
+                                                   setlangconsts(MSEFallbackLang);
+ {$endif}
+
  application.createdatamodule(tcompdebugmo,compdebugmo);
  application.createform(tmainfo,mainfo);
  application.createform(tpatheditfo,patheditfo);

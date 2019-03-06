@@ -17,8 +17,8 @@ order14=0
 order15=0
 order16=0
 [projectoptions]
-projectdir=/home/fred/mselangmoi
-projectfilename=/home/fred/mselangmoi/mselang.prj
+projectdir=/home/fred/mselang/src
+projectfilename=/home/fred/mselang/src/mselang.prj
 findinfiledialog=66
  [findinfileadialogfo.subdirs]
  value=1
@@ -254,7 +254,7 @@ objpref=-Fo
 targpref=-o
 befcommand=0
 aftcommand=0
-makeoptions=8
+makeoptions=9
  -l -Mobjfpc -Sh -Fcutf8
  -gl 
  -dmse_gui
@@ -263,7 +263,9 @@ makeoptions=8
  -dmse_debugparser
  -FUunits
  -O2 -XX -Xs -CX
-makeoptpurpose=8
+ -dmse_i18n
+makeoptpurpose=9
+ 
  
  
  
@@ -488,20 +490,11 @@ settingsstorage=0
 settingsprojecttree=0
 settingsautoload=0
 settingsautosave=0
-modulenames=3
- COMPMO
- COMPDEBUGMO
- MAINFO
-moduletypes=3
- TCOMPMO
- TCOMPDEBUGMO
- TMAINFO
-modulefiles=3
- /home/fred/mselangmoi/compiler/compmodule.mfm
- /home/fred/mselangmoi/compmoduledebug.mfm
- /home/fred/mselangmoi/main.mfm
+modulenames=0
+moduletypes=0
+modulefiles=0
 befcommandon=0
-makeoptionson=8
+makeoptionson=9
  4095
  0
  4095
@@ -509,7 +502,8 @@ makeoptionson=8
  10
  3840
  4095
- 96
+ 100
+ 4095
 compilerusedon=29
  3840
  0
@@ -806,7 +800,7 @@ files=
  a=0,8228,6,Text Files
  )
 [componentstore]
-storedir=/home/fred/msegui/apps/ide/compstore/
+storedir=/home/fred/mseguinew/mseide-msegui/apps/ide/compstore/
 filename=
 [components]
 [selecteditpage]
@@ -845,128 +839,29 @@ findhistory=20
  wrteln
  result
 findoptions=1
-editpos=16
- 0,17
- 0,211
- 0,11
- 0,0
- 0,-1073741823
- 0,-1073741823
- 0,0
- 0,-1073741823
- 0,-1073741823
- 0,0
- 0,0
- 0,-1073741823
- 0,-1073741823
- 0,-1073741823
- 0,17
- 0,1
+editpos=2
+ 34,26
+ 0,64
 bookmarks0=0
 bookmarks1=0
-bookmarks2=0
-bookmarks3=0
-bookmarks4=0
-bookmarks5=0
-bookmarks6=0
-bookmarks7=0
-bookmarks8=0
-bookmarks9=0
-bookmarks10=0
-bookmarks11=0
-bookmarks12=0
-bookmarks13=0
-bookmarks14=0
-bookmarks15=0
-sourcefiles=16
+sourcefiles=2
  ${PROJECTDIR}/mselang.pas
- ${PROJECTDIR}/main.pas
- ${PROJECTDIR}/parser.pas
- ${PROJECTDIR}/parserglob.pas
- ${PROJECTDIR}/mselang.pas
- /home/fred/mselang/src/parser.pas
- ${PROJECTDIR}/typehandler.pas
- ${PROJECTDIR}/filehandler.pas
- ${PROJECTDIR}/compmodule.pas
- ${PROJECTDIR}/compmoduledebug.pas
- ${PROJECTDIR}/stackops.pas
- ${PROJECTDIR}/mselang.pas
- /home/fred/strumpract/src/filelistform.pas
- /home/fred/strumpract/src/filelistform.mfm
- ${PROJECTDIR}/mselang.pas
- ${PROJECTDIR}/compiler/compmodule.pas
-relpaths=16
+ /home/fred/mseguinew/mseide-msegui/apps/ide/mseide.pas
+relpaths=2
  mselang.pas
- main.pas
- parser.pas
- parserglob.pas
- mselang.pas
- mselang/src/parser.pas
- typehandler.pas
- filehandler.pas
- compiler/compmodule.pas
- compmoduledebug.pas
- stackops.pas
- mselang.pas
- strumpract/src/filelistform.pas
- strumpract/src/filelistform.mfm
- mselang.pas
- compiler/compmodule.pas
-ismoduletexts=16
+ ../mseguinew/mseide-msegui/apps/ide/mseide.pas
+ismoduletexts=2
  0
  0
- 0
- 0
- 0
- 0
- 0
- 0
- 0
- 0
- 0
- 0
- 0
- -1
- 0
- 0
-modules=3
- /home/fred/mselangmoi/main.mfm
- /home/fred/mselangmoi/compiler/compmodule.mfm
- /home/fred/mselangmoi/compmoduledebug.mfm
-moduleoptions=3
- 0
- 0
- 0
-visiblemodules=3
- 0
- -1
- -1
-nomenumodules=3
- 0
- 0
- 0
+modules=0
+moduleoptions=0
+visiblemodules=0
+nomenumodules=0
 [sourcefo.files_tab]
-order=16
- 0
- 1
- 2
- 15
- 14
- 13
- 4
- 5
- 6
- 7
- 8
- 3
- 10
- 11
- 12
- 9
 firsttab=0
-index=2
+index=0
 [layout]
-windowlayout=655
+windowlayout=581
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -1196,7 +1091,7 @@ windowlayout=655
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_compmo_mse_
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1437,12 +1332,39 @@ windowlayout=655
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselangmoi/parser.pas
+ value=/home/fred/mselang/src/mselang.pas
  history=50
-  /home/fred/strumpract/src/filelistform.pas
-  /home/fred/mselangmoi/rtl/system/windows/rtl_libc.mla
-  /home/fred/mselangmoi/rtl/system/unix/rtl_sysintf.mla
+  /home/fred/mseguinew/mseide-msegui/apps/ide/mseide.pas
+  /home/fred/ideu/src/languages/i18n.trp
+  /home/fred/mseguinew/mseide-msegui/tools/i18n/project.pas
+  /home/fred/mseguinew/mseide-mseguitest/tools/i18n/project.pas
+  /home/fred/main.pas
+  /home/fred/mseguinew/mseide-msegui/apps/ide/lang/ru/i18n.trp
+  /home/fred/mseguinew/mseide-msegui/apps/ide/lang/fr/i18n.trp
+  /home/fred/mseguinew/mseide-msegui/apps/ide/lang/ru/i18n.trd
+  /home/fred/mseguinew/mseide-msegui/lib/common/kernel/windows/mseguiintf.pas
+  /home/fred/uos/examples/uos_libsndfile.pas
+  /home/fred/uos/examples/conswebstream.pas
+  /home/fred/Downloads/mseuniverse-master/samples/forms/formintabpage/editpage1form.pas
+  /home/fred/Downloads/mseuniverse-master/samples/forms/formintabpage/baseeditpageform.pas
+  /home/fred/Downloads/mseuniverse-master/samples/forms/formintabpage/main.pas
+  /home/fred/uos/examples/consoleplay.pas
+  /home/fred/mselangmoi/parser.pas
+  /home/fred/mselangmoi/interpreter/mli.pas
+  /home/fred/mselangmoi/compiler/compmodule.pas
+  /home/fred/mselangmoi/interpreter/mainmodule.pas
+  /home/fred/mselangmoi/main.pas
+  /home/fred/mlctestlast/hellomlc.pas
+  /home/fred/mselangmoi/rtl/system/unix/rtl_libc.mla
+  /home/fred/mselang/src/compiler/compmodule.pas
   /home/fred/mselangmoi/rtl/system/windows/rtl_sysintf.mla
+  /home/fred/mselangmoi/rtl/system/rtl_fpccompatibility.mla
+  /home/fred/mselangmoi/rtl/system/windows/rtl_libc.mla
+  /home/fred/mselangmoi/rtl/system/windows/rtl_stringconv.mla
+  /home/fred/mselangmoi/rtl/system/unix/rtl_stringconv.mla
+  /home/fred/mselangmoi/patheditform.pas
+  /home/fred/strumpract/src/filelistform.pas
+  /home/fred/mselangmoi/rtl/system/unix/rtl_sysintf.mla
   /home/fred/msegui/lib/common/kernel/windows/msesysintf.pas
   /home/fred/msegui/lib/common/kernel/linux/msesysintf.pas
   /home/fred/msegui/lib/common/kernel/windows/msewinglob.pas
@@ -1458,39 +1380,12 @@ windowlayout=655
   /home/fred/mselangmoi/compiler/__mla__system.mla
   /home/fred/mselangmoi/compiler/__mla__personality.pas
   /home/fred/mselangmoi/rtl/system/rtl_sysintf.mla
-  /home/fred/mselangmoi/rtl/system/unix/rtl_libc.mla
-  /home/fred/mselangmoi/main.pas
   /home/fred/mselangmoi/compiler/mmc.pas
   /home/fred/mselang-master/mselang/main.pas
   /home/fred/mselangmoi/rtl/system/rtl_strings.mla
   /home/fred/mselangmoi/rtl/system/rtl_strings_l.mla
-  /home/fred/mselangmoi/rtl/system/rtl_strings_w.mla
-  /home/fred/mselangmoi/rtl/stringutils/rtl_stringconv_w.mla
-  /home/fred/mselangmoi/rtl/stringutils/rtl_stringconv_l.mla
-  /home/fred/mselangmoi/rtl/system/rtl_sysconsts.mla
-  /home/fred/mselangmoi/rtl/system/rtl_ctypes.mla
-  /home/fred/mselangmoi/rtl/system/rtl_fpccompatibility.mla
-  /home/fred/mselangmoi/rtl/system/rtl_base.mla
-  /home/fred/mselangmoi/rtl/system/rtl_libc.mla
-  /home/fred/mselangmoi/rtl/system/rtl_rtlconsts.mla
-  /home/fred/mselangmoi/compiler/__mla__internaltypes.pas
-  /home/fred/mselangmoi/compmoduledebug.pas
-  /home/fred/mselangmoi/rtl/system/rtl_sysexceptions.mla
-  /home/fred/mselangmoi/rtl/system/system.mla
-  /home/fred/uos/src/uos.pas
-  /home/fred/ideu/src/confcompiler.pas
-  /home/fred/strumpract/src/drums.pas
-  /home/fred/Downloads/mselang-master/mselang/rtl/system/rtl_sysconsts.mla
-  /home/fred/Downloads/mselang-master/mselang/rtl/stringutils/rtl_format.mla
-  /home/fred/mselangmoi/rtl/stringutils/rtl_format.mla
-  /home/fred/mlctest/hellomlc.mla
-  /home/fred/mselang/mselang.pas
-  /home/fred/mselang/rtl/stringutils/rtl_format.mla
-  /home/fred/mselang/rtl/system/rtl_sysconsts.mla
-  /home/fred/mselang/rtl/system/rtl_rtlconsts.mla
-  /home/fred/mlctest/hellomlc.mli
  [debuggerfo.project_options]
- value=5
+ value=1
  [debuggerfo.hints]
  value=1
  [sourcefo]
@@ -1510,25 +1405,8 @@ windowlayout=655
  rcx=0
  rcy=0
  [sourcefo.files_tab]
- order=16
-  0
-  1
-  2
-  15
-  14
-  13
-  4
-  5
-  6
-  7
-  8
-  3
-  10
-  11
-  12
-  9
  firsttab=0
- index=2
+ index=0
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
@@ -1565,63 +1443,6 @@ windowlayout=655
  cy=521
  rcx=0
  rcy=0
- [_mse_mainfo_mse_]
- splitdir=0
- useroptions=268451963
- stackedunder=
- parent=
- mdistate=3
- nx=0
- ny=0
- ncx=0
- ncy=0
- x=317
- y=105
- cx=887
- cy=521
- rcx=0
- rcy=0
- wsize=0
- active=0
- visible=0
- [_mse_compmo_mse_]
- splitdir=0
- useroptions=268451963
- stackedunder=_mse_compdebugmo_mse_
- parent=
- mdistate=3
- nx=0
- ny=0
- ncx=0
- ncy=0
- x=397
- y=250
- cx=341
- cy=255
- rcx=0
- rcy=0
- wsize=0
- active=0
- visible=1
- [_mse_compdebugmo_mse_]
- splitdir=0
- useroptions=268451963
- stackedunder=targetconsolefo
- parent=
- mdistate=3
- nx=0
- ny=0
- ncx=0
- ncy=0
- x=397
- y=250
- cx=341
- cy=255
- rcx=0
- rcy=0
- wsize=0
- active=0
- visible=1
 [targetconsole]
 finddtext=
 findhistory=0
