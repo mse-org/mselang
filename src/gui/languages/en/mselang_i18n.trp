@@ -838,7 +838,7 @@ values5=1124
  
  
  
- File name of the output executable. if empty Pascal filename will be used.
+ File name of the output executable. If empty Pascal filename will be used.
  
  
  
@@ -891,7 +891,7 @@ values5=1124
  
  
  
- If enabled produde a bc file (bitcode) else a mli file (for interpreter)
+ If enabled produce a bc file (bitcode) else a mli file (for interpreter)
  
  
  
@@ -1037,7 +1037,7 @@ values5=1124
  
  
  
- Interprete the mli file (if created)
+ Interpret the mli file (if created)
  
  
  

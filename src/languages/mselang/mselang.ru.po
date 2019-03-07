@@ -1,0 +1,243 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# AlexL <loginov.alex.valer@gmail.com>, 2019
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mselang\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-07 23:44+0300\n"
+"PO-Revision-Date: 2019-03-07 23:46+0000\n"
+"Last-Translator: AlexL <loginov.alex.valer@gmail.com>, 2019\n"
+"Language-Team: Russian (https://www.transifex.com/Magic/teams/44238/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Generator: Poedit 2.0.9\n"
+
+msgid "Right-click to add row, (like -Fu/home/theproj or -othedefine)"
+msgstr ""
+"Щёлкните правой кнопкой мыши, чтобы добавить строку (например, "
+"-Fu/home/theproj или -othedefine)"
+
+msgid "Units Path and Define Editor"
+msgstr "Путь модулей и редактора определений"
+
+msgid "Compiler parameters"
+msgstr "Параметры компиляции"
+
+msgid "OK"
+msgstr "ОК"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Add row"
+msgstr "Добавить строку"
+
+msgid "Del row"
+msgstr "Удалить строку"
+
+msgid "MSElang parameters"
+msgstr "Параметры MSElang"
+
+msgid "name info"
+msgstr "имя инфо"
+
+msgid "debug name info"
+msgstr "отладка имя инфо"
+
+msgid "build"
+msgstr "пересобрать"
+
+msgid "Build all"
+msgstr "Пересобрать все"
+
+msgid "no rtl"
+msgstr "без rtl"
+
+msgid "Do not use rtl units"
+msgstr "Не использовать модули rtl"
+
+msgid "no comp"
+msgstr "без компилятора"
+
+msgid "Do not use compilers units"
+msgstr "Не использовать модули компилятора"
+
+msgid "object"
+msgstr "объект"
+
+msgid "Create object files"
+msgstr "Создать объектные файлы"
+
+msgid "modular"
+msgstr "модульная"
+
+msgid "Modular compilation"
+msgstr "Модульная компиляция"
+
+msgid "line info"
+msgstr "строка инфо"
+
+msgid "debug line info"
+msgstr "отладка строка инфо"
+
+msgid "keep temp"
+msgstr "сохранить временные"
+
+msgid "Keep temp files after compilation"
+msgstr "Сохранить временные файлы после компиляции"
+
+msgid "Units used (-Fu...) and Defines (-d...)"
+msgstr "Используемые модули (-Fu...) и определения (-d...)"
+
+msgid "Para"
+msgstr "Пара"
+
+msgid "prog info"
+msgstr "прог инфо"
+
+msgid "debug program info"
+msgstr "отладка программа инфо"
+
+msgid "Linking"
+msgstr "Линковка"
+
+msgid "Extra options for gcc"
+msgstr "Экстра опции для gcc"
+
+msgid "Execute gcc to link assembler code from llc"
+msgstr "Выполнить gcc, чтобы связать ассемблерный код с llc"
+
+msgid "extra options for llvm-llc"
+msgstr "Экстра опции для llvm-llc"
+
+msgid "Execute llc to produce assembler code"
+msgstr "Выполнить llc для создания ассемблерного кода"
+
+msgid "Extra options for llvm-link"
+msgstr "Экстра опции для llvm-link"
+
+msgid "Execute llvm-link"
+msgstr "Выполнить llvm-link"
+
+msgid "Extra options for Clang"
+msgstr "Экстра опции для Clang"
+
+msgid "Execute Clang linking"
+msgstr "Выполнить линковку Clang"
+
+msgid "Optimization"
+msgstr "Оптимизация"
+
+msgid "Execute opt"
+msgstr "Выполнить оптим."
+
+msgid "Extra options for llvm-opt"
+msgstr "Экстра опции для llvm-opt"
+
+msgid "Input / Output"
+msgstr "Ввод/Вывод"
+
+msgid "Ext"
+msgstr "Расш."
+
+msgid "File extension of the output executable"
+msgstr "Расширение файла выходного исполняемого файла"
+
+msgid "Output exec name"
+msgstr "Выходное имя бинарника"
+
+msgid ""
+"File name of the output executable. If empty Pascal filename will be used."
+msgstr ""
+"Имя файла выходного исполняемого файла. Если пустое, то имя файла Pascal "
+"будет использоваться."
+
+msgid "Ext Comp"
+msgstr "Расш. комп."
+
+msgid "If enabled use external compiler mlc else use built-in mselang parser."
+msgstr ""
+"Если включено, то используется внешний компилятор mlc, иначе используйте "
+"встроенный парсер mselang."
+
+msgid "Run at end"
+msgstr "Запустить в конце"
+
+msgid "Run the application at end"
+msgstr "Запустите приложение в конце"
+
+msgid ""
+"If enabled produce a bc file (bitcode) else a mli file (for interpreter)"
+msgstr ""
+"Если включено, то создать bc-файл (битовый код), иначе mli-файл (для "
+"интерпретатора)"
+
+msgid "Directory of llvm binaries"
+msgstr "Директория бинарных файлов llvm"
+
+msgid "Directory of LLVM suite"
+msgstr "Директория набора LLVM"
+
+msgid "MSElang source"
+msgstr "Исходник MSElang"
+
+msgid "Input filename"
+msgstr "Имя файла ввода"
+
+msgid "Pascal main filename used as input."
+msgstr "Главное имя файла Pascal, используемого как ввод."
+
+msgid "All Pascal source"
+msgstr "Все исходники Pascal"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Open a Pascal source file"
+msgstr "Открыть исходный файл Pascal"
+
+msgid "Reload Pascal file"
+msgstr "Перезагрузить файл Pascal"
+
+msgid "Reload"
+msgstr "Перезагрузить"
+
+msgid "Parse and build all"
+msgstr "Парсить и пересобрать все"
+
+msgid "Parse"
+msgstr "Парсить"
+
+msgid "Run the executable (if created)"
+msgstr "Запустить исполняемый файл (если создан)"
+
+msgid "Run"
+msgstr "Запустить"
+
+msgid "Interpret the mli file (if created)"
+msgstr "Интерпретировать mli-файл (если создан)"
+
+msgid "Inter"
+msgstr "Интерпр."
+
+msgid "Working..."
+msgstr "За работой..."
+
+msgid "Save Pascal file"
+msgstr "Сохранить файл Pascal"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Col: 0   Row: 0"
+msgstr "Кол: 0   Стр: 0"

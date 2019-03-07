@@ -319,7 +319,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox1,objed,enabled",vaFalse,T,,,
 "mainfo,tgroupbox1,modulared",vaNull,T,,,
 "mainfo,tgroupbox1,modulared,frame.levelo",vaInt8,T,,-1,
-"mainfo,tgroupbox1,modulared,frame.caption",vaString,T,,modular,modular
+"mainfo,tgroupbox1,modulared,frame.caption",vaString,F,,modular,modular
 "mainfo,tgroupbox1,modulared,frame.localprops",vaSet,T,,[frl_levelo],
 "mainfo,tgroupbox1,modulared,frame.localprops1",vaSet,T,,[],
 "mainfo,tgroupbox1,modulared,frame.outerframe",vaList,T,,,
@@ -746,7 +746,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox4,edexena,frame.outerframe,2:",vaInt8,T,,0,
 "mainfo,tgroupbox4,edexena,frame.outerframe,3:",vaInt8,T,,0,
 "mainfo,tgroupbox4,edexena,taborder",vaInt8,T,,1,
-"mainfo,tgroupbox4,edexena,hint",vaString,F,,File name of the output executable. if empty Pascal filename will be used.,File name of the output executable. if empty Pascal filename will be used.
+"mainfo,tgroupbox4,edexena,hint",vaString,F,,File name of the output executable. If empty Pascal filename will be used.,File name of the output executable. If empty Pascal filename will be used.
 "mainfo,tgroupbox4,edexena,bounds_x",vaInt8,T,,3,
 "mainfo,tgroupbox4,edexena,bounds_y",vaInt8,T,,50,
 "mainfo,tgroupbox4,edexena,bounds_cx",vaInt16,T,,165,
@@ -799,7 +799,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox4,llvm,frame.outerframe,2:",vaInt8,T,,54,
 "mainfo,tgroupbox4,llvm,frame.outerframe,3:",vaInt8,T,,2,
 "mainfo,tgroupbox4,llvm,taborder",vaInt8,T,,4,
-"mainfo,tgroupbox4,llvm,hint",vaString,F,,If enabled produde a bc file (bitcode) else a mli file (for interpreter),If enabled produde a bc file (bitcode) else a mli file (for interpreter)
+"mainfo,tgroupbox4,llvm,hint",vaString,F,,If enabled produce a bc file (bitcode) else a mli file (for interpreter),If enabled produce a bc file (bitcode) else a mli file (for interpreter)
 "mainfo,tgroupbox4,llvm,bounds_x",vaInt16,T,,214,
 "mainfo,tgroupbox4,llvm,bounds_y",vaInt8,T,,16,
 "mainfo,tgroupbox4,llvm,bounds_cx",vaInt8,T,,67,
@@ -945,7 +945,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox4,tbutton4,face.fade_direction",vaIdent,T,,gd_down,
 "mainfo,tgroupbox4,tbutton4,face.localprops",vaSet,T,,[fal_fadirection],
 "mainfo,tgroupbox4,tbutton4,taborder",vaInt8,T,,10,
-"mainfo,tgroupbox4,tbutton4,hint",vaString,F,,Interprete the mli file (if created),Interprete the mli file (if created)
+"mainfo,tgroupbox4,tbutton4,hint",vaString,F,,Interpret the mli file (if created),Interpret the mli file (if created)
 "mainfo,tgroupbox4,tbutton4,bounds_x",vaInt16,T,,256,
 "mainfo,tgroupbox4,tbutton4,bounds_y",vaInt8,T,,101,
 "mainfo,tgroupbox4,tbutton4,bounds_cx",vaInt8,T,,42,

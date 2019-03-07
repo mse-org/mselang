@@ -708,7 +708,7 @@ object mainfo: tmainfo
         0
       )
       taborder = 1
-      hint = 'File name of the output executable. if empty Pascal filename will be used.'
+      hint = 'File name of the output executable. If empty Pascal filename will be used.'
       bounds_x = 3
       bounds_y = 50
       bounds_cx = 165
@@ -767,7 +767,7 @@ object mainfo: tmainfo
         2
       )
       taborder = 4
-      hint = 'If enabled produde a bc file (bitcode) else a mli file (for interpreter)'
+      hint = 'If enabled produce a bc file (bitcode) else a mli file (for interpreter)'
       bounds_x = 214
       bounds_y = 16
       bounds_cx = 67
@@ -931,7 +931,7 @@ object mainfo: tmainfo
       face.fade_direction = gd_down
       face.localprops = [fal_fadirection]
       taborder = 10
-      hint = 'Interprete the mli file (if created)'
+      hint = 'Interpret the mli file (if created)'
       bounds_x = 256
       bounds_y = 101
       bounds_cx = 42

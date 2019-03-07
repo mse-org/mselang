@@ -17,6 +17,7 @@ name,type,notranslate,comment,value,en
 "mainfo,tgroupbox1,nocompilerunited,hint",vaString,F,,Do not use compilers units,Do not use compilers units
 "mainfo,tgroupbox1,objed,frame.caption",vaString,F,,object,object
 "mainfo,tgroupbox1,objed,hint",vaString,F,,Create object files,Create object files
+"mainfo,tgroupbox1,modulared,frame.caption",vaString,F,,modular,modular
 "mainfo,tgroupbox1,modulared,hint",vaString,F,,Modular compilation,Modular compilation
 "mainfo,tgroupbox1,lineinfoed,frame.caption",vaString,F,,line info,line info
 "mainfo,tgroupbox1,lineinfoed,hint",vaString,F,,debug line info,debug line info
@@ -42,12 +43,12 @@ name,type,notranslate,comment,value,en
 "mainfo,tgroupbox4,edexeex,frame.caption",vaString,F,,Ext,Ext
 "mainfo,tgroupbox4,edexeex,hint",vaString,F,,File extension of the output executable,File extension of the output executable
 "mainfo,tgroupbox4,edexena,frame.caption",vaString,F,,Output exec name,Output exec name
-"mainfo,tgroupbox4,edexena,hint",vaString,F,,File name of the output executable. if empty Pascal filename will be used.,File name of the output executable. if empty Pascal filename will be used.
+"mainfo,tgroupbox4,edexena,hint",vaString,F,,File name of the output executable. If empty Pascal filename will be used.,File name of the output executable. If empty Pascal filename will be used.
 "mainfo,tgroupbox4,extcomp,frame.caption",vaString,F,,Ext Comp,Ext Comp
 "mainfo,tgroupbox4,extcomp,hint",vaString,F,,If enabled use external compiler mlc else use built-in mselang parser.,If enabled use external compiler mlc else use built-in mselang parser.
 "mainfo,tgroupbox4,runend,frame.caption",vaString,F,,Run at end,Run at end
 "mainfo,tgroupbox4,runend,hint",vaString,F,,Run the application at end,Run the application at end
-"mainfo,tgroupbox4,llvm,hint",vaString,F,,If enabled produde a bc file (bitcode) else a mli file (for interpreter),If enabled produde a bc file (bitcode) else a mli file (for interpreter)
+"mainfo,tgroupbox4,llvm,hint",vaString,F,,If enabled produce a bc file (bitcode) else a mli file (for interpreter),If enabled produce a bc file (bitcode) else a mli file (for interpreter)
 "mainfo,tgroupbox4,llvmbindir,frame.caption",vaString,F,,Directory of llvm binaries,Directory of llvm binaries
 "mainfo,tgroupbox4,llvmbindir,hint",vaString,F,,Directory of LLVM suite,Directory of LLVM suite
 "mainfo,tgroupbox4,llvmbindir,controller.filterlist.data,0:,0:",vaString,F,,MSElang source,MSElang source
@@ -63,7 +64,7 @@ name,type,notranslate,comment,value,en
 "mainfo,tgroupbox4,tbutton2,caption",vaString,F,,Parse,Parse
 "mainfo,tgroupbox4,tbutton3,hint",vaString,F,,Run the executable (if created),Run the executable (if created)
 "mainfo,tgroupbox4,tbutton3,caption",vaString,F,,Run,Run
-"mainfo,tgroupbox4,tbutton4,hint",vaString,F,,Interprete the mli file (if created),Interprete the mli file (if created)
+"mainfo,tgroupbox4,tbutton4,hint",vaString,F,,Interpret the mli file (if created),Interpret the mli file (if created)
 "mainfo,tgroupbox4,tbutton4,caption",vaString,F,,Inter,Inter
 "mainfo,tgroupbox4,workpan,value",vaString,F,,Working...,Working...
 "mainfo,tgroupbox4,tbutton5,hint",vaString,F,,Save Pascal file,Save Pascal file
