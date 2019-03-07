@@ -319,7 +319,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox1,objed,enabled",vaFalse,T,,,
 "mainfo,tgroupbox1,modulared",vaNull,T,,,
 "mainfo,tgroupbox1,modulared,frame.levelo",vaInt8,T,,-1,
-"mainfo,tgroupbox1,modulared,frame.caption",vaString,F,,modular,modular
+"mainfo,tgroupbox1,modulared,frame.caption",vaString,T,,modular,modular
 "mainfo,tgroupbox1,modulared,frame.localprops",vaSet,T,,[frl_levelo],
 "mainfo,tgroupbox1,modulared,frame.localprops1",vaSet,T,,[],
 "mainfo,tgroupbox1,modulared,frame.outerframe",vaList,T,,,
@@ -883,7 +883,7 @@ mainfo,vaNull,T,,,
 "mainfo,tgroupbox4,filena,controller.options",vaSet,T,,"[fdo_sysfilename,fdo_file,fdo_absolute,fdo_checkexist]",
 "mainfo,tgroupbox4,filena,controller.captionopen",vaString,F,,Open a Pascal source file,Open a Pascal source file
 "mainfo,tgroupbox4,filena,reffontheight",vaInt8,T,,14,
-"mainfo,tgroupbox4,btnload",vaNull,F,,,
+"mainfo,tgroupbox4,btnload",vaNull,T,,,
 "mainfo,tgroupbox4,btnload,color",vaInt32,T,,-1610612731,
 "mainfo,tgroupbox4,btnload,frame.localprops",vaSet,T,,[frl_optionsskin],
 "mainfo,tgroupbox4,btnload,frame.localprops1",vaSet,T,,[],
