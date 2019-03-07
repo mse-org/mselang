@@ -15,7 +15,7 @@ patheditfo,vaNull,T,,,
 "patheditfo,container.bounds,3:",vaInt16,T,,156,
 "patheditfo,options",vaSet,T,,"[fo_cancelonesc,fo_autoreadstat,fo_autowritestat,fo_savepos,fo_savezorder,fo_savestate]",
 "patheditfo,statfile",vaIdent,T,,mainfo.statf,
-"patheditfo,caption",vaString,F,,Units Path and Define Editor ,Units Path and Define Editor 
+"patheditfo,caption",vaString,F,,Units Path and Define Editor,Units Path and Define Editor
 "patheditfo,windowopacity",vaExtended,T,,-Inf,
 "patheditfo,onloaded",vaIdent,T,,loadedev,
 "patheditfo,onclosequery",vaIdent,T,,closequerydef,

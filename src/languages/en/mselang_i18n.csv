@@ -1,1 +1,71 @@
 name,type,notranslate,comment,value,en
+"patheditfo,hint",vaString,F,,"Right-click to add row, (like -Fu/home/theproj or -othedefine)","Right-click to add row, (like -Fu/home/theproj or -othedefine)"
+"patheditfo,caption",vaString,F,,Units Path and Define Editor,Units Path and Define Editor
+"patheditfo,twidgetgrid1,frame.caption",vaString,F,,Compiler parameters,Compiler parameters
+"patheditfo,tbutton1,caption",vaString,F,,OK,OK
+"patheditfo,tbutton2,caption",vaString,F,,Cancel,Cancel
+"patheditfo,tbutton3,caption",vaString,F,,Add row,Add row
+"patheditfo,tbutton4,caption",vaString,F,,Del row,Del row
+"mainfo,tgroupbox1,frame.caption",vaString,F,,MSElang parameters,MSElang parameters
+"mainfo,tgroupbox1,nameed,frame.caption",vaString,F,,name info,name info
+"mainfo,tgroupbox1,nameed,hint",vaString,F,,debug name info,debug name info
+"mainfo,tgroupbox1,builded,frame.caption",vaString,F,,build,build
+"mainfo,tgroupbox1,builded,hint",vaString,F,,Build all,Build all
+"mainfo,tgroupbox1,nortlunitsed,frame.caption",vaString,F,,no rtl,no rtl
+"mainfo,tgroupbox1,nortlunitsed,hint",vaString,F,,Do not use rtl units,Do not use rtl units
+"mainfo,tgroupbox1,nocompilerunited,frame.caption",vaString,F,,no comp,no comp
+"mainfo,tgroupbox1,nocompilerunited,hint",vaString,F,,Do not use compilers units,Do not use compilers units
+"mainfo,tgroupbox1,objed,frame.caption",vaString,F,,object,object
+"mainfo,tgroupbox1,objed,hint",vaString,F,,Create object files,Create object files
+"mainfo,tgroupbox1,modulared,hint",vaString,F,,Modular compilation,Modular compilation
+"mainfo,tgroupbox1,lineinfoed,frame.caption",vaString,F,,line info,line info
+"mainfo,tgroupbox1,lineinfoed,hint",vaString,F,,debug line info,debug line info
+"mainfo,tgroupbox1,keeptmped,frame.caption",vaString,F,,keep temp,keep temp
+"mainfo,tgroupbox1,keeptmped,hint",vaString,F,,Keep temp files after compilation,Keep temp files after compilation
+"mainfo,tgroupbox1,btnPath,hint",vaString,F,,Units used (-Fu...) and Defines (-d...),Units used (-Fu...) and Defines (-d...)
+"mainfo,tgroupbox1,btnPath,caption",vaString,F,,Para,Para
+"mainfo,tgroupbox1,proginfoed,frame.caption",vaString,F,,prog info,prog info
+"mainfo,tgroupbox1,proginfoed,hint",vaString,F,,debug program info,debug program info
+"mainfo,tgroupbox2,frame.caption",vaString,F,,Linking,Linking
+"mainfo,tgroupbox2,gcced,hint",vaString,F,,Extra options for gcc,Extra options for gcc
+"mainfo,tgroupbox2,begcc,hint",vaString,F,,Execute gcc to link assembler code from llc,Execute gcc to link assembler code from llc
+"mainfo,tgroupbox2,llced,hint",vaString,F,,extra options for llvm-llc,extra options for llvm-llc
+"mainfo,tgroupbox2,bellc,hint",vaString,F,,Execute llc to produce assembler code,Execute llc to produce assembler code
+"mainfo,tgroupbox2,linked,hint",vaString,F,,Extra options for llvm-link,Extra options for llvm-link
+"mainfo,tgroupbox2,belink,hint",vaString,F,,Execute llvm-link,Execute llvm-link
+"mainfo,tgroupbox2,clanged,hint",vaString,F,,Extra options for Clang,Extra options for Clang
+"mainfo,tgroupbox2,beclang,hint",vaString,F,,Execute Clang linking,Execute Clang linking
+"mainfo,tgroupbox3,frame.caption",vaString,F,,Optimization,Optimization
+"mainfo,tgroupbox3,beopt,hint",vaString,F,,Execute opt,Execute opt
+"mainfo,tgroupbox3,opted,hint",vaString,F,,Extra options for llvm-opt,Extra options for llvm-opt
+"mainfo,tgroupbox4,frame.caption",vaString,F,,Input / Output,Input / Output
+"mainfo,tgroupbox4,edexeex,frame.caption",vaString,F,,Ext,Ext
+"mainfo,tgroupbox4,edexeex,hint",vaString,F,,File extension of the output executable,File extension of the output executable
+"mainfo,tgroupbox4,edexena,frame.caption",vaString,F,,Output exec name,Output exec name
+"mainfo,tgroupbox4,edexena,hint",vaString,F,,File name of the output executable. if empty Pascal filename will be used.,File name of the output executable. if empty Pascal filename will be used.
+"mainfo,tgroupbox4,extcomp,frame.caption",vaString,F,,Ext Comp,Ext Comp
+"mainfo,tgroupbox4,extcomp,hint",vaString,F,,If enabled use external compiler mlc else use built-in mselang parser.,If enabled use external compiler mlc else use built-in mselang parser.
+"mainfo,tgroupbox4,runend,frame.caption",vaString,F,,Run at end,Run at end
+"mainfo,tgroupbox4,runend,hint",vaString,F,,Run the application at end,Run the application at end
+"mainfo,tgroupbox4,llvm,hint",vaString,F,,If enabled produde a bc file (bitcode) else a mli file (for interpreter),If enabled produde a bc file (bitcode) else a mli file (for interpreter)
+"mainfo,tgroupbox4,llvmbindir,frame.caption",vaString,F,,Directory of llvm binaries,Directory of llvm binaries
+"mainfo,tgroupbox4,llvmbindir,hint",vaString,F,,Directory of LLVM suite,Directory of LLVM suite
+"mainfo,tgroupbox4,llvmbindir,controller.filterlist.data,0:,0:",vaString,F,,MSElang source,MSElang source
+"mainfo,tgroupbox4,filena,frame.caption",vaString,F,,Input filename,Input filename
+"mainfo,tgroupbox4,filena,hint",vaString,F,,Pascal main filename used as input.,Pascal main filename used as input.
+"mainfo,tgroupbox4,filena,controller.filterlist.data,0:,0:",vaString,F,,All Pascal source,All Pascal source
+"mainfo,tgroupbox4,filena,controller.filterlist.data,1:,0:",vaString,F,,MSElang source,MSElang source
+"mainfo,tgroupbox4,filena,controller.filterlist.data,4:,0:",vaString,F,,All,All
+"mainfo,tgroupbox4,filena,controller.captionopen",vaString,F,,Open a Pascal source file,Open a Pascal source file
+"mainfo,tgroupbox4,btnload,hint",vaString,F,,Reload Pascal file,Reload Pascal file
+"mainfo,tgroupbox4,btnload,caption",vaString,F,,Reload,Reload
+"mainfo,tgroupbox4,tbutton2,hint",vaString,F,,Parse and build all,Parse and build all
+"mainfo,tgroupbox4,tbutton2,caption",vaString,F,,Parse,Parse
+"mainfo,tgroupbox4,tbutton3,hint",vaString,F,,Run the executable (if created),Run the executable (if created)
+"mainfo,tgroupbox4,tbutton3,caption",vaString,F,,Run,Run
+"mainfo,tgroupbox4,tbutton4,hint",vaString,F,,Interprete the mli file (if created),Interprete the mli file (if created)
+"mainfo,tgroupbox4,tbutton4,caption",vaString,F,,Inter,Inter
+"mainfo,tgroupbox4,workpan,value",vaString,F,,Working...,Working...
+"mainfo,tgroupbox4,tbutton5,hint",vaString,F,,Save Pascal file,Save Pascal file
+"mainfo,tgroupbox4,tbutton5,caption",vaString,F,,Save,Save
+"mainfo,coldi,text",vaString,F,,Col: 0   Row: 0,Col: 0   Row: 0

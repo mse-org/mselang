@@ -15,7 +15,7 @@ object patheditfo: tpatheditfo
   )
   options = [fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = mainfo.statf
-  caption = 'Units Path and Define Editor '
+  caption = 'Units Path and Define Editor'
   windowopacity = -Inf
   onloaded = loadedev
   onclosequery = closequerydef
