@@ -2,13 +2,13 @@
 colcount=6
 [projectfo.impexpfiledialog]
 filenames=1
- /home/fred/mselang/src/languages/mselang_i18n.csv
+ /home/user/mselang/src/languages/mselang_i18n.csv
 filecolwidth=0
 x=0
 y=0
 cx=0
 cy=0
-lastdir=/home/fred/mselang/src/languages/
+lastdir=/home/user/mselang/src/languages/
 filefilterindex=0
 filefilter=
 [projectfo.aftermake]
@@ -28,16 +28,16 @@ values0=1
 width0=94
 sortdescend0=0
 values1=1
- /home/fred/mselang/src/languages/en/
+ /home/user/mselang/src/languages/en/
 [projectfo.datafilename]
 filenames=1
- /home/fred/mselang/src/languages/mselang_i18n.trd
+ /home/user/mselang/src/languages/en/mselang_i18n.trd
 filecolwidth=0
 x=0
 y=0
 cx=0
 cy=0
-lastdir=/home/fred/mselang/src/languages/
+lastdir=/home/user/mselang/src/languages/
 filefilterindex=0
 filefilter=
 [projectfo.grid]
@@ -49,9 +49,9 @@ values0=3
 width0=71
 sortdescend0=0
 values1=3
- /home/fred/mselang/src/patheditform.mfm
- /home/fred/mselang/src/main.mfm
- /home/fred/mselang/src/compmoduledebug.mfm
+ /home/user/mselang/src/patheditform.mfm
+ /home/user/mselang/src/main.mfm
+ /home/user/mselang/src/compmoduledebug.mfm
 values2=3
  0
  0
