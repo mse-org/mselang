@@ -2,19 +2,19 @@
 colcount=6
 [projectfo.impexpfiledialog]
 filenames=1
- /home/fred/mselang/src/gui/languages/en/mselang_i18n.csv
+ /home/fred/mselang/src/gui/lang_en/mselang_i18n.csv
 filecolwidth=174
 x=0
 y=0
 cx=0
 cy=0
-lastdir=/home/fred/mselang/src/gui/languages/en/
+lastdir=/home/fred/mselang/src/gui/lang_en/
 filefilterindex=0
 filefilter=*.csv
 [projectfo.aftermake]
-value=
+value=chmod 666 ./*.so; rm -f ../*.so; cp -f ./*.so ../;
 [projectfo.beforemake]
-value=
+value=rm -f ./*.so
 [projectfo.destname]
 value=
 [projectfo.makeon]
@@ -28,16 +28,16 @@ values0=1
 width0=94
 sortdescend0=0
 values1=1
- /home/fred/mselang/src/gui/languages/en/
+ /home/fred/mselang/src/gui/lang_en/
 [projectfo.datafilename]
 filenames=1
- /home/fred/mselang/src/gui/languages/en/mselang_i18n.trd
+ /home/fred/mselang/src/gui/lang_en/mselang_i18n.trd
 filecolwidth=0
 x=0
 y=0
 cx=0
 cy=0
-lastdir=/home/fred/mselang/src/gui/languages/en/
+lastdir=/home/fred/mselang/src/gui/lang_en/
 filefilterindex=0
 filefilter=
 [projectfo.grid]
