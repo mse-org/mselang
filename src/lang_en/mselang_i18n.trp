@@ -12,7 +12,7 @@ lastdir=/home/fred/mselang/src/lang_en/
 filefilterindex=0
 filefilter=*.csv
 [projectfo.aftermake]
-value=chmod 666 ./*.so; rm -f ../*.so; cp -f ./*.so ../;
+value=chmod 777 ./*.so; rm -f ../*.so; cp -f ./*.so ../;
 [projectfo.beforemake]
 value=rm -f ./*.so
 [projectfo.destname]
