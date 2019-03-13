@@ -225,12 +225,52 @@ settings=14
  wsize=0
  active=1
  visible=1
+imagelisteditor=25
+ [imagelisteditorfo.statfile1]
+ currentversion=0
+ [imagelisteditorfo.filedialog]
+ filenames=0
+ filecolwidth=0
+ x=0
+ y=0
+ cx=0
+ cy=0
+ lastdir=
+ filehistory=0
+ filefilterindex=0
+ filefilter=
+ [imagelisteditorfo.transparentcolor]
+ value=-2147483647
+ [imagelisteditorfo.stretch]
+ value=1
+ [imagelisteditorfo]
+ x=220
+ y=297
+ cx=508
+ cy=355
+ wsize=0
+ active=1
+ visible=1
 colordialog=5
  [colordialogfo]
  x=140
  y=234
  cx=338
  cy=298
+bmpfiledialog=13
+ [filedialog]
+ filenames=1
+  /home/fred/mselang/src/image/mselang_32.png
+ filecolwidth=174
+ x=0
+ y=0
+ cx=0
+ cy=0
+ lastdir=/home/fred/mselang/src/image/
+ filehistory=1
+  /home/fred/mselang/src/image/mselang_32.png
+ filefilterindex=0
+ filefilter="All" "*.jpg" "*.jpeg" "*.bmp" "*.ico" "*.png" "*.pnm" "*.pgm" "*.pbm" "*.tga" "*.tif" "*.tiff" "*.xpm"
 mainfile=${PROJECTNAME}.pas
 targetfile=${PROJECTNAME}${EXEEXT}
 messageoutputfile=
@@ -490,9 +530,15 @@ settingsstorage=0
 settingsprojecttree=0
 settingsautoload=0
 settingsautosave=0
-modulenames=0
-moduletypes=0
-modulefiles=0
+modulenames=2
+ MAINFO
+ PATHEDITFO
+moduletypes=2
+ TMAINFO
+ TPATHEDITFO
+modulefiles=2
+ /home/fred/mselang/src/main.mfm
+ /home/fred/mselang/src/patheditform.mfm
 befcommandon=0
 makeoptionson=9
  4095
@@ -839,29 +885,46 @@ findhistory=20
  wrteln
  result
 findoptions=1
-editpos=2
- 34,26
- 0,64
+editpos=3
+ 0,46
+ 0,207
+ 0,36
 bookmarks0=0
 bookmarks1=0
-sourcefiles=2
+bookmarks2=0
+sourcefiles=3
  ${PROJECTDIR}/mselang.pas
- /home/fred/mseguinew/mseide-msegui/apps/ide/mseide.pas
-relpaths=2
+ ${PROJECTDIR}/main.pas
+ ${PROJECTDIR}/patheditform.pas
+relpaths=3
  mselang.pas
- ../mseguinew/mseide-msegui/apps/ide/mseide.pas
-ismoduletexts=2
+ main.pas
+ patheditform.pas
+ismoduletexts=3
  0
  0
-modules=0
-moduleoptions=0
-visiblemodules=0
-nomenumodules=0
+ 0
+modules=2
+ /home/fred/mselang/src/main.mfm
+ /home/fred/mselang/src/patheditform.mfm
+moduleoptions=2
+ 0
+ 0
+visiblemodules=2
+ -1
+ -1
+nomenumodules=2
+ 0
+ 0
 [sourcefo.files_tab]
+order=3
+ 0
+ 2
+ 1
 firsttab=0
-index=0
+index=1
 [layout]
-windowlayout=581
+windowlayout=593
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -1091,22 +1154,22 @@ windowlayout=581
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=targetconsolefo
+ stackedunder=mainfo
  parent=
  mdistate=0
  nx=0
  ny=0
  ncx=0
  ncy=0
- x=828
- y=226
+ x=403
+ y=156
  cx=454
  cy=484
  rcx=0
  rcy=0
  wsize=0
  active=0
- visible=0
+ visible=1
  [objectinspectorfo.grid]
  propcolwidthref=444
  width0=197
@@ -1332,8 +1395,9 @@ windowlayout=581
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselang/src/mselang.pas
- history=50
+ value=/home/fred/mselang/src/patheditform.pas
+ history=20
+  /home/fred/mselang/src/mselang.pas
   /home/fred/mseguinew/mseide-msegui/apps/ide/mseide.pas
   /home/fred/ideu/src/languages/i18n.trp
   /home/fred/mseguinew/mseide-msegui/tools/i18n/project.pas
@@ -1353,37 +1417,6 @@ windowlayout=581
   /home/fred/mselangmoi/interpreter/mli.pas
   /home/fred/mselangmoi/compiler/compmodule.pas
   /home/fred/mselangmoi/interpreter/mainmodule.pas
-  /home/fred/mselangmoi/main.pas
-  /home/fred/mlctestlast/hellomlc.pas
-  /home/fred/mselangmoi/rtl/system/unix/rtl_libc.mla
-  /home/fred/mselang/src/compiler/compmodule.pas
-  /home/fred/mselangmoi/rtl/system/windows/rtl_sysintf.mla
-  /home/fred/mselangmoi/rtl/system/rtl_fpccompatibility.mla
-  /home/fred/mselangmoi/rtl/system/windows/rtl_libc.mla
-  /home/fred/mselangmoi/rtl/system/windows/rtl_stringconv.mla
-  /home/fred/mselangmoi/rtl/system/unix/rtl_stringconv.mla
-  /home/fred/mselangmoi/patheditform.pas
-  /home/fred/strumpract/src/filelistform.pas
-  /home/fred/mselangmoi/rtl/system/unix/rtl_sysintf.mla
-  /home/fred/msegui/lib/common/kernel/windows/msesysintf.pas
-  /home/fred/msegui/lib/common/kernel/linux/msesysintf.pas
-  /home/fred/msegui/lib/common/kernel/windows/msewinglob.pas
-  /home/fred/msegui/lib/common/fpccompatibility/dbf_idxfile.pas
-  /home/fred/mselangmoi/grammarglob.pas
-  /home/fred/mselangmoi/subhandler.pas
-  /home/fred/mselangmoi/syssubhandler.pas
-  /home/fred/mselangmoi/writeln.mla
-  /home/fred/mselangmoi/typex.mla
-  /home/fred/mselangmoi/classinh.mla
-  /home/fred/mselangmoi/compiler/mbc.pas
-  /home/fred/mselangmoi/compiler/__mla__compilerunit.mla
-  /home/fred/mselangmoi/compiler/__mla__system.mla
-  /home/fred/mselangmoi/compiler/__mla__personality.pas
-  /home/fred/mselangmoi/rtl/system/rtl_sysintf.mla
-  /home/fred/mselangmoi/compiler/mmc.pas
-  /home/fred/mselang-master/mselang/main.pas
-  /home/fred/mselangmoi/rtl/system/rtl_strings.mla
-  /home/fred/mselangmoi/rtl/system/rtl_strings_l.mla
  [debuggerfo.project_options]
  value=1
  [debuggerfo.hints]
@@ -1405,13 +1438,17 @@ windowlayout=581
  rcx=0
  rcy=0
  [sourcefo.files_tab]
+ order=3
+  0
+  2
+  1
  firsttab=0
- index=0
+ index=1
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=objectinspectorfo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1443,6 +1480,44 @@ windowlayout=581
  cy=521
  rcx=0
  rcy=0
+ [_mse_mainfo_mse_]
+ splitdir=0
+ useroptions=268451963
+ stackedunder=_mse_patheditfo_mse_
+ parent=
+ mdistate=3
+ nx=0
+ ny=0
+ ncx=0
+ ncy=0
+ x=266
+ y=73
+ cx=861
+ cy=540
+ rcx=0
+ rcy=0
+ wsize=0
+ active=0
+ visible=1
+ [_mse_patheditfo_mse_]
+ splitdir=0
+ useroptions=268451963
+ stackedunder=objectinspectorfo
+ parent=
+ mdistate=3
+ nx=0
+ ny=0
+ ncx=0
+ ncy=0
+ x=536
+ y=121
+ cx=414
+ cy=156
+ rcx=0
+ rcy=0
+ wsize=0
+ active=0
+ visible=1
 [targetconsole]
 finddtext=
 findhistory=0
