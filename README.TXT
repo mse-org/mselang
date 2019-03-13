@@ -1,8 +1,11 @@
 MSEpas/MSElang
 
-https://gitlab.com/mseide-msegui/mselang
+https://github.com/mse-org/mselang
 
 Copyright (c) 2013-2018 by Martin Schreiber
+
+Translations:
+You're welcome to translate: https://www.transifex.com/Magic/mseide-msegui
 
 MSElang   2013-11-01 mse
 =======
