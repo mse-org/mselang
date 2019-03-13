@@ -20,7 +20,7 @@ value=
 [projectfo.makeon]
 value=1
 [projectfo.makecommand]
-value=${COMPILER} -Fu${MSELIBDIR}i18n ${LIBFILE}
+value=${COMPILER} -Fu${MSELIBDIR}i18n ${LIBFILE} -fPIC -k-gc-sections
 [projectfo.grid2]
 propcolwidthref=589
 values0=1
