@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=MSElang
+GenericName=Pascal compiler of LLVM
+Comment=GUI for Pascal compiler of LLVM
+Type=Application
+Exec=mselang
+Icon=mselang
+Terminal=false
+Categories=IDE;Development;
+Keywords=fpc;compiler;mse;pascal;
+
+
+# Translations
+Comment[ru]=ГУИ для компилятора Pascal через LLVM
+GenericName[ru]=Компилятор Pascal через LLVM
