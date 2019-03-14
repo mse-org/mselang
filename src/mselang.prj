@@ -885,22 +885,27 @@ findhistory=20
  wrteln
  result
 findoptions=1
-editpos=3
+editpos=4
  0,-1073741823
  0,207
  0,-1073741823
+ 0,13
 bookmarks0=0
 bookmarks1=0
 bookmarks2=0
-sourcefiles=3
+bookmarks3=0
+sourcefiles=4
  ${PROJECTDIR}/mselang.pas
- /home/fred/mselang/src/main.pas
+ ${PROJECTDIR}/main.pas
  ${PROJECTDIR}/patheditform.pas
-relpaths=3
+ ${PROJECTDIR}/patheditform.pas
+relpaths=4
  mselang.pas
  main.pas
  patheditform.pas
-ismoduletexts=3
+ patheditform.pas
+ismoduletexts=4
+ 0
  0
  0
  0
@@ -911,16 +916,21 @@ moduleoptions=2
  0
  0
 visiblemodules=2
- -1
+ 0
  -1
 nomenumodules=2
  0
  0
 [sourcefo.files_tab]
+order=4
+ 0
+ 1
+ 3
+ 2
 firsttab=0
 index=1
 [layout]
-windowlayout=589
+windowlayout=594
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -1150,7 +1160,7 @@ windowlayout=589
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1434,13 +1444,18 @@ windowlayout=589
  rcx=0
  rcy=0
  [sourcefo.files_tab]
+ order=4
+  0
+  1
+  3
+  2
  firsttab=0
  index=1
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=_mse_mainfo_mse_
+ stackedunder=objectinspectorfo
  parent=
  mdistate=0
  nx=0
@@ -1475,7 +1490,7 @@ windowlayout=589
  [_mse_mainfo_mse_]
  splitdir=0
  useroptions=268451963
- stackedunder=_mse_patheditfo_mse_
+ stackedunder=
  parent=
  mdistate=3
  nx=0
@@ -1490,11 +1505,11 @@ windowlayout=589
  rcy=0
  wsize=0
  active=0
- visible=1
+ visible=0
  [_mse_patheditfo_mse_]
  splitdir=0
  useroptions=268451963
- stackedunder=targetconsolefo
+ stackedunder=mainfo
  parent=
  mdistate=3
  nx=0
