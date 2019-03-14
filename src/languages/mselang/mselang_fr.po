@@ -159,79 +159,85 @@ msgstr "Nom de l'exécutable"
 msgid ""
 "File name of the output executable. If empty Pascal filename will be used."
 msgstr ""
+"Nom du fichier de l'exécutable en sortie. Si le fichier est vide, le nom du "
+"fichier Pascal sera utilisé."
 
 msgid "Ext Comp"
-msgstr ""
+msgstr "Ext Comp"
 
 msgid "If enabled use external compiler mlc else use built-in mselang parser."
 msgstr ""
+"Si cette option est activée, utilisez le compilateur externe mlc. Sinon, "
+"utilisez l'analyseur mselang intégré."
 
 msgid "Run at end"
-msgstr ""
+msgstr "Exécuter à la fin"
 
 msgid "Run the application at end"
-msgstr ""
+msgstr "Exécuter l'application à la fin"
 
 msgid ""
 "If enabled produce a bc file (bitcode) else a mli file (for interpreter)"
 msgstr ""
+"Si activé, produit un fichier bc (bitcode) sinon un fichier mli (pour "
+"l'interpréteur)"
 
 msgid "Directory of llvm binaries"
-msgstr ""
+msgstr "Répertoire des binaires LLVM"
 
 msgid "Directory of LLVM suite"
-msgstr ""
+msgstr "Répertoire de la suite LLVM"
 
 msgid "MSElang source"
-msgstr ""
+msgstr "Source MSElang"
 
 msgid "Input filename"
-msgstr ""
+msgstr "Fichier d'entrée"
 
 msgid "Pascal main filename used as input."
-msgstr ""
+msgstr "Nom de fichier principal Pascal utilisé comme entrée."
 
 msgid "All Pascal source"
-msgstr ""
+msgstr "Toutes Pascal sources"
 
 msgid "All"
-msgstr ""
+msgstr "Tout"
 
 msgid "Open a Pascal source file"
-msgstr ""
+msgstr "Ouvrir un fichier source Pascal"
 
 msgid "Reload Pascal file"
-msgstr ""
+msgstr "Recharger le fichier Pascal"
 
 msgid "Reload"
-msgstr ""
+msgstr "Recharger"
 
 msgid "Parse and build all"
-msgstr ""
+msgstr "Analyser et construire tout"
 
 msgid "Parse"
-msgstr ""
+msgstr "Analy"
 
 msgid "Run the executable (if created)"
-msgstr ""
+msgstr "Exécuter l'exécutable (si créé)"
 
 msgid "Run"
-msgstr ""
+msgstr "Exéc"
 
 msgid "Interpret the mli file (if created)"
-msgstr ""
+msgstr "Interpréter le fichier mli (si créé)"
 
 msgid "Inter"
-msgstr ""
+msgstr "Inter"
 
 msgid "Working..."
-msgstr ""
+msgstr "Au travail..."
 
 msgid "Save Pascal file"
-msgstr ""
+msgstr "Enregistrer le fichier Pascal"
 
 msgid "Save"
-msgstr ""
+msgstr "Enreg"
 
 msgid "Col: 0   Row: 0"
-msgstr ""
+msgstr "Col: 0 Ran: 0"
