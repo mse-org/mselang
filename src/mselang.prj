@@ -886,15 +886,15 @@ findhistory=20
  result
 findoptions=1
 editpos=3
- 0,46
+ 0,-1073741823
  0,207
- 0,36
+ 0,-1073741823
 bookmarks0=0
 bookmarks1=0
 bookmarks2=0
 sourcefiles=3
  ${PROJECTDIR}/mselang.pas
- ${PROJECTDIR}/main.pas
+ /home/fred/mselang/src/main.pas
  ${PROJECTDIR}/patheditform.pas
 relpaths=3
  mselang.pas
@@ -917,14 +917,10 @@ nomenumodules=2
  0
  0
 [sourcefo.files_tab]
-order=3
- 0
- 2
- 1
 firsttab=0
 index=1
 [layout]
-windowlayout=593
+windowlayout=589
  [mainfo.basedock]
  splitdir=2
  useroptions=268450944
@@ -1154,7 +1150,7 @@ windowlayout=593
  [objectinspectorfo]
  splitdir=0
  useroptions=268451947
- stackedunder=mainfo
+ stackedunder=
  parent=
  mdistate=0
  nx=0
@@ -1169,7 +1165,7 @@ windowlayout=593
  rcy=0
  wsize=0
  active=0
- visible=1
+ visible=0
  [objectinspectorfo.grid]
  propcolwidthref=444
  width0=197
@@ -1395,8 +1391,9 @@ windowlayout=593
  [debuggerfo.edit_compiler]
  value=Pascal
  [debuggerfo.file_history]
- value=/home/fred/mselang/src/patheditform.pas
+ value=/home/fred/mselang/src/main.pas
  history=20
+  /home/fred/mselang/src/main.pas
   /home/fred/mselang/src/mselang.pas
   /home/fred/mseguinew/mseide-msegui/apps/ide/mseide.pas
   /home/fred/ideu/src/languages/i18n.trp
@@ -1416,7 +1413,6 @@ windowlayout=593
   /home/fred/mselangmoi/parser.pas
   /home/fred/mselangmoi/interpreter/mli.pas
   /home/fred/mselangmoi/compiler/compmodule.pas
-  /home/fred/mselangmoi/interpreter/mainmodule.pas
  [debuggerfo.project_options]
  value=1
  [debuggerfo.hints]
@@ -1438,17 +1434,13 @@ windowlayout=593
  rcx=0
  rcy=0
  [sourcefo.files_tab]
- order=3
-  0
-  2
-  1
  firsttab=0
  index=1
  [cpuc86_64fo]
  irqoff=0
  splitdir=0
  useroptions=268451947
- stackedunder=targetconsolefo
+ stackedunder=_mse_mainfo_mse_
  parent=
  mdistate=0
  nx=0
@@ -1502,7 +1494,7 @@ windowlayout=593
  [_mse_patheditfo_mse_]
  splitdir=0
  useroptions=268451963
- stackedunder=objectinspectorfo
+ stackedunder=targetconsolefo
  parent=
  mdistate=3
  nx=0
