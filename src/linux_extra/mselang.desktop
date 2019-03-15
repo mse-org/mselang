@@ -7,9 +7,13 @@ Exec=mselang
 Icon=mselang
 Terminal=false
 Categories=IDE;Development;
-Keywords=fpc;compiler;mse;pascal;
+Keywords=fpc;compiler;mse;pascal;llvm;
 
 
 # Translations
 Comment[ru]=ГУИ для компилятора Pascal через LLVM
 GenericName[ru]=Компилятор Pascal через LLVM
+Comment[uk]=Графічний інтерфейс компілятора Pascal LLVM
+GenericName[uk]=Компілятор Pascal LLVM
+Comment[fr]=Interface graphique pour le compilateur Pascal de LLVM
+GenericName[fr]=Compilateur Pascal de LLVM
