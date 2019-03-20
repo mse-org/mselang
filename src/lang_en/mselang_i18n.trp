@@ -83,7 +83,7 @@ value=1
 [mainfo.stringonly]
 value=1
 [mainfo.nont]
-value=0
+value=1
 [mainfo.ntonly]
 value=0
 [mainfo.coloron]
