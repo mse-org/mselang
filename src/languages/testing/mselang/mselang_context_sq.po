@@ -33,7 +33,7 @@ msgstr ""
 
 msgctxt "patheditfo,twidgetgrid1,frame.caption"
 msgid "Compiler parameters"
-msgstr ""
+msgstr "Parametrat e përpiluesit"
 
 msgctxt "patheditfo,tbutton1,caption"
 msgid "OK"
@@ -105,7 +105,7 @@ msgstr ""
 
 msgctxt "mainfo,tgroupbox1,lineinfoed,frame.caption"
 msgid "line info"
-msgstr ""
+msgstr "Info linjë"
 
 msgctxt "mainfo,tgroupbox1,lineinfoed,hint"
 msgid "debug line info"
@@ -113,11 +113,11 @@ msgstr ""
 
 msgctxt "mainfo,tgroupbox1,keeptmped,frame.caption"
 msgid "keep temp"
-msgstr ""
+msgstr "mbaj temp"
 
 msgctxt "mainfo,tgroupbox1,keeptmped,hint"
 msgid "Keep temp files after compilation"
-msgstr ""
+msgstr "Mbaj skedarët përkohshme pas përpilimit"
 
 msgctxt "mainfo,tgroupbox1,btnPath,hint"
 msgid "Units used (-Fu...) and Defines (-d...)"
@@ -129,7 +129,7 @@ msgstr ""
 
 msgctxt "mainfo,tgroupbox1,proginfoed,frame.caption"
 msgid "prog info"
-msgstr ""
+msgstr "Info programi"
 
 msgctxt "mainfo,tgroupbox1,proginfoed,hint"
 msgid "debug program info"
@@ -295,7 +295,7 @@ msgstr ""
 
 msgctxt "mainfo,tgroupbox4,workpan,value"
 msgid "Working..."
-msgstr ""
+msgstr "Punë..."
 
 msgctxt "mainfo,tgroupbox4,tbutton5,hint"
 msgid "Save Pascal file"

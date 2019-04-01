@@ -277,7 +277,7 @@ msgstr ""
 
 msgctxt "mainfo,tgroupbox4,tbutton2,caption"
 msgid "Parse"
-msgstr ""
+msgstr "Analiza"
 
 msgctxt "mainfo,tgroupbox4,tbutton3,hint"
 msgid "Run the executable (if created)"
