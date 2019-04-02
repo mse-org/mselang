@@ -11,6 +11,44 @@ cy=0
 lastdir=/home/fred/mselang/src/lang_en/
 filefilterindex=0
 filefilter=*.csv
+[projectfo.memopoheader]
+value=# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: mselang\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2019-03-04 23:54+0300\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
+[projectfo.memopotheader]
+value=# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: mselang\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2019-03-04 23:54+0300\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
 [projectfo.aftermake]
 value=chmod 777 ./*.so; rm -f ../*.so; cp -f ./*.so ../;
 [projectfo.beforemake]
@@ -41,7 +79,7 @@ lastdir=/home/fred/mselang/src/lang_en/
 filefilterindex=0
 filefilter=
 [projectfo.grid]
-propcolwidthref=486
+propcolwidthref=471
 values0=3
  patheditfo
  mainfo
@@ -78,13 +116,5 @@ cy=390
 wsize=6
 active=1
 visible=1
-[mainfo.flat]
-value=1
-[mainfo.stringonly]
-value=1
-[mainfo.nont]
-value=1
-[mainfo.ntonly]
-value=0
 [mainfo.coloron]
 value=1
