@@ -1,0 +1,309 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# AlexL <loginov.alex.valer@gmail.com>, 2019
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mselang\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-27 02:34+0300\n"
+"PO-Revision-Date: 2019-03-27 02:36+0000\n"
+"Last-Translator: AlexL <loginov.alex.valer@gmail.com>, 2019\n"
+"Language-Team: Turkish (https://www.transifex.com/Magic/teams/44238/tr/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: tr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.0.9\n"
+
+msgctxt "patheditfo,hint"
+msgid "Right-click to add row, (like -Fu/home/theproj or -othedefine)"
+msgstr ""
+
+msgctxt "patheditfo,caption"
+msgid "Units Path and Define Editor"
+msgstr ""
+
+msgctxt "patheditfo,twidgetgrid1,frame.caption"
+msgid "Compiler parameters"
+msgstr ""
+
+msgctxt "patheditfo,tbutton1,caption"
+msgid "OK"
+msgstr "Tamam"
+
+msgctxt "patheditfo,tbutton2,caption"
+msgid "Cancel"
+msgstr "İptal"
+
+msgctxt "patheditfo,tbutton3,caption"
+msgid "Add row"
+msgstr ""
+
+msgctxt "patheditfo,tbutton4,caption"
+msgid "Del row"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,frame.caption"
+msgid "MSElang parameters"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nameed,frame.caption"
+msgid "name info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nameed,hint"
+msgid "debug name info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,builded,frame.caption"
+msgid "build"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,builded,hint"
+msgid "Build all"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nortlunitsed,frame.caption"
+msgid "no rtl"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nortlunitsed,hint"
+msgid "Do not use rtl units"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nocompilerunited,frame.caption"
+msgid "no comp"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,nocompilerunited,hint"
+msgid "Do not use compilers units"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,objed,frame.caption"
+msgid "object"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,objed,hint"
+msgid "Create object files"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,modulared,frame.caption"
+msgid "modular"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,modulared,hint"
+msgid "Modular compilation"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,lineinfoed,frame.caption"
+msgid "line info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,lineinfoed,hint"
+msgid "debug line info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,keeptmped,frame.caption"
+msgid "keep temp"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,keeptmped,hint"
+msgid "Keep temp files after compilation"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,btnPath,hint"
+msgid "Units used (-Fu...) and Defines (-d...)"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,btnPath,caption"
+msgid "Para"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,proginfoed,frame.caption"
+msgid "prog info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox1,proginfoed,hint"
+msgid "debug program info"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,frame.caption"
+msgid "Linking"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,gcced,hint"
+msgid "Extra options for gcc"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,begcc,hint"
+msgid "Execute gcc to link assembler code from llc"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,llced,hint"
+msgid "extra options for llvm-llc"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,bellc,hint"
+msgid "Execute llc to produce assembler code"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,linked,hint"
+msgid "Extra options for llvm-link"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,belink,hint"
+msgid "Execute llvm-link"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,clanged,hint"
+msgid "Extra options for Clang"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox2,beclang,hint"
+msgid "Execute Clang linking"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox3,frame.caption"
+msgid "Optimization"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox3,beopt,hint"
+msgid "Execute opt"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox3,opted,hint"
+msgid "Extra options for llvm-opt"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,frame.caption"
+msgid "Input / Output"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,edexeex,frame.caption"
+msgid "Ext"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,edexeex,hint"
+msgid "File extension of the output executable"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,edexena,frame.caption"
+msgid "Output exec name"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,edexena,hint"
+msgid ""
+"File name of the output executable. If empty Pascal filename will be used."
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,extcomp,frame.caption"
+msgid "Ext Comp"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,extcomp,hint"
+msgid "If enabled use external compiler mlc else use built-in mselang parser."
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,runend,frame.caption"
+msgid "Run at end"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,runend,hint"
+msgid "Run the application at end"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,llvm,hint"
+msgid ""
+"If enabled produce a bc file (bitcode) else a mli file (for interpreter)"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,llvmbindir,frame.caption"
+msgid "Directory of llvm binaries"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,llvmbindir,hint"
+msgid "Directory of LLVM suite"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,llvmbindir,controller.filterlist.data,0:,0:"
+msgid "MSElang source"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,frame.caption"
+msgid "Input filename"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,hint"
+msgid "Pascal main filename used as input."
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,controller.filterlist.data,0:,0:"
+msgid "All Pascal source"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,controller.filterlist.data,1:,0:"
+msgid "MSElang source"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,controller.filterlist.data,4:,0:"
+msgid "All"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,filena,controller.captionopen"
+msgid "Open a Pascal source file"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,btnload,hint"
+msgid "Reload Pascal file"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,btnload,caption"
+msgid "Reload"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton2,hint"
+msgid "Parse and build all"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton2,caption"
+msgid "Parse"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton3,hint"
+msgid "Run the executable (if created)"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton3,caption"
+msgid "Run"
+msgstr "Çalıştır"
+
+msgctxt "mainfo,tgroupbox4,tbutton4,hint"
+msgid "Interpret the mli file (if created)"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton4,caption"
+msgid "Inter"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,workpan,value"
+msgid "Working..."
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton5,hint"
+msgid "Save Pascal file"
+msgstr ""
+
+msgctxt "mainfo,tgroupbox4,tbutton5,caption"
+msgid "Save"
+msgstr "Kaydet"
+
+msgctxt "mainfo,coldi,text"
+msgid "Col: 0   Row: 0"
+msgstr ""

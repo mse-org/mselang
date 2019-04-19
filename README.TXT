@@ -4,7 +4,7 @@ Original: https://gitlab.com/mseide-msegui/mselang
 
 Fork: https://github.com/mse-org/mselang
 
-Release from fork: https://github.com/fredvs/mselang/releases
+Release from fork: https://github.com/mse-org/mselang/releases
 
 Copyright (c) 2013-2018 by Martin Schreiber
 
