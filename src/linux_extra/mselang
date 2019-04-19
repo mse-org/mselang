@@ -1,2 +1,0 @@
-#!/bin/sh
-exec "/usr/share/mseide-msegui/mselang/mselang" --macrodef=MSEDIR,/usr/share/mseide-msegui/ "$@"

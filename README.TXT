@@ -1,13 +1,14 @@
 MSEpas/MSElang
 
-https://github.com/mse-org/mselang
+Original: https://gitlab.com/mseide-msegui/mselang
+
+Fork: https://github.com/mse-org/mselang
+
+Release from fork: https://github.com/fredvs/mselang/releases
 
 Copyright (c) 2013-2018 by Martin Schreiber
 
-Translations:
-You're welcome to translate: https://www.transifex.com/Magic/mseide-msegui
-
-MSElang   2013-11-01 mse
+MSElang   2013-11-01
 =======
 In the beginning of 2013 I decided to make an own compiler for the MSEide+MSEgui project and started to experiment.
  The reason is the development direction of Delphi since Delphi 7 which makes it less suitable for my tasks and
